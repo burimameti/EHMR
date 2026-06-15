@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EHMR.Views.AppointmentDetailFormPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+    xmlns:entities="clr-namespace:EHMR.Domain.Entities"
+    x:DataType="viewModels:AppointmentDetailFormViewModel"
+    BackgroundColor="#F8FAFC">
+
+	<Grid ColumnDefinitions="240,*">
+
+		<Border Grid.Column="0" BackgroundColor="#0F172A" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
+		</Border>
+
+		<Grid Grid.Column="1" RowDefinitions="80,*">
+
+			<Border Grid.Row="0" BackgroundColor="White" Stroke="#E2E8F0" StrokeThickness="1">
+				<Grid Padding="32,0" ColumnDefinitions="*,Auto">
+					<VerticalStackLayout Spacing="2" VerticalOptions="Center">
+						<HorizontalStackLayout Spacing="8">
+						
+							<Label Text="{Binding PageTitle}" FontSize="22" FontAttributes="Bold" TextColor="#0F172A" VerticalOptions="Center" Margin="4,0,0,0" />
+							
+						</HorizontalStackLayout>
+						<Label Text="Управување со времето, статусот и медицинската причина за посета" FontSize="13" TextColor="#64748B" Margin="28,0,0,0" />
+					</VerticalStackLayout>
+
+					<HorizontalStackLayout Grid.Column="1" Spacing="12" VerticalOptions="Center">
+						<Button Text="🔄 Пресметај и Закажи Следен Циклус"
+                                IsVisible="{Binding IsReadOnly}"
+                                Command="{Binding GenerateNextTherapyCycleAndAppointmentCommand}"
+                                HeightRequest="40"
+                                Padding="16,0"
+                                CornerRadius="10"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                BackgroundColor="#2563EB"
+                                TextColor="White" />
+
+						<Button Text="🧬 Креирај Нов Протокол"
+                                IsVisible="{Binding CanCreateSchedule}"
+                                Command="{Binding NavigateToCreateScheduleCommand}"
+                                HeightRequest="40"
+                                Padding="16,0"
+                                CornerRadius="10"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                BackgroundColor="#10B981"
+                                TextColor="White" />
+
+						<Button Text="✎ Уреди Термин"
+                                IsVisible="{Binding IsReadOnly}"
+                                Command="{Binding ToggleEditModeCommand}"
+                                HeightRequest="40"
+                                Padding="16,0"
+                                CornerRadius="10"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                BackgroundColor="#EFF6FF"
+                                TextColor="#2563EB" />
+
+						<Button Text="Откажи"
+                                IsVisible="{Binding IsEditMode}"
+                                Command="{Binding CancelCommand}"
+                                HeightRequest="40"
+                                Padding="16,0"
+                                CornerRadius="10"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                BackgroundColor="#F1F5F9"
+                                TextColor="#475569" />
+
+						<Button Text="💾 Зачувај Измени"
+                                IsVisible="{Binding IsEditMode}"
+                                Command="{Binding SaveCommand}"
+                                HeightRequest="40"
+                                Padding="20,0"
+                                CornerRadius="10"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                BackgroundColor="#10B981"
+                                TextColor="White" />
+					</HorizontalStackLayout>
+				</Grid>
+			</Border>
+
+			<ScrollView Grid.Row="1" Padding="32">
+				<Grid ColumnDefinitions="2*, *" ColumnSpacing="24">
+
+					<VerticalStackLayout Grid.Column="0" Spacing="24">
+
+						<Border BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
+							<VerticalStackLayout Spacing="20">
+								<HorizontalStackLayout Spacing="8" Margin="0,0,0,4">
+									<Label Text="🤝" FontSize="18" VerticalOptions="Center" />
+									<Label Text="Пациент и Лекар" FontSize="16" FontAttributes="Bold" TextColor="#0F172A" VerticalOptions="Center" />
+								</HorizontalStackLayout>
+
+								<VerticalStackLayout Spacing="6">
+									<Label Text="ИЗБЕРИ ПАЦИЕНТ *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
+
+									<Border IsVisible="{Binding IsReadOnly}" HeightRequest="46" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 10">
+										<Border Padding="12,6" BackgroundColor="#E0F2FE" StrokeThickness="0" HorizontalOptions="Start" VerticalOptions="Center" Margin="8,0" StrokeShape="RoundRectangle 8">
+											<HorizontalStackLayout Spacing="6">
+												<BoxView WidthRequest="8" HeightRequest="8" CornerRadius="4" Color="#0369A1" VerticalOptions="Center" />
+												<Label FontSize="12" FontAttributes="Bold" TextColor="#0369A1" VerticalOptions="Center">
+													<Label.Text>
+														<MultiBinding StringFormat="{}{0} {1}">
+															<Binding Path="Appointment.Patient.FirstName" />
+															<Binding Path="Appointment.Patient.LastName" />
+														</MultiBinding>
+													</Label.Text>
+												</Label>
+											</HorizontalStackLayout>
+										</Border>
+									</Border>
+									<HorizontalStackLayout Spacing="100">
+										<Border MinimumWidthRequest="540" HeightRequest="45" IsVisible="{Binding IsEditMode}" BackgroundColor="#FFFFFF" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="12,4">
+											<Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+
+												<Picker Grid.Column="0"
+    ItemsSource="{Binding PatientsList}"
+    SelectedItem="{Binding SelectedPatientForAppointment}"
+    ItemDisplayBinding="{Binding FullName}"
+    TextColor="#0F172A"
+
+    TitleColor="#94A3B8"
+    HorizontalOptions="Fill"
+    VerticalOptions="Center"
+    Margin="0" />
+
+												<Label Grid.Column="1"
+   Text="▼"
+   TextColor="#64748B"
+   FontSize="10"
+   VerticalOptions="Center"
+   HorizontalOptions="End"
+   InputTransparent="True" />
+											</Grid>
+										</Border>
+										<Button HorizontalOptions="End"
+Text="＋ Нов Пациент"
+Command="{Binding NavigateToAddNewPatientCommand}"
+Style="{StaticResource PrimaryButtonStyle}"
+HeightRequest="40" />
+									
+									</HorizontalStackLayout>
+									
+								</VerticalStackLayout>
+
+								<VerticalStackLayout Spacing="6">
+									<Label Text="ЛЕКАР ЗАДОЛЖЕН ЗА ТЕРМИНОТ *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
+
+									<Border IsVisible="{Binding IsReadOnly}" HeightRequest="46" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 10">
+										<Border Padding="12,6" BackgroundColor="#E0F2FE" StrokeThickness="0" HorizontalOptions="Start" VerticalOptions="Center" Margin="8,0" StrokeShape="RoundRectangle 8">
+											<HorizontalStackLayout Spacing="6">
+												<BoxView WidthRequest="8" HeightRequest="8" CornerRadius="4" Color="#0369A1" VerticalOptions="Center" />
+												<Label FontSize="12" FontAttributes="Bold" TextColor="#0369A1" VerticalOptions="Center">
+													<Label.Text>
+														<MultiBinding StringFormat="{}{0} {1}">
+															<Binding Path="Appointment.Doctor.FirstName" />
+															<Binding Path="Appointment.Doctor.LastName" />
+														</MultiBinding>
+													</Label.Text>
+												</Label>
+											</HorizontalStackLayout>
+										</Border>
+									</Border>
+
+									<Border IsVisible="{Binding IsEditMode}" BackgroundColor="#FFFFFF" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="12,4">
+										<Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+
+											<Picker Grid.Column="0" 
+                ItemsSource="{Binding DoctorsList}"
+                SelectedItem="{Binding SelectedDoctorForAppointment}"
+                ItemDisplayBinding="{Binding FullName}"
+                TextColor="#0F172A"
+           
+                TitleColor="#94A3B8"
+                HorizontalOptions="Fill"
+                VerticalOptions="Center"
+                Margin="0" />
+
+											<Label Grid.Column="1"
+               Text="▼"
+               TextColor="#64748B"
+               FontSize="10"
+               VerticalOptions="Center"
+               HorizontalOptions="End"
+               InputTransparent="True" />
+										</Grid>
+									</Border>
+								</VerticalStackLayout>
+							</VerticalStackLayout>
+						</Border>
+
+						<Border BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
+							<VerticalStackLayout Spacing="20">
+								<HorizontalStackLayout Spacing="8" Margin="0,0,0,4">
+									<Label Text="⏱" FontSize="18" VerticalOptions="Center" />
+									<Label Text="Временски Опсег (Автоматски пополнето од Календар)" FontSize="16" FontAttributes="Bold" TextColor="#0F172A" VerticalOptions="Center" />
+								</HorizontalStackLayout>
+
+								<Grid ColumnDefinitions="*,*" RowSpacing="16" ColumnSpacing="20">
+
+									<VerticalStackLayout Grid.Column="0" Spacing="6">
+										<Label Text="ПОЧЕТНО ВРЕМЕ И ДАТУМ *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
+										<Border BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="12,4" MinimumHeightRequest="46">
+											<Grid>
+												<Label Text="{Binding Appointment.ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}" IsVisible="{Binding IsReadOnly}" FontSize="14" TextColor="#0F172A" VerticalOptions="Center" />
+												<HorizontalStackLayout IsVisible="{Binding IsEditMode}" Spacing="12" VerticalOptions="Center">
+													<DatePicker Date="{Binding Appointment.ScheduledStart, Mode=TwoWay}" Format="dd.MM.yyyy" FontSize="13" TextColor="#0F172A" VerticalOptions="Center" MinimumHeightRequest="40" />
+													<TimePicker Time="{Binding SelectedStartTime, Mode=TwoWay}" FontSize="13" TextColor="#0F172A" VerticalOptions="Center" MinimumHeightRequest="40" />
+												</HorizontalStackLayout>
+											</Grid>
+										</Border>
+									</VerticalStackLayout>
+
+									<VerticalStackLayout Grid.Column="1" Spacing="6">
+										<Label Text="ПЛАНИРАН КРАЈ *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
+										<Border BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="12,4" MinimumHeightRequest="46">
+											<Grid>
+												<Label Text="{Binding Appointment.ScheduledEnd, StringFormat='{0:dd.MM.yyyy HH:mm}'}" IsVisible="{Binding IsReadOnly}" FontSize="14" TextColor="#0F172A" VerticalOptions="Center" />
+												<HorizontalStackLayout IsVisible="{Binding IsEditMode}" Spacing="12" VerticalOptions="Center">
+													<DatePicker Date="{Binding Appointment.ScheduledEnd, Mode=TwoWay}" Format="dd.MM.yyyy" FontSize="13" TextColor="#0F172A" VerticalOptions="Center" MinimumHeightRequest="40" />
+													<TimePicker Time="{Binding SelectedEndTime, Mode=TwoWay}" FontSize="13" TextColor="#0F172A" VerticalOptions="Center" MinimumHeightRequest="40" />
+												</HorizontalStackLayout>
+											</Grid>
+										</Border>
+									</VerticalStackLayout>
+								</Grid>
+							</VerticalStackLayout>
+						</Border>
+					</VerticalStackLayout>
+
+					<VerticalStackLayout Grid.Column="1" Spacing="24">
+
+						<Border BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
+							<VerticalStackLayout Spacing="14">
+								<Label Text="СТАТУС НА ТЕРМИН *" FontSize="11" FontAttributes="Bold" TextColor="#475569" />
+
+								<Border IsVisible="{Binding IsReadOnly}" Padding="12,6" BackgroundColor="#E0F2FE" StrokeThickness="0" HorizontalOptions="Start" StrokeShape="RoundRectangle 8">
+									<HorizontalStackLayout Spacing="6">
+										<BoxView WidthRequest="8" HeightRequest="8" CornerRadius="4" Color="#0369A1" VerticalOptions="Center" />
+										<Label Text="{Binding Appointment.Status}" FontSize="12" FontAttributes="Bold" TextColor="#0369A1" VerticalOptions="Center" />
+									</HorizontalStackLayout>
+								</Border>
+
+								<Border IsVisible="{Binding IsEditMode}" BackgroundColor="#FFFFFF" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="12,4">
+									<Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+
+										<Picker Grid.Column="0"
+                SelectedItem="{Binding Appointment.Status}"
+                ItemsSource="{Binding StatusOptions}"
+                TextColor="#0F172A"
+
+                TitleColor="#94A3B8"
+                HorizontalOptions="Fill"
+                VerticalOptions="Center"
+                Margin="0" />
+
+										<Label Grid.Column="1"
+               Text="▼"
+               TextColor="#64748B"
+               FontSize="10"
+               VerticalOptions="Center"
+               HorizontalOptions="End"
+               InputTransparent="True" />
+									</Grid>
+								</Border>
+							</VerticalStackLayout>
+						</Border>
+
+						<Border BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
+							<VerticalStackLayout Spacing="6" Margin="0,4,0,0">
+								<Label Text="КЛИНИЧКИ БЕЛЕШКИ / ПРИЧИНА ЗА ПОСЕТА" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
+								<Border BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="8">
+									<Editor Text="{Binding Appointment.ReasonForVisit}"
+                                            IsReadOnly="{Binding IsReadOnly}"
+                                            Placeholder="Внесете симптоми, причина за посета или лекарски белешки..."
+                                            PlaceholderColor="#94A3B8"
+                                            FontSize="13"
+                                            TextColor="#0F172A"
+                                            HeightRequest="120"
+                                            AutoSize="Disabled" />
+								</Border>
+							</VerticalStackLayout>
+						</Border>
+					</VerticalStackLayout>
+				</Grid>
+			</ScrollView>
+		</Grid>
+	</Grid>
+</ContentPage>

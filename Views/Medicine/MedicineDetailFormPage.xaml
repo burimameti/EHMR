@@ -1,0 +1,40 @@
+<ContentPage x:Class="EHMR.Views.MedicineDetailFormPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+             x:DataType="viewModels:MedicineDetailFormViewModel" BackgroundColor="#F8FAFC">
+	<VerticalStackLayout Padding="30" Spacing="20" HorizontalOptions="Center" WidthRequest="600">
+		<Label Text="{Binding PageTitle}" FontSize="20" FontAttributes="Bold" TextColor="#0F172A" />
+
+		<Border Padding="20" BackgroundColor="White" Stroke="#E2E8F0" StrokeShape="RoundRectangle 12">
+			<VerticalStackLayout Spacing="15">
+				<VerticalStackLayout Spacing="4">
+					<Label Text="Трговско Име" FontAttributes="Bold" FontSize="12" />
+					<Entry Text="{Binding Medicine.Name}" IsReadOnly="{Binding IsReadOnly}" />
+				</VerticalStackLayout>
+
+				<VerticalStackLayout Spacing="4">
+					<Label Text="Генеричко име (Состави)" FontAttributes="Bold" FontSize="12" />
+					<Entry Text="{Binding Medicine.GenericName}" IsReadOnly="{Binding IsReadOnly}" />
+				</VerticalStackLayout>
+
+				<Grid ColumnDefinitions="*, *" ColumnSpacing="15">
+					<VerticalStackLayout Grid.Column="0" Spacing="4">
+						<Label Text="Форма (пр. Ампула, Таблета)" FontAttributes="Bold" FontSize="12" />
+						<Entry Text="{Binding Medicine.DosageForm}" IsReadOnly="{Binding IsReadOnly}" />
+					</VerticalStackLayout>
+					<VerticalStackLayout Grid.Column="1" Spacing="4">
+						<Label Text="Стандардна доза" FontAttributes="Bold" FontSize="12" />
+						<Entry Text="{Binding Medicine.DefaultDosage}" IsReadOnly="{Binding IsReadOnly}" />
+					</VerticalStackLayout>
+				</Grid>
+			</VerticalStackLayout>
+		</Border>
+
+		<HorizontalStackLayout HorizontalOptions="End" Spacing="10">
+			<Button Text="Откажи" Command="{Binding CancelCommand}" BackgroundColor="#F1F5F9" TextColor="#475569" />
+			<Button Text="✎ Измени" Command="{Binding ToggleEditCommand}" IsVisible="{Binding IsReadOnly}" BackgroundColor="#FFFFFF" BorderColor="#CBD5E1" BorderWidth="1" TextColor="#2563EB" />
+			<Button Text="✓ Зачувај" Command="{Binding SaveCommand}" IsVisible="{Binding IsEditMode}" BackgroundColor="#2563EB" TextColor="White" />
+		</HorizontalStackLayout>
+	</VerticalStackLayout>
+</ContentPage>

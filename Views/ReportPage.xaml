@@ -1,0 +1,255 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+             xmlns:models="clr-namespace:EHMR.Domain.Entities.Reports"
+             x:Class="EHMR.Views.ReportPage"
+             x:DataType="viewModels:ReportViewModel"
+             Style="{StaticResource PageBackgroundStyle}">
+
+	<Grid ColumnDefinitions="295,*">
+
+		<!-- СТРАНИЧНО МЕНИ (Лево - усогласена ширина 295) -->
+		<Border Grid.Column="0" BackgroundColor="#0F172A" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
+		</Border>
+
+		<!-- ГЛАВЕН КОНТЕНТ (Десно) -->
+		<Grid Grid.Column="1" RowDefinitions="72,*">
+
+			<!-- ТОП БАР ХЕДЕР -->
+			<Border Grid.Row="0" Style="{StaticResource PageHeaderContainer}">
+				<Grid ColumnDefinitions="*,Auto">
+					<VerticalStackLayout Spacing="{StaticResource SpaceXs}" VerticalOptions="Center">
+						<Label Text="Медицински Извештаи и Аналитика" Style="{StaticResource PageHeaderTitle}" />
+						<Label Text="Изберете тип на извештај за обработка и детално филтрирање на базата" Style="{StaticResource PageHeaderSubtitle}" />
+					</VerticalStackLayout>
+
+					<HorizontalStackLayout Grid.Column="1" VerticalOptions="Center">
+						<Border Padding="12,8" BackgroundColor="{StaticResource SurfaceAlt}" StrokeThickness="0" StrokeShape="RoundRectangle 10">
+							<HorizontalStackLayout Spacing="{StaticResource SpaceSm}">
+								<Label Text="&#xf007;" FontFamily="FASolid" FontSize="12" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
+								<Label Text="{Binding UserName}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
+							</HorizontalStackLayout>
+						</Border>
+					</HorizontalStackLayout>
+				</Grid>
+			</Border>
+
+			<!-- ГЛАВЕН РАБОТЕН ПРОСТОР -->
+			<Grid Grid.Row="1" Padding="{StaticResource SpaceLg}">
+
+				<!-- ХАБ: Преглед на достапни дефиниции на извештаи -->
+				<Grid x:Name="HubGrid" RowDefinitions="Auto,16,*" IsVisible="True">
+					<Grid.Triggers>
+						<DataTrigger TargetType="Grid" Binding="{Binding IsShowingDetails}" Value="True">
+							<Setter Property="IsVisible" Value="False" />
+						</DataTrigger>
+					</Grid.Triggers>
+
+					<!-- Пребарувач во Хабот -->
+					<Border Grid.Row="0" Style="{StaticResource ToolbarContainer}">
+						<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+							<VerticalStackLayout Spacing="5">
+								<Label Text="ФИЛТРИРАЈ ТИПОВИ НА ИЗВЕШТАИ" Style="{StaticResource InputLabel}" />
+								<Border Style="{StaticResource InputBorderStyle}" WidthRequest="320" HorizontalOptions="Start">
+									<Grid ColumnDefinitions="Auto,*">
+										<Label Text="&#xf002;" FontFamily="FASolid" FontSize="14" Margin="4,0,8,0" TextColor="{StaticResource TextMuted}" VerticalOptions="Center" />
+										<Entry Grid.Column="1" Style="{StaticResource InputEntry}" Placeholder="Пребарај извештај по име или категорија..." PlaceholderColor="{StaticResource TextMuted}" Text="{Binding HubSearchText, Mode=TwoWay}" VerticalOptions="Center" />
+									</Grid>
+								</Border>
+							</VerticalStackLayout>
+						</Grid>
+					</Border>
+
+					<!-- Колекција во вид на картички со Span=2 -->
+					<CollectionView Grid.Row="2" ItemsSource="{Binding AvailableReports}">
+						<CollectionView.ItemsLayout>
+							<GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="20" VerticalItemSpacing="20" />
+						</CollectionView.ItemsLayout>
+						<CollectionView.ItemTemplate>
+							<DataTemplate x:DataType="models:ReportDefinition">
+								<Border BackgroundColor="White" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="16">
+									<Border.GestureRecognizers>
+										<TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ReportViewModel}}, Path=SelectReportCommand}" CommandParameter="{Binding .}" />
+									</Border.GestureRecognizers>
+									<Grid RowDefinitions="Auto,Auto,1,Auto" RowSpacing="16">
+										<Grid Grid.Row="0" ColumnDefinitions="Auto,*">
+											<Label Grid.Column="0" Text="{Binding Icon}" FontSize="32" Margin="0,0,16,0" VerticalOptions="Center" />
+											<VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+												<Label Text="{Binding Title}" FontAttributes="Bold" FontSize="15" TextColor="#0F172A" LineBreakMode="WordWrap" />
+												<Label Text="КЛИКНИ ЗА ОТВОРАЊЕ" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource Primary}" CharacterSpacing="0.5" />
+											</VerticalStackLayout>
+										</Grid>
+										<Label Grid.Row="1" Text="{Binding Description}" FontSize="13" TextColor="#64748B" HeightRequest="45" LineBreakMode="TailTruncation" MaxLines="2" />
+										<BoxView Grid.Row="2" BackgroundColor="#F1F5F9" />
+										<Grid Grid.Row="3" ColumnDefinitions="*,Auto">
+											<Label Grid.Column="0" Text="{Binding Category, StringFormat='Категорија: {0}'}" FontSize="11" FontAttributes="Bold" TextColor="#94A3B8" VerticalOptions="Center" />
+											<Label Grid.Column="1" Text="Отвори извештај ➔" FontAttributes="Bold" FontSize="12" TextColor="{StaticResource Primary}" VerticalOptions="Center" />
+										</Grid>
+									</Grid>
+								</Border>
+							</DataTemplate>
+						</CollectionView.ItemTemplate>
+					</CollectionView>
+				</Grid>
+
+				<!-- ДЕТАЛИ: Табеларен приказ со странична аналитика -->
+				<Grid x:Name="DetailsGrid" RowDefinitions="Auto,16,*" ColumnDefinitions="*,340" ColumnSpacing="24" IsVisible="False">
+					<Grid.Triggers>
+						<DataTrigger TargetType="Grid" Binding="{Binding IsShowingDetails}" Value="True">
+							<Setter Property="IsVisible" Value="True" />
+						</DataTrigger>
+					</Grid.Triggers>
+
+					<!-- ЛЕНТА СО ФИЛТРИ (ГОРЕ) -->
+					<Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ToolbarContainer}">
+						<Grid ColumnDefinitions="Auto,*,*,*,Auto" ColumnSpacing="12" VerticalOptions="Center">
+
+							
+
+							<VerticalStackLayout Grid.Column="1" Spacing="5">
+								<Label Text="ОД ДАТУМ" Style="{StaticResource InputLabel}" />
+								<Border Style="{StaticResource InputBorderStyle}">
+									<DatePicker Date="{Binding StartDate}" Format="dd.MM.yyyy" TextColor="{StaticResource TextPrimary}" BackgroundColor="Transparent" FontSize="13" VerticalOptions="Center" />
+								</Border>
+							</VerticalStackLayout>
+
+							<VerticalStackLayout Grid.Column="2" Spacing="5">
+								<Label Text="ДО ДАТУМ" Style="{StaticResource InputLabel}" />
+								<Border Style="{StaticResource InputBorderStyle}">
+									<DatePicker Date="{Binding EndDate}" Format="dd.MM.yyyy" TextColor="{StaticResource TextPrimary}" BackgroundColor="Transparent" FontSize="13" VerticalOptions="Center" />
+								</Border>
+							</VerticalStackLayout>
+
+							<VerticalStackLayout Grid.Column="3" Spacing="5">
+								<Label Text="КЛУЧ ЗА ФИЛТРИРАЊЕ" Style="{StaticResource InputLabel}" />
+								<Border Style="{StaticResource InputBorderStyle}">
+									<Entry Text="{Binding AdvancedFilterText}" Placeholder="Филтрирај редови..." PlaceholderColor="{StaticResource TextMuted}" Style="{StaticResource InputEntry}" VerticalOptions="Center" />
+								</Border>
+							</VerticalStackLayout>
+
+							<Button Grid.Column="4" Text="🔄 Освежи" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding ExecuteReportGenerationCommand}" VerticalOptions="End" />
+						</Grid>
+					</Border>
+
+					<!-- ТАБЕЛА СО ДИНАМИЧНИ ПОДАТОЦИ (ЛЕВО - структура 48,*,60) -->
+					<Border Grid.Row="2" Grid.Column="0" Style="{StaticResource ElevatedCard}" Padding="0">
+						<Grid RowDefinitions="48,*,60">
+
+							<!-- Овде овозможуваме хоризонтално скролање со видлив скролбар -->
+							<ScrollView Grid.Row="0" Grid.RowSpan="2" Orientation="Horizontal">
+								<Grid RowDefinitions="48,*">
+
+									<!-- Фиксиран Хедер преку BindableLayout за да биде стабилен и видлив -->
+									<Border Grid.Row="0" Style="{StaticResource GridHeaderStyle}">
+										<StackLayout Orientation="Horizontal" BindableLayout.ItemsSource="{Binding FormattedColumns}">
+											<BindableLayout.ItemTemplate>
+												<DataTemplate x:DataType="models:DynamicReportColumn">
+													<Grid WidthRequest="160" Padding="16,0,0,0" VerticalOptions="Center">
+														<Label Text="{Binding HeaderName}" Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+													</Grid>
+												</DataTemplate>
+											</BindableLayout.ItemTemplate>
+										</StackLayout>
+									</Border>
+
+									<!-- Динамички Редови -->
+									<Grid Grid.Row="1">
+										<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="50" WidthRequest="50" ZIndex="5" />
+
+										<CollectionView ItemsSource="{Binding ProcessedRows}" SelectionMode="None">
+											<CollectionView.ItemTemplate>
+												<DataTemplate x:DataType="models:DynamicReportRow">
+													<Border Style="{StaticResource GridRowStyle}">
+														<Border.Triggers>
+															<DataTrigger TargetType="Border" Binding="{Binding IsAlertSeverity}" Value="True">
+																<Setter Property="BackgroundColor" Value="#FEF2F2" />
+															</DataTrigger>
+														</Border.Triggers>
+
+														<!-- Внатрешните ќелии исто така наполнети преку StackLayout за точна синхронизација во ширина -->
+														<StackLayout Orientation="Horizontal" BindableLayout.ItemsSource="{Binding Cells}">
+															<BindableLayout.ItemTemplate>
+																<DataTemplate x:DataType="x:String">
+																	<Grid WidthRequest="160" Padding="16,0,0,0" VerticalOptions="Center">
+																		<Label Text="{Binding .}" Style="{StaticResource Body}" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+																	</Grid>
+																</DataTemplate>
+															</BindableLayout.ItemTemplate>
+														</StackLayout>
+													</Border>
+												</DataTemplate>
+											</CollectionView.ItemTemplate>
+										</CollectionView>
+									</Grid>
+								</Grid>
+							</ScrollView>
+
+							<!-- ДОЛНА ПАГИНАЦИЈА (Футер - Ист со AppointmentListPage) -->
+							<Border Grid.Row="2" BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource Border}" StrokeThickness="1">
+								<Grid Padding="20,0" HeightRequest="60" ColumnDefinitions="*,Auto">
+									<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+										<Label Text="Вкупно евидентирани записи во извештајот" Style="{StaticResource MutedText}" VerticalOptions="Center" />
+									</HorizontalStackLayout>
+
+									<HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+										<Button Text="Претходна" Style="{StaticResource ToolbarButton}" Command="{Binding PreviousPageCommand}" />
+
+										<Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource BorderStrong}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" HeightRequest="36" Padding="12,0">
+											<HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+												<Label Text="Страна" Style="{StaticResource MutedText}" />
+												<Label Text="{Binding CurrentPage, FallbackValue=1}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+												<Label Text="од" Style="{StaticResource MutedText}" />
+												<Label Text="{Binding TotalPages, FallbackValue=1}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" />
+											</HorizontalStackLayout>
+										</Border>
+
+										<Button Text="Следна" Style="{StaticResource ActiveTabButtonStyle}" Padding="12,0" HeightRequest="36" Command="{Binding NextPageCommand}" />
+									</HorizontalStackLayout>
+								</Grid>
+							</Border>
+
+						</Grid>
+					</Border>
+
+					<!-- АНАЛИТИКА И ЕКСПОРТ (ДЕСНО) -->
+					<ScrollView Grid.Row="2" Grid.Column="1" Padding="4,0,0,0">
+						<VerticalStackLayout Spacing="20">
+							<Label Text="АНАЛИТИКА ЗА ИЗВЕШТАЈОТ" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
+
+							<Border BackgroundColor="White" Padding="20" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 12">
+								<VerticalStackLayout Spacing="6">
+									<Label Text="{Binding Metric1Title, FallbackValue='ВКУПНО ЗАПИСИ'}" FontSize="12" FontAttributes="Bold" TextColor="#64748B" />
+									<Label Text="{Binding Metric1Value, FallbackValue='0'}" FontSize="26" FontAttributes="Bold" TextColor="#0F172A" />
+								</VerticalStackLayout>
+							</Border>
+
+							<Border BackgroundColor="White" Padding="20" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 12">
+								<VerticalStackLayout Spacing="6">
+									<Label Text="{Binding Metric2Title, FallbackValue='КРИТИЧНИ АЛАРМИ'}" FontSize="12" FontAttributes="Bold" TextColor="#64748B" />
+									<Label Text="{Binding Metric2Value, FallbackValue='0'}" FontSize="26" FontAttributes="Bold" TextColor="#DC2626" />
+								</VerticalStackLayout>
+							</Border>
+
+							<Border BackgroundColor="White" Padding="20" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 12">
+								<VerticalStackLayout Spacing="6">
+									<Label Text="{Binding Metric3Title, FallbackValue='ОБРАБОТЕНИ МОДУЛИ'}" FontSize="12" FontAttributes="Bold" TextColor="#64748B" />
+									<Label Text="{Binding Metric3Value, FallbackValue='0'}" FontSize="26" FontAttributes="Bold" TextColor="#16A34A" />
+								</VerticalStackLayout>
+							</Border>
+
+							<BoxView HeightRequest="1" BackgroundColor="#E2E8F0" Margin="0,8" />
+
+							<Label Text="ОПЦИИ ЗА ИЗВОЗ" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
+
+							<Button Text="📄 Извези како PDF Документ" Command="{Binding ExportToPdfCommand}" BackgroundColor="#EF4444" TextColor="White" FontAttributes="Bold" HeightRequest="44" CornerRadius="10" FontSize="13" />
+							<Button Text="📊 Извези во Excel (XLSX)" Command="{Binding ExportToExcelCommand}" BackgroundColor="#16A34A" TextColor="White" FontAttributes="Bold" HeightRequest="44" CornerRadius="10" FontSize="13" Margin="0,4,0,0" />
+						</VerticalStackLayout>
+					</ScrollView>
+
+				</Grid>
+			</Grid>
+		</Grid>
+	</Grid>
+</ContentPage>

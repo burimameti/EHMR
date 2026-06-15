@@ -1,0 +1,21 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="EHMR.Views.MedicinePage">
+	<Grid RowDefinitions="Auto, *">
+		<HorizontalStackLayout Grid.Row="0" Padding="10" Spacing="10" BackgroundColor="#F1F5F9">
+			<Entry x:Name="mName" Placeholder="Trade Formulation Name" WidthRequest="200" />
+			<Entry x:Name="mDose" Placeholder="Baseline Metric Unit" WidthRequest="150" />
+			<Button Text="Append Entry"  BackgroundColor="#10B981" TextColor="White" />
+		</HorizontalStackLayout>
+		<ListView Grid.Row="1" x:Name="lst" Margin="10">
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<ViewCell>
+						<HorizontalStackLayout Spacing="30" Padding="5">
+							<Label Text="{Binding Name}" FontAttributes="Bold" />
+							<Label Text="{Binding DefaultDosage}" />
+						</HorizontalStackLayout>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+	</Grid>
+</ContentPage>

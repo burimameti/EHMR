@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentView
+    x:Class="EHMR.Views.MenuView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:EHMR.Extensions"
+    x:Name="Root"
+    mc:Ignorable="d">
+
+	<ContentView.Resources>
+		<ResourceDictionary>
+			<converters:FontFamilyConverter x:Key="FontFamilyConverter" />
+		</ResourceDictionary>
+	</ContentView.Resources>
+
+	<Grid WidthRequest="295">
+		<!-- Чиста, професионална медицинска позадина за надворешниот Grid -->
+		<Grid.Background>
+			<SolidColorBrush Color="#F1F5F9" />
+		</Grid.Background>
+
+		<!-- Главен Sidebar контејнер - Претворен во елегантна Slate-темно сина (Medical Slate) -->
+		<Border
+            Margin="8,8,0,8"
+            Padding="16,20,16,16"
+            BackgroundColor="#1E293B" 
+            Stroke="#334155"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 20">
+
+			<Grid RowDefinitions="Auto,Auto,*">
+				<Grid Grid.Column="0" Margin="-5,8,0,-25">
+
+				</Grid>
+
+				<!-- ЛОГО И ХЕДЕР НА МЕНИТО -->
+				<Grid
+                    Grid.Row="1"
+                    Padding="4,0,4,24"
+                    ColumnDefinitions="46,*"
+                    ColumnSpacing="12">
+
+					<!-- Икона контејнер со посветла сина медицинска нота -->
+					<Border
+                        WidthRequest="44"
+                        HeightRequest="44"
+                        BackgroundColor="#334155"
+                        Stroke="{StaticResource Primary}"
+                        StrokeThickness="1.5"
+                        StrokeShape="RoundRectangle 12">
+
+						<Label
+                            Text="&#xf0f0;"
+                            FontFamily="FASolid"
+                            FontSize="18"
+                            TextColor="{StaticResource Primary}"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center" />
+					</Border>
+
+					<VerticalStackLayout
+                        Grid.Column="1"
+                        Spacing="2"
+                        VerticalOptions="Center">
+						<Label
+                            Text="EHMR"
+                            FontSize="16"
+                            FontAttributes="Bold"
+                            TextColor="#FFFFFF"
+                            CharacterSpacing="0.5" />
+						<Label
+                            Text="Платформа за здравство"
+                            FontSize="11"
+                            TextColor="{StaticResource Primary}" />
+					</VerticalStackLayout>
+				</Grid>
+
+				<!-- НАВИГАЦИСКИ СТАВКИ -->
+				<CollectionView
+                    Grid.Row="2"
+                    ItemsSource="{Binding Items}"
+                    SelectionMode="None">
+					<CollectionView.ItemTemplate>
+						<DataTemplate>
+							<VerticalStackLayout Margin="0,0,0,8">
+
+								<!-- Главна Група во Менито -->
+								<Border
+                                    Padding="12,10"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 12">
+									<Border.Triggers>
+										<!-- Посветла сина рефлексија за активна селекција -->
+										<DataTrigger TargetType="Border" Binding="{Binding IsActive}" Value="True">
+											<Setter Property="BackgroundColor" Value="#334155" />
+										</DataTrigger>
+										<DataTrigger TargetType="Border" Binding="{Binding IsActive}" Value="False">
+											<Setter Property="BackgroundColor" Value="Transparent" />
+										</DataTrigger>
+									</Border.Triggers>
+
+									<Grid ColumnDefinitions="24,*,20" ColumnSpacing="12">
+										<Label
+                                            Grid.Column="0"
+                                            Text="{Binding Icon.Glyph}"
+                                            FontFamily="{Binding Icon.Font, Converter={StaticResource FontFamilyConverter}}"
+                                            FontSize="14"
+                                            TextColor="#062CC6"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center" />
+
+										<Label
+                                            Grid.Column="1"
+                                            Text="{Binding GroupTitle}"
+                                            FontSize="13"
+                                            FontAttributes="Bold"
+                                            VerticalOptions="Center">
+											<Label.Triggers>
+												<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="True">
+													<Setter Property="TextColor" Value="#FFFFFF" />
+												</DataTrigger>
+												<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="False">
+													<Setter Property="TextColor" Value="#94A3B8" />
+												</DataTrigger>
+											</Label.Triggers>
+										</Label>
+
+										<Label
+                                            Grid.Column="2"
+                                            FontFamily="FASolid"
+                                            FontSize="10"
+                                            TextColor="#64748B"
+                                            HorizontalOptions="End"
+                                            VerticalOptions="Center">
+											<Label.Triggers>
+												<DataTrigger TargetType="Label" Binding="{Binding IsExpanded}" Value="True">
+													<Setter Property="Text" Value="&#xf077;" />
+													<Setter Property="TextColor" Value="{StaticResource Primary}" />
+												</DataTrigger>
+												<DataTrigger TargetType="Label" Binding="{Binding IsExpanded}" Value="False">
+													<Setter Property="Text" Value="&#xf078;" />
+												</DataTrigger>
+												<DataTrigger TargetType="Label" Binding="{Binding Items.Count}" Value="0">
+													<Setter Property="IsVisible" Value="False" />
+												</DataTrigger>
+											</Label.Triggers>
+										</Label>
+									</Grid>
+
+									<Border.GestureRecognizers>
+										<TapGestureRecognizer
+                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.ToggleGroupCommand}"
+                                            CommandParameter="{Binding .}" />
+									</Border.GestureRecognizers>
+								</Border>
+
+								<!-- Подмени Ставки (Sub-items) -->
+								<VerticalStackLayout
+                                    Margin="8,4,0,0"
+                                    Spacing="2"
+                                    IsVisible="{Binding IsExpanded}"
+                                    BindableLayout.ItemsSource="{Binding Items}">
+									<BindableLayout.ItemTemplate>
+										<DataTemplate>
+											<Border
+                                                Padding="0"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 10">
+												<Border.Triggers>
+													<!-- Суптилен контраст за активно подмени -->
+													<DataTrigger TargetType="Border" Binding="{Binding IsActive}" Value="True">
+														<Setter Property="BackgroundColor" Value="#475569" />
+													</DataTrigger>
+													<DataTrigger TargetType="Border" Binding="{Binding IsActive}" Value="False">
+														<Setter Property="BackgroundColor" Value="Transparent" />
+													</DataTrigger>
+												</Border.Triggers>
+
+												<Border.GestureRecognizers>
+													<TapGestureRecognizer
+                                                        Command="{Binding Source={x:Reference Root}, Path=BindingContext.NavigateCommand}"
+                                                        CommandParameter="{Binding .}" />
+												</Border.GestureRecognizers>
+
+												<Grid Padding="12,10" ColumnDefinitions="4,24,*" ColumnSpacing="10">
+
+													<!-- Индикатор линија од лево -->
+													<Border
+                                                        Grid.Column="0"
+                                                        WidthRequest="3"
+                                                        HeightRequest="16"
+                                                        StrokeThickness="0"
+                                                        StrokeShape="RoundRectangle 2"
+                                                        VerticalOptions="Center">
+														<Border.Triggers>
+															<DataTrigger TargetType="Border" Binding="{Binding IsActive}" Value="True">
+																<Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+															</DataTrigger>
+															<DataTrigger TargetType="Border" Binding="{Binding IsActive}" Value="False">
+																<Setter Property="BackgroundColor" Value="Transparent" />
+															</DataTrigger>
+														</Border.Triggers>
+													</Border>
+
+													<Label
+                                                        Grid.Column="1"
+                                                        Text="{Binding Icon.Glyph}"
+                                                        FontFamily="{Binding Icon.Font, Converter={StaticResource FontFamilyConverter}}"
+                                                        FontSize="13"
+                                                        HorizontalOptions="Center"
+                                                        VerticalOptions="Center">
+														<Label.Triggers>
+															<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="True">
+																<Setter Property="TextColor" Value="{StaticResource Primary}" />
+															</DataTrigger>
+															<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="False">
+																<Setter Property="TextColor" Value="#64748B" />
+															</DataTrigger>
+														</Label.Triggers>
+													</Label>
+
+													<Label
+                                                        Grid.Column="2"
+                                                        Text="{Binding Title}"
+                                                        FontSize="13"
+                                                        VerticalOptions="Center">
+														<Label.Triggers>
+															<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="True">
+																<Setter Property="TextColor" Value="#FFFFFF" />
+																<Setter Property="FontAttributes" Value="Bold" />
+															</DataTrigger>
+															<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="False">
+																<Setter Property="TextColor" Value="#94A3B8" />
+																<Setter Property="FontAttributes" Value="None" />
+															</DataTrigger>
+														</Label.Triggers>
+													</Label>
+												</Grid>
+											</Border>
+										</DataTemplate>
+									</BindableLayout.ItemTemplate>
+								</VerticalStackLayout>
+							</VerticalStackLayout>
+						</DataTemplate>
+					</CollectionView.ItemTemplate>
+				</CollectionView>
+			</Grid>
+		</Border>
+	</Grid>
+</ContentView>

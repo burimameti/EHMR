@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+             x:Class="EHMR.Views.Therapies.ProtocolDetailFormPage"
+             x:DataType="viewModels:ProtocolDetailFormViewModel"
+             BackgroundColor="#F8FAFC">
+
+	<Grid ColumnDefinitions="240,*">
+
+		<!-- СТРАНИЧНО МЕНИ (Лево - Задржуваме конзистентност) -->
+		<Border Grid.Column="0" BackgroundColor="#0F172A" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
+		</Border>
+
+		<!-- ГЛАВЕН ДЕЛ (Десно) -->
+		<Grid Grid.Column="1" RowDefinitions="72,*">
+
+			<!-- ТОП БАР (Динамичен Наслов во зависност дали е нов или измена) -->
+			<Border Grid.Row="0" BackgroundColor="White" Stroke="#E2E8F0" StrokeThickness="1">
+				<Grid Padding="24,0" ColumnDefinitions="*,Auto">
+					<VerticalStackLayout Spacing="2" VerticalOptions="Center">
+						<Label Text="{Binding PageTitle}" FontSize="22" FontAttributes="Bold" TextColor="#0F172A" />
+						<Label Text="Дефинирање на стандардизирани чекори, времетраење и клинички таргети за третманот" FontSize="13" TextColor="#64748B" />
+					</VerticalStackLayout>
+
+					<!-- Акциски копчиња горе десно (Конвенција за Десктоп софтвери) -->
+					<HorizontalStackLayout Grid.Column="1" Spacing="12" VerticalOptions="Center">
+						<Button Text="Откажи"
+						        HeightRequest="40"
+						        Padding="20,0"
+						        CornerRadius="10"
+						        FontSize="12"
+						        FontAttributes="Bold"
+						        BackgroundColor="#F1F5F9"
+						        TextColor="#475569"
+						        Command="{Binding CancelCommand}" />
+
+						<Button Text="💾 Зачувај"
+						        HeightRequest="40"
+						        Padding="20,0"
+						        CornerRadius="10"
+						        FontSize="12"
+						        FontAttributes="Bold"
+						        BackgroundColor="#10B981"
+						        TextColor="White"
+						        Command="{Binding SaveCommand}" />
+					</HorizontalStackLayout>
+				</Grid>
+			</Border>
+
+			<!-- ФОРМА (Скролабилна за да собере сè на помали екрани) -->
+			<ScrollView Grid.Row="1" Padding="16">
+				<Grid ColumnDefinitions="*, 400" ColumnSpacing="24">
+
+					<!-- ЛЕВА СТРАНА: Главни информации за протоколот -->
+					<VerticalStackLayout Grid.Column="0" Spacing="20">
+
+						<Border BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
+							<VerticalStackLayout Spacing="6">
+								<Label Text="Основни податоци за протоколот" FontSize="16" FontAttributes="Bold" TextColor="#0F172A" Margin="0,0,0,10" />
+
+								<!-- Поле 1: Име на Протоколот -->
+								<VerticalStackLayout Spacing="6">
+									<Label Text="НАСЛВ НА МЕДИЦИНСКИОТ ПРОТОКОЛ *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
+									<Border HeightRequest="44" BackgroundColor="#FFFFFF" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 10">
+										<Entry Text="{Binding CurrentProtocol.Name, Mode=TwoWay}" Placeholder="Пр. Протокол за третман на секундарна хипертензија" PlaceholderColor="#94A3B8" FontSize="13" TextColor="#0F172A" Margin="12,0" VerticalOptions="Center" />
+									</Border>
+								</VerticalStackLayout>
+
+								<Grid ColumnDefinitions="*, *" ColumnSpacing="16">
+									<!-- Поле 2: Категорија на болест -->
+									<VerticalStackLayout Grid.Column="0" Spacing="6">
+										<Label Text="МЕДИЦИНСКА КАТЕГОРИЈА *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
+										<Border HeightRequest="44" BackgroundColor="#FFFFFF" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 10">
+											<!-- Тука може да биде Picker или слободен текст како кај тебе во база -->
+											<Entry Text="{Binding CurrentProtocol.DiseaseCategory, Mode=TwoWay}" Placeholder="Пр. Кардиологија" PlaceholderColor="#94A3B8" FontSize="13" TextColor="#0F172A" Margin="12,0" VerticalOptions="Center" />
+										</Border>
+									</VerticalStackLayout>
+
+									<!-- Поле 3: Времетраење во денови -->
+									<VerticalStackLayout Grid.Column="1" Spacing="6">
+										<Label Text="СТАНДАРДНО ВРЕМЕТРАЕЊЕ (ДЕНОВИ)" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
+										<Border HeightRequest="44" BackgroundColor="#FFFFFF" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 10">
+											<Entry Text="{Binding CurrentProtocol.DurationInDays, Mode=TwoWay}" Keyboard="Numeric" Placeholder="Пр. 30" PlaceholderColor="#94A3B8" FontSize="13" TextColor="#0F172A" Margin="12,0" VerticalOptions="Center" />
+										</Border>
+									</VerticalStackLayout>
+								</Grid>
+
+								<!-- Поле 4: Краток Опис / Опсег -->
+								<VerticalStackLayout Spacing="6">
+									<Label Text="ДЕТАЛЕН КЛИНИЧКИ ОПИС И ИНДИКАЦИИ" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
+									<Border HeightRequest="120" BackgroundColor="#FFFFFF" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="4">
+										<Editor Text="{Binding CurrentProtocol.Description, Mode=TwoWay}" Placeholder="Внесете ги главните индикации, симптоматологија и насоки за кои се применува овој протокол..." PlaceholderColor="#94A3B8" FontSize="13" TextColor="#0F172A" AutoSize="Disabled" />
+									</Border>
+								</VerticalStackLayout>
+							</VerticalStackLayout>
+						</Border>
+
+						<!-- ИДНА СЕКЦИЈА: Тука совршено би се вклопила листа со лекови/чекори во иднина -->
+						<Border BackgroundColor="#F8FAFC" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16" StrokeDashArray="4,4">
+							<VerticalStackLayout Spacing="10" HorizontalOptions="Center" Padding="0,20">
+								<Label Text="💊 Поврзани Лекови и Упатство за употреба" FontSize="14" FontAttributes="Bold" TextColor="#475569" HorizontalOptions="Center" />
+								<Label Text="Во следната фаза, тука ќе можете да закачувате конкретни лекови од позитивната листа со дефинирани интервали на апликација." FontSize="12" TextColor="#94A3B8" HorizontalTextAlignment="Center" MaximumWidthRequest="500" />
+							</VerticalStackLayout>
+						</Border>
+					</VerticalStackLayout>
+
+					<!-- ДЕСНА СТРАНА: Системски метаподатоци и Сигурност -->
+					<VerticalStackLayout Grid.Column="1" Spacing="20">
+
+						<!-- Картичка за Метаподатоци -->
+						<Border BackgroundColor="White" Padding="20" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 12">
+							<VerticalStackLayout Spacing="6">
+								<Label Text="⚙️ Системски Запис" FontSize="14" FontAttributes="Bold" TextColor="#0F172A" />
+								<BoxView HeightRequest="1" Color="#F1F5F9" />
+
+								<!-- Креирано од -->
+								<Grid ColumnDefinitions="*,Auto">
+									<Label Text="Креирано од доктор:" FontSize="12" TextColor="#64748B" />
+									<Label Grid.Column="1" Text="{Binding CurrentProtocol.CreatedByDoctor}" FontSize="12" FontAttributes="Bold" TextColor="#334155" />
+								</Grid>
+
+								<!-- Датум на креирање -->
+								<Grid ColumnDefinitions="*,Auto">
+									<Label Text="Датум на запис:" FontSize="12" TextColor="#64748B" />
+									<Label Grid.Column="1" Text="{Binding CurrentProtocol.CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" FontSize="12" TextColor="#334155" />
+								</Grid>
+
+								<!-- Кориснички статус индикатор -->
+								<Border BackgroundColor="#E6F4EA" StrokeThickness="0" Padding="12" StrokeShape="RoundRectangle 8" Margin="0,10,0,0">
+									<Grid ColumnDefinitions="Auto, *">
+										<Label Text="🛡️" FontSize="16" VerticalOptions="Center" Margin="0,0,10,0" />
+										<VerticalStackLayout Grid.Column="1" Spacing="2">
+											<Label Text="Контрола на верзии" FontSize="11" FontAttributes="Bold" TextColor="#137333" />
+											<Label Text="Секоја измена на овој шаблон нема да ги промени тековните активни планови на пациентите, туку ќе важи само за новите." FontSize="10" TextColor="#137333" />
+										</VerticalStackLayout>
+									</Grid>
+								</Border>
+							</VerticalStackLayout>
+						</Border>
+					</VerticalStackLayout>
+				</Grid>
+			</ScrollView>
+		</Grid>
+	</Grid>
+</ContentPage>

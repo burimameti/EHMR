@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+             xmlns:entities="clr-namespace:EHMR.Domain.Entities"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="EHMR.Views.Therapies.ProtocolRegistryPage"
+             x:DataType="viewModels:ProtocolRegistryViewModel"
+             BackgroundColor="#F8FAFC">
+
+	<ContentPage.Behaviors>
+		<toolkit:EventToCommandBehavior EventName="Appearing" Command="{Binding LoadCommand}" />
+	</ContentPage.Behaviors>
+
+	<Grid ColumnDefinitions="240,*">
+
+		<Border Grid.Column="0" BackgroundColor="#0F172A" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
+		</Border>
+
+		<Grid Grid.Column="1" RowDefinitions="72,*">
+
+			<Border Grid.Row="0" BackgroundColor="White" Stroke="#E2E8F0" StrokeThickness="1">
+				<Grid Padding="24,0" ColumnDefinitions="*,Auto">
+					<VerticalStackLayout Spacing="2" VerticalOptions="Center">
+						<Label Text="Медицински Протоколи" FontSize="22" FontAttributes="Bold" TextColor="#0F172A" />
+						<Label Text="Централен регистар на Протоколи за третмани и терапии" FontSize="13" TextColor="#64748B" />
+					</VerticalStackLayout>
+
+					<HorizontalStackLayout Grid.Column="1" Spacing="12" VerticalOptions="Center">
+						<Border Padding="12,8" BackgroundColor="#F1F5F9" StrokeThickness="0" StrokeShape="RoundRectangle 10">
+							<HorizontalStackLayout Spacing="8">
+								<Label Text="👤" FontSize="12" VerticalOptions="Center" />
+								<Label Text="{Binding UserName}" FontSize="12" FontAttributes="Bold" TextColor="#334155" VerticalOptions="Center" />
+							</HorizontalStackLayout>
+						</Border>
+					</HorizontalStackLayout>
+				</Grid>
+			</Border>
+
+			<Grid Grid.Row="1" Padding="16" RowDefinitions="Auto,16,*">
+
+				<Border Grid.Row="0" BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
+					<Grid ColumnDefinitions="*,260,Auto,Auto,Auto" ColumnSpacing="10">
+
+						<VerticalStackLayout Spacing="5">
+							<Label Text="ПРЕБАРУВАЊЕ" FontSize="10" FontAttributes="Bold" TextColor="#475569" Margin="2,0,0,0" CharacterSpacing="0.5" />
+							<Border HeightRequest="40" BackgroundColor="#FFFFFF" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 10">
+								<Grid ColumnDefinitions="34,*">
+									<Label Text="⌕" FontSize="16" Margin="12,0,0,0" TextColor="#64748B" VerticalOptions="Center" />
+									<SearchBar Grid.Column="1" Placeholder="Пребарај протокол по име или опис..." PlaceholderColor="#94A3B8" Text="{Binding SearchText, Mode=TwoWay}" FontSize="12" TextColor="#0F172A" BackgroundColor="Transparent" Margin="-6,-8,8,-8" />
+								</Grid>
+							</Border>
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Grid.Column="1" Spacing="5">
+							<Label Text="МЕДИЦИНСКА КАТЕГОРИЈА" FontSize="10" FontAttributes="Bold" TextColor="#475569" Margin="2,0,0,0" CharacterSpacing="0.5" />
+							<Border HeightRequest="40" BackgroundColor="#FFFFFF" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 10">
+								<Picker ItemsSource="{Binding CategoryFilters}" SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" FontSize="12" TextColor="#0F172A" Title="Сите категории" HorizontalOptions="Fill" VerticalOptions="Center" Margin="10,0" />
+							</Border>
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Grid.Column="2" Spacing="5" VerticalOptions="End">
+							<Button Text="↻" WidthRequest="40" HeightRequest="40" CornerRadius="10" BackgroundColor="#FFFFFF" BorderColor="#CBD5E1" BorderWidth="1" TextColor="#475569" Command="{Binding RefreshCommand}" />
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Grid.Column="3" Spacing="5" VerticalOptions="End">
+							<Button Text="Исчисти" HeightRequest="40" Padding="16,0" CornerRadius="10" FontSize="12" FontAttributes="Bold" BackgroundColor="#F1F5F9" TextColor="#475569" Command="{Binding ClearFiltersCommand}" />
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Grid.Column="4" Spacing="5" VerticalOptions="End">
+							<Button Text="＋ Нов Протокол" HeightRequest="40" Padding="16,0" CornerRadius="10" FontSize="12" FontAttributes="Bold" BackgroundColor="#10B981" TextColor="White" Command="{Binding AddCommand}" />
+						</VerticalStackLayout>
+					</Grid>
+				</Border>
+
+				<Border Grid.Row="2" BackgroundColor="White" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
+					<Grid RowDefinitions="48,*,60">
+
+						<Border Grid.Row="0" StrokeThickness="0" BackgroundColor="#F8FAFC">
+							<Grid Padding="16,0" ColumnDefinitions="50, 2.5*, 2*, 3*, 1.5*, 1.5*, 140" ColumnSpacing="12" VerticalOptions="Center">
+								<CheckBox Scale="0.75" HorizontalOptions="Center" VerticalOptions="Center" Color="#10B981" />
+								<Label Grid.Column="1" Text="НАЗВИВ НА ПРОТОКОЛ" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" VerticalOptions="Center" />
+								<Label Grid.Column="2" Text="КАТЕГОРИЈА" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" VerticalOptions="Center" />
+								<Label Grid.Column="3" Text="КРАТОК ОПИС" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" VerticalOptions="Center" />
+								<Label Grid.Column="4" Text="КРЕИРАНО ОД" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" VerticalOptions="Center" />
+								<Label Grid.Column="5" Text="ДАТУМ НА КРЕИРАЊЕ" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" VerticalOptions="Center" />
+								<Label Grid.Column="6" Text="АКЦИИ" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+							</Grid>
+						</Border>
+
+						<CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="None">
+							<CollectionView.ItemTemplate>
+								<DataTemplate x:DataType="entities:TherapyProtocol">
+									<Grid RowDefinitions="64,1">
+										<Grid Padding="16,0" BackgroundColor="White" ColumnDefinitions="50, 2.5*, 2*, 3*, 1.5*, 1.5*, 140" ColumnSpacing="12" HeightRequest="64">
+
+											<CheckBox Scale="0.75" Color="#10B981" HorizontalOptions="Center" VerticalOptions="Center" />
+
+											<HorizontalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
+												<Border WidthRequest="36" HeightRequest="36" BackgroundColor="#E6F4EA" StrokeThickness="0" StrokeShape="RoundRectangle 18">
+													<Label Text="📄" FontSize="14" HorizontalOptions="Center" VerticalOptions="Center" TextColor="#10B981" />
+												</Border>
+												<VerticalStackLayout Spacing="1" VerticalOptions="Center">
+													<Label Text="{Binding Name}" FontSize="13" FontAttributes="Bold" TextColor="#0F172A" LineBreakMode="TailTruncation" />
+													<Label Text="Медицински шаблон" FontSize="11" TextColor="#64748B" />
+												</VerticalStackLayout>
+											</HorizontalStackLayout>
+
+											<Border Grid.Column="2" Padding="8,4" BackgroundColor="#EFF6FF" StrokeThickness="0" HorizontalOptions="Start" VerticalOptions="Center" StrokeShape="RoundRectangle 6">
+												<HorizontalStackLayout Spacing="5">
+													<BoxView WidthRequest="6" HeightRequest="6" CornerRadius="3" Color="#1E40AF" VerticalOptions="Center" />
+													<Label Text="{Binding DiseaseCategory}" FontSize="11" FontAttributes="Bold" TextColor="#1E40AF" VerticalOptions="Center" />
+												</HorizontalStackLayout>
+											</Border>
+
+											<Label Grid.Column="3" Text="{Binding Description}" FontSize="13" TextColor="#334155" VerticalOptions="Center" LineBreakMode="TailTruncation" MaxLines="1" />
+
+											<Label Grid.Column="4" Text="{Binding CreatedByDoctor}" FontSize="13" TextColor="#475569" VerticalOptions="Center" />
+
+											<Label Grid.Column="5" Text="{Binding CreatedAt, StringFormat='{0:dd.MM.yyyy}'}" FontSize="13" TextColor="#475569" VerticalOptions="Center" />
+
+											<HorizontalStackLayout Grid.Column="6" Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
+												<Button Text="👁" WidthRequest="32" HeightRequest="32" CornerRadius="8" FontSize="12" Padding="0" BackgroundColor="#F8FAFC" BorderColor="#E2E8F0" BorderWidth="1" TextColor="#475569" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding .}" />
+												<Button Text="✎" WidthRequest="32" HeightRequest="32" CornerRadius="8" FontSize="12" Padding="0" BackgroundColor="#F8FAFC" BorderColor="#E2E8F0" BorderWidth="1" TextColor="#2563EB" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditCommand}" CommandParameter="{Binding .}" />
+												<Button Text="✕" WidthRequest="32" HeightRequest="32" CornerRadius="8" FontSize="12" Padding="0" BackgroundColor="#FEF2F2" BorderColor="#FEE2E2" BorderWidth="1" TextColor="#DC2626" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding .}" />
+											</HorizontalStackLayout>
+										</Grid>
+
+										<BoxView Grid.Row="1" HeightRequest="1" Color="#F1F5F9" />
+									</Grid>
+								</DataTemplate>
+							</CollectionView.ItemTemplate>
+						</CollectionView>
+
+						<Border Grid.Row="2" BackgroundColor="#F8FAFC" Stroke="#E2E8F0" StrokeThickness="1">
+							<Grid Padding="20,0" HeightRequest="60" ColumnDefinitions="*,Auto">
+								<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+									<Label Text="Прикажани се дефинирани шаблони на протоколи" FontSize="12" TextColor="#64748B" VerticalOptions="Center" />
+									<Border BackgroundColor="#FFFFFF" Padding="8,4" Stroke="#CBD5E1" StrokeShape="RoundRectangle 6">
+										<HorizontalStackLayout Spacing="4">
+											<Label Text="Лимит:" FontSize="11" TextColor="#64748B" />
+											<Label Text="{Binding PageSize}" FontSize="11" FontAttributes="Bold" TextColor="#0F172A" />
+										</HorizontalStackLayout>
+									</Border>
+								</HorizontalStackLayout>
+
+								<HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+									<Button Text="Претходна" HeightRequest="36" Padding="12,0" FontSize="12" CornerRadius="8" BackgroundColor="#FFFFFF" BorderColor="#CBD5E1" BorderWidth="1" TextColor="#475569" Command="{Binding PreviousPageCommand}" />
+									<Border BackgroundColor="#FFFFFF" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 8" HeightRequest="36" Padding="12,0">
+										<HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+											<Label Text="Страна" FontSize="12" TextColor="#64748B" />
+											<Label Text="{Binding CurrentPage}" FontSize="12" FontAttributes="Bold" TextColor="#10B981" />
+											<Label Text="од" FontSize="12" TextColor="#64748B" />
+											<Label Text="{Binding TotalPages}" FontSize="12" FontAttributes="Bold" TextColor="#0F172A" />
+										</HorizontalStackLayout>
+									</Border>
+									<Button Text="Следна" HeightRequest="36" Padding="12,0" FontSize="12" CornerRadius="8" BackgroundColor="#10B981" TextColor="White" Command="{Binding NextPageCommand}" />
+								</HorizontalStackLayout>
+							</Grid>
+						</Border>
+					</Grid>
+				</Border>
+			</Grid>
+		</Grid>
+	</Grid>
+</ContentPage>

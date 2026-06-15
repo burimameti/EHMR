@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EHMR.Views.AppointmentListPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+    xmlns:entities="clr-namespace:EHMR.Domain.Entities"
+    x:DataType="viewModels:AppointmentListViewModel"
+    Style="{StaticResource PageBackgroundStyle}">
+	<!-- Ја користи твојата глобална позадина -->
+
+	<Grid ColumnDefinitions="295,*">
+
+		<!-- СТРАНИЧНО МЕНИ (Лево) -->
+		<Border Grid.Column="0" BackgroundColor="#0F172A" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
+		</Border>
+
+		<!-- ГЛАВЕН КОНТЕНТ (Десно) -->
+		<Grid Grid.Column="1" RowDefinitions="72,*">
+
+			<!-- ТОП БАР ХЕДЕР (Твојот PageHeaderContainer) -->
+			<Border Grid.Row="0" Style="{StaticResource PageHeaderContainer}">
+				<Grid ColumnDefinitions="*,Auto">
+					<VerticalStackLayout Spacing="{StaticResource SpaceXs}" VerticalOptions="Center">
+						<Label Text="Листа на преегледи" Style="{StaticResource PageHeaderTitle}" />
+						<Label Text="Менаџирање, филтрирање и евиденција на сите лекарски прегледи" Style="{StaticResource PageHeaderSubtitle}" />
+					</VerticalStackLayout>
+
+					<HorizontalStackLayout Grid.Column="1" VerticalOptions="Center">
+						<Border Padding="12,8" BackgroundColor="{StaticResource SurfaceAlt}" StrokeThickness="0" StrokeShape="RoundRectangle 10">
+							<HorizontalStackLayout Spacing="{StaticResource SpaceSm}">
+								<Label Text="&#xf007;" FontFamily="FASolid" FontSize="12" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
+								<Label Text="{Binding UserName}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
+							</HorizontalStackLayout>
+						</Border>
+					</HorizontalStackLayout>
+				</Grid>
+			</Border>
+
+			<!-- ГЛАВЕН РАБОТЕН ПРОСТОР -->
+			<Grid Grid.Row="1" Padding="{StaticResource SpaceLg}" RowDefinitions="Auto,16,*">
+
+				<!-- ФИЛТРИ И ТОР БАР (Твојот ToolbarContainer) -->
+				<Border Grid.Row="0" Style="{StaticResource ToolbarContainer}">
+					<Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="12" VerticalOptions="Center">
+
+						<!-- Текстуално пребарување -->
+						<VerticalStackLayout Spacing="5">
+							<Label Text="ПРЕБАРУВАЊЕ" Style="{StaticResource InputLabel}" />
+							<Border Style="{StaticResource InputBorderStyle}" WidthRequest="260">
+								<Grid ColumnDefinitions="Auto,*">
+									<Label Text="&#xf002;" FontFamily="FASolid" FontSize="14" Margin="4,0,8,0" TextColor="{StaticResource TextMuted}" VerticalOptions="Center" />
+									<Entry Grid.Column="1" Style="{StaticResource InputEntry}" Placeholder="Пребарај пациент или доктор..." PlaceholderColor="{StaticResource TextMuted}" Text="{Binding SearchText, Mode=TwoWay}" VerticalOptions="Center" />
+								</Grid>
+							</Border>
+						</VerticalStackLayout>
+
+						<!-- Чекбокс за активација на Датум -->
+						<HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="End" Margin="0,0,0,10">
+							<CheckBox IsChecked="{Binding FilterByDate, Mode=TwoWay}" Color="{StaticResource Primary}" Scale="0.9" />
+							<Label Text="По датум:" Style="{StaticResource InputLabel}" VerticalOptions="Center" />
+						</HorizontalStackLayout>
+
+						<!-- Избор на Датум -->
+						<VerticalStackLayout Grid.Column="2" Spacing="5">
+							<Label Text="ДАТУМ НА ТЕРМИН" Style="{StaticResource InputLabel}" />
+							<Border Style="{StaticResource InputBorderStyle}" WidthRequest="150" IsEnabled="{Binding FilterByDate}">
+								<DatePicker Date="{Binding FilterDate, Mode=TwoWay}" Format="dd.MM.yyyy" TextColor="{StaticResource TextPrimary}" BackgroundColor="Transparent" FontSize="13" VerticalOptions="Center" />
+							</Border>
+						</VerticalStackLayout>
+
+						<!-- Филтер Статус -->
+						<VerticalStackLayout Grid.Column="3" Spacing="5">
+							<Label Text="СТАТУС" Style="{StaticResource InputLabel}" />
+							<Border Style="{StaticResource InputBorderStyle}" WidthRequest="150">
+								<Picker Style="{StaticResource InputPicker}" ItemsSource="{Binding StatusFilters}" SelectedItem="{Binding SelectedStatus, Mode=TwoWay}" VerticalOptions="Center" />
+							</Border>
+						</VerticalStackLayout>
+
+						<!-- Копче за Чистење Филтри -->
+						<VerticalStackLayout Grid.Column="4" VerticalOptions="End">
+							<Button Text="✕ Исчисти" Padding="16,0" Style="{StaticResource SecondaryButtonStyle}" Command="{Binding ClearFiltersCommand}" />
+						</VerticalStackLayout>
+
+						<!-- Копче за Нов Термин -->
+						<VerticalStackLayout Grid.Column="5" VerticalOptions="End">
+							<Button Text="＋ Нов Термин" Padding="16,0" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding AddCommand}" />
+						</VerticalStackLayout>
+					</Grid>
+				</Border>
+
+				<!-- ДАТА ГРИД ТАБЕЛА ЗА ТЕРМИНИ (Твојот ElevatedCard со сенка) -->
+				<Border Grid.Row="2" Style="{StaticResource ElevatedCard}" Padding="0">
+					<Grid RowDefinitions="48,*,60">
+
+						<!-- Силен Хедер на табелата (Твојот GridHeaderStyle) -->
+						<Border Grid.Row="0" Style="{StaticResource PageHeader}">
+							<Grid Padding="16,0" ColumnDefinitions="2*,2*,1.5*,1.5*,1.5*,160" ColumnSpacing="12" VerticalOptions="Center">
+								<Label Grid.Column="0" Text="ПАЦИЕНТ" Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+								<Label Grid.Column="1" Text="ЛЕКАР / ДОКТОР" Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+								<Label Grid.Column="2" Text="ПОЧЕТОК" Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+								<Label Grid.Column="3" Text="КРАЈ" Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+								<Label Grid.Column="4" Text="СТАТУС" Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+								<Label Grid.Column="5" Text="АКЦИИ" Style="{StaticResource GridHeaderTextStyle}" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+							</Grid>
+						</Border>
+
+						<!-- Колекција на редови -->
+						<CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="None">
+
+							<!-- Празен преглед со твоите стилови за EmptyState -->
+							<CollectionView.EmptyView>
+								<VerticalStackLayout Spacing="12" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,50">
+									<Label Text="&#xf274;" FontFamily="FASolid" FontSize="36" TextColor="{StaticResource TextMuted}" HorizontalOptions="Center" />
+									<Label Text="Не се пронајдени термини за избраните критериуми." Style="{StaticResource EmptyStateText}" />
+								</VerticalStackLayout>
+							</CollectionView.EmptyView>
+
+							<CollectionView.ItemTemplate>
+								<DataTemplate x:DataType="entities:Appointment">
+									<!-- Секој ред ја следи структурата GridRowStyle -->
+									<Border Style="{StaticResource GridRowStyle}">
+										<Grid Padding="6,2" ColumnDefinitions="2*,2*,1.5*,1.5*,1.5*,160" ColumnSpacing="12" VerticalOptions="Center">
+
+											<!-- Пациент Име и Аватар -->
+											<HorizontalStackLayout Grid.Column="0" Spacing="10" VerticalOptions="Center">
+												<Border WidthRequest="32" HeightRequest="32" BackgroundColor="{StaticResource PrimaryLight}" StrokeThickness="0" StrokeShape="RoundRectangle 16">
+													<Label Text="&#xf007;" FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{StaticResource Primary}" />
+												</Border>
+												<Label Style="{StaticResource Body}" FontAttributes="Bold" VerticalOptions="Center" LineBreakMode="TailTruncation">
+													<Label.Text>
+														<MultiBinding StringFormat="{}{0} {1}">
+															<Binding Path="Patient.FirstName" />
+															<Binding Path="Patient.LastName" />
+														</MultiBinding>
+													</Label.Text>
+												</Label>
+											</HorizontalStackLayout>
+
+											<!-- Лекар / Доктор -->
+											<HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+												<Label Text="&#xf0f8;" FontFamily="FASolid" FontSize="12" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
+												<Label Style="{StaticResource Body}" VerticalOptions="Center" LineBreakMode="TailTruncation">
+													<Label.Text>
+														<MultiBinding StringFormat="д-р {0} {1}">
+															<Binding Path="Doctor.FirstName" />
+															<Binding Path="Doctor.LastName" />
+														</MultiBinding>
+													</Label.Text>
+												</Label>
+											</HorizontalStackLayout>
+
+											<!-- Времиња -->
+											<Label Grid.Column="2" Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}" Style="{StaticResource Body}" VerticalOptions="Center" />
+											<Label Grid.Column="3" Text="{Binding ScheduledEnd, StringFormat='{0:HH:mm}'}" Style="{StaticResource MutedText}" VerticalOptions="Center" />
+
+											<!-- Динамички статус со твојот PillStyle -->
+											<Border Grid.Column="4" Style="{StaticResource SuccessPillStyle}" Padding="8,4" StrokeThickness="0" HorizontalOptions="Start" VerticalOptions="Center" StrokeShape="RoundRectangle 6">
+												<HorizontalStackLayout Spacing="5">
+													<BoxView WidthRequest="6" HeightRequest="6" CornerRadius="3" Color="{StaticResource Success}" VerticalOptions="Center" />
+													<Label Text="{Binding Status}" Style="{StaticResource SuccessChipText}" VerticalOptions="Center" />
+												</HorizontalStackLayout>
+											</Border>
+
+											<!-- Акции (Усогласени со ToolbarButton / Danger стилови) -->
+											<HorizontalStackLayout Grid.Column="5" Spacing="6" HorizontalOptions="Center" VerticalOptions="Center">
+												<Button Text="Преглед"
+                                                        Style="{StaticResource PrimaryButtonStyle}"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:AppointmentListViewModel}}, Path=SelectCommand}" CommandParameter="{Binding .}"
+                                                        HeightRequest="32" FontSize="11" Padding="12,0" />
+												<Button Text="Откажи"
+                                                        Style="{StaticResource DangerButtonStyle}"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:AppointmentListViewModel}}, Path=CancelCommand}" CommandParameter="{Binding .}"
+                                                        HeightRequest="32" CornerRadius="10" FontSize="11" Padding="12,0" />
+											</HorizontalStackLayout>
+										</Grid>
+									</Border>
+								</DataTemplate>
+							</CollectionView.ItemTemplate>
+						</CollectionView>
+
+						<!-- ДОЛНА ПАГИНАЦИЈА (Футер усогласен со претходната страна) -->
+						<Border Grid.Row="2" BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource Border}" StrokeThickness="1">
+							<Grid Padding="20,0" HeightRequest="60" ColumnDefinitions="*,Auto">
+								<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+									<Label Text="Вкупно евидентирани лекарски прегледи во системот" Style="{StaticResource MutedText}" VerticalOptions="Center" />
+								</HorizontalStackLayout>
+
+								<HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+									<Button Text="Претходна" Style="{StaticResource ToolbarButton}" Command="{Binding PreviousPageCommand}" />
+
+									<Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource BorderStrong}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" HeightRequest="36" Padding="12,0">
+										<HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+											<Label Text="Страна" Style="{StaticResource MutedText}" />
+											<Label Text="{Binding CurrentPage, FallbackValue=1}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+											<Label Text="од" Style="{StaticResource MutedText}" />
+											<Label Text="{Binding TotalPages, FallbackValue=1}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" />
+										</HorizontalStackLayout>
+									</Border>
+
+									<Button Text="Следна" Style="{StaticResource ActiveTabButtonStyle}" Padding="12,0" HeightRequest="36" Command="{Binding NextPageCommand}" />
+								</HorizontalStackLayout>
+							</Grid>
+						</Border>
+					</Grid>
+				</Border>
+			</Grid>
+		</Grid>
+	</Grid>
+</ContentPage>

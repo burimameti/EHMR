@@ -1,0 +1,35 @@
+<ContentPage x:Class="EHMR.Views.MedicineListPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+             xmlns:entities="clr-namespace:EHMR.Domain.Entities"
+             x:DataType="viewModels:MedicineListViewModel" BackgroundColor="#F8FAFC">
+	<Grid RowDefinitions="72, *" Padding="16">
+		<Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,16">
+			<VerticalStackLayout VerticalOptions="Center">
+				<Label Text="📦 Шифрарник на Медикаменти" FontSize="20" FontAttributes="Bold" TextColor="#0F172A" />
+				<Label Text="Регистар на лекови во клиниката со нивните стандардни дози" FontSize="13" TextColor="#64748B" />
+			</VerticalStackLayout>
+			<Button Grid.Column="1" Text="➕ Нов Медикамент" Command="{Binding NavigateToCreateCommand}" BackgroundColor="#2563EB" TextColor="White" FontAttributes="Bold" CornerRadius="8" HeightRequest="40" />
+		</Grid>
+
+		<CollectionView Grid.Row="1" ItemsSource="{Binding Medicines}">
+			<CollectionView.ItemTemplate>
+				<DataTemplate x:DataType="entities:Medicine">
+					<Border Stroke="#E2E8F0" Margin="0,4" Padding="16" StrokeShape="RoundRectangle 10" BackgroundColor="White">
+						<Border.GestureRecognizers>
+							<TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MedicineListViewModel}}, Path=NavigateToDetailsCommand}" CommandParameter="{Binding .}" />
+						</Border.GestureRecognizers>
+						<Grid ColumnDefinitions="2*, 2*, *, *, Auto">
+							<Label Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" FontSize="14" VerticalOptions="Center" />
+							<Label Grid.Column="1" Text="{Binding GenericName}" TextColor="#475569" FontSize="13" VerticalOptions="Center" />
+							<Label Grid.Column="2" Text="{Binding DosageForm}" TextColor="#64748B" FontSize="13" VerticalOptions="Center" />
+							<Label Grid.Column="3" Text="{Binding DefaultDosage}" TextColor="#0F172A" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+							<Label Grid.Column="4" Text="👁 Преглед" TextColor="#2563EB" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+						</Grid>
+					</Border>
+				</DataTemplate>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
+	</Grid>
+</ContentPage>

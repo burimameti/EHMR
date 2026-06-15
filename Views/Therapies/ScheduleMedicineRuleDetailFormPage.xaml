@@ -1,0 +1,34 @@
+<ContentPage x:Class="EHMR.Views.ScheduleMedicineRuleDetailFormPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+             x:DataType="viewModels:ScheduleMedicineRuleDetailFormViewModel" BackgroundColor="#F1F5F9">
+	<VerticalStackLayout Padding="40" Spacing="24" HorizontalOptions="Center" WidthRequest="650" VerticalOptions="Center">
+
+		<VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+			<Label Text="{Binding PageTitle}" FontSize="22" FontAttributes="Bold" TextColor="#0F172A" HorizontalTextAlignment="Center" />
+			<Label Text="Ова правило ќе се реплицира низ сите генерирани циклуси на протоколот" FontSize="13" TextColor="#64748B" HorizontalTextAlignment="Center" />
+		</VerticalStackLayout>
+
+		<Border Padding="16" BackgroundColor="White" Stroke="#E2E8F0" StrokeShape="RoundRectangle 16">
+			<VerticalStackLayout Spacing="20">
+
+				<VerticalStackLayout Spacing="6">
+					<Label Text="1. Избери одобрен медикамент од шифрарник" FontAttributes="Bold" FontSize="12" TextColor="#334155" />
+					<Picker ItemsSource="{Binding MedicinesList}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedMedicine}" HeightRequest="44" />
+					<Label Text="{Binding SelectedMedicine.GenericName, StringFormat='Хемиски состав: {0}'}" FontSize="11" TextColor="#2563EB" />
+				</VerticalStackLayout>
+
+				<VerticalStackLayout Spacing="6">
+					<Label Text="2. Специфични инструкции за апликација и дозирање во циклусот" FontAttributes="Bold" FontSize="12" TextColor="#334155" />
+					<Editor Text="{Binding Rule.Medicine.DosageForm}" Placeholder="Пример: На Ден 1 се аплицира 375 mg/m² интравенозно, на Ден 2 до Ден 5 таблети х 40mg орално." HeightRequest="120" AutoSize="Disabled" />
+				</VerticalStackLayout>
+			</VerticalStackLayout>
+		</Border>
+
+		<Grid ColumnDefinitions="*, *" ColumnSpacing="12">
+			<Button Grid.Column="0" Text="❌ Откажи промени" Command="{Binding CancelCommand}" BackgroundColor="#E2E8F0" TextColor="#475569" FontAttributes="Bold" HeightRequest="44" CornerRadius="8" />
+			<Button Grid.Column="1" Text="✓ Потврди и Зачувај во Распоред" Command="{Binding SaveRuleCommand}" BackgroundColor="#2563EB" TextColor="White" FontAttributes="Bold" HeightRequest="44" CornerRadius="8" />
+		</Grid>
+	</VerticalStackLayout>
+</ContentPage>

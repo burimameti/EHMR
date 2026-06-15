@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EHMR.Views.PatientListPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+    xmlns:models="clr-namespace:EHMR.Domain.Entities"
+    xmlns:converters="clr-namespace:EHMR.Extensions"
+    x:DataType="viewModels:PatientListViewModel"
+    Style="{StaticResource PageBackgroundStyle}">
+	<!-- Ја користи твојата позадина -->
+
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<converters:FontFamilyConverter x:Key="FontFamilyConverter" />
+		</ResourceDictionary>
+	</ContentPage.Resources>
+
+	<Grid ColumnDefinitions="295,*">
+
+		<!-- СТРАНИЧНО МЕНИ (Лево) -->
+		<Border Grid.Column="0" BackgroundColor="#0F172A" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
+		</Border>
+
+		<!-- ГЛАВЕН КОНТЕНТ (Десно) -->
+		<Grid Grid.Column="1" RowDefinitions="72,*">
+
+			<!-- ТОП БАР (Твојот контејнер за хедер) -->
+			<Border Grid.Row="0" Style="{StaticResource PageHeaderContainer}">
+				<Grid ColumnDefinitions="*,Auto">
+					<VerticalStackLayout Spacing="{StaticResource SpaceXs}" VerticalOptions="Center">
+						<Label Text="Пациенти" Style="{StaticResource PageHeaderTitle}" />
+						<Label Text="Управување со пациентски записи и клиничка аналитика" Style="{StaticResource PageHeaderSubtitle}" />
+					</VerticalStackLayout>
+
+					<HorizontalStackLayout Grid.Column="1" VerticalOptions="Center">
+						<Border Padding="12,8" BackgroundColor="{StaticResource SurfaceAlt}" StrokeThickness="0" StrokeShape="RoundRectangle 10">
+							<HorizontalStackLayout Spacing="{StaticResource SpaceSm}">
+								<Label Text="&#xf007;" FontFamily="FASolid" FontSize="12" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
+								<Label Text="{Binding UserName}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
+							</HorizontalStackLayout>
+						</Border>
+					</HorizontalStackLayout>
+				</Grid>
+			</Border>
+
+			<!-- ГЛАВЕН РАБОТЕН ПРОСТОР -->
+			<Grid Grid.Row="1" Padding="{StaticResource SpaceLg}" RowDefinitions="Auto,16,*">
+
+				<!-- ФИЛТРИ И ПРЕБАРУВАЊЕ (Твојот ToolbarContainer) -->
+				<Border Grid.Row="0" Style="{StaticResource ToolbarContainer}">
+					<Grid ColumnDefinitions="*,200,160,Auto,Auto,Auto" ColumnSpacing="12">
+
+						<VerticalStackLayout Spacing="5">
+							<Label Text="ПРЕБАРУВАЊЕ" Style="{StaticResource InputLabel}" />
+							<Border Style="{StaticResource InputBorderStyle}">
+								<Grid ColumnDefinitions="Auto,*">
+									<Label Text="&#xf002;" FontFamily="FASolid" FontSize="14" Margin="4,0,8,0" TextColor="{StaticResource TextMuted}" VerticalOptions="Center" />
+									<Entry Grid.Column="1" Style="{StaticResource InputEntry}" Placeholder="Пребарај по име, е-пошта или ЕМБГ..." PlaceholderColor="{StaticResource TextMuted}" Text="{Binding SearchText, Mode=TwoWay}" VerticalOptions="Center" />
+								</Grid>
+							</Border>
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Grid.Column="1" Spacing="5">
+							<Label Text="ПОЛ" Style="{StaticResource InputLabel}" />
+							<Border Style="{StaticResource InputBorderStyle}">
+								<Picker Style="{StaticResource InputPicker}" ItemsSource="{Binding GenderFilters}" SelectedItem="{Binding SelectedGender, Mode=TwoWay}" VerticalOptions="Center" />
+							</Border>
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Grid.Column="2" Spacing="5">
+							<Label Text="СТАТУС" Style="{StaticResource InputLabel}" />
+							<Border Style="{StaticResource InputBorderStyle}">
+								<Picker Style="{StaticResource InputPicker}" ItemsSource="{Binding StatusFilters}" SelectedItem="{Binding SelectedStatus, Mode=TwoWay}" VerticalOptions="Center" />
+							</Border>
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Grid.Column="3" VerticalOptions="End">
+							<Button Text="&#xf2f9;" FontFamily="FASolid" WidthRequest="42" Style="{StaticResource SecondaryButtonStyle}" Command="{Binding RefreshCommand}" />
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Grid.Column="4" VerticalOptions="End">
+							<Button Text="Исчисти" Padding="16,0" HeightRequest="42" Style="{StaticResource SecondaryButtonStyle}" Command="{Binding ClearFiltersCommand}" />
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Grid.Column="5" VerticalOptions="End" IsVisible="{Binding CanCreatePatients}">
+							<Button Text="＋ Нов Пациент" Padding="16,0" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding AddCommand}" />
+						</VerticalStackLayout>
+					</Grid>
+				</Border>
+
+				<!-- ДАТА ГРИД ТАБЕЛА (Твојата картичка со дефинирана сенка ElevatedCard) -->
+				<Border Grid.Row="2" Style="{StaticResource ElevatedCard}" Padding="0">
+					<Grid RowDefinitions="48,*,60">
+
+						<!-- Хедер на табелата (Твојот GridHeaderStyle) -->
+						<Border Grid.Row="0" Style="{StaticResource PageHeader}">
+							<Grid Padding="16,0" ColumnDefinitions="50, 2*, 2.5*, 1.8*, 1.8*, 1.8*, 1*, 2.5*, 1.2*, 140" ColumnSpacing="12" VerticalOptions="Center">
+								<CheckBox Scale="0.8" HorizontalOptions="Center" VerticalOptions="Center" Color="{StaticResource TextPrimary}" />
+								<Label Grid.Column="1" Text="ПАЦИЕНТ" Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+								<Label Grid.Column="2" Text="Е-ПОШТА" Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+								<Label Grid.Column="3" Text="ОСИГУРУВАЊЕ БР." Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+								<Label Grid.Column="4" Text="ЕМБГ" Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+								<Label Grid.Column="5" Text="ТЕЛЕФОН" Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+								<Label Grid.Column="6" Text="ПОЛ" Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+								<Label Grid.Column="7" Text="ПРИМАРНА ДИЈАГНОЗА" Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+								<Label Grid.Column="8" Text="СТАТУС" Style="{StaticResource GridHeaderTextStyle}" VerticalOptions="Center" />
+								<Label Grid.Column="9" Text="АКЦИИ" Style="{StaticResource GridHeaderTextStyle}" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+							</Grid>
+						</Border>
+
+						<!-- Редови со пациенти (Секој ред го користи GridRowStyle) -->
+						<CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="None">
+							<CollectionView.ItemTemplate>
+								<DataTemplate x:DataType="models:Patient">
+									<Border Style="{StaticResource GridRowStyle}">
+										<Grid Padding="6,2" ColumnDefinitions="50, 2*, 2.5*, 1.8*, 1.8*, 1.8*, 1*, 2.5*, 1.2*, 140" ColumnSpacing="12" VerticalOptions="Center">
+
+											<CheckBox Scale="0.75" Color="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center" />
+
+											<!-- Пациент инфо со кружен аватар -->
+											<HorizontalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
+												<Border WidthRequest="36" HeightRequest="36" BackgroundColor="{StaticResource PrimaryLight}" StrokeThickness="0" StrokeShape="RoundRectangle 18">
+													<Label Text="&#xf007;" FontFamily="FASolid" FontSize="13" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{StaticResource Primary}" />
+												</Border>
+												<VerticalStackLayout Spacing="1" VerticalOptions="Center">
+													<HorizontalStackLayout Spacing="4">
+														<Label Text="{Binding FirstName}" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" LineBreakMode="TailTruncation" />
+														<Label Text="{Binding LastName}" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" LineBreakMode="TailTruncation" />
+													</HorizontalStackLayout>
+													<Label Text="Медицинско досие" Style="{StaticResource CaptionStyle}" />
+												</VerticalStackLayout>
+											</HorizontalStackLayout>
+
+											<!-- Податоци -->
+											<Label Grid.Column="2" Text="{Binding Email}" Style="{StaticResource Body}" VerticalOptions="Center" LineBreakMode="TailTruncation" HorizontalOptions="Fill" />
+											<Label Grid.Column="3" Text="{Binding SSN}" Style="{StaticResource MutedText}" FontAttributes="Italic" VerticalOptions="Center" LineBreakMode="TailTruncation" HorizontalOptions="Fill" />
+											<Label Grid.Column="4" Text="{Binding NationalId}" Style="{StaticResource Body}" VerticalOptions="Center" LineBreakMode="TailTruncation" HorizontalOptions="Fill" />
+											<Label Grid.Column="5" Text="{Binding Phone}" Style="{StaticResource Body}" VerticalOptions="Center" LineBreakMode="TailTruncation" HorizontalOptions="Fill" />
+											<Label Grid.Column="6" Text="{Binding Gender}" Style="{StaticResource Body}" VerticalOptions="Center" />
+											<Label Grid.Column="7" Text="{Binding PrimaryDiagnosis}" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" LineBreakMode="TailTruncation" MaxLines="1" HorizontalOptions="Fill" />
+
+											<!-- Твојот Баџ за Статус (Елегантен Success баџ) -->
+											<Border Grid.Column="8" Style="{StaticResource SuccessPillStyle}" Padding="8,4" StrokeThickness="0" HorizontalOptions="Start" VerticalOptions="Center" StrokeShape="RoundRectangle 6">
+												<HorizontalStackLayout Spacing="5">
+													<BoxView WidthRequest="6" HeightRequest="6" CornerRadius="3" Color="{StaticResource Success}" VerticalOptions="Center" />
+													<Label Text="{Binding Status}" Style="{StaticResource SuccessChipText}" VerticalOptions="Center" />
+												</HorizontalStackLayout>
+											</Border>
+
+											<!-- Икони за Акција (Користат Иконски стил/ToolbarButton за усогласеност) -->
+											<HorizontalStackLayout Grid.Column="9" Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
+												<Button Text="&#xf06e;" FontFamily="FASolid" WidthRequest="32" HeightRequest="32" CornerRadius="8" FontSize="11" Padding="0" Style="{StaticResource ToolbarButton}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding .}" />
+												<Button Text="&#xf044;"             FontFamily="FASolid"            FontSize="12"            Command="{Binding BindingContext.EditCommand, Source={x:Reference MenuHost}}"
+            CommandParameter="{Binding .}" Style="{StaticResource PrimaryButtonStyle}"
+            IsEnabled="{Binding BindingContext.CanUpdatePatients, Source={x:Reference MenuHost}}" />
+
+												<Button Text="&#xf2ed;"
+            FontFamily="FASolid"
+            FontSize="12"
+            TextColor="Red"
+            Command="{Binding BindingContext.DeleteCommand, Source={x:Reference MenuHost}}"
+            CommandParameter="{Binding .}"
+            IsVisible="{Binding BindingContext.CanDeletePatients, Source={x:Reference MenuHost}}" />
+											</HorizontalStackLayout>
+										</Grid>
+									</Border>
+								</DataTemplate>
+							</CollectionView.ItemTemplate>
+						</CollectionView>
+
+						<!-- ПАГИНАЦИЈА (Футер) -->
+						<Border Grid.Row="2" BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource Border}" StrokeThickness="1">
+							<Grid Padding="20,0" HeightRequest="60" ColumnDefinitions="*,Auto">
+								<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+									<Label Text="Прикажани се податоци за пациенти" Style="{StaticResource MutedText}" VerticalOptions="Center" />
+									<Border BackgroundColor="{StaticResource Surface}" Padding="8,4" Stroke="{StaticResource BorderStrong}" StrokeThickness="0.5" StrokeShape="RoundRectangle 6">
+										<HorizontalStackLayout Spacing="4">
+											<Label Text="Лимит:" Style="{StaticResource MutedText}" />
+											<Label Text="{Binding PageSize}" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" />
+										</HorizontalStackLayout>
+									</Border>
+								</HorizontalStackLayout>
+
+								<HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+									<Button Text="Претходна" Style="{StaticResource ToolbarButton}" Command="{Binding PreviousPageCommand}" />
+
+									<Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource BorderStrong}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" HeightRequest="36" Padding="12,0">
+										<HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+											<Label Text="Страна" Style="{StaticResource MutedText}" />
+											<Label Text="{Binding CurrentPage}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+											<Label Text="од" Style="{StaticResource MutedText}" />
+											<Label Text="{Binding TotalPages}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" />
+										</HorizontalStackLayout>
+									</Border>
+
+									<!-- Копчето Следна ја користи твојата примарна боја/акцент за да скокне во очи -->
+									<Button Text="Следна" Style="{StaticResource ActiveTabButtonStyle}" Padding="12,0" HeightRequest="36" Command="{Binding NextPageCommand}" />
+								</HorizontalStackLayout>
+							</Grid>
+						</Border>
+					</Grid>
+				</Border>
+			</Grid>
+		</Grid>
+	</Grid>
+</ContentPage>

@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+    x:Class="EHMR.Views.DashboardView"
+    x:DataType="viewModels:DashboardViewModel"
+    BackgroundColor="#F1F5F9">
+	<!-- Светла, неутрална и чиста медицинска позадина -->
+
+	<Grid ColumnDefinitions="280,*">
+
+		<!-- ========================================================= -->
+		<!-- СТРАНИЧНО МЕНИ (Sidebar) - Професионално темно-сино/медицинско -->
+		<!-- ========================================================= -->
+		<Border Grid.Column="0" BackgroundColor="#1E293B" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
+		</Border>
+
+		<!-- ========================================================= -->
+		<!-- ГЛАВЕН ПАНЕЛ -->
+		<!-- ========================================================= -->
+		<Grid Grid.Column="1" RowDefinitions="75,*">
+
+			<!-- ГОРНА ЛЕНТА (Header) - Снежно бела со суптилна сенка -->
+			<Border Grid.Row="0" BackgroundColor="#FFFFFF" StrokeThickness="0" Padding="32,0">
+				<Border.Shadow>
+					<Shadow Brush="#E2E8F0" Offset="0,2" Radius="4" Opacity="0.5" />
+				</Border.Shadow>
+
+				<Grid ColumnDefinitions="*,Auto,Auto" VerticalOptions="Center">
+
+					<!-- PAGE TITLE -->
+					<VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+						<Label Text="Основна Страна" FontSize="22" FontAttributes="Bold" TextColor="#0F172A" />
+						<Label Text="Добредојдовте во EHMR-MK медицинскиот систем" FontSize="13" TextColor="#64748B" />
+					</VerticalStackLayout>
+
+					<!-- SEARCH + DATE -->
+					<HorizontalStackLayout Grid.Column="1" Spacing="12" Margin="0,0,20,0" VerticalOptions="Center">
+
+						<!-- Поле за пребарување -->
+						<Border BackgroundColor="#F8FAFC" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="14,0" WidthRequest="340" HeightRequest="40">
+							<Grid ColumnDefinitions="Auto,*">
+								<Label Text="&#xf002;"
+                                       FontFamily="FASolid"
+                                       FontSize="14"
+                                       VerticalOptions="Center"
+                                       TextColor="#94A3B8"
+                                       Margin="0,0,10,0" />
+
+								<Entry Grid.Column="1"
+                                       Placeholder="Пребарај корисник, историја, картон..."
+                                       BackgroundColor="Transparent"
+                                       PlaceholderColor="#94A3B8"
+                                       TextColor="#0F172A"
+                                       FontSize="13"
+                                       VerticalOptions="Center" />
+							</Grid>
+						</Border>
+
+						<!-- Датум -->
+						<Border BackgroundColor="#F8FAFC" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="14,0" HeightRequest="40">
+							<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+								<Label Text="&#xf133;"
+                                       FontFamily="FASolid"
+                                       FontSize="14"
+                                       VerticalOptions="Center"
+                                       TextColor="#0284C7" />
+								<!-- Клинички сино -->
+
+								<Label Text="{Binding CurrentDate}"
+                                       FontSize="13"
+                                       FontAttributes="Bold"
+                                       TextColor="#334155"
+                                       VerticalOptions="Center" />
+							</HorizontalStackLayout>
+						</Border>
+					</HorizontalStackLayout>
+
+					<!-- PROFILE -->
+					<HorizontalStackLayout Grid.Column="2" Spacing="14" VerticalOptions="Center">
+
+						<Button Text="&#xf2f1;"
+                                FontFamily="FASolid"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                CornerRadius="8"
+                                BackgroundColor="#F8FAFC"
+
+                                TextColor="#64748B"
+                                FontSize="14"
+                                Command="{Binding RefreshCommand}" />
+
+						<!-- Кориснички Профил -->
+						<Border BackgroundColor="#F8FAFC" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="12,4" HeightRequest="40">
+							<HorizontalStackLayout Spacing="12" VerticalOptions="Center">
+
+								<Border WidthRequest="28"
+                                        HeightRequest="28"
+                                        BackgroundColor="#0284C7"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 14">
+									<Label Text="Д"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#FFFFFF"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+								</Border>
+
+								<VerticalStackLayout Spacing="0" VerticalOptions="Center">
+									<Label Text="{Binding UserName}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="#0F172A" />
+
+									<Label Text="{Binding UserRole}"
+                                           FontSize="11"
+                                           TextColor="#64748B" />
+								</VerticalStackLayout>
+							</HorizontalStackLayout>
+						</Border>
+					</HorizontalStackLayout>
+				</Grid>
+			</Border>
+
+			<!-- ГЛАВНА СОДРЖИНА (Скролање) -->
+			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+				<VerticalStackLayout Padding="32" Spacing="24">
+
+					<ActivityIndicator IsRunning="{Binding IsBusy}"
+                                       IsVisible="{Binding IsBusy}"
+                                       Color="#0284C7"
+                                       HeightRequest="40" />
+
+					<!-- МЕТРИКИ (Чисти медицински картички со бела позадина и благи пастелни икони) -->
+					<Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="20">
+
+						<!-- Вкупно Пациенти -->
+						<Border BackgroundColor="#FFFFFF" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="20">
+							<Grid ColumnDefinitions="Auto,*">
+								<Border WidthRequest="48" HeightRequest="48" BackgroundColor="#E0F2FE" StrokeThickness="0" StrokeShape="RoundRectangle 10">
+									<Label Text="&#xf0c0;" FontFamily="FASolid" FontSize="18" TextColor="#0369A1" HorizontalOptions="Center" VerticalOptions="Center" />
+								</Border>
+								<VerticalStackLayout Grid.Column="1" Margin="16,0,0,0" Spacing="2" VerticalOptions="Center">
+									<Label Text="ВКУПНО ПАЦИЕНТИ" FontSize="11" FontAttributes="Bold" TextColor="#64748B" CharacterSpacing="0.5" />
+									<Label Text="{Binding TotalPatients}" FontSize="24" FontAttributes="Bold" TextColor="#0F172A" />
+								</VerticalStackLayout>
+							</Grid>
+						</Border>
+
+						<!-- Активни Терапии -->
+						<Border Grid.Column="1" BackgroundColor="#FFFFFF" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="20">
+							<Grid ColumnDefinitions="Auto,*">
+								<Border WidthRequest="48" HeightRequest="48" BackgroundColor="#DCFCE7" StrokeThickness="0" StrokeShape="RoundRectangle 10">
+									<Label Text="&#xf0c3;" FontFamily="FASolid" FontSize="18" TextColor="#15803D" HorizontalOptions="Center" VerticalOptions="Center" />
+								</Border>
+								<VerticalStackLayout Grid.Column="1" Margin="16,0,0,0" Spacing="2" VerticalOptions="Center">
+									<Label Text="АКТИВНИ ТЕРАПИИ" FontSize="11" FontAttributes="Bold" TextColor="#64748B" CharacterSpacing="0.5" />
+									<Label Text="{Binding ActiveTherapies}" FontSize="24" FontAttributes="Bold" TextColor="#0F172A" />
+								</VerticalStackLayout>
+							</Grid>
+						</Border>
+
+						<!-- Закажани Прегледи -->
+						<Border Grid.Column="2" BackgroundColor="#FFFFFF" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="20">
+							<Grid ColumnDefinitions="Auto,*">
+								<Border WidthRequest="48" HeightRequest="48" BackgroundColor="#FEF3C7" StrokeThickness="0" StrokeShape="RoundRectangle 10">
+									<Label Text="&#xf274;" FontFamily="FASolid" FontSize="18" TextColor="#B45309" HorizontalOptions="Center" VerticalOptions="Center" />
+								</Border>
+								<VerticalStackLayout Grid.Column="1" Margin="16,0,0,0" Spacing="2" VerticalOptions="Center">
+									<Label Text="ЗАКАЖАНИ ПРЕГЛЕДИ" FontSize="11" FontAttributes="Bold" TextColor="#64748B" CharacterSpacing="0.5" />
+									<Label Text="{Binding UpcomingAppointmentsCount}" FontSize="24" FontAttributes="Bold" TextColor="#0F172A" />
+								</VerticalStackLayout>
+							</Grid>
+						</Border>
+
+						<!-- Критични Аларми - Умерено црвено -->
+						<Border Grid.Column="3" BackgroundColor="#FFFFFF" Stroke="#FEE2E2" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="20">
+							<Grid ColumnDefinitions="Auto,*">
+								<Border WidthRequest="48" HeightRequest="48" BackgroundColor="#FEE2E2" StrokeThickness="0" StrokeShape="RoundRectangle 10">
+									<Label Text="&#xf071;" FontFamily="FASolid" FontSize="18" TextColor="#B91C1C" HorizontalOptions="Center" VerticalOptions="Center" />
+								</Border>
+								<VerticalStackLayout Grid.Column="1" Margin="16,0,0,0" Spacing="2" VerticalOptions="Center">
+									<Label Text="КРИТИЧНИ АЛАРМИ" FontSize="11" FontAttributes="Bold" TextColor="#B91C1C" CharacterSpacing="0.5" />
+									<Label Text="{Binding CriticalAlerts}" FontSize="24" FontAttributes="Bold" TextColor="#B91C1C" />
+								</VerticalStackLayout>
+							</Grid>
+						</Border>
+					</Grid>
+
+					<!-- ДВЕ КОЛОНИ СО СОДРЖИНА -->
+					<Grid ColumnDefinitions="2*,*" ColumnSpacing="24">
+
+						<!-- ЛЕВА СТРАНА -->
+						<VerticalStackLayout Spacing="24">
+
+							<!-- Успешност -->
+							<Border BackgroundColor="#FFFFFF" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="24">
+								<VerticalStackLayout Spacing="20">
+									<Grid ColumnDefinitions="*,Auto">
+										<VerticalStackLayout Spacing="4">
+											<Label Text="Успешност на клинички третмани -  Namesto ova tyka da se pojavi od search gore - pacientt so mozn  i da bide skorz do dole " FontSize="16" FontAttributes="Bold" TextColor="#0F172A" />
+											<Label Text="{Binding CompletionStatus}" FontSize="13" TextColor="#64748B" />
+										</VerticalStackLayout>
+										<Border Grid.Column="1" Padding="12,6" BackgroundColor="#E0F2FE" StrokeThickness="0" StrokeShape="RoundRectangle 8" VerticalOptions="Center">
+											<Label Text="{Binding CompletionPercentage}" FontSize="13" FontAttributes="Bold" TextColor="#0369A1" />
+										</Border>
+									</Grid>
+
+									<Grid RowDefinitions="Auto,Auto" RowSpacing="10">
+										<ProgressBar Progress="{Binding AdherenceProgress}" ProgressColor="#0284C7" HeightRequest="6" BackgroundColor="#E2E8F0" />
+										<Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto">
+											<Label Text="0%" FontSize="11" TextColor="#94A3B8" />
+											<Label Grid.Column="1" HorizontalOptions="Center" Text="Глобален клинички перформанс во институцијата" FontSize="11" TextColor="#94A3B8" />
+											<Label Grid.Column="2" Text="100%" FontSize="11" TextColor="#94A3B8" />
+										</Grid>
+									</Grid>
+								</VerticalStackLayout>
+							</Border>
+
+							<!-- Денешни прегледи (Чист табеларен приказ) -->
+							<Border BackgroundColor="#FFFFFF" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="24">
+								<VerticalStackLayout Spacing="18">
+									<VerticalStackLayout Spacing="4">
+										<Label Text="Денешни прегледи и термини -- oca ke odi skroz desno mlacka pod akcii " FontSize="16" FontAttributes="Bold" TextColor="#0F172A" />
+										<HorizontalStackLayout Spacing="6">
+											<Label Text="Преостанати за денес:" FontSize="13" TextColor="#64748B" />
+											<Label Text="{Binding UpcomingAppointmentsCount}" FontSize="13" FontAttributes="Bold" TextColor="#0284C7" />
+										</HorizontalStackLayout>
+									</VerticalStackLayout>
+
+									<!-- Листа -->
+									<VerticalStackLayout BindableLayout.ItemsSource="{Binding Appointments}" Spacing="10">
+										<BindableLayout.ItemTemplate>
+											<DataTemplate x:DataType="viewModels:DashboardAppointmentItem">
+												<Border BackgroundColor="#F8FAFC" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="14">
+													<Grid ColumnDefinitions="Auto,*,Auto">
+
+														<Border WidthRequest="36" HeightRequest="36" BackgroundColor="#E2E8F0" StrokeThickness="0" StrokeShape="RoundRectangle 18">
+															<Label Text="&#xf007;" FontFamily="FASolid" FontSize="13" TextColor="#475569" HorizontalOptions="Center" VerticalOptions="Center" />
+														</Border>
+
+														<Grid Grid.Column="1" RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" Margin="14,0,0,0" VerticalOptions="Center">
+															<Label Grid.Row="0" Grid.Column="0" Text="{Binding PatientName}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" />
+															<Label Grid.Row="1" Grid.Column="0" Text="{Binding Diagnosis}" FontSize="12" TextColor="#64748B" Margin="0,1,0,0" />
+
+															<HorizontalStackLayout Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Spacing="6" VerticalOptions="Center">
+																<Label Text="&#xf017;" FontFamily="FASolid" FontSize="12" TextColor="#64748B" VerticalOptions="Center" />
+																<Label Text="{Binding Time}" FontSize="13" FontAttributes="Bold" TextColor="#0284C7" VerticalOptions="Center" />
+															</HorizontalStackLayout>
+														</Grid>
+
+														<Border Grid.Column="2" Padding="10,4" BackgroundColor="#E2E8F0" StrokeThickness="0" StrokeShape="RoundRectangle 6" VerticalOptions="Center" Margin="14,0,0,0">
+															<Label Text="{Binding RelativeDay}" FontSize="11" FontAttributes="Bold" TextColor="#475569" />
+														</Border>
+													</Grid>
+												</Border>
+											</DataTemplate>
+										</BindableLayout.ItemTemplate>
+									</VerticalStackLayout>
+								</VerticalStackLayout>
+							</Border>
+						</VerticalStackLayout>
+
+						<!-- ДЕСНА СТРАНА -->
+						<VerticalStackLayout Grid.Column="1" Spacing="24">
+
+							<!-- Известувања (Сериозни медицински бои) --><!--
+							<Border BackgroundColor="#FFFFFF" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="24">
+								<VerticalStackLayout Spacing="16">
+									<HorizontalStackLayout Spacing="10">
+										<Label Text="&#xf0f3;" FontFamily="FASolid" FontSize="16" TextColor="#D97706" VerticalOptions="Center" />
+										<Label Text="Известувања" FontSize="16" FontAttributes="Bold" TextColor="#0F172A" VerticalOptions="Center" />
+									</HorizontalStackLayout>
+
+									--><!-- Системско ажурирање --><!--
+									<Border BackgroundColor="#FFFBEB" Stroke="#FDE68A" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="12">
+										<VerticalStackLayout Spacing="2">
+											<Label Text="Системско ажурирање" FontSize="13" FontAttributes="Bold" TextColor="#B45309" />
+											<Label Text="EHMR системот ќе биде рестартиран во 23:00 часот." FontSize="12" TextColor="#78350F" />
+										</VerticalStackLayout>
+									</Border>
+
+									--><!-- Успешна синхронизација --><!--
+									<Border BackgroundColor="#F0FDF4" Stroke="#BBF7D0" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="12">
+										<VerticalStackLayout Spacing="2">
+											<Label Text="Успешна синхронизација" FontSize="13" FontAttributes="Bold" TextColor="#15803D" />
+											<Label Text="Сите медицински картони се успешно зачувани." FontSize="12" TextColor="#166534" />
+										</VerticalStackLayout>
+									</Border>
+								</VerticalStackLayout>
+							</Border>-->
+
+							<!-- Брзи Акции -->
+							<Border BackgroundColor="#FFFFFF" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="24">
+								<VerticalStackLayout Spacing="12">
+									<Label Text="Брзи Акции" FontSize="15" FontAttributes="Bold" TextColor="#0F172A" Margin="0,0,0,4" />
+
+									<Button Text="Нов Преглед"
+                                            BackgroundColor="#0284C7"
+                                            TextColor="#FFFFFF"
+                                            FontAttributes="Bold"
+                                            HeightRequest="40"
+                                            CornerRadius="8"
+                                            Command="{Binding NewAppointmentCommand}" />
+
+									<Button Text="Внеси Нов Пациент"
+                                            BackgroundColor="Transparent"
+
+                                            TextColor="#0284C7"
+                                            FontAttributes="Bold"
+                                            HeightRequest="40"
+                                            CornerRadius="8"
+                                            Command="{Binding AddPatientCommand}" />
+								</VerticalStackLayout>
+							</Border>
+						</VerticalStackLayout>
+					</Grid>
+				</VerticalStackLayout>
+			</ScrollView>
+		</Grid>
+	</Grid>
+</ContentPage>
