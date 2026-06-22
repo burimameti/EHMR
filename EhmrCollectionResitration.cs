@@ -1,25 +1,20 @@
-﻿using EHMR.Domain.Entities;
+﻿using EHMR.Abstraction;
 using EHMR.Domain.Interfaces;
+using EHMR.Domain.Search;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Infrastructure.Persistence.Configs;
 using EHMR.Infrastructure.Persistence.Seeders;
+using EHMR.Infrastructure.Services;
 using EHMR.Services;
 using EHMR.ViewModels;
-using EHMR.ViewModels.Calendar;
+using EHMR.ViewModels.Appointments;
+using EHMR.ViewModels.Support;
+using EHMR.ViewModels.Therapies;
 using EHMR.Views;
-
-using EHMR.Views;
-
+using EHMR.Views.Appointments;
 using EHMR.Views.Therapies;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Maui;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
 
 namespace EHMR
 {
@@ -69,7 +64,7 @@ namespace EHMR
             services.AddScoped<IEntitySeeder, AlertSeeder>();
             services.AddScoped<IEntitySeeder, AppointmentSeeder>();
             services.AddScoped<IEntitySeeder, AuditLogSeeder>();
-            services.AddScoped<IEntitySeeder, CycleMedicationDoseSeeder>();
+
             services.AddScoped<IEntitySeeder, DoctorSeeder>();
             services.AddScoped<IEntitySeeder, DiagnosisSeeder>();
             services.AddScoped<IEntitySeeder, DocumentSeeder>();
@@ -83,20 +78,15 @@ namespace EHMR
             services.AddScoped<IEntitySeeder, MedicineSeeder>();
             services.AddScoped<IEntitySeeder, NotificationSeeder>();
             services.AddScoped<IEntitySeeder, InventorySeeder>();
-            services.AddScoped<IEntitySeeder, InventoryTransactionSeeder>();
-            services.AddScoped<IEntitySeeder, TreatmentPlanSeeder>();
+
             services.AddScoped<IEntitySeeder, TherapyProtocolSeeder>();
             //  services.AddScoped<IEntitySeeder, TherapyProtocolMedicineSeeder>();
-            services.AddScoped<IEntitySeeder, ScheduleMedicineRuleSeeder>();
 
             services.AddScoped<IEntitySeeder, TherapyCycleSeeder>();
 
-            services.AddScoped<IEntitySeeder, TherapyDoseSeeder>();
-            services.AddScoped<IEntitySeeder, TherapyScheduleSeeder>();
-
             services.AddScoped<IEntitySeeder, PrescriptionSeeder>();
-            services.AddScoped<IEntitySeeder, PrescriptionMedicineSeeder>();
 
+            services.AddSingleton<Mkb10ImportService>();
             services.AddScoped<SeederRunner>();
 
             return services;
@@ -107,16 +97,17 @@ namespace EHMR
             // services.AddSingleton<IApiService, ApiService>();
             // services.AddSingleton<IApiClient, ApiClient>();
             services.AddSingleton<IAuthStateService, AuthStateService>();
-            services.AddSingleton<IUserAdminService, UserAdminService>();
+            services.AddSingleton<IUserService, UserService>();
+            services.AddSingleton<IPatientService, PatientService>();
             // services.AddSingleton<IAuthService, AuthService>();
             //services.AddSingleton<IAuthStateService, AuthStateService>();
             services.AddSingleton<IAuthorizationService, AuthorizationService>();
-            services.AddSingleton<IAuthorizationPolicy, AuthorizationPolicy>();
+
             // services.AddSingleton<IAnalyticsService, AnalyticsService>();
-            services.AddSingleton<IPolicyEngine, PolicyEngine>();
+            // services.AddSingleton<IPolicyEngine, PolicyEngine>();
             // services.AddSingleton<ILicenseService, LicenseService>();
             // services.AddSingleton<IPermissionService, PermissionService>();
-
+            services.AddScoped<IAppointmentSearchQueryHandler, AppointmentSearchQueryHandler>();
             services.AddSingleton<IPreferencesService, SecurePreferencesService>();
             services.AddSingleton<INavigationCoordinator, NavigationCoordinator>();
             //  services.AddSingleton<IAppointmentService, AppointmentService>();
@@ -124,6 +115,8 @@ namespace EHMR
             // services.AddSingleton<IPrescriptionService, PrescriptionService>();
             services.AddSingleton<INavigationCoordinator, NavigationCoordinator>();
             services.AddSingleton<IUserDialogService, UserDialogService>();
+            services.AddScoped<IAppointmentDetailService, AppointmentDetailService>();
+            services.AddScoped<ITherapyService, TherapyService>();
             //services.AddSingleton<ICalendarEngine, CalendarEngine>();
             //services.AddSingleton<ITimelineEngine, TimelineEngine>();
 
@@ -139,6 +132,7 @@ namespace EHMR
             services.AddSingleton<INavigationDataStore, NavigationDataStore>();
             services.AddSingleton<INavigationEvents, NavigationEvents>();
             services.AddSingleton<IMenuService, MenuService>();
+            services.AddSingleton<IFileDialogService, MauiFileDialogService>();
 
             return services;
         }
@@ -257,12 +251,10 @@ namespace EHMR
 
             services.AddTransient<AppointmentListPage>();
             services.AddTransient<AppointmentListViewModel>();
-            services.AddTransient<AppointmentDetailFormPage>();
-            services.AddTransient<AppointmentDetailFormViewModel>();
+            services.AddTransient<AppointmentDetailPage>();
+            services.AddTransient<AppointmentDetailViewModel>();
             services.AddTransient<CalendarDashboardPage>();
             services.AddTransient<CalendarDashboardViewModel>();
-            services.AddTransient<PlansViewModel>();
-            services.AddTransient<PlanPage>();
 
             services.AddTransient<TherapyDetailsViewModel>();
             services.AddTransient<TherapyDetailsPage>();
@@ -274,8 +266,6 @@ namespace EHMR
             services.AddTransient<TherapyCyclesPage>();
             services.AddTransient<TherapyCyclesViewModel>();
 
-            services.AddTransient<ScheduleMedicineRuleDetailFormPage>();
-
             services.AddTransient<MedicineDetailFormPage>();
             services.AddTransient<MedicineListPage>();
             services.AddTransient<MedicineDetailFormViewModel>();
@@ -286,7 +276,6 @@ namespace EHMR
             services.AddTransient<UserEditViewModel>();
             services.AddTransient<UserEditPage>();
 
-            services.AddTransient<ScheduleMedicineRuleDetailFormViewModel>();
             ////Calndar
             //// Register ViewModels
             //services.AddSingleton<CalendarViewModel>();
@@ -297,6 +286,9 @@ namespace EHMR
             //services.AddSingleton<Views.CalendarPage>();
             //services.AddTransient<Views.AppointmentCreatePage>();
             //services.AddTransient<Views.AppointmentEditPage>();
+
+            services.AddTransient<MbkImportExportViewModel>();
+            services.AddTransient<MbkImportExportPage>();
 
             return services;
         }

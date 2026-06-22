@@ -9,7 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
-using EHMR.Constants;
+using EHMR.Domain.Entities.Rbac;
 
 namespace EHMR.ViewModels;
 
@@ -203,13 +203,13 @@ public partial class CalendarDashboardViewModel : ObservableObject
     {
         await using var db = await _dbFactory.CreateDbContextAsync();
         var cycle = await db.TherapyCycles
-            .Include(c => c.TherapySchedule)
+            .Include(c => c.Appointments)
             .FirstOrDefaultAsync(c => c.Id==cycleId);
 
         if(cycle!=null)
         {
             _cycleSelectionService.SelectedItem=cycle;
-            await _navigationService.GoToAsync(AppRoutes.Cycle.Details);
+            await _navigationService.GoToAsync(AppRoutes.Therapy.Detail);
         }
     }
 
@@ -239,7 +239,7 @@ public partial class CalendarDashboardViewModel : ObservableObject
     private async Task CreateNewTherapyCycle()
     {
         // Логика за нов тераписки циклус рута
-        await _navigationService.GoToAsync(AppRoutes.Therapy.Details);
+        await _navigationService.GoToAsync(AppRoutes.Therapy.Detail);
     }
 
     public async Task LoadDashboardDataAsync()
@@ -253,8 +253,12 @@ public partial class CalendarDashboardViewModel : ObservableObject
             await using var db = await _dbFactory.CreateDbContextAsync();
 
             var cyclesInMonth = await db.TherapyCycles
-                .Include(c => c.TherapySchedule)
-                .Where(c => c.PlannedStartDate<=endOfMonth&&c.PlannedEndDate>=startOfMonth)
+                .Include(c => c.Appointments)
+                    .ThenInclude(s => s.Patient)
+                .AsNoTracking()
+                .Where(c =>
+                    c.Appointments.Any(x => x.ScheduledStart<=endOfMonth&&x.ScheduledEnd>=startOfMonth)
+                )
                 .ToListAsync();
 
             var appointmentsInMonth = await db.Appointments
@@ -279,15 +283,18 @@ public partial class CalendarDashboardViewModel : ObservableObject
                 var targetDay = new DateTime(_currentDate.Year, _currentDate.Month, day);
                 var dayEvents = new List<CalendarEventDto>();
 
-                // Чист филтер: Прикажи го циклусот само на почетниот датум
                 var dayCycles = cyclesInMonth
-                    .Where(c => c.PlannedStartDate.Date==targetDay.Date)
+                    .Where(c => c.Appointments.Any(x => x.ScheduledStart.Date==targetDay.Date))
                     .Select(c => new CalendarEventDto
                     {
                         Id=c.Id,
-                        Title=$"{c.TherapySchedule.Name} (Ц-#{c.CycleNumber})",
-                        ScheduledTime=c.PlannedStartDate,
-                        Status=(c.Status==TherapyStatus.Active&&c.PlannedEndDate<DateTime.Today) ? "Overdue" : c.Status.ToString(),
+                        Title=$"{c.Patient.FullName} (Ц-#{c.CycleNumber})",
+                        ScheduledTime=c.Appointments
+                            .Where(x => x.ScheduledStart.Date==targetDay.Date)
+                            .OrderBy(x => x.ScheduledEnd)
+                            .Select(x => x.ScheduledEnd)
+                            .FirstOrDefault(),
+                        Status=(c.Status==TherapyStatus.Planned&&c.Appointments.Any(x => x.ScheduledStart.Date<DateTime.Today)) ? "Overdue" : c.Status.ToString(),
                         EventType="Cycle"
                     })
                     .ToList();
@@ -318,17 +325,20 @@ public partial class CalendarDashboardViewModel : ObservableObject
                 });
             }
 
-            var activePlans = await db.TreatmentPlans.CountAsync(p => p.Status==TherapyStatus.Active);
+            //var activePlans = await db.TreatmentPlans.CountAsync(p => p.Status==TherapyStatus.Active);
 
-            var overdue = await db.TherapyCycles
-                .Include(c => c.TherapySchedule).ThenInclude(s => s.TreatmentPlan).ThenInclude(p => p.Patient)
-                .Where(c => c.PlannedEndDate<DateTime.Today&&(c.Status==TherapyStatus.Planned||c.Status==TherapyStatus.Active))
+            var overdue = db.TherapyCycles
+                .Include(p => p.Appointments);
+            var over = overdue
+                .Where(x =>
+                    x.Appointments.Any(a => a.ScheduledStart<DateTime.Today)&&
+                    (x.Status==TherapyStatus.Planned||x.Status==TherapyStatus.Active))
                 .Take(5)
                 .Select(c => new OverdueCycleDto
                 {
-                    PatientName=c.TherapySchedule.TreatmentPlan.Patient.LastName,
-                    ScheduleName=c.TherapySchedule.Name,
-                    CycleInfo=$"Циклус {c.CycleNumber} (Истече на {c.PlannedEndDate:dd.MM})",
+                    PatientName=c.Patient.LastName,
+
+                    CycleInfo=$"Циклус {c.CycleNumber}",
                     Status="ДОЦНИ"
                 }).ToListAsync();
 
@@ -342,11 +352,11 @@ public partial class CalendarDashboardViewModel : ObservableObject
                 CalendarDays.Clear();
                 foreach(var d in tempDays) CalendarDays.Add(d);
 
-                ActivePlansCount=activePlans;
+                //ActivePlansCount=activePlans;
                 TodaysAppointmentsCount=todaysAppointmentsCount;
 
                 CriticalCycles.Clear();
-                foreach(var item in overdue) CriticalCycles.Add(item);
+                foreach(var item in over.Result) CriticalCycles.Add(item);
                 CriticalCyclesCount=CriticalCycles.Count;
 
                 if(totalCycles>0)

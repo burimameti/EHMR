@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EHMR.Constants;
 using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +42,7 @@ public partial class MedicineListViewModel : ObservableObject
     private async Task NavigateToCreateAsync()
     {
         _medicineSelectionService.SelectedItem=null; // Сигнал за Креирање
-        await _navigationService.GoToAsync(AppRoutes.MedicalRecords);
+        await _navigationService.GoToAsync(AppRoutes.Medicines.List);
     }
 
     [RelayCommand]

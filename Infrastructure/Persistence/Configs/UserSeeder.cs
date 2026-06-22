@@ -1,90 +1,56 @@
 ﻿using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
+using EHMR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
-using System.Threading.Tasks;
-using static EHMR.Domain.Entities.User;
 using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
 
-namespace EHMR.Infrastructure.Persistence.Configs
+public class UserSeeder : IEntitySeeder
 {
-    public class UserSeeder : IEntitySeeder
-    {
-        public int Order => 1;
+    public int Order => 1;
 
-        public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
+    public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
+    {
+        if(await context.Users.AnyAsync(ct))
+            return;
+
+        var users = new List<User>
         {
-            var exists = await context.Users.AnyAsync(ct);
-            if(exists)
-                return;
+            new()
+            {
+                Id = SeedIds.AdminUser,
+                Username = "admin",
+                PasswordHash = "HASH_ADMIN",
+                FirstName = "Игор",
+                LastName = "Ангеловски",
+                Role = UserRole.Admin,
+                Position = UserPosition.SuperAdmin,
+                IsActive = true
+            },
 
-            context.Users.AddRange(
-                new User
-                {
-                    Id=SeedIds.AdminUser,
-                    Username="admin",
-                    PasswordHash="HASH1",
-                    FirstName="Игор",
-                    LastName="Ангеловски",
-                    Role=UserRole.Admin,
-                    Position=UserPosition.SuperAdmin,
-                    IsActive=true
-                },
-                new User
-                {
-                    Id=SeedIds.DocUser1,
-                    Username="dr.mitrev",
-                    PasswordHash="HASH2",
-                    FirstName="Никола",
-                    LastName="Митрев",
-                    Role=UserRole.Doctor,
-                    Position=UserPosition.Regular,
-                    IsActive=true
-                },
-                new User
-                {
-                    Id=SeedIds.DocUser2,
-                    Username="nurse.test",
-                    PasswordHash="HASH3",
-                    FirstName="Тест",
-                    LastName="Сестра",
-                    Role=UserRole.MainNurse,
-                    Position=UserPosition.Regular,
-                    IsActive=true
-                }
-            );
-            context.UserModules.AddRange(
-    new UserModule
-    {
-        UserId=SeedIds.AdminUser,
-        ModuleKey=Modules.Administration,
-        IsEnabled=true
-    },
-    new UserModule
-    {
-        UserId=SeedIds.AdminUser,
-        ModuleKey=Modules.Patients,
-        IsEnabled=true
-    },
-    new UserModule
-    {
-        UserId=SeedIds.DocUser1,
-        ModuleKey=Modules.Patients,
-        IsEnabled=true
-    },
-    new UserModule
-    {
-        UserId=SeedIds.DocUser1,
-        ModuleKey=Modules.Therapy,
-        IsEnabled=true
-    },
-    new UserModule
-    {
-        UserId=SeedIds.DocUser2,
-        ModuleKey=Modules.Therapy,
-        IsEnabled=true
-    }
-);
-            await context.SaveChangesAsync(ct);
-        }
+            new() { Id = SeedIds.DocUser1, Username="dr.mitrev", FirstName="Никола", LastName="Митрев", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
+            new() { Id = SeedIds.DocUser2, Username="dr.anastoj", FirstName="Ана", LastName="Стојанова", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
+            new() { Id = SeedIds.DocUser3, Username="dr.goran", FirstName="Горан", LastName="Петров", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
+            new() { Id = SeedIds.DocUser4, Username="dr.elena", FirstName="Елена", LastName="Костова", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
+            new() { Id = SeedIds.DocUser5, Username="dr.ivan", FirstName="Иван", LastName="Димитров", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
+            new() { Id = SeedIds.DocUser6, Username="dr.marija", FirstName="Марија", LastName="Трајкова", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
+            new() { Id = SeedIds.DocUser7, Username="dr.dejan", FirstName="Дејан", LastName="Стојков", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
+            new() { Id = SeedIds.DocUser8, Username="dr.sara", FirstName="Сара", LastName="Јованова", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
+            new() { Id = SeedIds.DocUser9, Username="dr.vlatko", FirstName="Влатко", LastName="Николов", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
+            new() { Id = SeedIds.DocUser10, Username="dr.jovana", FirstName="Јована", LastName="Ристовска", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
+
+            new()
+            {
+                Id = SeedIds.NurseUser,
+                Username = "nurse.main",
+                FirstName = "Сестра",
+                LastName = "Главна",
+                Role = UserRole.MainNurse,
+                Position = UserPosition.Regular,
+                IsActive = true
+            }
+        };
+
+        await context.Users.AddRangeAsync(users, ct);
+        await context.SaveChangesAsync(ct);
     }
 }

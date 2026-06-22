@@ -5,7 +5,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
 {
     public class AuditLogSeeder : IEntitySeeder
     {
-        public int Order => 5;
+        public int Order => 99;
 
         public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
         {

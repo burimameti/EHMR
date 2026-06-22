@@ -1,4 +1,5 @@
 ﻿using EHMR.ViewModels;
+using EHMR.ViewModels.Therapies;
 
 namespace EHMR.Views.Therapies;
 

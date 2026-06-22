@@ -2,12 +2,7 @@
 
 public enum PatientStatus
 {
-    Active, Inactive, Discharged, Deceased
-}
-
-public enum AppointmentStatus
-{
-    Scheduled, CheckedIn, Completed, NoShow, Cancelled, Missed
+    Active, Inactive, Discharged, Deceased, Chronic, Recovered, UnderObservation
 }
 
 public enum TherapyStatus
@@ -36,5 +31,5 @@ public enum DoseStatus
 
 public enum UserRole
 {
-    Admin, SuperAdmin, Doctor, MainNurse, RegularNurse, Staff
+    Admin, SuperAdmin, Doctor, MainNurse, Nurse, Staff
 }

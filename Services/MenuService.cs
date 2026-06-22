@@ -1,65 +1,51 @@
 ﻿using EHMR.Constants;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EHMR.Services;
 
 public class MenuService : IMenuService
 {
-    public Task<List<NavigationGroup>> UpdateMenuAsync(
-        IEnumerable<string> permissions,
-        IEnumerable<string> roles)
+    private readonly IAuthorizationService _auth;
+
+    public MenuService(
+        IAuthorizationService auth)
     {
-        var permissionSet = permissions?.ToHashSet()??new HashSet<string>();
-        var roleSet = roles?.ToHashSet()??new HashSet<string>();
+        _auth=auth;
+    }
 
-        var filteredGroups = AppNavigation.AllGroups
-            .Select(group =>
+    public Task<List<NavigationGroup>> UpdateMenuAsync()
+    {
+        var groups = AppNavigation.AllGroups
+            .Select(group => new NavigationGroup
             {
-                // 1. Филтрирај ги подменијата (ако ги има)
-                var allowedItems = group.Items?
-                    .Where(item => IsItemAllowed(item, permissionSet, roleSet))
-                    .ToList()??new List<NavigationItem>();
+                GroupTitle=group.GroupTitle,
+                Icon=group.Icon,
+                Route=group.Route,
+                Module=group.Module,
 
-                // 2. Врати го комплетниот објект со СИТЕ својства (вклучувајќи ја Route за Главен Прозор)
-                return new NavigationGroup
-                {
-                    GroupTitle=group.GroupTitle,
-                    Icon=group.Icon,
-                    Route=group.Route,                  // КРИТИЧНО: Мора да се префрли рутата!
-                    Module=group.Module,                // КРИТИЧНО
-                    RequiredPermissions=group.RequiredPermissions,
-                    IsActive=group.IsActive,// КРИТИЧНО
-                    Items=allowedItems
-                };
+                Items=group.Items
+                    .Where(x => _auth.CanAccessModule(x.Module))
+                    .Select(item => new NavigationItem
+                    {
+                        Title=item.Title,
+                        Route=item.Route,
+                        Module=item.Module,
+                        Icon=item.Icon
+                    })
+                    .ToList()
             })
             .Where(g =>
-                // КРИТИЧНО: Групата се прикажува ако има подменија ИЛИ ако самата таа е директен линк (како Главен Прозор)
-                (g.Items!=null&&g.Items.Any())||
-                (!string.IsNullOrEmpty(g.Route)&&IsGroupAllowed(g, permissionSet, roleSet))
-            )
+                _auth.CanAccessModule(g.Module)
+                ||g.Items.Any())
             .ToList();
 
-        return Task.FromResult(filteredGroups);
+        return Task.FromResult(groups);
     }
 
-    // Проверка за посебни ставки (NavigationItem)
-    private static bool IsItemAllowed(NavigationItem item, HashSet<string> userPermissions, HashSet<string> roles)
+    private static bool visibleItemsExist(
+        NavigationGroup group)
     {
-        if(roles.Contains("Admin")) return true;
-        if(item.RequiredPermissions==null||item.RequiredPermissions.Count==0) return true;
-
-        return item.RequiredPermissions.All(p => userPermissions.Contains(p.ToString()));
-    }
-
-    // Проверка за главни групи (NavigationGroup - како Главен Прозор)
-    private static bool IsGroupAllowed(NavigationGroup group, HashSet<string> userPermissions, HashSet<string> roles)
-    {
-        if(roles.Contains("Admin")) return true;
-        if(group.RequiredPermissions==null||group.RequiredPermissions.Count==0) return true;
-
-        return group.RequiredPermissions.All(p => userPermissions.Contains(p.ToString()));
+        return group.Items?.Count>0;
     }
 }

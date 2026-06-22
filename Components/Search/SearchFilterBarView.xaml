@@ -1,0 +1,76 @@
+<ContentView
+
+x:Class="EHMR.Components.Search.SearchFilterBarView"
+
+xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+
+xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+	<Border
+Style="{StaticResource DashboardCard}">
+		<Grid ColumnDefinitions="*,90,170,170,130,120"
+ColumnSpacing="8">
+
+			<!-- SEARCH -->
+
+			<VerticalStackLayout>
+				<Label Text="ПРЕБАРУВАЊЕ" Style="{StaticResource InputLabel}" />
+
+				<Border Style="{StaticResource InputBorderStyle}">
+
+					<Grid ColumnDefinitions="Auto,*">
+						<Label Text="&#xf002;" FontFamily="FASolid"
+TextColor="{StaticResource TextMuted}" />
+
+						<Entry
+
+Grid.Column="1"
+
+Placeholder="Пребарај пациент или доктор..."
+
+Text="{Binding SearchText}" />
+					</Grid>
+				</Border>
+			</VerticalStackLayout>
+
+			<!-- DATE FILTER -->
+
+			<VerticalStackLayout>
+
+				<Label
+
+Text="ФИЛТЕР"
+
+Style="{StaticResource InputLabel}" />
+
+				<CheckBox
+
+IsChecked="{Binding FilterByDate}" />
+			</VerticalStackLayout>
+
+			<DatePicker
+
+Date="{Binding FilterDate}"
+
+IsEnabled="{Binding FilterByDate}" />
+
+			<Picker
+
+ItemsSource="{Binding StatusFilters}"
+
+SelectedItem="{Binding SelectedStatus}" />
+
+			<Button
+
+Text="Исчисти"
+
+Command="{Binding ClearFiltersCommand}" />
+
+			<Button
+
+Text="＋ Нов"
+
+Command="{Binding AddCommand}" />
+		</Grid>
+	</Border>
+</ContentView>

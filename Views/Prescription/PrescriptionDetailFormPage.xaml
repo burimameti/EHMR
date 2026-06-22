@@ -48,105 +48,65 @@
 			</Border>
 
 			<!-- BODY -->
-			<Grid Grid.Row="1" Padding="{StaticResource SpaceLg}" RowDefinitions="Auto,Auto,*" ColumnDefinitions="*,*">
+			<Grid Grid.Row="1"
+      Padding="{StaticResource SpaceLg}"
+      RowDefinitions="Auto,Auto,Auto,*">
 
-				<!-- PATIENT SELECT -->
-				<Border Grid.Row="0" Grid.ColumnSpan="2" Style="{StaticResource ToolbarContainer}">
-					<VerticalStackLayout Spacing="5">
+				<!-- Patient -->
+				<Border Style="{StaticResource ToolbarContainer}">
+					<VerticalStackLayout>
+						<Label Text="Пациент"
+                   Style="{StaticResource InputLabel}" />
 
-						<Label Text="ПАЦИЕНТ" Style="{StaticResource InputLabel}" />
-
-						<Border Style="{StaticResource InputBorderStyle}">
-							<Picker ItemsSource="{Binding PatientsList}"
-                                    SelectedItem="{Binding SelectedPatient}"
-                                    ItemDisplayBinding="{Binding FirstName}"
-                                    IsEnabled="{Binding IsReadOnly, Converter={StaticResource InverseBoolConverter}}" />
-						</Border>
+						<Picker
+                ItemsSource="{Binding PatientsList}"
+                SelectedItem="{Binding SelectedPatient}"
+                ItemDisplayBinding="{Binding FirstName}"
+                IsEnabled="{Binding IsReadOnly, Converter={StaticResource InverseBoolConverter}}" />
 					</VerticalStackLayout>
 				</Border>
 
-				<!-- MEDICINES HEADER -->
-				<Border Grid.Row="1" Grid.ColumnSpan="2"
-                        Style="{StaticResource GridHeaderStyle}">
-					<Grid ColumnDefinitions="*,150,150,120,60" Padding="16,8">
+				<!-- Medication -->
+				<Border Grid.Row="1"
+            Style="{StaticResource ToolbarContainer}">
+					<VerticalStackLayout>
 
-						<Label Text="ЛЕКОВИ" Style="{StaticResource GridHeaderTextStyle}" />
-						<Label Grid.Column="1" Text="ДОЗА" Style="{StaticResource GridHeaderTextStyle}" />
-						<Label Grid.Column="2" Text="ФРЕКВЕНЦИЈА" Style="{StaticResource GridHeaderTextStyle}" />
-						<Label Grid.Column="3" Text="ДЕНА" Style="{StaticResource GridHeaderTextStyle}" />
-						<Label Grid.Column="4" Text="АКЦИИ" Style="{StaticResource GridHeaderTextStyle}" />
-					</Grid>
+						<Label Text="Лек"
+                   Style="{StaticResource InputLabel}" />
+
+						<Entry
+                Text="{Binding Medication}"
+                IsReadOnly="{Binding IsReadOnly}" />
+					</VerticalStackLayout>
 				</Border>
 
-				<!-- MEDICINES LIST -->
-				<CollectionView Grid.Row="2" Grid.ColumnSpan="2"
-                                ItemsSource="{Binding Prescription.Medicines}">
+				<!-- Dosage -->
+				<Border Grid.Row="2"
+            Style="{StaticResource ToolbarContainer}">
+					<VerticalStackLayout>
 
-					<CollectionView.ItemTemplate>
-						<DataTemplate x:DataType="models:PrescriptionMedicine">
+						<Label Text="Дозирање"
+                   Style="{StaticResource InputLabel}" />
 
-							<Border Style="{StaticResource GridRowStyle}">
-								<Grid ColumnDefinitions="*,150,150,120,60" Padding="12,6">
+						<Entry
+                Text="{Binding Dosage}"
+                IsReadOnly="{Binding IsReadOnly}" />
+					</VerticalStackLayout>
+				</Border>
 
-									<!-- MEDICINE NAME -->
-									<Label Text="{Binding Medicine.Name}"
-                                           VerticalOptions="Center"
-                                           Style="{StaticResource Body}" />
+				<!-- Instructions -->
+				<Border Grid.Row="3"
+            Style="{StaticResource ToolbarContainer}">
+					<VerticalStackLayout>
 
-									<!-- DOSAGE -->
-									<Entry Grid.Column="1"
-                                           Text="{Binding Dosage}"
-                                           IsReadOnly="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.IsReadOnly}" />
+						<Label Text="Инструкции"
+                   Style="{StaticResource InputLabel}" />
 
-									<!-- FREQUENCY -->
-									<Entry Grid.Column="2"
-                                           Text="{Binding Frequency}"
-                                           IsReadOnly="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.IsReadOnly}" />
-
-									<!-- DAYS -->
-									<Entry Grid.Column="3"
-                                           Text="{Binding DurationDays}"
-                                           Keyboard="Numeric"
-                                           IsReadOnly="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.IsReadOnly}" />
-
-									<!-- REMOVE -->
-									<Button Grid.Column="4"
-                                            Text="🗑"
-                                            Style="{StaticResource DangerButtonStyle}"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RemoveMedicineCommand}"
-                                            CommandParameter="{Binding .}"
-                                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.CanAddMedicine}" />
-								</Grid>
-							</Border>
-						</DataTemplate>
-					</CollectionView.ItemTemplate>
-				</CollectionView>
-
-				<!-- FOOTER ACTIONS -->
-				<Border Grid.Row="3" Grid.ColumnSpan="2"
-                        BackgroundColor="{StaticResource SurfaceAlt}"
-                        Stroke="{StaticResource Border}"
-                        StrokeThickness="1">
-
-					<Grid Padding="16" ColumnDefinitions="*,Auto">
-
-						<Button Text="＋ Додади лек"
-                                Style="{StaticResource PrimaryButtonStyle}"
-                                Command="{Binding AddMedicineCommand}"
-                                IsVisible="{Binding CanAddMedicine}" />
-
-						<HorizontalStackLayout Grid.Column="1" Spacing="10">
-
-							<Button Text="Откажи"
-                                    Style="{StaticResource SecondaryButtonStyle}"
-                                    Command="{Binding CancelCommand}" />
-
-							<Button Text="Зачувај"
-                                    Style="{StaticResource ActiveTabButtonStyle}"
-                                    Command="{Binding SaveCommand}"
-                                    IsVisible="{Binding IsReadOnly, Converter={StaticResource InverseBoolConverter}}" />
-						</HorizontalStackLayout>
-					</Grid>
+						<Editor
+                HeightRequest="150"
+                Text="{Binding Instructions}"
+                IsReadOnly="{Binding IsReadOnly}" />
+					</VerticalStackLayout>
 				</Border>
 			</Grid>
 		</Grid>

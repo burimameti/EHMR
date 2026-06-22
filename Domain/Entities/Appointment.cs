@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace EHMR.Domain.Entities;
 
@@ -9,14 +10,35 @@ public class Appointment : BaseEntity
         get; set;
     }
 
-    public Patient Patient { get; set; } = null!;
+    public Patient Patient
+    {
+        get; set;
+    }
 
     public Guid DoctorId
     {
         get; set;
     }
 
-    public Doctor Doctor { get; set; } = null!;
+    public Doctor Doctor
+    {
+        get; set;
+    }
+
+    public Guid? TherapyCycleId
+    {
+        get; set;
+    }
+
+    public TherapyCycle? TherapyCycle
+    {
+        get; set;
+    }
+
+    public AppointmentStatus Status
+    {
+        get; set;
+    }
 
     public DateTime ScheduledStart
     {
@@ -28,18 +50,52 @@ public class Appointment : BaseEntity
         get; set;
     }
 
-    public string ReasonForVisit { get; set; } = string.Empty;
-    public Guid? TherapyCycleId
+    public string ReasonForVisit { get; set; } = "";
+
+    public string ClinicalNotes { get; set; } = "";
+
+    public ICollection<AppointmentDiagnosis> AppointmentDiagnoses { get; set; } = [];
+}
+
+public class AppointmentDiagnosis
+{
+    public Guid AppointmentId
     {
         get; set;
     }
-    public TherapyCycle? TherapyCycle
+
+    public Appointment? Appointment
     {
         get; set;
     }
-    public AppointmentStatus Status
+
+    public Guid DiagnosisId
     {
         get; set;
     }
-        = AppointmentStatus.Scheduled;
+
+    public Diagnosis? Diagnosis
+    {
+        get; set;
+    }
+
+    public Guid Mkb10CodeId
+    {
+        get; set;
+    }
+
+    public Mkb10Code Mkb10Code
+    {
+        get; set;
+    }
+
+    public bool IsPrimary
+    {
+        get; set;
+    }
+}
+
+public enum AppointmentStatus
+{
+    Scheduled, CheckedIn, Completed, Cancelled, Missed
 }

@@ -2,12 +2,12 @@
 {
     public class TherapyCycle : BaseEntity
     {
-        public Guid TherapyScheduleId
+        public Guid PatientId
         {
             get; set;
         }
 
-        public TherapySchedule? TherapySchedule
+        public Patient Patient
         {
             get; set;
         }
@@ -15,34 +15,25 @@
         public int CycleNumber
         {
             get; set;
-        } // Sequence tracker: 1, 2, 3...
+        }
 
-        public DateTime PlannedStartDate
+        public TherapyStatus Status
         {
             get; set;
         }
 
-        public DateTime PlannedEndDate
+        public DateTime StartDate
         {
             get; set;
         }
 
-        public DateTime? StatusChangedAt
+        public DateTime? EndDate
         {
             get; set;
         }
 
-        public string? ReasonForMissing
-        {
-            get; set;
-        } // Причина: „Алергиска реакција“, „Не се појавил“
+        public string Notes { get; set; } = "";
 
-        public bool IsEscalatedToMissedGroup
-        {
-            get; set;
-        }
-
-        public TherapyStatus Status { get; set; } = TherapyStatus.Planned;
-        public List<CycleMedicationDose> ScheduledDoses { get; set; } = new();
+        public ICollection<Appointment> Appointments { get; set; } = [];
     }
 }

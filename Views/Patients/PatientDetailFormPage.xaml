@@ -37,7 +37,7 @@
                                 Command="{Binding CancelCommand}"
                                 HeightRequest="40" Padding="16,0" CornerRadius="10" FontSize="12" FontAttributes="Bold" BackgroundColor="#FF0A00" TextColor="#FFFFFF" />
 
-						<Button Text="💾 Зачувај Запис" 
+						<Button Text="💾 Зачувај Запис"
                                 IsVisible="{Binding IsEditMode}"
                                 Command="{Binding SaveCommand}"
                                 HeightRequest="40" Padding="20,0" CornerRadius="10" FontSize="12" FontAttributes="Bold" BackgroundColor="#2563EB" TextColor="#FFFFFF" />
@@ -100,7 +100,7 @@
 									<VerticalStackLayout Grid.ColumnSpan="2" Spacing="6">
 										<Label Text="ПРИМАРНА ДИЈАГНОЗА *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
 										<Border HeightRequest="42" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 10">
-											<Entry Text="{Binding Patient.PrimaryDiagnosis}" IsReadOnly="{Binding IsReadOnly}" Placeholder="Пулмолошка, кардиолошка дијагноза или МКБ-10 код" PlaceholderColor="#94A3B8" FontSize="13" FontAttributes="Bold" TextColor="#2563EB" VerticalOptions="Center" Margin="12,0" />
+											<Entry Text="{Binding Patient.Diagnoses}" IsReadOnly="{Binding IsReadOnly}" Placeholder="Пулмолошка, кардиолошка дијагноза или МКБ-10 код" PlaceholderColor="#94A3B8" FontSize="13" FontAttributes="Bold" TextColor="#2563EB" VerticalOptions="Center" Margin="12,0" />
 										</Border>
 									</VerticalStackLayout>
 
@@ -172,7 +172,7 @@
 								<VerticalStackLayout Spacing="6" Margin="0,4,0,0">
 									<Label Text="ДЕТАЛНИ КЛИНИЧКИ НАПОМЕНИ (АНАМНЕЗА / ИСТОРПИЈА НА БОЛЕСТ)" FontSize="12" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
 									<Border HeightRequest="120" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="8">
-										<Editor Text="{Binding Patient.ClinicalNotes}" IsReadOnly="{Binding IsReadOnly}" Placeholder="Внесете симптоми, терапија или лекарски забелешки..." PlaceholderColor="#94A3B8" FontSize="13" TextColor="#0F172A" VerticalOptions="Fill" HorizontalOptions="Fill" AutoSize="Disabled" />
+										<Editor Text="{Binding Patient.Allergies}" IsReadOnly="{Binding IsReadOnly}" Placeholder="Внесете симптоми, терапија или лекарски забелешки..." PlaceholderColor="#94A3B8" FontSize="13" TextColor="#0F172A" VerticalOptions="Fill" HorizontalOptions="Fill" AutoSize="Disabled" />
 									</Border>
 								</VerticalStackLayout>
 							</VerticalStackLayout>
@@ -218,13 +218,15 @@
         StrokeThickness="1"
         StrokeShape="RoundRectangle 16"
         Margin="0,0,0,0">
-							--><!--<VerticalStackLayout Spacing="12">
-								--><!--<HorizontalStackLayout Spacing="8">
+							-->
+						<!--<VerticalStackLayout Spacing="12">
+								-->
+						<!--<HorizontalStackLayout Spacing="8">
 									<Label Text="⚡" FontSize="16" VerticalOptions="Center" />
 									<Label Text="Брзи Терапевтски Акции" FontSize="14" FontAttributes="Bold" TextColor="#166534" VerticalOptions="Center" />
 								</HorizontalStackLayout>-->
 
-								<!--<Label Text="Автоматско пресметување на слободен слот кај докторот и генерирање на следниот онколошки циклус за овој пациент."
+						<!--<Label Text="Автоматско пресметување на слободен слот кај докторот и генерирање на следниот онколошки циклус за овој пациент."
                FontSize="12"
                TextColor="#1E293B" />
 
@@ -236,8 +238,10 @@
                 FontAttributes="Bold"
                 FontSize="13"
                 CornerRadius="10"
-                Margin="0,4,0,0" />--><!--
-							</VerticalStackLayout>--><!--
+                Margin="0,4,0,0" />-->
+						<!--
+							</VerticalStackLayout>-->
+						<!--
 						</Border>-->
 						<!--<Border BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
 							<VerticalStackLayout Spacing="14">

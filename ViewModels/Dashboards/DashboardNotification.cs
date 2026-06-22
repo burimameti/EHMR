@@ -1,8 +1,9 @@
-﻿using static EHMR.ViewModels.DashboardViewModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using static EHMR.ViewModels.DashboardViewModel;
 
 namespace EHMR.ViewModels;
 
-public class DashboardNotification
+public class DashboardNotification : ObservableObject
 {
     public string Title { get; set; } = string.Empty;
 

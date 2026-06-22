@@ -7,9 +7,17 @@
             get; set;
         }
 
-        public Patient Patient { get; set; } = null!;
+        public Patient? Patient
+        {
+            get; set;
+        }
 
-        public DateTime Date
+        public Guid AppointmentId
+        {
+            get; set;
+        }
+
+        public Appointment? Appointment
         {
             get; set;
         }
@@ -19,27 +27,20 @@
             get; set;
         }
 
-        public Doctor Doctor { get; set; } = null!;
-
-        public Guid? AppointmentId
+        public Doctor? Doctor
         {
             get; set;
         }
 
-        public DateTime PeriodStart
+        public DateTime EncounterDate
         {
             get; set;
         }
 
-        public DateTime? PeriodEnd
-        {
-            get; set;
-        }
+        public string Notes { get; set; } = "";
 
-        public string ChiefComplaint { get; set; } = string.Empty;
-        public string ClinicalNotes { get; set; } = string.Empty;
+        public ICollection<Prescription> Prescriptions { get; set; } = [];
 
-        public string EncounterType { get; set; } = "Outpatient"; // Outpatient, Inpatient, Telehealth
-        public string Status { get; set; } = "InProgress";
+        public ICollection<Diagnosis> Diagnoses { get; set; } = [];
     }
 }

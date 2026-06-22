@@ -1,21 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EHMR.Constants;
-using EHMR.Desktop.Core.ViewModels; // Патеката каде што ти е BaseViewModel
+using EHMR.Desktop.Core.ViewModels;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Services;
-using System;
-using System.Collections.Generic;
+
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EHMR.ViewModels;
 
 // Го наследуваме BaseViewModel за да ги добиеме NavigationService и UserDialogService автоматски
 public partial class UsersViewModel : BaseViewModel<UserAdminDto>
 {
-    private readonly IUserAdminService _userService;
+    private readonly IUserService _userService;
     private readonly ISelectedItemService<UserAdminDto> _userSelectionService;
 
     // Внатрешна листа која ја користи BaseViewModel за филтрирање во меморија
@@ -44,12 +41,12 @@ public partial class UsersViewModel : BaseViewModel<UserAdminDto>
     // CTOR
     // =========================================================
     public UsersViewModel(
-        IUserAdminService userService,
+        IUserService userService,
         INavigationService navigationService,
         IUserDialogService userDialogService,
         IMenuService menuService,
         ISelectedItemService<UserAdminDto> userSelectionService,
-        IAuthStateService authService)
+        IAuthorizationService authService)
         : base(navigationService, userDialogService, menuService, authService)
     {
         _userService=userService;

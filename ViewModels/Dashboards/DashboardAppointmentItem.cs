@@ -13,9 +13,6 @@ public partial class DashboardAppointmentItem : ObservableObject
     private string patientName = string.Empty;
 
     [ObservableProperty]
-    private string diagnosis = string.Empty;
-
-    [ObservableProperty]
     private DateTime scheduledStart;
 
     [ObservableProperty]

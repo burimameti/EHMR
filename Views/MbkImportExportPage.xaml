@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="EHMR.Views.MbkImportExportPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:EHMR.Views"
+
+    mc:Ignorable="d">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Затвори" Clicked="OnCloseClicked" />
+	</ContentPage.ToolbarItems>
+
+	<Grid Margin="16" RowSpacing="12">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<!-- File picker -->
+		<Grid Grid.Row="0" ColumnSpacing="8">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Entry Grid.Column="0"
+                   Text="{Binding SelectedFilePath}"
+                   IsReadOnly="True"
+                   Placeholder="Не е избрана датотека" />
+			<!-- This Button sits directly in the page content (not inside a DataTemplate),
+                 so its BindingContext is already the page's ViewModel — no RelativeSource
+                 needed, and BrowseFileAsync takes no parameter so no CommandParameter either. -->
+			<Button Grid.Column="1"
+                    Text="Избери датотека..."
+                    Command="{Binding BrowseFileCommand}" />
+		</Grid>
+
+		<!-- Status + progress -->
+		<VerticalStackLayout Grid.Row="1" Spacing="6">
+			<Label Text="{Binding StatusText}" />
+			<!-- MAUI's ProgressBar takes a single 0-1 fraction, not Minimum/Maximum/Value -->
+			<ProgressBar Progress="{Binding ImportProgressFraction}"
+                         IsVisible="{Binding IsImporting}" />
+		</VerticalStackLayout>
+
+		<!-- Results -->
+		<Border Grid.Row="2"
+                Stroke="LightGray"
+                StrokeThickness="1"
+                Padding="10"
+                IsVisible="{Binding HasResult}">
+			<Grid RowSpacing="8">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+
+				<HorizontalStackLayout Grid.Row="0" Spacing="20">
+					<HorizontalStackLayout Spacing="4">
+						<Label Text="Додадени:" FontAttributes="Bold" />
+						<Label Text="{Binding InsertedCount}" />
+					</HorizontalStackLayout>
+					<HorizontalStackLayout Spacing="4">
+						<Label Text="Ажурирани:" FontAttributes="Bold" />
+						<Label Text="{Binding UpdatedCount}" />
+					</HorizontalStackLayout>
+					<HorizontalStackLayout Spacing="4">
+						<Label Text="Прескокнати:" FontAttributes="Bold" />
+						<Label Text="{Binding SkippedCount}" />
+					</HorizontalStackLayout>
+				</HorizontalStackLayout>
+
+				<!-- MAUI has no ListBox; CollectionView is the equivalent for a bound list.
+                     x:DataType="x:String" on the template enables compiled bindings for the
+                     "Binding ." path against the plain string items in Errors. -->
+				<CollectionView Grid.Row="1" ItemsSource="{Binding Errors}">
+					<CollectionView.ItemTemplate>
+						<DataTemplate x:DataType="x:String">
+							<Label Text="{Binding .}" Margin="0,2" TextColor="DarkRed" />
+						</DataTemplate>
+					</CollectionView.ItemTemplate>
+				</CollectionView>
+			</Grid>
+		</Border>
+
+		<!-- Actions -->
+		<HorizontalStackLayout Grid.Row="3" Spacing="8" HorizontalOptions="End">
+			<Button Text="Прекини"
+                    Command="{Binding CancelImportCommand}"
+                    IsVisible="{Binding IsImporting}" />
+			<Button Text="Увези"
+                    Command="{Binding ImportCommand}" />
+		</HorizontalStackLayout>
+	</Grid>
+</ContentPage>

@@ -36,8 +36,6 @@ public class Patient : BaseEntity
     public string BloodType { get; set; } = string.Empty;
 
     public string Allergies { get; set; } = string.Empty;
-    public string PrimaryDiagnosis { get; set; } = string.Empty;
-    public string ClinicalNotes { get; set; } = string.Empty;
 
     public PatientStatus Status { get; set; } = PatientStatus.Active;
 
@@ -59,7 +57,7 @@ public class Patient : BaseEntity
         (DateTime.Today.DayOfYear<BirthDate.DayOfYear ? 1 : 0);
 
     public List<Appointment> Appointments { get; set; } = new();
-    public List<TreatmentPlan> TreatmentPlans { get; set; } = new();
+    public ICollection<TherapyCycle> TherapyCycles { get; set; } = [];
     public List<PatientDocument> Documents { get; set; } = new();
     public List<Prescription> Prescriptions { get; set; } = new();
     public List<Diagnosis> Diagnoses { get; set; } = new();

@@ -1,5 +1,4 @@
-﻿using Microsoft.Maui.Controls;
-using EHMR.ViewModels;
+﻿using EHMR.ViewModels.Therapies;
 
 namespace EHMR.Views.Therapies;
 
@@ -17,15 +16,14 @@ public partial class TherapyCyclesPage : ContentPage
         MenuHost.Content=this.menuView;
     }
 
+    // Автоматски повикај ја командата од ViewModel-от за да се наполнат податоците
     protected override async void OnAppearing()
     {
         base.OnAppearing();
 
-        // Автоматски повикај ја командата од ViewModel-от за да се наполнат податоците
-        if(BindingContext is TherapyCyclesViewModel viewModel&&viewModel.LoadDataCommand.CanExecute(null))
+        if(BindingContext is TherapyCyclesViewModel vm)
         {
-            await viewModel.LoadDataCommand.ExecuteAsync(null);
+            await vm.LoadDataAsync();
         }
     }
-
 }

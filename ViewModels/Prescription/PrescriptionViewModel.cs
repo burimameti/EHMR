@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using EHMR.Constants;
 using EHMR.Desktop.Core.ViewModels;
 using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Services;
@@ -13,12 +13,13 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
     private readonly ISelectedItemService<Prescription> _selectedItem;
+
     public PrescriptionListViewModel(
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
         INavigationService navigationService,
         IUserDialogService userDialogService,
         IMenuService menuService,
-        IAuthStateService authService,
+        IAuthorizationService authService,
         ISelectedItemService<Prescription> selectedItem)
         : base(navigationService, userDialogService, menuService, authService)
     {
@@ -51,8 +52,6 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>
             var prescriptions = await db.Prescriptions
                 .AsNoTracking()
                 .Include(x => x.Patient)
-                .Include(x => x.Medicines)
-                    .ThenInclude(m => m.Medicine)
                 .OrderByDescending(x => x.CreatedAt)
                 .ToListAsync();
 

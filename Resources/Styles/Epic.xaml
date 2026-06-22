@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+	<!-- ===================================================== -->
+	<!-- 🎨 CORE PALETTE (Light / EPOC dashboard theme)         -->
+	<!-- ===================================================== -->
+
+	<Color x:Key="EpicBackground">#F6F8FC</Color>
+	<Color x:Key="EpicSurface">#FFFFFF</Color>
+	<Color x:Key="EpicSurface2">#F1F5F9</Color>
+	<Color x:Key="EpicSidebarBackground">#FFFFFF</Color>
+
+	<Color x:Key="EpicText">#0F172A</Color>
+	<Color x:Key="EpicBodyColor">#111827</Color>
+	<Color x:Key="EpicSubtitleColor">#6B7280</Color>
+	<Color x:Key="EpicMuted">#94A3B8</Color>
+
+	<Color x:Key="EpicPrimary">#6366F1</Color>
+	<Color x:Key="EpicPrimaryDark">#4F46E5</Color>
+	<Color x:Key="EpicPrimaryLight">#EEF2FF</Color>
+	<Color x:Key="EpicSidebarSelected">#EEF2FF</Color>
+
+	<!-- Status -->
+	<Color x:Key="EpicSuccess">#22C55E</Color>
+	<Color x:Key="EpicSuccessBackground">#DCFCE7</Color>
+
+	<Color x:Key="EpicWarning">#F59E0B</Color>
+	<Color x:Key="EpicWarningBackground">#FEF3C7</Color>
+
+	<Color x:Key="EpicDanger">#EF4444</Color>
+	<Color x:Key="EpicDangerBackground">#FEE2E2</Color>
+
+	<Color x:Key="EpicInfo">#3B82F6</Color>
+	<Color x:Key="EpicInfoBackground">#DBEAFE</Color>
+
+	<Color x:Key="EpicBorder">#E5E7EB</Color>
+	<Color x:Key="EpicDivider">#E5E7EB</Color>
+	<Color x:Key="EpicBorderStrong">#CBD5E1</Color>
+
+	<Color x:Key="EpicShadowColor">#14000000</Color>
+	<Color x:Key="EpicHighlight">#6366F1</Color>
+	<Color x:Key="EpicFocus">#A5B4FC</Color>
+
+	<!-- Chart accent colors -->
+	<Color x:Key="ChartBlue">#3B82F6</Color>
+	<Color x:Key="ChartGreen">#22C55E</Color>
+	<Color x:Key="ChartOrange">#F59E0B</Color>
+	<Color x:Key="ChartRed">#EF4444</Color>
+	<Color x:Key="ChartPurple">#8B5CF6</Color>
+	<Color x:Key="ChartIndigo">#6366F1</Color>
+
+	<!-- Type scale -->
+	<x:Double x:Key="EpicTitleSize">26</x:Double>
+	<x:Double x:Key="EpicSubtitleSize">14</x:Double>
+	<x:Double x:Key="EpicBodySize">15</x:Double>
+	<x:Double x:Key="EpicButtonSize">15</x:Double>
+
+	<!-- ===================================================== -->
+	<!-- 🌫 SHADOWS                                             -->
+	<!-- ===================================================== -->
+
+	<Shadow x:Key="EpicSmallShadow" Brush="#12000000" Radius="5" Offset="0,2" />
+	<Shadow x:Key="EpicMediumShadow" Brush="#18000000" Radius="10" Offset="0,3" />
+	<Shadow x:Key="EpicLargeShadow" Brush="#20000000" Radius="16" Offset="0,5" />
+
+	<!-- ===================================================== -->
+	<!-- 🪟 SHELL / TOP BAR / SIDEBAR                           -->
+	<!-- ===================================================== -->
+
+	<Style x:Key="EpicShell" TargetType="Shell">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface}" />
+		<Setter Property="ForegroundColor" Value="{StaticResource EpicText}" />
+		<Setter Property="Shell.NavBarIsVisible" Value="True" />
+	</Style>
+
+	<Style x:Key="EpicTopBar" TargetType="Grid">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface}" />
+		<Setter Property="Padding" Value="20,14" />
+	</Style>
+
+	<Style x:Key="EpicSidebar" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSidebarBackground}" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="Padding" Value="12" />
+	</Style>
+
+	<!-- Menu item (sidebar link) -->
+	<Style x:Key="EpicMenuItem" TargetType="Grid">
+		<Setter Property="Padding" Value="14,10" />
+		<Setter Property="ColumnSpacing" Value="12" />
+		<Setter Property="Margin" Value="0,2" />
+	</Style>
+
+	<Style x:Key="EpicMenuItemSelected" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSidebarSelected}" />
+		<Setter Property="Padding" Value="12" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 14" />
+	</Style>
+
+	<!-- Alias: same selected pill, usable on a wrapping Border instead of inline in the menu Grid -->
+	<Style x:Key="EpicSidebarCard" TargetType="Border" BasedOn="{StaticResource EpicMenuItemSelected}" />
+
+	<Style x:Key="EpicMenuText" TargetType="Label">
+		<Setter Property="FontSize" Value="15" />
+		<Setter Property="TextColor" Value="{StaticResource EpicBodyColor}" />
+		<Setter Property="VerticalTextAlignment" Value="Center" />
+	</Style>
+
+	<Style x:Key="EpicMenuSelectedText" TargetType="Label" BasedOn="{StaticResource EpicMenuText}">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource EpicPrimary}" />
+	</Style>
+
+	<Style x:Key="EpicMenuIcon" TargetType="Image">
+		<Setter Property="HeightRequest" Value="22" />
+		<Setter Property="WidthRequest" Value="22" />
+		<Setter Property="Aspect" Value="AspectFit" />
+	</Style>
+
+	<Style x:Key="EpicShortcutsLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="11" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource EpicMuted}" />
+		<Setter Property="CharacterSpacing" Value="0.8" />
+		<Setter Property="Margin" Value="14,16,0,4" />
+	</Style>
+
+	<!-- Profile / avatar in top bar -->
+	<Style x:Key="EpicProfileCard" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface}" />
+		<Setter Property="Padding" Value="14" />
+		<Setter Property="Stroke" Value="{StaticResource EpicBorder}" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 18" />
+	</Style>
+
+	<Style x:Key="EpicAvatar" TargetType="Border">
+		<Setter Property="WidthRequest" Value="40" />
+		<Setter Property="HeightRequest" Value="40" />
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicPrimaryLight}" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="StrokeShape" Value="Ellipse" />
+	</Style>
+
+	<Style x:Key="EpicNotificationDot" TargetType="Border">
+		<Setter Property="WidthRequest" Value="10" />
+		<Setter Property="HeightRequest" Value="10" />
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicDanger}" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="StrokeShape" Value="Ellipse" />
+	</Style>
+
+	<Style x:Key="EpicMenuCounter" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicPrimary}" />
+		<Setter Property="Padding" Value="4" />
+		<Setter Property="MinimumWidthRequest" Value="22" />
+		<Setter Property="MinimumHeightRequest" Value="22" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 11" />
+	</Style>
+
+	<Style x:Key="EpicSearchContainer" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface2}" />
+		<Setter Property="Stroke" Value="{StaticResource EpicBorder}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Padding" Value="14,4" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+	</Style>
+
+	<!-- ===================================================== -->
+	<!-- 🧱 CARDS (base + variants)                             -->
+	<!-- ===================================================== -->
+
+	<Style x:Key="EpicCard" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface}" />
+		<Setter Property="Stroke" Value="{StaticResource EpicBorder}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 16" />
+		<Setter Property="Padding" Value="20" />
+		<Setter Property="Shadow" Value="{StaticResource EpicSmallShadow}" />
+	</Style>
+
+	<!-- KPI stat card (Total Projects / Users / Revenue) -->
+	<Style x:Key="EpicKpiCard" TargetType="Border" BasedOn="{StaticResource EpicCard}">
+		<Setter Property="MinimumHeightRequest" Value="130" />
+	</Style>
+
+	<Style x:Key="EpicKpiIconCircle" TargetType="Border">
+		<Setter Property="WidthRequest" Value="44" />
+		<Setter Property="HeightRequest" Value="44" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="HorizontalOptions" Value="Start" />
+	</Style>
+
+	<Style x:Key="EpicKpiLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="TextColor" Value="{StaticResource EpicSubtitleColor}" />
+	</Style>
+
+	<Style x:Key="EpicKpiValue" TargetType="Label">
+		<Setter Property="FontSize" Value="30" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource EpicText}" />
+	</Style>
+
+	<Style x:Key="EpicKpiDeltaPositive" TargetType="Label">
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource EpicSuccess}" />
+	</Style>
+
+	<Style x:Key="EpicKpiDeltaNegative" TargetType="Label">
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource EpicDanger}" />
+	</Style>
+
+	<!-- Chart / panel card (Project Activity, Tasks Overview) -->
+	<Style x:Key="EpicChartCard" TargetType="Border" BasedOn="{StaticResource EpicCard}">
+		<Setter Property="Padding" Value="24" />
+		<Setter Property="MinimumHeightRequest" Value="320" />
+	</Style>
+
+	<Style x:Key="EpicPanelCard" TargetType="Border" BasedOn="{StaticResource EpicCard}">
+		<Setter Property="Padding" Value="24" />
+	</Style>
+
+	<Style x:Key="EpicCompactCard" TargetType="Border" BasedOn="{StaticResource EpicCard}">
+		<Setter Property="Padding" Value="12" />
+	</Style>
+
+	<!-- List row card used inside panels (Recent Projects / Team Activity / Upcoming Events) -->
+	<Style x:Key="EpicListRow" TargetType="Grid">
+		<Setter Property="Padding" Value="0,10" />
+		<Setter Property="ColumnSpacing" Value="12" />
+	</Style>
+
+	<Style x:Key="EpicGridRowCard" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface}" />
+		<Setter Property="Stroke" Value="{StaticResource EpicDivider}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Padding" Value="15" />
+		<Setter Property="Margin" Value="0,3" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 14" />
+	</Style>
+
+	<!-- ===================================================== -->
+	<!-- 🏷 SECTION / PAGE HEADERS                               -->
+	<!-- ===================================================== -->
+
+	<Style x:Key="EpicPageTitle" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource EpicTitleSize}" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource EpicText}" />
+	</Style>
+
+	<Style x:Key="EpicPageSubtitle" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource EpicSubtitleSize}" />
+		<Setter Property="TextColor" Value="{StaticResource EpicSubtitleColor}" />
+	</Style>
+
+	<Style x:Key="EpicSectionTitle" TargetType="Label">
+		<Setter Property="FontSize" Value="18" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource EpicText}" />
+	</Style>
+
+	<Style x:Key="EpicSectionSubtitle" TargetType="Label">
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="TextColor" Value="{StaticResource EpicSubtitleColor}" />
+	</Style>
+
+	<!-- ===================================================== -->
+	<!-- 🔘 BUTTONS                                              -->
+	<!-- ===================================================== -->
+
+	<Style x:Key="EpicPrimaryButton" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicPrimary}" />
+		<Setter Property="TextColor" Value="White" />
+		<Setter Property="CornerRadius" Value="12" />
+		<Setter Property="HeightRequest" Value="48" />
+		<Setter Property="FontSize" Value="{StaticResource EpicButtonSize}" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="Padding" Value="20,0" />
+	</Style>
+
+	<Style x:Key="EpicSecondaryButton" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicPrimaryLight}" />
+		<Setter Property="TextColor" Value="{StaticResource EpicPrimary}" />
+		<Setter Property="CornerRadius" Value="12" />
+		<Setter Property="HeightRequest" Value="48" />
+		<Setter Property="FontAttributes" Value="Bold" />
+	</Style>
+
+	<Style x:Key="EpicGhostButton" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="BorderColor" Value="{StaticResource EpicBorder}" />
+		<Setter Property="BorderWidth" Value="1" />
+		<Setter Property="TextColor" Value="{StaticResource EpicBodyColor}" />
+		<Setter Property="CornerRadius" Value="12" />
+		<Setter Property="HeightRequest" Value="48" />
+	</Style>
+
+	<Style x:Key="EpicSuccessButton" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSuccess}" />
+		<Setter Property="TextColor" Value="White" />
+		<Setter Property="CornerRadius" Value="12" />
+		<Setter Property="HeightRequest" Value="48" />
+		<Setter Property="FontAttributes" Value="Bold" />
+	</Style>
+
+	<Style x:Key="EpicDangerButton" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicDanger}" />
+		<Setter Property="TextColor" Value="White" />
+		<Setter Property="CornerRadius" Value="12" />
+		<Setter Property="HeightRequest" Value="48" />
+		<Setter Property="FontAttributes" Value="Bold" />
+	</Style>
+
+	<Style x:Key="EpicSmallButton" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicPrimary}" />
+		<Setter Property="TextColor" Value="White" />
+		<Setter Property="CornerRadius" Value="10" />
+		<Setter Property="HeightRequest" Value="36" />
+		<Setter Property="FontSize" Value="13" />
+	</Style>
+
+	<Style x:Key="EpicIconButton" TargetType="ImageButton">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface2}" />
+		<Setter Property="HeightRequest" Value="40" />
+		<Setter Property="WidthRequest" Value="40" />
+		<Setter Property="Padding" Value="8" />
+		<Setter Property="CornerRadius" Value="10" />
+	</Style>
+
+	<Style x:Key="EpicFilterButton" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface}" />
+		<Setter Property="BorderColor" Value="{StaticResource EpicBorder}" />
+		<Setter Property="BorderWidth" Value="1" />
+		<Setter Property="TextColor" Value="{StaticResource EpicBodyColor}" />
+		<Setter Property="CornerRadius" Value="10" />
+		<Setter Property="HeightRequest" Value="38" />
+		<Setter Property="FontSize" Value="13" />
+	</Style>
+
+	<!-- ===================================================== -->
+	<!-- 🏷 BADGES / TAGS / CHIPS                                -->
+	<!-- ===================================================== -->
+
+	<Style x:Key="EpicBadge" TargetType="Border">
+		<Setter Property="Padding" Value="10,4" />
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicPrimaryLight}" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="HorizontalOptions" Value="Start" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 50" />
+	</Style>
+
+	<Style x:Key="EpicSuccessBadge" TargetType="Border" BasedOn="{StaticResource EpicBadge}">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSuccessBackground}" />
+	</Style>
+
+	<Style x:Key="EpicWarningBadge" TargetType="Border" BasedOn="{StaticResource EpicBadge}">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicWarningBackground}" />
+	</Style>
+
+	<Style x:Key="EpicDangerBadge" TargetType="Border" BasedOn="{StaticResource EpicBadge}">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicDangerBackground}" />
+	</Style>
+
+	<Style x:Key="EpicInfoBadge" TargetType="Border" BasedOn="{StaticResource EpicBadge}">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicInfoBackground}" />
+	</Style>
+
+	<Style x:Key="EpicBadgeLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="FontAttributes" Value="Bold" />
+	</Style>
+
+	<Style x:Key="EpicTag" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface2}" />
+		<Setter Property="Stroke" Value="{StaticResource EpicBorder}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Padding" Value="10,5" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 10" />
+	</Style>
+
+	<Style x:Key="EpicChip" TargetType="Border" BasedOn="{StaticResource EpicTag}" />
+
+	<!-- ===================================================== -->
+	<!-- 📊 DATA GRID / LISTS / TABLES                          -->
+	<!-- ===================================================== -->
+
+	<Style x:Key="EpicDataGrid" TargetType="CollectionView">
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="SelectionMode" Value="Single" />
+	</Style>
+
+	<Style x:Key="EpicGridHeader" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="TextColor" Value="{StaticResource EpicSubtitleColor}" />
+	</Style>
+
+	<Style x:Key="EpicGridCell" TargetType="Label">
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="TextColor" Value="{StaticResource EpicBodyColor}" />
+	</Style>
+
+	<!-- ===================================================== -->
+	<!-- 📈 PROGRESS BARS (Recent Projects %)                   -->
+	<!-- ===================================================== -->
+
+	<Style x:Key="EpicProgressTrack" TargetType="Border">
+		<Setter Property="HeightRequest" Value="6" />
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface2}" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 4" />
+	</Style>
+
+	<Style x:Key="EpicProgressBarFill" TargetType="BoxView">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicPrimary}" />
+		<Setter Property="HeightRequest" Value="6" />
+		<Setter Property="CornerRadius" Value="4" />
+	</Style>
+
+	<Style x:Key="EpicProgressLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource EpicText}" />
+	</Style>
+
+	<!-- ===================================================== -->
+	<!-- 🧩 ICON CONTAINERS                                      -->
+	<!-- ===================================================== -->
+
+	<Style x:Key="EpicIconContainer" TargetType="Border">
+		<Setter Property="WidthRequest" Value="44" />
+		<Setter Property="HeightRequest" Value="44" />
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicPrimaryLight}" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+	</Style>
+
+	<Style x:Key="EpicIconCircle" TargetType="Border">
+		<Setter Property="WidthRequest" Value="40" />
+		<Setter Property="HeightRequest" Value="40" />
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface2}" />
+		<Setter Property="StrokeShape" Value="Ellipse" />
+		<Setter Property="HorizontalOptions" Value="Center" />
+		<Setter Property="VerticalOptions" Value="Center" />
+	</Style>
+
+	<!-- ===================================================== -->
+	<!-- 🧱 INPUTS                                               -->
+	<!-- ===================================================== -->
+
+	<Style x:Key="EpicInputContainer" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface}" />
+		<Setter Property="Padding" Value="12,0" />
+		<Setter Property="Stroke" Value="{StaticResource EpicBorder}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="MinimumHeightRequest" Value="50" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+	</Style>
+
+	<Style x:Key="EpicEntry" TargetType="Entry">
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="TextColor" Value="{StaticResource EpicBodyColor}" />
+		<Setter Property="PlaceholderColor" Value="{StaticResource EpicMuted}" />
+	</Style>
+
+	<Style x:Key="EpicSearchBar" TargetType="SearchBar">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface2}" />
+		<Setter Property="TextColor" Value="{StaticResource EpicBodyColor}" />
+		<Setter Property="PlaceholderColor" Value="{StaticResource EpicMuted}" />
+		<Setter Property="HeightRequest" Value="46" />
+	</Style>
+
+	<Style x:Key="EpicEditor" TargetType="Editor">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface}" />
+		<Setter Property="TextColor" Value="{StaticResource EpicBodyColor}" />
+		<Setter Property="PlaceholderColor" Value="{StaticResource EpicMuted}" />
+		<Setter Property="AutoSize" Value="TextChanges" />
+		<Setter Property="MinimumHeightRequest" Value="120" />
+	</Style>
+
+	<Style x:Key="EpicPicker" TargetType="Picker">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface}" />
+		<Setter Property="TextColor" Value="{StaticResource EpicBodyColor}" />
+		<Setter Property="TitleColor" Value="{StaticResource EpicSubtitleColor}" />
+		<Setter Property="HeightRequest" Value="48" />
+	</Style>
+
+	<Style x:Key="EpicDatePicker" TargetType="DatePicker">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface}" />
+		<Setter Property="TextColor" Value="{StaticResource EpicBodyColor}" />
+		<Setter Property="HeightRequest" Value="48" />
+	</Style>
+
+	<Style x:Key="EpicCheckBox" TargetType="CheckBox">
+		<Setter Property="Color" Value="{StaticResource EpicPrimary}" />
+	</Style>
+
+	<Style x:Key="EpicSwitch" TargetType="Switch">
+		<Setter Property="OnColor" Value="{StaticResource EpicPrimary}" />
+	</Style>
+
+	<!-- ===================================================== -->
+	<!-- 🔔 NOTIFICATIONS                                        -->
+	<!-- ===================================================== -->
+
+	<Style x:Key="EpicNotificationCard" TargetType="Border" BasedOn="{StaticResource EpicCard}">
+		<Setter Property="Padding" Value="14" />
+	</Style>
+
+	<Style x:Key="EpicNotificationTitle" TargetType="Label">
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource EpicText}" />
+	</Style>
+
+	<Style x:Key="EpicNotificationText" TargetType="Label">
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="TextColor" Value="{StaticResource EpicSubtitleColor}" />
+	</Style>
+
+	<!-- ===================================================== -->
+	<!-- 💬 POPUP / DIALOG                                       -->
+	<!-- ===================================================== -->
+
+	<Style x:Key="EpicPopupOverlay" TargetType="Grid">
+		<Setter Property="BackgroundColor" Value="#66000000" />
+	</Style>
+
+	<Style x:Key="EpicPopupContainer" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicSurface}" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 18" />
+		<Setter Property="Padding" Value="22" />
+		<Setter Property="Margin" Value="30" />
+		<Setter Property="Shadow" Value="{StaticResource EpicLargeShadow}" />
+	</Style>
+
+	<Style x:Key="EpicDialogTitle" TargetType="Label">
+		<Setter Property="FontSize" Value="18" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource EpicText}" />
+	</Style>
+
+	<Style x:Key="EpicDialogMessage" TargetType="Label">
+		<Setter Property="TextColor" Value="{StaticResource EpicSubtitleColor}" />
+		<Setter Property="FontSize" Value="14" />
+	</Style>
+
+	<Style x:Key="EpicDialogButton" TargetType="Button" BasedOn="{StaticResource EpicSecondaryButton}" />
+
+	<!-- ===================================================== -->
+	<!-- 📅 CALENDAR / EVENTS                                    -->
+	<!-- ===================================================== -->
+
+	<Style x:Key="EpicEventDateBadge" TargetType="Border">
+		<Setter Property="WidthRequest" Value="52" />
+		<Setter Property="HeightRequest" Value="52" />
+		<Setter Property="BackgroundColor" Value="{StaticResource EpicPrimaryLight}" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+	</Style>
+
+	<Style x:Key="EpicEventMonth" TargetType="Label">
+		<Setter Property="FontSize" Value="11" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource EpicPrimary}" />
+		<Setter Property="HorizontalTextAlignment" Value="Center" />
+	</Style>
+
+	<Style x:Key="EpicEventDay" TargetType="Label">
+		<Setter Property="FontSize" Value="16" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource EpicPrimary}" />
+		<Setter Property="HorizontalTextAlignment" Value="Center" />
+	</Style>
+
+	<Style x:Key="EpicEventTitle" TargetType="Label">
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource EpicText}" />
+	</Style>
+
+	<Style x:Key="EpicEventTime" TargetType="Label">
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="TextColor" Value="{StaticResource EpicSubtitleColor}" />
+	</Style>
+
+</ResourceDictionary>

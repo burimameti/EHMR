@@ -1,0 +1,43 @@
+<Grid
+xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+x:Class="EHMR.Components.PageHeader">
+
+	<Border
+
+Style="{StaticResource DashboardCard}"
+
+Padding="16">
+
+		<Grid ColumnDefinitions="*,Auto">
+
+			<VerticalStackLayout>
+
+				<Label
+Text="{Binding Title}"
+Style="{StaticResource MedicalSectionTitle}" />
+
+				<Label
+Text="{Binding Subtitle}"
+Style="{StaticResource MutedText}" />
+			</VerticalStackLayout>
+
+			<Border
+
+Grid.Column="1"
+
+BackgroundColor="{StaticResource SurfaceAlt}"
+
+Padding="12,6"
+
+StrokeThickness="0"
+
+StrokeShape="RoundRectangle 10">
+
+				<Label
+Text="{Binding UserName}"
+FontAttributes="Bold" />
+			</Border>
+		</Grid>
+	</Border>
+</Grid>

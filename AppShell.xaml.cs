@@ -1,8 +1,7 @@
-﻿using EHMR.Constants;
+﻿using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
-using EHMR.Services;
-using EHMR.ViewModels;
 using EHMR.Views;
+using EHMR.Views.Appointments;
 using EHMR.Views.Prescription;
 using EHMR.Views.Therapies;
 
@@ -12,66 +11,62 @@ public partial class AppShell : Shell
 {
     private readonly IAuthStateService _auth;
     private readonly INavigationCoordinator _coordinator;
-    private readonly IAuthorizationPolicy _policy;
+    private readonly IAuthorizationService _authorization;
     private bool _isNavigating;
 
-    // СЕГА КОРИСТИМЕ ЧИСТ КЛЕШ БЕЗ ДУПЛИРАЊА
     public AppShell(
-        IAuthStateService auth,
-        INavigationCoordinator coordinator,
-        IAuthorizationPolicy policy)
+        IAuthStateService auth, IAuthorizationService authorization,
+        INavigationCoordinator coordinator)
     {
         InitializeComponent();
 
         _auth=auth;
         _coordinator=coordinator;
-        _policy=policy;
 
         RegisterRoutes();
         SetupCoordinator();
 
-        // Се претплатуваме САМО ЕДНАШ
         _auth.AuthStateChanged+=OnAuthStateChanged;
     }
 
-    // Овој метод ќе го повикаме безбедно ОД НАДВОР дури откако Shell ќе се прикаже на екран
+    // =========================
+    // INITIAL NAVIGATION
+    // =========================
     public async Task HandleInitialNavigationAsync()
     {
-        ApplyAuthorizationRules();
         await HandleAuthChangedAsync();
     }
 
+    // =========================
+    // AUTH CHANGED
+    // =========================
     private async void OnAuthStateChanged(object? sender, EventArgs e)
     {
         await MainThread.InvokeOnMainThreadAsync(async () =>
         {
-            ApplyAuthorizationRules();
             await HandleAuthChangedAsync();
         });
     }
 
-    private void ApplyAuthorizationRules()
-    {
-        foreach(var item in Items)
-        {
-            //if(item is ShellItem shellItem)
-            //{
-            //    shellItem.IsVisible=_policy.CanAccess(shellItem.Route);
-            //}
-        }
-    }
-
+    // =========================
+    // CENTRAL NAVIGATION PIPE
+    // =========================
     private void SetupCoordinator()
     {
         _coordinator.RegisterHandler(async route =>
         {
-            if(_isNavigating) return;
+            if(_isNavigating)
+                return;
+            if(!_authorization.CanAccessRoute(route))
+                return;
             try
             {
                 _isNavigating=true;
+
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
                     await GoToAsync(route);
+
                     FlyoutIsPresented=false;
                 });
             }
@@ -82,17 +77,22 @@ public partial class AppShell : Shell
         });
     }
 
+    // =========================
+    // LOGIN / LOGOUT FLOW
+    // =========================
     private async Task HandleAuthChangedAsync()
     {
-        // Ако уште не е вчитан хандлерот во оперативниот систем, навигирај преку оваа (this) инстанца, а не преку Shell.Current
-        if(_isNavigating) return;
+        if(_isNavigating)
+            return;
 
         try
         {
             _isNavigating=true;
-            var target = _auth.IsAuthenticated ? "//dashboard" : "//login";
 
-            // Наместо Shell.Current, користиме директно GoToAsync бидејќи сме внатре во самата Shell класа
+            var target = _auth.IsAuthenticated
+                ? "//dashboard"
+                : "//login";
+
             await GoToAsync(target);
         }
         finally
@@ -101,56 +101,54 @@ public partial class AppShell : Shell
         }
     }
 
+    // =========================
+    // ROUTE REGISTRATION
+    // =========================
     private void RegisterRoutes()
     {
-        // =========================
-        // DASHBOARD
-        // =========================
+        // Dashboard
         Routing.RegisterRoute(AppRoutes.Dashboard, typeof(DashboardView));
 
-        // =========================
-        // PATIENTS
-        // =========================
-        Routing.RegisterRoute("patientslist", typeof(PatientListPage));
-        Routing.RegisterRoute("patientsdetail", typeof(PatientDetailFormPage));
+        // Patients
+        Routing.RegisterRoute(AppRoutes.Patients.List, typeof(PatientListPage));
+        Routing.RegisterRoute(AppRoutes.Patients.Detail, typeof(PatientDetailFormPage));
 
-        // =========================
-        // APPOINTMENTS
-        // =========================
-        Routing.RegisterRoute("appointmentslist", typeof(AppointmentListPage));
-        Routing.RegisterRoute("appointmentsdetail", typeof(AppointmentDetailFormPage));
+        // Appointments
+        Routing.RegisterRoute(AppRoutes.Appointments.List, typeof(AppointmentListPage));
+        Routing.RegisterRoute(AppRoutes.Appointments.Detail, typeof(AppointmentDetailPage));
 
-        // =========================
-        // MEDICINE / PHARMACY
-        // =========================
+        // Medicines
         Routing.RegisterRoute(AppRoutes.Medicines.List, typeof(MedicineListPage));
         Routing.RegisterRoute(AppRoutes.Medicines.Detail, typeof(MedicineDetailFormPage));
+
+        // Prescriptions
         Routing.RegisterRoute(AppRoutes.Prescriptions.List, typeof(PrescriptionListPage));
-        Routing.RegisterRoute(AppRoutes.Prescriptions.Detail, typeof(PrescriptionDetailFormPage));
-        // =========================
-        // CALENDAR / ADMIN UI
-        // =========================
+
+        // Calendar
         Routing.RegisterRoute(AppRoutes.Calendar, typeof(CalendarDashboardPage));
+
+        // Reports
         Routing.RegisterRoute(AppRoutes.Reports.List, typeof(ReportPage));
+
+        // Users
         Routing.RegisterRoute(AppRoutes.Users.List, typeof(UsersPage));
-        Routing.RegisterRoute(AppRoutes.Users.Detail, typeof(UserEditPage));
 
-        // =========================
-        // THERAPY MODULE
-        // =========================
-        Routing.RegisterRoute("therapylist", typeof(PlanPage));
-        Routing.RegisterRoute("therapydetails", typeof(TherapyDetailsPage));
-        Routing.RegisterRoute(AppRoutes.TherapyCycle.List, typeof(TherapyCyclesPage));
-        // Routing.RegisterRoute(AppRoutes.TherapyCycle.Details, typeof(TherapyCycleDetailsPage));
-        // =========================
-        // PROTOCOLS
-        // =========================
-        Routing.RegisterRoute("protocolslist", typeof(ProtocolRegistryPage));
-        Routing.RegisterRoute("protocolsdetails", typeof(ProtocolDetailFormPage));
+        // Therapy
+        Routing.RegisterRoute(AppRoutes.Therapy.Detail, typeof(TherapyDetailsPage));
+        Routing.RegisterRoute(AppRoutes.Therapy.List, typeof(TherapyCyclesPage));
 
-        // =========================
-        // RULES / CONFIGURATION
-        // =========================
-        Routing.RegisterRoute("rulesschedule-medicine", typeof(ScheduleMedicineRuleDetailFormPage));
+        // Protocols
+        Routing.RegisterRoute(AppRoutes.Protocols.List, typeof(ProtocolRegistryPage));
+        Routing.RegisterRoute(AppRoutes.Protocols.Detail, typeof(ProtocolDetailFormPage));
+
+        // MKB
+        Routing.RegisterRoute(AppRoutes.Mkb10Codes.List, typeof(MbkImportExportPage));
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        _auth.AuthStateChanged-=OnAuthStateChanged;
     }
 }

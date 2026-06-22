@@ -46,6 +46,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		    <PackageReference Include="ClosedXML" Version="0.105.0" />
 		    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 
     <!-- MAUI UI TOOLKIT -->
@@ -73,7 +74,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Views\Appointments\AppointmentDetailFormPage.xaml">
+	  <MauiXaml Update="Components\PageHeader.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Components\Search\SearchFilterBarView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Styles\Epic.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Appointments\AppointmentDetailPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\AppointmentListPage.xaml">
@@ -94,6 +104,9 @@
 	  <MauiXaml Update="Views\LoginView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\MbkImportExportPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Medicine\MedicineDetailFormPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -112,9 +125,6 @@
 	  <MauiXaml Update="Views\Patients\PatientListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Prescription\PrescriptionDetailFormPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Views\Prescription\PrescriptionListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -130,16 +140,10 @@
 	  <MauiXaml Update="Views\Therapies\ProtocolRegistryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Therapies\ScheduleMedicineRuleDetailFormPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Views\Therapies\TherapyCyclesPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Therapies\TherapyDetailsPagе.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Therapies\PlanPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\UserEditPage.xaml">
@@ -151,8 +155,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Components\PageHeader.xaml.cs">
+	    <DependentUpon>PageHeader.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\AppointmentListPage.xaml.cs">
 	    <DependentUpon>AppointmentListPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Appointments\AppointmentDetailPage.xaml.cs">
+	    <DependentUpon>AppointmentDetailPage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\Patients\PatientListPage.xaml.cs">
 	    <DependentUpon>PatientListPage.xaml</DependentUpon>
@@ -172,9 +182,6 @@
 	  <Compile Update="Views\Therapies\TherapyDetailsPagе.xaml.cs">
 	    <DependentUpon>TherapyDetailsPagе.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Therapies\PlanPage.xaml.cs">
-	    <DependentUpon>PlanPage.xaml</DependentUpon>
-	  </Compile>
 	  <Compile Update="Views\UserEditPage.xaml.cs">
 	    <DependentUpon>UserEditPage.xaml</DependentUpon>
 	  </Compile>
@@ -187,6 +194,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Constants\" />
+	  <Folder Include="Shared\" />
 	  <Folder Include="Views\Ter\" />
 	</ItemGroup>
 

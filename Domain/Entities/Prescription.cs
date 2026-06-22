@@ -9,24 +9,32 @@
 
         public Patient Patient { get; set; } = null!;
 
-        public List<PrescriptionMedicine> Medicines { get; set; } = new();
+        public Encounter? Encounter
+        {
+            get; set;
+        }
+
+        public Guid? EncounterId
+        {
+            get; set;
+        }
 
         public string Dosage
         {
             get;
-            internal set;
+            set;
         }
 
         public string Medication
         {
             get;
-            internal set;
+            set;
         }
 
         public string Instructions
         {
             get;
-            internal set;
+            set;
         }
     }
 }

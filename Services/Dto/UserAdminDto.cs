@@ -1,4 +1,5 @@
 ﻿using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
 
 namespace EHMR.Services
 {

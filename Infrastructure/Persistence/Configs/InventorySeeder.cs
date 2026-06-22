@@ -6,7 +6,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
 {
     public class InventorySeeder : IEntitySeeder
     {
-        public int Order => 12;
+        public int Order => 54;
 
         public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
         {
@@ -18,7 +18,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 context.Inventories.Add(
                     new Inventory
                     {
-                        Id=SeedIds.Inventory1,
+                        Id=Guid.NewGuid(),
                         MedicineId=SeedIds.Med1,
                         InitialStock=500,
                         CurrentStock=500,

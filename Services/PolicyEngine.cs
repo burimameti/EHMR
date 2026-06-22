@@ -1,43 +1,52 @@
-﻿using EHMR.Constants;
-using EHMR.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//using EHMR.Domain.Entities.Rbac;
+//using EHMR.Domain.Interfaces;
 
-namespace EHMR.Services
-{
-    public class PolicyEngine : IPolicyEngine
-    {
-        public bool HasPermission(IEnumerable<string> userPermissions, string permission)
-        {
-            if(userPermissions==null)
-                return false;
+//namespace EHMR.Services;
 
-            return userPermissions.Contains(permission, StringComparer.OrdinalIgnoreCase);
-        }
+//public class PolicyEngine : IPolicyEngine
+//{
+//    public bool HasPermission(IEnumerable<string>? userPermissions, string permission)
+//    {
+//        if(userPermissions==null) return false;
 
-        public bool CanAccessModule(IEnumerable<string> userPermissions, string module)
-        {
-            if(userPermissions==null)
-                return false;
+//        return userPermissions.Contains(permission, StringComparer.OrdinalIgnoreCase);
+//    }
 
-            return PolicyRegistry.Policies.Any(p =>
-                p.Module.Equals(module, StringComparison.OrdinalIgnoreCase)&&
-                userPermissions.Contains(p.Permission, StringComparer.OrdinalIgnoreCase));
-        }
+//    public bool CanAccessModule(IEnumerable<string>? userPermissions, string module)
+//    {
+//        if(userPermissions==null) return false;
 
-        public IReadOnlyList<string> ResolveModules(IEnumerable<string> userPermissions)
-        {
-            if(userPermissions==null)
-                return new List<string>();
+//        // module is derived from permissions convention: "patients.*"
+//        var modulePrefix = module.ToLower() switch
+//        {
+//            Modules.Patients => "patients.",
+//            Modules.Appointments => "appointments.",
+//            Modules.Therapy => "therapy.",
+//            Modules.Reports => "reports.",
+//            Modules.Administration => "admin.",
+//            _ => module.ToLower()+"."
+//        };
 
-            return PolicyRegistry.Policies
-                .Where(p => userPermissions.Contains(p.Permission, StringComparer.OrdinalIgnoreCase))
-                .Select(p => p.Module)
-                .Distinct()
-                .ToList();
-        }
-    }
-}
+//        return userPermissions.Any(p =>
+//            p.StartsWith(modulePrefix, StringComparison.OrdinalIgnoreCase));
+//    }
+
+//    public IReadOnlyList<string> ResolveModules(IEnumerable<string>? userPermissions)
+//    {
+//        if(userPermissions==null) return [];
+
+//        return userPermissions
+//            .Select(p => p.Split('.')[0])
+//            .Distinct(StringComparer.OrdinalIgnoreCase)
+//            .Select(prefix => prefix switch
+//            {
+//                "patients" => Modules.Patients,
+//                "appointments" => Modules.Appointments,
+//                "therapy" => Modules.Therapy,
+//                "reports" => Modules.Reports,
+//                "admin" => Modules.Administration,
+//                _ => prefix
+//            })
+//            .ToList();
+//    }
+//}

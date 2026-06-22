@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EHMR.Constants;
 using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -79,8 +79,7 @@ public partial class PatientDetailFormViewModel : ObservableObject
                 EmergencyContactPhone=string.Empty,
                 BloodType=string.Empty,
                 Allergies=string.Empty,
-                PrimaryDiagnosis=string.Empty,
-                ClinicalNotes=string.Empty,
+
                 RegistrationDate=DateTime.UtcNow,
                 Status=PatientStatus.Active
             };
@@ -167,7 +166,7 @@ public partial class PatientDetailFormViewModel : ObservableObject
         if(_isModalReturnMode)
         {
             _selectedItemService.SelectedItem=null;
-            await _navigationService.GoToAsync("..");
+            await _navigationService.GoToAsync(AppRoutes.Patients.List);
             return;
         }
 

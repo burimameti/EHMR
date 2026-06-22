@@ -1,54 +1,45 @@
-﻿using EHMR.Domain.Entities;
+﻿using EHMR.Domain.Entities.Rbac;
+using EHMR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
 
-namespace EHMR.Infrastructure.Persistence.Configs
+public class UserScopeSeeder : IEntitySeeder
 {
-    // =====================================================
-    // 8. SECURITY SCOPE
-    // =====================================================
+    public int Order => 3;
 
-    public class UserScopeSeeder : IEntitySeeder
+    public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {
-        public int Order => 80;
+        if(await context.UserScopes.AnyAsync(ct))
+            return;
 
-        public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
+        var scopes = new List<UserScope>
         {
-            if(await context.Set<UserScope>().AnyAsync(ct))
-                return;
+            new()
+            {
+                Id = SeedIds.AdminScope,
+                UserId = SeedIds.AdminUser,
+                ScopeType = ScopeType.Admin,
+                TargetId = SeedIds.Tenant,
+            },
 
-            context.Set<UserScope>().AddRange(
+            new()
+            {
+                Id = SeedIds.Doctor1Scope,
+                UserId = SeedIds.DocUser1,
+                ScopeType =  ScopeType.Hospital,
+                TargetId = SeedIds.Tenant,
+            },
 
-    new UserScope
-    {
-        Id=SeedIds.Rule1,
-        UserId=SeedIds.AdminUser,
-        ScopeType="Admin",
+            new()
+            {
+                Id = SeedIds.Doctor2Scope,
+                UserId = SeedIds.DocUser2,
+                ScopeType =  ScopeType.Department,
+                TargetId = SeedIds.Tenant,
+            }
+        };
 
-        TargetId=SeedIds.Tenant,
-        IsPrimaryScope=true
-    },
-    new UserScope
-    {
-        Id=SeedIds.Rule2,
-        UserId=SeedIds.DocUser1,
-        ScopeType="Hospital",
-
-        TargetId=SeedIds.Tenant,
-        IsPrimaryScope=true
-    },
-    new UserScope
-    {
-        Id=SeedIds.Rule3,
-        UserId=SeedIds.DocUser2,
-        ScopeType="Department",
-        //Permissions=new List<string> { "ManagePrescriptions" },
-        TargetId=SeedIds.Tenant,
-        IsPrimaryScope=true
-    }
-);
-
-            Console.WriteLine("Seeding Scopes...");
-        }
+        await context.UserScopes.AddRangeAsync(scopes, ct);
+        await context.SaveChangesAsync(ct);
     }
 }

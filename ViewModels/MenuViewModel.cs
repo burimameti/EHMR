@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using Microsoft.Maui.ApplicationModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EHMR.Domain.Interfaces;
 using EHMR.Constants;
+using EHMR.Domain.Entities.Rbac;
+using EHMR.Domain.Interfaces;
+using System.Collections.ObjectModel;
 
 namespace EHMR.ViewModels;
 
@@ -14,7 +13,85 @@ public partial class MenuViewModel : ObservableObject, IDisposable
     private readonly IMenuService _menuService;
     private readonly INavigationService _navigation;
 
-    public ObservableCollection<NavigationGroup> Items { get; } = new();
+    public ObservableCollection<NavigationGroup> Items { get; } = [];
+
+    public MenuViewModel(
+        IAuthStateService auth,
+        IMenuService menuService,
+        INavigationService navigation)
+    {
+        _auth=auth;
+        _menuService=menuService;
+        _navigation=navigation;
+
+        _auth.AuthStateChanged+=OnAuthChanged;
+
+        _=RefreshMenuAsync();
+    }
+
+    private async void OnAuthChanged(object? sender, EventArgs e)
+    {
+        await RefreshMenuAsync();
+    }
+
+    [RelayCommand]
+    private async Task NavigateAsync(NavigationItem? item)
+    {
+        if(item==null||string.IsNullOrWhiteSpace(item.Route))
+            return;
+
+        if(ActiveRoute==item.Route)
+            return;
+
+        ActiveRoute=item.Route;
+
+        await _navigation.GoToAsync(item.Route);
+    }
+
+    [RelayCommand]
+    private async Task ToggleGroupAsync(NavigationGroup group)
+    {
+        if(group==null)
+            return;
+
+        // директен линк
+        if(group.Items.Count==0)
+        {
+            ActiveRoute=group.Route;
+
+            if(!string.IsNullOrWhiteSpace(group.Route))
+                await _navigation.GoToAsync(group.Route);
+
+            return;
+        }
+
+        group.IsExpanded=!group.IsExpanded;
+    }
+
+    public async Task RefreshMenuAsync()
+    {
+        try
+        {
+            var groups = await _menuService.UpdateMenuAsync();
+
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Items.Clear();
+
+                foreach(var group in groups)
+                    Items.Add(group);
+
+                ActiveRoute??=AppRoutes.Dashboard;
+
+                ApplyActiveState();
+            });
+        }
+        catch(Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(
+                $"Menu refresh failed: {ex}");
+        }
+    }
 
     private string? _activeRoute;
 
@@ -30,109 +107,38 @@ public partial class MenuViewModel : ObservableObject, IDisposable
         }
     }
 
-    public MenuViewModel(
-        IAuthStateService auth,
-        IMenuService menuService,
-        INavigationService navigation)
-    {
-        _auth=auth;
-        _menuService=menuService;
-        _navigation=navigation;
-
-        _auth.AuthStateChanged+=OnAuthChanged;
-
-        // Почетно вчитување
-        RefreshMenu();
-    }
-
-    private void OnAuthChanged(object? sender, EventArgs e)
-        => RefreshMenu();
-
-    [RelayCommand]
-    private async Task NavigateAsync(NavigationItem? item)
-    {
-        if(item is null||string.IsNullOrWhiteSpace(item.Route))
-            return;
-
-        if(ActiveRoute==item.Route)
-            return;
-
-        ActiveRoute=item.Route;
-
-        // Со користење на "//" му кажуваш на Shell дека ова е топ-левел дестинација
-        // Ако рутата ти е регистрирана со Routing.RegisterRoute, пробај прво вака:
-        await _navigation.GoToAsync(item.Route);
-    }
-
-    [RelayCommand]
-    public async Task ToggleGroup(NavigationGroup group)
-    {
-        // Ако нема деца (Како Главен Прозор), веднаш правиме директна навигација
-        if(group.Items==null||group.Items.Count==0)
-        {
-            ActiveRoute=group.Route; // Постави ја активната рута за да светне иконата
-            await Shell.Current.GoToAsync($"//{group.Route}");
-            return;
-        }
-
-        // Ако има подменија, класично отвори/затвори го менито
-        group.IsExpanded=!group.IsExpanded;
-    }
-
-    public async void RefreshMenu()
-    {
-        try
-        {
-            var groups = await _menuService.UpdateMenuAsync(_auth.Permissions, _auth.Roles);
-
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Items.Clear();
-                foreach(var group in groups)
-                {
-                    Items.Add(group);
-                }
-
-                // Стандардно селектирај го дашбордот ако нема активна рута во моментот
-                if(string.IsNullOrEmpty(ActiveRoute))
-                {
-                    ActiveRoute="dashboard";
-                }
-                else
-                {
-                    ApplyActiveState();
-                }
-            });
-        }
-        catch(Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Грешка при мени: {ex.Message}");
-        }
-    }
-
     private void ApplyActiveState()
     {
         foreach(var group in Items)
         {
-            // ПРВО: Проверка дали самата група е директен линк (Како Главен Прозор)
-            if(group.Items==null||group.Items.Count==0)
+            // group without children
+            if(group.Items.Count==0)
             {
-                group.IsActive=!string.IsNullOrWhiteSpace(group.Route)&&group.Route==ActiveRoute;
+                group.IsActive=
+                    !string.IsNullOrWhiteSpace(group.Route)&&
+                    group.Route.Equals(
+                        ActiveRoute,
+                        StringComparison.OrdinalIgnoreCase);
+
                 group.IsExpanded=false;
+
                 continue;
             }
 
-            // ВТОРО: Проверка за групи што содржат подменија (деца)
             bool hasActiveChild = false;
+
             foreach(var item in group.Items)
             {
-                item.IsActive=!string.IsNullOrWhiteSpace(item.Route)&&item.Route==ActiveRoute;
+                item.IsActive=
+                    !string.IsNullOrWhiteSpace(item.Route)&&
+                    item.Route.Equals(
+                        ActiveRoute,
+                        StringComparison.OrdinalIgnoreCase);
 
                 if(item.IsActive)
                     hasActiveChild=true;
             }
 
-            // Групата е активна ако некое нејзино дете е селектирано
             group.IsActive=hasActiveChild;
             group.IsExpanded=hasActiveChild;
         }

@@ -1,6 +1,4 @@
-﻿
-
-using EHMR.Constants;
+﻿using EHMR.Domain.Entities.Rbac;
 using System.Globalization;
 
 namespace EHMR.Extensions

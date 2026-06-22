@@ -1,216 +1,74 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EHMR.Constants;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using EHMR.Domain.Entities;
-using EHMR.Domain.Interfaces;
-using EHMR.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Maui.Graphics;
 using System.Collections.ObjectModel;
 
 namespace EHMR.ViewModels.Prescriptions;
 
 public partial class PrescriptionDetailFormViewModel : ObservableObject
 {
-    private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
-    private readonly INavigationService _navigationService;
-    private readonly ISelectedItemService<Prescription> _selectedItemService;
+    [ObservableProperty]
+    private string pageTitle = "Рецепт";
 
-    private bool _isNewMode;
+    [ObservableProperty]
+    private bool isReadOnly;
 
-    [ObservableProperty] private Prescription _prescription = new();
-    [ObservableProperty] private string _pageTitle = string.Empty;
-    [ObservableProperty] private bool _isReadOnly = true;
-    [ObservableProperty] private bool _isEditMode;
+    [ObservableProperty]
+    private Guid id;
 
-    [ObservableProperty] private Patient? _selectedPatient;
-    [ObservableProperty] private Color _inputBgColor = Color.FromArgb("#F8FAFC");
-    [ObservableProperty] private Color _inputBorderColor = Color.FromArgb("#E2E8F0");
+    [ObservableProperty]
+    private Patient? selectedPatient;
 
-    public ObservableCollection<Patient> PatientsList { get; set; } = new();
+    [ObservableProperty]
+    private string medication = string.Empty;
 
-    public bool CanAddMedicine => !IsReadOnly;
+    [ObservableProperty]
+    private string dosage = string.Empty;
 
-    public PrescriptionDetailFormViewModel(
-        IDbContextFactory<DesktopTherapyDbContext> dbFactory,
-        INavigationService navigationService,
-        ISelectedItemService<Prescription> selectedItemService)
+    [ObservableProperty]
+    private string instructions = string.Empty;
+
+    [ObservableProperty]
+    private ObservableCollection<Patient> patientsList = [];
+
+    public bool IsEditMode => !IsReadOnly;
+
+    [RelayCommand]
+    private async Task Save()
     {
-        _dbFactory=dbFactory;
-        _navigationService=navigationService;
-        _selectedItemService=selectedItemService;
+        // validation
 
-        _=LoadInitialDataAsync();
+        if(SelectedPatient==null)
+            return;
+
+        var prescription = new Prescription
+        {
+            Id=Guid.NewGuid(),
+            PatientId=SelectedPatient.Id
+        };
+
+        // use domain methods if available
+        // prescription.Update(...);
+
+        await Task.CompletedTask;
     }
 
-    // =========================================================
-    // INIT
-    // =========================================================
-
-    private async Task LoadInitialDataAsync()
+    [RelayCommand]
+    private async Task Back()
     {
-        try
-        {
-            await using var db = await _dbFactory.CreateDbContextAsync();
-
-            var patients = await db.Patients
-                .AsNoTracking()
-                .ToListAsync();
-
-            PatientsList.Clear();
-            foreach(var p in patients)
-                PatientsList.Add(p);
-
-            InitializeForm();
-        }
-        catch(Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Prescription init error: {ex.Message}");
-        }
+        await Shell.Current.GoToAsync("..");
     }
-
-    private void InitializeForm()
-    {
-        var shared = _selectedItemService.SelectedItem;
-
-        if(shared==null)
-        {
-            Prescription=new Prescription
-            {
-                Medicines=new List<PrescriptionMedicine>()
-            };
-
-            _isNewMode=true;
-            IsReadOnly=false;
-            IsEditMode=true;
-            PageTitle="➕ Нова Прескрипција";
-        }
-        else if(shared.Id==Guid.Empty)
-        {
-            Prescription=shared;
-
-            _isNewMode=true;
-            IsReadOnly=false;
-            IsEditMode=true;
-            PageTitle="➕ Нова Прескрипција од Пациент";
-        }
-        else
-        {
-            Prescription=shared;
-
-            _isNewMode=false;
-            IsReadOnly=true;
-            IsEditMode=false;
-            PageTitle="Преглед на Прескрипција";
-        }
-
-        SelectedPatient=PatientsList.FirstOrDefault(p => p.Id==Prescription.PatientId);
-
-        UpdateInputStyle();
-    }
-
-    // =========================================================
-    // MODE
-    // =========================================================
 
     [RelayCommand]
     private void ToggleEditMode()
     {
-        IsReadOnly=false;
-        IsEditMode=true;
-        UpdateInputStyle();
+        IsReadOnly=!IsReadOnly;
     }
 
     [RelayCommand]
-    private void Cancel()
+    private async Task Cancel()
     {
-        if(_isNewMode)
-        {
-            _navigationService.GoToAsync("..");
-        }
-        else
-        {
-            InitializeForm();
-        }
-    }
-
-    // =========================================================
-    // MEDICINES
-    // =========================================================
-
-    [RelayCommand]
-    private void AddMedicine()
-    {
-        Prescription.Medicines.Add(new PrescriptionMedicine
-        {
-            PrescriptionId=Prescription.Id,
-            Dosage="1-0-1",
-            Frequency="Daily",
-            DurationDays=5
-        });
-    }
-
-    [RelayCommand]
-    private void RemoveMedicine(PrescriptionMedicine item)
-    {
-        Prescription.Medicines.Remove(item);
-    }
-
-    // =========================================================
-    // SAVE
-    // =========================================================
-
-    [RelayCommand]
-    private async Task SaveAsync()
-    {
-        if(SelectedPatient==null)
-            return;
-
-        try
-        {
-            await using var db = await _dbFactory.CreateDbContextAsync();
-
-            Prescription.PatientId=SelectedPatient.Id;
-
-            if(_isNewMode)
-            {
-                Prescription.Id=Guid.NewGuid();
-                db.Prescriptions.Add(Prescription);
-            }
-            else
-            {
-                db.Prescriptions.Update(Prescription);
-            }
-
-            await db.SaveChangesAsync();
-
-            _selectedItemService.SelectedItem=null;
-            await _navigationService.GoToAsync("..");
-        }
-        catch(Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Save prescription error: {ex.Message}");
-        }
-    }
-
-    // =========================================================
-    // NAVIGATION
-    // =========================================================
-
-    [RelayCommand]
-    private async Task BackAsync()
-    {
-        _selectedItemService.SelectedItem=null;
-        await _navigationService.GoToAsync("..");
-    }
-
-    // =========================================================
-    // UI STYLE
-    // =========================================================
-
-    private void UpdateInputStyle()
-    {
-        InputBgColor=IsReadOnly ? Color.FromArgb("#F1F5F9") : Color.FromArgb("#FFFFFF");
-        InputBorderColor=IsReadOnly ? Color.FromArgb("#CBD5E1") : Color.FromArgb("#2563EB");
+        await Shell.Current.GoToAsync("..");
     }
 }

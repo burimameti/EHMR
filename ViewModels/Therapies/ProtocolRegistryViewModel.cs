@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EHMR.Constants;
 using EHMR.Desktop.Core.ViewModels;
 using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Views.Therapies; // Промени го со точниот namespace каде ќе биде формата
@@ -43,7 +43,7 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
         IUserDialogService userDialogService,
         IMenuService menuService,
         ISelectedItemService<TherapyProtocol> selectedItemService,
-        IAuthStateService authService)
+        IAuthorizationService authService)
         : base(navigationService, userDialogService, menuService, authService)
     {
         _dbFactory=dbFactory;
@@ -121,7 +121,7 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
     private async Task AddAsync()
     {
         _selectedItemService.SelectedItem=null;
-        await NavigationService.GoToAsync(AppRoutes.Protocols.Details);
+        await NavigationService.GoToAsync(AppRoutes.Protocols.Detail);
     }
 
     [RelayCommand]
@@ -130,7 +130,7 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
         if(protocol==null) return;
 
         _selectedItemService.SelectedItem=protocol; // Праќаме постоечки -> ПРЕГЛЕД/ИЗМЕНА
-        await NavigationService.GoToAsync(AppRoutes.Protocols.Details);
+        await NavigationService.GoToAsync(AppRoutes.Protocols.Detail);
     }
 
     [RelayCommand]
@@ -139,7 +139,7 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
         if(protocol==null) return;
 
         _selectedItemService.SelectedItem=protocol;
-        await NavigationService.GoToAsync(AppRoutes.Protocols.Details);
+        await NavigationService.GoToAsync(AppRoutes.Protocols.Detail);
     }
 
     [RelayCommand]

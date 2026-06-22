@@ -10,7 +10,6 @@ namespace EHMR.Domain.Interfaces
     public interface IMenuService
     {
         Task<List<NavigationGroup>> UpdateMenuAsync(
-           IEnumerable<string> permissions,
-           IEnumerable<string> roles);
+          );
     }
 }

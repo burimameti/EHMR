@@ -20,6 +20,15 @@ public partial class DashboardView : ContentPage
         MenuHost.Content=menu;
     }
 
+    private void PatientSearch_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if(BindingContext is DashboardViewModel vm)
+        {
+            vm.PatientSearchText=e.NewTextValue;
+            vm.ApplySearch(e.NewTextValue??string.Empty);
+        }
+    }
+
     protected override async void OnAppearing()
     {
         base.OnAppearing();

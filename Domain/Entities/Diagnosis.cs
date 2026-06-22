@@ -7,20 +7,49 @@
             get; set;
         }
 
-        public Guid EncounterId
+        public Patient? Patient
         {
             get; set;
-        } // Every valid diagnosis stems from an clinical encounter event
+        }
 
-        public string ClinicalDescription { get; set; } = string.Empty;
+        public Guid? Mkb10CodeId
+        {
+            get; set;
+        }
 
-        // Enterprise Interoperability Mapping Codes
-        public string Code { get; set; } = string.Empty; // e.g., "M54.5"
+        public Mkb10Code? Mkb10Code
+        {
+            get; set;
+        }
 
-        public string System { get; set; } = "ICD-10";   // e.g., "ICD-10", "SNOMED-CT"
+        public DateTime DiagnosedAt
+        {
+            get; set;
+        }
 
-        public string Severity { get; set; } = "Moderate"; // Mild, Moderate, Severe
-        public bool IsPrimary { get; set; } = false;
-        public DateTime DiagnosedAt { get; set; } = DateTime.UtcNow;
+        public bool IsPrimary
+        {
+            get; set;
+        }
+
+        public string Severity { get; set; } = "";
+
+        public string ClinicalDescription { get; set; } = "";
+
+        public DiagnosisStatus Status
+        {
+            get; set;
+        }
+    }
+
+    public enum DiagnosisStatus
+    {
+        Active = 1,          // тековна дијагноза
+        Chronic = 2,         // хронична
+        Resolved = 3,        // завршена / излекувана
+        InRemission = 4,     // во ремисија
+        Suspected = 5,       // сомневање
+        RuledOut = 6,        // исклучена
+        Inactive = 7         // неактивна
     }
 }

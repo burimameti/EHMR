@@ -17,7 +17,5 @@ namespace EHMR.Domain.Entities
         {
             get; set;
         }
-
-        public virtual ICollection<TreatmentPlan> TreatmentPlans { get; set; } = new List<TreatmentPlan>();
     }
 }

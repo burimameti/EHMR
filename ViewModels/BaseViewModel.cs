@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EHMR.Desktop.Core.ViewModels;
@@ -16,19 +16,16 @@ public partial class BaseViewModel<T>
     protected readonly INavigationService NavigationService;
     protected readonly IUserDialogService UserDialogService;
     protected readonly IMenuService MenuService;
-    protected readonly IAuthStateService AuthService;
+    protected readonly IAuthorizationService AuthorizationService;
 
-    protected CancellationTokenSource? SearchCts;
-    public int PageIndex { get; set; } = 1;
-    public int PageSize { get; set; } = 10;
     private readonly SynchronizationContext? _uiContext;
 
     protected CancellationTokenSource? _searchCts;
     protected List<T> _allItems = new();
     protected List<T> _filteredItems = new();
 
-    private readonly int _pageSize = 10;
     private int _currentPage = 1;
+    private int _pageSize = 10;
 
     // =========================================================
     // OBSERVABLES
@@ -41,15 +38,17 @@ public partial class BaseViewModel<T>
     [ObservableProperty] private bool hasError;
     [ObservableProperty] private bool hasItems;
 
-    public string SearchText = string.Empty;
+    private string _searchText = string.Empty;
 
-    public string SearchTextValue
+    public string SearchText
     {
-        get => SearchText;
+        get => _searchText;
         set
         {
-            if(SetProperty(ref SearchText, value))
+            if(SetProperty(ref _searchText, value))
+            {
                 HandleSearchTextChanged(ApplyFilterAsync, value);
+            }
         }
     }
 
@@ -63,29 +62,61 @@ public partial class BaseViewModel<T>
         }
     }
 
+    /// <summary>
+    /// Number of rows shown per page. Changing this resets to page 1 and
+    /// re-renders the current page immediately.
+    /// </summary>
+    public int PageSize
+    {
+        get => _pageSize;
+        set
+        {
+            if(value<1) value=1;
+            if(SetProperty(ref _pageSize, value))
+            {
+                CurrentPage=1;
+                RefreshPage();
+            }
+        }
+    }
+
     // =========================================================
     // COMPUTED
     // =========================================================
 
     public bool HasPreviousPage => CurrentPage>1;
-    public bool HasNextPage => CurrentPage*_pageSize<_filteredItems.Count;
+    public bool HasNextPage => CurrentPage*PageSize<_filteredItems.Count;
     public int TotalItems => _filteredItems.Count;
-    public int TotalPages => (int)Math.Ceiling((decimal)TotalItems/_pageSize);
+    public int TotalPages => TotalItems==0 ? 1 : (int)Math.Ceiling((decimal)TotalItems/PageSize);
+
+    /// <summary>
+    /// Human readable "Showing 1-10 of 48" style summary for grid footers.
+    /// </summary>
+    public string PaginationSummary
+    {
+        get
+        {
+            if(TotalItems==0) return "Нема резултати";
+
+            int start = (CurrentPage-1)*PageSize+1;
+            int end = Math.Min(CurrentPage*PageSize, TotalItems);
+            return $"Прикажани {start}–{end} од {TotalItems}";
+        }
+    }
 
     protected BaseViewModel(
-    INavigationService navigationService,
-    IUserDialogService userDialogService,
-    IMenuService menuService,
-    IAuthStateService authService)
+      INavigationService navigationService,
+      IUserDialogService userDialogService,
+      IMenuService menuService,
+      IAuthorizationService authorizationService)
     {
         NavigationService=navigationService;
         UserDialogService=userDialogService;
         MenuService=menuService;
-        AuthService=authService;
+        AuthorizationService=authorizationService;
+
         _uiContext=SynchronizationContext.Current;
     }
-
-    // protected Guid? TenantId => AuthService?.CurrentUser?.TenantId;
 
     protected async Task ExecuteSafeAsync(Func<Task> action, string errorMessage)
     {
@@ -115,6 +146,7 @@ public partial class BaseViewModel<T>
         OnPropertyChanged(nameof(HasNextPage));
         OnPropertyChanged(nameof(HasPreviousPage));
         OnPropertyChanged(nameof(TotalPages));
+        OnPropertyChanged(nameof(PaginationSummary));
     }
 
     protected void HandleSearchTextChanged(Func<CancellationToken, Task> applyFilterAction, string value, int debounceMs = 400)
@@ -138,8 +170,8 @@ public partial class BaseViewModel<T>
     protected void RefreshPage()
     {
         var pagedItems = _filteredItems
-            .Skip((CurrentPage-1)*_pageSize)
-            .Take(_pageSize)
+            .Skip((CurrentPage-1)*PageSize)
+            .Take(PageSize)
             .ToList();
 
         Items.Clear();
@@ -168,6 +200,7 @@ public partial class BaseViewModel<T>
                 CurrentPage=1;
                 RefreshPage();
                 OnPropertyChanged(nameof(TotalItems));
+                OnPropertyChanged(nameof(PaginationSummary));
             });
         }
         catch(OperationCanceledException) { }

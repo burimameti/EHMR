@@ -12,6 +12,8 @@
             get; set;
         }
 
+        public Patient? Patient { get; set; } = null!;
+
         public Guid EncounterId
         {
             get; set;

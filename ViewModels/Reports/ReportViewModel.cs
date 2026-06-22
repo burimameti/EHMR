@@ -139,19 +139,44 @@ public partial class ReportViewModel : ObservableObject
             {
                 case "MISSED_THERAPIES":
                     var missedQuery = db.TherapyCycles
-                        .Include(c => c.TherapySchedule).ThenInclude(s => s.TreatmentPlan).ThenInclude(p => p.Patient)
-                        .Where(c => c.Status==TherapyStatus.Missed&&c.PlannedEndDate>=startRange&&c.PlannedEndDate<=endRange);
+                        .Include(p => p.Patient)
+                     .Where(c => c.Status==TherapyStatus.Missed
+                     &&c.Appointments.Any(a => a.ScheduledStart>=startRange&&a.ScheduledEnd<=endRange));
 
                     if(!string.IsNullOrWhiteSpace(AdvancedFilterText))
-                        missedQuery=missedQuery.Where(x => x.TherapySchedule.TreatmentPlan.Patient.LastName.Contains(AdvancedFilterText));
+                        missedQuery=missedQuery.Where(x => x.Patient.LastName.Contains(AdvancedFilterText));
 
                     var missedData = await missedQuery.ToListAsync();
                     foreach(var x in missedData)
                     {
+                        // Get the missed appointment(s) and their reasons
+                        var missedAppointments = x.Appointments
+                            .Where(a => a.Status==AppointmentStatus.Missed)
+                            .ToList();
+
+                        // Concatenate reasons for visit (if any)
+                        string reasons = string.Join("; ", missedAppointments.Select(a => a.ReasonForVisit));
+
+                        // Use a fallback for missing planned end date (since TherapyCycle does not have PlannedEndDate)
+                        // We'll use the latest ScheduledEnd from missed appointments, or empty string if none
+                        string plannedEndDate = missedAppointments.Count>0
+                            ? missedAppointments.Max(a => a.ScheduledEnd).ToString("dd.MM.yyyy")
+                            : string.Empty;
+
+                        // There is no x.Res or x.ReasonForMissing in TherapyCycle, so fallback to reasons or "Нема причина!"
+                        string reasonForMissing = string.IsNullOrWhiteSpace(reasons) ? "Нема причина!" : reasons;
+
                         resolvedRows.Add(new DynamicReportRow
                         {
-                            Cells=new List<string> { x.TherapySchedule.TreatmentPlan.Patient.LastName, x.TherapySchedule.Name, $"Ц-#{x.CycleNumber}", x.PlannedEndDate.ToString("dd.MM.yyyy"), string.IsNullOrEmpty(x.ReasonForMissing) ? "Нема причина!" : x.ReasonForMissing },
-                            IsAlertSeverity=string.IsNullOrEmpty(x.ReasonForMissing)
+                            Cells=new List<string>
+                            {
+                                x.Patient?.LastName ?? string.Empty,
+                                reasons,
+                                $"Ц-#{x.CycleNumber}",
+                                plannedEndDate,
+                                reasonForMissing
+                            },
+                            IsAlertSeverity=string.IsNullOrWhiteSpace(reasons)
                         });
                     }
                     Metric1Title="Вкупно Пропуштени"; Metric1Value=resolvedRows.Count.ToString();

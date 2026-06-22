@@ -1,13 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EHMR.Constants;
-using EHMR.Desktop.Core.ViewModels;
 using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Threading.Tasks;
 
 namespace EHMR.ViewModels;
 
@@ -32,7 +29,7 @@ public partial class ProtocolDetailFormViewModel(
             CurrentProtocol=new TherapyProtocol
             {
                 CreatedAt=DateTime.UtcNow,
-                CreatedByDoctor=authStateService.UserName
+                CreatedByDoctor=authStateService.CurrentUser.Username
             };
         }
         else

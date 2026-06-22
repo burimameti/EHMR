@@ -9,12 +9,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
+using EHMR.Domain.Entities.Rbac;
 
 namespace EHMR.ViewModels;
 
 public partial class UserEditViewModel : ObservableObject
 {
-    private readonly IUserAdminService _service;
+    private readonly IUserService _service;
     private readonly ISelectedItemService<UserAdminDto> _userSelectionService;
     private readonly IUserDialogService _dialogService;
 
@@ -58,7 +59,7 @@ public partial class UserEditViewModel : ObservableObject
     }
 
     public UserEditViewModel(
-        IUserAdminService service,
+        IUserService service,
         ISelectedItemService<UserAdminDto> userSelectionService,
         IUserDialogService dialogService)
     {
@@ -93,7 +94,7 @@ public partial class UserEditViewModel : ObservableObject
                 Username=string.Empty,
                 FirstName=string.Empty,
                 LastName=string.Empty,
-                Role=UserRole.RegularNurse,
+                Role=UserRole.Nurse,
                 Position=UserPosition.Regular,
                 IsActive=true,
                 Modules=new List<string>()

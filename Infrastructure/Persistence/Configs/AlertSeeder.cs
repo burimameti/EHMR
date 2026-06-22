@@ -5,7 +5,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
 {
     public class AlertSeeder : IEntitySeeder
     {
-        public int Order => 3;
+        public int Order => 88;
 
         public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
         {

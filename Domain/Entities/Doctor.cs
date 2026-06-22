@@ -1,4 +1,6 @@
-﻿namespace EHMR.Domain.Entities
+﻿using EHMR.Domain.Entities.Rbac;
+
+namespace EHMR.Domain.Entities
 {
     public class Doctor : BaseEntity
     {
@@ -9,14 +11,8 @@
 
         public User User { get; set; } = null!;
 
-        public string FirstName { get; set; } = string.Empty;
-
-        public string LastName { get; set; } = string.Empty;
-
         public string LicenseNumber { get; set; } = string.Empty;
-
         public string Specialty { get; set; } = string.Empty;
-
         public string ContactPhone { get; set; } = string.Empty;
 
         public bool IsActive
@@ -24,6 +20,7 @@
             get; set;
         }
 
-        public string FullName => $"{FirstName} {LastName}";
+        // optional convenience
+        public string FullName => User.FirstName+" "+User.LastName;
     }
 }

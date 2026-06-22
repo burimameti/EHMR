@@ -1,4 +1,5 @@
-﻿using EHMR.Views;
+﻿using EHMR.Domain.Interfaces;
+using EHMR.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;

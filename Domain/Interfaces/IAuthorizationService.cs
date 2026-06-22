@@ -1,37 +1,20 @@
 ﻿using EHMR.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EHMR.Domain.Entities.Rbac;
 
-namespace EHMR.Domain.Interfaces
+namespace EHMR.Domain.Interfaces;
+
+public interface IAuthorizationService
 {
-    public interface IAuthorizationService
+    bool IsAuthenticated
     {
-        bool IsAuthenticated
-        {
-            get;
-        }
-
-        bool RoleHasPermission(UserRole role, string permission);
-
-        bool HasPermission(User user, string permission);
-
-        bool ApplyPositionRules(User user, string permission, bool current);
-
-        IEnumerable<string> Get(UserRole role);
-
-        bool HasRole(string role);
-
-        bool HasAnyRole(params string[] roles);
-
-        bool HasScope(string scope);
-
-        bool HasAnyScope(params string[] scopes);
-
-        bool HasAllScopes(params string[] scopes);
-
-        bool CanAccess(string module);
+        get;
     }
+
+    bool HasRole(UserRole role);
+
+    bool HasModule(string module);
+
+    bool CanAccessModule(string module);
+
+    bool CanAccessRoute(string route);
 }

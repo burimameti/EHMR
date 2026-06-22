@@ -4,10 +4,6 @@ using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
 
 namespace EHMR.Infrastructure.Persistence.Configs
 {
-    // =====================================================
-    // 5. EXECUTION LAYER
-    // =====================================================
-
     public class TherapyCycleSeeder : IEntitySeeder
     {
         public int Order => 40;
@@ -17,66 +13,139 @@ namespace EHMR.Infrastructure.Persistence.Configs
             if(await context.TherapyCycles.AnyAsync(ct))
                 return;
 
-            await context.Set<TherapyCycle>().AddRangeAsync(new TherapyCycle
+            var patients = await context.Patients
+                .OrderBy(p => p.FirstName)
+                .Take(10)
+                .ToListAsync(ct);
+
+            if(patients.Count<5)
+                throw new InvalidOperationException("Not enough patients for TherapyCycleSeeder");
+
+            var now = DateTime.UtcNow;
+
+            var cycles = new List<TherapyCycle>
             {
-                Id=SeedIds.Cycle1,
+                // ================= ACTIVE / PLANNED =================
 
-                TherapyScheduleId=SeedIds.Schedule1,
-                CycleNumber=1,
-                // Нормален тековен план
-                PlannedStartDate=DateTime.UtcNow,
-                PlannedEndDate=DateTime.UtcNow.AddDays(21),
-                Status=TherapyStatus.Planned,
-                IsEscalatedToMissedGroup=false,
-                ReasonForMissing=null,
-                StatusChangedAt=null
-            },
-            new TherapyCycle
-            {
-                Id=SeedIds.Cycle2,
+                new TherapyCycle
+                {
+                    Id = SeedIds.Cycle1,
+                    PatientId = patients[0].Id,
+                    CycleNumber = 1,
+                    Status = TherapyStatus.Planned,
+                    StartDate = now.AddDays(2),
+                    Notes = "Планиран почеток на физиотерапија за лумбална болка"
+                },
 
-                TherapyScheduleId=SeedIds.Schedule2,
-                CycleNumber=2,
-                // Нормален иден план
-                PlannedStartDate=DateTime.UtcNow.AddDays(22),
-                PlannedEndDate=DateTime.UtcNow.AddDays(52),
-                Status=TherapyStatus.Planned,
-                IsEscalatedToMissedGroup=false,
-                ReasonForMissing=null,
-                StatusChangedAt=null
-            },
-            // ТЕСТ ПОДАТОК 1: Пациент што пропуштил вакцина/терапија минатиот месец
-            new TherapyCycle
-            {
-                Id=SeedIds.Cycle3,
+                new TherapyCycle
+                {
+                    Id = SeedIds.Cycle2,
+                    PatientId = patients[1].Id,
+                    CycleNumber = 1,
+                    Status = TherapyStatus.Active,
+                    StartDate = now.AddDays(-10),
+                    Notes = "Активна терапија за колено - напредок стабилен"
+                },
 
-                TherapyScheduleId=SeedIds.Schedule2,
-                CycleNumber=3,
-                // Датуми намерно ставени во минатото за да го фати филтерот
-                PlannedStartDate=DateTime.UtcNow.AddMonths(-1).AddDays(-10),
-                PlannedEndDate=DateTime.UtcNow.AddMonths(-1),
-                Status=TherapyStatus.Missed,
-                IsEscalatedToMissedGroup=true,
-                StatusChangedAt=DateTime.UtcNow.AddMonths(-1).AddDays(3), // Ескалирано по 3 дена
-                ReasonForMissing="Пациентот пријави силна алергиска реакција и осип по примањето на претходната доза."
-            },
-            // ТЕСТ ПОДАТОК 2: Пациент кој пропуштил терапија, но уште нема медицинско образложение
-            new TherapyCycle
-            {
-                Id=SeedIds.Cycle4,
+                new TherapyCycle
+                {
+                    Id = SeedIds.Cycle3,
+                    PatientId = patients[2].Id,
+                    CycleNumber = 1,
+                    Status = TherapyStatus.Completed,
+                    StartDate = now.AddDays(-30),
+                    EndDate = now.AddDays(-5),
+                    Notes = "Завршена терапија за цервикална болка"
+                },
 
-                TherapyScheduleId=SeedIds.Schedule2,
-                CycleNumber=4,
-                PlannedStartDate=DateTime.UtcNow.AddDays(-15),
-                PlannedEndDate=DateTime.UtcNow.AddDays(-5), // Поминат рок пред 5 дена (Бекграунд процесот веќе го фатил)
-                Status=TherapyStatus.Missed,
-                IsEscalatedToMissedGroup=true,
-                StatusChangedAt=DateTime.UtcNow.AddDays(-2),
-                ReasonForMissing="Системска нотификација: Потребно е внесување причина од медицинско лице."
-            });
+                new TherapyCycle
+                {
+                    Id = SeedIds.Cycle4,
+                    PatientId = patients[3].Id,
+                    CycleNumber = 1,
+                    Status = TherapyStatus.Missed,
+                    StartDate = now.AddDays(-7),
+                    Notes = "Пациентот не се појави на повеќе сесии"
+                },
 
-            // IMPORTANT: save once per seeder (recommended)
-            await context.SaveChangesAsync();
+                new TherapyCycle
+                {
+                    Id = SeedIds.Cycle5,
+                    PatientId = patients[4].Id,
+                    CycleNumber = 1,
+                    Status = TherapyStatus.Suspended,
+                    StartDate = now.AddDays(-3),
+                    Notes = "Терапијата откажана по барање на пациент"
+                },
+
+                // ================= MORE REALISTIC CYCLES =================
+
+                new TherapyCycle
+                {
+                    Id = SeedIds.Cycle6,
+                    PatientId = patients[5].Id,
+                    CycleNumber = 2,
+                    Status = TherapyStatus.Active,
+                    StartDate = now.AddDays(-15),
+                    Notes = "Втора рунда терапија за хронична болка"
+                },
+
+                new TherapyCycle
+                {
+                    Id = SeedIds.Cycle7,
+                    PatientId = patients[6].Id,
+                    CycleNumber = 1,
+                    Status = TherapyStatus.Planned,
+                    StartDate = now.AddDays(5),
+                    Notes = "Планирана рехабилитација после повреда"
+                },
+
+                new TherapyCycle
+                {
+                    Id = SeedIds.Cycle8,
+                    PatientId = patients[7].Id,
+                    CycleNumber = 1,
+                    Status = TherapyStatus.Completed,
+                    StartDate = now.AddDays(-40),
+                    EndDate = now.AddDays(-20),
+                    Notes = "Успешно завршена пост-оперативна рехабилитација"
+                },
+
+                new TherapyCycle
+                {
+                    Id = SeedIds.Cycle9,
+                    PatientId = patients[8].Id,
+                    CycleNumber = 1,
+                    Status = TherapyStatus.Active,
+                    StartDate = now.AddDays(-12),
+                    Notes = "Психосоматска терапија во тек"
+                },
+
+                new TherapyCycle
+                {
+                    Id = SeedIds.Cycle10,
+                    PatientId = patients[9].Id,
+                    CycleNumber = 1,
+                    Status = TherapyStatus.Missed,
+                    StartDate = now.AddDays(-8),
+                    Notes = "Пациентот пропушти повеќе термини"
+                },
+
+                // ================= EXTRA EDGE CASE =================
+
+                new TherapyCycle
+                {
+                    Id = SeedIds.Cycle11,
+                    PatientId = patients[0].Id,
+                    CycleNumber = 2,
+                    Status = TherapyStatus.Planned,
+                    StartDate = now.AddDays(10),
+                    Notes = "Втор циклус - продолжена терапија"
+                }
+            };
+
+            await context.TherapyCycles.AddRangeAsync(cycles, ct);
+            await context.SaveChangesAsync(ct);
         }
     }
 }

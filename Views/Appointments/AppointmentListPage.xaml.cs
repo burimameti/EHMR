@@ -17,10 +17,17 @@ namespace EHMR.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            // ЕДИНСТВЕНО место каде што се повикува вчитување на податоците од базата при влез во страницата
             if(_viewModel!=null)
             {
                 await _viewModel.LoadAsync();
+            }
+        }
+
+        private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(BindingContext is AppointmentListViewModel vm)
+            {
+                vm.SearchText=e.NewTextValue;
             }
         }
     }

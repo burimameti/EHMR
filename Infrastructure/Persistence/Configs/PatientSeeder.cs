@@ -1,113 +1,116 @@
 ﻿using EHMR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
 
 namespace EHMR.Infrastructure.Persistence.Seeders;
 
 public class PatientSeeder : IEntitySeeder
 {
-    int IEntitySeeder.Order => 4;
+    int IEntitySeeder.Order => 8;
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {
         if(await context.Patients.AnyAsync(ct))
             return;
 
+        var now = DateTime.UtcNow;
+
         var patients = new List<Patient>
-        {
-            new Patient
+        {new()
             {
-                Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
-                FirstName = "Marko",
-                LastName = "Stojanov",
-                NationalId = "MK1234567",
-                SSN = "0101995123456",
-                BirthDate = new DateTime(1995, 1, 1),
+                Id = SeedIds.Patient1,
+                FirstName = "Jeton",
+                LastName = "Jetoni",
                 Gender = Gender.Male,
-
-                Phone = "+38970111222",
-                Email = "marko.stojanov@email.com",
-                Address = "Ul. Partizanska 12",
                 City = "Skopje",
-                PostalCode = "1000",
-
-                EmergencyContactName = "Ana Stojanova",
-                EmergencyContactPhone = "+38970111999",
-                EmergencyRelationship = "Sister",
-
+                Phone = "+38970111222",
+                Email = "j.j@email.com",
                 BloodType = "A+",
                 Allergies = "None",
-                PrimaryDiagnosis = "Lumbar disc herniation",
-                ClinicalNotes = "Initial physiotherapy recommended",
-
                 Status = PatientStatus.Active,
-                RegistrationDate = DateTime.UtcNow,
+                RegistrationDate = now.AddDays(-30),
+                IsDeleted = false
+            },
+            new()
+            {
+                Id = SeedIds.Patient2,
+                FirstName = "Test",
+                LastName = "Test",
+                Gender = Gender.Male,
+                City = "Skopje",
+                Phone = "+38970111222",
+                Email = "t.t@email.com",
+                BloodType = "A+",
+                Allergies = "None",
+                Status = PatientStatus.Active,
+                RegistrationDate = now.AddDays(-30),
                 IsDeleted = false
             },
 
-            new Patient
+            new()
             {
-                Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
-                FirstName = "Elena",
-                LastName = "Kostova",
-                NationalId = "MK7654321",
-                SSN = "0202988123456",
-                BirthDate = new DateTime(1988, 2, 2),
+                Id = SeedIds.Patient3,
+                FirstName = "Asdren",
+                LastName = "Shabani",
                 Gender = Gender.Female,
-
-                Phone = "+38971222333",
-                Email = "elena.kostova@email.com",
-                Address = "Ul. Goce Delcev 5",
-                City = "Bitola",
-                PostalCode = "7000",
-
-                EmergencyContactName = "Petar Kostov",
-                EmergencyContactPhone = "+38971222999",
-                EmergencyRelationship = "Husband",
-
+                City = "Struga",
                 BloodType = "B-",
                 Allergies = "Penicillin",
-                PrimaryDiagnosis = "Knee osteoarthritis",
-                ClinicalNotes = "Chronic condition, rehab program ongoing",
-
-                Status = PatientStatus.Active,
-                RegistrationDate = DateTime.UtcNow,
+                Status = PatientStatus.Chronic,
+                RegistrationDate = now.AddDays(-28),
                 IsDeleted = false
             },
 
-            new Patient
+            new()
             {
-                Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
-                FirstName = "Nikola",
-                LastName = "Dimitrov",
-                NationalId = "MK9988776",
-                SSN = "1505990123456",
-                BirthDate = new DateTime(1990, 5, 15),
+                Id = SeedIds.Patient4,
+                FirstName = "Muharem",
+                LastName = "Muharemi",
                 Gender = Gender.Male,
-
-                Phone = "+38973333444",
-                Email = "nikola.dimitrov@email.com",
-                Address = "Ul. Ilindenska 20",
-                City = "Strumica",
-                PostalCode = "2400",
-
-                EmergencyContactName = "Maja Dimitrova",
-                EmergencyContactPhone = "+38973333999",
-                EmergencyRelationship = "Wife",
-
+                City = "Gostivar",
                 BloodType = "O+",
-                Allergies = "Dust allergy",
-                PrimaryDiagnosis = "Cervical pain syndrome",
-                ClinicalNotes = "Postural correction therapy required",
-
+                Allergies = "Dust",
                 Status = PatientStatus.Active,
-                RegistrationDate = DateTime.UtcNow,
+                RegistrationDate = now.AddDays(-26),
                 IsDeleted = false
-            }
+            },
+
+            new() { Id = SeedIds.Patient5, FirstName="Tomi", LastName="Tom", City="Skopje", Gender=Gender.Female, Status=PatientStatus.Active, RegistrationDate=now.AddDays(-24), IsDeleted=false },
+            new() { Id = SeedIds.Patient6, FirstName="Vujce", LastName="Tujce", City="Kumanovo", Gender=Gender.Male, Status=PatientStatus.Active, RegistrationDate=now.AddDays(-22), IsDeleted=false },
+            new() { Id = SeedIds.Patient7, FirstName="Mome", LastName="Tome", City="Ohrid", Gender=Gender.Female, Status=PatientStatus.Chronic, RegistrationDate=now.AddDays(-20), IsDeleted=false },
+            new() { Id = SeedIds.Patient8, FirstName="Tome", LastName="Lome", City="Tetovo", Gender=Gender.Male, Status=PatientStatus.Active, RegistrationDate=now.AddDays(-18), IsDeleted=false },
+            new()
+            {
+                Id = SeedIds.Patient9, FirstName="Besa", LastName="Tezja", City="Veles", Gender=Gender.Female, Status=PatientStatus.Active, RegistrationDate=now.AddDays(-16), IsDeleted=false
+            },
+            new()
+            {
+                Id = SeedIds.Patient10, FirstName="Imran", LastName="Ma", City="Struga", Gender=Gender.Male, Status=PatientStatus.Inactive, RegistrationDate=now.AddDays(-14), IsDeleted=false
+            },
+
+            new()
+            {
+                Id = SeedIds.Patient11, FirstName="Sara", LastName="Sara", City="Skopje", Gender=Gender.Female, Status=PatientStatus.Active, RegistrationDate=now.AddDays(-12), IsDeleted=false
+            },
+            new()
+            {
+                Id = SeedIds.Patient12, FirstName="Halla", LastName="E Gjalit Menjxhes", City="Bitola", Gender=Gender.Male, Status=PatientStatus.Active, RegistrationDate=now.AddDays(-10), IsDeleted=false
+            },
+            new()
+            { Id = SeedIds.Patient13, FirstName="Ana", LastName="Ana", City="Prilep", Gender=Gender.Female, Status=PatientStatus.Chronic, RegistrationDate=now.AddDays(-9), IsDeleted=false
+            },
+            new()
+            { Id = SeedIds.Patient14, FirstName="Gore", LastName="Dole", City="Skopje", Gender=Gender.Male, Status=PatientStatus.Active, RegistrationDate=now.AddDays(-8), IsDeleted=false },
+            new() { Id = SeedIds.Patient15, FirstName="Mare", LastName="Nare", City="Ohrid", Gender=Gender.Female, Status=PatientStatus.Active, RegistrationDate=now.AddDays(-7), IsDeleted=false },
+
+            new() { Id = SeedIds.Patient16, FirstName="Dare", LastName="Mare", City="Tetovo", Gender=Gender.Male, Status=PatientStatus.Active, RegistrationDate=now.AddDays(-6), IsDeleted=false },
+            new() { Id = SeedIds.Patient17, FirstName="Ivana", LastName="Stariot", City="Kavadarci", Gender=Gender.Female, Status=PatientStatus.Chronic, RegistrationDate=now.AddDays(-5), IsDeleted=false },
+            new() { Id = SeedIds.Patient18, FirstName="Bojan", LastName="Mladiot", City="Skopje", Gender=Gender.Male, Status=PatientStatus.Active, RegistrationDate=now.AddDays(-4), IsDeleted=false },
+            new() { Id = SeedIds.Patient19, FirstName="Eli", LastName="Teli", City="Bitola", Gender=Gender.Female, Status=PatientStatus.Inactive, RegistrationDate=now.AddDays(-3), IsDeleted=false },
+            new() { Id = SeedIds.Patient20, FirstName="Deli", LastName="Leli", City="Skopje", Gender=Gender.Female, Status=PatientStatus.Active, RegistrationDate=now.AddDays(-2), IsDeleted=false }
         };
 
         await context.Patients.AddRangeAsync(patients, ct);
-
-        // IMPORTANT: save once per seeder (recommended)
         await context.SaveChangesAsync(ct);
     }
 }

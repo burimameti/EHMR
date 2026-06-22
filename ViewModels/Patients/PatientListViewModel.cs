@@ -1,37 +1,27 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EHMR.Constants;
 using EHMR.Desktop.Core.ViewModels;
 using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
-using EHMR.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EHMR.ViewModels;
 
 public partial class PatientListViewModel : BaseViewModel<Patient>
 {
-    private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
+    private readonly IPatientService _patientService;
     private readonly ISelectedItemService<Patient> _selectedItemService;
-    private readonly IAuthStateService _authService;
+    private readonly IAuthorizationService _authorization;
 
-    [ObservableProperty]
-    private Patient? _selectedPatient;
+    // =========================
+    // UI PERMISSIONS (MODULE BASED)
+    // =========================
+    [ObservableProperty] private bool canCreatePatients;
 
-    // Својства за UI Пермисии (Видливост на контроли во XAML)
-    [ObservableProperty]
-    private bool _canCreatePatients;
+    [ObservableProperty] private bool canUpdatePatients;
+    [ObservableProperty] private bool canDeletePatients;
 
-    [ObservableProperty]
-    private bool _canUpdatePatients;
-
-    [ObservableProperty]
-    private bool _canDeletePatients;
-
+    // filters
     private string _selectedStatus = "Сите";
 
     public string SelectedStatus
@@ -40,9 +30,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>
         set
         {
             if(SetProperty(ref _selectedStatus, value))
-            {
                 _=ApplyFilterAsync();
-            }
         }
     }
 
@@ -54,71 +42,68 @@ public partial class PatientListViewModel : BaseViewModel<Patient>
         set
         {
             if(SetProperty(ref _selectedGender, value))
-            {
                 _=ApplyFilterAsync();
-            }
         }
     }
 
     public List<string> StatusFilters { get; } = ["Сите", "Active", "Inactive", "Critical"];
     public List<string> GenderFilters { get; } = ["Сите", "Male", "Female"];
 
-    // =========================================================
+    // =========================
     // CTOR
-    // =========================================================
+    // =========================
     public PatientListViewModel(
-        IDbContextFactory<DesktopTherapyDbContext> dbFactory,
+        IPatientService patientService,
         INavigationService navigationService,
         IUserDialogService userDialogService,
         IMenuService menuService,
         ISelectedItemService<Patient> selectedItemService,
-        IAuthStateService authService)
-        : base(navigationService, userDialogService, menuService, authService)
+        IAuthorizationService authorization)
+        : base(navigationService, userDialogService, menuService, authorization)
     {
-        _dbFactory=dbFactory;
+        _patientService=patientService;
         _selectedItemService=selectedItemService;
-        _authService=authService;
+        _authorization=authorization;
 
-        // Првична евалуација на безбедносните дозволи
         EvaluatePermissions();
     }
 
-    /// <summary>
-    /// Ги проверува стринговите за дозволи зачувани во AuthState корисничкиот сесиски профил.
-    /// </summary>
+    // =========================
+    // MODULE-BASED PERMISSIONS
+    // =========================
     private void EvaluatePermissions()
     {
-        CanCreatePatients=_authService.Permissions.Contains(Modules.Patients);
-        CanUpdatePatients=_authService.Permissions.Contains(Modules.Patients);
+        var hasModule = _authorization.CanAccessModule("patients");
+
+        CanCreatePatients=hasModule;
+        CanUpdatePatients=hasModule;
+        CanDeletePatients=hasModule;
     }
 
-    // =========================================================
-    // LIFECYCLE OVERRIDES
-    // =========================================================
+    // =========================
+    // LIFECYCLE
+    // =========================
     public override async Task OnAppearingAsync()
     {
-        // СУШТИНСКА ПОПРАВКА: Освежи ги дозволите секој пат кога екранот станува активен
         EvaluatePermissions();
 
-        // Главна заштита при самото отворање на погледот
-        if(!_authService.Permissions.Contains(Modules.Patients, StringComparer.OrdinalIgnoreCase))
+        if(!_authorization.CanAccessModule("patients"))
         {
-            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате соодветни безбедносни пермисии за преглед на пациенти.", "OK");
-            await NavigationService.GoToAsync($"//{AppRoutes.Dashboard}");
+            await UserDialogService.ShowAlertAsync(
+                "Пристап одбиен",
+                "Немате пристап до пациенти.",
+                "OK");
+
+            await NavigationService.GoToAsync("//Dashboard");
             return;
         }
 
         await LoadAsync();
     }
 
-    protected override async Task OnRefreshAsync()
-    {
-        await LoadAsync();
-    }
-
-    // =========================================================
-    // DATA LOADING & FILTERING
-    // =========================================================
+    // =========================
+    // LOAD
+    // =========================
     [RelayCommand]
     public async Task LoadAsync()
     {
@@ -129,20 +114,14 @@ public partial class PatientListViewModel : BaseViewModel<Patient>
             IsBusy=true;
             ClearError();
 
-            await using var db = await _dbFactory.CreateDbContextAsync();
-
-            var patients = await db.Patients
-                .AsNoTracking()
-                .OrderByDescending(x => x.CreatedAt)
-                .ToListAsync();
+            var patients = await _patientService.GetAllAsync();
 
             _allItems=patients;
-
             await ApplyFilterAsync();
         }
         catch(Exception ex)
         {
-            OnError($"Неуспешно вчитување на листата: {ex.Message}");
+            OnError($"Грешка: {ex.Message}");
         }
         finally
         {
@@ -150,6 +129,9 @@ public partial class PatientListViewModel : BaseViewModel<Patient>
         }
     }
 
+    // =========================
+    // FILTER
+    // =========================
     protected override IEnumerable<Patient> FilterItems(string searchText, IEnumerable<Patient> items)
     {
         var query = items;
@@ -157,34 +139,29 @@ public partial class PatientListViewModel : BaseViewModel<Patient>
         if(!string.IsNullOrWhiteSpace(searchText))
         {
             query=query.Where(x =>
-                (x.FirstName?.Contains(searchText, StringComparison.OrdinalIgnoreCase)??false)||
-                (x.LastName?.Contains(searchText, StringComparison.OrdinalIgnoreCase)??false)||
-                (x.Email?.Contains(searchText, StringComparison.OrdinalIgnoreCase)??false)||
-                ($"{x.FirstName} {x.LastName}").Contains(searchText, StringComparison.OrdinalIgnoreCase));
+                x.FirstName?.Contains(searchText, StringComparison.OrdinalIgnoreCase)==true||
+                x.LastName?.Contains(searchText, StringComparison.OrdinalIgnoreCase)==true||
+                x.Email?.Contains(searchText, StringComparison.OrdinalIgnoreCase)==true);
         }
 
         if(SelectedStatus!="Сите")
-        {
             query=query.Where(x => x.Status.ToString()==SelectedStatus);
-        }
 
         if(SelectedGender!="Сите")
-        {
             query=query.Where(x => x.Gender.ToString()==SelectedGender);
-        }
 
         return query;
     }
 
-    // =========================================================
-    // OPERATIONS & COMMANDS
-    // =========================================================
+    // =========================
+    // COMMANDS
+    // =========================
     [RelayCommand]
     private async Task AddAsync()
     {
         if(!CanCreatePatients)
         {
-            await UserDialogService.ShowAlertAsync("Акцијата е одбиена", "Немате авторизација за додавање нови пациенти во системот.", "OK");
+            await UserDialogService.ShowAlertAsync("Одбиено", "Немате пристап.", "OK");
             return;
         }
 
@@ -195,41 +172,35 @@ public partial class PatientListViewModel : BaseViewModel<Patient>
     [RelayCommand]
     private async Task SelectAsync(Patient patient)
     {
-        if(patient==null) return;
+        _selectedItemService.SelectedItem=patient;
+        await NavigationService.GoToAsync(AppRoutes.Patients.Detail);
+    }
+
+    [RelayCommand]
+    private async Task EditAsync(Patient patient)
+    {
+        if(!CanUpdatePatients)
+        {
+            await UserDialogService.ShowAlertAsync("Одбиено", "Немате пристап.", "OK");
+            return;
+        }
 
         _selectedItemService.SelectedItem=patient;
         await NavigationService.GoToAsync(AppRoutes.Patients.Detail);
     }
 
     [RelayCommand]
-    private async Task EditAsync(Patient selectedPatient)
-    {
-        if(selectedPatient==null) return;
-
-        if(!CanUpdatePatients)
-        {
-            await UserDialogService.ShowAlertAsync("Акцијата е одбиена", "Немате авторизација за измена на податоци за пациенти.", "OK");
-            return;
-        }
-
-        _selectedItemService.SelectedItem=selectedPatient;
-        await NavigationService.GoToAsync(AppRoutes.Patients.Detail);
-    }
-
-    [RelayCommand]
     private async Task DeleteAsync(Patient patient)
     {
-        if(patient==null) return;
-
         if(!CanDeletePatients)
         {
-            await UserDialogService.ShowAlertAsync("Акцијата е одбиена", "Немате безбедносна дозвола за бришење на пациенти.", "OK");
+            await UserDialogService.ShowAlertAsync("Одбиено", "Немате пристап.", "OK");
             return;
         }
 
-        bool confirm = await UserDialogService.ShowConfirmationAsync(
-            "Потврда за бришење",
-            $"Дали сте сигурни дека сакате трајно да го избришете пациентот {patient.FirstName} {patient.LastName}?");
+        var confirm = await UserDialogService.ShowConfirmationAsync(
+            "Бришење",
+            $"Избриши {patient.FirstName} {patient.LastName}?");
 
         if(!confirm) return;
 
@@ -237,20 +208,10 @@ public partial class PatientListViewModel : BaseViewModel<Patient>
         {
             IsBusy=true;
 
-            await using var db = await _dbFactory.CreateDbContextAsync();
-
-            // Закачување на објектот доколку доаѓа од AsNoTracking состојба
-            db.Patients.Entry(patient).State=EntityState.Deleted;
-            await db.SaveChangesAsync();
+            await _patientService.DeleteAsync(patient.Id);
 
             _allItems.Remove(patient);
             await ApplyFilterAsync();
-
-            await UserDialogService.ShowAlertAsync("Избришано", "Пациентот е успешно отстранет од медицинскиот систем.", "OK");
-        }
-        catch(Exception ex)
-        {
-            OnError($"Неуспешно бришење на записот: {ex.Message}");
         }
         finally
         {
@@ -264,6 +225,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>
         SearchText=string.Empty;
         SelectedStatus="Сите";
         SelectedGender="Сите";
+
         await ApplyFilterAsync();
     }
 }

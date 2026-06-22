@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
 
 namespace EHMR.Infrastructure.Persistence;
 
@@ -44,28 +45,28 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     public DbSet<Alert> Alerts => Set<Alert>();
 
     public DbSet<Appointment> Appointments => Set<Appointment>();
-    public DbSet<CycleMedicationDose> CycleMedicationDoses => Set<CycleMedicationDose>();
+
     public DbSet<Doctor> Doctors => Set<Doctor>();
     public DbSet<Diagnosis> Diagnoses => Set<Diagnosis>();
     public DbSet<Encounter> Encounters => Set<Encounter>();
     public DbSet<Medicine> Medicines => Set<Medicine>();
     public DbSet<Patient> Patients => Set<Patient>();
-    public DbSet<ScheduleMedicineRule> ScheduleMedicineRules => Set<ScheduleMedicineRule>();
+
     public DbSet<TaskItem> TaskItems => Set<TaskItem>();
     public DbSet<TherapyCycle> TherapyCycles => Set<TherapyCycle>();
-    public DbSet<TherapySchedule> TherapySchedules => Set<TherapySchedule>();
+
     public DbSet<Inventory> Inventories => Set<Inventory>();
     public DbSet<PatientDocument> PatientDocuments => Set<PatientDocument>();
     public DbSet<Prescription> Prescriptions => Set<Prescription>();
-    public DbSet<PrescriptionMedicine> PrescriptionMedicines => Set<PrescriptionMedicine>();
-    public DbSet<TreatmentPlan> TreatmentPlans => Set<TreatmentPlan>();
+
     public DbSet<TherapyProtocol> TherapyProtocols { get; set; } = null!;
     public DbSet<UserScope> UserScopes => Set<UserScope>();
-    public DbSet<UserModule> UserModules => Set<UserModule>();
+    public DbSet<Domain.Entities.Rbac.Module> UserModules => base.Set<Domain.Entities.Rbac.Module>();
     public DbSet<User> Users => Set<User>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
-    public DbSet<InventoryTransaction> InventoryTransactions => Set<InventoryTransaction>();
+    public DbSet<Mkb10Code> Mkb10Codes => Set<Mkb10Code>();
+    public DbSet<AppointmentDiagnosis> AppointmentDiagnoses => Set<AppointmentDiagnosis>();
 
     public override async Task<int> SaveChangesAsync(
       CancellationToken cancellationToken = default)
@@ -90,7 +91,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
         ConfigureMappings(modelBuilder);
         ConfigurePatient(modelBuilder);
         //ConfigueProtocol(modelBuilder);
-        ConfigurePrescriptionMedicine(modelBuilder);
         ConfigureRelationships(modelBuilder);
         ConfigureIndexes(modelBuilder);
         ConfigureEnumConversions(modelBuilder);
@@ -169,147 +169,144 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             entity.Property(x => x.LastName).HasMaxLength(100);
             entity.Property(x => x.Email).HasMaxLength(256);
             entity.Property(x => x.Gender).HasMaxLength(20);
-            entity.Property(x => x.PrimaryDiagnosis).HasMaxLength(300);
-            entity.Property(x => x.ClinicalNotes).HasMaxLength(4000);
+
             entity.Property(x => x.Status).HasConversion<string>();
             entity.Ignore(x => x.Age); // Computed property runtime evaluation ignore
         });
     }
 
     // --- 5. PRESCRIPTION MANY-TO-MANY BRIDGE MAPPING ---
-    private static void ConfigurePrescriptionMedicine(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<PrescriptionMedicine>(entity =>
-        {
-            entity.HasKey(x => new { x.PrescriptionId, x.MedicineId });
-            entity.Property(x => x.Dosage).HasMaxLength(100);
-            entity.Property(x => x.Frequency).HasMaxLength(100);
-
-            entity.HasOne(x => x.Prescription)
-                .WithMany(x => x.Medicines)
-                .HasForeignKey(x => x.PrescriptionId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-    }
 
     // --- 6. GLOBAL RELATIONSHIP MATRIX MAPS ---
     private static void ConfigureRelationships(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Patient>()
-            .HasMany(x => x.TreatmentPlans)
-            .WithOne(x => x.Patient)
-            .HasForeignKey(x => x.PatientId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<TherapySchedule>()
-            .HasOne(x => x.TreatmentPlan)
-            .WithMany(x => x.TherapySchedules)
-            .HasForeignKey(x => x.TreatmentPlanId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<TherapySchedule>()
-            .HasMany(x => x.Cycles)
-            .WithOne(x => x.TherapySchedule)
-            .HasForeignKey(x => x.TherapyScheduleId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        // Multi-Medicine Rules Relationship Config
-        modelBuilder.Entity<ScheduleMedicineRule>()
-            .HasOne(x => x.TherapySchedule)
-            .WithMany(x => x.MedicineRules)
-            .HasForeignKey(x => x.TherapyScheduleId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<ScheduleMedicineRule>()
-            .HasOne(x => x.Medicine)
-            .WithMany()
-            .HasForeignKey(x => x.MedicineId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        // Cycle Medication Doses Config
-        modelBuilder.Entity<CycleMedicationDose>()
-        .HasOne(x => x.TherapyCycle)
-        .WithMany(x => x.ScheduledDoses)
-        .HasForeignKey(x => x.TherapyCycleId);
-
-        modelBuilder.Entity<CycleMedicationDose>()
-            .HasOne(x => x.Medicine)
-            .WithMany()
-            .HasForeignKey(x => x.MedicineId);
-
+        // =====================================================
+        // Inventory -> Medicine
+        // =====================================================
         modelBuilder.Entity<Inventory>()
             .HasOne(x => x.Medicine)
             .WithMany()
             .HasForeignKey(x => x.MedicineId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // =====================================================
+        // Appointment -> Patient
+        // =====================================================
         modelBuilder.Entity<Appointment>()
             .HasOne(x => x.Patient)
             .WithMany(x => x.Appointments)
             .HasForeignKey(x => x.PatientId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
+        // =====================================================
+        // Appointment -> Doctor
+        // =====================================================
         modelBuilder.Entity<Appointment>()
             .HasOne(x => x.Doctor)
             .WithMany()
             .HasForeignKey(x => x.DoctorId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // =====================================================
+        // Appointment -> TherapyCycle
+        // =====================================================
+        modelBuilder.Entity<Appointment>()
+            .HasOne(x => x.TherapyCycle)
+            .WithMany(x => x.Appointments)
+            .HasForeignKey(x => x.TherapyCycleId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // =====================================================
+        // TherapyCycle -> Patient
+        // =====================================================
+        modelBuilder.Entity<TherapyCycle>()
+            .HasOne(x => x.Patient)
+            .WithMany(x => x.TherapyCycles)
+            .HasForeignKey(x => x.PatientId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // =====================================================
+        // Diagnosis -> Patient
+        // =====================================================
         modelBuilder.Entity<Diagnosis>()
-            .HasOne<Patient>()
+            .HasOne(x => x.Patient)
             .WithMany(x => x.Diagnoses)
             .HasForeignKey(x => x.PatientId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
+        // =====================================================
+        // AppointmentDiagnosis (many-to-many bridge)
+        // =====================================================
+        modelBuilder.Entity<AppointmentDiagnosis>()
+            .HasKey(x => new
+            {
+                x.AppointmentId,
+                x.Mkb10CodeId
+            });
+
+        modelBuilder.Entity<AppointmentDiagnosis>()
+            .HasOne(x => x.Appointment)
+            .WithMany(x => x.AppointmentDiagnoses)
+            .HasForeignKey(x => x.AppointmentId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<AppointmentDiagnosis>()
+            .HasOne(x => x.Mkb10Code)
+            .WithMany()
+            .HasForeignKey(x => x.Mkb10CodeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Optional Diagnosis entity relation
+        modelBuilder.Entity<AppointmentDiagnosis>()
+            .HasOne<Diagnosis>()
+            .WithMany()
+            .HasForeignKey(x => x.DiagnosisId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // =====================================================
+        // Encounter -> Patient
+        // =====================================================
         modelBuilder.Entity<Encounter>()
             .HasOne(x => x.Patient)
             .WithMany(x => x.Encounters)
             .HasForeignKey(x => x.PatientId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
+        // =====================================================
+        // Encounter -> Doctor
+        // =====================================================
         modelBuilder.Entity<Encounter>()
             .HasOne(x => x.Doctor)
             .WithMany()
             .HasForeignKey(x => x.DoctorId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // =====================================================
+        // Prescription -> Patient
+        // =====================================================
         modelBuilder.Entity<Prescription>()
             .HasOne(x => x.Patient)
             .WithMany(x => x.Prescriptions)
             .HasForeignKey(x => x.PatientId)
-            .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<TreatmentPlan>()
-            .HasOne(p => p.TherapyProtocol)
-            .WithMany(p => p.TreatmentPlans)
-            .HasForeignKey(p => p.TherapyProtocolId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // =====================================================
+        // PatientDocument -> Patient
+        // =====================================================
         modelBuilder.Entity<PatientDocument>()
-            .HasOne<Patient>()
+            .HasOne(x => x.Patient)
             .WithMany(x => x.Documents)
             .HasForeignKey(x => x.PatientId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
+        // =====================================================
+        // UserScope -> User
+        // =====================================================
         modelBuilder.Entity<UserScope>()
             .HasOne(x => x.User)
             .WithMany(x => x.Scopes)
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<InventoryTransaction>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-
-            entity.HasIndex(x => x.InventoryId);
-            entity.HasIndex(x => x.MedicineId);
-            entity.HasIndex(x => x.CreatedAt);
-
-            entity.Property(x => x.ReferenceNote)
-                .HasMaxLength(500);
-
-            entity.HasOne(x => x.Inventory)
-                .WithMany()
-                .HasForeignKey(x => x.InventoryId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
     }
 
     // --- 7. SQL INDEX OPTIMIZATIONS LAYER ---
@@ -320,9 +317,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
         modelBuilder.Entity<Inventory>().HasIndex(x => x.MedicineId);
         modelBuilder.Entity<Medicine>().HasIndex(x => x.Name);
         modelBuilder.Entity<Diagnosis>().HasIndex(x => x.PatientId);
-        modelBuilder.Entity<TherapyCycle>().HasIndex(x => x.TherapyScheduleId);
-        modelBuilder.Entity<ScheduleMedicineRule>().HasIndex(x => x.TherapyScheduleId);
-        modelBuilder.Entity<CycleMedicationDose>().HasIndex(x => x.TherapyCycleId);
+        modelBuilder.Entity<TherapyCycle>().HasIndex(x => x.PatientId);
     }
 
     // --- 8. STRING-CONVERTED STATE TRACKING LAYER ---
@@ -332,10 +327,10 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
         modelBuilder.Entity<TaskItem>().Property(x => x.Priority).HasConversion<string>();
         modelBuilder.Entity<TaskItem>().Property(x => x.Status).HasConversion<string>();
         modelBuilder.Entity<TherapyCycle>().Property(x => x.Status).HasConversion<string>();
-        modelBuilder.Entity<CycleMedicationDose>().Property(x => x.Status).HasConversion<string>();
+
         modelBuilder.Entity<Appointment>().Property(x => x.Status).HasConversion<string>();
         modelBuilder.Entity<Inventory>().Property(x => x.Status).HasConversion<string>();
-        modelBuilder.Entity<TreatmentPlan>().Property(x => x.Status).HasConversion<string>();
+
         modelBuilder.Entity<Alert>().Property(x => x.Level).HasConversion<string>();
     }
 }
