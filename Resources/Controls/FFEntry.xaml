@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="EHMR.Resources.Controls.FFEntry"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="Root">
+
+	<VerticalStackLayout Spacing="6">
+
+		<!-- LABEL -->
+		<Label
+            x:Name="LabelView"
+            Text="{Binding Label, Source={x:Reference Root}}"
+            IsVisible="{Binding HasLabel, Source={x:Reference Root}}"
+            FontSize="11"
+            FontAttributes="Bold"
+            CharacterSpacing="0.8"
+            TextColor="#94A3B8"
+            Margin="2,0,0,0" />
+
+		<!-- INPUT SHELL -->
+		<Border
+            x:Name="InputBorder"
+            BackgroundColor="White"
+            Stroke="#E2E8F0"
+            StrokeThickness="1"
+            MinimumHeightRequest="46"
+            Padding="0">
+			<Border.StrokeShape>
+				<RoundRectangle CornerRadius="10" />
+			</Border.StrokeShape>
+
+			<Grid
+                ColumnDefinitions="Auto,*,Auto"
+                ColumnSpacing="0"
+                Padding="14,0">
+
+				<!-- LEFT ICON -->
+				<Label
+                    x:Name="LeftIcon"
+                    Grid.Column="0"
+                    Text="{Binding Icon, Source={x:Reference Root}}"
+                    IsVisible="{Binding HasIcon, Source={x:Reference Root}}"
+                    FontSize="16"
+                    TextColor="#94A3B8"
+                    VerticalOptions="Center"
+                    Margin="0,0,10,0" />
+
+				<!-- ENTRY -->
+				<Entry
+                    x:Name="PART_Entry"
+                    Grid.Column="1"
+                    BackgroundColor="Transparent"
+                    FontSize="14"
+                    TextColor="#0F172A"
+                    PlaceholderColor="#CBD5E1"
+                    FontFamily="Sans"
+                    HeightRequest="46"
+                    VerticalOptions="Center"
+                    Text="{Binding Text, Source={x:Reference Root}, Mode=TwoWay}"
+                    Placeholder="{Binding Placeholder, Source={x:Reference Root}}"
+                    Keyboard="{Binding Keyboard, Source={x:Reference Root}}"
+                    ReturnType="{Binding ReturnType, Source={x:Reference Root}}"
+                    IsPassword="{Binding IsPassword, Source={x:Reference Root}}"
+                    MaxLength="{Binding MaxLength, Source={x:Reference Root}}"
+                    IsEnabled="{Binding IsEnabled, Source={x:Reference Root}}"
+                    Focused="OnEntryFocused"
+                    Unfocused="OnEntryUnfocused" />
+
+				<!-- RIGHT SLOT -->
+				<Grid
+                    Grid.Column="2"
+                    VerticalOptions="Center"
+                    IsVisible="{Binding HasRightContent, Source={x:Reference Root}}"
+                    Margin="6,0,0,0">
+					<ContentPresenter Content="{Binding RightContent, Source={x:Reference Root}}" />
+				</Grid>
+			</Grid>
+
+			<!-- STATES -->
+			<Border.Triggers>
+				<DataTrigger TargetType="Border"
+                             Binding="{Binding IsInputFocused, Source={x:Reference Root}}"
+                             Value="True">
+					<Setter Property="Stroke" Value="#2563EB" />
+					<Setter Property="StrokeThickness" Value="1.5" />
+					<Setter Property="BackgroundColor" Value="#FAFCFF" />
+				</DataTrigger>
+				<DataTrigger TargetType="Border"
+                             Binding="{Binding HasError, Source={x:Reference Root}}"
+                             Value="True">
+					<Setter Property="Stroke" Value="#EF4444" />
+					<Setter Property="StrokeThickness" Value="1.5" />
+					<Setter Property="BackgroundColor" Value="#FFF8F8" />
+				</DataTrigger>
+				<DataTrigger TargetType="Border"
+                             Binding="{Binding IsEnabled, Source={x:Reference Root}}"
+                             Value="False">
+					<Setter Property="BackgroundColor" Value="#F8FAFC" />
+					<Setter Property="Opacity" Value="0.6" />
+				</DataTrigger>
+			</Border.Triggers>
+		</Border>
+
+		<!-- ERROR MESSAGE -->
+		<Label
+            Text="{Binding Error, Source={x:Reference Root}}"
+            IsVisible="{Binding HasError, Source={x:Reference Root}}"
+            FontSize="11"
+            TextColor="#EF4444"
+            Margin="2,0,0,0" />
+
+	</VerticalStackLayout>
+</ContentView>

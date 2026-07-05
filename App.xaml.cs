@@ -30,10 +30,10 @@ namespace EHMR
             var loadingPage = new LoadingPage();
             var window = new Window(loadingPage);
 
-            window.Width=1600;
-            window.Height=950;
-            window.MinimumWidth=1400;
-            window.MinimumHeight=800;
+            window.Width=1800;
+            window.Height=1250;
+            window.MinimumWidth=1600;
+            window.MinimumHeight=1200;
 
             // 2. БЕЗБЕДНО ИНИЦИЈАЛИЗИРАЊЕ: Се активира кога прозорецот е подготвен на оперативниот систем
             window.Created+=async (s, e) =>

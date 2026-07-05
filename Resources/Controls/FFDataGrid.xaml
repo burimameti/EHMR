@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+	x:Class="EHMR.Resources.Controls.FFDataGrid"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	x:Name="Root">
+
+	<Border
+		Background="{Binding SurfaceBackground, Source={x:Reference Root}}"
+		Stroke="{Binding BorderBrush, Source={x:Reference Root}}"
+		StrokeThickness="1">
+
+		<Border.Shadow>
+			<Shadow
+				Brush="{Binding ShadowBrush, Source={x:Reference Root}}"
+				Opacity="{Binding ShadowOpacity, Source={x:Reference Root}}"
+				Radius="12"
+				Offset="0,4" />
+		</Border.Shadow>
+
+		<Border.StrokeShape>
+			<RoundRectangle CornerRadius="{Binding CornerRadius, Source={x:Reference Root}}" />
+		</Border.StrokeShape>
+
+		<Grid RowDefinitions="Auto,*,Auto">
+
+			<!--  HEADER  -->
+			<!--  HEADER  -->
+			<ContentView
+				Grid.Row="0"
+				Background="{Binding HeaderBackground, Source={x:Reference Root}}"
+				Content="{Binding HeaderContent, Source={x:Reference Root}}"
+				HeightRequest="{Binding HeaderHeight, Source={x:Reference Root}}"
+				IsVisible="{Binding HeaderContent, Source={x:Reference Root}, Converter={StaticResource IsNotNullConverter}}" />
+
+			<!--  ROWS  -->
+			<CollectionView
+				x:Name="PART_Items"
+				Grid.Row="1"
+				BackgroundColor="Transparent"
+				ItemTemplate="{Binding RowTemplate, Source={x:Reference Root}}"
+				ItemsSource="{Binding PagedItems, Source={x:Reference Root}}"
+				SelectionChangedCommand="{Binding RowCommand, Source={x:Reference Root}}"
+				SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}"
+				SelectionMode="Single">
+
+				<CollectionView.ItemsLayout>
+					<LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
+				</CollectionView.ItemsLayout>
+
+				<!--  EMPTY STATE  -->
+				<CollectionView.EmptyView>
+					<VerticalStackLayout
+						Padding="24"
+						HorizontalOptions="Center"
+						Spacing="6"
+						VerticalOptions="Center">
+						<Label
+							FontAttributes="Bold"
+							FontSize="15"
+							HorizontalTextAlignment="Center"
+							Text="{Binding EmptyTitle, Source={x:Reference Root}}"
+							TextColor="{Binding PrimaryTextColor, Source={x:Reference Root}}" />
+						<Label
+							FontSize="13"
+							HorizontalTextAlignment="Center"
+							Text="{Binding EmptyMessage, Source={x:Reference Root}}"
+							TextColor="{Binding MutedTextColor, Source={x:Reference Root}}" />
+					</VerticalStackLayout>
+				</CollectionView.EmptyView>
+			</CollectionView>
+
+			<!--  FOOTER  -->
+			<!--  FOOTER  -->
+			<Grid
+				Grid.Row="2"
+				Padding="12,6"
+				Background="{Binding FooterBackground, Source={x:Reference Root}}"
+				ColumnDefinitions="Auto,*,Auto"
+				HeightRequest="48">
+
+				<BoxView
+					Grid.ColumnSpan="3"
+					HeightRequest="1"
+					VerticalOptions="Start"
+					Color="{Binding DividerBrush, Source={x:Reference Root}, Converter={StaticResource BrushToColorConverter}}" />
+
+				<!--  LEFT INFO  -->
+				<HorizontalStackLayout
+					Grid.Column="0"
+					Spacing="6"
+					VerticalOptions="Center">
+					<Label
+						FontSize="12"
+						Text="Total:"
+						TextColor="{Binding SecondaryTextColor, Source={x:Reference Root}}" />
+					<Label
+						FontAttributes="Bold"
+						FontSize="12"
+						Text="{Binding TotalItems, Source={x:Reference Root}}"
+						TextColor="{Binding PrimaryTextColor, Source={x:Reference Root}}" />
+				</HorizontalStackLayout>
+
+				<!--  PAGINATION (CENTERED)  -->
+				<HorizontalStackLayout
+					Grid.Column="1"
+					HorizontalOptions="Center"
+					Spacing="6"
+					VerticalOptions="Center">
+
+					<Label
+						FontFamily="FASolid"
+						FontSize="12"
+						HorizontalTextAlignment="Center"
+						Text="&#xf104;"
+						TextColor="{Binding MutedTextColor, Source={x:Reference Root}}"
+						VerticalOptions="Center"
+						WidthRequest="24">
+						<Label.GestureRecognizers>
+							<TapGestureRecognizer Command="{Binding PrevPageCommand, Source={x:Reference Root}}" />
+						</Label.GestureRecognizers>
+					</Label>
+
+					<CollectionView
+						HeightRequest="30"
+						ItemsSource="{Binding PageNumbers, Source={x:Reference Root}}"
+						VerticalOptions="Center">
+						<CollectionView.ItemsLayout>
+							<LinearItemsLayout ItemSpacing="4" Orientation="Horizontal" />
+						</CollectionView.ItemsLayout>
+						<CollectionView.ItemTemplate>
+							<DataTemplate>
+								<Border
+									Padding="0"
+									BackgroundColor="{Binding IsActive, Converter={StaticResource BoolToPillColorConverter}}"
+									HeightRequest="28"
+									StrokeThickness="0"
+									WidthRequest="28">
+									<Border.StrokeShape>
+										<RoundRectangle CornerRadius="6" />
+									</Border.StrokeShape>
+									<Border.GestureRecognizers>
+										<TapGestureRecognizer Command="{Binding GoToPageCommand, Source={x:Reference Root}}" CommandParameter="{Binding Number}" />
+									</Border.GestureRecognizers>
+									<Label
+										FontAttributes="{Binding IsActive, Converter={StaticResource BoolToFontAttrConverter}}"
+										FontSize="12.5"
+										HorizontalOptions="Center"
+										Text="{Binding Number}"
+										TextColor="{Binding IsActive, Converter={StaticResource BoolToPillTextConverter}}"
+										VerticalOptions="Center" />
+								</Border>
+							</DataTemplate>
+						</CollectionView.ItemTemplate>
+					</CollectionView>
+
+					<Label
+						FontFamily="FASolid"
+						FontSize="12"
+						HorizontalTextAlignment="Center"
+						Text="&#xf105;"
+						TextColor="{Binding MutedTextColor, Source={x:Reference Root}}"
+						VerticalOptions="Center"
+						WidthRequest="24">
+						<Label.GestureRecognizers>
+							<TapGestureRecognizer Command="{Binding NextPageCommand, Source={x:Reference Root}}" />
+						</Label.GestureRecognizers>
+					</Label>
+				</HorizontalStackLayout>
+
+			</Grid>
+
+			<!--  LOADING  -->
+			<Grid
+				Grid.RowSpan="3"
+				Background="{Binding OverlayBackground, Source={x:Reference Root}}"
+				IsVisible="{Binding IsLoading, Source={x:Reference Root}}">
+
+				<Border
+					Background="{Binding SurfaceBackground, Source={x:Reference Root}}"
+					HeightRequest="120"
+					HorizontalOptions="Center"
+					Stroke="{Binding BorderBrush, Source={x:Reference Root}}"
+					VerticalOptions="Center"
+					WidthRequest="120">
+
+					<ActivityIndicator
+						HorizontalOptions="Center"
+						IsRunning="True"
+						VerticalOptions="Center"
+						Color="{Binding AccentBrush, Source={x:Reference Root}, Converter={StaticResource BrushToColorConverter}}" />
+
+				</Border>
+
+			</Grid>
+
+		</Grid>
+	</Border>
+</ContentView>

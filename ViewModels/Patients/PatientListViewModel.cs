@@ -1,127 +1,163 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EHMR.Desktop.Core.ViewModels;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
+using EHMR.UI.Lookup;
+using EHMR.ViewModels.Patients.Extensions;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
-namespace EHMR.ViewModels;
+namespace EHMR.ViewModels.Patients;
 
-public partial class PatientListViewModel : BaseViewModel<Patient>
+public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttributable
 {
+    private string? _pendingSearch;
+    private string? _pendingStatus;
+
+    private readonly FilterLookup _cityLookup = PatientFilterLookups.BuildCityLookup();
+
     private readonly IPatientService _patientService;
-    private readonly ISelectedItemService<Patient> _selectedItemService;
     private readonly IAuthorizationService _authorization;
 
-    // =========================
-    // UI PERMISSIONS (MODULE BASED)
-    // =========================
     [ObservableProperty] private bool canCreatePatients;
-
     [ObservableProperty] private bool canUpdatePatients;
     [ObservableProperty] private bool canDeletePatients;
 
-    // filters
-    private string _selectedStatus = "Сите";
+    [ObservableProperty] private string selectedStatus = "All";
+    [ObservableProperty] private string selectedGender = "All";
+    [ObservableProperty] private string selectedBloodType = "All";
+    [ObservableProperty] private string selectedCity = "All";
+    [ObservableProperty] private string selectedAgeGroup = "All";
 
-    public string SelectedStatus
+    public ObservableCollection<string> StatusFilters { get; } = PatientFilterLookups.Status.ToObservableCollection();
+    public ObservableCollection<string> GenderFilters { get; } = PatientFilterLookups.Gender.ToObservableCollection();
+    public ObservableCollection<string> BloodTypeFilters { get; } = PatientFilterLookups.BloodType.ToObservableCollection();
+    public ObservableCollection<string> AgeGroups { get; } = PatientFilterLookups.AgeGroup.ToObservableCollection();
+    public ObservableCollection<string> CityFilterNames
     {
-        get => _selectedStatus;
+        get;
+    }
+    public string SelectedStatusDisplay
+    {
+        get => PatientFilterLookups.Status.ToDisplay(SelectedStatus);
         set
         {
-            if(SetProperty(ref _selectedStatus, value))
-                _=ApplyFilterAsync();
+            var internalValue = PatientFilterLookups.Status.ToInternal(value);
+            if(SelectedStatus==internalValue)
+                return;
+
+            SelectedStatus=internalValue;
+            CurrentPage=1;
+            ApplyPipeline();
+            OnPropertyChanged();
         }
     }
 
-    private string _selectedGender = "Сите";
-
-    public string SelectedGender
+    public string SelectedGenderDisplay
     {
-        get => _selectedGender;
+        get => PatientFilterLookups.Gender.ToDisplay(SelectedGender);
         set
         {
-            if(SetProperty(ref _selectedGender, value))
-                _=ApplyFilterAsync();
+            var internalValue = PatientFilterLookups.Gender.ToInternal(value);
+            if(SelectedGender==internalValue)
+                return;
+
+            SelectedGender=internalValue;
+            CurrentPage=1;
+            ApplyPipeline();
+            OnPropertyChanged();
         }
     }
 
-    public List<string> StatusFilters { get; } = ["Сите", "Active", "Inactive", "Critical"];
-    public List<string> GenderFilters { get; } = ["Сите", "Male", "Female"];
+    public string SelectedBloodTypeDisplay
+    {
+        get => PatientFilterLookups.BloodType.ToDisplay(SelectedBloodType);
+        set
+        {
+            var internalValue = PatientFilterLookups.BloodType.ToInternal(value);
+            if(SelectedBloodType==internalValue)
+                return;
 
-    // =========================
-    // CTOR
-    // =========================
+            SelectedBloodType=internalValue;
+            CurrentPage=1;
+            ApplyPipeline();
+            OnPropertyChanged();
+        }
+    }
+
+    public string SelectedCityDisplay
+    {
+        get => _cityLookup.ToDisplay(SelectedCity);
+        set
+        {
+            var internalValue = _cityLookup.ToInternal(value);
+            if(SelectedCity==internalValue)
+                return;
+
+            SelectedCity=internalValue;
+            CurrentPage=1;
+            ApplyPipeline();
+            OnPropertyChanged();
+        }
+    }
+
+    public string SelectedAgeGroupDisplay
+    {
+        get => PatientFilterLookups.AgeGroup.ToDisplay(SelectedAgeGroup);
+        set
+        {
+            var internalValue = PatientFilterLookups.AgeGroup.ToInternal(value);
+            if(SelectedAgeGroup==internalValue)
+                return;
+
+            SelectedAgeGroup=internalValue;
+            CurrentPage=1;
+            ApplyPipeline();
+            OnPropertyChanged();
+        }
+    }
+
+    private readonly ISelectedItemService<Patient> _selectedItemService;
     public PatientListViewModel(
-        IPatientService patientService,
+        IPatientService patientService, ISelectedItemService<Patient> selectedItemService,
         INavigationService navigationService,
         IUserDialogService userDialogService,
         IMenuService menuService,
-        ISelectedItemService<Patient> selectedItemService,
         IAuthorizationService authorization)
         : base(navigationService, userDialogService, menuService, authorization)
     {
         _patientService=patientService;
-        _selectedItemService=selectedItemService;
         _authorization=authorization;
-
+        _selectedItemService=selectedItemService;
+        CityFilterNames=_cityLookup.ToObservableCollection();
         EvaluatePermissions();
     }
 
-    // =========================
-    // MODULE-BASED PERMISSIONS
-    // =========================
-    private void EvaluatePermissions()
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        var hasModule = _authorization.CanAccessModule("patients");
-
-        CanCreatePatients=hasModule;
-        CanUpdatePatients=hasModule;
-        CanDeletePatients=hasModule;
+        _pendingSearch=query.TryGetValue("search", out var s) ? s?.ToString() : null;
+        _pendingStatus=query.TryGetValue("statusFilter", out var f) ? f?.ToString() : null;
     }
+    
 
-    // =========================
-    // LIFECYCLE
-    // =========================
-    public override async Task OnAppearingAsync()
-    {
-        EvaluatePermissions();
-
-        if(!_authorization.CanAccessModule("patients"))
-        {
-            await UserDialogService.ShowAlertAsync(
-                "Пристап одбиен",
-                "Немате пристап до пациенти.",
-                "OK");
-
-            await NavigationService.GoToAsync("//Dashboard");
-            return;
-        }
-
-        await LoadAsync();
-    }
-
-    // =========================
-    // LOAD
-    // =========================
     [RelayCommand]
     public async Task LoadAsync()
     {
         if(IsBusy) return;
-
         try
         {
             IsBusy=true;
             ClearError();
 
             var patients = await _patientService.GetAllAsync();
-
-            _allItems=patients;
-            await ApplyFilterAsync();
+            AllItems=patients?.ToList()??new List<Patient>();
+            ApplyPendingQuery();
+            ApplyPipeline();
         }
         catch(Exception ex)
         {
-            OnError($"Грешка: {ex.Message}");
+            OnError($"Failed to load patients: {ex.Message}");
         }
         finally
         {
@@ -129,103 +165,152 @@ public partial class PatientListViewModel : BaseViewModel<Patient>
         }
     }
 
-    // =========================
-    // FILTER
-    // =========================
-    protected override IEnumerable<Patient> FilterItems(string searchText, IEnumerable<Patient> items)
+    private void ApplyPendingQuery()
     {
-        var query = items;
+        if(!string.IsNullOrWhiteSpace(_pendingSearch))
+            SearchText=_pendingSearch;
 
-        if(!string.IsNullOrWhiteSpace(searchText))
-        {
-            query=query.Where(x =>
-                x.FirstName?.Contains(searchText, StringComparison.OrdinalIgnoreCase)==true||
-                x.LastName?.Contains(searchText, StringComparison.OrdinalIgnoreCase)==true||
-                x.Email?.Contains(searchText, StringComparison.OrdinalIgnoreCase)==true);
-        }
+        if(!string.IsNullOrWhiteSpace(_pendingStatus))
+            SelectedStatus=_pendingStatus;
 
-        if(SelectedStatus!="Сите")
-            query=query.Where(x => x.Status.ToString()==SelectedStatus);
+        CurrentPage=1;
+        _pendingSearch=null;
+        _pendingStatus=null;
+    }
 
-        if(SelectedGender!="Сите")
-            query=query.Where(x => x.Gender.ToString()==SelectedGender);
+    [RelayCommand]
+    private void SelectedStatusChanged(string? value)
+    {
+        SelectedStatus=PatientFilterLookups.Status.ToInternal(value);
+        CurrentPage=1;
+        ApplyPipeline();
+    }
+
+    [RelayCommand]
+    private void SelectedGenderChanged(string? value)
+    {
+        SelectedGender=PatientFilterLookups.Gender.ToInternal(value);
+        CurrentPage=1;
+        ApplyPipeline();
+    }
+
+    [RelayCommand]
+    private void SelectedBloodTypeChanged(string? value)
+    {
+        SelectedBloodType=PatientFilterLookups.BloodType.ToInternal(value);
+        CurrentPage=1;
+        ApplyPipeline();
+    }
+
+    [RelayCommand]
+    private void SelectedCityChanged(string? value)
+    {
+        SelectedCity=_cityLookup.ToInternal(value);
+        CurrentPage=1;
+        ApplyPipeline();
+    }
+
+    [RelayCommand]
+    private void SelectedAgeGroupChanged(string? value)
+    {
+        SelectedAgeGroup=PatientFilterLookups.AgeGroup.ToInternal(value);
+        CurrentPage=1;
+        ApplyPipeline();
+    }
+
+    [RelayCommand]
+    private async Task ClearFilters()
+    {
+        SearchText=string.Empty;
+
+        SelectedStatus="All";
+        SelectedGender="All";
+        SelectedBloodType="All";
+        SelectedCity="All";
+        SelectedAgeGroup="All";
+
+        OnPropertyChanged(nameof(SelectedStatusDisplay));
+        OnPropertyChanged(nameof(SelectedGenderDisplay));
+        OnPropertyChanged(nameof(SelectedBloodTypeDisplay));
+        OnPropertyChanged(nameof(SelectedCityDisplay));
+        OnPropertyChanged(nameof(SelectedAgeGroupDisplay));
+
+        CurrentPage=1;
+        ApplyPipeline();
+        
+    }
+
+    [RelayCommand]
+    private async Task AddAsync() => await NavigationService.GoToAsync(AppRoutes.Patients.Detail);
+
+    [RelayCommand]
+    private async Task SelectAsync(Patient? patient)
+    {
+        if(patient==null)
+            return;
+
+        _selectedItemService.SelectedItem=patient;
+        _selectedItemService.OpenInEditMode=false;
+
+        await NavigationService.GoToAsync(AppRoutes.Patients.Detail);
+    }
+
+    [RelayCommand]
+    private async Task EditAsync(Patient? patient)
+    {
+        if(patient==null)
+            return;
+
+        _selectedItemService.SelectedItem=patient;
+        _selectedItemService.OpenInEditMode=true;
+
+        await NavigationService.GoToAsync(AppRoutes.Patients.Detail);
+    }
+    [RelayCommand]
+    private async Task ViewHistoryAsync(Patient? patient)
+    {
+        if(patient==null) return;
+    }
+
+    protected override IEnumerable<Patient> ApplyFilters(IEnumerable<Patient> query)
+    {
+        if(SelectedStatus!="All")
+            query=query.Where(x => string.Equals(x.Status.ToString(), SelectedStatus, StringComparison.OrdinalIgnoreCase));
+
+        if(SelectedGender!="All")
+            query=query.Where(x => string.Equals(x.Gender.ToString(), SelectedGender, StringComparison.OrdinalIgnoreCase));
+
+        if(SelectedBloodType!="All")
+            query=query.Where(x => string.Equals(x.BloodType, SelectedBloodType, StringComparison.OrdinalIgnoreCase));
+
+        if(SelectedCity!="All")
+            query=query.Where(x => string.Equals(x.City, SelectedCity, StringComparison.OrdinalIgnoreCase));
+
+        if(SelectedAgeGroup!="All")
+            query=query.Where(x => x.Age.IsInAgeGroup(SelectedAgeGroup));
 
         return query;
     }
 
-    // =========================
-    // COMMANDS
-    // =========================
-    [RelayCommand]
-    private async Task AddAsync()
+    protected override IEnumerable<Patient> ApplySearch(IEnumerable<Patient> query, string search)
     {
-        if(!CanCreatePatients)
-        {
-            await UserDialogService.ShowAlertAsync("Одбиено", "Немате пристап.", "OK");
-            return;
-        }
+        if(string.IsNullOrWhiteSpace(search))
+            return query;
 
-        _selectedItemService.SelectedItem=null;
-        await NavigationService.GoToAsync(AppRoutes.Patients.Detail);
+        search=search.Trim().ToLowerInvariant();
+
+        return query.Where(x =>
+            (!string.IsNullOrWhiteSpace(x.FullName)&&x.FullName.ToLowerInvariant().Contains(search))||
+            (!string.IsNullOrWhiteSpace(x.NationalId)&&x.NationalId.Contains(search, StringComparison.OrdinalIgnoreCase))||
+            (!string.IsNullOrWhiteSpace(x.Phone)&&x.Phone.Contains(search, StringComparison.OrdinalIgnoreCase))||
+            (!string.IsNullOrWhiteSpace(x.City)&&x.City.ToLowerInvariant().Contains(search)));
     }
 
-    [RelayCommand]
-    private async Task SelectAsync(Patient patient)
+    private void EvaluatePermissions()
     {
-        _selectedItemService.SelectedItem=patient;
-        await NavigationService.GoToAsync(AppRoutes.Patients.Detail);
-    }
-
-    [RelayCommand]
-    private async Task EditAsync(Patient patient)
-    {
-        if(!CanUpdatePatients)
-        {
-            await UserDialogService.ShowAlertAsync("Одбиено", "Немате пристап.", "OK");
-            return;
-        }
-
-        _selectedItemService.SelectedItem=patient;
-        await NavigationService.GoToAsync(AppRoutes.Patients.Detail);
-    }
-
-    [RelayCommand]
-    private async Task DeleteAsync(Patient patient)
-    {
-        if(!CanDeletePatients)
-        {
-            await UserDialogService.ShowAlertAsync("Одбиено", "Немате пристап.", "OK");
-            return;
-        }
-
-        var confirm = await UserDialogService.ShowConfirmationAsync(
-            "Бришење",
-            $"Избриши {patient.FirstName} {patient.LastName}?");
-
-        if(!confirm) return;
-
-        try
-        {
-            IsBusy=true;
-
-            await _patientService.DeleteAsync(patient.Id);
-
-            _allItems.Remove(patient);
-            await ApplyFilterAsync();
-        }
-        finally
-        {
-            IsBusy=false;
-        }
-    }
-
-    [RelayCommand]
-    private async Task ClearFiltersAsync()
-    {
-        SearchText=string.Empty;
-        SelectedStatus="Сите";
-        SelectedGender="Сите";
-
-        await ApplyFilterAsync();
+        var hasModule = _authorization.CanAccessModule("patients");
+        CanCreatePatients=hasModule;
+        CanUpdatePatients=hasModule;
+        CanDeletePatients=hasModule;
     }
 }

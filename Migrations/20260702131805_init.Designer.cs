@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EHMR.Migrations
 {
     [DbContext(typeof(DesktopTherapyDbContext))]
-    [Migration("20260620224324_initialCreate")]
-    partial class initialCreate
+    [Migration("20260702131805_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -308,31 +308,98 @@ namespace EHMR.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AppointmentId")
+                    b.Property<Guid?>("AppointmentId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Assessment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BillingStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CheckInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CheckOutTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ChiefComplaint")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClinicalNotes")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("DoctorId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("DurationMinutes")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("EncounterDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Notes")
+                    b.Property<string>("EncounterNumber")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EncounterType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("HistoryOfPresentIllness")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("PatientId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Plan")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReasonForVisit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ScheduledEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ScheduledStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("VisitSource")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -410,6 +477,9 @@ namespace EHMR.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("EncounterId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("GenericName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -422,6 +492,8 @@ namespace EHMR.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EncounterId");
 
                     b.HasIndex("Name");
 
@@ -638,6 +710,8 @@ namespace EHMR.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EncounterId");
 
                     b.HasIndex("PatientId");
 
@@ -1000,9 +1074,10 @@ namespace EHMR.Migrations
 
             modelBuilder.Entity("EHMR.Domain.Entities.Diagnosis", b =>
                 {
-                    b.HasOne("EHMR.Domain.Entities.Encounter", null)
+                    b.HasOne("EHMR.Domain.Entities.Encounter", "Encounter")
                         .WithMany("Diagnoses")
-                        .HasForeignKey("EncounterId");
+                        .HasForeignKey("EncounterId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("EHMR.Domain.Entities.Mkb10Code", "Mkb10Code")
                         .WithMany()
@@ -1013,6 +1088,8 @@ namespace EHMR.Migrations
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Encounter");
 
                     b.Navigation("Mkb10Code");
 
@@ -1034,9 +1111,7 @@ namespace EHMR.Migrations
                 {
                     b.HasOne("EHMR.Domain.Entities.Appointment", "Appointment")
                         .WithMany()
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AppointmentId");
 
                     b.HasOne("EHMR.Domain.Entities.Doctor", "Doctor")
                         .WithMany()
@@ -1068,8 +1143,21 @@ namespace EHMR.Migrations
                     b.Navigation("Medicine");
                 });
 
+            modelBuilder.Entity("EHMR.Domain.Entities.Medicine", b =>
+                {
+                    b.HasOne("EHMR.Domain.Entities.Encounter", null)
+                        .WithMany("MedicationOrders")
+                        .HasForeignKey("EncounterId");
+                });
+
             modelBuilder.Entity("EHMR.Domain.Entities.PatientDocument", b =>
                 {
+                    b.HasOne("EHMR.Domain.Entities.Encounter", null)
+                        .WithMany("Attachments")
+                        .HasForeignKey("EncounterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("EHMR.Domain.Entities.Patient", "Patient")
                         .WithMany("Documents")
                         .HasForeignKey("PatientId")
@@ -1136,7 +1224,11 @@ namespace EHMR.Migrations
 
             modelBuilder.Entity("EHMR.Domain.Entities.Encounter", b =>
                 {
+                    b.Navigation("Attachments");
+
                     b.Navigation("Diagnoses");
+
+                    b.Navigation("MedicationOrders");
 
                     b.Navigation("Prescriptions");
                 });

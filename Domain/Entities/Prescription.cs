@@ -1,4 +1,6 @@
-﻿namespace EHMR.Domain.Entities
+﻿
+
+namespace EHMR.Domain.Entities
 {
     public class Prescription : BaseEntity
     {

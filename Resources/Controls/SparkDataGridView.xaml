@@ -1,0 +1,35 @@
+<ContentView
+	x:Class="EHMR.Resources.Controls.SparkDataGridView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	x:Name="Root">
+	<Grid Background="{StaticResource Gray100}" RowDefinitions="*, Auto">
+
+		<ScrollView
+			x:Name="HostScroll"
+			Grid.Row="0"
+			HorizontalOptions="Fill"
+			Orientation="Vertical"
+			VerticalOptions="Fill">
+
+			<Grid
+				x:Name="GridRoot"
+				ColumnSpacing="0"
+				HorizontalOptions="Fill"
+				RowSpacing="0"
+				VerticalOptions="Fill" />
+		</ScrollView>
+
+		<Grid
+			x:Name="PagerContainer"
+			Grid.Row="1"
+			Padding="0,14,0,4"
+			HorizontalOptions="Center"
+			IsVisible="False">
+			<HorizontalStackLayout
+				x:Name="PagerRow"
+				HorizontalOptions="Center"
+				Spacing="4" />
+		</Grid>
+	</Grid>
+</ContentView>

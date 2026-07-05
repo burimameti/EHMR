@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+	<!--  =========================================================  -->
+	<!--  SPACING  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="Space0">0</x:Double>
+	<x:Double x:Key="Space1">2</x:Double>
+	<x:Double x:Key="Space2">4</x:Double>
+	<x:Double x:Key="Space3">6</x:Double>
+	<x:Double x:Key="Space4">8</x:Double>
+	<x:Double x:Key="Space5">10</x:Double>
+	<x:Double x:Key="Space6">12</x:Double>
+	<x:Double x:Key="Space7">14</x:Double>
+	<x:Double x:Key="Space8">16</x:Double>
+	<x:Double x:Key="Space9">18</x:Double>
+	<x:Double x:Key="Space10">20</x:Double>
+	<x:Double x:Key="Space12">24</x:Double>
+	<x:Double x:Key="Space14">28</x:Double>
+	<x:Double x:Key="Space16">32</x:Double>
+	<x:Double x:Key="Space20">40</x:Double>
+	<x:Double x:Key="Space24">48</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  CORNER RADIUS  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="RadiusNone">0</x:Double>
+	<x:Double x:Key="RadiusXS">4</x:Double>
+	<x:Double x:Key="RadiusSM">6</x:Double>
+	<x:Double x:Key="RadiusMD">8</x:Double>
+	<x:Double x:Key="RadiusLG">12</x:Double>
+	<x:Double x:Key="RadiusXL">16</x:Double>
+	<x:Double x:Key="Radius2XL">20</x:Double>
+	<x:Double x:Key="RadiusRound">999</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  PAGE  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="PageHorizontalPadding">24</x:Double>
+	<x:Double x:Key="PageVerticalPadding">20</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  SIDEBAR  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="SidebarWidthCollapsed">72</x:Double>
+	<x:Double x:Key="SidebarWidthExpanded">260</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  TOOLBAR  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="ToolbarHeight">56</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  PAGE HEADER  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="PageHeaderHeight">64</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  INPUTS  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="InputHeightSM">36</x:Double>
+	<x:Double x:Key="InputHeight">42</x:Double>
+	<x:Double x:Key="InputHeightLG">48</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  BUTTONS  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="ButtonHeightSM">34</x:Double>
+	<x:Double x:Key="ButtonHeight">40</x:Double>
+	<x:Double x:Key="ButtonHeightLG">46</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  GRID  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="GridToolbarHeight">56</x:Double>
+	<x:Double x:Key="GridHeaderHeight">44</x:Double>
+	<x:Double x:Key="GridRowHeight">52</x:Double>
+	<x:Double x:Key="GridFooterHeight">52</x:Double>
+	<x:Double x:Key="GridCellPadding">16</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  CARDS  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="CardPadding">20</x:Double>
+
+	<x:Double x:Key="CardSpacing">16</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  DIALOG  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="DialogWidthSmall">420</x:Double>
+	<x:Double x:Key="DialogWidthMedium">640</x:Double>
+	<x:Double x:Key="DialogWidthLarge">900</x:Double>
+
+	<x:Double x:Key="DialogPadding">24</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  ICONS  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="IconXS">12</x:Double>
+	<x:Double x:Key="IconSM">16</x:Double>
+	<x:Double x:Key="IconMD">20</x:Double>
+	<x:Double x:Key="IconLG">24</x:Double>
+	<x:Double x:Key="IconXL">32</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  AVATARS  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="AvatarSM">28</x:Double>
+	<x:Double x:Key="AvatarMD">36</x:Double>
+	<x:Double x:Key="AvatarLG">48</x:Double>
+	<x:Double x:Key="AvatarXL">64</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  STATUS CHIPS  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="ChipHeight">24</x:Double>
+	<x:Double x:Key="ChipPaddingHorizontal">10</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  SEARCH  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="SearchHeight">42</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  PAGINATION  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="PaginationButtonSize">34</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  DIVIDERS  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="DividerThickness">1</x:Double>
+
+</ResourceDictionary>
+

@@ -1,4 +1,5 @@
 ﻿using EHMR.ViewModels;
+using EHMR.ViewModels.Patients;
 
 namespace EHMR.Views
 {
@@ -22,7 +23,24 @@ namespace EHMR.Views
                 await _viewModel.LoadAsync();
             }
         }
+        private void OnSelectedStatusChanged(object sender, EventArgs e)
+        {
+            var picker = (Picker)sender;
 
+            if(picker.SelectedIndex<0)
+                return;
+
+            if(BindingContext is not AppointmentListViewModel vm)
+                return;
+
+            if(vm.StatusFilters.Count<=picker.SelectedIndex)
+                return;
+
+            var selected = vm.StatusFilters[picker.SelectedIndex];
+
+            if(vm.SelectSuggestionCommand?.CanExecute(selected)==true)
+                vm.SelectSuggestionCommand.Execute(selected);
+        }
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
             if(BindingContext is AppointmentListViewModel vm)

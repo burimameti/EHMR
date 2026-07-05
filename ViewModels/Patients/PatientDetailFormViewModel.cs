@@ -4,8 +4,10 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
+using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace EHMR.ViewModels;
@@ -19,7 +21,18 @@ public partial class PatientDetailFormViewModel : ObservableObject
 
     private Patient? _originalPatient;
     private bool _isNewPatientMode;
-    private bool _isModalReturnMode; // Флаг кој кажува дека сме дојдени од друга форма (пр. Термин)
+    private bool _isModalReturnMode;
+    public bool IsNewPatient => _isNewPatientMode;
+
+    public string HeaderTitle =>
+        _isNewPatientMode
+            ? "Нов Пациент"
+            : $" Детали за пациент : Име {Patient.FirstName} Презиме: {Patient.LastName}";
+
+    public string HeaderSubtitle =>
+        _isNewPatientMode
+            ? "Креирање ново пациентско досие"
+            : $"Матичен: {Patient.NationalId} • Возраст {Patient.Age} год.";
 
     [ObservableProperty] private Patient patient = new();
 
@@ -31,9 +44,71 @@ public partial class PatientDetailFormViewModel : ObservableObject
 
     [ObservableProperty] private string pageTitle = string.Empty;
 
+
     public bool IsEditMode => !IsReadOnly;
-    public string InputBgColor => IsReadOnly ? "#F8FAFC" : "#FFFFFF";
-    public string InputBorderColor => IsReadOnly ? "#E2E8F0" : "#2563EB";
+    public Color InputBgColor =>
+        IsReadOnly
+        ? Color.FromArgb("#F8FAFC")
+        : Color.FromArgb("#FFFFFF");
+
+
+    public Color InputBorderColor =>
+        IsReadOnly
+        ? Color.FromArgb("#CBD5E1")
+        : Color.FromArgb("#2563EB");
+
+    public ObservableCollection<string> GenderOptions { get; } = PatientEnumLookups.Gender.ToObservableCollection();
+    public ObservableCollection<string> StatusOptions { get; } = PatientEnumLookups.Status.ToObservableCollection();
+    public ObservableCollection<string> BloodTypeOptions { get; } = PatientFilterLookups.BloodType.ToObservableCollection();
+
+    public ObservableCollection<string> CityOptions
+    {
+        get;
+    } =
+       new(PatientFilterLookups.BuildCityLookup().DisplayValues); // skip "Сите"
+
+    // Doctor: се полни при InitializeForm од база
+    public ObservableCollection<string> DoctorOptions { get; } = new();
+
+    // Relation
+    public ObservableCollection<string> RelationOptions
+    {
+        get;
+    } = new()
+    {
+        "Сопруг / Сопруга",
+        "Родител",
+        "Дете",
+        "Брат / Сестра",
+        "Пријател",
+        "Друго"
+    };
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsTab2Active))]
+    [NotifyPropertyChangedFor(nameof(IsTab3Active))]
+    [NotifyPropertyChangedFor(nameof(IsTab4Active))]
+    private int activeTab = 1;
+
+    public bool IsTab1Active => ActiveTab==1;
+    public bool IsTab2Active => ActiveTab==2;
+    public bool IsTab3Active => ActiveTab==3;
+    public bool IsTab4Active => ActiveTab==4;
+
+    [ObservableProperty] private string selectedGenderDisplay = string.Empty;
+    [ObservableProperty] private string selectedStatusDisplay = string.Empty;
+    [ObservableProperty] private string selectedDoctorDisplay = string.Empty;
+    [ObservableProperty] private string selectedRelationDisplay = string.Empty;
+    // Needed because ActiveTab notifies only Tab2/3/4
+    partial void OnActiveTabChanged(int value) =>
+        OnPropertyChanged(nameof(IsTab1Active));
+
+    [RelayCommand]
+    private void SelectTab(string tab)
+    {
+        if(int.TryParse(tab, out var t))
+            ActiveTab=t;
+    }
 
     public PatientDetailFormViewModel(
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
@@ -53,48 +128,43 @@ public partial class PatientDetailFormViewModel : ObservableObject
     {
         var selectedPatient = _selectedItemService.SelectedItem;
 
-        // Паметна проверка: Ако објектот има специфичен Id или маркер, знаеме дека доаѓаме од Appointment екранот
-        if(selectedPatient!=null&&selectedPatient.Id==Guid.Empty&&selectedPatient.FirstName=="APPOINTMENT_CONTEXT")
+        if(selectedPatient is { Id: var id, FirstName: "APPOINTMENT_CONTEXT" }&&id==Guid.Empty)
         {
             _isModalReturnMode=true;
-            selectedPatient=null; // Ресетирај за да се креира чиста инстанца
+            selectedPatient=null;
         }
 
         if(selectedPatient==null)
         {
             _isNewPatientMode=true;
-            Patient=new Patient
-            {
-                FirstName=string.Empty,
-                LastName=string.Empty,
-                NationalId=string.Empty,
-                SSN=string.Empty,
-                BirthDate=DateTime.Today.AddYears(-30),
-                Gender=Gender.Male,
-                Phone=string.Empty,
-                Email=string.Empty,
-                Address=string.Empty,
-                City=string.Empty,
-                EmergencyContactName=string.Empty,
-                EmergencyContactPhone=string.Empty,
-                BloodType=string.Empty,
-                Allergies=string.Empty,
-
-                RegistrationDate=DateTime.UtcNow,
-                Status=PatientStatus.Active
-            };
-
-            PageTitle="➕ Креирај Нов Пациент за Термин";
+            Patient=CreateBlankForRegistration();
+            PageTitle="Нов Пациент";
             IsReadOnly=false;
+
+            OnPropertyChanged(nameof(IsNewPatient));
+            OnPropertyChanged(nameof(HeaderTitle));
+            OnPropertyChanged(nameof(HeaderSubtitle));
             return;
         }
 
-        _isNewPatientMode=false;
         _originalPatient=selectedPatient;
-        Patient=ClonePatient(selectedPatient);
-        PageTitle=$"Досие: {Patient.FirstName} {Patient.LastName}";
-        IsReadOnly=true;
+        Patient=selectedPatient.Clone();
+
+        PageTitle=$"Досие: {Patient.FullName}";
+
+        IsReadOnly=!_selectedItemService.OpenInEditMode;
+
+        OnPropertyChanged(nameof(IsNewPatient));
+        OnPropertyChanged(nameof(HeaderTitle));
+        OnPropertyChanged(nameof(HeaderSubtitle));
     }
+
+    // ------------------------------------------------------------------ //
+    // Commands
+    // ------------------------------------------------------------------ //
+
+    [RelayCommand]
+    private void ToggleEditMode() => IsReadOnly=!IsReadOnly;
 
     [RelayCommand]
     private async Task SaveAsync()
@@ -127,39 +197,68 @@ public partial class PatientDetailFormViewModel : ObservableObject
                 var existing = await db.Patients.FirstOrDefaultAsync(x => x.Id==Patient.Id);
                 if(existing==null) return;
 
-                // Мапирање на измените...
                 existing.FirstName=Patient.FirstName;
                 existing.LastName=Patient.LastName;
                 existing.NationalId=Patient.NationalId;
+                existing.SSN=Patient.SSN;
                 existing.BirthDate=Patient.BirthDate;
                 existing.Gender=Patient.Gender;
                 existing.Phone=Patient.Phone;
                 existing.Email=Patient.Email;
+                existing.Address=Patient.Address;
+                existing.City=Patient.City;
                 existing.Status=Patient.Status;
+                existing.BloodType=Patient.BloodType;
+                existing.Allergies=Patient.Allergies;
+                existing.EmergencyContactName=Patient.EmergencyContactName;
+                existing.EmergencyContactPhone=Patient.EmergencyContactPhone;
+                 db.Patients.Update(existing);
             }
 
             await db.SaveChangesAsync();
-
             await _userDialogService.ShowAlertAsync("Успешно", "Пациентот е успешно зачуван.", "OK");
 
             if(_isModalReturnMode)
             {
-                // КЛУЧОТ: Го оставаме новиот пациент во споделениот сервис за Appointment да го прочита
                 _selectedItemService.SelectedItem=Patient;
-                await _navigationService.GoToAsync(".."); // Се враќа назад кон формата за термин
+                await _navigationService.GoToAsync("..");
             }
             else
             {
                 _selectedItemService.SelectedItem=null;
                 await _navigationService.GoToAsync(AppRoutes.Patients.List);
             }
+            _selectedItemService.OpenInEditMode=false;
+            _selectedItemService.SelectedItem=null;
         }
         catch(Exception ex)
         {
             await _userDialogService.ShowAlertAsync("Грешка", ex.Message, "OK");
         }
     }
+    private void SyncDisplayFromPatient()
+    {
+        SelectedGenderDisplay=PatientEnumLookups.Gender.ToDisplay(Patient.Gender.ToString());
+        SelectedStatusDisplay=PatientEnumLookups.Status.ToDisplay(Patient.Status.ToString());
+    }
 
+    private async Task LoadDoctorsAsync()
+    {
+        try
+        {
+            await using var db = await _dbFactory.CreateDbContextAsync();
+            var doctors = await db.Users
+                .Where(u => u.Role==UserRole.Doctor)
+                .Select(u => $"Д-р {u.FirstName} {u.LastName}")
+                .ToListAsync();
+
+            DoctorOptions.Clear();
+            DoctorOptions.Add("— Не е доделен —");
+            foreach(var d in doctors)
+                DoctorOptions.Add(d);
+        }
+        catch { /* non-critical */ }
+    }
     [RelayCommand]
     private async Task CancelAsync()
     {
@@ -176,25 +275,28 @@ public partial class PatientDetailFormViewModel : ObservableObject
             return;
         }
 
-        if(_originalPatient!=null) Patient=ClonePatient(_originalPatient);
+        if(_originalPatient!=null) Patient=_originalPatient.Clone();
         IsReadOnly=true;
     }
 
-    private static Patient ClonePatient(Patient source)
+
+    public static Patient CreateBlankForRegistration() => new()
     {
-        return new Patient
-        {
-            Id=source.Id,
-            FirstName=source.FirstName,
-            LastName=source.LastName,
-            NationalId=source.NationalId,
-            BirthDate=source.BirthDate,
-            Gender=source.Gender,
-            Phone=source.Phone,
-            Email=source.Email,
-            Address=source.Address,
-            City=source.City,
-            Status=source.Status
-        };
-    }
+        FirstName=string.Empty,
+        LastName=string.Empty,
+        NationalId=string.Empty,
+        SSN=string.Empty,
+        BirthDate=DateTime.Today.AddYears(-30),
+        Gender=Gender.Male,
+        Phone=string.Empty,
+        Email=string.Empty,
+        Address=string.Empty,
+        City=string.Empty,
+        EmergencyContactName=string.Empty,
+        EmergencyContactPhone=string.Empty,
+        BloodType=string.Empty,
+        Allergies=string.Empty,
+        RegistrationDate=DateTime.UtcNow,
+        Status=PatientStatus.Active
+    };
 }

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentView
+	x:Class="EHMR.Resources.Controls.SparkExplorerHeaderView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:sc="clr-namespace:EHMR.Resources.Controls"
+	x:Name="Root">
+
+	<VerticalStackLayout>
+
+		<!--  ============ ROW 1: TABS + TRAILING ============  -->
+		<Border
+			BackgroundColor="{StaticResource SparkBadgeNeutralBg}"
+			Stroke="{StaticResource SparkBorder}"
+			StrokeThickness="0">
+
+
+			<Grid
+				x:Name="ExplorerGrid"
+				Padding="0"
+				ColumnSpacing="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<!--  0: tabs  -->
+					<ColumnDefinition Width="1" />
+					<!--  1: divider  -->
+					<ColumnDefinition Width="*" />
+					<!--  2: spacer  -->
+					<ColumnDefinition Width="Auto" />
+					<!--  3: trailing  -->
+				</Grid.ColumnDefinitions>
+
+				<!--  ============ 0: TABS ============  -->
+				<ScrollView
+					Grid.Column="0"
+					HorizontalScrollBarVisibility="Never"
+					Orientation="Horizontal">
+					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Tabs, Source={x:Reference Root}}" Spacing="0">
+						<BindableLayout.ItemTemplate>
+							<DataTemplate x:DataType="sc:SparkTabItem">
+								<Grid
+									Padding="20,0"
+									RowDefinitions="*,3"
+									WidthRequest="-1">
+									<Grid.GestureRecognizers>
+										<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
+									</Grid.GestureRecognizers>
+
+									<!--  TAB BACKGROUND STATE  -->
+									<Grid.Triggers>
+										<DataTrigger
+											Binding="{Binding IsSelected}"
+											TargetType="Grid"
+											Value="True">
+											<Setter Property="BackgroundColor" Value="{StaticResource SparkBackgroundAlt}" />
+										</DataTrigger>
+										<DataTrigger
+											Binding="{Binding IsSelected}"
+											TargetType="Grid"
+											Value="False">
+											<Setter Property="BackgroundColor" Value="{StaticResource SparkButtonSecondaryBackground}" />
+										</DataTrigger>
+									</Grid.Triggers>
+
+									<Label
+										Grid.Row="0"
+										FontSize="14"
+										HorizontalOptions="Center"
+										VerticalOptions="Center">
+										<Label.FormattedText>
+											<FormattedString>
+												<Span Text="{Binding Title}" />
+												<Span Text=" " />
+												<Span Text="{Binding Value, StringFormat='({0})'}" />
+											</FormattedString>
+										</Label.FormattedText>
+										<Label.Triggers>
+											<DataTrigger
+												Binding="{Binding IsSelected}"
+												TargetType="Label"
+												Value="True">
+												<Setter Property="TextColor" Value="{StaticResource SparkAccentTeal}" />
+												<Setter Property="FontAttributes" Value="Bold" />
+											</DataTrigger>
+											<DataTrigger
+												Binding="{Binding IsSelected}"
+												TargetType="Label"
+												Value="False">
+												<Setter Property="TextColor" Value="{StaticResource SparkBackground}" />
+											</DataTrigger>
+										</Label.Triggers>
+									</Label>
+
+									<BoxView Grid.Row="1" HorizontalOptions="Fill">
+										<BoxView.Triggers>
+											<DataTrigger
+												Binding="{Binding IsSelected}"
+												TargetType="BoxView"
+												Value="True">
+												<Setter Property="Color" Value="{StaticResource SparkAccentTeal}" />
+											</DataTrigger>
+										</BoxView.Triggers>
+									</BoxView>
+								</Grid>
+							</DataTemplate>
+						</BindableLayout.ItemTemplate>
+					</HorizontalStackLayout>
+				</ScrollView>
+
+				<!--  ============ 1: DIVIDER ============  -->
+				<BoxView
+					Grid.Column="1"
+					BackgroundColor="{StaticResource SparkBorder}"
+					WidthRequest="1" />
+
+				<!--  ============ 2: SPACER ============  -->
+				<!--  intentionally empty — pushes trailing action to the right edge  -->
+
+				<!--  ============ 3: TRAILING ACTION ============  -->
+				<Border
+					Grid.Column="3"
+					BackgroundColor="{StaticResource SparkButtonSecondaryBackground}"
+					HeightRequest="34"
+					IsVisible="{Binding TrailingButton, Source={x:Reference Root}, Converter={StaticResource SparkNotNullConverter}}"
+					StrokeThickness="0"
+					VerticalOptions="Center"
+					WidthRequest="34">
+					<Border.StrokeShape>
+						<RoundRectangle CornerRadius="6" />
+					</Border.StrokeShape>
+					<Border.GestureRecognizers>
+						<TapGestureRecognizer Command="{Binding TrailingButton.Command, Source={x:Reference Root}}" CommandParameter="{Binding TrailingButton.CommandParameter, Source={x:Reference Root}}" />
+					</Border.GestureRecognizers>
+					<Path
+						Aspect="Uniform"
+						Data="{Binding TrailingButton.IconGlyph, Source={x:Reference Root}}"
+						HeightRequest="14"
+						HorizontalOptions="Center"
+						Stroke="White"
+						StrokeThickness="1.4"
+						VerticalOptions="Center"
+						WidthRequest="14" />
+				</Border>
+			</Grid>
+		</Border>
+
+		<!--  ============ ROW 2: SEARCH + BUTTONS + PICKERS ============  -->
+		<Border
+			BackgroundColor="{StaticResource SparkBackground}"
+			Stroke="{StaticResource SparkBorder}"
+			StrokeThickness="0">
+			<Border.StrokeShape>
+				<RoundRectangle CornerRadius="0" />
+			</Border.StrokeShape>
+
+			<Grid
+				x:Name="SecondaryToolbarGrid"
+				Padding="6,10"
+				ColumnSpacing="8"
+				MinimumHeightRequest="48">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<!--  0: search  -->
+					<ColumnDefinition Width="Auto" />
+					<!--  1: buttons  -->
+					<ColumnDefinition Width="Auto" />
+					<!--  2: pickers  -->
+				</Grid.ColumnDefinitions>
+
+				<!--  ============ 0: SEARCH ============  -->
+				<Border
+					Grid.Column="0"
+					Padding="10,0"
+					BackgroundColor="White"
+					Stroke="{StaticResource SparkBorder}"
+					StrokeThickness="1">
+					<Border.StrokeShape>
+						<RoundRectangle CornerRadius="6" />
+					</Border.StrokeShape>
+					<Grid ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="8">
+						<HorizontalStackLayout
+							Grid.Column="0"
+							Spacing="4"
+							VerticalOptions="Center">
+							<Path
+								Data="M9,2 A7,7 0 1 0 9,16 A7,7 0 1 0 9,2 Z M14,14 L20,20"
+								HeightRequest="22"
+								Stroke="{StaticResource SparkTextSecondary}"
+								StrokeThickness="1.9"
+								WidthRequest="18" />
+							<Path
+								Data="M0,0 L8,0 L4,6 Z"
+								Fill="{StaticResource SparkTextSecondary}"
+								HeightRequest="16"
+								WidthRequest="18" />
+						</HorizontalStackLayout>
+						<Entry
+							Grid.Column="1"
+							BackgroundColor="Transparent"
+							Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
+							Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}"
+							TextColor="{StaticResource SparkTextPrimary}"
+							VerticalOptions="Center" />
+						<Border
+							Grid.Column="2"
+							Padding="0"
+							Stroke="{StaticResource SparkBorder}"
+							StrokeThickness="1"
+							VerticalOptions="Center"
+							WidthRequest="18">
+							<Border.StrokeShape>
+								<RoundRectangle CornerRadius="9" />
+							</Border.StrokeShape>
+							<Label
+								FontSize="11"
+								HorizontalTextAlignment="Center"
+								Text="?"
+								TextColor="{StaticResource SparkTextSecondary}"
+								VerticalTextAlignment="Center" />
+						</Border>
+					</Grid>
+				</Border>
+				<!--  ============ 2: PICKERS ============  -->
+				<HorizontalStackLayout
+					Grid.Column="1"
+					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
+					Spacing="8"
+					VerticalOptions="Center">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate x:DataType="sc:SparkPickerItem">
+							<Border
+								Padding="6,1"
+								BackgroundColor="White"
+								MinimumHeightRequest="42"
+								Stroke="{StaticResource Gray300}"
+								StrokeThickness="1">
+								<Border.StrokeShape>
+									<RoundRectangle CornerRadius="6" />
+								</Border.StrokeShape>
+								<Picker
+									Title="{Binding Placeholder}"
+									FontSize="12"
+									HorizontalTextAlignment="Center"
+									ItemsSource="{Binding Items}"
+									MinimumHeightRequest="36"
+									SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+									TextColor="{StaticResource SparkTextPrimary}"
+									VerticalOptions="Center"
+									WidthRequest="110" />
+							</Border>
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
+				</HorizontalStackLayout>
+				<!--  ============ 3: BUTTONS ============  -->
+				<HorizontalStackLayout
+					Grid.Column="2"
+					BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}"
+					Spacing="8"
+					VerticalOptions="Center">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate x:DataType="sc:SparkButtonItem">
+							<Border
+								Padding="16,8"
+								HeightRequest="40"
+								StrokeThickness="0">
+								<Border.StrokeShape>
+									<RoundRectangle CornerRadius="6" />
+								</Border.StrokeShape>
+								<Border.GestureRecognizers>
+									<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
+								</Border.GestureRecognizers>
+								<Border.Triggers>
+									<DataTrigger
+										Binding="{Binding IsPrimary}"
+										TargetType="Border"
+										Value="True">
+										<Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTeal}" />
+									</DataTrigger>
+									<DataTrigger
+										Binding="{Binding IsPrimary}"
+										TargetType="Border"
+										Value="False">
+										<Setter Property="BackgroundColor" Value="{StaticResource SparkButtonSecondaryBackground}" />
+									</DataTrigger>
+								</Border.Triggers>
+								<HorizontalStackLayout
+									HorizontalOptions="Center"
+									Spacing="6"
+									VerticalOptions="Center">
+									<Path
+										Aspect="Uniform"
+										Data="{Binding IconGlyph}"
+										HeightRequest="12"
+										IsVisible="{Binding IconGlyph, Converter={StaticResource SparkStringNotEmptyConverter}}"
+										Stroke="White"
+										StrokeThickness="1.4"
+										WidthRequest="12" />
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="{Binding Label}"
+										TextColor="White"
+										VerticalOptions="Center" />
+								</HorizontalStackLayout>
+							</Border>
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
+				</HorizontalStackLayout>
+
+
+			</Grid>
+		</Border>
+
+		<!--  ============ ROW 3: DATA GRID HEADER COLUMNS ============  -->
+		<Grid
+			x:Name="DataGridHeaderGrid"
+			Padding="16,10"
+			BackgroundColor="{StaticResource SparkBackground}"
+			ColumnSpacing="8"
+			IsVisible="{Binding HeaderColumns, Source={x:Reference Root}, Converter={StaticResource SparkCollectionNotEmptyConverter}}" />
+
+	</VerticalStackLayout>
+</ContentView>

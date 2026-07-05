@@ -1,653 +1,321 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+	x:Class="EHMR.Views.DashboardView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	xmlns:domain="clr-namespace:EHMR.Domain.Entities"
-    x:Class="EHMR.Views.DashboardView"
-    x:DataType="viewModels:DashboardViewModel"
-    x:Name="Page"
-    BackgroundColor="{StaticResource EpicBackground}">
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+	x:Name="Page"
+	x:DataType="viewModels:DashboardViewModel"
+	BackgroundColor="#191E29">
 
-	<!-- NOTE: assumes EpicStyles.xaml is merged in App.xaml:
-	     <ResourceDictionary.MergedDictionaries>
-	         <ResourceDictionary Source="Resources/Styles/EpicStyles.xaml" />
-	     </ResourceDictionary.MergedDictionaries>
-	-->
+	<Grid ColumnDefinitions="290,*">
 
-	<Grid ColumnDefinitions="280,*">
-
-		<!-- ========================================================= -->
-		<!-- СТРАНИЧНО МЕНИ (Sidebar) -->
-		<!-- ========================================================= -->
-		<Border Grid.Column="0"
-		        BackgroundColor="{StaticResource EpicSidebarBackground}"
-		        StrokeThickness="0">
+		<!--  LEFT MENU  -->
+		<Border
+			Grid.Column="0"
+			BackgroundColor="{StaticResource Gray200}"
+			StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
-		<!-- ========================================================= -->
-		<!-- ГЛАВЕН ПАНЕЛ -->
-		<!-- ========================================================= -->
-		<Grid Grid.Column="1" RowDefinitions="80,*">
+		<Border
+			Grid.Column="1"
+			BackgroundColor="{StaticResource Gray100}"
+			StrokeThickness="0">
+			<Grid
+				Padding="28"
+				BackgroundColor="{StaticResource AppBackground}"
+				RowDefinitions="110,Auto,*"
+				RowSpacing="6">
+				<Border
+					Grid.Row="0"
+					Padding="20"
+					StrokeShape="RoundRectangle 0"
+					Style="{StaticResource SurfaceCard}">
+					<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 
-			<!-- ГОРНА ЛЕНТА (Header) -->
-			<Border Grid.Row="0"
-			        BackgroundColor="{StaticResource EpicSurface}"
-			        StrokeThickness="0"
-			        Padding="32,0"
-			        Shadow="{StaticResource EpicSmallShadow}">
+						<controls:FFPageHeader
+							Title="Основна страна"
+							Caption="Dashboard"
+							Subtitle="Преглед на пациентите, терапиите, закажаните прегледи и активноста на системот." />
 
-				<Grid ColumnDefinitions="250,*,Auto" VerticalOptions="Center">
-
-					<!-- PAGE TITLE -->
-					<VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
-						<Label Text="Основна Страна" Style="{StaticResource EpicSectionTitle}" FontSize="22" />
-						<Label Text="Добредојдовте во EHMR-MK медицинскиот систем" Style="{StaticResource EpicPageSubtitle}" />
-					</VerticalStackLayout>
-
-					<!-- SEARCH + DATE -->
-					<HorizontalStackLayout Grid.Column="1" Spacing="12" Margin="1,0,20,0" VerticalOptions="Center">
-
-						<!-- Поле за пребарување -->
-						<Border Style="{StaticResource EpicSearchContainer}" HorizontalOptions="Center" MinimumWidthRequest="400" HeightRequest="40">
-							<Grid ColumnDefinitions="Auto,*">
-								<Label Text="&#xf002;"
-                                       FontFamily="FASolid"
-                                       FontSize="14"
-                                       VerticalOptions="Center"
-                                       TextColor="{StaticResource EpicMuted}"
-                                       Margin="0,0,10,0" />
-								<Entry Grid.Column="1"
-								       Style="{StaticResource EpicEntry}"
-								       Placeholder="Барај пациенти..."
-								       Text="{Binding PatientSearchText}"
-								       TextChanged="PatientSearch_TextChanged" />
-							</Grid>
-						</Border>
-
-						<!-- Датум -->
-						<Border Style="{StaticResource EpicSearchContainer}" HeightRequest="40">
-							<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
-								<Label Text="&#xf133;"
-                                       FontFamily="FASolid"
-                                       FontSize="14"
-                                       VerticalOptions="Center"
-                                       TextColor="{StaticResource EpicPrimary}" />
-
-								<Label Text="{Binding CurrentDate}"
-                                       FontSize="13"
-                                       FontAttributes="Bold"
-                                       TextColor="{StaticResource EpicBodyColor}"
-                                       VerticalOptions="Center" />
-							</HorizontalStackLayout>
-						</Border>
-					</HorizontalStackLayout>
-
-					<!-- ACTIONS -->
-					<HorizontalStackLayout Grid.Column="2" Spacing="14" VerticalOptions="Center">
-
-						<Button Text="+ Нов Пациент"
-						        Style="{StaticResource EpicPrimaryButton}"
-						        HeightRequest="40"
-						        Command="{Binding AddPatientCommand}" />
-						<Button Text="Нов Преглед"
-        Style="{StaticResource EpicPrimaryButton}"
-        HeightRequest="40"
-        Command="{Binding NewAppointmentCommand}" />
-						<Button Text="&#xf2f1;"
-						        FontFamily="FASolid"
-						        WidthRequest="40"
-						        HeightRequest="40"
-						        CornerRadius="10"
-						        BackgroundColor="{StaticResource EpicSurface2}"
-						        TextColor="{StaticResource EpicSubtitleColor}"
-						        FontSize="14"
-						        Command="{Binding RefreshCommand}" />
-
-						<!-- Notification bell, MOCK badge count -->
-						<Grid WidthRequest="40" HeightRequest="40">
-							<Button Text="&#xf0f3;"
-							        FontFamily="FASolid"
-							        WidthRequest="40"
-							        HeightRequest="40"
-							        CornerRadius="10"
-							        BackgroundColor="{StaticResource EpicSurface2}"
-							        TextColor="{StaticResource EpicSubtitleColor}"
-							        FontSize="14" />
-							<Border WidthRequest="18" HeightRequest="18"
-							        BackgroundColor="{StaticResource EpicDanger}"
-							        StrokeThickness="0" StrokeShape="Ellipse"
-							        HorizontalOptions="End" VerticalOptions="Start"
-							        Margin="0,-4,-4,0">
-								<Label Text="3" FontSize="10" FontAttributes="Bold" TextColor="White"
-								       HorizontalOptions="Center" VerticalOptions="Center" />
-							</Border>
-						</Grid>
-					</HorizontalStackLayout>
-				</Grid>
-			</Border>
-
-			<!-- ГЛАВНА СОДРЖИНА (Скролање) -->
-			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-				<VerticalStackLayout Padding="10" Spacing="10">
-
-					<ActivityIndicator IsRunning="{Binding IsBusy}"
-                                       IsVisible="{Binding IsBusy}"
-                                       Color="{StaticResource EpicPrimary}"
-                                       HeightRequest="40" />
-
-			
-					<Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="20">
-
-						<!-- Вкупно Пациенти -->
-						<Border Style="{StaticResource EpicKpiCard}">
-							<Grid ColumnDefinitions="Auto,*">
-								<Border Style="{StaticResource EpicKpiIconCircle}" BackgroundColor="{StaticResource EpicInfoBackground}">
-									<Label Text="&#xf0c0;" FontFamily="FASolid" FontSize="18" TextColor="{StaticResource EpicInfo}" HorizontalOptions="Center" VerticalOptions="Center" />
-								</Border>
-								<VerticalStackLayout Grid.Column="1" Margin="16,0,0,0" Spacing="2" VerticalOptions="Center">
-									<Label Text="ВКУПНО ПАЦИЕНТИ" Style="{StaticResource EpicKpiLabel}" FontSize="11" FontAttributes="Bold" CharacterSpacing="0.5" />
-									<Label Text="{Binding TotalPatients}" Style="{StaticResource EpicKpiValue}" FontSize="24" />
-								</VerticalStackLayout>
-							</Grid>
-						</Border>
-
-						<!-- Активни Терапии -->
-						<Border Grid.Column="1" Style="{StaticResource EpicKpiCard}">
-							<Grid ColumnDefinitions="Auto,*">
-								<Border Style="{StaticResource EpicKpiIconCircle}" BackgroundColor="{StaticResource EpicSuccessBackground}">
-									<Label Text="&#xf0c3;" FontFamily="FASolid" FontSize="18" TextColor="{StaticResource EpicSuccess}" HorizontalOptions="Center" VerticalOptions="Center" />
-								</Border>
-								<VerticalStackLayout Grid.Column="1" Margin="16,0,0,0" Spacing="2" VerticalOptions="Center">
-									<Label Text="АКТИВНИ ТЕРАПИИ" Style="{StaticResource EpicKpiLabel}" FontSize="11" FontAttributes="Bold" CharacterSpacing="0.5" />
-									<Label Text="{Binding ActiveTherapies}" Style="{StaticResource EpicKpiValue}" FontSize="24" />
-								</VerticalStackLayout>
-							</Grid>
-						</Border>
-
-						<!-- Закажани Прегледи -->
-						<Border Grid.Column="2" Style="{StaticResource EpicKpiCard}">
-							<Grid ColumnDefinitions="Auto,*">
-								<Border Style="{StaticResource EpicKpiIconCircle}" BackgroundColor="{StaticResource EpicWarningBackground}">
-									<Label Text="&#xf274;" FontFamily="FASolid" FontSize="18" TextColor="{StaticResource EpicWarning}" HorizontalOptions="Center" VerticalOptions="Center" />
-								</Border>
-								<VerticalStackLayout Grid.Column="1" Margin="16,0,0,0" Spacing="2" VerticalOptions="Center">
-									<Label Text="ЗАКАЖАНИ ПРЕГЛЕДИ" Style="{StaticResource EpicKpiLabel}" FontSize="11" FontAttributes="Bold" CharacterSpacing="0.5" />
-									<Label Text="{Binding UpcomingAppointmentsCount}" Style="{StaticResource EpicKpiValue}" FontSize="24" />
-								</VerticalStackLayout>
-							</Grid>
-						</Border>
-
-						<!-- Критични Аларми -->
-						<Border Grid.Column="3"
-						        Style="{StaticResource EpicKpiCard}"
-						        Stroke="{StaticResource EpicDangerBackground}">
-							<Grid ColumnDefinitions="Auto,*">
-								<Border Style="{StaticResource EpicKpiIconCircle}" BackgroundColor="{StaticResource EpicDangerBackground}">
-									<Label Text="&#xf071;" FontFamily="FASolid" FontSize="18" TextColor="{StaticResource EpicDanger}" HorizontalOptions="Center" VerticalOptions="Center" />
-								</Border>
-								<VerticalStackLayout Grid.Column="1" Margin="16,0,0,0" Spacing="2" VerticalOptions="Center">
-									<Label Text="КРИТИЧНИ АЛАРМИ" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource EpicDanger}" CharacterSpacing="0.5" />
-									<Label Text="{Binding CriticalAlerts}" Style="{StaticResource EpicKpiValue}" FontSize="24" TextColor="{StaticResource EpicDanger}" />
-								</VerticalStackLayout>
-							</Grid>
-						</Border>
-					</Grid>
-
-					<!-- ===================================================== -->
-					<!-- ПАЦИЕНТИ (компактно пребарување) | ДЕНЕШНИ ПРЕГЛЕДИ
-					     (компактна листа со скрол) — рамноправни колони, *,* -->
-					<!-- ===================================================== -->
-					<Grid ColumnDefinitions="*,*" ColumnSpacing="20">
-
-						<!-- ═══════════════════════════════════════
-						     ЛЕВО — ПРЕБАРУВАЊЕ ПАЦИЕНТИ
-						═══════════════════════════════════════ -->
-						<Border Style="{StaticResource EpicPanelCard}">
-							<VerticalStackLayout Spacing="16">
-
-								<!-- Panel header -->
-								<Grid ColumnDefinitions="*,Auto">
-									<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-										<Border Style="{StaticResource EpicIconContainer}"
-                                                WidthRequest="36" HeightRequest="36"
-                                                BackgroundColor="{StaticResource EpicInfoBackground}">
-											<Label Text="&#xf0c0;" FontFamily="FASolid" FontSize="14"
-                                                   TextColor="{StaticResource EpicInfo}"
-                                                   HorizontalOptions="Center" VerticalOptions="Center" />
-										</Border>
-										<VerticalStackLayout Spacing="1" VerticalOptions="Center">
-											<Label Text="Пациенти" Style="{StaticResource EpicSectionTitle}" FontSize="15" />
-											
-										</VerticalStackLayout>
-									</HorizontalStackLayout>
-
-									<Border Grid.Column="1"
-                                            Style="{StaticResource EpicInfoBadge}"
-                                            VerticalOptions="Center"
-                                            IsVisible="{Binding HasSearchResults}">
-										<Label Text="{Binding FilteredPatientsCount}"
-                                               FontSize="11" FontAttributes="Bold"
-                                               TextColor="{StaticResource EpicInfo}" />
-									</Border>
-								</Grid>
-
-								<!-- Search box -->
+						<HorizontalStackLayout
+							Grid.Column="1"
+							Spacing="10"
+							VerticalOptions="Center">
+							<!--
+								Removed BorderWidth="6" — a stray border width on what should
+								be a solid-fill primary button. HeightRequest standardized to
+								45 to match the icon button; let PrimaryButtonStyle drive the
+								rest instead of per-instance overrides.
 								
+								NOTE: this still points at RefreshCommand. If "+ Преглед" means
+								"start a new encounter/review" rather than "refresh," rebind
+								to the appropriate new-encounter command in DashboardViewModel.
+							-->
+							<Button
+								Command="{Binding RefreshCommand}"
+								HeightRequest="45"
+								Style="{StaticResource PrimaryButtonStyle}"
+								Text="+ Преглед"
+								WidthRequest="160" />
 
-								<!-- Results -->
-								<VerticalStackLayout Spacing="0"
-                                                     IsVisible="{Binding HasSearchResults}">
+							<Button
+								Command="{Binding NewAppointmentCommand}"
+								HeightRequest="45"
+								Style="{StaticResource PrimaryButtonStyle}"
+								Text="+ Термин"
+								WidthRequest="160" />
 
-									<!-- Column header -->
-									<Grid Padding="10,6" ColumnDefinitions="*,Auto"
-                                          BackgroundColor="{StaticResource EpicSurface2}">
-										<Label Grid.Column="0" Text="ПАЦИЕНТ"
-                                               Style="{StaticResource EpicGridHeader}" FontSize="11" />
-										<Label Grid.Column="1" Text="ГРАД"
-                                               Style="{StaticResource EpicGridHeader}" FontSize="11" />
+							<Button
+								Command="{Binding RefreshCommand}"
+								HeightRequest="45"
+								Style="{StaticResource EhmrIconButton}"
+								TextColor="Blue"
+								WidthRequest="45" />
+						</HorizontalStackLayout>
+					</Grid>
+				</Border>
+				<Border Grid.Row="1" Padding="0">
+					<Grid
+						ColumnDefinitions="2.9*,1*"
+						ColumnSpacing="10"
+						RowSpacing="10">
+						<VerticalStackLayout Grid.Column="0">
+							<controls:SparkExplorerHeaderView
+								Buttons="{Binding Buttons}"
+								Pickers="{Binding Pickers}"
+								SearchCommand="{Binding SearchCommand}"
+								SearchPlaceholder="Пребарување на пациенти..."
+								SearchText="{Binding PatientSearchText}"
+								Tabs="{Binding Tabs}" />
+							<Border>
+								<controls:SparkDataGridView
+									x:Name="PatientGrid"
+									Columns="{Binding GridColumns}"
+									CurrentPage="{Binding CurrentPage}"
+									EditRowCommand="{Binding EditCommand}"
+									NextPageCommand="{Binding NextPageCommand}"
+									PageChangedCommand="{Binding PageChangedCommand}"
+									PreviousPageCommand="{Binding PreviousPageCommand}"
+									RowTappedCommand="{Binding SelectCommand}"
+									Rows="{Binding GridRows}"
+									TotalPages="{Binding TotalPages}" />
+							</Border>
+
+						</VerticalStackLayout>
+
+
+						<VerticalStackLayout Grid.Column="1">
+							<Border
+								Grid.Row="0"
+								Grid.Column="1"
+								Padding="20"
+								BackgroundColor="{StaticResource Gray50}"
+								Stroke="{StaticResource Gray100}"
+								StrokeShape="RoundRectangle 12">
+
+								<Grid RowDefinitions="Auto,*" RowSpacing="18">
+									<Grid ColumnDefinitions="*,Auto">
+										<VerticalStackLayout Spacing="2">
+											<Label
+												CharacterSpacing="1.5"
+												FontAttributes="Bold"
+												FontSize="11"
+												Text="TODAY"
+												TextColor="{StaticResource Gray500}" />
+											<Label
+												FontAttributes="Bold"
+												FontSize="20"
+												Text="Денешни прегледи"
+												TextColor="{StaticResource Gray900}" />
+										</VerticalStackLayout>
+
+										<Border
+											Grid.Column="1"
+											Padding="10,4"
+											StrokeShape="RoundRectangle 14"
+											StrokeThickness="0">
+											<Label
+												FontAttributes="Bold"
+												FontSize="13"
+												Text="{Binding UpcomingAppointmentsCount}"
+												TextColor="{StaticResource Gray600}" />
+										</Border>
 									</Grid>
 
-									<!-- Rows -->
-									<CollectionView ItemsSource="{Binding FilteredPatients}"
-                                                    SelectionMode="None"
-                                                    HeightRequest="220">
-
-										<CollectionView.EmptyView>
-											<VerticalStackLayout Padding="0,20" Spacing="4"
-                                                                 HorizontalOptions="Center">
-												<Label Text="&#xf119;" FontFamily="FASolid" FontSize="24"
-                                                       TextColor="{StaticResource EpicMuted}"
-                                                       HorizontalOptions="Center" />
-												<Label Text="Нема пронајдени пациенти"
-                                                       FontSize="12" TextColor="{StaticResource EpicMuted}"
-                                                       HorizontalTextAlignment="Center" />
-											</VerticalStackLayout>
-										</CollectionView.EmptyView>
-
+									<CollectionView
+										Grid.Row="1"
+										ItemsSource="{Binding Appointments}"
+										SelectionMode="None">
 										<CollectionView.ItemTemplate>
-											<DataTemplate x:DataType="domain:Patient">
-												<Grid Padding="10,7"
-                                                      ColumnDefinitions="28,*,Auto"
-                                                      ColumnSpacing="10">
+											<DataTemplate>
+												<Border
+													Margin="0,0,0,10"
+													Padding="14"
+													BackgroundColor="{StaticResource White}"
+													Stroke="{StaticResource DashboardBorder}"
+													StrokeShape="RoundRectangle 12">
+													<Grid ColumnDefinitions="56,*,Auto" ColumnSpacing="14">
+														<Border
+															BackgroundColor="{Binding StatusColor}"
+															HeightRequest="56"
+															StrokeShape="RoundRectangle 12"
+															StrokeThickness="0"
+															WidthRequest="56">
+															<VerticalStackLayout
+																HorizontalOptions="Center"
+																Spacing="0"
+																VerticalOptions="Center">
+																<Label
+																	FontAttributes="Bold"
+																	FontSize="15"
+																	HorizontalTextAlignment="Center"
+																	Text="{Binding Time}"
+																	TextColor="White" />
+															</VerticalStackLayout>
+														</Border>
 
-													<!-- Mini avatar -->
-													<Border Grid.Column="0"
-                                                            WidthRequest="26" HeightRequest="26"
-                                                            BackgroundColor="{StaticResource EpicInfoBackground}"
-                                                            StrokeThickness="0"
-                                                            StrokeShape="Ellipse"
-                                                            VerticalOptions="Center">
-														<Label Text="&#xf007;" FontFamily="FASolid"
-                                                               FontSize="11"
-                                                               TextColor="{StaticResource EpicInfo}"
-                                                               HorizontalOptions="Center"
-                                                               VerticalOptions="Center" />
-													</Border>
+														<VerticalStackLayout
+															Grid.Column="1"
+															Spacing="3"
+															VerticalOptions="Center">
+															<Label
+																FontAttributes="Bold"
+																FontSize="15"
+																Text="{Binding PatientName}"
+																TextColor="{StaticResource Gray900}" />
+															<Label
+																FontSize="13"
+																Text="{Binding RelativeDay}"
+																TextColor="{StaticResource Gray500}" />
+															<Label
+																FontSize="12"
+																Text="{Binding ScheduledStart, StringFormat='{}{0:dd MMM yyyy}'}"
+																TextColor="{StaticResource Gray400}" />
+														</VerticalStackLayout>
 
-													<Label Grid.Column="1"
-                                                           Text="{Binding FullName}"
-                                                           Style="{StaticResource EpicGridCell}"
-                                                           FontSize="13"
-                                                           VerticalOptions="Center"
-                                                           LineBreakMode="TailTruncation" />
-
-													<Label Grid.Column="2"
-                                                           Text="{Binding City}"
-                                                           FontSize="12"
-                                                           TextColor="{StaticResource EpicMuted}"
-                                                           VerticalOptions="Center" />
-
-													<Grid.GestureRecognizers>
-														<TapGestureRecognizer
-                                                            Command="{Binding BindingContext.OpenPatientCommand,
-                                                                Source={x:Reference Page}}"
-                                                            CommandParameter="{Binding .}" />
-													</Grid.GestureRecognizers>
-												</Grid>
+														<Border
+															Grid.Column="2"
+															Padding="10,5"
+															BackgroundColor="{Binding StatusColor}"
+															StrokeShape="RoundRectangle 20"
+															StrokeThickness="0"
+															VerticalOptions="Center">
+															<Label
+																FontAttributes="Bold"
+																FontSize="11"
+																Text="{Binding RelativeDay}"
+																TextColor="White" />
+														</Border>
+													</Grid>
+												</Border>
 											</DataTemplate>
 										</CollectionView.ItemTemplate>
 									</CollectionView>
-
-									<!-- Separator -->
-									<BoxView HeightRequest="1"
-                                             Color="{StaticResource EpicDivider}"
-                                             Margin="0,4" />
-
-									<!-- Pagination -->
-									<Grid ColumnDefinitions="Auto,*,Auto" Margin="0,4,0,0">
-										<Button Grid.Column="0"
-                                                Style="{StaticResource EpicGhostButton}"
-                                                Text="← Претходна"
-                                                HeightRequest="32" FontSize="12"
-                                                Padding="12,0"
-                                                Command="{Binding PreviousPageCommand}" />
-
-										<Label Grid.Column="1"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center"
-                                               FontSize="12"
-                                               TextColor="{StaticResource EpicSubtitleColor}">
-											<Label.FormattedText>
-												<FormattedString>
-													<Span Text="Страна " />
-													<Span Text="{Binding CurrentPage}"
-                                                          FontAttributes="Bold"
-                                                          TextColor="{StaticResource EpicPrimary}" />
-													<Span Text=" / " />
-													<Span Text="{Binding TotalPages}"
-                                                          FontAttributes="Bold" />
-												</FormattedString>
-											</Label.FormattedText>
-										</Label>
-
-										<Button Grid.Column="2"
-                                                Style="{StaticResource EpicPrimaryButton}"
-                                                Text="Следна →"
-                                                HeightRequest="32" FontSize="12"
-                                                Padding="12,0"
-                                                Command="{Binding NextPageCommand}" />
-									</Grid>
-								</VerticalStackLayout>
-							</VerticalStackLayout>
-						</Border>
-
-						<!-- ═══════════════════════════════════════
-						     ДЕСНО — ДЕНЕШНИ ПРЕГЛЕДИ (со скрол, фиксна висина)
-						═══════════════════════════════════════ -->
-						<Border Grid.Column="1" Style="{StaticResource EpicPanelCard}">
-							<VerticalStackLayout Spacing="16">
-
-								<!-- Panel header -->
-								<Grid ColumnDefinitions="*,Auto">
-									<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-										<Border Style="{StaticResource EpicIconContainer}"
-                                                WidthRequest="36" HeightRequest="36"
-                                                BackgroundColor="{StaticResource EpicWarningBackground}">
-											<Label Text="&#xf274;" FontFamily="FASolid" FontSize="14"
-                                                   TextColor="{StaticResource EpicWarning}"
-                                                   HorizontalOptions="Center" VerticalOptions="Center" />
-										</Border>
-										<VerticalStackLayout Spacing="1" VerticalOptions="Center">
-											<Label Text="Денешни прегледи"
-                                                   Style="{StaticResource EpicSectionTitle}" FontSize="15" />
-											<HorizontalStackLayout Spacing="4">
-												<Label Text="Преостанати:"
-                                                       Style="{StaticResource EpicSectionSubtitle}"
-                                                       FontSize="12" />
-												<Label Text="{Binding UpcomingAppointmentsCount}"
-                                                       FontSize="12" FontAttributes="Bold"
-                                                       TextColor="{StaticResource EpicPrimary}" />
-											</HorizontalStackLayout>
-										</VerticalStackLayout>
-									</HorizontalStackLayout>
-
-									<Button Grid.Column="1"
-                                            Text="Сите"
-                                            Style="{StaticResource EpicGhostButton}"
-                                            FontSize="12" HeightRequest="32" Padding="12,0"
-                                            Command="{Binding NavigateToAppointmentsCommand}" />
 								</Grid>
+							</Border>
 
-								<!-- Column header -->
-								<Grid Padding="10,6"
-                                      ColumnDefinitions="*,60,70"
-                                      ColumnSpacing="10"
-                                      BackgroundColor="{StaticResource EpicSurface2}">
-									<Label Grid.Column="0" Text="ПАЦИЕНТ"
-                                           Style="{StaticResource EpicGridHeader}" FontSize="11" />
-									<Label Grid.Column="1" Text="СТАТУС"
-                                           Style="{StaticResource EpicGridHeader}" FontSize="11" />
-									<Label Grid.Column="2" Text="ВРЕМЕ"
-                                           Style="{StaticResource EpicGridHeader}" FontSize="11"
-                                           HorizontalTextAlignment="End" />
-								</Grid>
 
-								<!-- Scrollable appointments list — fixed height so it never grows the panel -->
-								<ScrollView HeightRequest="260"
-                                            VerticalScrollBarVisibility="Always">
-									<VerticalStackLayout BindableLayout.ItemsSource="{Binding Appointments}"
-                                                         Spacing="0">
-										<BindableLayout.ItemTemplate>
-											<DataTemplate x:DataType="viewModels:DashboardAppointmentItem">
 
-												<!-- Compact row — no card, just a subtle divider -->
-												<Grid Padding="10,9"
-                                                      ColumnDefinitions="*,60,70"
-                                                      ColumnSpacing="10">
-
-													<!-- Patient name + mini avatar -->
-													<HorizontalStackLayout Grid.Column="0"
-                                                                           Spacing="8"
-                                                                           VerticalOptions="Center">
-														<Border WidthRequest="26" HeightRequest="26"
-                                                                BackgroundColor="{StaticResource EpicSuccessBackground}"
-                                                                StrokeThickness="0"
-                                                                StrokeShape="Ellipse">
-															<Label Text="&#xf007;" FontFamily="FASolid"
-                                                                   FontSize="11"
-                                                                   TextColor="{StaticResource EpicSuccess}"
-                                                                   HorizontalOptions="Center"
-                                                                   VerticalOptions="Center" />
-														</Border>
-														<Label Text="{Binding PatientName}"
-                                                               Style="{StaticResource EpicGridCell}"
-                                                               FontSize="13"
-                                                               VerticalOptions="Center"
-                                                               LineBreakMode="TailTruncation" />
-													</HorizontalStackLayout>
-
-													<!-- Status badge -->
-													<Border Grid.Column="1"
-                                                            BackgroundColor="{StaticResource EpicSuccessBackground}"
-                                                            StrokeThickness="0"
-                                                            StrokeShape="RoundRectangle 6"
-                                                            Padding="6,3"
-                                                            HorizontalOptions="Start"
-                                                            VerticalOptions="Center">
-														<Label Text="{Binding RelativeDay}"
-                                                               FontSize="11" FontAttributes="Bold"
-                                                               TextColor="{StaticResource EpicSuccess}" />
-													</Border>
-
-													<!-- Time -->
-													<HorizontalStackLayout Grid.Column="2"
-                                                                           Spacing="4"
-                                                                           HorizontalOptions="End"
-                                                                           VerticalOptions="Center">
-														<Label Text="&#xf017;" FontFamily="FASolid"
-                                                               FontSize="11"
-                                                               TextColor="{StaticResource EpicMuted}" />
-														<Label Text="{Binding Time}"
-                                                               FontSize="13" FontAttributes="Bold"
-                                                               TextColor="{StaticResource EpicPrimary}" />
-													</HorizontalStackLayout>
-												</Grid>
-
-												<!-- Row divider -->
-												<!--<BoxView HeightRequest="0.5"
-                                                         Color="{StaticResource EpicDivider}"
-                                                         Margin="10,0" />-->
+							<Border
+								Padding="20"
+								BackgroundColor="{StaticResource Gray100}"
+								Stroke="{StaticResource Gray50}"
+								StrokeShape="RoundRectangle 12"
+								StrokeThickness="1">
+								<Grid RowDefinitions="Auto,*" RowSpacing="14">
+									<Label Text="Известувања" TextColor="{StaticResource Gray600}" />
+									<CollectionView
+										Grid.Row="1"
+										HeightRequest="240"
+										ItemsSource="{Binding Notifications}">
+										<CollectionView.ItemTemplate>
+											<DataTemplate>
+												<Border
+													Margin="0,4"
+													Padding="16"
+													BackgroundColor="{StaticResource Gray100}"
+													Stroke="{StaticResource Gray50}"
+													StrokeShape="RoundRectangle 8"
+													StrokeThickness="1">
+													<Grid
+														ColumnDefinitions="Auto,*"
+														ColumnSpacing="18"
+														RowSpacing="6">
+														<Label
+															FontSize="22"
+															Text="⚠"
+															TextColor="#F59E0B"
+															VerticalOptions="Center" />
+														<VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+															<Label
+																FontAttributes="Bold"
+																Text="{Binding Title}"
+																TextColor="{StaticResource Gray700}" />
+															<Label
+																FontSize="12"
+																Text="{Binding Time}"
+																TextColor="{StaticResource Gray600}" />
+														</VerticalStackLayout>
+													</Grid>
+												</Border>
 											</DataTemplate>
-										</BindableLayout.ItemTemplate>
-									</VerticalStackLayout>
-								</ScrollView>
-							</VerticalStackLayout>
-						</Border>
+										</CollectionView.ItemTemplate>
+									</CollectionView>
+								</Grid>
+							</Border>
+						</VerticalStackLayout>
+
+
 					</Grid>
 
-					<Grid ColumnDefinitions="*" ColumnSpacing="20">
+				</Border>
 
-						<!-- Активност на пациенти (line chart placeholder) -->
-						<Border Grid.Column="0" Style="{StaticResource EpicChartCard}">
-							<VerticalStackLayout Spacing="16">
-								<Grid ColumnDefinitions="*,Auto">
-									<VerticalStackLayout Spacing="2">
-										<Label Text="Графички приказ" Style="{StaticResource EpicSectionTitle}" FontSize="16" />
-										<HorizontalStackLayout Spacing="14">
-											<HorizontalStackLayout Spacing="6">
-												<Border WidthRequest="8" HeightRequest="8" StrokeShape="Ellipse" BackgroundColor="{StaticResource EpicPrimary}" />
-												<Label Text="Нови пациенти" FontSize="12" TextColor="{StaticResource EpicSubtitleColor}" />
-											</HorizontalStackLayout>
-											<HorizontalStackLayout Spacing="6">
-												<Border WidthRequest="8" HeightRequest="8" StrokeShape="Ellipse" BackgroundColor="{StaticResource EpicInfo}" />
-												<Label Text="Завршени прегледи" FontSize="12" TextColor="{StaticResource EpicSubtitleColor}" />
-											</HorizontalStackLayout>
-										</HorizontalStackLayout>
-									</VerticalStackLayout>
-									<Button Grid.Column="1" Text="Оваа недела  ⌄" Style="{StaticResource EpicFilterButton}" FontSize="12" />
-								</Grid>
+				<!--  ================= BODY =================  -->
+				<Border
+					Grid.Row="2"
+					StrokeShape="RoundRectangle 0"
+					StrokeThickness="0">
+					<Grid ColumnDefinitions="3*,1*" ColumnSpacing="20">
+						<!--
+							Was RowDefinitions="Auto, Auto,*" with Row 0 left unassigned —
+							dead space above the divider. Collapsed to Auto,* since nothing
+							occupies a header row here; re-add a title row above the divider
+							if the blueprint's list panel should carry one.
+						-->
+						<Grid
+							Grid.Column="0"
+							RowDefinitions="Auto,*"
+							RowSpacing="6">
 
-								<!-- MOCK chart surface: swap this Border's content for a real chart control
-								     (e.g. Microcharts / SkiaSharp / your charting lib) bound to a real series. -->
-								<Border HeightRequest="220"
-								        BackgroundColor="{StaticResource EpicSurface2}"
-								        StrokeThickness="0"
-								        StrokeShape="RoundRectangle 12">
-									<Label Text="📈  Графикон (MOCK) — поврзи реални податоци"
-									       HorizontalOptions="Center"
-									       VerticalOptions="Center"
-									       FontSize="13"
-									       TextColor="{StaticResource EpicMuted}" />
-								</Border>
-							</VerticalStackLayout>
-						</Border>
-					
-			
-						
-					</Grid>
+							<ScrollView Grid.Row="1">
+								<VerticalStackLayout Spacing="20">
 
-			
-					<Grid ColumnDefinitions="*,*,*" ColumnSpacing="20">
 
-						<!-- Брзи Акции -->
-
-						<Border Grid.Column="0" Style="{StaticResource EpicChartCard}">
-							<VerticalStackLayout Spacing="16">
-								<Label Text="Графикон на успешност" Style="{StaticResource EpicSectionTitle}" FontSize="16" />
-
-								<!-- MOCK donut surface -->
-								<Grid HeightRequest="150" HorizontalOptions="Center" WidthRequest="150">
-									<Border StrokeThickness="14"
-						        Stroke="{StaticResource EpicSuccess}"
-						        BackgroundColor="Transparent"
-						        StrokeShape="Ellipse"
-						        WidthRequest="150" HeightRequest="150" />
-									<VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
-										<Label Text="248" FontSize="26" FontAttributes="Bold" TextColor="{StaticResource EpicText}" HorizontalTextAlignment="Center" />
-										<Label Text="Вкупно" FontSize="11" TextColor="{StaticResource EpicSubtitleColor}" HorizontalTextAlignment="Center" />
-									</VerticalStackLayout>
-								</Grid>
-
-								<VerticalStackLayout Spacing="10">
-									<Grid ColumnDefinitions="Auto,*,Auto">
-										<Border WidthRequest="8" HeightRequest="8" StrokeShape="Ellipse" BackgroundColor="{StaticResource EpicSuccess}" VerticalOptions="Center" />
-										<Label Grid.Column="1" Text="Завршени" Margin="8,0,0,0" FontSize="13" TextColor="{StaticResource EpicBodyColor}" VerticalOptions="Center" />
-										<Label Grid.Column="2" Text="156 (62.9%)" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource EpicText}" />
-									</Grid>
-									<Grid ColumnDefinitions="Auto,*,Auto">
-										<Border WidthRequest="8" HeightRequest="8" StrokeShape="Ellipse" BackgroundColor="{StaticResource EpicInfo}" VerticalOptions="Center" />
-										<Label Grid.Column="1" Text="Во тек" Margin="8,0,0,0" FontSize="13" TextColor="{StaticResource EpicBodyColor}" VerticalOptions="Center" />
-										<Label Grid.Column="2" Text="68 (27.4%)" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource EpicText}" />
-									</Grid>
-									<Grid ColumnDefinitions="Auto,*,Auto">
-										<Border WidthRequest="8" HeightRequest="8" StrokeShape="Ellipse" BackgroundColor="{StaticResource EpicWarning}" VerticalOptions="Center" />
-										<Label Grid.Column="1" Text="Чекаат" Margin="8,0,0,0" FontSize="13" TextColor="{StaticResource EpicBodyColor}" VerticalOptions="Center" />
-										<Label Grid.Column="2" Text="24 (9.7%)" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource EpicText}" />
+									<!--  CHARTS CONTAINER  -->
+									<Grid ColumnDefinitions="*,*,*" ColumnSpacing="20">
+										<controls:FFChart Title="Пациенти" Values="{Binding PatientTrend}" />
+										<controls:FFChart
+											Title="Прегледи"
+											Grid.Column="1"
+											Values="{Binding AppointmentTrend}" />
+										<controls:FFChart
+											Title="Терапии"
+											Grid.Column="2"
+											Values="{Binding TherapyStats}" />
 									</Grid>
 								</VerticalStackLayout>
-							</VerticalStackLayout>
-						</Border>
-						<Border Grid.Column="1" Style="{StaticResource EpicPanelCard}">
-							<VerticalStackLayout Spacing="14">
-								<Grid ColumnDefinitions="*,Auto">
-									<Label Text="Настани во системот" Style="{StaticResource EpicSectionTitle}" FontSize="15" />
-									<Button Grid.Column="1" Text="Сите" Style="{StaticResource EpicGhostButton}" FontSize="12" HeightRequest="32" Padding="12,0" />
-								</Grid>
+							</ScrollView>
+						</Grid>
 
-								<Grid ColumnDefinitions="32,*" RowSpacing="2">
-									<Border Style="{StaticResource EpicAvatar}" WidthRequest="32" HeightRequest="32" BackgroundColor="{StaticResource EpicSuccessBackground}">
-										<Label Text="С" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource EpicSuccess}" HorizontalOptions="Center" VerticalOptions="Center" />
-									</Border>
-									<VerticalStackLayout Grid.Column="1" Margin="10,0,0,0" Spacing="1">
-										<Label Text="д-р Соња завршила преглед" FontSize="13" TextColor="{StaticResource EpicBodyColor}" />
-										<Label Text="пред 2 минути" FontSize="11" TextColor="{StaticResource EpicMuted}" />
-									</VerticalStackLayout>
-								</Grid>
+						<!--  ================= RIGHT SIDEBAR =================  -->
 
-								<Grid ColumnDefinitions="32,*" RowSpacing="2">
-									<Border Style="{StaticResource EpicAvatar}" WidthRequest="32" HeightRequest="32" BackgroundColor="{StaticResource EpicInfoBackground}">
-										<Label Text="М" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource EpicInfo}" HorizontalOptions="Center" VerticalOptions="Center" />
-									</Border>
-									<VerticalStackLayout Grid.Column="1" Margin="10,0,0,0" Spacing="1">
-										<Label Text="д-р Митко прикачил резултат" FontSize="13" TextColor="{StaticResource EpicBodyColor}" />
-										<Label Text="пред 15 минути" FontSize="11" TextColor="{StaticResource EpicMuted}" />
-									</VerticalStackLayout>
-								</Grid>
-
-								<Grid ColumnDefinitions="32,*" RowSpacing="2">
-									<Border Style="{StaticResource EpicAvatar}" WidthRequest="32" HeightRequest="32" BackgroundColor="{StaticResource EpicWarningBackground}">
-										<Label Text="Е" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource EpicWarning}" HorizontalOptions="Center" VerticalOptions="Center" />
-									</Border>
-									<VerticalStackLayout Grid.Column="1" Margin="10,0,0,0" Spacing="1">
-										<Label Text="д-р Елена додала нов пациент" FontSize="13" TextColor="{StaticResource EpicBodyColor}" />
-										<Label Text="пред 1 час" FontSize="11" TextColor="{StaticResource EpicMuted}" />
-									</VerticalStackLayout>
-								</Grid>
-							</VerticalStackLayout>
-						</Border>
-
-						<Border Grid.Column="2" Style="{StaticResource EpicPanelCard}">
-							<VerticalStackLayout Spacing="14">
-								<Grid ColumnDefinitions="*,Auto">
-									<Label Text="Калденарски настани" Style="{StaticResource EpicSectionTitle}" FontSize="15" />
-									<Button Grid.Column="1" Text="Календар" Style="{StaticResource EpicGhostButton}" FontSize="12" HeightRequest="32" Padding="12,0" />
-								</Grid>
-
-								<Grid ColumnDefinitions="48,*" ColumnSpacing="12">
-									<Border Style="{StaticResource EpicEventDateBadge}">
-										<VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="0">
-											<Label Text="МАЈ" Style="{StaticResource EpicEventMonth}" />
-											<Label Text="20" Style="{StaticResource EpicEventDay}" />
-										</VerticalStackLayout>
-									</Border>
-									<VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-										<Label Text="Состанок за преглед" Style="{StaticResource EpicEventTitle}" />
-										<Label Text="10:00 - 11:00" Style="{StaticResource EpicEventTime}" />
-									</VerticalStackLayout>
-								</Grid>
-
-								<Grid ColumnDefinitions="48,*" ColumnSpacing="12">
-									<Border Style="{StaticResource EpicEventDateBadge}">
-										<VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="0">
-											<Label Text="МАЈ" Style="{StaticResource EpicEventMonth}" />
-											<Label Text="22" Style="{StaticResource EpicEventDay}" />
-										</VerticalStackLayout>
-									</Border>
-									<VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-										<Label Text="Едукативна сесија" Style="{StaticResource EpicEventTitle}" />
-										<Label Text="14:00 - 15:00" Style="{StaticResource EpicEventTime}" />
-									</VerticalStackLayout>
-								</Grid>
-
-								<Grid ColumnDefinitions="48,*" ColumnSpacing="12">
-									<Border Style="{StaticResource EpicEventDateBadge}">
-										<VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="0">
-											<Label Text="МАЈ" Style="{StaticResource EpicEventMonth}" />
-											<Label Text="25" Style="{StaticResource EpicEventDay}" />
-										</VerticalStackLayout>
-									</Border>
-									<VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-										<Label Text="Тимски состанок" Style="{StaticResource EpicEventTitle}" />
-										<Label Text="09:00 - 17:00" Style="{StaticResource EpicEventTime}" />
-									</VerticalStackLayout>
-								</Grid>
-							</VerticalStackLayout>
-						</Border>
 					</Grid>
-				</VerticalStackLayout>
-			</ScrollView>
-		</Grid>
+				</Border>
+			</Grid>
+		</Border>
 	</Grid>
 </ContentPage>

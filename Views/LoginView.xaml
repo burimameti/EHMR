@@ -1,182 +1,372 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:vm="clr-namespace:EHMR.ViewModels"
-    x:Class="EHMR.Views.LoginView"
-    x:DataType="vm:LoginViewModel"
-    NavigationPage.HasNavigationBar="False"
-    BackgroundColor="#0F172A">
-	<!-- Конзистентна темна позадина како основа -->
+	x:Class="EHMR.Views.LoginView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:vm="clr-namespace:EHMR.ViewModels"
+	x:DataType="vm:LoginViewModel"
+	NavigationPage.HasNavigationBar="False"
+	Style="{StaticResource LoginPageStyle}">
 
-	<Grid ColumnDefinitions="*, 600">
+	<Grid ColumnDefinitions="*,600">
 
-		<!-- ЛЕВА КОЛОНА: Информативен дел со суптилен градиент и графики -->
+		<!--  =====================================================  -->
+		<!--  LEFT PANEL  -->
+		<!--  =====================================================  -->
 		<Grid Grid.Column="0">
+
 			<Grid.Background>
-				<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-					<GradientStop Color="#1E293B" Offset="0" />
-					<GradientStop Color="#0F172A" Offset="0.6" />
-					<GradientStop Color="#05084E" Offset="1" />
-				</LinearGradientBrush>
+				<StaticResource Key="LoginPageGradient" />
 			</Grid.Background>
 
-			<!-- Модерни апстрактни кругови во позадина -->
+			<!--  Decorative circles (UNCHANGED)  -->
 			<AbsoluteLayout HorizontalOptions="Fill" VerticalOptions="Fill">
-				<Ellipse Fill="#38BDF8" WidthRequest="200" HeightRequest="200" Opacity="0.15" AbsoluteLayout.LayoutBounds="-50, 100, 200, 200" />
-				<Ellipse Fill="#0C87FD" WidthRequest="400" HeightRequest="400" Opacity="0.1" AbsoluteLayout.LayoutBounds="0.1, 0.2, 400, 400" AbsoluteLayout.LayoutFlags="PositionProportional" />
-				<Ellipse Fill="#38BDF8" WidthRequest="300" HeightRequest="300" Opacity="0.15" AbsoluteLayout.LayoutBounds="0.9, 0.8, 300, 300" AbsoluteLayout.LayoutFlags="PositionProportional" />
+				<Ellipse
+					AbsoluteLayout.LayoutBounds="-50,100,200,200"
+					Fill="{StaticResource LoginAccent}"
+					HeightRequest="200"
+					Opacity="0.15"
+					WidthRequest="200" />
+
+				<Ellipse
+					AbsoluteLayout.LayoutBounds="0.1,0.2,400,400"
+					AbsoluteLayout.LayoutFlags="PositionProportional"
+					Fill="#0C87FD"
+					HeightRequest="400"
+					Opacity="0.1"
+					WidthRequest="400" />
+
+				<Ellipse
+					AbsoluteLayout.LayoutBounds="0.9,0.8,300,300"
+					AbsoluteLayout.LayoutFlags="PositionProportional"
+					Fill="{StaticResource LoginAccent}"
+					HeightRequest="300"
+					Opacity="0.15"
+					WidthRequest="300" />
 			</AbsoluteLayout>
 
-			<!-- Содржина на левата колона -->
-			<VerticalStackLayout Padding="60, 0" VerticalOptions="Center" Spacing="28">
-				<Label Text="&#xf2f6;" FontFamily="FASolid" FontSize="64" TextColor="#38BDF8" HorizontalOptions="Start" />
+			<!--  CONTENT  -->
+			<VerticalStackLayout
+				Padding="80,0"
+				Spacing="40"
+				VerticalOptions="Center">
 
-				<VerticalStackLayout Spacing="6">
-					<Label Text="EHMR-MK" FontSize="44" FontAttributes="Bold" TextColor="#FFFFFF" CharacterSpacing="0.5" />
-					<Label Text="Систем за управување со здравствени податоци" FontSize="16" TextColor="#94A3B8" />
+				<!--  LOGO  -->
+				<Border
+					BackgroundColor="{StaticResource LoginPrimary}"
+					HeightRequest="72"
+					HorizontalOptions="Start"
+					StrokeThickness="0"
+					WidthRequest="72">
+
+					<Border.StrokeShape>
+						<RoundRectangle CornerRadius="20" />
+					</Border.StrokeShape>
+
+					<Label
+						FontAttributes="Bold"
+						FontSize="28"
+						HorizontalOptions="Center"
+						Text="EH"
+						TextColor="White"
+						VerticalOptions="Center" />
+				</Border>
+
+				<!--  TITLE  -->
+				<VerticalStackLayout Spacing="8">
+					<Label
+						FontAttributes="Bold"
+						FontSize="52"
+						Text="EHMR"
+						TextColor="White" />
+
+					<Label
+						FontSize="18"
+						Text="Систем за обработка на податоци за преглед, терапии, диагнози за потребите на Одделот на Клиниката за реуматологија"
+						TextColor="{StaticResource LoginMuted}" />
 				</VerticalStackLayout>
 
-				<BoxView HeightRequest="1" BackgroundColor="#1E293B" HorizontalOptions="Fill" Margin="0,10" />
+				<!--  STATS  -->
+				<Grid ColumnDefinitions="*,*" ColumnSpacing="16">
 
-				<!-- Листа на карактеристики -->
-				<VerticalStackLayout Spacing="16">
-					<HorizontalStackLayout Spacing="14">
-						<Label Text="&#xf3ed;" FontFamily="FASolid" FontSize="16" TextColor="#38BDF8" WidthRequest="24" VerticalOptions="Center" HorizontalTextAlignment="Center" />
-						<Label Text="Енд-ту-енд енкрипција и највисоко ниво на безбедност." TextColor="#94A3B8" FontSize="14" VerticalOptions="Center" />
-					</HorizontalStackLayout>
+					<Border
+						Grid.Column="0"
+						Padding="20"
+						BackgroundColor="{StaticResource LoginCardAlt}"
+						Stroke="{StaticResource LoginBorder}"
+						StrokeThickness="1.5">
 
-					<HorizontalStackLayout Spacing="14">
-						<Label Text="&#xf0f0;" FontFamily="FASolid" FontSize="16" TextColor="#38BDF8" WidthRequest="24" VerticalOptions="Center" HorizontalTextAlignment="Center" />
-						<Label Text="Унифициран преглед на картони, терапии и анамнези." TextColor="#94A3B8" FontSize="14" VerticalOptions="Center" />
-					</HorizontalStackLayout>
+						<Border.Shadow>
+							<Shadow
+								Brush="#000000"
+								Opacity="0.25"
+								Radius="12"
+								Offset="0,4" />
+						</Border.Shadow>
 
-					<HorizontalStackLayout Spacing="14">
-						<Label Text="&#xf201;" FontFamily="FASolid" FontSize="16" TextColor="#38BDF8" WidthRequest="24" VerticalOptions="Center" HorizontalTextAlignment="Center" />
-						<Label Text="Напредна статистика и автоматизирани извештаи." TextColor="#94A3B8" FontSize="14" VerticalOptions="Center" />
-					</HorizontalStackLayout>
-				</VerticalStackLayout>
+						<Border.StrokeShape>
+							<RoundRectangle CornerRadius="16" />
+						</Border.StrokeShape>
+
+						<VerticalStackLayout>
+							<Label
+								FontAttributes="Bold"
+								FontSize="28"
+								Text="50K+"
+								TextColor="White" />
+
+							<Label Text="Пациенти" TextColor="{StaticResource LoginMuted}" />
+						</VerticalStackLayout>
+
+					</Border>
+
+					<Border
+						Grid.Column="1"
+						Padding="20"
+						BackgroundColor="{StaticResource LoginCardAlt}"
+						Stroke="{StaticResource LoginBorder}"
+						StrokeThickness="1.5">
+
+						<Border.Shadow>
+							<Shadow
+								Brush="#000000"
+								Opacity="0.25"
+								Radius="12"
+								Offset="0,4" />
+						</Border.Shadow>
+
+						<Border.StrokeShape>
+							<RoundRectangle CornerRadius="16" />
+						</Border.StrokeShape>
+
+						<VerticalStackLayout>
+							<Label
+								FontAttributes="Bold"
+								FontSize="28"
+								Text="120+"
+								TextColor="White" />
+
+							<Label Text="Медицински лица" TextColor="{StaticResource LoginMuted}" />
+						</VerticalStackLayout>
+
+					</Border>
+
+				</Grid>
+
+				<!--  FEATURES  -->
+				<Border
+					Padding="24"
+					BackgroundColor="{StaticResource LoginCardAlt}"
+					Stroke="{StaticResource LoginBorder}"
+					StrokeThickness="1.5">
+
+					<Border.Shadow>
+						<Shadow
+							Brush="#000000"
+							Opacity="0.25"
+							Radius="12"
+							Offset="0,4" />
+					</Border.Shadow>
+
+					<Border.StrokeShape>
+						<RoundRectangle CornerRadius="16" />
+					</Border.StrokeShape>
+
+					<VerticalStackLayout Spacing="14">
+
+						<HorizontalStackLayout Spacing="12">
+							<Label Text="✓" TextColor="{StaticResource LoginPrimary}" />
+							<Label Text="HIPAA / GDPR усогласеност" TextColor="#CBD5E1" />
+						</HorizontalStackLayout>
+
+						<HorizontalStackLayout Spacing="12">
+							<Label Text="✓" TextColor="{StaticResource LoginPrimary}" />
+							<Label Text="Централизирани пациентски картони" TextColor="#CBD5E1" />
+						</HorizontalStackLayout>
+
+						<HorizontalStackLayout Spacing="12">
+							<Label Text="✓" TextColor="{StaticResource LoginPrimary}" />
+							<Label Text="Напредна аналитика и извештаи" TextColor="#CBD5E1" />
+						</HorizontalStackLayout>
+
+					</VerticalStackLayout>
+
+				</Border>
+
 			</VerticalStackLayout>
 		</Grid>
 
-		<!-- ДЕСНА КОЛОНА: Форма за најава -->
-		<Grid Grid.Column="1"  Padding="40">
-			<!-- Суптилна разделна линија помеѓу двете колони -->
-			<!--<BoxView HorizontalOptions="Start" WidthRequest="1" BackgroundColor="#1E293B" />-->
+		<!--  =====================================================  -->
+		<!--  RIGHT PANEL  -->
+		<!--  =====================================================  -->
+		<Grid Grid.Column="1" Padding="40">
 
-			<Border Padding="40"
-                    BackgroundColor="#1E293B"
-                    Stroke="#334155"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 24"
-                    VerticalOptions="Center"
-                    HorizontalOptions="Fill">
+			<Border
+				HorizontalOptions="Fill"
+				Style="{StaticResource LoginCard}"
+				VerticalOptions="Center">
 
 				<Border.Shadow>
-					<Shadow Brush="#000000" Offset="0,15" Radius="30" Opacity="0.3" />
+					<Shadow
+						Brush="#000000"
+						Opacity="0.3"
+						Radius="30"
+						Offset="0,15" />
 				</Border.Shadow>
 
-				<ScrollView VerticalOptions="Center">
+				<ScrollView>
+
 					<VerticalStackLayout Spacing="24">
 
-						<!-- Наслов на формата -->
+						<!--  TITLE  -->
 						<VerticalStackLayout Spacing="6">
-							<Label Text="Системска најава" FontSize="28" FontAttributes="Bold" TextColor="White" />
-							<Label Text="Внесете ги вашите медицински креденцијали" FontSize="14" TextColor="#94A3B8" />
+							<Label
+								FontAttributes="Bold"
+								FontSize="28"
+								Text="Најава"
+								TextColor="White" />
+
+							<Label
+								FontSize="14"
+								Text="За да се најавите ве молиме користете ја е-поштата и лозинката дадена од Администрацијата"
+								TextColor="{StaticResource LoginMuted}" />
 						</VerticalStackLayout>
 
-						<!-- Поле за Корисничко име -->
+						<!--  USERNAME  -->
 						<VerticalStackLayout Spacing="8">
-							<Label Text="Корисничко име или Е-пошта" TextColor="#94A3B8" FontSize="13" FontAttributes="Bold" />
 
-							<Border x:Name="EmailBorder" Stroke="#334155" StrokeThickness="1" StrokeShape="RoundRectangle 12" BackgroundColor="#0F172A" Padding="14,0">
-								<Border.Triggers>
-									<DataTrigger TargetType="Border" Binding="{Binding Source={x:Reference EmailEntry}, Path=IsFocused}" Value="True">
-										<Setter Property="Stroke" Value="#38BDF8" />
-										<Setter Property="StrokeThickness" Value="1.5" />
-										<Setter Property="BackgroundColor" Value="#1E293B" />
-									</DataTrigger>
-								</Border.Triggers>
+							<Label
+								FontAttributes="Bold"
+								FontSize="13"
+								Text="Корисничко име или Е-пошта"
+								TextColor="{StaticResource LoginMuted}" />
 
-								<Grid ColumnDefinitions="Auto, *">
-									<Label Text="&#xf0e0;" FontFamily="FASolid" FontSize="14" TextColor="#38BDF8" VerticalOptions="Center" Margin="0,0,12,0" />
-									<Entry x:Name="EmailEntry"
-                                           Grid.Column="1"
-                                           Placeholder="username@ehmr.mk"
-                                           Text="{Binding Username, Mode=TwoWay}"
-                                           TextColor="White"
-                                           PlaceholderColor="#475569"
-                                           HeightRequest="50" />
+							<Border
+								Margin="0,8,0,0"
+								Style="{StaticResource LoginInputBorder}"
+								VerticalOptions="Center">
+
+								<Grid ColumnDefinitions="Auto,*" VerticalOptions="Center">
+
+									<Label
+										Margin="0,0,12,0"
+										FontFamily="FASolid"
+										FontSize="14"
+										Text="&#xf0e0;"
+										TextColor="{StaticResource LoginAccent}"
+										VerticalOptions="Center" />
+
+									<Entry
+										Grid.Column="1"
+										Placeholder="username@ehmr.mk"
+										Style="{StaticResource LoginEntry}"
+										Text="{Binding Username}" />
+
 								</Grid>
+
 							</Border>
+
 						</VerticalStackLayout>
 
-						<!-- Поле за Лозинка -->
+						<!--  PASSWORD  -->
 						<VerticalStackLayout Spacing="8">
-							<Label Text="Лозинка" TextColor="#94A3B8" FontSize="13" FontAttributes="Bold" />
 
-							<Border x:Name="PasswordBorder" Stroke="#334155" StrokeThickness="1" StrokeShape="RoundRectangle 12" BackgroundColor="#0F172A" Padding="14,0">
-								<Border.Triggers>
-									<DataTrigger TargetType="Border" Binding="{Binding Source={x:Reference PasswordEntry}, Path=IsFocused}" Value="True">
-										<Setter Property="Stroke" Value="#38BDF8" />
-										<Setter Property="StrokeThickness" Value="1.5" />
-										<Setter Property="BackgroundColor" Value="#1E293B" />
-									</DataTrigger>
-								</Border.Triggers>
+							<Label
+								FontAttributes="Bold"
+								FontSize="13"
+								Text="Лозинка"
+								TextColor="{StaticResource LoginMuted}" />
 
-								<Grid ColumnDefinitions="Auto, *">
-									<Label Text="&#xf023;" FontFamily="FASolid" FontSize="14" TextColor="#38BDF8" VerticalOptions="Center" Margin="0,0,12,0" />
-									<Entry x:Name="PasswordEntry"
-                                           Grid.Column="1"
-                                           Placeholder="••••••••••••"
-                                           IsPassword="True"
-                                           Text="{Binding Password, Mode=TwoWay}"
-                                           TextColor="White"
-                                           PlaceholderColor="#475569"
-                                           HeightRequest="50" />
+							<Border Style="{StaticResource LoginInputBorder}">
+
+								<Grid ColumnDefinitions="Auto,*">
+
+									<Label
+										Margin="0,0,12,0"
+										FontFamily="FASolid"
+										FontSize="14"
+										Text="&#xf023;"
+										TextColor="{StaticResource LoginAccent}"
+										VerticalOptions="Center" />
+
+									<Entry
+										Grid.Column="1"
+										IsPassword="True"
+										Placeholder="••••••••••••"
+										Style="{StaticResource LoginEntry}"
+										Text="{Binding Password}" />
+
 								</Grid>
+
 							</Border>
+
 						</VerticalStackLayout>
 
-						<!-- Опции (Запамти ме и Заборавена лозинка) -->
-						<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-							<HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-								<CheckBox IsChecked="{Binding RememberMe}" Color="#38BDF8" Visual="Default" />
-								<Label Text="Запамти ме" VerticalOptions="Center" TextColor="#94A3B8" FontSize="13" />
+						<!--  OPTIONS  -->
+						<Grid ColumnDefinitions="*,Auto">
+
+							<HorizontalStackLayout Spacing="6">
+								<CheckBox IsChecked="{Binding RememberMe}" Color="{StaticResource LoginAccent}" />
+								<Label
+									FontSize="13"
+									Text="Запамти"
+									TextColor="{StaticResource LoginMuted}" />
 							</HorizontalStackLayout>
 
-							<Label Grid.Column="1" Text="Заборавена лозинка?" TextColor="#38BDF8" FontSize="13" VerticalOptions="Center">
-								<Label.GestureRecognizers>
-									<!-- Тука може да се додаде команда за ресетирање подоцна -->
-								</Label.GestureRecognizers>
-							</Label>
+							<Label
+								Grid.Column="1"
+								FontSize="13"
+								Text="Заборавена лозинка?"
+								TextColor="{StaticResource LoginAccent}" />
+
 						</Grid>
 
-						<!-- Копче за Најава -->
-						<Border Stroke="Transparent" BackgroundColor="#0284C7" StrokeShape="RoundRectangle 12" HeightRequest="50" Margin="0,8,0,0">
+						<!--  BUTTON  -->
+						<Border Style="{StaticResource LoginPrimaryButton}">
+
 							<Border.GestureRecognizers>
 								<TapGestureRecognizer Command="{Binding LoginCommand}" />
 							</Border.GestureRecognizers>
-							<Grid ColumnDefinitions="*, Auto" Padding="20,0">
-								<Label Text="Влези во систем"
-                                       TextColor="White"
-                                       FontAttributes="Bold"
-                                       FontSize="15"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center"
-                                       Grid.ColumnSpan="2" />
-								<Label Grid.Column="1" Text="&#xf061;" FontFamily="FASolid" FontSize="14" TextColor="White" VerticalOptions="Center" />
+
+							<Grid Padding="20,0" ColumnDefinitions="*,Auto">
+
+								<Label
+									Grid.ColumnSpan="2"
+									FontAttributes="Bold"
+									FontSize="15"
+									HorizontalOptions="Center"
+									Text="Влези во систем"
+									TextColor="White"
+									VerticalOptions="Center" />
+
 							</Grid>
+
 						</Border>
 
-						<!-- Футер Безбедност -->
-						<HorizontalStackLayout HorizontalOptions="Center" Spacing="6" Margin="0,8,0,0">
-							<Label Text="&#xf3ed;" FontFamily="FASolid" FontSize="12" TextColor="#22C55E" VerticalOptions="Center" />
-							<Label Text="Заштитен и криптиран пристап (SSL)" FontSize="12" TextColor="#64748B" VerticalOptions="Center" />
+						<!--  FOOTER  -->
+						<HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+
+							<Label
+								FontFamily="FASolid"
+								FontSize="12"
+								Text="&#xf3ed;"
+								TextColor="#22C55E" />
+
+							<Label
+								FontSize="12"
+								Text="Заштитен и криптиран пристап (SSL)"
+								TextColor="{StaticResource LoginMuted}" />
+
 						</HorizontalStackLayout>
+
 					</VerticalStackLayout>
+
 				</ScrollView>
+
 			</Border>
+
 		</Grid>
+
 	</Grid>
+
 </ContentPage>

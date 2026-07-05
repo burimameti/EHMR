@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+	x:Class="EHMR.Resources.Controls.FFPageHeader"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	x:Name="Root"
+	x:DataType="controls:FFPageHeader">
+
+	<Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
+
+		<!--  Left  -->
+
+		<VerticalStackLayout
+			Grid.Column="0"
+			Spacing="3"
+			VerticalOptions="Center">
+
+			<Label
+				CharacterSpacing="2"
+				FontAttributes="Bold"
+				FontSize="11"
+				IsVisible="{Binding Caption, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
+				Text="{Binding Caption, Source={x:Reference Root}}"
+				TextColor="{StaticResource Gray500}" />
+
+			<Label
+				FontSize="{Binding TitleFontSize, Source={x:Reference Root}}"
+				Text="{Binding Title, Source={x:Reference Root}}"
+				TextColor="{Binding TitleColor, Source={x:Reference Root}}" />
+
+			<Label
+				FontSize="{Binding SubtitleFontSize, Source={x:Reference Root}}"
+				IsVisible="{Binding Subtitle, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
+				Text="{Binding Subtitle, Source={x:Reference Root}}"
+				TextColor="{Binding SubtitleColor, Source={x:Reference Root}}" />
+
+		</VerticalStackLayout>
+
+		<!--  Right  -->
+
+		<HorizontalStackLayout
+			Grid.Column="1"
+			Spacing="10"
+			VerticalOptions="Center">
+
+			<Button
+				Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
+				IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
+				Style="{StaticResource PrimaryButton}"
+				Text="{Binding PrimaryButtonText, Source={x:Reference Root}}" />
+
+			<Button
+				Command="{Binding SecondaryButtonCommand, Source={x:Reference Root}}"
+				IsVisible="{Binding ShowSecondaryButton, Source={x:Reference Root}}"
+				Style="{StaticResource SecondaryButton}"
+				Text="{Binding SecondaryButtonText, Source={x:Reference Root}}" />
+
+			<Button
+				Command="{Binding RefreshCommand, Source={x:Reference Root}}"
+				FontFamily="FASolid"
+				IsVisible="{Binding ShowRefreshButton, Source={x:Reference Root}}"
+				Style="{StaticResource IconButton}"
+				Text="&#xf021;" />
+
+		</HorizontalStackLayout>
+
+	</Grid>
+
+</ContentView>

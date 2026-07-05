@@ -78,14 +78,14 @@
 											<Label Grid.Column="0" Text="{Binding Icon}" FontSize="32" Margin="0,0,16,0" VerticalOptions="Center" />
 											<VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
 												<Label Text="{Binding Title}" FontAttributes="Bold" FontSize="15" TextColor="#0F172A" LineBreakMode="WordWrap" />
-												<Label Text="КЛИКНИ ЗА ОТВОРАЊЕ" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource Primary}" CharacterSpacing="0.5" />
+												<Label Text="КЛИКНИ ЗА ОТВОРАЊЕ" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource EhmrPrimary}" CharacterSpacing="0.5" />
 											</VerticalStackLayout>
 										</Grid>
 										<Label Grid.Row="1" Text="{Binding Description}" FontSize="13" TextColor="#64748B" HeightRequest="45" LineBreakMode="TailTruncation" MaxLines="2" />
 										<BoxView Grid.Row="2" BackgroundColor="#F1F5F9" />
 										<Grid Grid.Row="3" ColumnDefinitions="*,Auto">
 											<Label Grid.Column="0" Text="{Binding Category, StringFormat='Категорија: {0}'}" FontSize="11" FontAttributes="Bold" TextColor="#94A3B8" VerticalOptions="Center" />
-											<Label Grid.Column="1" Text="Отвори извештај ➔" FontAttributes="Bold" FontSize="12" TextColor="{StaticResource Primary}" VerticalOptions="Center" />
+											<Label Grid.Column="1" Text="Отвори извештај ➔" FontAttributes="Bold" FontSize="12" TextColor="{StaticResource EhmrPrimary}" VerticalOptions="Center" />
 										</Grid>
 									</Grid>
 								</Border>
@@ -156,7 +156,7 @@
 
 									<!-- Динамички Редови -->
 									<Grid Grid.Row="1">
-										<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="50" WidthRequest="50" ZIndex="5" />
+										<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource EhmrPrimary}" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="50" WidthRequest="50" ZIndex="5" />
 
 										<CollectionView ItemsSource="{Binding ProcessedRows}" SelectionMode="None">
 											<CollectionView.ItemTemplate>
@@ -187,8 +187,8 @@
 							</ScrollView>
 
 							<!-- ДОЛНА ПАГИНАЦИЈА (Футер - Ист со AppointmentListPage) -->
-							<Border Grid.Row="2" BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource Border}" StrokeThickness="1">
-								<Grid Padding="20,0" HeightRequest="60" ColumnDefinitions="*,Auto">
+							<Border Grid.Row="2" BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource BorderDefault}" StrokeThickness="1">
+								<Grid Padding="20,0"  ColumnDefinitions="*,Auto">
 									<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
 										<Label Text="Вкупно евидентирани записи во извештајот" Style="{StaticResource MutedText}" VerticalOptions="Center" />
 									</HorizontalStackLayout>
@@ -196,10 +196,10 @@
 									<HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
 										<Button Text="Претходна" Style="{StaticResource ToolbarButton}" Command="{Binding PreviousPageCommand}" />
 
-										<Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource BorderStrong}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" HeightRequest="36" Padding="12,0">
+										<Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource BorderDefaultStrong}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" HeightRequest="36" Padding="12,0">
 											<HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 												<Label Text="Страна" Style="{StaticResource MutedText}" />
-												<Label Text="{Binding CurrentPage, FallbackValue=1}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+												<Label Text="{Binding CurrentPage, FallbackValue=1}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource EhmrPrimary}" />
 												<Label Text="од" Style="{StaticResource MutedText}" />
 												<Label Text="{Binding TotalPages, FallbackValue=1}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" />
 											</HorizontalStackLayout>

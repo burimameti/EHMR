@@ -121,6 +121,7 @@ public class DesktopTherapyDbContext : TherapyTrackerDbContext
         public static readonly Guid Encounter1 = Guid.Parse("00000000-0000-0000-0000-000000005001");
 
         public static readonly Guid Encounter2 = Guid.Parse("00000000-0000-0000-0000-000000005002");
+        public static readonly Guid Inv1 = Guid.Parse("90000000-0000-0000-0000-000000005002");
 
         // ================= PRESCRIPTIONS =================
         public static readonly Guid Presc1 = Guid.Parse("00000000-0000-0000-0000-000000006001");

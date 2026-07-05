@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+	x:Class="EHMR.Resources.Controls.FFGridRowPresenter"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	x:Name="Root">
+
+	<Border Padding="18,0" HeightRequest="{Binding RowHeight, Source={x:Reference Root}}">
+
+		<Border.StrokeShape>
+			<Rectangle />
+		</Border.StrokeShape>
+
+		<!--  BACKGROUND CONTROL  -->
+		<Border.Triggers>
+
+			<!--  NORMAL  -->
+			<DataTrigger
+				Binding="{Binding IsSelected}"
+				TargetType="Border"
+				Value="False">
+				<Setter Property="BackgroundColor" Value="{Binding RowBackground, Source={x:Reference Root}}" />
+			</DataTrigger>
+
+			<!--  SELECTED  -->
+			<DataTrigger
+				Binding="{Binding IsSelected}"
+				TargetType="Border"
+				Value="True">
+				<Setter Property="BackgroundColor" Value="{Binding SelectedRowBackground, Source={x:Reference Root}}" />
+			</DataTrigger>
+
+		</Border.Triggers>
+
+		<!--  CONTENT  -->
+		<Grid RowDefinitions="*,1">
+
+			<ContentPresenter
+				Grid.Row="0"
+				Content="{Binding Content, Source={x:Reference Root}}"
+				VerticalOptions="Center" />
+
+			<!--  DIVIDER  -->
+			<BoxView
+				Grid.Row="1"
+				HeightRequest="1"
+				Color="{Binding DividerColor, Source={x:Reference Root}}" />
+
+		</Grid>
+
+	</Border>
+
+</ContentView>

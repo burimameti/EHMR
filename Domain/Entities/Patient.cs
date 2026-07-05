@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+
 namespace EHMR.Domain.Entities;
 
 public class Patient : BaseEntity
@@ -64,6 +65,18 @@ public class Patient : BaseEntity
     public List<Encounter> Encounters { get; set; } = new();
 
     public string FullName => $"{FirstName} {LastName}";
+    public override string ToString() => FullName;
+    public DateTime? LastVisitDate =>
+    Appointments
+        .Where(a => a.Status==AppointmentStatus.Completed)
+        .OrderByDescending(a => a.ScheduledStart)
+        .FirstOrDefault()?.ScheduledStart;
+
+    public DateTime? NextAppointmentDate =>
+        Appointments
+            .Where(a => a.Status==AppointmentStatus.Scheduled&&a.ScheduledStart>DateTime.Now)
+            .OrderBy(a => a.ScheduledStart)
+            .FirstOrDefault()?.ScheduledStart;
 }
 
 public enum Gender

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EHMR.Migrations
 {
     /// <inheritdoc />
-    public partial class initialCreate : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,24 +52,6 @@ namespace EHMR.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AuditLogs", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Medicines",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    GenericName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DosageForm = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DefaultDosage = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Medicines", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -201,60 +183,6 @@ namespace EHMR.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Inventories",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MedicineId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    InitialStock = table.Column<int>(type: "int", nullable: false),
-                    CurrentStock = table.Column<int>(type: "int", nullable: false),
-                    ReservedStock = table.Column<int>(type: "int", nullable: false),
-                    MinimumStockLevel = table.Column<int>(type: "int", nullable: false),
-                    MaximumStockLevel = table.Column<int>(type: "int", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MinimumStockAlert = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Inventories", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Inventories_Medicines_MedicineId",
-                        column: x => x.MedicineId,
-                        principalTable: "Medicines",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PatientDocuments",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EncounterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FileUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FileType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FileSizeInBytes = table.Column<long>(type: "bigint", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    IsCritical = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PatientDocuments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PatientDocuments_Patients_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "Patients",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -399,13 +327,35 @@ namespace EHMR.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AppointmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AppointmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DoctorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EncounterNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EncounterType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Priority = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ScheduledStart = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ScheduledEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CheckInTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CheckOutTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DurationMinutes = table.Column<int>(type: "int", nullable: true),
+                    ChiefComplaint = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReasonForVisit = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HistoryOfPresentIllness = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Assessment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Plan = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VisitSource = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BillingStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsLocked = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     EncounterDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ClinicalNotes = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -414,8 +364,7 @@ namespace EHMR.Migrations
                         name: "FK_Encounters_Appointments_AppointmentId",
                         column: x => x.AppointmentId,
                         principalTable: "Appointments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Encounters_Doctors_DoctorId",
                         column: x => x.DoctorId,
@@ -435,13 +384,13 @@ namespace EHMR.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EncounterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Mkb10CodeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DiagnosedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsPrimary = table.Column<bool>(type: "bit", nullable: false),
                     Severity = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ClinicalDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    EncounterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -461,6 +410,63 @@ namespace EHMR.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Diagnoses_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Patients",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Medicines",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GenericName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DosageForm = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DefaultDosage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EncounterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Medicines", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Medicines_Encounters_EncounterId",
+                        column: x => x.EncounterId,
+                        principalTable: "Encounters",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientDocuments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EncounterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileSizeInBytes = table.Column<long>(type: "bigint", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IsCritical = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientDocuments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PatientDocuments_Encounters_EncounterId",
+                        column: x => x.EncounterId,
+                        principalTable: "Encounters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientDocuments_Patients_PatientId",
                         column: x => x.PatientId,
                         principalTable: "Patients",
                         principalColumn: "Id");
@@ -535,6 +541,33 @@ namespace EHMR.Migrations
                         column: x => x.Mkb10CodeId1,
                         principalTable: "Mkb10Codes",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Inventories",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MedicineId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    InitialStock = table.Column<int>(type: "int", nullable: false),
+                    CurrentStock = table.Column<int>(type: "int", nullable: false),
+                    ReservedStock = table.Column<int>(type: "int", nullable: false),
+                    MinimumStockLevel = table.Column<int>(type: "int", nullable: false),
+                    MaximumStockLevel = table.Column<int>(type: "int", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MinimumStockAlert = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Inventories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Inventories_Medicines_MedicineId",
+                        column: x => x.MedicineId,
+                        principalTable: "Medicines",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -618,9 +651,19 @@ namespace EHMR.Migrations
                 column: "MedicineId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Medicines_EncounterId",
+                table: "Medicines",
+                column: "EncounterId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Medicines_Name",
                 table: "Medicines",
                 column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientDocuments_EncounterId",
+                table: "PatientDocuments",
+                column: "EncounterId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PatientDocuments_PatientId",
@@ -701,10 +744,10 @@ namespace EHMR.Migrations
                 name: "Medicines");
 
             migrationBuilder.DropTable(
-                name: "Encounters");
+                name: "Mkb10Codes");
 
             migrationBuilder.DropTable(
-                name: "Mkb10Codes");
+                name: "Encounters");
 
             migrationBuilder.DropTable(
                 name: "Appointments");

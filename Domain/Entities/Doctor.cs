@@ -21,6 +21,7 @@ namespace EHMR.Domain.Entities
         }
 
         // optional convenience
-        public string FullName => User.FirstName+" "+User.LastName;
+        public string FullName => User.FirstName+" "+User.LastName; public override string ToString() => FullName;
+
     }
 }

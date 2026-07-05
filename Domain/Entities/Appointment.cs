@@ -97,5 +97,5 @@ public class AppointmentDiagnosis
 
 public enum AppointmentStatus
 {
-    Scheduled, CheckedIn, Completed, Cancelled, Missed
+    Scheduled, CheckedIn, Completed, Cancelled, Missed, InProgress, ReScheduled,
 }

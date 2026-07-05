@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+
+
+	<Color x:Key="SparkSidebarBg">#1D2A44</Color>
+	<Color x:Key="SparkAccentTeal">#21B6C4</Color>
+	<Color x:Key="SparkAccentTealDark">#1899A6</Color>
+	<Color x:Key="SparkButtonSecondaryBackground">#5B6B79</Color>
+	<Color x:Key="SparkTabActiveBg">#E7F7FA</Color>
+	<Color x:Key="SparkTabActiveBorder">#21B6C4</Color>
+	<Color x:Key="SparkTabActiveText">#16374A</Color>
+	<Color x:Key="SparkTabInactiveText">#7C8798</Color>
+	<Color x:Key="SparkTabHoverBg">#F1F5F8</Color>
+
+	<Color x:Key="SparkBorder">#E3E6EC</Color>
+	<Color x:Key="SparkBackground">#FFFFFF</Color>
+	<Color x:Key="SparkBackgroundAlt">#F7F9FB</Color>
+
+	<Color x:Key="SparkTextPrimary">#2E3A4E</Color>
+	<Color x:Key="SparkTextSecondary">#8B95A6</Color>
+
+	<Color x:Key="SparkBadgeDangerBg">#FDE8E8</Color>
+	<Color x:Key="SparkBadgeDangerText">#E0554F</Color>
+	<Color x:Key="SparkBadgeSuccessBg">#E7F6E9</Color>
+	<Color x:Key="SparkBadgeSuccessText">#3CB35B</Color>
+	<Color x:Key="SparkBadgeNeutralBg">#EDF1F5</Color>
+	<Color x:Key="SparkBadgeNeutralBgSelected">#21B6C4</Color>
+	<Color x:Key="SparkBadgeNeutralText">#5B6B85</Color>
+	<Color x:Key="SparkBadgeNeutralTextSelected">#FFFFFF</Color>
+
+	<Color x:Key="SparkButtonPrimaryText">#FFFFFF</Color>
+	<Color x:Key="SparkButtonSecondaryBorder">#D8DEE6</Color>
+	<Color x:Key="SparkLink">#2F8FE0</Color>
+
+	<!--  Reusable icon path data (vector, so they tint with any color)  -->
+	<x:String x:Key="SparkIconSearchPathData">M9,2 A7,7 0 1,0 9,16 A7,7 0 1,0 9,2 Z M14.2,14.2 L19,19</x:String>
+	<x:String x:Key="SparkIconFilterPathData">M2,3 L18,3 L11.5,10.5 L11.5,16 L8.5,17.5 L8.5,10.5 Z</x:String>
+	<x:String x:Key="SparkIconChevronDownPathData">M3,6 L10,13 L17,6</x:String>
+	<x:Double x:Key="SparkFontSizeSmall">12</x:Double>
+	<x:Double x:Key="SparkFontSizeNormal">14</x:Double>
+	<x:Double x:Key="SparkFontSizeTitle">16</x:Double>
+
+
+	<Style x:Key="SparkSearchBarStyle" TargetType="SearchBar">
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
+		<Setter Property="CancelButtonColor" Value="{StaticResource SparkTextSecondary}" />
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+		<Setter Property="HeightRequest" Value="32" />
+	</Style>
+
+	<Style x:Key="SparkSearchBarFrameStyle" TargetType="Border">
+		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+		<Setter Property="Padding" Value="0" />
+	</Style>
+
+
+	<Style x:Key="SparkPickerStyle" TargetType="Picker">
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="TitleColor" Value="{StaticResource SparkTextSecondary}" />
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+		<Setter Property="HeightRequest" Value="32" />
+	</Style>
+
+	<Style x:Key="SparkPickerFrameStyle" TargetType="Border">
+		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+		<Setter Property="Padding" Value="8,0" />
+		<Setter Property="MinimumWidthRequest" Value="96" />
+	</Style>
+
+
+
+
+	<Style x:Key="SparkActionButtonStyle" TargetType="Button">
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="CornerRadius" Value="6" />
+		<Setter Property="HeightRequest" Value="32" />
+		<Setter Property="Padding" Value="12,0" />
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="BorderColor" Value="{StaticResource SparkButtonSecondaryBorder}" />
+		<Setter Property="BorderWidth" Value="1" />
+		<Style.Triggers>
+			<DataTrigger
+				Binding="{Binding IsPrimary}"
+				TargetType="Button"
+				Value="True">
+				<Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTeal}" />
+				<Setter Property="TextColor" Value="{StaticResource SparkButtonPrimaryText}" />
+				<Setter Property="BorderWidth" Value="0" />
+			</DataTrigger>
+		</Style.Triggers>
+	</Style>
+
+
+
+	<Style x:Key="SparkIconButtonFrameStyle" TargetType="Border">
+		<Setter Property="Stroke" Value="{StaticResource SparkButtonSecondaryBorder}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+		<Setter Property="WidthRequest" Value="38" />
+		<Setter Property="HeightRequest" Value="38" />
+		<Setter Property="Padding" Value="0" />
+	</Style>
+
+	<Style x:Key="SparkPagerButtonStyle" TargetType="Button">
+		<Setter Property="FontFamily" Value="{x:Null}" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+		<Setter Property="BorderColor" Value="{StaticResource SparkBorder}" />
+		<Setter Property="BorderWidth" Value="1" />
+		<Setter Property="CornerRadius" Value="6" />
+		<Setter Property="HeightRequest" Value="32" />
+		<Setter Property="Padding" Value="14,0" />
+		<Setter Property="ImageSource" Value="{x:Null}" />
+		<Style.Triggers>
+			<Trigger TargetType="Button" Property="IsEnabled" Value="False">
+				<Setter Property="Opacity" Value="0.4" />
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+
+	<Style x:Key="SparkPagerLabelStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+		<Setter Property="VerticalOptions" Value="Center" />
+	</Style>
+	<Style x:Key="SparkTabTitleLabelStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource SparkFontSizeNormal}" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTabInactiveText}" />
+		<Setter Property="VerticalOptions" Value="Center" />
+		<Style.Triggers>
+			<DataTrigger
+				Binding="{Binding IsSelected}"
+				TargetType="Label"
+				Value="True">
+				<Setter Property="TextColor" Value="{StaticResource SparkTabActiveText}" />
+			</DataTrigger>
+		</Style.Triggers>
+	</Style>
+
+	<Style x:Key="SparkTabBadgeFrameStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeNeutralBg}" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 8" />
+		<Setter Property="Padding" Value="7,2" />
+		<Setter Property="Stroke" Value="Transparent" />
+		<Style.Triggers>
+			<DataTrigger
+				Binding="{Binding IsSelected}"
+				TargetType="Border"
+				Value="True">
+				<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeNeutralBgSelected}" />
+			</DataTrigger>
+		</Style.Triggers>
+	</Style>
+
+	<Style x:Key="SparkTabBadgeLabelStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource SparkFontSizeSmall}" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource SparkBadgeNeutralText}" />
+		<Style.Triggers>
+			<DataTrigger
+				Binding="{Binding IsSelected}"
+				TargetType="Label"
+				Value="True">
+				<Setter Property="TextColor" Value="{StaticResource SparkBadgeNeutralTextSelected}" />
+			</DataTrigger>
+		</Style.Triggers>
+	</Style>
+
+	<Style x:Key="SparkTabUnderlineStyle" TargetType="BoxView">
+		<Setter Property="HeightRequest" Value="2" />
+		<Setter Property="Color" Value="Transparent" />
+		<Style.Triggers>
+			<DataTrigger
+				Binding="{Binding IsSelected}"
+				TargetType="BoxView"
+				Value="True">
+				<Setter Property="Color" Value="{StaticResource SparkTabActiveBorder}" />
+			</DataTrigger>
+		</Style.Triggers>
+	</Style>
+
+
+	<Style x:Key="SparkBadgeDangerFrameStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeDangerBg}" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 4" />
+		<Setter Property="Stroke" Value="Transparent" />
+		<Setter Property="Padding" Value="8,3" />
+	</Style>
+	<Style x:Key="SparkBadgeSuccessFrameStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeSuccessBg}" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 4" />
+		<Setter Property="Stroke" Value="Transparent" />
+		<Setter Property="Padding" Value="8,3" />
+	</Style>
+
+</ResourceDictionary>

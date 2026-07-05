@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+	<!--  =========================================================  -->
+	<!--  PAGE  -->
+	<!--  =========================================================  -->
+
+	<Style x:Key="PageTitleLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyBold}" />
+		<Setter Property="FontSize" Value="{StaticResource PageTitleSize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+		<Setter Property="LineHeight" Value="{StaticResource LineHeightCompact}" />
+	</Style>
+
+	<Style x:Key="PageSubtitleLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyDefault}" />
+		<Setter Property="FontSize" Value="{StaticResource PageSubtitleSize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+	</Style>
+
+	<!--  =========================================================  -->
+	<!--  SECTION  -->
+	<!--  =========================================================  -->
+
+	<Style x:Key="SectionTitleLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyBold}" />
+		<Setter Property="FontSize" Value="{StaticResource SectionTitleSize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+	</Style>
+
+	<Style x:Key="SectionSubtitleLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyDefault}" />
+		<Setter Property="FontSize" Value="{StaticResource SectionSubtitleSize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+	</Style>
+
+	<!--  =========================================================  -->
+	<!--  CARD  -->
+	<!--  =========================================================  -->
+
+	<Style x:Key="CardTitleLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyMedium}" />
+		<Setter Property="FontSize" Value="{StaticResource CardTitleSize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+	</Style>
+
+	<Style x:Key="CardSubtitleLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource CardSubtitleSize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+	</Style>
+
+	<!--  =========================================================  -->
+	<!--  FORM  -->
+	<!--  =========================================================  -->
+
+	<Style x:Key="FormLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyMedium}" />
+		<Setter Property="FontSize" Value="{StaticResource FormLabelSize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+		<Setter Property="Margin" Value="0,0,0,4" />
+	</Style>
+
+	<Style x:Key="FormHintLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource FormHelperSize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextMuted}" />
+	</Style>
+
+	<Style x:Key="ValidationErrorLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource ValidationSize}" />
+		<Setter Property="TextColor" Value="{StaticResource Danger}" />
+	</Style>
+
+	<Style x:Key="ValidationSuccessLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource ValidationSize}" />
+		<Setter Property="TextColor" Value="{StaticResource Success}" />
+	</Style>
+
+	<!--  =========================================================  -->
+	<!--  GRID  -->
+	<!--  =========================================================  -->
+
+	<Style x:Key="GridHeaderLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyMedium}" />
+		<Setter Property="FontSize" Value="{StaticResource GridHeaderSize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextMuted}" />
+		<Setter Property="CharacterSpacing" Value="0.5" />
+	</Style>
+
+	<Style x:Key="GridPrimaryLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyMedium}" />
+		<Setter Property="FontSize" Value="{StaticResource GridCellSize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+	</Style>
+
+	<Style x:Key="GridSecondaryLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource GridSecondarySize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+	</Style>
+
+	<Style x:Key="GridMutedLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource GridSecondarySize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextMuted}" />
+	</Style>
+
+	<Style
+		x:Key="GridNumberLabel"
+		BasedOn="{StaticResource GridPrimaryLabel}"
+		TargetType="Label">
+		<Setter Property="HorizontalTextAlignment" Value="End" />
+	</Style>
+
+	<Style
+		x:Key="GridDateLabel"
+		BasedOn="{StaticResource GridSecondaryLabel}"
+		TargetType="Label" />
+
+	<Style x:Key="GridLinkLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyMedium}" />
+		<Setter Property="TextColor" Value="{StaticResource EhmrPrimary}" />
+		<Setter Property="FontSize" Value="{StaticResource GridCellSize}" />
+	</Style>
+
+	<!--  =========================================================  -->
+	<!--  KPI  -->
+	<!--  =========================================================  -->
+
+	<Style x:Key="KpiValueLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyBold}" />
+		<Setter Property="FontSize" Value="{StaticResource KpiValueSize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+	</Style>
+
+	<Style x:Key="KpiTitleLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource KpiLabelSize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+	</Style>
+
+	<Style x:Key="KpiDeltaLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyMedium}" />
+		<Setter Property="FontSize" Value="{StaticResource KpiDeltaSize}" />
+	</Style>
+
+	<!--  =========================================================  -->
+	<!--  STATUS  -->
+	<!--  =========================================================  -->
+
+	<Style x:Key="StatusLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyMedium}" />
+		<Setter Property="FontSize" Value="{StaticResource StatusSize}" />
+	</Style>
+
+	<Style x:Key="BadgeLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyBold}" />
+		<Setter Property="FontSize" Value="{StaticResource BadgeSize}" />
+		<Setter Property="HorizontalTextAlignment" Value="Center" />
+		<Setter Property="VerticalTextAlignment" Value="Center" />
+	</Style>
+
+	<!--  =========================================================  -->
+	<!--  TIMELINE  -->
+	<!--  =========================================================  -->
+
+	<Style x:Key="TimelineTitleLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyMedium}" />
+		<Setter Property="FontSize" Value="{StaticResource TimelineTitleSize}" />
+	</Style>
+
+	<Style x:Key="TimelineDateLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource TimelineDateSize}" />
+		<Setter Property="TextColor" Value="{StaticResource TextMuted}" />
+	</Style>
+
+	<!--  =========================================================  -->
+	<!--  DIALOG  -->
+	<!--  =========================================================  -->
+
+	<Style
+		x:Key="DialogTitleLabel"
+		BasedOn="{StaticResource SectionTitleLabel}"
+		TargetType="Label" />
+
+	<Style
+		x:Key="DialogSubtitleLabel"
+		BasedOn="{StaticResource SectionSubtitleLabel}"
+		TargetType="Label" />
+
+	<!--  =========================================================  -->
+	<!--  EMPTY  -->
+	<!--  =========================================================  -->
+
+	<Style x:Key="EmptyTitleLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyBold}" />
+		<Setter Property="FontSize" Value="{StaticResource FontXL}" />
+		<Setter Property="HorizontalTextAlignment" Value="Center" />
+		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+	</Style>
+
+	<Style x:Key="EmptyDescriptionLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
+		<Setter Property="HorizontalTextAlignment" Value="Center" />
+		<Setter Property="TextColor" Value="{StaticResource TextMuted}" />
+	</Style>
+
+	<!--  =========================================================  -->
+	<!--  UTILITY  -->
+	<!--  =========================================================  -->
+
+	<Style x:Key="CaptionLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="{StaticResource FontXS}" />
+		<Setter Property="TextColor" Value="{StaticResource TextMuted}" />
+	</Style>
+
+	<Style x:Key="LinkLabel" TargetType="Label">
+		<Setter Property="FontFamily" Value="{StaticResource FontFamilyMedium}" />
+		<Setter Property="TextColor" Value="{StaticResource EhmrPrimary}" />
+	</Style>
+
+</ResourceDictionary>

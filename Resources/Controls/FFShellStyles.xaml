@@ -1,0 +1,30 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+	<!--  SIDEBAR  -->
+	<Style x:Key="FFShellSidebarStyle" TargetType="Border">
+		<Setter Property="Background" Value="#111827" />
+		<Setter Property="Padding" Value="12" />
+	</Style>
+
+	<!--  BRAND  -->
+	<Style x:Key="FFShellBrandStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="White" />
+		<Setter Property="FontSize" Value="16" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="Margin" Value="0,10,0,20" />
+	</Style>
+
+	<!--  MENU BUTTON  -->
+	<Style x:Key="FFShellMenuButtonStyle" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="TextColor" Value="White" />
+		<Setter Property="HorizontalOptions" Value="Start" />
+	</Style>
+
+	<!--  TOP BAR  -->
+	<Style x:Key="FFShellTopBarStyle" TargetType="Border">
+		<Setter Property="Background" Value="White" />
+		<Setter Property="Padding" Value="10" />
+		<Setter Property="Stroke" Value="#E5E7EB" />
+	</Style>
+</ResourceDictionary>

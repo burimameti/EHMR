@@ -12,6 +12,11 @@ namespace EHMR.Services
             get => _selectedItem;
             set => _selectedItem=value;
         }
+        public bool OpenInEditMode
+        {
+            get;
+            set;
+        }
 
         // Optional helper methods
         public T? GetSelectedItem() => _selectedItem;

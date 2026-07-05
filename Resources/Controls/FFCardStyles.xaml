@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls">
+
+	<!--  =====================================================  -->
+	<!--  FFCard presets  -->
+	<!--  =====================================================  -->
+
+	<Style x:Key="FFCardDefaultStyle" TargetType="controls:FFCard">
+		<Setter Property="Variant" Value="Default" />
+		<Setter Property="CardPadding" Value="6" />
+		<Setter Property="CardCornerRadius" Value="1" />
+		<Setter Property="HasShadow" Value="True" />
+	</Style>
+
+	<Style x:Key="FFCardElevatedStyle" TargetType="controls:FFCard">
+		<Setter Property="Variant" Value="Elevated" />
+		<Setter Property="CardPadding" Value="18" />
+		<Setter Property="CardCornerRadius" Value="18" />
+		<Setter Property="HasShadow" Value="True" />
+	</Style>
+
+	<Style x:Key="FFCardOutlinedStyle" TargetType="controls:FFCard">
+		<Setter Property="Variant" Value="Outlined" />
+		<Setter Property="CardPadding" Value="16" />
+		<Setter Property="CardCornerRadius" Value="16" />
+		<Setter Property="HasShadow" Value="False" />
+	</Style>
+
+	<Style x:Key="FFCardFlatStyle" TargetType="controls:FFCard">
+		<Setter Property="Variant" Value="Flat" />
+		<Setter Property="CardPadding" Value="16" />
+		<Setter Property="CardCornerRadius" Value="16" />
+		<Setter Property="HasShadow" Value="False" />
+	</Style>
+
+	<Style x:Key="FFCardSoftStyle" TargetType="controls:FFCard">
+		<Setter Property="Variant" Value="Soft" />
+		<Setter Property="CardPadding" Value="16" />
+		<Setter Property="CardCornerRadius" Value="16" />
+		<Setter Property="HasShadow" Value="True" />
+	</Style>
+</ResourceDictionary>

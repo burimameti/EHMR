@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+	x:Class="EHMR.Views.Encounters.EncounterDetailPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:entities="clr-namespace:EHMR.Domain.Entities"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Encounters"
+	x:DataType="viewModels:EncounterDetailViewModel">
+
+	<Grid ColumnDefinitions="285,*">
+
+		<Border Grid.Column="0" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
+		</Border>
+
+
+		<Grid
+			Grid.Column="1"
+			Padding="30"
+			BackgroundColor="{StaticResource Gray200}"
+			RowDefinitions="65,Auto,*"
+			RowSpacing="20">
+
+			<!--  HEADER  -->
+			<Border
+				Padding="20"
+				BackgroundColor="{StaticResource White}"
+				StrokeShape="RoundRectangle 12">
+
+				<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="18">
+
+					<Border
+						BackgroundColor="{StaticResource Primary100}"
+						HeightRequest="52"
+						StrokeShape="RoundRectangle 26"
+						WidthRequest="52">
+
+						<Label
+							FontFamily="FASolid"
+							FontSize="20"
+							HorizontalOptions="Center"
+							Text="&#xf0f1;"
+							TextColor="{StaticResource Primary600}"
+							VerticalOptions="Center" />
+					</Border>
+
+					<VerticalStackLayout Grid.Column="1">
+						<Label
+							FontAttributes="Bold"
+							FontSize="22"
+							Text="{Binding PageTitle}" />
+						<Label
+							FontSize="13"
+							Text="Create or update the clinical encounter."
+							TextColor="{StaticResource Gray600}" />
+					</VerticalStackLayout>
+
+					<HorizontalStackLayout Grid.Column="2" Spacing="10">
+						<controls:FFButton
+							ButtonKind="Secondary"
+							Command="{Binding CancelAsyncCommand}"
+							Text="Cancel" />
+
+						<controls:FFButton
+							ButtonKind="Primary"
+							Command="{Binding SaveAsyncCommand}"
+							Text="Save Encounter" />
+					</HorizontalStackLayout>
+
+				</Grid>
+			</Border>
+
+			<!--  BODY  -->
+			<ScrollView Grid.Row="1">
+
+				<VerticalStackLayout Padding="32" Spacing="28">
+
+					<!--  PATIENT + DOCTOR  -->
+					<Label Text="PATIENT AND DOCTOR" />
+
+					<Grid ColumnDefinitions="*,*" ColumnSpacing="26">
+
+						<Border Grid.Column="0">
+							<Picker
+								ItemDisplayBinding="{Binding FullName}"
+								ItemsSource="{Binding Patients}"
+								SelectedItem="{Binding SelectedPatient}" />
+						</Border>
+
+						<Border Grid.Column="1">
+							<Picker
+								ItemDisplayBinding="{Binding FullName}"
+								ItemsSource="{Binding Doctors}"
+								SelectedItem="{Binding SelectedDoctor}" />
+						</Border>
+
+					</Grid>
+
+					<!--  ENCOUNTER  -->
+					<Label Text="ENCOUNTER DETAILS" />
+
+					<Entry Text="{Binding Encounter.ReasonForVisit}" />
+
+					<Editor Text="{Binding Encounter.ClinicalNotes}" />
+
+					<!--  MKB  -->
+					<Label Text="DIAGNOSES" />
+
+					<Entry Text="{Binding MkbSearchText}" TextChanged="OnMkbSearchTextChanged" />
+
+					<CollectionView IsVisible="{Binding ShowMkbDropdown}" ItemsSource="{Binding MkbResults}">
+
+						<CollectionView.ItemTemplate>
+							<DataTemplate x:DataType="entities:Mkb10Code">
+
+								<Border>
+									<Border.GestureRecognizers>
+										<TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext.AddMkbCommand}" CommandParameter="{Binding .}" />
+									</Border.GestureRecognizers>
+
+									<Label Text="{Binding Code}" />
+								</Border>
+
+							</DataTemplate>
+						</CollectionView.ItemTemplate>
+
+					</CollectionView>
+
+					<FlexLayout BindableLayout.ItemsSource="{Binding Diagnoses}">
+						<BindableLayout.ItemTemplate>
+							<DataTemplate x:DataType="entities:Diagnosis">
+
+								<Border>
+									<Label Text="{Binding Mkb10Code.Code}" />
+								</Border>
+
+							</DataTemplate>
+						</BindableLayout.ItemTemplate>
+					</FlexLayout>
+
+					<!--  STATUS  -->
+					<Picker ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding Encounter.Status}" />
+
+				</VerticalStackLayout>
+			</ScrollView>
+
+			<!--  FOOTER  -->
+			<Border Grid.Row="2">
+				<HorizontalStackLayout HorizontalOptions="End">
+					<Button Command="{Binding CancelAsyncCommand}" Text="Cancel" />
+
+					<Button Command="{Binding SaveAsyncCommand}" Text="Save" />
+				</HorizontalStackLayout>
+			</Border>
+
+		</Grid>
+	</Grid>
+</ContentPage>

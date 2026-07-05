@@ -22,7 +22,7 @@ namespace EHMR.Views.Prescription
             // ЕДИНСТВЕНО место каде што се повикува вчитување на податоците од базата при влез во страницата
             if(_viewModel!=null)
             {
-                await _viewModel.OnAppearingAsync();
+                await _viewModel.LoadAsync();
             }
         }
     }

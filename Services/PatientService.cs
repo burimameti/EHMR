@@ -24,6 +24,13 @@ public class PatientService : IPatientService
             .ToListAsync();
     }
 
+    public async Task UpdatePatientAsync(Patient p)
+    {
+        await using var db = await _factory.CreateDbContextAsync();
+        db.Patients.Update(p);
+        await db.SaveChangesAsync();
+    }
+
     public async Task DeleteAsync(Guid id)
     {
         await using var db = await _factory.CreateDbContextAsync();

@@ -1,10 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using EHMR.Desktop.Core.ViewModels;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
-using EHMR.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace EHMR.ViewModels.Prescriptions;
@@ -27,16 +25,9 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>
         _selectedItem=selectedItem;
     }
 
-    public override async Task OnAppearingAsync()
-    {
-        await LoadAsync();
-    }
+    // ================= LIFECYCLE =================
 
-    protected override async Task OnRefreshAsync()
-    {
-        await LoadAsync();
-    }
-
+    // ================= LOAD =================
     [RelayCommand]
     public async Task LoadAsync()
     {
@@ -55,9 +46,10 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>
                 .OrderByDescending(x => x.CreatedAt)
                 .ToListAsync();
 
-            _allItems=prescriptions;
+            // 🔥 IMPORTANT: new base engine source
+            AllItems=prescriptions??new();
 
-            await ApplyFilterAsync();
+            ApplyPipeline();
         }
         catch(Exception ex)
         {
@@ -69,49 +61,62 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>
         }
     }
 
+    // ================= NAVIGATION =================
     [RelayCommand]
     private async Task AddAsync()
     {
-        _selectedItem.SelectedItem=null; // Нов термин
+        _selectedItem.SelectedItem=null;
         await NavigationService.GoToAsync(AppRoutes.Prescriptions.Detail);
     }
 
     [RelayCommand]
-    private async Task SelectAsync(Prescription appointment)
+    private async Task SelectAsync(Prescription item)
     {
-        if(appointment==null) return;
-        _selectedItem.SelectedItem=appointment;
+        if(item==null) return;
+
+        _selectedItem.SelectedItem=item;
         await NavigationService.GoToAsync(AppRoutes.Prescriptions.Detail);
     }
 
     [RelayCommand]
-    private async Task EditAsync(Prescription appointment)
+    private async Task EditAsync(Prescription item)
     {
-        if(appointment==null) return;
-        _selectedItem.SelectedItem=appointment;
+        if(item==null) return;
+
+        _selectedItem.SelectedItem=item;
         await NavigationService.GoToAsync(AppRoutes.Prescriptions.Detail);
     }
 
+    // ================= DELETE =================
     [RelayCommand]
-    private async Task DeleteAsync(Prescription pr)
+    private async Task DeleteAsync(Prescription item)
     {
-        if(pr==null) return;
+        if(item==null) return;
 
-        bool confirm = await UserDialogService.ShowConfirmationAsync("Потврда", "Дали сакате да го откажете/избришетe?");
+        var confirm = await UserDialogService.ShowConfirmationAsync(
+            "Потврда",
+            "Дали сакате да ја избришете оваа рецепта?");
+
         if(!confirm) return;
 
         try
         {
             IsBusy=true;
+
             await using var db = await _dbFactory.CreateDbContextAsync();
 
-            db.Prescriptions.Remove(pr);
+            db.Prescriptions.Remove(item);
             await db.SaveChangesAsync();
 
-            _allItems.Remove(pr);
-            await ApplyFilterAsync();
+            // 🔥 sync in-memory state
+            AllItems.Remove(item);
 
-            await UserDialogService.ShowAlertAsync("Успешно", "Oтстранет од база", "OK");
+            ApplyPipeline();
+
+            await UserDialogService.ShowAlertAsync(
+                "Успешно",
+                "Рецептот е отстранет",
+                "OK");
         }
         catch(Exception ex)
         {
@@ -123,11 +128,20 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>
         }
     }
 
+    // ================= FILTER RESET =================
     [RelayCommand]
-    private async Task ClearFiltersAsync()
+    private void ClearFilters()
     {
         SearchText=string.Empty;
 
-        await ApplyFilterAsync();
+        // reset pipeline
+        ApplyPipeline();
+    }
+
+    // ================= FILTER HOOK (IMPORTANT) =================
+    protected override IEnumerable<Prescription> ApplyFilters(IEnumerable<Prescription> query)
+    {
+        // No filters yet → clean extension point
+        return query;
     }
 }

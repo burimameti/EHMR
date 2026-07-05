@@ -1,4 +1,6 @@
-﻿namespace EHMR.Domain.Entities
+﻿
+
+namespace EHMR.Domain.Entities
 {
     public class Diagnosis : BaseEntity
     {
@@ -8,6 +10,14 @@
         }
 
         public Patient? Patient
+        {
+            get; set;
+        }
+        public Guid? EncounterId
+        {
+            get; set;
+        }
+        public Encounter? Encounter
         {
             get; set;
         }

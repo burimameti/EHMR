@@ -8,10 +8,13 @@ using EHMR.Infrastructure.Services;
 using EHMR.Services;
 using EHMR.ViewModels;
 using EHMR.ViewModels.Appointments;
+using EHMR.ViewModels.Encounters;
+using EHMR.ViewModels.Patients;
 using EHMR.ViewModels.Support;
 using EHMR.ViewModels.Therapies;
 using EHMR.Views;
 using EHMR.Views.Appointments;
+using EHMR.Views.Encounters;
 using EHMR.Views.Therapies;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -128,10 +131,12 @@ namespace EHMR
             //  services.AddSingleton<ITherapyScheduleService, TherapyScheduleService>();
             //  services.AddSingleton<IDashboardService, DashboardService>();
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<IEncounterDetailService, EncounterDetailService>();
             services.AddSingleton<INavigationHost, NavigationHost>();
             services.AddSingleton<INavigationDataStore, NavigationDataStore>();
             services.AddSingleton<INavigationEvents, NavigationEvents>();
             services.AddSingleton<IMenuService, MenuService>();
+           // services.AddSingleton<ThemeService>();
             services.AddSingleton<IFileDialogService, MauiFileDialogService>();
 
             return services;
@@ -271,6 +276,19 @@ namespace EHMR
             services.AddTransient<MedicineDetailFormViewModel>();
             services.AddTransient<MedicineListViewModel>();
 
+
+
+            ///
+
+            services.AddTransient<EncounterCreateViewModel>();
+            services.AddTransient<EncounterDetailViewModel>();
+            services.AddTransient<EncounterListViewModel>();
+            services.AddTransient<EncounterEditViewModel>();
+
+            services.AddTransient<EncounterDetailPage>();
+            services.AddTransient<EncounterListPage>();
+            services.AddTransient<EncounterCreatePage>();
+            services.AddTransient<EncounterEditPage>();
             services.AddTransient<UsersViewModel>();
             services.AddTransient<UsersPage>();
             services.AddTransient<UserEditViewModel>();

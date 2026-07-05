@@ -17,6 +17,8 @@ public static class Modules
     public const string Inventory = "Inventory";
 
     public const string Reports = "Reports";
+
+    public const string Encounters = "Encounters";
     public const string Calendar = "Calendar";
 
     public const string MKBCodes = "MKBCodes";

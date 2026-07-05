@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+	<!--  =====================================================  -->
+	<!--  PAGINATION ROOT GRID  -->
+	<!--  =====================================================  -->
+	<Style x:Key="FFPaginationGridStyle" TargetType="Grid">
+		<Setter Property="ColumnSpacing" Value="18" />
+		<Setter Property="MinimumHeightRequest" Value="56" />
+		<Setter Property="VerticalOptions" Value="Center" />
+	</Style>
+
+	<!--  =====================================================  -->
+	<!--  SUMMARY / INFO LABEL  -->
+	<!--  =====================================================  -->
+	<Style x:Key="FFPaginationLabelStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="TextColor" Value="{StaticResource Bl}" />
+		<Setter Property="VerticalOptions" Value="Center" />
+		<Setter Property="LineBreakMode" Value="TailTruncation" />
+		<Setter Property="MaxLines" Value="1" />
+	</Style>
+
+
+
+	<!--  =====================================================  -->
+	<!--  NAV BUTTON (PREV / NEXT / FIRST / LAST)  -->
+	<!--  =====================================================  -->
+	<Style x:Key="FFPaginationButtonStyle" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceAlt}" />
+		<Setter Property="TextColor" Value="{StaticResource White}" />
+		<Setter Property="BorderColor" Value="{StaticResource Divider}" />
+		<Setter Property="BorderWidth" Value="1" />
+		<Setter Property="CornerRadius" Value="8" />
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="FontSize" Value="15" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="MinimumWidthRequest" Value="34" />
+		<Setter Property="MinimumHeightRequest" Value="34" />
+		<Setter Property="VerticalOptions" Value="Center" />
+		<Setter Property="VisualStateManager.VisualStateGroups">
+			<VisualStateGroupList>
+				<VisualStateGroup Name="CommonStates">
+
+					<VisualState Name="Normal" />
+
+					<VisualState Name="Disabled">
+						<VisualState.Setters>
+							<Setter Property="Opacity" Value="0.45" />
+						</VisualState.Setters>
+					</VisualState>
+
+					<VisualState Name="PointerOver">
+						<VisualState.Setters>
+							<Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
+						</VisualState.Setters>
+					</VisualState>
+
+					<VisualState Name="Pressed">
+						<VisualState.Setters>
+							<Setter Property="Opacity" Value="0.8" />
+						</VisualState.Setters>
+					</VisualState>
+
+				</VisualStateGroup>
+			</VisualStateGroupList>
+		</Setter>
+	</Style>
+
+	<!--  =====================================================  -->
+	<!--  PAGE NUMBER BUTTON  -->
+	<!--  =====================================================  -->
+
+	<!--  =====================================================  -->
+	<!--  ACTIVE PAGE BUTTON  -->
+	<!--  =====================================================  -->
+
+
+
+</ResourceDictionary>

@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+	<!--  BORDER  -->
+	<Style x:Key="FFInputBorderStyle" TargetType="Border">
+		<Setter Property="Background" Value="White" />
+		<Setter Property="Stroke" Value="#E5E7EB" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Padding" Value="12" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="10" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  CONTAINER  -->
+	<Style x:Key="FFInputContainerStyle" TargetType="VerticalStackLayout">
+		<Setter Property="Spacing" Value="4" />
+	</Style>
+
+	<!--  LABEL  -->
+	<Style x:Key="FFInputLabelStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="12" />
+
+	</Style>
+
+	<!--  ENTRY  -->
+	<Style x:Key="FFInputEntryStyle" TargetType="Entry">
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="TextColor" Value="#111827" />
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="PlaceholderColor" Value="#9CA3AF" />
+		<Setter Property="HeightRequest" Value="40" />
+	</Style>
+</ResourceDictionary>

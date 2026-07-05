@@ -1,4 +1,5 @@
-﻿using EHMR.ViewModels;
+﻿using EHMR.Services;
+using EHMR.ViewModels;
 
 namespace EHMR.Views
 {
@@ -23,5 +24,8 @@ namespace EHMR.Views
 
             //((CollectionView)sender).SelectedItem=null;
         }
+
+        // Code-behind
+       
     }
 }

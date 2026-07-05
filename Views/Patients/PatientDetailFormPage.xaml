@@ -1,408 +1,1048 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="EHMR.Views.PatientDetailFormPage"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:viewModels="clr-namespace:EHMR.ViewModels"
-    x:DataType="viewModels:PatientDetailFormViewModel"
-    BackgroundColor="#F8FAFC">
+	x:Class="EHMR.Views.PatientDetailFormPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:models="clr-namespace:EHMR.Domain.Entities"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+	x:DataType="viewModels:PatientDetailFormViewModel">
 
-	<Grid ColumnDefinitions="240,*">
+	<!--  Главен контејнер со темна позадина  -->
+	<Grid ColumnDefinitions="285,*">
 
+		<!--  ─── LEFT MENU SIDEBAR ───  -->
 		<Border Grid.Column="0" StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
-		<Grid Grid.Column="1" RowDefinitions="80,*">
+		<!--  ─── MAIN CONTENT AREA ───  -->
+		<Grid
+			Grid.Column="1"
+			Padding="24"
+			BackgroundColor="{StaticResource Gray200}"
+			RowDefinitions="Auto,Auto,*"
+			RowSpacing="20">
 
-			<Border Grid.Row="0" Style="{StaticResource GridHeaderStyle}" StrokeThickness="0">
-				<Grid Padding="6,0" ColumnDefinitions="*,Auto">
+			<!--  =====================================================  -->
+			<!--  HEADER PANEL (Информации за пациент / Акции)  -->
+			<!--  =====================================================  -->
+			<Border
+				Padding="20"
+				BackgroundColor="{StaticResource White}"
+				StrokeShape="RoundRectangle 12"
+				StrokeThickness="0">
 
-					<VerticalStackLayout Spacing="2" VerticalOptions="Center">
-						<HorizontalStackLayout Spacing="8">
+				<Grid
+					ColumnDefinitions="Auto,*,Auto"
+					ColumnSpacing="16"
+					VerticalOptions="Center">
 
-							<Label Text="Податоци за Пациент" FontSize="22" FontAttributes="Bold" TextColor="#00A0FF" VerticalOptions="Center" Margin="4,0,0,0" />
+					<!--  Наслов кога се креира нов пациент  -->
+
+
+					<!--  Аватар со иницијали (при преглед на постоечки)  -->
+					<!--<Border
+						BackgroundColor="{StaticResource LoginPrimary}"
+						HeightRequest="48"
+						IsVisible="{Binding IsReadOnly}"
+						StrokeShape="RoundRectangle 24"
+						StrokeThickness="0"
+						VerticalOptions="Center"
+						WidthRequest="48">
+						<Label
+							FontAttributes="Bold"
+							FontSize="14"
+							HorizontalOptions="Center"
+							Text="{Binding PatientInitials}"
+						TextColor="{StaticResource Gray800}"
+							VerticalOptions="Center" />
+					</Border>-->
+
+					<!--  Детални информации во заглавието  -->
+					<VerticalStackLayout
+						Grid.Column="1"
+						Spacing="4"
+						VerticalOptions="Center">
+
+						<!--  Title  -->
+						<HorizontalStackLayout HorizontalOptions="Fill" Spacing="12">
+
+							<Label
+								FontAttributes="Bold"
+								FontSize="20"
+								Text="{Binding HeaderTitle}"
+								TextColor="{StaticResource Gray600}" />
+
+
+							<controls:FFStatusChip
+								BackgroundColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToColorConverter}}"
+								HorizontalOptions="End"
+								IsVisible="{Binding IsNewPatient, Converter={StaticResource InverseBoolConverter}}"
+								Text="{Binding Patient.Status, Converter={StaticResource PatientStatusToLabelConverter}}"
+								TextColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToTextColorConverter}}" />
+
 						</HorizontalStackLayout>
-						<Label Text="Целосен увид, креирање и ажурирање на медицински картон" FontSize="13" Margin="4,0,0,0" />
+
+
+						<!--  Subtitle  -->
+						<Label
+							FontSize="12"
+							HorizontalOptions="Fill"
+							Text="{Binding HeaderSubtitle}"
+							TextColor="{StaticResource Gray700}" />
+
 					</VerticalStackLayout>
 
-					<HorizontalStackLayout Grid.Column="1" Spacing="12" VerticalOptions="Center">
-						<Button Text="✎ Уреди Податоци"
-                                IsVisible="{Binding IsReadOnly}"
-                                Command="{Binding ToggleEditModeCommand}"
-                                HeightRequest="40" Padding="16,0" CornerRadius="10" FontSize="12" FontAttributes="Bold" BackgroundColor="#2563EB" TextColor="#FFFFFF" />
-
-						<Button Text="Откажи"
-                                IsVisible="{Binding IsEditMode}"
-                                Command="{Binding CancelCommand}"
-                                HeightRequest="40" Padding="16,0" CornerRadius="10" FontSize="12" FontAttributes="Bold" BackgroundColor="#FF0A00" TextColor="#FFFFFF" />
-
-						<Button Text="💾 Зачувај Запис"
-                                IsVisible="{Binding IsEditMode}"
-                                Command="{Binding SaveCommand}"
-                                HeightRequest="40" Padding="20,0" CornerRadius="10" FontSize="12" FontAttributes="Bold" BackgroundColor="#2563EB" TextColor="#FFFFFF" />
+					<!--  Акциски копчиња кои менаџираат состојба  -->
+					<HorizontalStackLayout
+						Grid.Column="2"
+						Spacing="10"
+						VerticalOptions="Center">
+						<controls:FFButton
+							ButtonKind="Primary"
+							Command="{Binding ToggleEditModeCommand}"
+							ContentPadding="20,0"
+							HeightRequestEx="42"
+							IsVisible="{Binding IsReadOnly}"
+							Text="✎ Уреди досие" />
+						<controls:FFButton
+							ButtonKind="Secondary"
+							Command="{Binding CancelCommand}"
+							ContentPadding="20,0"
+							HeightRequestEx="42"
+							IsVisible="{Binding IsEditMode}"
+							Text="Откажи" />
+						<controls:FFButton
+							ButtonKind="Primary"
+							Command="{Binding SaveCommand}"
+							ContentPadding="20,0"
+							HeightRequestEx="42"
+							IsVisible="{Binding IsEditMode}"
+							Text="💾 Зачувај промени" />
 					</HorizontalStackLayout>
 				</Grid>
 			</Border>
 
-			<ScrollView Grid.Row="1" Padding="16">
-				<Grid ColumnDefinitions="2*,*" ColumnSpacing="16">
+			<!--  =====================================================  -->
+			<!--  NAVIGATION TABS (Јазичиња за навигација низ форма)  -->
+			<!--  =====================================================  -->
+			<Border
+				Grid.Row="1"
+				Padding="20"
+				BackgroundColor="{StaticResource White}"
+				StrokeShape="RoundRectangle 12"
+				StrokeThickness="0">
+				<Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+					<controls:FFButton
+						Grid.Column="0"
+						ButtonKind="{Binding IsTab1Active, Converter={StaticResource BoolToTabKindConverter}}"
+						Command="{Binding SelectTabCommand}"
+						CommandParameter="1"
+						HeightRequestEx="40"
+						Text="Лични податоци" />
+					<controls:FFButton
+						Grid.Column="1"
+						ButtonKind="{Binding IsTab2Active, Converter={StaticResource BoolToTabKindConverter}}"
+						Command="{Binding SelectTabCommand}"
+						CommandParameter="2"
+						HeightRequestEx="40"
+						Text="Медицински податоци" />
+					<controls:FFButton
+						Grid.Column="2"
+						ButtonKind="{Binding IsTab3Active, Converter={StaticResource BoolToTabKindConverter}}"
+						Command="{Binding SelectTabCommand}"
+						CommandParameter="3"
+						HeightRequestEx="40"
+						Text="Контакт информации" />
+					<controls:FFButton
+						Grid.Column="3"
+						ButtonKind="{Binding IsTab4Active, Converter={StaticResource BoolToTabKindConverter}}"
+						Command="{Binding SelectTabCommand}"
+						CommandParameter="4"
+						HeightRequestEx="40"
+						Text="Системски запис" />
+				</Grid>
+			</Border>
 
-					<VerticalStackLayout Grid.Column="0" Spacing="6">
+			<!--  =====================================================  -->
+			<!--  FORM CONTENT WORKSPACE  -->
+			<!--  =====================================================  -->
+			<Border
+				Grid.Row="2"
+				BackgroundColor="{StaticResource White}"
+				StrokeShape="RoundRectangle 16"
+				StrokeThickness="0">
+				<ScrollView>
+					<VerticalStackLayout Padding="32" Spacing="24">
 
-						<Border BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
-							<VerticalStackLayout Spacing="20">
-								<HorizontalStackLayout Spacing="8" Margin="0,0,0,4">
-									<Label Text="👤" FontSize="18" VerticalOptions="Center" />
-									<Label Text="Лични Информации" FontSize="16" FontAttributes="Bold" TextColor="#0F172A" VerticalOptions="Center" />
-								</HorizontalStackLayout>
+						<!--  ============================================  -->
+						<!--  TAB 1 — ЛИЧНИ ПОДАТОЦИ  -->
+						<!--  ============================================  -->
+						<VerticalStackLayout IsVisible="{Binding IsTab1Active}" Spacing="20">
 
-								<Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="20" RowSpacing="16">
-									<VerticalStackLayout Spacing="6">
-										<Label Text="ИМЕ *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
-										<Border HeightRequest="42" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 10">
-											<Entry Text="{Binding Patient.FirstName}" IsReadOnly="{Binding IsReadOnly}" Placeholder="Внесете име" PlaceholderColor="#94A3B8" FontSize="13" TextColor="#0F172A" VerticalOptions="Center" Margin="12,0" />
+							<Label
+								CharacterSpacing="1"
+								FontAttributes="Bold"
+								FontSize="13"
+								Text="ОСНОВНИ ИНФОРМАЦИИ"
+								TextColor="{StaticResource Gray800}" />
+							<BoxView
+								Margin="0,10"
+								HeightRequest="1"
+								Color="{StaticResource Gray600}" />
+							<Grid ColumnDefinitions="*,*,*" ColumnSpacing="22">
+								<Grid
+									ColumnDefinitions="70,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Име *"
+										TextColor="{StaticResource Gray600}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="12,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10"
+										StrokeThickness="0">
+										<Entry
+											Background="{StaticResource Gray200}"
+											BackgroundColor="{StaticResource Gray200}"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="Пр. Марко"
+											Text="{Binding Patient.FirstName}"
+											TextColor="{StaticResource Gray800}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+
+
+
+								<Grid
+									Grid.Column="1"
+									ColumnDefinitions="70,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Презиме *"
+										TextColor="{StaticResource Gray600}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="12,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10"
+										StrokeThickness="0">
+										<Entry
+											Background="{StaticResource Gray200}"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="Пр. Петровски"
+											PlaceholderColor="{StaticResource Gray600}"
+											Text="{Binding Patient.LastName}"
+											TextColor="{StaticResource Gray800}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+
+								<!--  ЕМБГ  -->
+								<Grid
+									Grid.Column="2"
+									ColumnDefinitions="70,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="ЕМБГ *"
+										TextColor="{StaticResource Gray800}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="12,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10"
+										StrokeThickness="0">
+										<Entry
+											Background="{StaticResource Gray200}"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Keyboard="Numeric"
+											MaxLength="13"
+											Placeholder="Внесете 13 цифри"
+											PlaceholderColor="{StaticResource Gray600}"
+											Text="{Binding Patient.NationalId}"
+											TextColor="{StaticResource Gray800}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+
+
+							</Grid>
+
+
+							<BoxView
+								Margin="0,10"
+								HeightRequest="1"
+								Color="{StaticResource Gray200}" />
+							<Grid ColumnDefinitions="*,*,*" ColumnSpacing="30">
+								<Grid
+									ColumnDefinitions="70,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Бр. на осигурување"
+										TextColor="{StaticResource Gray600}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="12,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10"
+										StrokeThickness="0">
+										<Entry
+											Background="{StaticResource Gray200}"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="МК-000000"
+											PlaceholderColor="{StaticResource Gray600}"
+											Text="{Binding Patient.SSN}"
+											TextColor="{StaticResource Gray800}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+								<Grid
+									Grid.Column="1"
+									ColumnDefinitions="70,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Датум на раѓање"
+										TextColor="{StaticResource Gray600}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="12,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10">
+										<Grid>
+											<DatePicker
+												BackgroundColor="{StaticResource Gray200}"
+												Date="{Binding Patient.BirthDate}"
+												Format="dd.MM.yyyy"
+												HorizontalOptions="Start"
+												IsVisible="{Binding IsEditMode}"
+												TextColor="{StaticResource Gray800}"
+												VerticalOptions="Center"
+												WidthRequest="150" />
+											<Label
+												FontSize="26"
+												IsVisible="{Binding IsReadOnly}"
+												Text="{Binding Patient.BirthDate, StringFormat='{0:dd.MM.yyyy}'}"
+												TextColor="{StaticResource Gray800}"
+												VerticalOptions="Center" />
+										</Grid>
+									</Border>
+								</Grid>
+								<Grid
+									Grid.Column="3"
+									ColumnDefinitions="70,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Пол *"
+										TextColor="{StaticResource Gray600}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="14,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10">
+										<Grid ColumnDefinitions="*,Auto">
+											<Label
+												FontSize="13"
+												Text="{Binding SelectedGenderDisplay}"
+												TextColor="{StaticResource Gray800}"
+												VerticalOptions="Center" />
+											<Label
+												Grid.Column="1"
+												FontSize="11"
+												Text="▼"
+												TextColor="#64748B"
+												VerticalOptions="Center" />
+											<Picker
+												Grid.ColumnSpan="2"
+												Background="{StaticResource LoginAccent}"
+												IsEnabled="{Binding IsEditMode}"
+												ItemsSource="{Binding GenderOptions}"
+												Opacity="0"
+												SelectedItem="{Binding SelectedGenderDisplay}" />
+										</Grid>
+									</Border>
+								</Grid>
+							</Grid>
+
+
+
+
+
+							<Label
+								CharacterSpacing="1"
+								FontAttributes="Bold"
+								FontSize="13"
+								Text="КОНТАКТ ИНФОРМАЦИИ"
+								TextColor="{StaticResource Gray800}" />
+							<BoxView
+								Margin="0,10"
+								HeightRequest="1"
+								Color="{StaticResource Gray400}" />
+							<Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+								<Grid
+									Grid.Column="0"
+									ColumnDefinitions="70,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Телефон *"
+										TextColor="{StaticResource Gray600}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="12,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10">
+										<Entry
+											Background="{StaticResource Gray200}"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Keyboard="Telephone"
+											Placeholder="+389 7X XXX XXX"
+											PlaceholderColor="#64748B"
+											Text="{Binding Patient.Phone}"
+											TextColor="{StaticResource Gray800}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+								<Grid
+									Grid.Column="1"
+									ColumnDefinitions="70,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Е-пошта *"
+										TextColor="{StaticResource Gray600}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="12,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10">
+										<Entry
+											Background="{StaticResource Gray200}"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Keyboard="Email"
+											Placeholder="example@domain.com"
+											PlaceholderColor="#64748B"
+											Text="{Binding Patient.Email}"
+											TextColor="{StaticResource Gray800}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+							</Grid>
+
+							<BoxView
+								Margin="0,10"
+								HeightRequest="1"
+								Color="{StaticResource Gray200}" />
+							<Grid ColumnDefinitions="*,*,*" ColumnSpacing="55">
+
+
+								<!--  ГРАД  -->
+								<Grid
+									Grid.Column="0"
+									ColumnDefinitions="70,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Град"
+										TextColor="{StaticResource Gray600}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="14,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10">
+										<Grid ColumnDefinitions="*,Auto">
+											<Label
+												FontSize="13"
+												Text="{Binding Patient.City}"
+												TextColor="{StaticResource Gray800}"
+												VerticalOptions="Center" />
+											<Label
+												Grid.Column="1"
+												FontSize="11"
+												Text="▼"
+												TextColor="#64748B"
+												VerticalOptions="Center" />
+											<Picker
+												Grid.ColumnSpan="2"
+												IsEnabled="{Binding IsEditMode}"
+												ItemsSource="{Binding CityOptions}"
+												Opacity="0"
+												SelectedItem="{Binding Patient.City}" />
+										</Grid>
+									</Border>
+								</Grid>
+								<Grid
+									Grid.Column="1"
+									ColumnDefinitions="70,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Адреса"
+										TextColor="{StaticResource Gray600}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="12,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10">
+										<Entry
+											Background="{StaticResource Gray200}"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="Улица и број"
+											PlaceholderColor="#64748B"
+											Text="{Binding Patient.Address}"
+											TextColor="{StaticResource Gray800}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+								<!--  ПОШТЕНСКИ БРОЈ  -->
+								<Grid
+									Grid.Column="2"
+									ColumnDefinitions="75,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Поштенски број"
+										TextColor="{StaticResource Gray600}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="12,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="42"
+										StrokeShape="RoundRectangle 10"
+										StrokeThickness="1">
+										<Entry
+											BackgroundColor="{StaticResource Gray200}"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="Пр. 1000 , 4AAB300"
+											PlaceholderColor="#64748B"
+											Text="{Binding Patient.PostalCode}"
+											TextColor="{StaticResource Gray800}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+							</Grid>
+							<!--  АДРЕСА  -->
+
+
+							<BoxView
+								Margin="0,10"
+								HeightRequest="1"
+								Color="{StaticResource Gray200}" />
+
+							<Label
+								CharacterSpacing="1"
+								FontAttributes="Bold"
+								FontSize="13"
+								Text="СТАТУС ДОСИЕ И МАТИЧЕН ЛЕКАР"
+								TextColor="{StaticResource Gray800}" />
+							<BoxView
+								Margin="0,10"
+								HeightRequest="1"
+								Color="{StaticResource Gray600}" />
+							<Grid ColumnDefinitions="*,*">
+								<Grid
+									ColumnDefinitions="200,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Статус на досие"
+										TextColor="{StaticResource Gray600}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="6,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10">
+										<Picker
+											BackgroundColor="{StaticResource Gray200}"
+											FontSize="13"
+											IsEnabled="{Binding IsEditMode}"
+											ItemsSource="{Binding StatusOptions}"
+											SelectedItem="{Binding SelectedStatusDisplay}"
+											TextColor="{StaticResource Gray800}"
+											TitleColor="#64748B"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+								<Grid
+									Grid.Column="1"
+									ColumnDefinitions="200,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										Margin="120,0,0,0"
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Матичен лекар"
+										TextColor="{StaticResource Gray600}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="6,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10">
+										<Entry
+											BackgroundColor="{StaticResource Gray200}"
+											FontSize="13"
+											IsEnabled="{Binding IsEditMode}"
+											Text="Матичен лекар"
+											TextColor="{StaticResource Gray600}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+							</Grid>
+
+
+						</VerticalStackLayout>
+
+						<!--  ============================================  -->
+						<!--  TAB 2 — МЕДИЦИНСКИ ПОДАТОЦИ  -->
+						<!--  ============================================  -->
+						<VerticalStackLayout IsVisible="{Binding IsTab2Active}" Spacing="24">
+							<VerticalStackLayout Spacing="12">
+								<Label
+									CharacterSpacing="1"
+									FontAttributes="Bold"
+									FontSize="13"
+									Text="ОСИГУРУВАЊЕ ИЛИ ПОЛИСА"
+									TextColor="{StaticResource Gray800}" />
+								<BoxView
+									Margin="0,10"
+									HeightRequest="1"
+									Color="{StaticResource Gray800}" />
+								<Grid ColumnDefinitions="*,*">
+									<VerticalStackLayout
+										Grid.Column="0"
+										MinimumWidthRequest="300"
+										Spacing="8">
+										<Label
+											FontAttributes="Bold"
+											FontSize="13"
+											Text="Број на осигуреник / или полиса"
+											TextColor="{StaticResource Gray800}" />
+										<Border
+											Padding="12,0"
+											BackgroundColor="{StaticResource Gray200}"
+											HeightRequest="46"
+											StrokeShape="RoundRectangle 10">
+											<Entry
+												BackgroundColor="Transparent"
+												FontSize="13"
+												IsReadOnly="{Binding IsReadOnly}"
+												Placeholder="МК-0001-2024"
+												PlaceholderColor="#64748B"
+												Text="{Binding Patient.SSN}"
+												TextColor="{StaticResource Gray800}"
+												VerticalOptions="Center" />
 										</Border>
 									</VerticalStackLayout>
 
-									<VerticalStackLayout Grid.Column="1" Spacing="6">
-										<Label Text="ПРЕЗИМЕ *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
-										<Border HeightRequest="42" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 10">
-											<Entry Text="{Binding Patient.LastName}" IsReadOnly="{Binding IsReadOnly}" Placeholder="Внесете презиме" PlaceholderColor="#94A3B8" FontSize="13" TextColor="#0F172A" VerticalOptions="Center" Margin="12,0" />
-										</Border>
-									</VerticalStackLayout>
-
-									<VerticalStackLayout Grid.Row="1" Spacing="6">
-										<Label Text="ЕМБГ *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
-										<Border HeightRequest="42" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 10">
-											<Entry Text="{Binding Patient.NationalId}" IsReadOnly="{Binding IsReadOnly}" MaxLength="13" Keyboard="Numeric" Placeholder="13 цифри" PlaceholderColor="#94A3B8" FontSize="13" TextColor="#0F172A" VerticalOptions="Center" Margin="12,0" />
-										</Border>
-									</VerticalStackLayout>
-
-									<VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="6">
-										<Label Text="БРОЈ НА ОСИГУРУВАЊЕ (SSN)" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
-										<Border HeightRequest="42" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 10">
-											<Entry Text="{Binding Patient.SSN}" IsReadOnly="{Binding IsReadOnly}" Placeholder="Внесете осигурителен број" PlaceholderColor="#94A3B8" FontSize="13" TextColor="#0F172A" VerticalOptions="Center" Margin="12,0" />
+									<VerticalStackLayout
+										Grid.Column="1"
+										HorizontalOptions="Start"
+										Spacing="8">
+										<Label
+											CharacterSpacing="1"
+											FontAttributes="Bold"
+											FontSize="13"
+											Text="КРВНА ГРУПА"
+											TextColor="{StaticResource Gray800}" />
+										<Border
+											Padding="14,0"
+											BackgroundColor="{StaticResource Gray200}"
+											HeightRequest="46"
+											StrokeShape="RoundRectangle 10">
+											<Grid ColumnDefinitions="*,Auto" MinimumWidthRequest="300">
+												<Label
+													FontSize="13"
+													Text="{Binding Patient.BloodType, FallbackValue='Изберете крвна група...'}"
+													TextColor="{StaticResource Gray800}"
+													VerticalOptions="Center" />
+												<Label
+													Grid.Column="1"
+													FontSize="11"
+													Text="▼"
+													TextColor="#64748B"
+													VerticalOptions="Center" />
+												<Picker
+													Grid.ColumnSpan="2"
+													IsEnabled="{Binding IsEditMode}"
+													ItemsSource="{Binding BloodTypeOptions}"
+													Opacity="0"
+													SelectedItem="{Binding Patient.BloodType}" />
+											</Grid>
 										</Border>
 									</VerticalStackLayout>
 								</Grid>
 							</VerticalStackLayout>
-						</Border>
+							<BoxView
+								Margin="0,10"
+								HeightRequest="1"
+								Color="{StaticResource Gray200}" />
+							<!--  КРВНА ГРУПА  -->
 
-						<Border BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
-							<VerticalStackLayout Spacing="20">
-								<HorizontalStackLayout Spacing="8" Margin="0,0,0,4">
-									<Label Text="🩺" FontSize="18" VerticalOptions="Center" />
-									<Label Text="Медицински Картон" FontSize="16" FontAttributes="Bold" TextColor="#0F172A" VerticalOptions="Center" />
-								</HorizontalStackLayout>
 
-								<Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="20" RowSpacing="16">
-									<VerticalStackLayout Grid.ColumnSpan="2" Spacing="6">
-										<Label Text="ПРИМАРНА ДИЈАГНОЗА *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
-										<Border HeightRequest="42" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 10">
-											<Entry Text="{Binding Patient.Diagnoses}" IsReadOnly="{Binding IsReadOnly}" Placeholder="Пулмолошка, кардиолошка дијагноза или МКБ-10 код" PlaceholderColor="#94A3B8" FontSize="13" FontAttributes="Bold" TextColor="#2563EB" VerticalOptions="Center" Margin="12,0" />
-										</Border>
-									</VerticalStackLayout>
 
-									<VerticalStackLayout Grid.Row="1" Spacing="6">
-										<Label Text="ПОЛ *"    FontSize="11"           FontAttributes="Bold"           TextColor="#475569"           CharacterSpacing="0.5" />
 
-										<Grid>
-											<!-- READ ONLY -->
-											<Border IsVisible="{Binding IsReadOnly}"                Padding="12,6"                BackgroundColor="#E0F2FE"                StrokeThickness="0"                HorizontalOptions="Start"                StrokeShape="RoundRectangle 8">
+							<!--  ДИЈАГНОЗИ  -->
+							<VerticalStackLayout Spacing="12">
+								<Label
+									CharacterSpacing="1"
+									FontAttributes="Bold"
+									FontSize="13"
+									Text="АКТИВНИ И ИСТОРИЈА НА ДИЈАГНОЗИ"
+									TextColor="{StaticResource Gray800}" />
+								<BoxView HeightRequest="1" Color="{StaticResource Gray600}" />
+								<CollectionView
+									EmptyView="Нема евидентирани клинички дијагнози."
+									ItemsSource="{Binding Patient.Diagnoses}"
+									SelectionMode="None">
+									<CollectionView.ItemTemplate>
+										<DataTemplate x:DataType="models:Diagnosis">
+											<Border
+												Margin="0,0,0,12"
+												Padding="16"
+												BackgroundColor="{StaticResource Gray200}"
+												StrokeShape="RoundRectangle 12"
+												StrokeThickness="1">
+												<Grid
+													ColumnDefinitions="*,Auto"
+													ColumnSpacing="12"
+													RowDefinitions="Auto,Auto">
 
-												<HorizontalStackLayout Spacing="6">
-													<BoxView WidthRequest="8"  HeightRequest="8" CornerRadius="4"  Color="#0369A1"  VerticalOptions="Center" />
+													<VerticalStackLayout Spacing="6">
+														<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+															<Border
+																Padding="8,4"
+																BackgroundColor="#0F172A"
+																StrokeShape="RoundRectangle 6"
+																StrokeThickness="0">
+																<Label
+																	FontAttributes="Bold"
+																	FontFamily="Consolas"
+																	FontSize="12"
+																	Text="{Binding Mkb10Code.Code, FallbackValue='—'}"
+																	TextColor="{StaticResource LoginAccent}" />
+															</Border>
+															<Label
+																FontAttributes="Bold"
+																FontSize="14"
+																Text="{Binding ClinicalDescription}"
+																TextColor="{StaticResource Gray800}"
+																VerticalOptions="Center" />
+														</HorizontalStackLayout>
+														<Label
+															FontSize="11"
+															Text="{Binding DiagnosedAt, StringFormat='Евидентирано на: {0:dd.MM.yyyy}'}"
+															TextColor="#64748B" />
+													</VerticalStackLayout>
 
-													<Label Text="{Binding Patient.Gender}" FontSize="12" FontAttributes="Bold" TextColor="#0369A1" VerticalOptions="Center" />
-												</HorizontalStackLayout>
-											</Border>
-											<!-- EDIT MODE -->
-											<Border IsVisible="{Binding IsEditMode}"  HeightRequest="42"
-													BackgroundColor="#FFFFFF"
-													Stroke="#CBD5E1"
-													StrokeThickness="1"
-													StrokeShape="RoundRectangle 10">
+													<controls:FFStatusChip
+														Grid.Column="1"
+														BackgroundColor="{Binding Status, Converter={StaticResource DiagnosisStatusToColorConverter}}"
+														Text="{Binding Status, Converter={StaticResource DiagnosisStatusToLabelConverter}}"
+														TextColor="{Binding Status, Converter={StaticResource DiagnosisStatusToTextColorConverter}}"
+														VerticalOptions="Center" />
 
-												<Grid>
-													<!-- Fake display -->
-													<Grid ColumnDefinitions="*,Auto"
-														  Margin="12,0"
-														  InputTransparent="True">
-														<Label Text="{Binding Patient.Gender, FallbackValue='Изберете пол'}"
-															   TextColor="#0F172A"  FontSize="13"
-															   VerticalOptions="Center" />
-														<Label Grid.Column="1"
-															   Text="▼"
-															   TextColor="#94A3B8"
-															   FontSize="11"
-															   VerticalOptions="Center" />
-													</Grid>
-
-													<!-- Real picker -->
-													<Picker SelectedItem="{Binding Patient.Gender}"
-															TextColor="Transparent"
-															TitleColor="Transparent"
-															BackgroundColor="Transparent"
-															HorizontalOptions="Fill"
-															VerticalOptions="Fill">
-
-														<Picker.ItemsSource>
-															<x:Array Type="{x:Type x:String}">
-																<x:String>Male</x:String>
-																<x:String>Female</x:String>
-															</x:Array>
-														</Picker.ItemsSource>
-													</Picker>
+													<Border
+														Grid.Row="1"
+														Margin="0,12,0,0"
+														Padding="8,3"
+														BackgroundColor="#0284C7"
+														HorizontalOptions="Start"
+														IsVisible="{Binding IsPrimary}"
+														StrokeShape="RoundRectangle 6"
+														StrokeThickness="0">
+														<Label
+															FontAttributes="Bold"
+															FontSize="11"
+															Text="Примарна Дијагноза"
+															TextColor="{StaticResource Gray800}" />
+													</Border>
 												</Grid>
 											</Border>
-										</Grid>
-									</VerticalStackLayout>
-									<VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="6">
-										<Label Text="ДАТУМ НА РАЃАЊЕ *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
-										<Border HeightRequest="42" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 10">
-											<Grid>
-												<DatePicker Date="{Binding Patient.BirthDate, Mode=TwoWay}" Format="dd.MM.yyyy" IsVisible="{Binding IsEditMode}" FontSize="13" TextColor="#0F172A" VerticalOptions="Fill" HorizontalOptions="Fill" Margin="10,0" />
-												<Label Text="{Binding Patient.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" IsVisible="{Binding IsReadOnly}" FontSize="13" TextColor="#0F172A" VerticalOptions="Center" Margin="12,0" />
-											</Grid>
-										</Border>
-									</VerticalStackLayout>
-								</Grid>
+										</DataTemplate>
+									</CollectionView.ItemTemplate>
+								</CollectionView>
+							</VerticalStackLayout>
 
-								<VerticalStackLayout Spacing="6" Margin="0,4,0,0">
-									<Label Text="ДЕТАЛНИ КЛИНИЧКИ НАПОМЕНИ (АНАМНЕЗА / ИСТОРПИЈА НА БОЛЕСТ)" FontSize="12" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
-									<Border HeightRequest="120" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="8">
-										<Editor Text="{Binding Patient.Allergies}" IsReadOnly="{Binding IsReadOnly}" Placeholder="Внесете симптоми, терапија или лекарски забелешки..." PlaceholderColor="#94A3B8" FontSize="13" TextColor="#0F172A" VerticalOptions="Fill" HorizontalOptions="Fill" AutoSize="Disabled" />
+							<BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
+
+							<!--  АЛЕРГИИ  -->
+							<VerticalStackLayout Spacing="8">
+								<Label
+									CharacterSpacing="1"
+									FontAttributes="Bold"
+									FontSize="13"
+									Text="ПОЗНАТИ АЛЕРГИИ И РЕАКЦИИ"
+									TextColor="{StaticResource Gray800}" />
+								<BoxView HeightRequest="1" Color="{StaticResource Gray600}" />
+								<Border
+									Padding="12,10"
+									BackgroundColor="{StaticResource Gray200}"
+									HeightRequest="120"
+									StrokeShape="RoundRectangle 12">
+									<Editor
+										AutoSize="Disabled"
+										BackgroundColor="Transparent"
+										FontSize="13"
+										IsReadOnly="{Binding IsReadOnly}"
+										Placeholder="Внесете алергии (Пр. Пеницилин, Храна, Прашина...)"
+										PlaceholderColor="#64748B"
+										Text="{Binding Patient.Allergies}"
+										TextColor="{StaticResource Gray800}" />
+								</Border>
+							</VerticalStackLayout>
+						</VerticalStackLayout>
+
+						<!--  ============================================  -->
+						<!--  TAB 3 — КОНТАКТ ИНФОРМАЦИИ (ИТНО)  -->
+						<!--  ============================================  -->
+						<VerticalStackLayout IsVisible="{Binding IsTab3Active}" Spacing="20">
+							<Label
+								CharacterSpacing="1"
+								FontAttributes="Bold"
+								FontSize="13"
+								Text="КОНТАКТ ЛИЦЕ ЗА ИТНИ СЛУЧАИ"
+								TextColor="{StaticResource LoginAccent}" />
+
+							<Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+								<!--  ИМЕ И ПРЕЗИМЕ НА КОНТАКТ  -->
+								<VerticalStackLayout Spacing="8">
+									<Label
+										FontAttributes="Bold"
+										FontSize="12"
+										Text="Име и презиме"
+										TextColor="{StaticResource Gray600}" />
+									<Border
+										Padding="12,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10">
+										<Entry
+											BackgroundColor="Transparent"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="Пр. Ана Петровска"
+											PlaceholderColor="#64748B"
+											Text="{Binding Patient.EmergencyContactName}"
+											TextColor="{StaticResource Gray800}"
+											VerticalOptions="Center" />
 									</Border>
 								</VerticalStackLayout>
+
+								<!--  ТЕЛЕФОН НА КОНТАКТ  -->
+								<VerticalStackLayout Grid.Column="1" Spacing="8">
+									<Label
+										FontAttributes="Bold"
+										FontSize="12"
+										Text="Телефонски број"
+										TextColor="{StaticResource Gray600}" />
+									<Border
+										Padding="12,0"
+										BackgroundColor="{StaticResource Gray200}"
+										HeightRequest="46"
+										StrokeShape="RoundRectangle 10">
+										<Entry
+											BackgroundColor="Transparent"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Keyboard="Telephone"
+											Placeholder="+389 7X XXX XXX"
+											PlaceholderColor="#64748B"
+											Text="{Binding Patient.EmergencyContactPhone}"
+											TextColor="{StaticResource Gray800}"
+											VerticalOptions="Center" />
+									</Border>
+								</VerticalStackLayout>
+							</Grid>
+
+							<!--  РОДНИНСКА ВРСКА  -->
+							<VerticalStackLayout Spacing="8">
+								<Label
+									FontAttributes="Bold"
+									FontSize="12"
+									Text="Роднинска врска / Релација"
+									TextColor="{StaticResource Gray600}" />
+								<Border
+									Padding="14,0"
+									BackgroundColor="{StaticResource Gray200}"
+									HeightRequest="46"
+									StrokeShape="RoundRectangle 10">
+									<Grid ColumnDefinitions="*,Auto">
+										<Label
+											FontSize="13"
+											Text="{Binding SelectedRelationDisplay, FallbackValue='Изберете релација...'}"
+											TextColor="{StaticResource Gray800}"
+											VerticalOptions="Center" />
+										<Label
+											Grid.Column="1"
+											FontSize="11"
+											Text="▼"
+											TextColor="#64748B"
+											VerticalOptions="Center" />
+										<Picker
+											Grid.ColumnSpan="2"
+											IsEnabled="{Binding IsEditMode}"
+											ItemsSource="{Binding RelationOptions}"
+											Opacity="0"
+											SelectedItem="{Binding SelectedRelationDisplay}" />
+									</Grid>
+								</Border>
 							</VerticalStackLayout>
-						</Border>
+						</VerticalStackLayout>
+
+						<!--  ============================================  -->
+						<!--  TAB 4 — СИСТЕМСКИ ЗАПИС  -->
+						<!--  ============================================  -->
+						<VerticalStackLayout IsVisible="{Binding IsTab4Active}" Spacing="24">
+							<Label
+								CharacterSpacing="1"
+								FontAttributes="Bold"
+								FontSize="13"
+								Text="МЕТАДАТА И ИНФОРМАЦИИ ЗА ЗАПИСОТ"
+								TextColor="{StaticResource LoginAccent}" />
+
+							<Border
+								Padding="20"
+								BackgroundColor="{StaticResource Gray200}"
+								StrokeShape="RoundRectangle 12">
+								<Grid
+									ColumnDefinitions="*,Auto"
+									RowDefinitions="Auto,Auto,Auto,Auto"
+									RowSpacing="16">
+
+									<!--  ID  -->
+									<Label
+										FontSize="13"
+										Text="Системско ID во база"
+										TextColor="{StaticResource Gray600}" />
+									<Label
+										Grid.Column="1"
+										FontAttributes="Bold"
+										FontFamily="Consolas"
+										FontSize="13"
+										HorizontalOptions="End"
+										Text="{Binding Patient.Id}"
+										TextColor="{StaticResource Gray800}" />
+
+									<!--  ДАТУМ РЕГИСТРАЦИЈА  -->
+									<Label
+										Grid.Row="1"
+										FontSize="13"
+										Text="Датум на првична регистрација"
+										TextColor="{StaticResource Gray600}" />
+									<Label
+										Grid.Row="1"
+										Grid.Column="1"
+										FontSize="13"
+										HorizontalOptions="End"
+										Text="{Binding Patient.RegistrationDate, StringFormat='{0:dd.MM.yyyy}'}"
+										TextColor="{StaticResource Gray800}" />
+
+									<!--  КРЕИРАНО НА  -->
+									<Label
+										Grid.Row="2"
+										FontSize="13"
+										Text="Инстанцирано на сервер"
+										TextColor="{StaticResource Gray600}" />
+									<Label
+										Grid.Row="2"
+										Grid.Column="1"
+										FontSize="13"
+										HorizontalOptions="End"
+										Text="{Binding Patient.CreatedAt, StringFormat='{0:dd.MM.yyyy}'}"
+										TextColor="{StaticResource Gray800}" />
+
+									<!--  ПОСЛЕДНА ПОСЕТА  -->
+									<Label
+										Grid.Row="3"
+										FontSize="13"
+										Text="Последна активност / Преглед"
+										TextColor="{StaticResource Gray600}" />
+									<Label
+										Grid.Row="3"
+										Grid.Column="1"
+										FontAttributes="Bold"
+										FontSize="13"
+										HorizontalOptions="End"
+										Text="{Binding Patient.LastVisitDate, StringFormat='{0:dd.MM.yyyy}', FallbackValue='Нема евидентирано посети'}"
+										TextColor="{StaticResource LoginAccent}" />
+								</Grid>
+							</Border>
+
+							<BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
+
+							<!--  ДОПОЛНИТЕЛНИ ДЕТАЛИ  -->
+
+						</VerticalStackLayout>
+
 					</VerticalStackLayout>
-
-					<VerticalStackLayout Grid.Column="1" Spacing="24">
-						<Border BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
-							<VerticalStackLayout Spacing="14">
-								<Label Text="СТАТУС НА ДОСИЕ *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
-								<Grid>
-									<Border IsVisible="{Binding IsReadOnly}" Padding="12,6" BackgroundColor="#E0F2FE" StrokeThickness="0" HorizontalOptions="Start" StrokeShape="RoundRectangle 8">
-										<HorizontalStackLayout Spacing="6">
-											<BoxView WidthRequest="8" HeightRequest="8" CornerRadius="4" Color="#0369A1" VerticalOptions="Center" />
-											<Label Text="{Binding Patient.Status}" FontSize="12" FontAttributes="Bold" TextColor="#0369A1" VerticalOptions="Center" />
-										</HorizontalStackLayout>
-									</Border>
-
-									<Border IsVisible="{Binding IsEditMode}" HeightRequest="42" BackgroundColor="#FFFFFF" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 10">
-										<Grid>
-											<Grid ColumnDefinitions="*, Auto" Margin="12,0" InputTransparent="True">
-												<Label Text="{Binding Patient.Status, FallbackValue='Изберете статус'}" TextColor="#0F172A" FontSize="13" VerticalOptions="Center" />
-												<Label Grid.Column="1" Text="▼" TextColor="#94A3B8" FontSize="11" VerticalOptions="Center" />
-											</Grid>
-											<Picker SelectedItem="{Binding Patient.Status}" TextColor="Transparent" TitleColor="Transparent" BackgroundColor="Transparent" HorizontalOptions="Fill" VerticalOptions="Fill">
-												<Picker.ItemsSource>
-													<x:Array Type="{x:Type x:String}">
-														<x:String>Active</x:String>
-														<x:String>Inactive</x:String>
-														<x:String>Critical</x:String>
-													</x:Array>
-												</Picker.ItemsSource>
-											</Picker>
-										</Grid>
-									</Border>
-								</Grid>
-							</VerticalStackLayout>
-						</Border>
-						<!--<Border IsVisible="{Binding IsReadOnly}"
-        BackgroundColor="#F0FDF4"
-        Padding="16"
-        Stroke="#DCFCE7"
-        StrokeThickness="1"
-        StrokeShape="RoundRectangle 16"
-        Margin="0,0,0,0">
-							-->
-						<!--<VerticalStackLayout Spacing="12">
-								-->
-						<!--<HorizontalStackLayout Spacing="8">
-									<Label Text="⚡" FontSize="16" VerticalOptions="Center" />
-									<Label Text="Брзи Терапевтски Акции" FontSize="14" FontAttributes="Bold" TextColor="#166534" VerticalOptions="Center" />
-								</HorizontalStackLayout>-->
-
-						<!--<Label Text="Автоматско пресметување на слободен слот кај докторот и генерирање на следниот онколошки циклус за овој пациент."
-               FontSize="12"
-               TextColor="#1E293B" />
-
-								<Button Text="📅 Алоцирај Следен Циклус"
-                Command="{Binding GenerateNextTherapyCycleAndAppointmentCommand}"
-                HeightRequest="42"
-                BackgroundColor="#16A34A"
-                TextColor="White"
-                FontAttributes="Bold"
-                FontSize="13"
-                CornerRadius="10"
-                Margin="0,4,0,0" />-->
-						<!--
-							</VerticalStackLayout>-->
-						<!--
-						</Border>-->
-						<!--<Border BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
-							<VerticalStackLayout Spacing="14">
-								<Label Text="СТАТУС НА ДОСИЕ *" FontSize="11" FontAttributes="Bold" TextColor="#475569" CharacterSpacing="0.5" />
-								<Grid>
-									<Border IsVisible="{Binding IsReadOnly}" Padding="12,6" BackgroundColor="#E0F2FE" StrokeThickness="0" HorizontalOptions="Start" StrokeShape="RoundRectangle 8">
-										<HorizontalStackLayout Spacing="6">
-											<BoxView WidthRequest="8" HeightRequest="8" CornerRadius="4" Color="#0369A1" VerticalOptions="Center" />
-											<Label Text="{Binding Patient.Status}" FontSize="12" FontAttributes="Bold" TextColor="#0369A1" VerticalOptions="Center" />
-										</HorizontalStackLayout>
-									</Border>
-
-									-->
-						<!-- СТАБИЛЕН ДРОПДАУН СИСТЕМ (СТАТУС) -->
-						<!--
-									<Border IsVisible="{Binding IsEditMode}" HeightRequest="42" BackgroundColor="#FFFFFF" Stroke="#CBD5E1" StrokeThickness="1" StrokeShape="RoundRectangle 10">
-										<Grid>
-											<Grid ColumnDefinitions="*, Auto" Margin="12,0" InputTransparent="True">
-												<Label Text="{Binding Patient.Status, FallbackValue='Изберете статус'}" TextColor="#0F172A" FontSize="13" VerticalOptions="Center" />
-												<Label Grid.Column="1" Text="▼" TextColor="#94A3B8" FontSize="11" VerticalOptions="Center" />
-											</Grid>
-
-											<Picker SelectedItem="{Binding Patient.Status}" TextColor="Transparent" TitleColor="Transparent" BackgroundColor="Transparent" HorizontalOptions="Fill" VerticalOptions="Fill">
-												<Picker.ItemsSource>
-													<x:Array Type="{x:Type x:String}">
-														<x:String>Active</x:String>
-														<x:String>Inactive</x:String>
-														<x:String>Critical</x:String>
-													</x:Array>
-												</Picker.ItemsSource>
-											</Picker>
-										</Grid>
-									</Border>
-								</Grid>
-							</VerticalStackLayout>
-						</Border>-->
-
-						<Border BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
-							<VerticalStackLayout Spacing="6">
-								<HorizontalStackLayout Spacing="8">
-									<Label Text="🚑" FontSize="16" />
-									<Label Text="Итен Контакт" FontSize="15" FontAttributes="Bold" TextColor="#0F172A" />
-								</HorizontalStackLayout>
-
-								<VerticalStackLayout Spacing="6">
-									<Label Text="ЛИЦЕ ЗА КОНТАКТ" FontSize="10" FontAttributes="Bold" TextColor="#64748B" />
-									<Border HeightRequest="40" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-										<Entry Text="{Binding Patient.EmergencyContactName}" IsReadOnly="{Binding IsReadOnly}" TextColor="#0F172A" FontSize="13" VerticalOptions="Center" Margin="12,0" />
-									</Border>
-								</VerticalStackLayout>
-
-								<VerticalStackLayout Spacing="6">
-									<Label Text="ТЕЛЕФОН" FontSize="10" FontAttributes="Bold" TextColor="#64748B" />
-									<Border HeightRequest="40" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-										<Entry Text="{Binding Patient.EmergencyContactPhone}" IsReadOnly="{Binding IsReadOnly}" Keyboard="Telephone" TextColor="#0F172A" FontSize="13" VerticalOptions="Center" Margin="12,0" />
-									</Border>
-								</VerticalStackLayout>
-							</VerticalStackLayout>
-						</Border>
-
-						<Border BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
-							<VerticalStackLayout Spacing="6">
-								<HorizontalStackLayout Spacing="8">
-									<Label Text="🩸" FontSize="16" />
-									<Label Text="Медицински Информации" FontSize="15" FontAttributes="Bold" TextColor="#0F172A" />
-								</HorizontalStackLayout>
-
-								<VerticalStackLayout Spacing="6">
-									<Label Text="КРВНА ГРУПА" FontSize="10" FontAttributes="Bold" TextColor="#64748B" />
-									<Border HeightRequest="40" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-										<!-- СТАБИЛЕН ДРОПДАУН СИСТЕМ (КРВНА ГРУПА) -->
-										<Grid>
-											<Grid ColumnDefinitions="*, Auto" Margin="12,0" InputTransparent="True">
-												<Label Text="{Binding Patient.BloodType, FallbackValue='Изберете група'}" TextColor="#0F172A" FontSize="13" VerticalOptions="Center" />
-												<Label Grid.Column="1" Text="▼" TextColor="#94A3B8" FontSize="11" VerticalOptions="Center" />
-											</Grid>
-
-											<Picker SelectedItem="{Binding Patient.BloodType}" IsVisible="{Binding IsEditMode}" TextColor="Transparent" TitleColor="Transparent" BackgroundColor="Transparent" HorizontalOptions="Fill" VerticalOptions="Fill">
-												<Picker.ItemsSource>
-													<x:Array Type="{x:Type x:String}">
-														<x:String>A+</x:String>
-														<x:String>A-</x:String>
-														<x:String>B+</x:String>
-														<x:String>B-</x:String>
-														<x:String>AB+</x:String>
-														<x:String>AB-</x:String>
-														<x:String>O+</x:String>
-														<x:String>O-</x:String>
-													</x:Array>
-												</Picker.ItemsSource>
-											</Picker>
-										</Grid>
-									</Border>
-								</VerticalStackLayout>
-
-								<VerticalStackLayout Spacing="6">
-									<Label Text="АЛЕРГИИ" FontSize="10" FontAttributes="Bold" TextColor="#64748B" />
-									<Border HeightRequest="80" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="4">
-										<Editor Text="{Binding Patient.Allergies}" IsReadOnly="{Binding IsReadOnly}" Placeholder="Пеницилин, латекс, храна..." PlaceholderColor="#94A3B8" TextColor="#0F172A" FontSize="13" VerticalOptions="Fill" HorizontalOptions="Fill" />
-									</Border>
-								</VerticalStackLayout>
-							</VerticalStackLayout>
-						</Border>
-
-						<Border BackgroundColor="White" Padding="16" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 16">
-							<VerticalStackLayout Spacing="6">
-								<HorizontalStackLayout Spacing="8" Margin="0,0,0,4">
-									<Label Text="📞" FontSize="16" VerticalOptions="Center" />
-									<Label Text="Контакт Информации" FontSize="15" FontAttributes="Bold" TextColor="#0F172A" VerticalOptions="Center" />
-								</HorizontalStackLayout>
-
-								<VerticalStackLayout Spacing="6">
-									<Label Text="Е-ПОШТА" FontSize="10" FontAttributes="Bold" TextColor="#64748B" />
-									<Border HeightRequest="40" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-										<Entry Text="{Binding Patient.Email}" IsReadOnly="{Binding IsReadOnly}" Keyboard="Email" Placeholder="наслов@домен.com" PlaceholderColor="#94A3B8" FontSize="13" TextColor="#0F172A" VerticalOptions="Center" Margin="12,0" />
-									</Border>
-								</VerticalStackLayout>
-
-								<VerticalStackLayout Spacing="6">
-									<Label Text="ТЕЛЕФОН" FontSize="10" FontAttributes="Bold" TextColor="#64748B" />
-									<Border HeightRequest="40" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-										<Entry Text="{Binding Patient.Phone}" IsReadOnly="{Binding IsReadOnly}" Keyboard="Telephone" Placeholder="+389 7X XXX XXX" PlaceholderColor="#94A3B8" FontSize="13" TextColor="#0F172A" VerticalOptions="Center" Margin="12,0" />
-									</Border>
-								</VerticalStackLayout>
-
-								<VerticalStackLayout Spacing="6">
-									<Label Text="АДРЕСА" FontSize="10" FontAttributes="Bold" TextColor="#64748B" />
-									<Border HeightRequest="40" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-										<Entry Text="{Binding Patient.Address}" IsReadOnly="{Binding IsReadOnly}" Placeholder="Улица и број" PlaceholderColor="#94A3B8" TextColor="#0F172A" FontSize="13" VerticalOptions="Center" Margin="12,0" />
-									</Border>
-								</VerticalStackLayout>
-
-								<VerticalStackLayout Spacing="6">
-									<Label Text="ГРАД" FontSize="10" FontAttributes="Bold" TextColor="#64748B" />
-									<Border HeightRequest="40" BackgroundColor="{Binding InputBgColor}" Stroke="{Binding InputBorderColor}" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-										<Entry Text="{Binding Patient.City}" IsReadOnly="{Binding IsReadOnly}" Placeholder="Струмица" PlaceholderColor="#94A3B8" TextColor="#0F172A" FontSize="13" VerticalOptions="Center" Margin="12,0" />
-									</Border>
-								</VerticalStackLayout>
-							</VerticalStackLayout>
-						</Border>
-
-						<Border IsVisible="{Binding IsReadOnly}" BackgroundColor="#F8FAFC" Padding="20" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 14">
-							<VerticalStackLayout Spacing="10">
-								<HorizontalStackLayout Spacing="6">
-									<Label Text="⚙" TextColor="#64748B" FontSize="12" />
-									<Label Text="Информации за записот" FontSize="11" FontAttributes="Bold" TextColor="#64748B" CharacterSpacing="0.5" />
-								</HorizontalStackLayout>
-								<BoxView HeightRequest="1" Color="#E2E8F0" />
-								<Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto, Auto" RowSpacing="6">
-									<Label Text="Датум на креирање:" FontSize="11" TextColor="#94A3B8" />
-									<Label Grid.Column="1" Text="{Binding Patient.CreatedAt, StringFormat='{0:dd.MM.yyyy}'}" FontSize="11" HorizontalOptions="End" TextColor="#64748B" />
-									<Label Grid.Row="1" Text="ID во база:" FontSize="11" TextColor="#94A3B8" />
-									<Label Grid.Row="1" Grid.Column="1" Text="{Binding Patient.Id}" FontSize="11" HorizontalOptions="End" TextColor="#64748B" />
-									<Label Grid.Row="2" Text="Регистрација:" FontSize="11" TextColor="#94A3B8" />
-									<Label Grid.Row="2" Grid.Column="1" Text="{Binding Patient.RegistrationDate,StringFormat='{0:dd.MM.yyyy}'}" FontSize="11" HorizontalOptions="End" TextColor="#64748B" />
-								</Grid>
-							</VerticalStackLayout>
-						</Border>
-					</VerticalStackLayout>
-				</Grid>
-			</ScrollView>
+				</ScrollView>
+			</Border>
 		</Grid>
 	</Grid>
 </ContentPage>

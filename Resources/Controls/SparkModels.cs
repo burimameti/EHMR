@@ -1,0 +1,313 @@
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
+
+namespace EHMR.Resources.Controls
+{
+    /// <summary>How a cell's value should be rendered.</summary>
+    public enum SparkGridCellType
+    {
+        Text,
+        Badge,
+        Currency,
+        Number,
+        Avatar,
+        /// <summary>Row-level action icons (e.g. view/edit). Value is ignored; icons are wired via
+        /// SparkDataGridView.RowTappedCommand (view) and EditRowCommand (edit).</summary>
+        Actions
+    }
+
+    /// <summary>Semantic color for a badge cell (Predicted risk %, trend, status...).</summary>
+    public enum SparkBadgeTone
+    {
+        Neutral,
+        Success,
+        Danger
+    }
+    public abstract class SparkBindableBase : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected bool Set<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if(Equals(field, value)) return false;
+            field=value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return true;
+        }
+    }
+
+
+    /// <summary>
+    /// A single row of data. Backed by a dictionary so grids can be built dynamically
+    /// from any data source without generating per-model XAML. Access via row["Key"].
+    /// For badge cells, store a SparkBadgeValue as the value.
+    /// </summary>
+    public class SparkGridRow : Dictionary<string, object>
+    {
+        /// <summary>Arbitrary payload (e.g. the underlying customer id/entity) for use in RowTappedCommand.</summary>
+        public object Tag
+        {
+            get; set;
+        }
+    }
+
+    /// <summary>Value + tone for a badge cell, e.g. { Text = "42%", Tone = Danger }.</summary>
+    public class SparkBadgeValue
+    {
+        public string Text
+        {
+            get; set;
+        }
+        public SparkBadgeTone Tone { get; set; } = SparkBadgeTone.Neutral;
+
+        public SparkBadgeValue()
+        {
+        }
+
+        public SparkBadgeValue(string text, SparkBadgeTone tone)
+        {
+            Text=text;
+            Tone=tone;
+        }
+    }
+
+    /// <summary>
+    /// One tab in the header row, e.g. "All Users  200,401" / "Churned  12,904".
+    /// Title / Value / Command / IsSelected are all bindable so a dashboard
+    /// definition can build any number of these (4, 5, 6, ...).
+    /// </summary>
+    public class SparkTabItem : SparkBindableBase
+    {
+        private string _title;
+        private string _value;          // e.g. "200,401" — shown as a small badge next to the title
+        private bool _isSelected;
+        private ICommand _command;
+        private object _commandParameter;
+
+        public string Title
+        {
+            get => _title;
+            set => Set(ref _title, value);
+        }
+
+        public string Value
+        {
+            get => _value;
+            set => Set(ref _value, value);
+        }
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set => Set(ref _isSelected, value);
+        }
+
+        /// <summary>Fired when the tab is clicked/selected.</summary>
+        public ICommand Command
+        {
+            get => _command;
+            set => Set(ref _command, value);
+        }
+
+        public object CommandParameter
+        {
+            get => _commandParameter;
+            set => Set(ref _commandParameter, value);
+        }
+    }
+
+    /// <summary>
+    /// One dropdown/picker placed after the search box, e.g. "Prioritized Searches".
+    /// </summary>
+    public class SparkPickerItem : SparkBindableBase
+    {
+        private string _placeholder;
+        private object _selectedItem;
+        private ObservableCollection<object> _items = new ObservableCollection<object>();
+        private ICommand _selectionChangedCommand;
+
+        public string Placeholder
+        {
+            get => _placeholder;
+            set => Set(ref _placeholder, value);
+        }
+
+        public ObservableCollection<object> Items
+        {
+            get => _items;
+            set => Set(ref _items, value);
+        }
+
+        public object SelectedItem
+        {
+            get => _selectedItem;
+            set => Set(ref _selectedItem, value);
+        }
+
+        public ICommand SelectionChangedCommand
+        {
+            get => _selectionChangedCommand;
+            set => Set(ref _selectionChangedCommand, value);
+        }
+    }
+
+    /// <summary>
+    /// One button on the right of the row (e.g. "Search", "New", the funnel icon).
+    /// IconGlyph is optional path data (Segoe MDL2 / any Path.Data string) so an
+    /// icon-only button can be built without extra XAML per instance.
+    /// </summary>
+    public class SparkButtonItem : SparkBindableBase
+    {
+        private string _label;
+        private string _iconGlyph;
+        private bool _isPrimary;
+        private ICommand _command;
+        private object _commandParameter;
+
+        public string Label
+        {
+            get => _label;
+            set => Set(ref _label, value);
+        }
+
+        /// <summary>Optional icon-only glyph (Path Data). Leave null for a text button.</summary>
+        public string IconGlyph
+        {
+            get => _iconGlyph;
+            set => Set(ref _iconGlyph, value);
+        }
+
+        /// <summary>True = solid teal button (Search), False = outline button (New).</summary>
+        public bool IsPrimary
+        {
+            get => _isPrimary;
+            set => Set(ref _isPrimary, value);
+        }
+
+        public ICommand Command
+        {
+            get => _command;
+            set => Set(ref _command, value);
+        }
+
+        public object CommandParameter
+        {
+            get => _commandParameter;
+            set => Set(ref _commandParameter, value);
+        }
+    }
+    /// <summary>One stat card on the detail page, e.g. { Label = "Predicted LTV", Value = "$12,345" }.</summary>
+    public class SparkMetricItem : SparkBindableBase
+    {
+        private string _label;
+        private string _value;
+        private SparkBadgeTone _tone = SparkBadgeTone.Neutral;
+
+        public string Label
+        {
+            get => _label;
+            set => Set(ref _label, value);
+        }
+
+        public string Value
+        {
+            get => _value;
+            set => Set(ref _value, value);
+        }
+
+        /// <summary>Optional accent (e.g. Danger for a high-risk score) — colors just the value text.</summary>
+        public SparkBadgeTone Tone
+        {
+            get => _tone;
+            set => Set(ref _tone, value);
+        }
+    }
+
+    /// <summary>One row in the activity/timeline list on the detail page.</summary>
+    public class SparkActivityItem : SparkBindableBase
+    {
+        private string _title;
+        private string _timestamp;
+        private string _description;
+        private string _iconGlyph;
+
+        public string Title
+        {
+            get => _title;
+            set => Set(ref _title, value);
+        }
+
+        public string Timestamp
+        {
+            get => _timestamp;
+            set => Set(ref _timestamp, value);
+        }
+
+        public string Description
+        {
+            get => _description;
+            set => Set(ref _description, value);
+        }
+
+        /// <summary>Optional small icon glyph (Path data) shown to the left of the entry.</summary>
+        public string IconGlyph
+        {
+            get => _iconGlyph;
+            set => Set(ref _iconGlyph, value);
+        }
+    }
+    public class SparkGridColumn : SparkBindableBase
+    {
+        /// <summary>Header text.</summary>
+        public string Header
+        {
+            get; set;
+        }
+
+        /// <summary>Dictionary key used to read the value from SparkGridRow.</summary>
+        public string Key
+        {
+            get; set;
+        }
+
+        /// <summary>How the cell is rendered.</summary>
+        public SparkGridCellType CellType { get; set; } = SparkGridCellType.Text;
+
+        /// <summary>
+        /// Column width.
+        /// Use GridLength.Star or new GridLength(x, GridUnitType.Star)
+        /// for responsive layouts.
+        /// Use Absolute only when a fixed width is really required.
+        /// </summary>
+        public GridLength Width { get; set; } = GridLength.Star;
+
+        /// <summary>Automatically right-align numeric columns.</summary>
+        public bool RightAlign =>
+            CellType==SparkGridCellType.Currency||
+            CellType==SparkGridCellType.Number;
+
+        /// <summary>Whether clicking the header sorts this column.</summary>
+        public bool Sortable
+        {
+            get; set;
+        }
+
+        /// <summary>Executed when the header is clicked.</summary>
+        public ICommand HeaderTapCommand
+        {
+            get; set;
+        }
+    }
+
+    /// <summary>
+    /// A single row of data. Backed by a dictionary so grids can be built dynamically
+    /// from any data source without generating per-model XAML. Access via row["Key"].
+    /// For badge cells, store a SparkBadgeValue as the value.
+    /// </summary>
+
+
+    /// <summary>Value + tone for a badge cell, e.g. { Text = "42%", Tone = Danger }.</summary>
+
+}

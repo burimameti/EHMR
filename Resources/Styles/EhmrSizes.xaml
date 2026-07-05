@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+	<!--  =========================================================  -->
+	<!--  FONT FAMILY  -->
+	<!--  =========================================================  -->
+
+	<x:String x:Key="FontFamilyDefault">OpenSansRegular</x:String>
+	<x:String x:Key="FontFamilyMedium">OpenSansSemibold</x:String>
+	<x:String x:Key="FontFamilyBold">OpenSansBold</x:String>
+
+	<!--  =========================================================  -->
+	<!--  FONT SIZE SCALE  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="Font2XS">10</x:Double>
+
+	<x:Double x:Key="FontXS">11</x:Double>
+
+	<x:Double x:Key="FontSM">12</x:Double>
+
+	<x:Double x:Key="FontBase">13</x:Double>
+
+	<x:Double x:Key="FontMD">14</x:Double>
+
+	<x:Double x:Key="FontLG">16</x:Double>
+
+	<x:Double x:Key="FontXL">18</x:Double>
+
+	<x:Double x:Key="Font2XL">20</x:Double>
+
+	<x:Double x:Key="Font3XL">24</x:Double>
+
+	<x:Double x:Key="Font4XL">30</x:Double>
+
+	<x:Double x:Key="Font5XL">36</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  PAGE HEADINGS  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="PageTitleSize">30</x:Double>
+
+	<x:Double x:Key="PageSubtitleSize">14</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  SECTION HEADINGS  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="SectionTitleSize">18</x:Double>
+
+	<x:Double x:Key="SectionSubtitleSize">13</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  CARD TYPOGRAPHY  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="CardTitleSize">16</x:Double>
+
+	<x:Double x:Key="CardSubtitleSize">13</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  GRID TYPOGRAPHY  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="GridHeaderSize">12</x:Double>
+
+	<x:Double x:Key="GridCellSize">13</x:Double>
+
+	<x:Double x:Key="GridSecondarySize">12</x:Double>
+
+	<x:Double x:Key="GridFooterSize">12</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  FORM TYPOGRAPHY  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="FormLabelSize">12</x:Double>
+
+	<x:Double x:Key="FormInputSize">13</x:Double>
+
+	<x:Double x:Key="FormHelperSize">11</x:Double>
+
+	<x:Double x:Key="ValidationSize">11</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  BUTTON TYPOGRAPHY  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="ButtonTextSize">13</x:Double>
+
+	<x:Double x:Key="ButtonSmallTextSize">12</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  KPI TYPOGRAPHY  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="KpiValueSize">30</x:Double>
+
+	<x:Double x:Key="KpiLabelSize">13</x:Double>
+
+	<x:Double x:Key="KpiDeltaSize">12</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  TIMELINE TYPOGRAPHY  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="TimelineTitleSize">13</x:Double>
+
+	<x:Double x:Key="TimelineDateSize">11</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  STATUS TYPOGRAPHY  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="StatusSize">11</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  BADGE TYPOGRAPHY  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="BadgeSize">10</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  CHARACTER SPACING  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="SpacingTight">0</x:Double>
+
+	<x:Double x:Key="SpacingNormal">0.25</x:Double>
+
+	<x:Double x:Key="SpacingWide">0.5</x:Double>
+
+	<x:Double x:Key="SpacingExtraWide">1</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  LINE HEIGHT  -->
+	<!--  =========================================================  -->
+
+	<x:Double x:Key="LineHeightCompact">1.1</x:Double>
+
+	<x:Double x:Key="LineHeightNormal">1.25</x:Double>
+
+	<x:Double x:Key="LineHeightRelaxed">1.4</x:Double>
+
+	<!--  =========================================================  -->
+	<!--  FONT ATTRIBUTES  -->
+	<!--  =========================================================  -->
+
+	<x:String x:Key="WeightRegular">Regular</x:String>
+
+	<x:String x:Key="WeightMedium">Medium</x:String>
+
+	<x:String x:Key="WeightBold">Bold</x:String>
+
+</ResourceDictionary>

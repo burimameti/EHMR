@@ -19,10 +19,10 @@ namespace EHMR.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            // ЕДИНСТВЕНО место каде што се повикува вчитување на податоците од базата при влез во страницата
+
             if(_viewModel!=null)
             {
-                await _viewModel.OnAppearingAsync();
+                await _viewModel.LoadAsync();
             }
         }
     }

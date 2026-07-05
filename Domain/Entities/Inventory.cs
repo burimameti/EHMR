@@ -15,7 +15,7 @@
             get; set;
         }
 
-        public Medicine Medicine
+        public Medicine? Medicine
         {
             get; set;
         }

@@ -47,7 +47,7 @@ public partial class AppointmentDetailViewModel : ObservableObject
     // UI STATE
     // =========================
 
-    [ObservableProperty] private string pageTitle = "Детали за преглед";
+    [ObservableProperty] private string pageTitle = "Детали за термин";
     [ObservableProperty] private bool isReadOnly = true;
     [ObservableProperty] private bool isEditMode;
     [ObservableProperty] private bool showDiagnosisDropdown;

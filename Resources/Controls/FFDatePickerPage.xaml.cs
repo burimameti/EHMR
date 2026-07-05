@@ -1,0 +1,84 @@
+﻿using System.ComponentModel;
+
+namespace EHMR.Resources.Controls;
+
+public partial class FFDatePicker : ContentView
+{
+    public FFDatePicker()
+    {
+        InitializeComponent();
+        UpdateDisplay();
+    }
+
+    // =====================================================
+    // BINDABLE PROPERTIES
+    // =====================================================
+    public static readonly BindableProperty LabelProperty =
+        BindableProperty.Create(nameof(Label), typeof(string), typeof(FFDatePicker), string.Empty, propertyChanged: OnLabelChanged);
+
+    public static readonly BindableProperty HasLabelProperty =
+        BindableProperty.Create(nameof(HasLabel), typeof(bool), typeof(FFDatePicker), true);
+
+    public static readonly BindableProperty SelectedDateProperty =
+        BindableProperty.Create(nameof(SelectedDate), typeof(DateTime), typeof(FFDatePicker), DateTime.Today, BindingMode.TwoWay, propertyChanged: OnDateChanged);
+
+    public static readonly BindableProperty IsFilterActiveProperty =
+        BindableProperty.Create(nameof(IsFilterActive), typeof(bool), typeof(FFDatePicker), false, BindingMode.TwoWay);
+
+    public string Label
+    {
+        get => (string)GetValue(LabelProperty);
+        set => SetValue(LabelProperty, value);
+    }
+
+    public bool HasLabel
+    {
+        get => (bool)GetValue(HasLabelProperty);
+        set => SetValue(HasLabelProperty,value);
+    }
+
+    public DateTime SelectedDate
+    {
+        get => (DateTime)GetValue(SelectedDateProperty);
+        set => SetValue(SelectedDateProperty, value);
+    }
+
+    public bool IsFilterActive
+    {
+        get => (bool)GetValue(IsFilterActiveProperty);
+        set => SetValue(IsFilterActiveProperty, value);
+    }
+
+    // =====================================================
+    // COMPONENT INTERACTION LOGIC
+    // =====================================================
+    private static void OnLabelChanged(BindableObject bindable, object oldValue, object newValue)
+    {
+        var control = (FFDatePicker)bindable;
+        control.HasLabel=!string.IsNullOrWhiteSpace(newValue?.ToString());
+    }
+
+    private static void OnDateChanged(BindableObject bindable, object oldValue, object newValue)
+    {
+        var control = (FFDatePicker)bindable;
+        control.UpdateDisplay();
+    }
+
+    private void OnBorderTapped(object sender, TappedEventArgs e)
+    {
+        if(IsFilterActive)
+        {
+            InnerDatePicker.Focus();
+        }
+    }
+
+    private void InnerDatePicker_DateSelected(object sender, DateChangedEventArgs e)
+    {
+        UpdateDisplay();
+    }
+
+    private void UpdateDisplay()
+    {
+        DisplayLabel.Text=SelectedDate.ToString("dd.MM.yyyy");
+    }
+}

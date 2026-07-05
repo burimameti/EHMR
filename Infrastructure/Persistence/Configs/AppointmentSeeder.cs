@@ -20,6 +20,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 // ===================== СКЕДЖУЛИРАНИ =====================
                 new Appointment
                 {
+                    Id=SeedIds.Appt1,
                     PatientId = SeedIds.Patient1,
                     DoctorId = SeedIds.Doctor1,
                     TherapyCycleId = SeedIds.Cycle1,
@@ -31,6 +32,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 },
                 new Appointment
                 {
+                    Id=SeedIds.Appt2,
                     PatientId = SeedIds.Patient2,
                     DoctorId = SeedIds.Doctor2,         TherapyCycleId = SeedIds.Cycle2,
                     ScheduledStart = now.AddDays(1).AddHours(10),

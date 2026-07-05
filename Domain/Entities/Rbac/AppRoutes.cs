@@ -11,11 +11,27 @@
             public const string List = "patientslist";
             public const string Detail = "patientsdetail";
         }
-
+        public static class Encounters
+        {
+            public const string List = "encounterslist";
+            public const string Create = "encounterscreate";
+            public const string Edit = "encountersedit";
+            public const string Detail = "encountersdetail";
+        }
         public static class Protocols
         {
             public const string List = "protocolslist";
             public const string Detail = "protocoldetail";
+        }
+
+        public static class Diagnoses
+        {
+            public const string List = "diagnoseslist";
+        }
+
+        public static class Documents
+        {
+            public const string List = "documentslist";
         }
 
         public static class Medicines

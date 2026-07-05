@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using EHMR.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,8 @@ namespace EHMR.ViewModels;
 
 public partial class DashboardAppointmentItem : ObservableObject
 {
+   
+    public Appointment Source { get; set; } = null!;
     [ObservableProperty]
     private string patientName = string.Empty;
 

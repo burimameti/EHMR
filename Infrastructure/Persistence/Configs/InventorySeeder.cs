@@ -12,13 +12,13 @@ namespace EHMR.Infrastructure.Persistence.Configs
         {
             try
             {
-                if(await context.Inventories.AnyAsync(ct))
+                if(await context.Inventories.AnyAsync(x => x.Id==SeedIds.Inv1, ct))
                     return;
 
                 context.Inventories.Add(
                     new Inventory
                     {
-                        Id=Guid.NewGuid(),
+                        Id=SeedIds.Inv1,
                         MedicineId=SeedIds.Med1,
                         InitialStock=500,
                         CurrentStock=500,

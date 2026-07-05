@@ -1,7 +1,9 @@
-﻿using EHMR.Domain.Entities.Rbac;
+﻿using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Views;
 using EHMR.Views.Appointments;
+using EHMR.Views.Encounters;
 using EHMR.Views.Prescription;
 using EHMR.Views.Therapies;
 
@@ -140,6 +142,12 @@ public partial class AppShell : Shell
         // Protocols
         Routing.RegisterRoute(AppRoutes.Protocols.List, typeof(ProtocolRegistryPage));
         Routing.RegisterRoute(AppRoutes.Protocols.Detail, typeof(ProtocolDetailFormPage));
+
+        Routing.RegisterRoute(AppRoutes.Encounters.Edit, typeof(EncounterEditPage));
+
+        Routing.RegisterRoute(AppRoutes.Encounters.Create, typeof(EncounterCreatePage));
+        Routing.RegisterRoute(AppRoutes.Encounters.List, typeof(EncounterListPage));
+        Routing.RegisterRoute(AppRoutes.Encounters.Detail, typeof(EncounterDetailPage));
 
         // MKB
         Routing.RegisterRoute(AppRoutes.Mkb10Codes.List, typeof(MbkImportExportPage));

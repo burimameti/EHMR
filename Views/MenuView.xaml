@@ -1,164 +1,170 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ContentView
-    x:Class="EHMR.Views.MenuView"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="clr-namespace:EHMR.Extensions"
-    x:Name="Root"
-    mc:Ignorable="d">
+	x:Class="EHMR.Views.MenuView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:converters="clr-namespace:EHMR.Extensions"
+	xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="Root"
+	mc:Ignorable="d">
 
-	<ContentView.Resources>
-		<ResourceDictionary>
-			<converters:FontFamilyConverter x:Key="FontFamilyConverter" />
+	<Border
+		Padding="0"
+		BackgroundColor="{StaticResource Surface}"
+		StrokeThickness="0">
 
-			<!-- Dark sidebar token overrides — all Epic* keys unchanged elsewhere -->
-			<Color x:Key="SidebarBg">#0F172A</Color>
-			<Color x:Key="SidebarSurface">#1E293B</Color>
-			<Color x:Key="SidebarBorder">#334155</Color>
-			<Color x:Key="SidebarSelected">#1E3A5F</Color>
-			<Color x:Key="SidebarSelectedAccent">#38BDF8</Color>
-			<Color x:Key="SidebarText">#CBD5E1</Color>
-			<Color x:Key="SidebarTextMuted">#64748B</Color>
-			<Color x:Key="SidebarTextActive">#F1F5F9</Color>
-			<Color x:Key="SidebarIconMuted">#475569</Color>
-			<Color x:Key="SidebarDivider">#1E293B</Color>
-		</ResourceDictionary>
-	</ContentView.Resources>
+		<Grid RowDefinitions="Auto,Auto,*,Auto" WidthRequest="270">
 
-	<Border BackgroundColor="{StaticResource SidebarBg}"
-            StrokeThickness="0"
-            Padding="0">
+			<!--  ================= HEADER / LOGO =================  -->
+			<Grid
+				Grid.Row="0"
+				Padding="22,24,20,18"
+				Background="{StaticResource DialogBackground}"
+				ColumnDefinitions="26,*"
+				ColumnSpacing="10">
 
-		<Grid RowDefinitions="Auto,*,Auto" WidthRequest="295">
+				<Label
+					FontFamily="FASolid"
+					FontSize="18"
+					Text="&#xf005;"
+					TextColor="{StaticResource SidebarActiveBg}"
+					VerticalOptions="Center" />
 
-			<!-- ═══════════════════════════════════════════════
-                 LOGO / BRAND HEADER
-            ═══════════════════════════════════════════════ -->
-			<Grid Grid.Row="0"
-                  Padding="20,24,20,20"
-                  ColumnDefinitions="40,*"
-                  ColumnSpacing="12"
-                  BackgroundColor="{StaticResource SidebarBg}">
-
-				<!-- App icon -->
-				<Border WidthRequest="38"
-                        HeightRequest="38"
-                        BackgroundColor="{StaticResource EpicPrimary}"
-                        StrokeThickness="0"
-                        StrokeShape="RoundRectangle 10"
-                        VerticalOptions="Center">
-					<Label Text="&#xf0f0;"
-                           FontFamily="FASolid"
-                           FontSize="16"
-                           TextColor="White"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center" />
-				</Border>
-
-				<!-- Brand name + subtitle -->
-				<VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-					<Label Text="EHMR"
-                           FontSize="18"
-                           FontAttributes="Bold"
-                           TextColor="{StaticResource SidebarTextActive}"
-                           CharacterSpacing="0.5" />
-					<Label Text="Платформа за здравство"
-                           FontSize="11"
-                           TextColor="{StaticResource SidebarTextMuted}" />
-				</VerticalStackLayout>
+				<Label
+					Grid.Column="1"
+					FontAttributes="Bold"
+					FontSize="18"
+					Text="EHMR"
+					TextColor="White"
+					VerticalOptions="Center" />
 			</Grid>
-
-			<!-- Divider under logo -->
-			<BoxView Grid.Row="0"
-                     HeightRequest="1"
-                     Color="{StaticResource SidebarBorder}"
-                     VerticalOptions="End"
-                     Margin="16,0" />
-
-			<!-- ═══════════════════════════════════════════════
-                 NAVIGATION ITEMS
-            ═══════════════════════════════════════════════ -->
-			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-				<VerticalStackLayout Padding="12,12,12,8" Spacing="2">
+			<BoxView
+				Grid.Row="1"
+				BackgroundColor="{StaticResource SidebarActiveBg}"
+				HeightRequest="1"
+				HorizontalOptions="Fill" />
+			<!--  ================= NAVIGATION =================  -->
+			<ScrollView Grid.Row="2" VerticalScrollBarVisibility="Never">
+				<VerticalStackLayout Padding="12,8,12,14" Spacing="2">
 
 					<CollectionView ItemsSource="{Binding Items}" SelectionMode="None">
 						<CollectionView.ItemTemplate>
 							<DataTemplate>
-								<VerticalStackLayout Margin="0,0,0,2">
+								<VerticalStackLayout Spacing="0">
 
-									<!-- ── GROUP ROW ── -->
-									<Border Padding="12,10"
-                                            StrokeThickness="0"
-                                            StrokeShape="RoundRectangle 10">
+									<!--  ================= GROUP HEADER =================  -->
+									<Border
+										Padding="14,0"
+										HeightRequest="42"
+										StrokeThickness="0">
+										<Border.StrokeShape>
+											<RoundRectangle CornerRadius="1" />
+										</Border.StrokeShape>
+
 										<Border.Triggers>
-											<DataTrigger TargetType="Border" Binding="{Binding IsActive}" Value="True">
-												<Setter Property="BackgroundColor" Value="{StaticResource SidebarSelected}" />
+											<DataTrigger
+												Binding="{Binding IsActive}"
+												TargetType="Border"
+												Value="True">
+												<Setter Property="BackgroundColor" Value="{StaticResource SidebarActiveBg}" />
 											</DataTrigger>
-											<DataTrigger TargetType="Border" Binding="{Binding IsActive}" Value="False">
+											<DataTrigger
+												Binding="{Binding IsActive}"
+												TargetType="Border"
+												Value="False">
 												<Setter Property="BackgroundColor" Value="Transparent" />
 											</DataTrigger>
 										</Border.Triggers>
 
 										<Border.GestureRecognizers>
-											<TapGestureRecognizer
-                                                Command="{Binding Source={x:Reference Root}, Path=BindingContext.ToggleGroupCommand}"
-                                                CommandParameter="{Binding .}" />
+											<TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.ToggleGroupCommand}" CommandParameter="{Binding .}" />
 										</Border.GestureRecognizers>
 
 										<Grid ColumnDefinitions="20,*,16" ColumnSpacing="12">
-
-											<!-- Icon -->
-											<Label Grid.Column="0"
-                                                   Text="{Binding Icon.Glyph}"
-                                                   FontFamily="{Binding Icon.Font, Converter={StaticResource FontFamilyConverter}}"
-                                                   FontSize="14"
-                                                   HorizontalOptions="Center"
-                                                   VerticalOptions="Center">
+											<Label
+												Grid.Column="0"
+												FontFamily="FASolid"
+												FontSize="14"
+												HorizontalOptions="Center"
+												Text="{Binding Icon.Glyph}"
+												VerticalOptions="Center">
 												<Label.Triggers>
-													<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="True">
-														<Setter Property="TextColor" Value="{StaticResource SidebarSelectedAccent}" />
+													<DataTrigger
+														Binding="{Binding IsActive}"
+														TargetType="Label"
+														Value="True">
+														<Setter Property="TextColor" Value="{StaticResource SidebarActiveBg}" />
 													</DataTrigger>
-													<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="False">
-														<Setter Property="TextColor" Value="{StaticResource SidebarIconMuted}" />
+													<DataTrigger
+														Binding="{Binding IsActive}"
+														TargetType="Label"
+														Value="False">
+														<Setter Property="TextColor" Value="{StaticResource SidebarText}" />
 													</DataTrigger>
 												</Label.Triggers>
 											</Label>
 
-											<!-- Title -->
-											<Label Grid.Column="1"
-                                                   Text="{Binding GroupTitle}"
-                                                   FontSize="13"
-                                                   VerticalOptions="Center">
+											<Label
+												Grid.Column="1"
+												FontSize="14"
+												LineBreakMode="TailTruncation"
+												Text="{Binding GroupTitle}"
+												VerticalOptions="Center">
 												<Label.Triggers>
-													<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="True">
-														<Setter Property="TextColor" Value="{StaticResource SidebarTextActive}" />
+													<DataTrigger
+														Binding="{Binding IsActive}"
+														TargetType="Label"
+														Value="True">
+														<Setter Property="TextColor" Value="{StaticResource White}" />
 														<Setter Property="FontAttributes" Value="Bold" />
 													</DataTrigger>
-													<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="False">
+													<DataTrigger
+														Binding="{Binding IsActive}"
+														TargetType="Label"
+														Value="False">
 														<Setter Property="TextColor" Value="{StaticResource SidebarText}" />
 														<Setter Property="FontAttributes" Value="None" />
 													</DataTrigger>
 												</Label.Triggers>
 											</Label>
 
-											<!-- Chevron -->
-											<Label Grid.Column="2"
-                                                   FontFamily="FASolid"
-                                                   FontSize="9"
-                                                   HorizontalOptions="End"
-                                                   VerticalOptions="Center">
+											<Label
+												Grid.Column="2"
+												FontFamily="FASolid"
+												FontSize="10"
+												HorizontalOptions="End"
+												VerticalOptions="Center">
 												<Label.Triggers>
-													<DataTrigger TargetType="Label" Binding="{Binding IsExpanded}" Value="True">
+													<DataTrigger
+														Binding="{Binding IsExpanded}"
+														TargetType="Label"
+														Value="True">
+														<Setter Property="TextColor" Value="{StaticResource SidebarActiveBg}" />
 														<Setter Property="Text" Value="&#xf077;" />
-														<Setter Property="TextColor" Value="{StaticResource SidebarSelectedAccent}" />
 													</DataTrigger>
-													<DataTrigger TargetType="Label" Binding="{Binding IsExpanded}" Value="False">
+													<DataTrigger
+														Binding="{Binding IsExpanded}"
+														TargetType="Label"
+														Value="False">
 														<Setter Property="Text" Value="&#xf078;" />
-														<Setter Property="TextColor" Value="{StaticResource SidebarIconMuted}" />
 													</DataTrigger>
-													<DataTrigger TargetType="Label" Binding="{Binding Items.Count}" Value="0">
+													<DataTrigger
+														Binding="{Binding IsActive}"
+														TargetType="Label"
+														Value="True">
+														<Setter Property="TextColor" Value="{StaticResource SidebarActiveText}" />
+													</DataTrigger>
+													<DataTrigger
+														Binding="{Binding IsActive}"
+														TargetType="Label"
+														Value="False">
+														<Setter Property="TextColor" Value="{StaticResource SidebarTextMuted}" />
+													</DataTrigger>
+													<DataTrigger
+														Binding="{Binding Items.Count}"
+														TargetType="Label"
+														Value="0">
 														<Setter Property="IsVisible" Value="False" />
 													</DataTrigger>
 												</Label.Triggers>
@@ -166,85 +172,89 @@
 										</Grid>
 									</Border>
 
-									<!-- ── SUB-ITEMS ── -->
-									<VerticalStackLayout Margin="8,2,0,4"
-                                                         Spacing="1"
-                                                         IsVisible="{Binding IsExpanded}"
-                                                         BindableLayout.ItemsSource="{Binding Items}">
+									<!--  ================= CHILDREN =================  -->
+									<VerticalStackLayout
+										Padding="0,6,0,6"
+										IsVisible="{Binding IsExpanded}"
+										Spacing="0">
+
+										<BindableLayout.ItemsSource>
+											<Binding Path="Items" />
+										</BindableLayout.ItemsSource>
+
 										<BindableLayout.ItemTemplate>
 											<DataTemplate>
-												<Border Padding="0"
-                                                        StrokeThickness="0"
-                                                        StrokeShape="RoundRectangle 8">
-													<Border.Triggers>
-														<DataTrigger TargetType="Border" Binding="{Binding IsActive}" Value="True">
-															<Setter Property="BackgroundColor" Value="{StaticResource SidebarSelected}" />
-														</DataTrigger>
-														<DataTrigger TargetType="Border" Binding="{Binding IsActive}" Value="False">
-															<Setter Property="BackgroundColor" Value="Transparent" />
-														</DataTrigger>
-													</Border.Triggers>
+												<Grid
+													Padding="22,0,10,0"
+													ColumnDefinitions="16,*"
+													ColumnSpacing="10"
+													HeightRequest="32">
 
-													<Border.GestureRecognizers>
-														<TapGestureRecognizer
-                                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.NavigateCommand}"
-                                                            CommandParameter="{Binding .}" />
-													</Border.GestureRecognizers>
+													<Grid.GestureRecognizers>
+														<TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.NavigateCommand}" CommandParameter="{Binding .}" />
+													</Grid.GestureRecognizers>
 
-													<Grid Padding="10,8" ColumnDefinitions="3,20,*" ColumnSpacing="10">
+													<!--  connector line, contiguous across rows since Spacing="0"  -->
+													<BoxView
+														Grid.Column="0"
+														HorizontalOptions="Center"
+														VerticalOptions="Fill"
+														WidthRequest="1"
+														Color="{StaticResource SidebarActiveBg}" />
 
-														<!-- Active indicator pill -->
-														<Border Grid.Column="0"
-                                                                WidthRequest="3"
-                                                                HeightRequest="16"
-                                                                StrokeThickness="0"
-                                                                StrokeShape="RoundRectangle 2"
-                                                                VerticalOptions="Center">
-															<Border.Triggers>
-																<DataTrigger TargetType="Border" Binding="{Binding IsActive}" Value="True">
-																	<Setter Property="BackgroundColor" Value="{StaticResource SidebarSelectedAccent}" />
-																</DataTrigger>
-																<DataTrigger TargetType="Border" Binding="{Binding IsActive}" Value="False">
-																	<Setter Property="BackgroundColor" Value="Transparent" />
-																</DataTrigger>
-															</Border.Triggers>
-														</Border>
+													<!--  bullet, painted with sidebar bg to mask the line behind it  -->
+													<Border
+														Grid.Column="0"
+														Padding="0"
+														BackgroundColor="{StaticResource CardSelected}"
+														HeightRequest="9"
+														HorizontalOptions="Center"
+														StrokeThickness="1.4"
+														VerticalOptions="Center"
+														WidthRequest="9">
+														<Border.StrokeShape>
+															<Ellipse />
+														</Border.StrokeShape>
+														<Border.Triggers>
+															<DataTrigger
+																Binding="{Binding IsActive}"
+																TargetType="Border"
+																Value="True">
+																<Setter Property="Stroke" Value="{StaticResource SidebarActiveBg}" />
+															</DataTrigger>
+															<DataTrigger
+																Binding="{Binding IsActive}"
+																TargetType="Border"
+																Value="False">
+																<Setter Property="Stroke" Value="{StaticResource CardSelected}" />
+															</DataTrigger>
+														</Border.Triggers>
+													</Border>
 
-														<!-- Sub icon -->
-														<Label Grid.Column="1"
-                                                               Text="{Binding Icon.Glyph}"
-                                                               FontFamily="{Binding Icon.Font, Converter={StaticResource FontFamilyConverter}}"
-                                                               FontSize="12"
-                                                               HorizontalOptions="Center"
-                                                               VerticalOptions="Center">
-															<Label.Triggers>
-																<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="True">
-																	<Setter Property="TextColor" Value="{StaticResource SidebarSelectedAccent}" />
-																</DataTrigger>
-																<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="False">
-																	<Setter Property="TextColor" Value="{StaticResource SidebarIconMuted}" />
-																</DataTrigger>
-															</Label.Triggers>
-														</Label>
-
-														<!-- Sub title -->
-														<Label Grid.Column="2"
-                                                               Text="{Binding Title}"
-                                                               FontSize="12"
-                                                               VerticalOptions="Center">
-															<Label.Triggers>
-																<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="True">
-																	<Setter Property="TextColor" Value="{StaticResource SidebarTextActive}" />
-																	<Setter Property="FontAttributes" Value="Bold" />
-																</DataTrigger>
-																<DataTrigger TargetType="Label" Binding="{Binding IsActive}" Value="False">
-																	<Setter Property="TextColor" Value="{StaticResource SidebarText}" />
-																	<Setter Property="FontAttributes" Value="None" />
-																</DataTrigger>
-															</Label.Triggers>
-														</Label>
-													</Grid>
-												</Border>
+													<Label
+														Grid.Column="1"
+														FontSize="13"
+														LineBreakMode="TailTruncation"
+														Text="{Binding Title}"
+														VerticalOptions="Center">
+														<Label.Triggers>
+															<DataTrigger
+																Binding="{Binding IsActive}"
+																TargetType="Label"
+																Value="True">
+																<Setter Property="TextColor" Value="White" />
+																<Setter Property="FontAttributes" Value="Bold" />
+															</DataTrigger>
+															<DataTrigger
+																Binding="{Binding IsActive}"
+																TargetType="Label"
+																Value="False">
+																<Setter Property="TextColor" Value="{StaticResource SidebarTextMuted}" />
+																<Setter Property="FontAttributes" Value="None" />
+															</DataTrigger>
+														</Label.Triggers>
+													</Label>
+												</Grid>
 											</DataTemplate>
 										</BindableLayout.ItemTemplate>
 									</VerticalStackLayout>
@@ -255,52 +265,54 @@
 				</VerticalStackLayout>
 			</ScrollView>
 
-			<!-- ═══════════════════════════════════════════════
-                 BOTTOM PROFILE CARD
-            ═══════════════════════════════════════════════ -->
-			<Border Grid.Row="2"
-                    BackgroundColor="{StaticResource SidebarSurface}"
-                    Stroke="{StaticResource SidebarBorder}"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 12"
-                    Padding="14,10"
-                    Margin="12,8,12,16">
-				<Grid ColumnDefinitions="36,*,Auto" ColumnSpacing="10">
+			<!--  ================= USER CARD =================  -->
+			<Border
+				Grid.Row="3"
+				Margin="12,8,12,16"
+				Padding="12,10"
+				BackgroundColor="#2F3944"
+				StrokeShape="RoundRectangle 12"
+				StrokeThickness="0">
 
-					<!-- Avatar circle -->
-					<Border Grid.Column="0"
-                            WidthRequest="34"
-                            HeightRequest="34"
-                            BackgroundColor="{StaticResource EpicPrimary}"
-                            StrokeThickness="0"
-                            StrokeShape="Ellipse"
-                            VerticalOptions="Center">
-						<Label Text="Д"
-                               FontSize="13"
-                               FontAttributes="Bold"
-                               TextColor="White"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center" />
+				<Grid ColumnDefinitions="34,*,Auto" ColumnSpacing="10">
+					<Border
+						BackgroundColor="{StaticResource SidebarActiveBg}"
+						HeightRequest="34"
+						StrokeShape="Ellipse"
+						StrokeThickness="0"
+						VerticalOptions="Center"
+						WidthRequest="34">
+						<Label
+							FontAttributes="Bold"
+							FontSize="12"
+							HorizontalOptions="Center"
+							Text="Д"
+							TextColor="{StaticResource SidebarActiveText}"
+							VerticalOptions="Center" />
 					</Border>
 
-					<!-- Name + role -->
-					<VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
-						<Label Text="{Binding UserName}"
-                               FontSize="13"
-                               FontAttributes="Bold"
-                               TextColor="{StaticResource SidebarTextActive}" />
-						<Label Text="{Binding UserRole}"
-                               FontSize="11"
-                               TextColor="{StaticResource SidebarTextMuted}" />
+					<VerticalStackLayout
+						Grid.Column="1"
+						Spacing="1"
+						VerticalOptions="Center">
+						<Label
+							FontAttributes="Bold"
+							FontSize="12.5"
+							Text="{Binding UserName}"
+							TextColor="White" />
+						<Label
+							FontSize="10.5"
+							Text="{Binding UserRole}"
+							TextColor="{StaticResource SidebarTextMuted}" />
 					</VerticalStackLayout>
 
-					<!-- Settings icon -->
-					<Label Grid.Column="2"
-                           Text="&#xf013;"
-                           FontFamily="FASolid"
-                           FontSize="13"
-                           TextColor="{StaticResource SidebarIconMuted}"
-                           VerticalOptions="Center" />
+					<Label
+						Grid.Column="2"
+						FontFamily="FASolid"
+						FontSize="12"
+						Text="&#xf013;"
+						TextColor="{StaticResource SidebarTextMuted}"
+						VerticalOptions="Center" />
 				</Grid>
 			</Border>
 		</Grid>

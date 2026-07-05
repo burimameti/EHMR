@@ -1,14 +1,87 @@
-﻿<?xml version = "1.0" encoding = "UTF-8" ?>
-<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:EHMR"
-             x:Class="EHMR.App">
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<Application
+	x:Class="EHMR.App"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:converters="clr-namespace:EHMR.Converters"
+	xmlns:local="clr-namespace:EHMR">
 	<Application.Resources>
 		<ResourceDictionary>
+			<converters:SparkStringNotEmptyConverter x:Key="SparkStringNotEmptyConverter" />
+			<converters:SparkToneToTextColorConverter x:Key="SparkToneToTextColorConverter" />
+			<converters:SparkToneToBackgroundColorConverter x:Key="SparkToneToBackgroundColorConverter" />
+			<converters:SparkNotNullConverter x:Key="SparkNotNullConverter " />
+			<converters:SparkCollectionNotEmptyConverter x:Key="SparkCollectionNotEmptyConverter  " />
+			<converters:StringNotNullOrEmptyConverter x:Key="StringNotNullOrEmptyConverter" />
+			<converters:BrushToColorConverter x:Key="BrushToColorConverter" />
+			<converters:SuggestionSelectionStrokeConverter x:Key="SuggestionSelectionStrokeConverter" />
+			<converters:GenderDisplayConverter x:Key="GenderDisplayConverter " />
+			<converters:StatusDisplayConverter x:Key="StatusDisplayConverter " />
+			<converters:HighlightMatchConverter x:Key="HighlightMatchConverter" />
+			<converters:SearchEntityTypeToIconConverter x:Key="SearchEntityTypeToIconConverter" />
+
+			<converters:EncounterStatusToTextConverter x:Key="EncounterStatusToTextConverter" />
+			<converters:EncounterStatusToColorConverter x:Key="EncounterStatusToColorConverter" />
+			<converters:EncounterStatusToBgConverter x:Key="EncounterStatusToBgConverter" />
+
+			<converters:SearchEntityTypeToLabelConverter x:Key="SearchEntityTypeToLabelConverter" />
+			<converters:GenderToLabelConverter x:Key="GenderToLabelConverter" />
+			<converters:PatientStatusToBgConverter x:Key="PatientStatusToBgConverter" />
+			<converters:PatientStatusToColorConverter x:Key="PatientStatusToColorConverter" />
+			<converters:AppointmentStatusToPillFgConverter x:Key="AppointmentStatusToPillFgConverter" />
+			<converters:AppointmentStatusDisplayConverter x:Key="AppointmentStatusDisplayConverter" />
+			<converters:AppointmentStatusToPillBgConverter x:Key="AppointmentStatusToPillBgConverter" />
+			<converters:PatientStatusToLabelConverter x:Key="PatientStatusToLabelConverter" />
+			<converters:PatientStatusToTextColorConverter x:Key="PatientStatusToTextColorConverter" />
+			<converters:PatientStatusDisplayConverter x:Key="PatientStatusDisplayConverter" />
+			<converters:PatientStatusToPillBgConverter x:Key="PatientStatusToPillBgConverter " />
+
+			<converters:PatientStatusToPillFgConverter x:Key="PatientStatusToPillFgConverter  " />
+			<converters:StatusToColorConverter x:Key="StatusToColorConverter" />
+			<converters:StatusToBgConverter x:Key="StatusToBgConverter" />
+			<converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+			<converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+			<converters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+			<converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+
+			<converters:RiskToBackgroundConverter x:Key="RiskToBackgroundConverter" />
+			<converters:RiskToTextColorConverter x:Key="RiskToTextColorConverter" />
+			<converters:PageActiveConverter x:Key="PageActiveConverter" />
+			<converters:LayoutStyleToTemplateConverter x:Key="LayoutStyleToTemplateConverter" />
 			<ResourceDictionary.MergedDictionaries>
+
 				<ResourceDictionary Source="Resources/Styles/Colors.xaml" />
-				<ResourceDictionary Source="Resources/Styles/Styles.xaml" />
-				<ResourceDictionary Source="Resources/Styles/Epic.xaml" />
+				<ResourceDictionary Source="Resources/Styles/AuthStyle.xaml" />
+				<ResourceDictionary Source="Resources/Styles/MyStyle.xaml" />
+				<ResourceDictionary Source="Resources/Controls/SparkStyles.xaml" />
+				<!--<ResourceDictionary Source="Resources/Styles/Styles.xaml" />-->
+				<ResourceDictionary Source="Resources/Styles/Typography.xaml" />
+				<ResourceDictionary Source="Resources/Styles/Controls.xaml" />
+				<ResourceDictionary Source="Resources/Styles/Layouts.xaml" />
+
+
+				<!--<ResourceDictionary Source="Resources/Styles/Colors2.xaml" />-->
+				<!--<ResourceDictionary Source="Resources/Styles/Styles2.xaml" />-->
+
+
+				<ResourceDictionary Source="Resources/Controls/FFCardStyles.xaml" />
+				<ResourceDictionary Source="Resources/Controls/FFDataGridStyles.xaml" />
+
+
+				<ResourceDictionary Source="Resources/Controls/FFHeaderStyles.xaml" />
+
+				<ResourceDictionary Source="Resources/Controls/FFSearchBoxStyles.xaml" />
+				<ResourceDictionary Source="Resources/Controls/FFInputStyles.xaml" />
+				<!--<ResourceDictionary Source="Resources/Controls/FFPaginationStyles.xaml" />-->
+				<ResourceDictionary Source="Resources/Controls/FFIconButtonStyles.xaml" />
+				<ResourceDictionary Source="Resources/Controls/FFPickerStyles.xaml" />
+				<ResourceDictionary Source="Resources/Controls/FFShellStyles.xaml" />
+
+				<ResourceDictionary Source="Resources/Controls/FFSwitchStyles.xaml" />
+				<ResourceDictionary Source="Resources/Controls/FFMetricTileStyles.xaml" />
+				<ResourceDictionary Source="Resources/Controls/FFStatusChipStyles.xaml" />
+
+				<ResourceDictionary Source="Resources/Controls/ShadowFieldContainerStyles.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>

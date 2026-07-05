@@ -6,5 +6,9 @@
         {
             get; set;
         }
+        bool OpenInEditMode
+        {
+            get; set;
+        }
     }
 }

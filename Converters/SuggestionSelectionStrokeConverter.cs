@@ -1,12 +1,18 @@
 ﻿using EHMR.Domain.Search;
 using EHMR.Services;
 using EHMR.ViewModels;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Graphics;
+
 using System.Globalization;
 
 namespace EHMR.Converters;
+public class StringNotEmptyConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        => !string.IsNullOrWhiteSpace(value as string);
 
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
 /// <summary>
 /// Border.Stroke color for one suggestion row: highlighted (parameter color,
 /// typically the app's Primary resource) when this row is the one currently

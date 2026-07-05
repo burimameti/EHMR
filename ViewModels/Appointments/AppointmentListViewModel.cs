@@ -1,20 +1,29 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EHMR.Desktop.Core.ViewModels;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Domain.Search;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Services;
+using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 
 namespace EHMR.ViewModels;
 
 public partial class AppointmentListViewModel
-    : BaseViewModel<Appointment>
+    : BaseViewModel<Appointment>, IQueryAttributable
 {
+    private string? _pendingStatus;
+    private bool _pendingToday;
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        _pendingStatus=query.TryGetValue("statusFilter", out var f) ? f?.ToString() : null;
+        _pendingToday=query.TryGetValue("dateFilter", out var d)&&d?.ToString()=="today";
+    }
+
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
     private readonly ISelectedItemService<Appointment> _selectedItemService;
     private readonly IAuthorizationService _authService;
@@ -69,17 +78,21 @@ public partial class AppointmentListViewModel
         yield return new TextSpan { Text=text[(index+query.Length)..] };
     }
 
-    public IReadOnlyList<AppointmentStatusOption> StatusFilters =
+    public IReadOnlyList<AppointmentStatusOption> StatusFilters
+    {
+        get;
+    } =
 [
-    new() { Filter = AppointmentStatusFilter.Active,    Label = "Активни" },
+
     new() { Filter = AppointmentStatusFilter.All,       Label = "Сите" },
+            new() { Filter = AppointmentStatusFilter.Active,    Label = "Активни" },
     new() { Filter = AppointmentStatusFilter.Scheduled, Label = "Закажан" },
     new() { Filter = AppointmentStatusFilter.CheckedIn, Label = "Пријавен" },
     new() { Filter = AppointmentStatusFilter.Completed, Label = "Завршен" },
     new() { Filter = AppointmentStatusFilter.Cancelled, Label = "Откажан" },
     new() { Filter = AppointmentStatusFilter.Missed,    Label = "Пропуштен" }
 ];
-
+ 
     private async Task DebouncedSearchAsync(string text)
     {
         _searchCts?.Cancel();
@@ -137,7 +150,7 @@ public partial class AppointmentListViewModel
         get => _selectedStatus;
         set
         {
-            if(SetProperty(ref _selectedStatus, value)) _=ApplyFilterAsync();
+            if(SetProperty(ref _selectedStatus, value)) ApplyPipeline();
         }
     }
 
@@ -148,7 +161,7 @@ public partial class AppointmentListViewModel
         get => _filterDate;
         set
         {
-            if(SetProperty(ref _filterDate, value)) _=ApplyFilterAsync();
+            if(SetProperty(ref _filterDate, value)) ApplyPipeline();
         }
     }
 
@@ -165,7 +178,7 @@ public partial class AppointmentListViewModel
         set
         {
             SetProperty(ref _filterByDate, value);
-            if(value) _=ApplyFilterAsync(); else _=LoadAsync();
+            if(value) ApplyPipeline(); else _=LoadAsync();
         }
     }
 
@@ -235,8 +248,9 @@ public partial class AppointmentListViewModel
                 .AsNoTracking()
                 .OrderBy(x => x.ScheduledStart)
                 .ToListAsync();
-            _allItems=items;
-            await ApplyFilterAsync();
+            AllItems=items;
+            ApplyPendingQuery();
+            ApplyPipeline();
         }
         catch(Exception ex)
         {
@@ -247,54 +261,23 @@ public partial class AppointmentListViewModel
             IsBusy=false;
         }
     }
-
-    protected override IEnumerable<Appointment> FilterItems(string searchText, IEnumerable<Appointment> items)
+    private void ApplyPendingQuery()
     {
-        if(_activePersonId is not null)
+        if(!string.IsNullOrWhiteSpace(_pendingStatus)&&
+            Enum.TryParse<AppointmentStatusFilter>(_pendingStatus, true, out var parsed))
         {
-            // Drilled into one person's complete record: id match, no date filter,
-            // sorted most-recent-first since this is a history view.
-            var history = _activePersonType==SearchEntityType.Doctor
-                ? items.Where(x => x.Doctor!=null&&x.Doctor.Id.ToString()==_activePersonId)
-                : items.Where(x => x.Patient!=null&&x.Patient.Id.ToString()==_activePersonId);
-
-            if(SelectedStatus.Filter==AppointmentStatusFilter.Active)
-                history=history.Where(x => x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.CheckedIn);
-            else if(SelectedStatus.Filter!=AppointmentStatusFilter.All)
-            {
-                var status = Enum.Parse<AppointmentStatus>(
-                    SelectedStatus.Filter.ToString());
-                history=history.Where(x => x.Status==status);
-            }
-            return history.OrderByDescending(x => x.ScheduledStart);
+            SelectedStatus=StatusFilters.First(x => x.Filter==parsed);
         }
 
-        var query = items;
-        if(!string.IsNullOrWhiteSpace(searchText))
+        if(_pendingToday)
         {
-            var term = searchText.Trim();
-            query=query.Where(x =>
-                (x.Patient?.FullName?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
-                (x.Doctor?.FullName?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
-                (x.ReasonForVisit?.Contains(term, StringComparison.OrdinalIgnoreCase)??false));
+            FilterDate=DateTime.Today;
+            FilterByDate=true;
         }
 
-        if(SelectedStatus.Filter==AppointmentStatusFilter.Active)
-            query=query.Where(x => x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.CheckedIn);
-        else if(SelectedStatus.Filter!=AppointmentStatusFilter.All)
-        {
-            var status = Enum.Parse<AppointmentStatus>(
-                SelectedStatus.Filter.ToString());
-
-            query=query.Where(x => x.Status==status);
-        }
-
-        if(FilterByDate)
-            query=query.Where(x => x.ScheduledStart.Date==FilterDate.Date);
-
-        return query;
+        _pendingStatus=null;
+        _pendingToday=false;
     }
-
     [RelayCommand]
     private void CommitSearch()
     {
@@ -305,14 +288,14 @@ public partial class AppointmentListViewModel
         }
 
         ShowSuggestions=false;
-        _=ApplyFilterAsync();
+        ApplyPipeline();
     }
 
     [RelayCommand]
-    private async Task SelectSuggestionAsync(SearchSuggestionDto suggestion)
+    private Task SelectSuggestionAsync(SearchSuggestionDto suggestion)
     {
-        if(suggestion is null) return;
-
+        if(suggestion is null)
+            return Task.CompletedTask;
         SelectedSuggestion=suggestion;
         _activePersonType=suggestion.Type;
         _activePersonId=suggestion.Id;
@@ -332,7 +315,8 @@ public partial class AppointmentListViewModel
         FilterByDate=false;
         SelectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
 
-        await ApplyFilterAsync();
+        ApplyPipeline();
+        return Task.CompletedTask;
     }
 
     [RelayCommand]
@@ -387,7 +371,7 @@ public partial class AppointmentListViewModel
     }
 
     [RelayCommand]
-    private async Task ClearFiltersAsync()
+    private async Task ClearFilters()
     {
         _activePersonId=null;
         _activePersonType=null;
@@ -403,8 +387,56 @@ public partial class AppointmentListViewModel
         ShowSuggestions=false;
         FilterDate=DateTime.Today;
         FilterByDate=true;
-        SelectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.Active);
-        await ApplyFilterAsync();
+        SelectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
+        CurrentPage=1;
+        ApplyPipeline();
+    }
+
+    protected override IEnumerable<Appointment> ApplyFilters(IEnumerable<Appointment> items)
+    {
+        if(_activePersonId is not null)
+        {
+            // Drilled into one person's complete record: id match, no date filter,
+            // sorted most-recent-first since this is a history view.
+            var history = _activePersonType==SearchEntityType.Doctor
+                ? items.Where(x => x.Doctor!=null&&x.Doctor.Id.ToString()==_activePersonId)
+                : items.Where(x => x.Patient!=null&&x.Patient.Id.ToString()==_activePersonId);
+
+            if(SelectedStatus.Filter==AppointmentStatusFilter.Active)
+                history=history.Where(x => x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.CheckedIn);
+            else if(SelectedStatus.Filter!=AppointmentStatusFilter.All)
+            {
+                var status = Enum.Parse<AppointmentStatus>(
+                    SelectedStatus.Filter.ToString());
+                history=history.Where(x => x.Status==status);
+            }
+            return history.OrderByDescending(x => x.ScheduledStart);
+        }
+
+        var query = items;
+        if(!string.IsNullOrWhiteSpace(SearchText))
+        {
+            var term = SearchText.Trim();
+            query=query.Where(x =>
+                (x.Patient?.FullName?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
+                (x.Doctor?.FullName?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
+                (x.ReasonForVisit?.Contains(term, StringComparison.OrdinalIgnoreCase)??false));
+        }
+
+        if(SelectedStatus.Filter==AppointmentStatusFilter.Active)
+            query=query.Where(x => x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.CheckedIn);
+        else if(SelectedStatus.Filter!=AppointmentStatusFilter.All)
+        {
+            var status = Enum.Parse<AppointmentStatus>(
+                SelectedStatus.Filter.ToString());
+
+            query=query.Where(x => x.Status==status);
+        }
+
+        if(FilterByDate)
+            query=query.Where(x => x.ScheduledStart.Date==FilterDate.Date);
+
+        return query;
     }
 }
 

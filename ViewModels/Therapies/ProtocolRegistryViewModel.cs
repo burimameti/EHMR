@@ -1,11 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using EHMR.Desktop.Core.ViewModels;
+﻿using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
-using EHMR.Views.Therapies; // Промени го со точниот namespace каде ќе биде формата
+
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -29,7 +27,7 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
         {
             if(SetProperty(ref _selectedCategory, value))
             {
-                _=ApplyFilterAsync();
+                ApplyPipeline();
             }
         }
     }
@@ -51,15 +49,6 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
     }
 
     // LIFECYCLE
-    public override async Task OnAppearingAsync()
-    {
-        await LoadAsync();
-    }
-
-    protected override async Task OnRefreshAsync()
-    {
-        await LoadAsync();
-    }
 
     // LOAD DATA
     [RelayCommand]
@@ -79,9 +68,9 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
                 .OrderByDescending(x => x.CreatedAt)
                 .ToListAsync();
 
-            _allItems=protocols; // Полнење на заштитената база од твојот BaseViewModel
+            AllItems=protocols; // Полнење на заштитената база од твојот BaseViewModel
 
-            await ApplyFilterAsync();
+            ApplyPipeline();
         }
         catch(Exception ex)
         {
@@ -94,23 +83,22 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
     }
 
     // ФИЛТРИРАЊЕ НА ПРОТОКОЛИТЕ (Имплементација на апстрактниот метод од BaseViewModel)
-    protected override IEnumerable<TherapyProtocol> FilterItems(string searchText, IEnumerable<TherapyProtocol> items)
+    protected override IEnumerable<TherapyProtocol> ApplySearch(
+     IEnumerable<TherapyProtocol> query,
+     string search)
     {
-        var query = items;
+        if(string.IsNullOrWhiteSpace(search))
+            return query;
 
-        // 1. Пребарување по текст (Име или Опис)
-        if(!string.IsNullOrWhiteSpace(searchText))
-        {
-            query=query.Where(x =>
-                (x.Name?.Contains(searchText, StringComparison.OrdinalIgnoreCase)??false)||
-                (x.Description?.Contains(searchText, StringComparison.OrdinalIgnoreCase)??false));
-        }
+        return query.Where(x =>
+            (x.Name?.Contains(search, StringComparison.OrdinalIgnoreCase)??false)||
+            (x.Description?.Contains(search, StringComparison.OrdinalIgnoreCase)??false));
+    }
 
-        // 2. Филтрирање по Категорија
+    protected override IEnumerable<TherapyProtocol> ApplyFilters(IEnumerable<TherapyProtocol> query)
+    {
         if(SelectedCategory!="Сите")
-        {
             query=query.Where(x => x.DiseaseCategory==SelectedCategory);
-        }
 
         return query;
     }
@@ -163,8 +151,8 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
             db.TherapyProtocols.Remove(protocol);
             await db.SaveChangesAsync();
 
-            _allItems.Remove(protocol);
-            await ApplyFilterAsync();
+            AllItems.Remove(protocol);
+            ApplyPipeline();
 
             await UserDialogService.ShowAlertAsync("Успешно бришење", "Протоколот е отстранет од каталогот.", "OK");
         }
@@ -183,6 +171,6 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
     {
         SearchText=string.Empty;
         SelectedCategory="Сите";
-        await ApplyFilterAsync();
+        ApplyPipeline();
     }
 }

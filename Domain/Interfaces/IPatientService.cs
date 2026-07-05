@@ -9,6 +9,8 @@ namespace EHMR.Domain.Interfaces
 {
     public interface IPatientService
     {
+        Task UpdatePatientAsync(Patient cycle);
+
         Task<List<Patient>> GetAllAsync();
 
         Task DeleteAsync(Guid id);

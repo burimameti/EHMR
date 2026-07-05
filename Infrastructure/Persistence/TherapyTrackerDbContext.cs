@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 
+
 namespace EHMR.Infrastructure.Persistence;
 
 public interface ISoftDelete
@@ -233,7 +234,11 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             .WithMany(x => x.Diagnoses)
             .HasForeignKey(x => x.PatientId)
             .OnDelete(DeleteBehavior.NoAction);
-
+        modelBuilder.Entity<Diagnosis>()
+          .HasOne(x => x.Encounter)
+          .WithMany(x => x.Diagnoses)
+          .HasForeignKey(x => x.EncounterId)
+          .OnDelete(DeleteBehavior.NoAction);
         // =====================================================
         // AppointmentDiagnosis (many-to-many bridge)
         // =====================================================
