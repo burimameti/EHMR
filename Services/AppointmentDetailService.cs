@@ -60,6 +60,7 @@ namespace EHMR.Services
     public interface IAppointmentDetailService
     {
         Task<AppointmentDetailDto> GetAppointment(Guid id);
+        Task<AppointmentDetailDto> GetAppointmentContext();
 
         Task<PatientContextDto> GetPatientContext(Guid patientId);
 
@@ -151,7 +152,40 @@ namespace EHMR.Services
                 TotalCycles=cycles.Count
             };
         }
+        public async Task<AppointmentDetailDto> GetAppointmentContext()
+        {
+            await using var db = await _factory.CreateDbContextAsync();
 
+
+            var patients = await db.Patients
+                .AsNoTracking()
+                .OrderBy(x => x.LastName)
+                .ThenBy(x => x.FirstName)
+                .ToListAsync();
+
+            var doctors = await db.Doctors.Include(x => x.User)
+                .AsNoTracking()
+                .OrderBy(x => x.User.LastName)
+                .ThenBy(x => x.User.FirstName)
+                .ToListAsync();
+
+
+       
+
+            return new AppointmentDetailDto
+            {
+                Appointment=null,
+                Diagnoses=null,
+                TherapyCycles=null,
+                Patients=patients,
+                Doctors=doctors,
+                PreviousAppointment=null,
+                NextAppointment=null,
+                TotalAppointments=0,
+                TotalDiagnoses=0,
+                TotalCycles=0
+            };
+        }
         public async Task<PatientContextDto> GetPatientContext(Guid patientId)
         {
             await using var db = await _factory.CreateDbContextAsync();

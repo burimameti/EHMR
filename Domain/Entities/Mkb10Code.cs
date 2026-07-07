@@ -13,13 +13,13 @@ namespace EHMR.Domain.Entities
         public string Code { get; set; } = string.Empty;
 
         /// <summary>Clinical description of the diagnosis, e.g. "Болка во долниот дел на грбот".</summary>
-        public string Description
+        public string? Description
         {
             get; set;
         }
 
         /// <summary>Optional grouping/chapter from the official МКБ-10 classification.</summary>
-        public string Chapter { get; set; } = string.Empty;
+        public string? Chapter { get; set; } = string.Empty;
 
         /// <summary>Soft toggle so outdated codes can be hidden from the dropdown without deleting history.</summary>
         public bool IsActive { get; set; } = true;

@@ -4,38 +4,32 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
-	xmlns:converters="clr-namespace:EHMR.Converters"
-	xmlns:entities="clr-namespace:EHMR.Domain.Entities"
-	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Appointments"
 	x:Name="PageRoot"
 	x:DataType="viewModels:AppointmentListViewModel"
 	BackgroundColor="{StaticResource Gray200}">
 
 	<Grid ColumnDefinitions="285,*">
 
-		<!--  SIDEBAR  -->
+		<!--  ================= LEFT MENU =================  -->
 		<Border Grid.Column="0" StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
-		<!--  MAIN  -->
+		<!--  ================= MAIN =================  -->
 		<Grid
 			Grid.Column="1"
 			Padding="24"
 			BackgroundColor="{StaticResource Gray200}"
-			RowDefinitions="Auto,Auto,*"
-			RowSpacing="20">
+			RowDefinitions="Auto,*"
+			RowSpacing="16">
 
-			<!--  ================= HEADER =================  -->
-
+			<!--  HEADER  -->
 			<Border
 				Grid.Row="0"
-				Padding="12"
-				BackgroundColor="{StaticResource White}"
-				StrokeShape="RoundRectangle 16"
-				StrokeThickness="0">
-
-
+				Padding="20"
+				StrokeShape="RoundRectangle 0"
+				Style="{StaticResource SurfaceCard}">
 				<Grid ColumnDefinitions="*,Auto">
 
 					<controls:FFPageHeader Title="Регистар на термини" Subtitle="Преглед и управување со закажани термини" />
@@ -45,12 +39,11 @@
 						Spacing="10"
 						VerticalOptions="Center">
 
-
-
 						<Button
+							BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
 							Command="{Binding NewAppointmentCommand}"
 							HeightRequest="45"
-							Style="{StaticResource PrimaryButtonStyle}"
+							Style="{StaticResource TabButtonActiveStyle}"
 							Text="Нов Термин"
 							WidthRequest="150" />
 
@@ -59,238 +52,58 @@
 							HeightRequest="44"
 							Style="{StaticResource EhmrIconButton}"
 							WidthRequest="44" />
+
 					</HorizontalStackLayout>
 
 				</Grid>
 			</Border>
 
-			<!--  ================= FILTERS =================  -->
-			<Border
-				Grid.Row="1"
-				Padding="10"
-				BackgroundColor="{StaticResource White}"
-				StrokeShape="RoundRectangle 12"
-				StrokeThickness="0">
+			<!--  SEARCH / FILTER / GRID  -->
+			<Border Grid.Row="1" Padding="0">
+				<Grid ColumnSpacing="5" RowSpacing="20">
+					<VerticalStackLayout>
 
-
-				<Grid ColumnDefinitions="2.5*,1*,Auto" ColumnSpacing="{StaticResource Space16}">
-
-					<!--  SEARCH  -->
-					<controls:FFSearchBox
-						Placeholder="Пациент или доктор…"
-						Text="{Binding SearchText}"
-						VerticalOptions="Center" />
-
-					<!--  STATUS  -->
-					<controls:FFPicker
-						Grid.Column="1"
-						ItemDisplayBinding="{Binding Label}"
-						ItemsSource="{Binding StatusFilters}"
-						Label="Статус"
-						Placeholder="Сите"
-						SelectedItem="{Binding SelectedStatus}" />
-
-
-					<!--  CLEAR  -->
-					<VerticalStackLayout Grid.Column="4" VerticalOptions="End">
-						<Border
-							Margin="5"
-							Padding="16,0"
-							BackgroundColor="{StaticResource MedicalBlue}"
-							HeightRequest="42"
-							Stroke="{StaticResource Gray700}"
-							StrokeShape="RoundRectangle 8">
-
-							<Border.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding ClearFiltersCommand}" />
-							</Border.GestureRecognizers>
-
-							<Label
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalTextAlignment="Center"
-								Text="✕ Исчисти"
-								TextColor="White"
-								VerticalTextAlignment="Center" />
+						<Border Margin="0,8,0,8" Padding="0">
+							<controls:SparkExplorerHeaderView
+								Buttons="{Binding Buttons}"
+								Pickers="{Binding Pickers}"
+								SearchCommand="{Binding SearchCommand}"
+								SearchPlaceholder="Пациент или доктор..."
+								SearchText="{Binding SearchText}"
+								Tabs="{Binding Tabs}" />
 						</Border>
+
+						<!--  History drill-down banner  -->
+						<Border
+							Margin="0,0,0,8"
+							Padding="12,8"
+							BackgroundColor="{StaticResource MedicalBlue}"
+							IsVisible="{Binding IsViewingPersonHistory}"
+							StrokeShape="RoundRectangle 8"
+							StrokeThickness="0">
+							<Label
+								FontAttributes="Bold"
+								FontSize="13"
+								Text="{Binding ActiveHistoryLabel, StringFormat='Целосна историја за: {0}'}"
+								TextColor="White" />
+						</Border>
+
+						<Border>
+							<controls:SparkDataGridView
+								x:Name="AppointmentGrid"
+								Columns="{Binding GridColumns}"
+								CurrentPage="{Binding CurrentPage}"
+								EditRowCommand="{Binding EditCommand}"
+								NextPageCommand="{Binding NextPageCommand}"
+								PageChangedCommand="{Binding PageChangedCommand}"
+								PreviousPageCommand="{Binding PreviousPageCommand}"
+								RowTappedCommand="{Binding SelectCommand}"
+								Rows="{Binding GridRows}"
+								TotalPages="{Binding TotalPages}" />
+						</Border>
+
 					</VerticalStackLayout>
-
 				</Grid>
-			</Border>
-
-			<!--  ================= GRID =================  -->
-			<Border
-				Grid.Row="2"
-				StrokeShape="RoundRectangle 12"
-				StrokeThickness="0">
-
-				<controls:FFDataGrid
-					x:Name="AppointmentGrid"
-					CurrentPage="{Binding CurrentPage}"
-					EmptyMessage="Пробај да ги промениш филтрите..."
-					EmptyTitle="Нема пронајдени пациенти"
-					IsLoading="{Binding IsBusy}"
-					ItemsSource="{Binding Items}"
-					NextPageCommand="{Binding NextPageCommand}"
-					PagedItems="{Binding Items}"
-					PrevPageCommand="{Binding PreviousPageCommand}"
-					RowCommand="{Binding SelectCommand}"
-					TotalPages="{Binding Items.Count}"
-					Variant="CoolBlueLight">
-
-					<!--  HEADER  -->
-					<controls:FFDataGrid.HeaderContent>
-						<Grid
-							Padding="18,0"
-							ColumnDefinitions="2*,2*,1*,1*,1*,160"
-							ColumnSpacing="14"
-							HeightRequest="48">
-							<Grid.Resources>
-								<Style TargetType="Label">
-									<Setter Property="FontSize" Value="10" />
-									<Setter Property="FontAttributes" Value="Bold" />
-									<Setter Property="CharacterSpacing" Value="0.8" />
-									<Setter Property="VerticalOptions" Value="Center" />
-									<Setter Property="TextColor" Value="{Binding HeaderForeground, Source={x:Reference AppointmentGrid}, Converter={StaticResource BrushToColorConverter}}" />
-								</Style>
-							</Grid.Resources>
-
-							<Label
-								Grid.Column="0"
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalTextAlignment="Center"
-								Text="ПАЦИЕНТ"
-								VerticalOptions="Center" />
-							<Label
-								Grid.Column="1"
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalTextAlignment="Center"
-								Text="ДОКТОР"
-								VerticalOptions="Center" />
-							<Label
-								Grid.Column="2"
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalTextAlignment="Center"
-								Text="ДАТУМ"
-								VerticalOptions="Center" />
-							<Label
-								Grid.Column="3"
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalTextAlignment="Center"
-								Text="БРЕМЕ"
-								VerticalOptions="Center" />
-							<Label
-								Grid.Column="4"
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalTextAlignment="Center"
-								Text="СТАТУС"
-								VerticalOptions="Center" />
-							<Label
-								Grid.Column="5"
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalTextAlignment="Center"
-								Text="АКЦИИ"
-								VerticalOptions="Center" />
-
-						</Grid>
-					</controls:FFDataGrid.HeaderContent>
-
-					<!--  ROW  -->
-					<controls:FFDataGrid.RowTemplate>
-						<DataTemplate x:DataType="entities:Appointment">
-
-							<Grid Padding="18,10" ColumnDefinitions="2*,2*,1*,1*,1*,160">
-
-								<!--  PATIENT  -->
-								<VerticalStackLayout>
-									<Label FontAttributes="Bold" Text="{Binding Patient.FullName}" />
-									<Label
-										FontSize="12"
-										Text="{Binding Patient.NationalId}"
-										TextColor="{StaticResource Black}" />
-								</VerticalStackLayout>
-
-								<!--  DOCTOR  -->
-								<VerticalStackLayout Grid.Column="1">
-									<Label FontAttributes="Bold" Text="{Binding Doctor.FullName}" />
-									<Label
-										FontSize="12"
-										Text="{Binding Doctor.Specialty}"
-										TextColor="{StaticResource Black}" />
-								</VerticalStackLayout>
-
-								<!--  DATE  -->
-								<Label
-									Grid.Column="2"
-									HorizontalTextAlignment="Center"
-									Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy}'}"
-									TextColor="{StaticResource Black}" />
-
-								<!--  TIME  -->
-								<Label
-									Grid.Column="3"
-									HorizontalTextAlignment="Center"
-									Text="{Binding ScheduledStart, StringFormat='{0:HH:mm}'}"
-									TextColor="{StaticResource Black}" />
-
-								<!--  STATUS  -->
-
-								<Border
-									Grid.Column="4"
-									Padding="10,5"
-									BackgroundColor="{Binding Status, Converter={converters:AppointmentStatusToPillBgConverter}}"
-									HorizontalOptions="Center"
-									Stroke="{Binding Status, Converter={converters:AppointmentStatusToPillFgConverter}}"
-									StrokeShape="RoundRectangle 16"
-									StrokeThickness="1"
-									VerticalOptions="Center">
-
-									<Label
-										Padding="6,0"
-										FontAttributes="Bold"
-										FontSize="11"
-										HorizontalTextAlignment="Center"
-										Text="{Binding Status, Converter={converters:AppointmentStatusDisplayConverter}}"
-										TextColor="{Binding Status, Converter={converters:AppointmentStatusToPillFgConverter}}"
-										VerticalTextAlignment="Center" />
-
-								</Border>
-
-								<!--  ACTIONS  -->
-								<HorizontalStackLayout
-									Grid.Column="5"
-									HorizontalOptions="Center"
-									Spacing="6">
-
-									<Button
-										Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:AppointmentListViewModel}}, Path=SelectCommand}"
-										CommandParameter="{Binding .}"
-										HeightRequest="40"
-										Text="👁"
-										WidthRequest="40" />
-
-									<Button
-										Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:AppointmentListViewModel}}, Path=EditCommand}"
-										CommandParameter="{Binding .}"
-										HeightRequest="36"
-										Text="✎"
-										TextColor="Black"
-										WidthRequest="36" />
-
-								</HorizontalStackLayout>
-
-							</Grid>
-						</DataTemplate>
-					</controls:FFDataGrid.RowTemplate>
-
-				</controls:FFDataGrid>
-
 			</Border>
 
 		</Grid>

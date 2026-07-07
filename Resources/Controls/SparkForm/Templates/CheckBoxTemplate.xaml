@@ -1,0 +1,7 @@
+﻿<DataTemplate
+ xmlns="http://schemas.microsoft.com/dotnet/2021/maui">
+
+<CheckBox
+    IsChecked="{Binding Value}" />
+
+</DataTemplate>

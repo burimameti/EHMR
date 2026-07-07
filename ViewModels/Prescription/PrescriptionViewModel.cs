@@ -12,6 +12,9 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
     private readonly ISelectedItemService<Prescription> _selectedItem;
 
+    /// <summary>Module key used by BaseViewModel&lt;T&gt;.EvaluatePermissions().</summary>
+    protected override string ModuleName => "prescriptions";
+
     public PrescriptionListViewModel(
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
         INavigationService navigationService,
@@ -23,9 +26,9 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>
     {
         _dbFactory=dbFactory;
         _selectedItem=selectedItem;
-    }
 
-    // ================= LIFECYCLE =================
+        EvaluatePermissions(); // base method — was never being called before
+    }
 
     // ================= LOAD =================
     [RelayCommand]
@@ -46,7 +49,6 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>
                 .OrderByDescending(x => x.CreatedAt)
                 .ToListAsync();
 
-            // 🔥 IMPORTANT: new base engine source
             AllItems=prescriptions??new();
 
             ApplyPipeline();
@@ -108,9 +110,7 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>
             db.Prescriptions.Remove(item);
             await db.SaveChangesAsync();
 
-            // 🔥 sync in-memory state
             AllItems.Remove(item);
-
             ApplyPipeline();
 
             await UserDialogService.ShowAlertAsync(
@@ -128,20 +128,17 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>
         }
     }
 
-    // ================= FILTER RESET =================
-    [RelayCommand]
-    private void ClearFilters()
-    {
-        SearchText=string.Empty;
-
-        // reset pipeline
-        ApplyPipeline();
-    }
-
-    // ================= FILTER HOOK (IMPORTANT) =================
+    // ================= FILTER HOOK =================
     protected override IEnumerable<Prescription> ApplyFilters(IEnumerable<Prescription> query)
     {
         // No filters yet → clean extension point
         return query;
+    }
+
+    // ClearFilters command now comes from BaseViewModel<T> (ClearFiltersCommand):
+    // it calls ResetFilters() → ApplyPipeline() → SyncSparkPickersFromFilters().
+    protected override void ResetFilters()
+    {
+        SearchText=string.Empty;
     }
 }

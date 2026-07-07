@@ -183,7 +183,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             Diagnoses=new ObservableCollection<Diagnosis>(dto.Diagnoses);
             Prescriptions=new ObservableCollection<Prescription>(dto.Prescriptions);
 
-            EncounterDiagnosisNotes=Encounter.ClinicalNotes;
+            EncounterDiagnosisNotes=Encounter.ClinicalNotes ?? string.Empty;
             SelectedPatient=Patients.FirstOrDefault(x => x.Id==Encounter.PatientId);
             SelectedDoctor=Doctors.FirstOrDefault(x => x.Id==Encounter.DoctorId);
 

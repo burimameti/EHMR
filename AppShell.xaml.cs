@@ -5,6 +5,7 @@ using EHMR.Views;
 using EHMR.Views.Appointments;
 using EHMR.Views.Encounters;
 using EHMR.Views.Prescription;
+using EHMR.Views.Protocols;
 using EHMR.Views.Therapies;
 
 namespace EHMR;

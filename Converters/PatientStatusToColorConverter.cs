@@ -1,17 +1,29 @@
 ﻿using EHMR.Domain.Entities;
 using EHMR.ViewModels.Patients.Extensions;
-using System;
 using System.Globalization;
 
 namespace EHMR.Converters
 {
+  
+
+    public class BoolToActiveBackgroundConverter : IValueConverter
+    {
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            bool isActive = value is bool b&&b;
+            return isActive ? Color.FromArgb("#69CFDD") : Color.FromArgb("#94A3B8");
+        }
+
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
 
     /// <summary>
     /// Текст боја за статус chip - темна/наситена нијанса за секој статус.
     /// </summary>
     public class PatientStatusToTextColorConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if(value is not PatientStatus status)
                 return Colors.Black;
@@ -27,7 +39,7 @@ namespace EHMR.Converters
             };
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
 
@@ -37,7 +49,7 @@ namespace EHMR.Converters
     /// </summary>
     public class PatientStatusToColorConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if(value is not PatientStatus status)
                 return Color.FromArgb("#F1F5F9");
@@ -53,13 +65,13 @@ namespace EHMR.Converters
             };
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
 
     public class GenderToLabelConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if(value is null)
                 return string.Empty;
@@ -76,7 +88,7 @@ namespace EHMR.Converters
             };
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
 
@@ -85,7 +97,7 @@ namespace EHMR.Converters
     /// </summary>
     public class PatientStatusToLabelConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if(value is not PatientStatus status)
                 return string.Empty;
@@ -101,25 +113,25 @@ namespace EHMR.Converters
             };
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
 
     public sealed class GenderDisplayConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
             value is Gender g ? g.ToDisplay() : value?.ToString()??"";
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
             throw new NotSupportedException();
     }
 
     public sealed class StatusDisplayConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
             value is PatientStatus s ? s.ToDisplay() : value?.ToString()??"";
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
             throw new NotSupportedException();
     }
 }

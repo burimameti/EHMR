@@ -1,4 +1,5 @@
-﻿using EHMR.ViewModels;
+﻿
+using EHMR.ViewModels.Encounters;
 
 namespace EHMR.Views.Encounters
 {

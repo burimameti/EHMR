@@ -10,7 +10,7 @@ public class Appointment : BaseEntity
         get; set;
     }
 
-    public Patient Patient
+    public Patient? Patient
     {
         get; set;
     }
@@ -20,7 +20,7 @@ public class Appointment : BaseEntity
         get; set;
     }
 
-    public Doctor Doctor
+    public Doctor? Doctor
     {
         get; set;
     }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ResourceDictionary
+xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+<ResourceDictionary.MergedDictionaries>
+
+<ResourceDictionary Source="Templates/TextTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/MultilineTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/NumericTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/DecimalTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/CurrencyTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/DateTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/DateTimeTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/TimeTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/PasswordTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/EmailTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/PhoneTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/ComboTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/LookupTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/SearchTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/ToggleTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/CheckBoxTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/ImageTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/AttachmentTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/RichTextTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/RatingTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/SignatureTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/BarcodeTemplate.xaml"/>
+
+<ResourceDictionary Source="Templates/QrCodeTemplate.xaml"/>
+
+</ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

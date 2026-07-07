@@ -6,7 +6,7 @@ public partial class TherapyCyclesPage : ContentPage
 {
     private readonly MenuView menuView;
 
-    public TherapyCyclesPage(TherapyCyclesViewModel viewModel, MenuView menuView)
+    public TherapyCyclesPage(TherapyCycleListViewModel viewModel, MenuView menuView)
     {
         InitializeComponent();
 
@@ -21,9 +21,9 @@ public partial class TherapyCyclesPage : ContentPage
     {
         base.OnAppearing();
 
-        if(BindingContext is TherapyCyclesViewModel vm)
+        if(BindingContext is TherapyCycleListViewModel vm)
         {
-            await vm.LoadDataAsync();
+            await vm.LoadAsync();
         }
     }
 }

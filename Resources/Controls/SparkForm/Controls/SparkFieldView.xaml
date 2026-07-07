@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+	x:Class="EHMR.Resources.Controls.SparkForms.Controls.SparkFieldView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+	<VerticalStackLayout x:Name="PART_FieldHost" Spacing="6">
+
+		<!--  Label  -->
+
+		<Label
+			FontAttributes="Bold"
+			FontSize="14"
+			Text="{Binding Field.Label}" />
+
+
+
+		<!--  Generated Control  -->
+
+		<ContentView x:Name="PART_ControlHost" />
+
+
+
+		<!--  Required  -->
+
+		<Label
+			x:Name="PART_RequiredLabel"
+			FontSize="11"
+			IsVisible="False"
+			Opacity="0.65"
+			Text="* Required" />
+
+
+
+		<!--  Help  -->
+
+		<Label
+			x:Name="PART_HelpLabel"
+			FontSize="11"
+			IsVisible="False"
+			LineBreakMode="WordWrap"
+			Opacity="0.75" />
+
+
+
+		<!--  Validation  -->
+
+		<Label
+			x:Name="PART_ErrorLabel"
+			FontSize="12"
+			IsVisible="False"
+			LineBreakMode="WordWrap"
+			TextColor="Red" />
+
+	</VerticalStackLayout>
+
+</ContentView>

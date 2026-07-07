@@ -20,7 +20,7 @@
 
 		<Border.Shadow>
 			<Shadow
-				Brush="#22000000"
+				Brush="#224AA74A"
 				Radius="10"
 				Offset="0,4" />
 		</Border.Shadow>

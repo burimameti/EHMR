@@ -10,6 +10,7 @@
 
 		<!--  ============ ROW 1: TABS + TRAILING ============  -->
 		<Border
+			Padding="0"
 			BackgroundColor="{StaticResource SparkBadgeNeutralBg}"
 			Stroke="{StaticResource SparkBorder}"
 			StrokeThickness="0">
@@ -34,13 +35,14 @@
 				<ScrollView
 					Grid.Column="0"
 					HorizontalScrollBarVisibility="Never"
-					Orientation="Horizontal">
+					Orientation="Both">
 					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Tabs, Source={x:Reference Root}}" Spacing="0">
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkTabItem">
 								<Grid
-									Padding="20,0"
-									RowDefinitions="*,3"
+									Padding="26,0"
+									HeightRequest="56"
+									RowDefinitions="*,4"
 									WidthRequest="-1">
 									<Grid.GestureRecognizers>
 										<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
@@ -170,8 +172,9 @@
 				<!--  ============ 0: SEARCH ============  -->
 				<Border
 					Grid.Column="0"
-					Padding="10,0"
+					Padding="16,0"
 					BackgroundColor="White"
+					HeightRequest="48"
 					Stroke="{StaticResource SparkBorder}"
 					StrokeThickness="1">
 					<Border.StrokeShape>
@@ -184,19 +187,22 @@
 							VerticalOptions="Center">
 							<Path
 								Data="M9,2 A7,7 0 1 0 9,16 A7,7 0 1 0 9,2 Z M14,14 L20,20"
-								HeightRequest="22"
+								HeightRequest="24"
 								Stroke="{StaticResource SparkTextSecondary}"
 								StrokeThickness="1.9"
-								WidthRequest="18" />
+								WidthRequest="24" />
 							<Path
 								Data="M0,0 L8,0 L4,6 Z"
 								Fill="{StaticResource SparkTextSecondary}"
-								HeightRequest="16"
-								WidthRequest="18" />
+								HeightRequest="22"
+								WidthRequest="22" />
 						</HorizontalStackLayout>
 						<Entry
 							Grid.Column="1"
 							BackgroundColor="Transparent"
+							FontSize="14"
+							HeightRequest="42"
+							MinimumWidthRequest="500"
 							Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
 							Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}"
 							TextColor="{StaticResource SparkTextPrimary}"
@@ -229,20 +235,20 @@
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkPickerItem">
 							<Border
-								Padding="6,1"
+								Padding="10,0"
 								BackgroundColor="White"
-								MinimumHeightRequest="42"
+								MinimumHeightRequest="40"
 								Stroke="{StaticResource Gray300}"
 								StrokeThickness="1">
 								<Border.StrokeShape>
-									<RoundRectangle CornerRadius="6" />
+									<RoundRectangle CornerRadius="8" />
 								</Border.StrokeShape>
 								<Picker
 									Title="{Binding Placeholder}"
-									FontSize="12"
+									FontSize="14"
 									HorizontalTextAlignment="Center"
 									ItemsSource="{Binding Items}"
-									MinimumHeightRequest="36"
+									MinimumHeightRequest="38"
 									SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
 									TextColor="{StaticResource SparkTextPrimary}"
 									VerticalOptions="Center"
@@ -260,11 +266,11 @@
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkButtonItem">
 							<Border
-								Padding="16,8"
-								HeightRequest="40"
+								Padding="22,0"
+								HeightRequest="38"
 								StrokeThickness="0">
 								<Border.StrokeShape>
-									<RoundRectangle CornerRadius="6" />
+									<RoundRectangle CornerRadius="12" />
 								</Border.StrokeShape>
 								<Border.GestureRecognizers>
 									<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
@@ -297,7 +303,7 @@
 										WidthRequest="12" />
 									<Label
 										FontAttributes="Bold"
-										FontSize="13"
+										FontSize="15"
 										Text="{Binding Label}"
 										TextColor="White"
 										VerticalOptions="Center" />

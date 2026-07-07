@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Interfaces;
+using EHMR.Resources.Controls;
 using System.Collections.ObjectModel;
 
 namespace EHMR.ViewModels;
@@ -22,7 +23,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     protected List<T> FilteredItems = new();
 
     [ObservableProperty] private ObservableCollection<T> items = new();
-
+    [ObservableProperty] private ObservableCollection<T> pagedItems = new();
     // ================= STATE =================
     [ObservableProperty] private bool isBusy;
 
@@ -37,6 +38,10 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
 
     public bool HasNextPage => CurrentPage<TotalPages;
     public bool HasPreviousPage => CurrentPage>1;
+    // ================= PERMISSIONS =================
+    [ObservableProperty] private bool canCreate;
+    [ObservableProperty] private bool canUpdate;
+    [ObservableProperty] private bool canDelete;
 
     protected BaseViewModel(
         INavigationService navigationService,
@@ -51,7 +56,25 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
 
         UiContext=SynchronizationContext.Current;
     }
+    [RelayCommand]
+    private void PageChanged(int page)
+    {
+        if(page<1||page>TotalPages||page==CurrentPage) return;
+        CurrentPage=page;
+    }
 
+    protected abstract string ModuleName
+    {
+        get;
+    }
+
+    protected void EvaluatePermissions()
+    {
+        var has = AuthService.CanAccessModule(ModuleName);
+        CanCreate=has;
+        CanUpdate=has;
+        CanDelete=has;
+    }
     // ================= CORE PIPELINE =================
     protected void ApplyPipeline()
     {
@@ -63,12 +86,15 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
 
         FilteredItems=query.ToList();
 
-        // Bypass the property setter to avoid duplicate calls to RefreshPage
         _currentPage=1;
-
         RefreshPage();
+
+        OnPipelineApplied(); // new hook — runs after every filter/search/sort/page refresh
     }
 
+    protected virtual void OnPipelineApplied()
+    {
+    }
     protected void RefreshPage()
     {
         var page = FilteredItems
@@ -77,13 +103,18 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
             .ToList();
 
         Items=new ObservableCollection<T>(page);
-
         HasItems=Items.Any();
 
         OnPropertyChanged(nameof(TotalItems));
         OnPropertyChanged(nameof(TotalPages));
         OnPropertyChanged(nameof(HasNextPage));
         OnPropertyChanged(nameof(HasPreviousPage));
+
+        OnPageProjected(Items);   // new hook
+    }
+
+    protected virtual void OnPageProjected(ObservableCollection<T> page)
+    {
     }
 
     // ================= HOOKS =================
@@ -124,11 +155,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         }
     }
 
-    private int _pageSize = 10;
-
-    public int TotalPages =>
-           PageSize<=0 ? 0 : (int)Math.Ceiling((double)TotalItems/PageSize);
-
+    private int _pageSize = 25;
     public int PageSize
     {
         get => _pageSize;
@@ -140,6 +167,25 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
                 RefreshPage();
             }
         }
+    }
+    public int TotalPages =>
+           PageSize<=0 ? 0 : (int)Math.Ceiling((double)TotalItems/PageSize);
+
+    public bool IsGridView
+    {
+        get; set;
+    }
+
+    public bool IsListView => !IsGridView;
+
+    public int TotalRecords
+    {
+        get;
+    }
+
+    public int FilteredRecords
+    {
+        get;
     }
 
     // ================= PAGINATION COMMANDS =================
@@ -210,4 +256,52 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     public void Dispose()
     {
     }
+
+    // ================= SPARK BUTTONS =================
+    public ObservableCollection<SparkButtonItem> Buttons { get; } = new();
+
+    protected virtual void BuildSparkButtons()
+    {
+        Buttons.Clear();
+        Buttons.Add(new SparkButtonItem
+        {
+            Label="✕ Исчисти",
+            IsPrimary=true,
+            Command=ClearFiltersCommand
+        });
+    }
+
+    // ================= SPARK PICKERS (shared helper only — content is entity-specific) =================
+    public ObservableCollection<SparkPickerItem> Pickers { get; } = new();
+
+    protected static SparkPickerItem MakePicker(string placeholder, IEnumerable<string> items,
+        string initialSelection, Action<string> onSelected)
+    {
+        var picker = new SparkPickerItem { Placeholder=placeholder };
+        foreach(var item in items) picker.Items.Add(item);
+        picker.SelectedItem=initialSelection;
+
+        picker.PropertyChanged+=(_, e) =>
+        {
+            if(e.PropertyName==nameof(SparkPickerItem.SelectedItem)&&picker.SelectedItem is string s)
+                onSelected(s);
+        };
+        return picker;
+    }
+
+    protected virtual void SyncSparkPickersFromFilters()
+    {
+    }
+
+    // ================= CLEAR FILTERS =================
+    [RelayCommand]
+    protected void ClearFilters()
+    {
+        ResetFilters();
+        ApplyPipeline();               // recomputes filters/search/sort and resets CurrentPage=1 internally
+        SyncSparkPickersFromFilters();
+    }
+
+    /// <summary>Reset all entity-specific filter fields (and search text) back to defaults.</summary>
+    protected abstract void ResetFilters();
 }

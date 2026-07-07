@@ -155,7 +155,7 @@
 	<!--  в”Ђв”Ђ SEPARATOR в”Ђв”Ђ  -->
 	<Style x:Key="SeparatorStyle" TargetType="BoxView">
 		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceBorder}" />
-		<Setter Property="HeightRequest" Value="1" />
+		<Setter Property="HeightRequest" Value="2" />
 		<Setter Property="HorizontalOptions" Value="Fill" />
 	</Style>
 
@@ -164,7 +164,7 @@
 		<Setter Property="BackgroundColor" Value="{StaticResource InputBg}" />
 		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
 		<Setter Property="PlaceholderColor" Value="{StaticResource TextPlaceholder}" />
-		<Setter Property="FontSize" Value="13" />
+		<Setter Property="FontSize" Value="14" />
 	</Style>
 
 	<!--  в”Ђв”Ђ COLLECTIONVIEW в”Ђв”Ђ  -->
@@ -211,7 +211,7 @@
 		<Setter Property="TextColor" Value="{StaticResource TextMuted}" />
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="Padding" Value="16,8" />
-		<Setter Property="CornerRadius" Value="6" />
+		<Setter Property="CornerRadius" Value="12" />
 		<Setter Property="BorderWidth" Value="0" />
 	</Style>
 
@@ -221,7 +221,7 @@
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="Padding" Value="16,8" />
-		<Setter Property="CornerRadius" Value="6" />
+		<Setter Property="CornerRadius" Value="12" />
 		<Setter Property="BorderWidth" Value="0" />
 	</Style>
 </ResourceDictionary>

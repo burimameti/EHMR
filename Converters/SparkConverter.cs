@@ -14,9 +14,9 @@ namespace EHMR.Converters
     /// 
     public class SparkNotNullConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
             => value!=null;
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
             => throw new NotSupportedException();
     }
 
@@ -25,47 +25,49 @@ namespace EHMR.Converters
     /// Register: &lt;sc:SparkCollectionNotEmptyConverter x:Key="SparkCollectionNotEmptyConverter" /&gt;</summary>
     public class SparkCollectionNotEmptyConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
             => value is System.Collections.ICollection c&&c.Count>0;
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
             => throw new NotSupportedException();
     }
     public class SparkStringNotEmptyConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
             => !string.IsNullOrEmpty(value as string);
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
             => throw new NotSupportedException();
     }
 
     /// <summary>SparkBadgeTone -> text color (used by metric card values and the profile risk badge).</summary>
     public class SparkToneToTextColorConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
             => (value as SparkBadgeTone?) switch
             {
                 SparkBadgeTone.Success => Color.FromArgb("#3CB35B"),
                 SparkBadgeTone.Danger => Color.FromArgb("#E0554F"),
+                SparkBadgeTone.Warning => Color.FromArgb("#E0A83C"),
                 _ => Color.FromArgb("#2E3A4E")
             };
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
             => throw new NotSupportedException();
     }
 
     /// <summary>SparkBadgeTone -> background tint (used by the profile risk badge pill).</summary>
     public class SparkToneToBackgroundColorConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
             => (value as SparkBadgeTone?) switch
             {
-                SparkBadgeTone.Success => Color.FromArgb("#E7F6E9"),
-                SparkBadgeTone.Danger => Color.FromArgb("#FDE8E8"),
+                SparkBadgeTone.Success => Color.FromArgb("#3CB35B"),
+                SparkBadgeTone.Danger => Color.FromArgb("#E0554F"),
+                SparkBadgeTone.Warning => Color.FromArgb("#E0A83C"),
                 _ => Color.FromArgb("#EDF1F5")
             };
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
             => throw new NotSupportedException();
     }
 }

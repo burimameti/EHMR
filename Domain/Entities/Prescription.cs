@@ -21,13 +21,13 @@ namespace EHMR.Domain.Entities
             get; set;
         }
 
-        public string Dosage
+        public string? Dosage
         {
             get;
             set;
         }
 
-        public string Medication
+        public string? Medication
         {
             get;
             set;

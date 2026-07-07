@@ -14,15 +14,15 @@ public class LayoutStyleToTemplateConverter : IValueConverter
         get; set;
     }
 
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         => (FFThemeVariant)value== FFThemeVariant.Sparked ? SparkTemplate : ClassicTemplate;
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
 }
 public class RiskToBackgroundConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if(value is not double and not int) return Colors.Transparent;
         double risk = System.Convert.ToDouble(value);
@@ -38,7 +38,7 @@ public class RiskToBackgroundConverter : IValueConverter
 
 public class RiskToTextColorConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if(value is not double and not int) return Colors.Black;
         double risk = System.Convert.ToDouble(value);
@@ -48,7 +48,7 @@ public class RiskToTextColorConverter : IValueConverter
         return Color.FromArgb("#1F7A2E");                   // dark green (very low risk)
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
 }
 

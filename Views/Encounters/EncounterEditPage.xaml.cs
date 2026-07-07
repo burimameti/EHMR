@@ -15,6 +15,15 @@ public partial class EncounterEditPage : ContentPage
         BindingContext=_VM;
         // MenuHost.Content=menu;
     }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        if(BindingContext is EncounterEditViewModel vm)
+        {
+            await vm.LoadAsync();
+        }
+    }
     private CancellationTokenSource _searchCts;
     private async void OnMkbSearchTextChanged(object sender, TextChangedEventArgs e)
     {

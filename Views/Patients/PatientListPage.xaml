@@ -3,368 +3,81 @@
 	x:Class="EHMR.Views.PatientListPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:behaviors="clr-namespace:EHMR.Behaviors"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
-	xmlns:converters="clr-namespace:EHMR.Converters"
-	xmlns:domain="clr-namespace:EHMR.Domain.Entities"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Patients"
 	x:Name="PageRoot"
 	x:DataType="viewModels:PatientListViewModel">
 
-	<ContentPage.Resources>
-		<ResourceDictionary>
-			<Color x:Key="PillActiveBg">#10B981</Color>
-			<Color x:Key="PillActiveFg">#FFFFFF</Color>
-			<Color x:Key="PillInactiveBg">#64748B</Color>
-			<Color x:Key="PillInactiveFg">#FFFFFF</Color>
-			<Color x:Key="PillDeceasedBg">#EF4444</Color>
-			<Color x:Key="PillDeceasedFg">#FFFFFF</Color>
-			<converters:PatientStatusToPillBgConverter x:Key="StatusBgConverter" />
-		</ResourceDictionary>
-	</ContentPage.Resources>
-
 	<Grid ColumnDefinitions="285,*">
 
+		<!--  ================= LEFT MENU =================  -->
 		<Border Grid.Column="0" StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
+		<!--  ================= MAIN =================  -->
 		<Grid
 			Grid.Column="1"
 			Padding="24"
 			BackgroundColor="{StaticResource Gray200}"
 			RowDefinitions="Auto,Auto,*"
-			RowSpacing="20">
+			RowSpacing="16">
 
+			<!--  HEADER  -->
 			<Border
 				Grid.Row="0"
-				Margin="15"
-				Padding="10"
-				BackgroundColor="{StaticResource Gray200}"
-				StrokeShape="RoundRectangle 16"
-				StrokeThickness="0">
+				Padding="20"
+				StrokeShape="RoundRectangle 0"
+				Style="{StaticResource SurfaceCard}">
 
 				<Grid ColumnDefinitions="*,Auto">
 
 					<controls:FFPageHeader Title="Регистар на пациенти" Subtitle="Преглед, пребарување и управување со пациенти" />
 
-					<HorizontalStackLayout
+					<Button
 						Grid.Column="1"
-						Spacing="10"
-						VerticalOptions="Center">
-
-						<Button
-							Command="{Binding AddCommand}"
-							HeightRequest="45"
-							Style="{StaticResource PrimaryButtonStyle}"
-							Text="Нов Пациент"
-							WidthRequest="150" />
-
-						<!--<Button
-							Command="{Binding NewAppointmentCommand}"
-							Style="{StaticResource PrimaryButtonStyle}"
-							Text="+ Преглед" />
-
-						<Button Command="{Binding RefreshCommand}" Style="{StaticResource EhmrIconButton}" />-->
-
-					</HorizontalStackLayout>
+						BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
+						Command="{Binding AddCommand}"
+						HeightRequest="45"
+						Style="{StaticResource TabButtonActiveStyle}"
+						Text="Нов Пациент"
+						WidthRequest="150" />
 
 				</Grid>
-
 			</Border>
-			<Border
-				Grid.Row="1"
-				Padding="10"
-				BackgroundColor="{StaticResource Gray100}"
-				StrokeShape="RoundRectangle 12"
-				StrokeThickness="0">
-				<Border
-					Padding="16,16"
-					StrokeShape="RoundRectangle 12"
-					StrokeThickness="0">
 
-					<Grid ColumnDefinitions="2*,1.2*,1.2*,1.2*,1.2*,Auto" ColumnSpacing="{StaticResource Space16}">
-
-
-						<!--  SEARCH  -->
-						<controls:FFSearchBox
-							Placeholder="Име, презиме или ЕМБГ..."
-							Text="{Binding SearchText}"
-							VerticalOptions="Center" />
-
-						<!--  STATUS  -->
-						<controls:FFPicker
-							Grid.Column="1"
-							ItemsSource="{Binding StatusFilters}"
-							Label="Статус"
-							SelectedItem="{Binding SelectedStatusDisplay}" />
-
-						<!--  GENDER  -->
-						<controls:FFPicker
-							Grid.Column="2"
-							ItemsSource="{Binding GenderFilters}"
-							Label="Пол"
-							SelectedItem="{Binding SelectedGenderDisplay}" />
-
-						<!--  AGE  -->
-						<controls:FFPicker
-							Grid.Column="3"
-							ItemsSource="{Binding AgeGroups}"
-							Label="Возраст"
-							SelectedItem="{Binding SelectedAgeGroupDisplay}" />
-
-						<!--  CITY  -->
-						<controls:FFPicker
-							Grid.Column="4"
-							ItemsSource="{Binding CityFilterNames}"
-							Label="Град"
-							SelectedItem="{Binding SelectedCityDisplay}" />
-						<Button
-							Grid.Column="5"
-							Margin="0,20,0,0"
-							Command="{Binding ClearFiltersCommand}"
-							HeightRequest="45"
-							Style="{StaticResource EhmrIconButton}"
-							Text="Освежи Филтер"
-							TextColor="{StaticResource Primary}"
-							WidthRequest="150" />
-						<!--  CLEAR  -->
-						<!--<VerticalStackLayout
-						Grid.Column="5"
-						HeightRequest="40"
-						VerticalOptions="End">
-						<Border
-							Padding="12,0"
-							BackgroundColor="{StaticResource Gray500}"
-							HeightRequest="36"
-							Stroke="{StaticResource Gray700}"
-							StrokeShape="RoundRectangle 8"
-							StrokeThickness="1">
-
-							<Border.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding ClearFiltersCommand}" />
-							</Border.GestureRecognizers>
-
-							<Label
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalTextAlignment="Center"
-								Text="✕ Исчисти"
-								TextColor="{StaticResource White}"
-								VerticalTextAlignment="Center" />
+			<!--  SEARCH / FILTER  -->
+			<Border Grid.Row="1" Padding="0">
+				<Grid ColumnSpacing="5" RowSpacing="20">
+					<VerticalStackLayout>
+						<Border Margin="0,8,0,8" Padding="0">
+							<controls:SparkExplorerHeaderView
+								Buttons="{Binding Buttons}"
+								Pickers="{Binding Pickers}"
+								SearchCommand="{Binding SearchCommand}"
+								SearchPlaceholder="Пребарување на пациенти..."
+								SearchText="{Binding PatientSearchText}"
+								Tabs="{Binding Tabs}" />
 						</Border>
-					</VerticalStackLayout>-->
-					</Grid>
-				</Border>
-			</Border>
-			<Border
-				Grid.Row="2"
-				Padding="10"
-				BackgroundColor="{StaticResource Gray100}"
-				StrokeShape="RoundRectangle 12"
-				StrokeThickness="0">
-				<controls:FFDataGrid
-					x:Name="PatientGrid"
-					CurrentPage="{Binding CurrentPage}"
-					EmptyMessage="Пробај да ги промениш филтрите..."
-					EmptyTitle="Нема пронајдени пациенти"
-					IsLoading="{Binding IsBusy}"
-					ItemsSource="{Binding Items}"
-					NextPageCommand="{Binding NextPageCommand}"
-					PagedItems="{Binding Items}"
-					PrevPageCommand="{Binding PreviousPageCommand}"
-					RowCommand="{Binding SelectCommand}"
-					TotalPages="{Binding Items.Count}"
-					Variant="Sparked">
-					<controls:FFDataGrid.HeaderContent>
+						<Border>
+							<controls:SparkDataGridView
+								x:Name="PatientGrid"
+								Columns="{Binding GridColumns}"
+								CurrentPage="{Binding CurrentPage}"
+								EditRowCommand="{Binding EditCommand}"
+								NextPageCommand="{Binding NextPageCommand}"
+								PageChangedCommand="{Binding PageChangedCommand}"
+								PreviousPageCommand="{Binding PreviousPageCommand}"
+								RowTappedCommand="{Binding SelectCommand}"
+								Rows="{Binding GridRows}"
+								TotalPages="{Binding TotalPages}" />
+						</Border>
+					</VerticalStackLayout>
 
-						<Grid
-							Padding="18,0"
-							ColumnDefinitions="1.2*,2*,0.8*,0.8*,0.9*,1.3*,1.5*,1*,110"
-							ColumnSpacing="14"
-							HeightRequest="48">
-							<Grid.Resources>
-								<Style TargetType="Label">
-									<Setter Property="FontSize" Value="10" />
-									<Setter Property="FontAttributes" Value="Bold" />
-									<Setter Property="CharacterSpacing" Value="0.8" />
-									<Setter Property="VerticalOptions" Value="Center" />
-									<Setter Property="TextColor" Value="{Binding HeaderForeground, Source={x:Reference PatientGrid}, Converter={StaticResource BrushToColorConverter}}" />
-								</Style>
-							</Grid.Resources>
-							<Label
-								FontAttributes="Bold"
-								FontSize="12"
-								Text="Ид"
-								VerticalOptions="Center" />
-							<Label
-								Grid.Column="1"
-								FontAttributes="Bold"
-								FontSize="12"
-								Text="ПАЦИЕНТ"
-								VerticalOptions="Center" />
-							<Label
-								Grid.Column="2"
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalTextAlignment="Center"
-								Text="ПОЛ"
-								VerticalOptions="Center" />
-							<Label
-								Grid.Column="3"
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalTextAlignment="Center"
-								Text="ВОЗРАСТ"
-								VerticalOptions="Center" />
-							<Label
-								Grid.Column="4"
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalTextAlignment="Center"
-								Text="КРВ"
-								VerticalOptions="Center" />
-							<Label
-								Grid.Column="5"
-								FontAttributes="Bold"
-								FontSize="12"
-								Text="ТЕЛЕФОН"
-								VerticalOptions="Center" />
-							<Label
-								Grid.Column="6"
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalTextAlignment="Center"
-								Text="СТАТУС"
-								VerticalOptions="Center" />
-							<Label
-								Grid.Column="7"
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalTextAlignment="Center"
-								Text="АКЦИИ"
-								VerticalOptions="Center" />
-						</Grid>
-					</controls:FFDataGrid.HeaderContent>
-
-					<controls:FFDataGrid.RowTemplate>
-						<DataTemplate x:DataType="domain:Patient">
-							<Grid RowDefinitions="55,1">
-								<Grid
-									Padding="18,0"
-									ColumnDefinitions="1.2*,2*,0.8*,0.8*,0.9*,1.3*,1.5*,1*,110"
-									ColumnSpacing="14"
-									HeightRequest="60">
-									<Label
-										FontSize="13"
-										Text="{Binding Id}"
-										TextColor="{StaticResource Black}"
-										VerticalOptions="Center" />
-									<VerticalStackLayout
-										Grid.Column="1"
-										Spacing="2"
-										VerticalOptions="Center">
-										<Label
-											FontAttributes="Bold"
-											FontSize="13"
-											Text="{Binding FullName}"
-											TextColor="{StaticResource Black}" />
-										<Label
-											FontSize="13"
-											Text="{Binding NationalId}"
-											TextColor="{StaticResource Black}" />
-									</VerticalStackLayout>
-									<Label
-										Grid.Column="2"
-										FontAttributes="Bold"
-										FontSize="13"
-										HorizontalTextAlignment="Center"
-										Text="{Binding Gender, Converter={StaticResource GenderToLabelConverter}}"
-										TextColor="{StaticResource Black}"
-										VerticalOptions="Center" />
-									<Label
-										Grid.Column="3"
-										FontAttributes="Bold"
-										FontSize="13"
-										HorizontalTextAlignment="Center"
-										Text="{Binding Age}"
-										TextColor="{StaticResource Black}"
-										VerticalOptions="Center" />
-									<Border
-										Grid.Column="4"
-										HorizontalOptions="Center"
-										StrokeShape="RoundRectangle 16"
-										StrokeThickness="0"
-										VerticalOptions="Center">
-										<Label
-											FontAttributes="Bold"
-											FontSize="16"
-											Text="{Binding BloodType}"
-											TextColor="{StaticResource ChartRed}" />
-									</Border>
-									<Label
-										Grid.Column="5"
-										FontSize="13"
-										Text="{Binding Phone}"
-										TextColor="{StaticResource ChartBlue}"
-										VerticalOptions="Center" />
-									<Label
-										Grid.Column="6"
-										FontSize="13"
-										Text="{Binding Email}"
-										TextColor="{StaticResource ChartBlue}"
-										VerticalOptions="Center" />
-									<Border
-										Grid.Column="7"
-										Padding="8,4"
-										BackgroundColor="{Binding Status, Converter={StaticResource PatientStatusToBgConverter}}"
-										HorizontalOptions="Center"
-										StrokeShape="RoundRectangle 12"
-										StrokeThickness="0"
-										VerticalOptions="Center">
-										<Label
-											FontAttributes="Bold"
-											FontSize="12"
-											Text="{Binding Status, Converter={StaticResource PatientStatusToLabelConverter}}"
-											TextColor="{Binding Status, Converter={StaticResource PatientStatusToTextColorConverter}}" />
-									</Border>
-									<HorizontalStackLayout
-										Grid.Column="8"
-										HorizontalOptions="Center"
-										Spacing="6"
-										VerticalOptions="Center">
-										<Button
-											BackgroundColor="{StaticResource Gray600}"
-											Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:PatientListViewModel}}, Path=SelectCommand}"
-											CommandParameter="{Binding .}"
-											CornerRadius="18"
-											FontSize="12"
-											HeightRequest="40"
-											Text="👁"
-											TextColor="White"
-											WidthRequest="40" />
-										<Button
-											BackgroundColor="{StaticResource Gray800}"
-											Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:PatientListViewModel}}, Path=EditCommand}"
-											CommandParameter="{Binding .}"
-											CornerRadius="18"
-											FontSize="12"
-											HeightRequest="40"
-											Text="✎"
-											TextColor="{StaticResource White}"
-											WidthRequest="40" />
-									</HorizontalStackLayout>
-								</Grid>
-								<BoxView
-									Grid.Row="1"
-									HeightRequest="1"
-									Color="#DAE0E9" />
-							</Grid>
-						</DataTemplate>
-					</controls:FFDataGrid.RowTemplate>
-				</controls:FFDataGrid>
-
+				</Grid>
 			</Border>
 		</Grid>
+
+
 	</Grid>
 </ContentPage>

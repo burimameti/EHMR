@@ -36,10 +36,10 @@
             get;
             set;
         }
-        public string Description
+        public string? Description
         {
             get;
-            internal set;
+           set;
         }
     }
 }

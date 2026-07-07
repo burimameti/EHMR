@@ -1,8 +1,25 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
+	<!--  ============================================================  -->
+	<!--  RADIUS SCALE — single source of truth for all corner rounding  -->
+	<!--  ============================================================  -->
+	<x:Double x:Key="SparkRadiusXs">4</x:Double>
+	<!--  badges, tight chips  -->
+	<x:Double x:Key="SparkRadiusSm">6</x:Double>
+	<!--  inputs, buttons, pickers  -->
+	<x:Double x:Key="SparkRadiusMd">8</x:Double>
+	<!--  tab badges, larger chips  -->
+	<x:Double x:Key="SparkRadiusLg">12</x:Double>
+	<!--  section panels  -->
+	<x:Double x:Key="SparkRadiusXl">16</x:Double>
+	<!--  page-level cards  -->
+	<x:Double x:Key="SparkRadiusPill">20</x:Double>
+	<!--  fully rounded chips/tags  -->
 
-
+	<!--  ============================================================  -->
+	<!--  COLORS  -->
+	<!--  ============================================================  -->
 	<Color x:Key="SparkSidebarBg">#1D2A44</Color>
 	<Color x:Key="SparkAccentTeal">#21B6C4</Color>
 	<Color x:Key="SparkAccentTealDark">#1899A6</Color>
@@ -24,6 +41,8 @@
 	<Color x:Key="SparkBadgeDangerText">#E0554F</Color>
 	<Color x:Key="SparkBadgeSuccessBg">#E7F6E9</Color>
 	<Color x:Key="SparkBadgeSuccessText">#3CB35B</Color>
+	<Color x:Key="SparkBadgeWarningBg">#FDF3E3</Color>
+	<Color x:Key="SparkBadgeWarningText">#E0A83C</Color>
 	<Color x:Key="SparkBadgeNeutralBg">#EDF1F5</Color>
 	<Color x:Key="SparkBadgeNeutralBgSelected">#21B6C4</Color>
 	<Color x:Key="SparkBadgeNeutralText">#5B6B85</Color>
@@ -41,7 +60,9 @@
 	<x:Double x:Key="SparkFontSizeNormal">14</x:Double>
 	<x:Double x:Key="SparkFontSizeTitle">16</x:Double>
 
-
+	<!--  ============================================================  -->
+	<!--  INPUTS  (radius = Sm/6, matches buttons/pickers)  -->
+	<!--  ============================================================  -->
 	<Style x:Key="SparkSearchBarStyle" TargetType="SearchBar">
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
@@ -54,11 +75,14 @@
 	<Style x:Key="SparkSearchBarFrameStyle" TargetType="Border">
 		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
 		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="0" />
+			</Setter.Value>
+		</Setter>
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
 		<Setter Property="Padding" Value="0" />
 	</Style>
-
 
 	<Style x:Key="SparkPickerStyle" TargetType="Picker">
 		<Setter Property="FontSize" Value="13" />
@@ -71,15 +95,18 @@
 	<Style x:Key="SparkPickerFrameStyle" TargetType="Border">
 		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
 		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="6" />
+			</Setter.Value>
+		</Setter>
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
 		<Setter Property="Padding" Value="8,0" />
 		<Setter Property="MinimumWidthRequest" Value="96" />
 	</Style>
-
-
-
-
+	<!--  ============================================================  -->
+	<!--  BUTTONS  (radius = Sm/6, matches inputs/pickers)  -->
+	<!--  ============================================================  -->
 	<Style x:Key="SparkActionButtonStyle" TargetType="Button">
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="FontAttributes" Value="Bold" />
@@ -101,8 +128,6 @@
 			</DataTrigger>
 		</Style.Triggers>
 	</Style>
-
-
 
 	<Style x:Key="SparkIconButtonFrameStyle" TargetType="Border">
 		<Setter Property="Stroke" Value="{StaticResource SparkButtonSecondaryBorder}" />
@@ -133,12 +158,15 @@
 		</Style.Triggers>
 	</Style>
 
-
 	<Style x:Key="SparkPagerLabelStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
 		<Setter Property="VerticalOptions" Value="Center" />
 	</Style>
+
+	<!--  ============================================================  -->
+	<!--  TABS  (badge radius = Md/8, matches other "chip" elements)  -->
+	<!--  ============================================================  -->
 	<Style x:Key="SparkTabTitleLabelStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="{StaticResource SparkFontSizeNormal}" />
 		<Setter Property="FontAttributes" Value="Bold" />
@@ -196,18 +224,102 @@
 		</Style.Triggers>
 	</Style>
 
-
+	<!--  ============================================================  -->
+	<!--  STATUS BADGES  (radius = Xs/4 — tightest, matches grid pill cells)  -->
+	<!--  Danger / Success / Warning / Neutral now all present and consistent  -->
+	<!--  ============================================================  -->
 	<Style x:Key="SparkBadgeDangerFrameStyle" TargetType="Border">
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeDangerBg}" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 4" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="4" />
+			</Setter.Value>
+		</Setter>
 		<Setter Property="Stroke" Value="Transparent" />
 		<Setter Property="Padding" Value="8,3" />
 	</Style>
+
 	<Style x:Key="SparkBadgeSuccessFrameStyle" TargetType="Border">
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeSuccessBg}" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 4" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="4" />
+			</Setter.Value>
+		</Setter>
 		<Setter Property="Stroke" Value="Transparent" />
 		<Setter Property="Padding" Value="8,3" />
+	</Style>
+
+	<Style x:Key="SparkBadgeWarningFrameStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeWarningBg}" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="4" />
+			</Setter.Value>
+		</Setter>
+		<Setter Property="Stroke" Value="Transparent" />
+		<Setter Property="Padding" Value="8,3" />
+	</Style>
+
+	<Style x:Key="SparkBadgeNeutralFrameStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeNeutralBg}" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="4" />
+			</Setter.Value>
+		</Setter>
+		<Setter Property="Stroke" Value="Transparent" />
+		<Setter Property="Padding" Value="8,3" />
+	</Style>
+	<Style x:Key="SparkEntryStyle" TargetType="Entry">
+
+		<Setter Property="FontSize" Value="13" />
+
+		<Setter Property="HeightRequest" Value="32" />
+
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+
+		<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
+
+		<Setter Property="BackgroundColor" Value="Transparent" />
+
+		<Setter Property="ClearButtonVisibility" Value="WhileEditing" />
+
+	</Style>
+	<Style x:Key="SparkEditorStyle" TargetType="Editor">
+
+		<Setter Property="FontSize" Value="13" />
+
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+
+		<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
+
+		<Setter Property="BackgroundColor" Value="Transparent" />
+
+		<Setter Property="AutoSize" Value="TextChanges" />
+
+	</Style>
+	<Style x:Key="SparkDatePickerStyle" TargetType="DatePicker">
+
+		<Setter Property="FontSize" Value="13" />
+
+		<Setter Property="HeightRequest" Value="32" />
+
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+
+		<Setter Property="BackgroundColor" Value="Transparent" />
+
+	</Style>
+	<Style x:Key="SparkTimePickerStyle" TargetType="TimePicker">
+
+		<Setter Property="FontSize" Value="13" />
+
+		<Setter Property="HeightRequest" Value="32" />
+
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+
+		<Setter Property="BackgroundColor" Value="Transparent" />
+
 	</Style>
 
 </ResourceDictionary>

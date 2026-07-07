@@ -1,16 +1,16 @@
 ﻿using EHMR.Domain.Search;
 using EHMR.Services;
 using EHMR.ViewModels;
-
+using EHMR.ViewModels.Appointments;
 using System.Globalization;
 
 namespace EHMR.Converters;
 public class StringNotEmptyConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         => !string.IsNullOrWhiteSpace(value as string);
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotSupportedException();
 }
 /// <summary>
@@ -83,9 +83,9 @@ public sealed class SearchEntityTypeToIconConverter : IValueConverter
 /// <summary>Macedonian caption shown under a suggestion's name.</summary>
 public sealed class SearchEntityTypeToLabelConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object? parameter, CultureInfo culture) =>
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         value is SearchEntityType.Doctor ? "Доктор" : "Пациент";
 
-    public object ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) =>
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();
 }

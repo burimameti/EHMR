@@ -8,9 +8,7 @@ public class FFTextColumn : FFDataGridColumn
     // =========================================
     // DATA BINDING
     // =========================================
-    public string BindingPath { get; set; } = string.Empty;
-
-    public string Format { get; set; } = string.Empty;
+   
 
     // =========================================
     // TEXT STYLE (intent only)

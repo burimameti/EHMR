@@ -1,4 +1,7 @@
-﻿using EHMR.ViewModels.Encounters;
+﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using EHMR.Domain.Interfaces;
+using EHMR.Services;
+using EHMR.ViewModels.Encounters;
 using EHMR.Views;
 namespace EHMR.Views.Encounters;
 [QueryProperty(nameof(EncounterId), "EncounterId")]
@@ -50,20 +53,9 @@ public partial class EncounterDetailPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-
-        if(_viewModel!=null)
+        if(BindingContext is EncounterDetailViewModel vm)
         {
-            // Parse the string ID into a Guid if it exists
-            if(Guid.TryParse(EncounterId, out var id))
-            {
-                // This is EDIT/DETAILS mode
-                await _viewModel.InitializeAsync(id);
-            }
-            else
-            {
-                // This is CREATE mode (ID is null/empty)
-                await _viewModel.LoadAsync(id);
-            }
+            await vm.LoadAsync();
         }
     }
 }

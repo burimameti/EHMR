@@ -19,7 +19,7 @@
 			BackgroundColor="White"
 			HeightRequest="40"
 			Stroke="{StaticResource Gray300}"
-			StrokeShape="RoundRectangle 0"
+			StrokeShape="RoundRectangle 6"
 			StrokeThickness="1">
 
 			<Grid Padding="10,0" ColumnDefinitions="18,*,Auto">

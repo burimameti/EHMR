@@ -1,4 +1,5 @@
 ﻿using EHMR.ViewModels;
+using EHMR.ViewModels.Appointments;
 using EHMR.ViewModels.Patients;
 
 namespace EHMR.Views

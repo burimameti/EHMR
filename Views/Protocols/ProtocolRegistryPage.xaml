@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="EHMR.Views.Protocols.ProtocolRegistryPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+	x:Name="PageRoot"
+	x:DataType="viewModels:ProtocolRegistryViewModel">
+	<Grid ColumnDefinitions="285,*">
+		<!--  ================= LEFT MENU =================  -->
+		<Border Grid.Column="0" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
+		</Border>
+		<!--  ================= MAIN =================  -->
+		<Grid
+			Grid.Column="1"
+			Padding="24"
+			BackgroundColor="{StaticResource Gray200}"
+			RowDefinitions="Auto,Auto,*"
+			RowSpacing="16">
+
+			<!--  HEADER  -->
+			<Border
+				Grid.Row="0"
+				Padding="20"
+				StrokeShape="RoundRectangle 0"
+				Style="{StaticResource SurfaceCard}">
+				<Grid ColumnDefinitions="*,Auto">
+					<controls:FFPageHeader Title="Регистар на протоколи" Subtitle="Преглед и управување со терапевтски протоколи по медицински гранки" />
+					<Button
+						Grid.Column="1"
+						BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
+						Command="{Binding AddCommand}"
+						HeightRequest="45"
+						Style="{StaticResource TabButtonActiveStyle}"
+						Text="Нов Протокол"
+						WidthRequest="170" />
+				</Grid>
+			</Border>
+
+			<!--  SEARCH / FILTER  -->
+			<Border Grid.Row="1" Padding="0">
+				<Grid ColumnSpacing="5" RowSpacing="20">
+					<VerticalStackLayout>
+						<Border Margin="0,8,0,8" Padding="0">
+							<!--
+								Category filter now rides inside Pickers (built via
+								MakePicker in the ViewModel), same as Patients' Status/
+								Gender/BloodType/City/AgeGroup pickers — no separate
+								control needed here anymore.
+							-->
+							<controls:SparkExplorerHeaderView
+								Buttons="{Binding Buttons}"
+								Pickers="{Binding Pickers}"
+								SearchCommand="{Binding SearchCommand}"
+								SearchPlaceholder="Пребарување на протоколи..."
+								SearchText="{Binding SearchText}"
+								Tabs="{Binding Tabs}" />
+						</Border>
+
+						<!--
+							DeleteRowCommand is a guess at the property name — Patients'
+							Actions column only ever wired EditRowCommand since patients
+							aren't deleted from that grid. If SparkDataGridView doesn't
+							expose a delete slot under this name, point me at the right
+							one (or the row-actions mechanism it does support) and I'll
+							fix the binding.
+						-->
+						<Border>
+							<controls:SparkDataGridView
+								x:Name="ProtocolGrid"
+								Columns="{Binding GridColumns}"
+								CurrentPage="{Binding CurrentPage}"
+							
+								EditRowCommand="{Binding EditCommand}"
+								NextPageCommand="{Binding NextPageCommand}"
+								PageChangedCommand="{Binding PageChangedCommand}"
+								PreviousPageCommand="{Binding PreviousPageCommand}"
+								RowTappedCommand="{Binding SelectCommand}"
+								Rows="{Binding GridRows}"
+								TotalPages="{Binding TotalPages}" />
+						</Border>
+					</VerticalStackLayout>
+				</Grid>
+			</Border>
+		</Grid>
+	</Grid>
+</ContentPage>

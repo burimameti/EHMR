@@ -1,9 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
 	<Style x:Key="FFIconButtonStyle" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="#2563EB" />
+		<Setter Property="BackgroundColor" Value="#69CFDD" />
 		<Setter Property="TextColor" Value="White" />
-		<Setter Property="CornerRadius" Value="12" />
+		<Setter Property="CornerRadius" Value="6" />
 		<Setter Property="Padding" Value="0" />
 		<Setter Property="HeightRequest" Value="44" />
 		<Setter Property="WidthRequest" Value="44" />

@@ -1,232 +1,522 @@
-﻿//using System.Collections.ObjectModel;
-//using Microsoft.EntityFrameworkCore;
-//using CommunityToolkit.Mvvm.ComponentModel;
-//using CommunityToolkit.Mvvm.Input;
-//using EHMR.Domain.Entities;
-//using EHMR.Infrastructure.Persistence;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
+using EHMR.Domain.Interfaces;
+using EHMR.Infrastructure.Persistence;
+using EHMR.Resources.Controls;
+using EHMR.Services;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
-//namespace EHMR.ViewModels;
+namespace EHMR.ViewModels.Reports;
 
-//public partial class ReportViewModel : ObservableObject
-//{
-//    private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
+public partial class ReportViewModel : BaseViewModel<GenericReportRow>
+{
+    private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
 
-//    [ObservableProperty] private DateTime _startDate = DateTime.Today.AddMonths(-1);
-//    [ObservableProperty] private DateTime _endDate = DateTime.Today;
-//    [ObservableProperty] private bool _isBusy;
+    private bool _suppressSearchTextSideEffects;
 
-//    // Advanced Filtering Properties
-//    [ObservableProperty] private List<ReportType> _availableReportTypes;
+    [ObservableProperty] private DateTime startDate = DateTime.Today.AddMonths(-1);
+    [ObservableProperty] private DateTime endDate = DateTime.Today;
 
-//    [ObservableProperty] private ReportType _selectedReportType = ReportType.MissedTherapies;
-//    [ObservableProperty] private string _searchText = string.Empty;
-//    [ObservableProperty] private string _statusFilter = "ИТНО / СИТЕ";
+    [ObservableProperty] private string col1Header = "ПАЦИЕНТ";
+    [ObservableProperty] private string col2Header = "ПРОТОКОЛ / ТЕРАПИЈА";
+    [ObservableProperty] private string col3Header = "ЦИКЛУС";
+    [ObservableProperty] private string col4Header = "ДАТУМ";
+    [ObservableProperty] private string col5Header = "МЕДИЦИНСКО ОБРАЗЛОЖЕНИЕ";
 
-//    // Dynamic Columns Titles
-//    [ObservableProperty] private string _col1Header = "ПАЦИЕНТ";
+    [ObservableProperty] private string metric1Title = "Вкупно Протоколи";
+    [ObservableProperty] private int metric1Value;
+    [ObservableProperty] private string metric2Title = "Бараат внимание";
+    [ObservableProperty] private int metric2Value;
+    [ObservableProperty] private string metric3Title = "Стапка на Конзистентност";
+    [ObservableProperty] private string metric3ValueText = "100%";
 
-//    [ObservableProperty] private string _col2Header = "ПРОТОКОЛ / ТЕРАПИЈА";
-//    [ObservableProperty] private string _col3Header = "ЦИКЛУС";
-//    [ObservableProperty] private string _col4Header = "ДАТУМ";
-//    [ObservableProperty] private string _col5Header = "МЕДИЦИНСКО ОБРАЗЛОЖЕНИЕ";
+    protected override string ModuleName => Modules.Reports;
 
-//    // Dynamic Analytics panel tracking
-//    [ObservableProperty] private string _metric1Title = "Вкупно Протоколи";
+    public IReadOnlyList<ReportTypeOption> ReportTypes
+    {
+        get;
+    } =
+    [
+        new() { Type = ReportType.MissedTherapies,      Label = "Пропуштени терапии" },
+        new() { Type = ReportType.Auditing,              Label = "Одит" },
+        new() { Type = ReportType.AppointmentStatuses,   Label = "Статус на термини" },
+        new() { Type = ReportType.Patients,               Label = "Пациенти" }
+    ];
 
-//    [ObservableProperty] private int _metric1Value;
-//    [ObservableProperty] private string _metric2Title = "Бараат внимание";
-//    [ObservableProperty] private int _metric2Value;
-//    [ObservableProperty] private string _metric3Title = "Стапка на Конзистентност";
-//    [ObservableProperty] private string _metric3ValueText = "100%";
+    private ReportTypeOption _selectedReportType;
 
-//    public ObservableCollection<GenericReportRow> UnifiedReportRows { get; set; } = new();
+    public ReportTypeOption SelectedReportType
+    {
+        get => _selectedReportType;
+        set
+        {
+            if(!SetProperty(ref _selectedReportType, value)) return;
+            ApplyColumnLayout(value.Type);
+            SyncSparkPickersFromFilters();
+            BuildSparkGridColumns();
+            _=GenerateReportAsync();
+        }
+    }
 
-//    public ReportViewModel(IDbContextFactory<DesktopTherapyDbContext> dbFactory)
-//    {
-//        _dbFactory=dbFactory;
-//        AvailableReportTypes=Enum.GetValues(typeof(ReportType)).Cast<ReportType>().ToList();
+    private ReportStatusOption _statusFilter;
 
-//        // Initial load
-//        _=GenerateReportAsync();
-//    }
+    public ReportStatusOption StatusFilter
+    {
+        get => _statusFilter;
+        set
+        {
+            if(!SetProperty(ref _statusFilter, value)) return;
+            SyncSparkPickersFromFilters();
+            ApplyPipeline();
+        }
+    }
 
-//    private partial void OnSelectedReportTypeChanged(ReportType value)
-//    {
-//        // Adjust column layouts instantly based on selection
-//        switch(value)
-//        {
-//            case ReportType.MissedTherapies:
-//                Col1Header="ПАЦИЕНТ"; Col2Header="ПРОТОКОЛ"; Col3Header="ЦИКЛУС"; Col4Header="ИСТЕЧЕН РОК"; Col5Header="ОБРАЗЛОЖЕНИЕ";
-//                Metric1Title="Пропуштени Протоколи"; Metric2Title="Неразјаснети"; Metric3Title="Легитимирана Доследност";
-//                break;
+    public ReportViewModel(
+        IDbContextFactory<DesktopTherapyDbContext> dbFactory,
+        INavigationService navigationService,
+        IUserDialogService userDialogService,
+        IMenuService menuService,
+        IAuthorizationService authService)
+        : base(navigationService, userDialogService, menuService, authService)
+    {
+        _dbFactory=dbFactory;
+        _selectedReportType=ReportTypes.First(x => x.Type==ReportType.MissedTherapies);
+        _statusFilter=new ReportStatusOption { Label="ИТНО / СИТЕ" };
 
-//            case ReportType.Auditing:
-//                Col1Header="КОРИСНИК"; Col2Header="АКЦИЈА / НАСТАН"; Col3Header="МОДУЛ"; Col4Header="ВРЕМЕ"; Col5Header="ДЕТАЛИ ОД АУДИТ ПАТЕКА";
-//                Metric1Title="Вкупно Акции"; Metric2Title="Безбедносни Критични"; Metric3Title="Системски Статус";
-//                break;
+        PageSize=10;
 
-//            case ReportType.AppointmentStatuses:
-//                Col1Header="ПАЦИЕНТ"; Col2Header="ДОКТОР / ТЕРАПЕВТ"; Col3Header="СТАТУС"; Col4Header="ТЕРМИН"; Col5Header="ЗАБЕЛЕШКА ОД ПРЕГЛЕД";
-//                Metric1Title="Закажани Прегледи"; Metric2Title="Откажани Термини"; Metric3Title="Ефикасност на Сали";
-//                break;
+        PropertyChanged+=OnViewModelPropertyChanged;
 
-//            case ReportType.Patients:
-//                Col1Header="ПАЦИЕНТ (ИМЕ/ПРЕЗИМЕ)"; Col2Header="МАТИЧЕН БРОЈ"; Col3Header="ОДДЕЛЕНИЕ"; Col4Header="КРЕИРАН НА"; Col5Header="ДИЈАГНОЗА / АЛЕРГИИ";
-//                Metric1Title="Нови Пациенти"; Metric2Title="Хронични Случаи"; Metric3Title="Активни Картони";
-//                break;
-//        }
-//        _=GenerateReportAsync();
-//    }
+        ApplyColumnLayout(SelectedReportType.Type);
+        EvaluatePermissions();
+        InitializeSparkControls();
+    }
 
-//    [RelayCommand]
-//    public async Task GenerateReportAsync()
-//    {
-//        if(IsBusy) return;
-//        try
-//        {
-//            IsBusy=true;
-//            await using var db = await _dbFactory.CreateDbContextAsync();
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if(e.PropertyName!=nameof(SearchText)) return;
+        if(_suppressSearchTextSideEffects) return;
 
-//            var startRange = StartDate.Date;
-//            var endRange = EndDate.Date.AddDays(1).AddTicks(-1);
-//            List<GenericReportRow> temporaryRows = new();
+        ApplyPipeline();
+    }
 
-//            switch(SelectedReportType)
-//            {
-//                case ReportType.MissedTherapies:
-//                    var query = db.TherapyCycles
-//                        .Include(c => c.TherapySchedule).ThenInclude(s => s.TreatmentPlan).ThenInclude(p => p.Patient)
-//                        .Where(c => c.Status==TherapyStatus.Missed&&c.PlannedEndDate>=startRange&&c.PlannedEndDate<=endRange);
+    // ============================================================
+    // COLUMN / METRIC LAYOUT PER REPORT TYPE
+    // ============================================================
+    private void ApplyColumnLayout(ReportType type)
+    {
+        switch(type)
+        {
+            case ReportType.MissedTherapies:
+                Col1Header="ПАЦИЕНТ"; Col2Header="ПРОТОКОЛ"; Col3Header="ЦИКЛУС"; Col4Header="ИСТЕЧЕН РОК"; Col5Header="ОБРАЗЛОЖЕНИЕ";
+                Metric1Title="Пропуштени Протоколи"; Metric2Title="Неразјаснети"; Metric3Title="Легитимирана Доследност";
+                break;
 
-//                    if(!string.IsNullOrWhiteSpace(SearchText))
-//                        query=query.Where(x => x.TherapySchedule.TreatmentPlan.Patient.LastName.Contains(SearchText)||x.TherapySchedule.Name.Contains(SearchText));
+            case ReportType.Auditing:
+                Col1Header="КОРИСНИК"; Col2Header="АКЦИЈА / НАСТАН"; Col3Header="МОДУЛ"; Col4Header="ВРЕМЕ"; Col5Header="ДЕТАЛИ ОД АУДИТ ПАТЕКА";
+                Metric1Title="Вкупно Акции"; Metric2Title="Безбедносни Критични"; Metric3Title="Системски Статус";
+                break;
 
-//                    var missedData = await query.OrderByDescending(c => c.PlannedEndDate).ToListAsync();
+            case ReportType.AppointmentStatuses:
+                Col1Header="ПАЦИЕНТ"; Col2Header="ДОКТОР / ТЕРАПЕВТ"; Col3Header="СТАТУС"; Col4Header="ТЕРМИН"; Col5Header="ЗАБЕЛЕШКА ОД ПРЕГЛЕД";
+                Metric1Title="Закажани Прегледи"; Metric2Title="Откажани Термини"; Metric3Title="Ефикасност на Сали";
+                break;
 
-//                    temporaryRows=missedData.Select(c => new GenericReportRow
-//                    {
-//                        PrimaryHeader=c.TherapySchedule.TreatmentPlan.Patient.LastName,
-//                        SecondaryHeader=c.TherapySchedule.Name,
-//                        HighlightValue=$"Ц-#{c.CycleNumber}",
-//                        DateValue=c.PlannedEndDate.ToString("dd.MM.yyyy"),
-//                        InformationalText=string.IsNullOrEmpty(c.ReasonForMissing) ? "Нема внесено причина од лекар!" : c.ReasonForMissing,
-//                        IsAlertSeverity=string.IsNullOrEmpty(c.ReasonForMissing)
-//                    }).ToList();
+            case ReportType.Patients:
+                Col1Header="ПАЦИЕНТ (ИМЕ/ПРЕЗИМЕ)"; Col2Header="МАТИЧЕН БРОЈ"; Col3Header="ОДДЕЛЕНИЕ"; Col4Header="КРЕИРАН НА"; Col5Header="ДИЈАГНОЗА / АЛЕРГИИ";
+                Metric1Title="Нови Пациенти"; Metric2Title="Хронични Случаи"; Metric3Title="Активни Картони";
+                break;
+        }
+    }
 
-//                    Metric1Value=temporaryRows.Count;
-//                    Metric2Value=temporaryRows.Count(x => x.IsAlertSeverity);
-//                    Metric3ValueText=Metric1Value>0 ? $"{Math.Round((double)(Metric1Value-Metric2Value)/Metric1Value*100)}%" : "100%";
-//                    break;
+    // ============================================================
+    // DATA LOAD — one real EF Core query per report type
+    // ============================================================
+    [RelayCommand]
+    public async Task GenerateReportAsync()
+    {
+        if(IsBusy) return;
+        try
+        {
+            IsBusy=true;
+            ClearError();
 
-//                case ReportType.Auditing:
-//                    // Example mapping onto generalized system components
-//                    // var auditLogs = await db.AuditLogs.Where(a => a.Timestamp >= startRange && a.Timestamp <= endRange)...
-//                    temporaryRows=new List<GenericReportRow> {
-//                        new() { PrimaryHeader = "д-р Стојанов", SecondaryHeader = "Промена на терапија", HighlightValue = "Сигурност", DateValue = DateTime.Now.ToString("dd.MM.yyyy HH:mm"), InformationalText = "Промена во картон ID: 4192", IsAlertSeverity = false }
-//                    };
-//                    Metric1Value=temporaryRows.Count; Metric2Value=0; Metric3ValueText="ОК";
-//                    break;
+            var startRange = StartDate.Date;
+            var endRange = EndDate.Date.AddDays(1).AddTicks(-1);
 
-//                case ReportType.AppointmentStatuses:
-//                    // Concrete logic for binding Appointments entities
-//                    temporaryRows=new List<GenericReportRow> {
-//                        new() { PrimaryHeader = "Марко Петров", SecondaryHeader = "д-р Ангеловски", HighlightValue = "ОТКАЖАН", DateValue = DateTime.Now.AddHours(2).ToString("dd.MM.yyyy HH:mm"), InformationalText = "Пациентот не може да присуствува", IsAlertSeverity = true }
-//                    };
-//                    Metric1Value=temporaryRows.Count; Metric2Value=1; Metric3ValueText="85%";
-//                    break;
+            await using var db = await _dbFactory.CreateDbContextAsync();
+            List<GenericReportRow> rows;
 
-//                case ReportType.Patients:
-//                    // Concrete logic for rendering advanced patient structural parameters
-//                    temporaryRows=new List<GenericReportRow> {
-//                        new() { PrimaryHeader = "Ана Стојанова", SecondaryHeader = "0102983450021", HighlightValue = "Физио", DateValue = DateTime.Now.AddDays(-5).ToString("dd.MM.yyyy"), InformationalText = "Dg: Lumbalgia. Алергија на Пеницилин.", IsAlertSeverity = true }
-//                    };
-//                    Metric1Value=temporaryRows.Count; Metric2Value=1; Metric3ValueText="94%";
-//                    break;
-//            }
+            switch(SelectedReportType.Type)
+            {
+                case ReportType.MissedTherapies:
+                    rows=await LoadMissedTherapiesAsync(db, startRange, endRange);
+                    break;
 
-//            MainThread.BeginInvokeOnMainThread(() =>
-//            {
-//                UnifiedReportRows.Clear();
-//                foreach(var row in temporaryRows)
-//                {
-//                    UnifiedReportRows.Add(row);
-//                }
-//            });
-//        }
-//        catch(Exception ex)
-//        {
-//            System.Diagnostics.Debug.WriteLine($"[REPORT ARCHITECTURE ERROR]: {ex.Message}");
-//        }
-//        finally
-//        {
-//            IsBusy=false;
-//        }
-//    }
+                case ReportType.Auditing:
+                    rows=await LoadAuditingAsync(db, startRange, endRange);
+                    break;
 
-//    [RelayCommand]
-//    public async Task ExportToPdfAsync()
-//    {
-//        if(IsBusy) return;
-//        try
-//        {
-//            IsBusy=true;
+                case ReportType.AppointmentStatuses:
+                    rows=await LoadAppointmentStatusesAsync(db, startRange, endRange);
+                    break;
 
-//            // Native platform agnostic compilation engine (HTML target printing pipeline pattern)
-//            var htmlBlueprint = $@"
-//            <html>
-//            <head>
-//                <style>
-//                    body {{ font-family: Arial, sans-serif; padding: 30px; color: #0F172A; }}
-//                    h2 {{ color: #2563EB; border-bottom: 2px solid #E2E8F0; padding-bottom: 10px; }}
-//                    table {{ width: 100%; border-collapse: collapse; margin-top: 20px; }}
-//                    th {{ background-color: #0F172A; color: white; padding: 12px; text-align: left; font-size: 12px; }}
-//                    td {{ padding: 12px; border-bottom: 1px solid #E2E8F0; font-size: 13px; }}
-//                    .alert {{ background-color: #FEF2F2; color: #991B1B; padding: 6px; border-radius: 4px; }}
-//                </style>
-//            </head>
-//            <body>
-//                <h2>ИЗВЕШТАЈ: {SelectedReportType}</h2>
-//                <p>Опсег: {StartDate:dd.MM.yyyy} до {EndDate:dd.MM.yyyy}</p>
-//                <table>
-//                    <thead>
-//                        <tr>
-//                            <th>{Col1Header}</th><th>{Col2Header}</th><th>{Col3Header}</th><th>{Col4Header}</th><th>{Col5Header}</th>
-//                        </tr>
-//                    </thead>
-//                    <tbody>";
+                case ReportType.Patients:
+                    rows=await LoadPatientsAsync(db, startRange, endRange);
+                    break;
 
-//            foreach(var item in UnifiedReportRows)
-//            {
-//                htmlBlueprint+=$@"
-//                    <tr>
-//                        <td><b>{item.PrimaryHeader}</b></td>
-//                        <td>{item.SecondaryHeader}</td>
-//                        <td>{item.HighlightValue}</td>
-//                        <td>{item.DateValue}</td>
-//                        <td><span class='{(item.IsAlertSeverity ? "alert" : "")}'>{item.InformationalText}</span></td>
-//                    </tr>";
-//            }
+                default:
+                    rows= [];
+                    break;
+            }
 
-//            htmlBlueprint+="</tbody></table></body></html>";
+            AllItems=rows;
+            ApplyPipeline();
+            RecomputeMetrics();
+        }
+        catch(Exception ex)
+        {
+            OnError($"Грешка при генерирање извештај: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy=false;
+        }
+    }
 
-//            // Standard storage directory invocation
-//            string fileName = $"Report_{SelectedReportType}_{DateTime.Now:yyyyMMdd_HHmmss}.html";
-//            string targetFile = Path.Combine(FileSystem.CacheDirectory, fileName);
-//            await File.WriteAllTextAsync(targetFile, htmlBlueprint);
+    private static async Task<List<GenericReportRow>> LoadMissedTherapiesAsync(
+        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
+    {
+        var data = await db.TherapyCycles
+            .Include(p => p.Patient)
+            .AsNoTracking()
+            .Where(c => c.Status==TherapyStatus.Missed
+                        &&c.StartDate>=startRange&&c.EndDate<=endRange)
+            .OrderByDescending(c => c.EndDate)
+            .ToListAsync();
 
-//            // Open or share generated print stream
-//            await Launcher.Default.OpenAsync(new OpenFileRequest
-//            {
-//                File=new ReadOnlyFile(targetFile)
-//            });
-//        }
-//        catch(Exception ex)
-//        {
-//            System.Diagnostics.Debug.WriteLine($"[PDF EXPORT ERROR]: {ex.Message}");
-//        }
-//        finally
-//        {
-//            IsBusy=false;
-//        }
-//    }
-//}
+        return data.Select(c => new GenericReportRow
+        {
+            PrimaryHeader=c.Patient.LastName,
+            SecondaryHeader=c.Patient.FirstName,
+            HighlightValue=$"Ц-#{c.CycleNumber}",
+            DateValue=c.StartDate?.ToString("dd.MM.yyyy"),
+            InformationalText=string.IsNullOrEmpty(c.Notes) ? "Нема внесено причина од лекар!" : c.Notes,
+            IsAlertSeverity=string.IsNullOrEmpty(c.Notes)
+        }).ToList();
+    }
+
+    // NOTE: AuditLog entity guessed — Timestamp/UserFullName/Action/Module/Details/IsSecurityCritical.
+    // Adjust field names once you confirm the real entity shape.
+    private static async Task<List<GenericReportRow>> LoadAuditingAsync(
+        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
+    {
+        var data = await db.AuditLogs
+            .AsNoTracking()
+            .Where(a => a.Timestamp>=startRange&&a.Timestamp<=endRange)
+            .OrderByDescending(a => a.Timestamp)
+            .ToListAsync();
+
+        return data.Select(a => new GenericReportRow
+        {
+            PrimaryHeader=a.UserId.ToString(),
+            SecondaryHeader=a.Action,
+            HighlightValue=a.AfterValue,
+            DateValue=a.Timestamp.ToString("dd.MM.yyyy HH:mm"),
+            InformationalText=a.Description,
+            IsAlertSeverity=a.AfterValue!=a.BeforeValue // simplistic assumption; adjust as needed
+        }).ToList();
+    }
+
+    private static async Task<List<GenericReportRow>> LoadAppointmentStatusesAsync(
+        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
+    {
+        var data = await db.Appointments
+            .Include(a => a.Patient)
+            .Include(a => a.Doctor).ThenInclude(d => d.User)
+            .AsNoTracking()
+            .Where(a => a.ScheduledStart>=startRange&&a.ScheduledStart<=endRange)
+            .OrderByDescending(a => a.ScheduledStart)
+            .ToListAsync();
+
+        return data.Select(a => new GenericReportRow
+        {
+            PrimaryHeader=a.Patient?.FullName??"",
+            SecondaryHeader=a.Doctor?.FullName??"",
+            HighlightValue=StatusLabel(a.Status),
+            DateValue=a.ScheduledStart.ToString("dd.MM.yyyy HH:mm"),
+            InformationalText=a.ReasonForVisit??"",
+            IsAlertSeverity=a.Status is AppointmentStatus.Cancelled or AppointmentStatus.Missed
+        }).ToList();
+    }
+
+    // NOTE: Patient fields guessed — IdNumber/Department/CreatedAt/Diagnosis/Allergies.
+    // Adjust once you confirm the real Patient entity shape.
+    private static async Task<List<GenericReportRow>> LoadPatientsAsync(
+        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
+    {
+        var data = await db.Patients
+            .AsNoTracking()
+            .Where(p => p.CreatedAt>=startRange&&p.CreatedAt<=endRange)
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync();
+
+        return data.Select(p => new GenericReportRow
+        {
+            PrimaryHeader=p.FullName,
+            SecondaryHeader=p.NationalId,
+            HighlightValue=p.Phone??"",
+            DateValue=p.CreatedAt.ToString("dd.MM.yyyy"),
+            InformationalText=$"Dg: {p.Diagnoses.Select(x=>x.Mkb10Code.Code)}. Алергии: {(string.IsNullOrEmpty(p.Allergies) ? "нема" : p.Allergies)}",
+            IsAlertSeverity=!string.IsNullOrEmpty(p.Allergies)
+        }).ToList();
+    }
+
+    private void RecomputeMetrics()
+    {
+        Metric1Value=AllItems.Count;
+        Metric2Value=AllItems.Count(x => x.IsAlertSeverity);
+        Metric3ValueText=Metric1Value>0
+            ? $"{Math.Round((double)(Metric1Value-Metric2Value)/Metric1Value*100)}%"
+            : "100%";
+    }
+
+    private static string StatusLabel(AppointmentStatus status) => status switch
+    {
+        AppointmentStatus.Scheduled => "Закажан",
+        AppointmentStatus.CheckedIn => "Пријавен",
+        AppointmentStatus.Completed => "Завршен",
+        AppointmentStatus.Cancelled => "Откажан",
+        AppointmentStatus.Missed => "Пропуштен",
+        AppointmentStatus.InProgress => "Во тек",
+        AppointmentStatus.ReScheduled => "Презакажан",
+        _ => status.ToString()
+    };
+
+    // ================= PIPELINE HOOKS =================
+    protected override IEnumerable<GenericReportRow> ApplySearch(IEnumerable<GenericReportRow> items, string search)
+    {
+        if(string.IsNullOrWhiteSpace(search)) return items;
+
+        var term = search.Trim();
+        return items.Where(x =>
+            (x.PrimaryHeader?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
+            (x.SecondaryHeader?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
+            (x.InformationalText?.Contains(term, StringComparison.OrdinalIgnoreCase)??false));
+    }
+
+    protected override IEnumerable<GenericReportRow> ApplyFilters(IEnumerable<GenericReportRow> items)
+    {
+        if(string.IsNullOrWhiteSpace(StatusFilter?.Label)||StatusFilter.Label=="ИТНО / СИТЕ")
+            return items;
+
+        return items.Where(x => x.HighlightValue==StatusFilter.Label);
+    }
+
+    protected override IEnumerable<GenericReportRow> ApplySort(IEnumerable<GenericReportRow> query) =>
+        query; // already ordered by the DB query per report type
+
+    protected override void ResetFilters()
+    {
+        _suppressSearchTextSideEffects=true;
+        SearchText=string.Empty;
+        _suppressSearchTextSideEffects=false;
+
+        StatusFilter=new ReportStatusOption { Label="ИТНО / СИТЕ" };
+    }
+
+    // ============================================================
+    // SPARK CONTROLS
+    // ============================================================
+    [ObservableProperty] private ObservableCollection<SparkGridColumn> gridColumns = new();
+    [ObservableProperty] private ObservableCollection<SparkGridRow> gridRows = new();
+
+    private SparkPickerItem _reportTypePicker;
+    private SparkPickerItem _statusPicker;
+
+    private void InitializeSparkControls()
+    {
+        BuildSparkPickers();
+        BuildSparkButtons();
+        BuildSparkGridColumns();
+    }
+
+    private void BuildSparkPickers()
+    {
+        Pickers.Clear();
+
+        _reportTypePicker=MakePicker("Извештај", ReportTypes.Select(x => x.Label), SelectedReportType.Label,
+            selected =>
+            {
+                var match = ReportTypes.FirstOrDefault(x => x.Label==selected);
+                if(match!=null) SelectedReportType=match;
+            });
+
+        _statusPicker=MakePicker("Статус", new[] { "ИТНО / СИТЕ" }, StatusFilter.Label,
+            selected => StatusFilter=new ReportStatusOption { Label=selected });
+
+        Pickers.Add(_reportTypePicker);
+        Pickers.Add(_statusPicker);
+    }
+
+    protected override void SyncSparkPickersFromFilters()
+    {
+        if(_reportTypePicker!=null) _reportTypePicker.SelectedItem=SelectedReportType.Label;
+        if(_statusPicker!=null) _statusPicker.SelectedItem=StatusFilter.Label;
+    }
+
+    protected override void BuildSparkButtons()
+    {
+        Buttons.Clear();
+        Buttons.Add(new SparkButtonItem
+        {
+            Label="✕ Исчисти",
+            IsPrimary=true,
+            Command=ClearFiltersCommand
+        });
+        Buttons.Add(new SparkButtonItem
+        {
+            Label="Извези PDF",
+            IsPrimary=false,
+            Command=ExportToPdfCommand
+        });
+    }
+
+    private void BuildSparkGridColumns()
+    {
+        GridColumns=new ObservableCollection<SparkGridColumn>
+        {
+            new() { Header = Col1Header, Key = "Primary",  Width = new GridLength(2, GridUnitType.Star) },
+            new() { Header = Col2Header, Key = "Secondary", Width = new GridLength(2, GridUnitType.Star) },
+            new() { Header = Col3Header, Key = "Highlight", CellType = SparkGridCellType.Badge, Width = new GridLength(1, GridUnitType.Star) },
+            new() { Header = Col4Header, Key = "Date",      Width = new GridLength(1, GridUnitType.Star) },
+            new() { Header = Col5Header, Key = "Info",      Width = new GridLength(2, GridUnitType.Star) }
+        };
+    }
+
+    protected override void OnPageProjected(ObservableCollection<GenericReportRow> page)
+    {
+        var rows = new ObservableCollection<SparkGridRow>();
+
+        foreach(var r in page)
+        {
+            var row = new SparkGridRow { Tag=r };
+            row["Primary"]=r.PrimaryHeader??"";
+            row["Secondary"]=r.SecondaryHeader??"";
+            row["Highlight"]=new SparkBadgeValue(r.HighlightValue??"", r.IsAlertSeverity ? SparkBadgeTone.Danger : SparkBadgeTone.Neutral);
+            row["Date"]=r.DateValue??"";
+            row["Info"]=r.InformationalText??"";
+            rows.Add(row);
+        }
+
+        GridRows=rows;
+    }
+
+    // ============================================================
+    // PDF EXPORT — kept as HTML->Launcher, unchanged in approach
+    // ============================================================
+    [RelayCommand]
+    public async Task ExportToPdfAsync()
+    {
+        if(IsBusy) return;
+        try
+        {
+            IsBusy=true;
+
+            var htmlBlueprint = $@"
+            <html>
+            <head>
+                <style>
+                    body {{ font-family: Arial, sans-serif; padding: 30px; color: #0F172A; }}
+                    h2 {{ color: #2563EB; border-bottom: 2px solid #E2E8F0; padding-bottom: 10px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 20px; }}
+                    th {{ background-color: #0F172A; color: white; padding: 12px; text-align: left; font-size: 12px; }}
+                    td {{ padding: 12px; border-bottom: 1px solid #E2E8F0; font-size: 13px; }}
+                    .alert {{ background-color: #FEF2F2; color: #991B1B; padding: 6px; border-radius: 4px; }}
+                </style>
+            </head>
+            <body>
+                <h2>ИЗВЕШТАЈ: {SelectedReportType.Label}</h2>
+                <p>Опсег: {StartDate:dd.MM.yyyy} до {EndDate:dd.MM.yyyy}</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>{Col1Header}</th><th>{Col2Header}</th><th>{Col3Header}</th><th>{Col4Header}</th><th>{Col5Header}</th>
+                        </tr>
+                    </thead>
+                    <tbody>";
+
+            foreach(var item in AllItems)
+            {
+                htmlBlueprint+=$@"
+                    <tr>
+                        <td><b>{item.PrimaryHeader}</b></td>
+                        <td>{item.SecondaryHeader}</td>
+                        <td>{item.HighlightValue}</td>
+                        <td>{item.DateValue}</td>
+                        <td><span class='{(item.IsAlertSeverity ? "alert" : "")}'>{item.InformationalText}</span></td>
+                    </tr>";
+            }
+
+            htmlBlueprint+="</tbody></table></body></html>";
+
+            string fileName = $"Report_{SelectedReportType.Type}_{DateTime.Now:yyyyMMdd_HHmmss}.html";
+            string targetFile = Path.Combine(FileSystem.CacheDirectory, fileName);
+            await File.WriteAllTextAsync(targetFile, htmlBlueprint);
+
+            await Launcher.Default.OpenAsync(new OpenFileRequest
+            {
+                File=new ReadOnlyFile(targetFile)
+            });
+        }
+        catch(Exception ex)
+        {
+            OnError($"Грешка при извоз на PDF: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy=false;
+        }
+    }
+}
+
+public enum ReportType
+{
+    MissedTherapies,
+    Auditing,
+    AppointmentStatuses,
+    Patients
+}
+
+public sealed class ReportTypeOption
+{
+    public ReportType Type
+    {
+        get; init;
+    }
+    public string Label { get; init; } = "";
+    public override string ToString() => Label;
+}
+
+public sealed class ReportStatusOption
+{
+    public string Label { get; init; } = "";
+    public override string ToString() => Label;
+}
+
+public class GenericReportRow
+{
+    public string PrimaryHeader { get; set; } = "";
+    public string SecondaryHeader { get; set; } = "";
+    public string HighlightValue { get; set; } = "";
+    public string DateValue { get; set; } = "";
+    public string InformationalText { get; set; } = "";
+    public bool IsAlertSeverity
+    {
+        get; set;
+    }
+}

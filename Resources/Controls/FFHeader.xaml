@@ -40,7 +40,7 @@
 
 		<!--  Right  -->
 
-		<HorizontalStackLayout
+		<!--<HorizontalStackLayout
 			Grid.Column="1"
 			Spacing="10"
 			VerticalOptions="Center">
@@ -48,23 +48,23 @@
 			<Button
 				Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
 				IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
-				Style="{StaticResource PrimaryButton}"
+				Style="{StaticResource SparkPagerButtonStyle}"
 				Text="{Binding PrimaryButtonText, Source={x:Reference Root}}" />
 
 			<Button
 				Command="{Binding SecondaryButtonCommand, Source={x:Reference Root}}"
 				IsVisible="{Binding ShowSecondaryButton, Source={x:Reference Root}}"
-				Style="{StaticResource SecondaryButton}"
+				Style="{StaticResource SparkActionButtonStyle}"
 				Text="{Binding SecondaryButtonText, Source={x:Reference Root}}" />
 
 			<Button
 				Command="{Binding RefreshCommand, Source={x:Reference Root}}"
 				FontFamily="FASolid"
 				IsVisible="{Binding ShowRefreshButton, Source={x:Reference Root}}"
-				Style="{StaticResource IconButton}"
+				Style="{StaticResource FFIconButtonStyle}"
 				Text="&#xf021;" />
 
-		</HorizontalStackLayout>
+		</HorizontalStackLayout>-->
 
 	</Grid>
 

@@ -22,143 +22,156 @@
 
 		<Border
 			Grid.Column="1"
-			BackgroundColor="{StaticResource Gray100}"
+			BackgroundColor="{StaticResource Gray200}"
 			StrokeThickness="0">
-			<Grid
-				Padding="28"
-				BackgroundColor="{StaticResource AppBackground}"
-				RowDefinitions="110,Auto,*"
-				RowSpacing="6">
-				<Border
-					Grid.Row="0"
-					Padding="20"
-					StrokeShape="RoundRectangle 0"
-					Style="{StaticResource SurfaceCard}">
-					<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+			<Grid BackgroundColor="{StaticResource AppBackground}">
 
-						<controls:FFPageHeader
-							Title="Основна страна"
-							Caption="Dashboard"
-							Subtitle="Преглед на пациентите, терапиите, закажаните прегледи и активноста на системот." />
+				<Grid
+					Padding="28"
+					RowDefinitions="110,Auto,Auto,*"
+					RowSpacing="20">
 
-						<HorizontalStackLayout
-							Grid.Column="1"
-							Spacing="10"
-							VerticalOptions="Center">
-							<!--
-								Removed BorderWidth="6" — a stray border width on what should
-								be a solid-fill primary button. HeightRequest standardized to
-								45 to match the icon button; let PrimaryButtonStyle drive the
-								rest instead of per-instance overrides.
-								
-								NOTE: this still points at RefreshCommand. If "+ Преглед" means
-								"start a new encounter/review" rather than "refresh," rebind
-								to the appropriate new-encounter command in DashboardViewModel.
-							-->
-							<Button
-								Command="{Binding RefreshCommand}"
-								HeightRequest="45"
-								Style="{StaticResource PrimaryButtonStyle}"
-								Text="+ Преглед"
-								WidthRequest="160" />
+					<!--  HEADER  -->
+					<Border
+						Grid.Row="0"
+						Padding="20"
+						StrokeShape="RoundRectangle 0"
+						Style="{StaticResource SurfaceCard}">
+						<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 
-							<Button
-								Command="{Binding NewAppointmentCommand}"
-								HeightRequest="45"
-								Style="{StaticResource PrimaryButtonStyle}"
-								Text="+ Термин"
-								WidthRequest="160" />
+							<controls:FFPageHeader Title="Основна страна" Subtitle="Преглед на пациентите, терапиите, закажаните прегледи и активноста на системот." />
 
-							<Button
-								Command="{Binding RefreshCommand}"
-								HeightRequest="45"
-								Style="{StaticResource EhmrIconButton}"
-								TextColor="Blue"
-								WidthRequest="45" />
-						</HorizontalStackLayout>
-					</Grid>
-				</Border>
-				<Border Grid.Row="1" Padding="0">
-					<Grid
-						ColumnDefinitions="2.9*,1*"
-						ColumnSpacing="10"
-						RowSpacing="10">
-						<VerticalStackLayout Grid.Column="0">
-							<controls:SparkExplorerHeaderView
-								Buttons="{Binding Buttons}"
-								Pickers="{Binding Pickers}"
-								SearchCommand="{Binding SearchCommand}"
-								SearchPlaceholder="Пребарување на пациенти..."
-								SearchText="{Binding PatientSearchText}"
-								Tabs="{Binding Tabs}" />
-							<Border>
-								<controls:SparkDataGridView
-									x:Name="PatientGrid"
-									Columns="{Binding GridColumns}"
-									CurrentPage="{Binding CurrentPage}"
-									EditRowCommand="{Binding EditCommand}"
-									NextPageCommand="{Binding NextPageCommand}"
-									PageChangedCommand="{Binding PageChangedCommand}"
-									PreviousPageCommand="{Binding PreviousPageCommand}"
-									RowTappedCommand="{Binding SelectCommand}"
-									Rows="{Binding GridRows}"
-									TotalPages="{Binding TotalPages}" />
-							</Border>
+							<HorizontalStackLayout
+								Grid.Column="1"
+								Spacing="10"
+								VerticalOptions="Center">
+								<Button
+									BackgroundColor="{StaticResource SparkAccentTeal}"
+									Command="{Binding NewEncounterCommand}"
+									HeightRequest="45"
+									Style="{StaticResource TabButtonActiveStyle}"
+									Text="+ Преглед"
+									WidthRequest="160" />
 
-						</VerticalStackLayout>
+								<Button
+									BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
+									Command="{Binding NewAppointmentCommand}"
+									HeightRequest="45"
+									Style="{StaticResource TabButtonActiveStyle}"
+									Text="+ Термин"
+									WidthRequest="160" />
+
+								<Button
+									Command="{Binding RefreshCommand}"
+									HeightRequest="45"
+									Style="{StaticResource EhmrIconButton}"
+									TextColor="Blue"
+									WidthRequest="45" />
+							</HorizontalStackLayout>
+						</Grid>
+					</Border>
+
+					<!--  KPI TILE ROW  -->
 
 
-						<VerticalStackLayout Grid.Column="1">
+					<!--  FILTERS / GRID + APPOINTMENTS / NOTIFICATIONS  -->
+					<Border Grid.Row="1" Padding="0">
+						<Grid ColumnSpacing="5" RowSpacing="20">
+							<VerticalStackLayout>
+								<Border Margin="0,8,0,8" Padding="0">
+									<controls:SparkExplorerHeaderView
+										Buttons="{Binding Buttons}"
+										Pickers="{Binding Pickers}"
+										SearchCommand="{Binding SearchCommand}"
+										SearchPlaceholder="Пребарување на пациенти..."
+										SearchText="{Binding PatientSearchText}"
+										Tabs="{Binding Tabs}" />
+								</Border>
+								<Border>
+									<controls:SparkDataGridView
+										x:Name="PatientGrid"
+										Columns="{Binding GridColumns}"
+										CurrentPage="{Binding CurrentPage}"
+										EditRowCommand="{Binding EditCommand}"
+										NextPageCommand="{Binding NextPageCommand}"
+										PageChangedCommand="{Binding PageChangedCommand}"
+										PreviousPageCommand="{Binding PreviousPageCommand}"
+										RowTappedCommand="{Binding SelectCommand}"
+										Rows="{Binding GridRows}"
+										TotalPages="{Binding TotalPages}" />
+								</Border>
+							</VerticalStackLayout>
+
+						</Grid>
+					</Border>
+					<Border Grid.Row="2" Padding="0">
+						<Grid
+							ColumnDefinitions="*,*"
+							ColumnSpacing="10"
+							RowSpacing="10">
+
+							<!--  Денешни прегледи  -->
 							<Border
 								Grid.Row="0"
-								Grid.Column="1"
+								Grid.Column="0"
 								Padding="20"
 								BackgroundColor="{StaticResource Gray50}"
 								Stroke="{StaticResource Gray100}"
-								StrokeShape="RoundRectangle 12">
+								StrokeShape="RoundRectangle 0">
 
 								<Grid RowDefinitions="Auto,*" RowSpacing="18">
 									<Grid ColumnDefinitions="*,Auto">
 										<VerticalStackLayout Spacing="2">
 											<Label
-												CharacterSpacing="1.5"
-												FontAttributes="Bold"
-												FontSize="11"
-												Text="TODAY"
-												TextColor="{StaticResource Gray500}" />
-											<Label
 												FontAttributes="Bold"
 												FontSize="20"
 												Text="Денешни прегледи"
-												TextColor="{StaticResource Gray900}" />
+												TextColor="#2E3A4E" />
 										</VerticalStackLayout>
 
+										<!--  FIX: имаше BackgroundColor=transparent + TextColor слична на позадината  -->
 										<Border
 											Grid.Column="1"
 											Padding="10,4"
+											BackgroundColor="#EDF1F5"
 											StrokeShape="RoundRectangle 14"
 											StrokeThickness="0">
 											<Label
 												FontAttributes="Bold"
 												FontSize="13"
 												Text="{Binding UpcomingAppointmentsCount}"
-												TextColor="{StaticResource Gray600}" />
+												TextColor="#5B6B85" />
 										</Border>
 									</Grid>
-
 									<CollectionView
 										Grid.Row="1"
+										HeightRequest="320"
 										ItemsSource="{Binding Appointments}"
 										SelectionMode="None">
+										<CollectionView.EmptyView>
+											<VerticalStackLayout
+												Padding="20"
+												HorizontalOptions="Center"
+												Spacing="6"
+												VerticalOptions="Center">
+												<Label
+													FontSize="13"
+													HorizontalTextAlignment="Center"
+													Text="Нема закажани прегледи за денес"
+													TextColor="#5B6B85" />
+											</VerticalStackLayout>
+										</CollectionView.EmptyView>
 										<CollectionView.ItemTemplate>
 											<DataTemplate>
 												<Border
-													Margin="0,0,0,10"
-													Padding="14"
-													BackgroundColor="{StaticResource White}"
-													Stroke="{StaticResource DashboardBorder}"
-													StrokeShape="RoundRectangle 12">
-													<Grid ColumnDefinitions="56,*,Auto" ColumnSpacing="14">
+													Margin="0,10"
+													Padding="8"
+													BackgroundColor="White"
+													HeightRequest="60"
+													Stroke="#F0F2F5"
+													StrokeShape="RoundRectangle 8"
+													StrokeThickness="1">
+													<Grid ColumnDefinitions="56,*,90" ColumnSpacing="14">
 														<Border
 															BackgroundColor="{Binding StatusColor}"
 															HeightRequest="56"
@@ -174,7 +187,7 @@
 																	FontSize="15"
 																	HorizontalTextAlignment="Center"
 																	Text="{Binding Time}"
-																	TextColor="White" />
+																	TextColor="Black" />
 															</VerticalStackLayout>
 														</Border>
 
@@ -186,15 +199,15 @@
 																FontAttributes="Bold"
 																FontSize="15"
 																Text="{Binding PatientName}"
-																TextColor="{StaticResource Gray900}" />
+																TextColor="#2E3A4E" />
 															<Label
 																FontSize="13"
 																Text="{Binding RelativeDay}"
-																TextColor="{StaticResource Gray500}" />
-															<Label
+																TextColor="#5B6B85" />
+															<!--<Label
 																FontSize="12"
 																Text="{Binding ScheduledStart, StringFormat='{}{0:dd MMM yyyy}'}"
-																TextColor="{StaticResource Gray400}" />
+																TextColor="#8B95A6" />-->
 														</VerticalStackLayout>
 
 														<Border
@@ -218,27 +231,46 @@
 								</Grid>
 							</Border>
 
-
-
+							<!--  Информации за аудитинг  -->
 							<Border
+								Grid.Row="0"
+								Grid.Column="1"
 								Padding="20"
-								BackgroundColor="{StaticResource Gray100}"
-								Stroke="{StaticResource Gray50}"
-								StrokeShape="RoundRectangle 12"
-								StrokeThickness="1">
+								BackgroundColor="{StaticResource Gray50}"
+								Stroke="{StaticResource Gray100}"
+								StrokeShape="RoundRectangle 0">
 								<Grid RowDefinitions="Auto,*" RowSpacing="14">
-									<Label Text="Известувања" TextColor="{StaticResource Gray600}" />
+									<Label
+										FontAttributes="Bold"
+										FontSize="20"
+										Text="Информации за аудитинг"
+										TextColor="#2E3A4E" />
 									<CollectionView
+										x:Name="NotificationsCollectionView"
 										Grid.Row="1"
 										HeightRequest="240"
+										IsVisible="{Binding IsnotificationVisisble}"
 										ItemsSource="{Binding Notifications}">
+										<CollectionView.EmptyView>
+											<VerticalStackLayout
+												HorizontalOptions="Center"
+												Spacing="6"
+												VerticalOptions="Center">
+												<Label
+													FontSize="13"
+													HorizontalTextAlignment="Center"
+													Text="Нема нови известувања"
+													TextColor="#8B95A6" />
+											</VerticalStackLayout>
+										</CollectionView.EmptyView>
 										<CollectionView.ItemTemplate>
 											<DataTemplate>
 												<Border
-													Margin="0,4"
-													Padding="16"
-													BackgroundColor="{StaticResource Gray100}"
-													Stroke="{StaticResource Gray50}"
+													Margin="0,10"
+													Padding="8"
+													BackgroundColor="White"
+													HeightRequest="60"
+													Stroke="#F0F2F5"
 													StrokeShape="RoundRectangle 8"
 													StrokeThickness="1">
 													<Grid
@@ -254,11 +286,11 @@
 															<Label
 																FontAttributes="Bold"
 																Text="{Binding Title}"
-																TextColor="{StaticResource Gray700}" />
+																TextColor="#2E3A4E" />
 															<Label
 																FontSize="12"
 																Text="{Binding Time}"
-																TextColor="{StaticResource Gray600}" />
+																TextColor="#8B95A6" />
 														</VerticalStackLayout>
 													</Grid>
 												</Border>
@@ -267,54 +299,25 @@
 									</CollectionView>
 								</Grid>
 							</Border>
-						</VerticalStackLayout>
 
-
-					</Grid>
-
-				</Border>
-
-				<!--  ================= BODY =================  -->
-				<Border
-					Grid.Row="2"
-					StrokeShape="RoundRectangle 0"
-					StrokeThickness="0">
-					<Grid ColumnDefinitions="3*,1*" ColumnSpacing="20">
-						<!--
-							Was RowDefinitions="Auto, Auto,*" with Row 0 left unassigned —
-							dead space above the divider. Collapsed to Auto,* since nothing
-							occupies a header row here; re-add a title row above the divider
-							if the blueprint's list panel should carry one.
-						-->
-						<Grid
-							Grid.Column="0"
-							RowDefinitions="Auto,*"
-							RowSpacing="6">
-
-							<ScrollView Grid.Row="1">
-								<VerticalStackLayout Spacing="20">
-
-
-									<!--  CHARTS CONTAINER  -->
-									<Grid ColumnDefinitions="*,*,*" ColumnSpacing="20">
-										<controls:FFChart Title="Пациенти" Values="{Binding PatientTrend}" />
-										<controls:FFChart
-											Title="Прегледи"
-											Grid.Column="1"
-											Values="{Binding AppointmentTrend}" />
-										<controls:FFChart
-											Title="Терапии"
-											Grid.Column="2"
-											Values="{Binding TherapyStats}" />
-									</Grid>
-								</VerticalStackLayout>
-							</ScrollView>
 						</Grid>
+					</Border>
 
-						<!--  ================= RIGHT SIDEBAR =================  -->
+				</Grid>
 
-					</Grid>
-				</Border>
+				<!--  LOADING OVERLAY  -->
+				<Grid BackgroundColor="#80191E29" IsVisible="{Binding IsBusy}">
+					<VerticalStackLayout
+						HorizontalOptions="Center"
+						Spacing="12"
+						VerticalOptions="Center">
+						<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource Primary}" />
+						<Label
+							FontSize="13"
+							Text="Вчитување..."
+							TextColor="White" />
+					</VerticalStackLayout>
+				</Grid>
 			</Grid>
 		</Border>
 	</Grid>

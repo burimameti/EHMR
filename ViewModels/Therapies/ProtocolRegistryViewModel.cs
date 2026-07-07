@@ -1,12 +1,14 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
-
+using EHMR.Resources.Controls;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,14 +28,24 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
         set
         {
             if(SetProperty(ref _selectedCategory, value))
-            {
                 ApplyPipeline();
-            }
         }
     }
 
     // Листа за филтрирање по медицински гранки (можеш да ја дополниш од база или статички)
-    public List<string> CategoryFilters { get; } = ["Сите", "Кардиологија", "Онкологија", "Нефрологија", "Пулмологија"];
+    public ObservableCollection<string> CategoryFilters
+    {
+        get;
+    } =
+        new(["Сите", "Кардиологија", "Онкологија", "Нефрологија", "Пулмологија"]);
+
+    /// <summary>Module key used by BaseViewModel&lt;T&gt;.EvaluatePermissions().</summary>
+    protected override string ModuleName => "protocols";
+
+    // ================= GRID (entity-specific, same shape as PatientListViewModel) =================
+    [ObservableProperty] private ObservableCollection<TherapyProtocol> filteredProtocols = new();
+    [ObservableProperty] private ObservableCollection<SparkGridColumn> gridColumns = new();
+    [ObservableProperty] private ObservableCollection<SparkGridRow> gridRows = new();
 
     public ProtocolRegistryViewModel(
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
@@ -46,9 +58,9 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
     {
         _dbFactory=dbFactory;
         _selectedItemService=selectedItemService;
-    }
 
-    // LIFECYCLE
+        EvaluatePermissions(); // base method — was never being called before, so CanCreate/Update/Delete stayed false
+    }
 
     // LOAD DATA
     [RelayCommand]
@@ -70,6 +82,8 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
 
             AllItems=protocols; // Полнење на заштитената база од твојот BaseViewModel
 
+            InitializeSparkControls();
+
             ApplyPipeline();
         }
         catch(Exception ex)
@@ -84,8 +98,8 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
 
     // ФИЛТРИРАЊЕ НА ПРОТОКОЛИТЕ (Имплементација на апстрактниот метод од BaseViewModel)
     protected override IEnumerable<TherapyProtocol> ApplySearch(
-     IEnumerable<TherapyProtocol> query,
-     string search)
+        IEnumerable<TherapyProtocol> query,
+        string search)
     {
         if(string.IsNullOrWhiteSpace(search))
             return query;
@@ -101,6 +115,101 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
             query=query.Where(x => x.DiseaseCategory==SelectedCategory);
 
         return query;
+    }
+
+    /// <summary>
+    /// Mirrors PatientListViewModel.OnPageProjected: base pipeline calls this with
+    /// the paged/sorted/filtered slice, we store it locally, and the partial
+    /// OnFilteredProtocolsChanged hook below rebuilds the Spark grid rows.
+    /// </summary>
+    protected override void OnPageProjected(ObservableCollection<TherapyProtocol> page)
+    {
+        FilteredProtocols=page;
+    }
+
+    partial void OnFilteredProtocolsChanged(ObservableCollection<TherapyProtocol> value) => RefreshSparkGridRows();
+
+    // ClearFilters command now comes from BaseViewModel<T> (ClearFiltersCommand):
+    // it calls ResetFilters() → ApplyPipeline() → SyncSparkPickersFromFilters().
+    protected override void ResetFilters()
+    {
+        SearchText=string.Empty;
+        SelectedCategory="Сите";
+    }
+
+    // ============================================================
+    // PICKERS — category filter now goes through the same
+    // SparkPickerItem/MakePicker mechanism as Patients, instead of
+    // a bare property, so it renders inside SparkExplorerHeaderView.
+    // ============================================================
+    private SparkPickerItem _categoryPicker;
+
+    private void BuildSparkPickers()
+    {
+        Pickers.Clear();
+        _categoryPicker=MakePicker("Категорија", CategoryFilters, SelectedCategory, s => SelectedCategory=s);
+        Pickers.Add(_categoryPicker);
+    }
+
+    protected override void SyncSparkPickersFromFilters()
+    {
+        if(_categoryPicker==null) return;
+        _categoryPicker.SelectedItem=SelectedCategory;
+    }
+
+    // ============================================================
+    // GRID — columns/rows for TherapyProtocol
+    // ============================================================
+    private void BuildSparkGridColumns()
+    {
+        GridColumns=new ObservableCollection<SparkGridColumn>
+        {
+            new() { Header = "НАЗИВ", Key = "Name", Width = new GridLength(2.2, GridUnitType.Star) },
+            new() { Header = "КАТЕГОРИЈА", Key = "DiseaseCategory", CellType = SparkGridCellType.Badge, Width = new GridLength(1.3, GridUnitType.Star) },
+            new() { Header = "ОПИС", Key = "Description", Width = new GridLength(2.8, GridUnitType.Star) },
+            new() { Header = "ТРАЕЊЕ (ДЕНОВИ)", Key = "DurationInDays", CellType = SparkGridCellType.Number, Width = new GridLength(1.1, GridUnitType.Star) },
+            new() { Header = "ИЗРАБОТИЛ", Key = "CreatedByDoctor", Width = new GridLength(1.4, GridUnitType.Star) },
+            new() { Header = "АКЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
+        };
+    }
+
+    private void RefreshSparkGridRows()
+    {
+        var rows = new ObservableCollection<SparkGridRow>();
+        foreach(var p in FilteredProtocols)
+        {
+            var row = new SparkGridRow { Tag=p };
+            row["Name"]=p.Name;
+            row["DiseaseCategory"]=new SparkBadgeValue(p.DiseaseCategory??"—", CategoryToTone(p.DiseaseCategory));
+            row["Description"]=p.Description;
+            row["DurationInDays"]=p.DurationInDays??0;
+            row["CreatedByDoctor"]=p.CreatedByDoctor??"—";
+            rows.Add(row);
+        }
+        GridRows=rows;
+    }
+
+    /// <summary>
+    /// Purely cosmetic grouping so the category badge has some visual variety —
+    /// adjust freely, there's no clinical meaning behind the tone assignment.
+    /// </summary>
+    private static SparkBadgeTone CategoryToTone(string? category) => category?.ToLowerInvariant() switch
+    {
+        "онкологија" => SparkBadgeTone.Danger,
+        "кардиологија" => SparkBadgeTone.Warning,
+        "нефрологија" => SparkBadgeTone.Neutral,
+        "пулмологија" => SparkBadgeTone.Success,
+        _ => SparkBadgeTone.Neutral
+    };
+
+    // ============================================================
+    // WIRING
+    // ============================================================
+    private void InitializeSparkControls()
+    {
+        BuildSparkPickers();
+        BuildSparkButtons();   // inherited from BaseViewModel<T>
+        BuildSparkGridColumns();
     }
 
     // ACTIONS
@@ -164,13 +273,5 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
         {
             IsBusy=false;
         }
-    }
-
-    [RelayCommand]
-    private async Task ClearFiltersAsync()
-    {
-        SearchText=string.Empty;
-        SelectedCategory="Сите";
-        ApplyPipeline();
     }
 }

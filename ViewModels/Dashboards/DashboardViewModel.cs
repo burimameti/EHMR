@@ -1,16 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
 using EHMR.Converters;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
-
 using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
 using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Input;
 
 namespace EHMR.ViewModels;
@@ -22,9 +21,6 @@ public partial class DashboardViewModel : ObservableObject
     private readonly ISelectedItemService<Patient> _selectedPatient;
     private readonly ISelectedItemService<Appointment> _selectedAppointment;
     private readonly IUserDialogService _userDialogService;
-
-    private string? _pendingSearch;
-    private string? _pendingStatus;
 
     private readonly FilterLookup _cityLookup = PatientFilterLookups.BuildCityLookup();
 
@@ -42,14 +38,14 @@ public partial class DashboardViewModel : ObservableObject
     {
         get;
     }
+
     public string SelectedStatusDisplay
     {
         get => PatientFilterLookups.Status.ToDisplay(SelectedStatus);
         set
         {
             var internalValue = PatientFilterLookups.Status.ToInternal(value);
-            if(SelectedStatus==internalValue)
-                return;
+            if(SelectedStatus==internalValue) return;
 
             SelectedStatus=internalValue;
             CurrentPage=1;
@@ -64,8 +60,7 @@ public partial class DashboardViewModel : ObservableObject
         set
         {
             var internalValue = PatientFilterLookups.Gender.ToInternal(value);
-            if(SelectedGender==internalValue)
-                return;
+            if(SelectedGender==internalValue) return;
 
             SelectedGender=internalValue;
             CurrentPage=1;
@@ -80,8 +75,7 @@ public partial class DashboardViewModel : ObservableObject
         set
         {
             var internalValue = PatientFilterLookups.BloodType.ToInternal(value);
-            if(SelectedBloodType==internalValue)
-                return;
+            if(SelectedBloodType==internalValue) return;
 
             SelectedBloodType=internalValue;
             CurrentPage=1;
@@ -96,8 +90,7 @@ public partial class DashboardViewModel : ObservableObject
         set
         {
             var internalValue = _cityLookup.ToInternal(value);
-            if(SelectedCity==internalValue)
-                return;
+            if(SelectedCity==internalValue) return;
 
             SelectedCity=internalValue;
             CurrentPage=1;
@@ -112,8 +105,7 @@ public partial class DashboardViewModel : ObservableObject
         set
         {
             var internalValue = PatientFilterLookups.AgeGroup.ToInternal(value);
-            if(SelectedAgeGroup==internalValue)
-                return;
+            if(SelectedAgeGroup==internalValue) return;
 
             SelectedAgeGroup=internalValue;
             CurrentPage=1;
@@ -121,18 +113,11 @@ public partial class DashboardViewModel : ObservableObject
             OnPropertyChanged();
         }
     }
-    //public List<FFDataGridColumn> ColumnsPatient
-    //{
-    //    get; set;
-    //}
-    [ObservableProperty]
-    private List<int> weeklyPatients = new();
 
-    [ObservableProperty]
-    private List<int> weeklyAppointments = new();
+    [ObservableProperty] private List<int> weeklyPatients = new();
+    [ObservableProperty] private List<int> weeklyAppointments = new();
+    [ObservableProperty] private List<string> chartLabels = new();
 
-    [ObservableProperty]
-    private List<string> chartLabels = new();
     public MenuViewModel Menu
     {
         get;
@@ -141,14 +126,12 @@ public partial class DashboardViewModel : ObservableObject
     // =========================================================
     // STATE
     // =========================================================
-
     [ObservableProperty] private bool isBusy;
     [ObservableProperty] private bool isLoaded;
 
     // =========================================================
     // KPI
     // =========================================================
-
     [ObservableProperty] private int totalPatients;
     [ObservableProperty] private int activeTherapies;
     [ObservableProperty] private int upcomingAppointmentsCount;
@@ -164,72 +147,50 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty] private string completionPercentage = "0%";
     [ObservableProperty] private string completionStatus = "Loading...";
 
+    // KPI tile variants — drive FFMetricTile's color state without touching the tile markup itself
+    [ObservableProperty] private MetricTileVariant criticalAlertsVariant = MetricTileVariant.Neutral;
+    [ObservableProperty] private MetricTileVariant overdueCyclesVariant = MetricTileVariant.Success;
+    [ObservableProperty] private MetricTileVariant missedCyclesVariant = MetricTileVariant.Success;
+    [ObservableProperty] private MetricTileVariant adherenceVariant = MetricTileVariant.Neutral;
+
     // =========================================================
     // PATIENT SEARCH + PAGINATION
     // =========================================================
-    [ObservableProperty]
-    private ObservableCollection<FFGridColumn<Patient>> patientColumns = new();
-    [ObservableProperty]
-    private string patientSearchText = "";
 
-    // Only populated after a search — empty on dashboard load
-    [ObservableProperty]
-    private ObservableCollection<Patient> filteredPatients = new();
+    [ObservableProperty] private string patientSearchText = "";
+    [ObservableProperty] private ObservableCollection<Patient> filteredPatients = new();
 
-    // True only while the user has typed something
-    [ObservableProperty]
-    private bool hasSearchResults;
-
-    // Shown in the badge next to the panel title
-    [ObservableProperty]
-    private string filteredPatientsCount = "";
-
+    [ObservableProperty] private string filteredPatientsCount = "";
     [ObservableProperty] private int currentPage = 1;
     [ObservableProperty] private int totalPages;
 
-    // Max results shown per page in the dashboard search panel
     private const int PageSize = 5;
-
-    // Full in-memory patient list loaded once from DB
     private List<Patient> _allPatients = [];
-
-    // Paged subset of the current search
     private List<Patient> _searchResults = [];
 
     // =========================================================
     // APPOINTMENTS
     // =========================================================
-
-    [ObservableProperty]
-    private ObservableCollection<DashboardAppointmentItem> appointments = new();
-    [ObservableProperty]
-    private ObservableCollection<Appointment> appList = new();
+      [ObservableProperty]private ObservableCollection<DashboardAppointmentItem> appointments = new();
+   
 
     // =========================================================
     // NOTIFICATIONS
     // =========================================================
-
     private ObservableCollection<DashboardNotification> _notifications = [];
-
     public ObservableCollection<DashboardNotification> Notifications
     {
         get => _notifications;
         set => SetProperty(ref _notifications, value);
     }
-    [ObservableProperty]
-    private ObservableCollection<ChartPoint> patientTrend = new();
 
-    [ObservableProperty]
-    private ObservableCollection<ChartPoint> appointmentTrend = new();
-
-    [ObservableProperty]
-    private ObservableCollection<ChartPoint> therapyStats = new();
-
+    [ObservableProperty] private ObservableCollection<ChartPoint> patientTrend = new();
+    [ObservableProperty] private ObservableCollection<ChartPoint> appointmentTrend = new();
+    [ObservableProperty] private ObservableCollection<ChartPoint> therapyStats = new();
 
     // =========================================================
     // INFO
     // =========================================================
-
     public string CurrentDate => DateTime.Now.ToString("dd MMM yyyy");
     public User? UserName => _auth?.CurrentUser;
     public UserRole UserRole => UserRole.Admin;
@@ -237,7 +198,6 @@ public partial class DashboardViewModel : ObservableObject
     // =========================================================
     // SERVICES
     // =========================================================
-
     private readonly INavigationService navigationService;
     private readonly IAuthorizationService _policyService;
 
@@ -248,6 +208,7 @@ public partial class DashboardViewModel : ObservableObject
     {
         get;
     }
+
     public DashboardViewModel(
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
         ISelectedItemService<Patient> selectedPatient,
@@ -267,11 +228,9 @@ public partial class DashboardViewModel : ObservableObject
         Menu=menu;
         _policyService=policyService;
         CityFilterNames=_cityLookup.ToObservableCollection();
-      
+
         SearchCommand=new Command<string>(query => ApplySearch(query));
-
     }
-
 
     /// <summary>
     /// Called every time the search Entry text changes.
@@ -282,106 +241,51 @@ public partial class DashboardViewModel : ObservableObject
         if(query!=null)
             PatientSearchText=query;
 
+        if(string.IsNullOrWhiteSpace(PatientSearchText))
+        {
+            _searchResults=new List<Patient>();
+            FilteredPatients=new ObservableCollection<Patient>();
+            FilteredPatientsCount="";
+            TotalPages=0;
+            CurrentPage=1;
+            return;
+        }
 
         IEnumerable<Patient> result = _allPatients;
 
+        var search = PatientSearchText.Trim();
+        result=result.Where(x =>
+            (!string.IsNullOrWhiteSpace(x.FullName)&&
+             x.FullName.Contains(search, StringComparison.OrdinalIgnoreCase))
+            ||
+            (!string.IsNullOrWhiteSpace(x.NationalId)&&
+             x.NationalId.Contains(search, StringComparison.OrdinalIgnoreCase))
+            ||
+            (!string.IsNullOrWhiteSpace(x.Phone)&&
+             x.Phone.Contains(search, StringComparison.OrdinalIgnoreCase))
+            ||
+            (!string.IsNullOrWhiteSpace(x.City)&&
+             x.City.Contains(search, StringComparison.OrdinalIgnoreCase))
+        );
 
-        // SEARCH
-        if(!string.IsNullOrWhiteSpace(PatientSearchText))
-        {
-            var search = PatientSearchText.Trim();
-
-            result=result.Where(x =>
-                (!string.IsNullOrWhiteSpace(x.FullName)&&
-                 x.FullName.Contains(search, StringComparison.OrdinalIgnoreCase))
-
-                ||
-
-                (!string.IsNullOrWhiteSpace(x.NationalId)&&
-                 x.NationalId.Contains(search, StringComparison.OrdinalIgnoreCase))
-
-                ||
-
-                (!string.IsNullOrWhiteSpace(x.Phone)&&
-                 x.Phone.Contains(search, StringComparison.OrdinalIgnoreCase))
-
-                ||
-
-                (!string.IsNullOrWhiteSpace(x.City)&&
-                 x.City.Contains(search, StringComparison.OrdinalIgnoreCase))
-            );
-        }
-
-
-
-        // FILTERS
-
+        // ФИЛТРИ
         if(SelectedStatus!="All")
-        {
-            result=result.Where(x =>
-                x.Status.ToString()
-                .Equals(
-                    SelectedStatus,
-                    StringComparison.OrdinalIgnoreCase));
-        }
-
-
+            result=result.Where(x => x.Status.ToString().Equals(SelectedStatus, StringComparison.OrdinalIgnoreCase));
         if(SelectedGender!="All")
-        {
-            result=result.Where(x =>
-                x.Gender.ToString()
-                .Equals(
-                    SelectedGender,
-                    StringComparison.OrdinalIgnoreCase));
-        }
-
-
+            result=result.Where(x => x.Gender.ToString().Equals(SelectedGender, StringComparison.OrdinalIgnoreCase));
         if(SelectedBloodType!="All")
-        {
-            result=result.Where(x =>
-                x.BloodType.Equals(
-                    SelectedBloodType,
-                    StringComparison.OrdinalIgnoreCase));
-        }
-
-
+            result=result.Where(x => x.BloodType.Equals(SelectedBloodType, StringComparison.OrdinalIgnoreCase));
         if(SelectedCity!="All")
-        {
-            result=result.Where(x =>
-                x.City.Equals(
-                    SelectedCity,
-                    StringComparison.OrdinalIgnoreCase));
-        }
-
-
+            result=result.Where(x => x.City.Equals(SelectedCity, StringComparison.OrdinalIgnoreCase));
         if(SelectedAgeGroup!="All")
-        {
-            result=result.Where(x =>
-                x.Age.IsInAgeGroup(
-                    SelectedAgeGroup));
-        }
+            result=result.Where(x => x.Age.IsInAgeGroup(SelectedAgeGroup));
 
-
-
-        _searchResults=result
-            .OrderBy(x => x.LastName)
-            .ToList();
-
-
-
+        _searchResults=result.OrderBy(x => x.LastName).ToList();
         TotalPages=Math.Max(1, (int)Math.Ceiling(_searchResults.Count/(double)PageSize));
-
-
         CurrentPage=1;
-
-
-        HasSearchResults=_searchResults.Any();
-
 
         ProjectPage();
     }
-
-
     [RelayCommand]
     private void NextPage()
     {
@@ -398,30 +302,37 @@ public partial class DashboardViewModel : ObservableObject
         ProjectPage();
     }
 
-    /// <summary>Slices _searchResults into the current page and pushes to FilteredPatients.</summary>
-private void ProjectPage()
-{
-    var page = _searchResults
-        .Skip((CurrentPage - 1) * PageSize)
-        .Take(PageSize)
-        .ToList();
-
-    MainThread.BeginInvokeOnMainThread(() =>
+    /// <summary>Jump to a specific page — wired to SparkDataGridView's PageChangedCommand (was previously unbound).</summary>
+    [RelayCommand]
+    private void PageChanged(int page)
     {
-        // Pushing a fresh collection instantly triggers a single, clean UI refresh
-        FilteredPatients = new ObservableCollection<Patient>(page);
-        
-        FilteredPatientsCount = $"{_searchResults.Count} резултати";
-    });
-}
+        if(page<1||page>TotalPages||page==CurrentPage) return;
+        CurrentPage=page;
+        ProjectPage();
+    }
+
+    /// <summary>Slices _searchResults into the current page and pushes to FilteredPatients.</summary>
+    private void ProjectPage()
+    {
+        var page = _searchResults
+            .Skip((CurrentPage-1)*PageSize)
+            .Take(PageSize)
+            .ToList();
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            FilteredPatients=new ObservableCollection<Patient>(page);
+            FilteredPatientsCount=$"{_searchResults.Count} резултати";
+        });
+    }
 
     // =========================================================
     // LOAD / REFRESH
     // =========================================================
-
     public bool CanManageAppointments => _policyService.CanAccessModule(Modules.Appointments);
     public bool CanCreatePatient => _policyService.CanAccessModule(Modules.Patients);
-
+    [ObservableProperty] private bool isAppointmentsVisible;
+    [ObservableProperty] private bool isnotificationVisisble;
     [RelayCommand]
     public async Task Initialize()
     {
@@ -429,14 +340,17 @@ private void ProjectPage()
         await LoadGlobalAsync();
         IsLoaded=true;
     }
+
     private void InitializeChartState()
     {
         PatientTrend=new ObservableCollection<ChartPoint>();
         AppointmentTrend=new ObservableCollection<ChartPoint>();
         TherapyStats=new ObservableCollection<ChartPoint>();
     }
+
     [RelayCommand]
     public async Task Refresh() => await LoadGlobalAsync();
+
     [RelayCommand]
     public async Task LoadGlobalAsync()
     {
@@ -446,17 +360,14 @@ private void ProjectPage()
         try
         {
             await using var db = await _dbFactory.CreateDbContextAsync();
-           
+
             // =====================================================
             // BASE DATA LOAD
             // =====================================================
-
             _allPatients=await db.Patients
                 .AsNoTracking()
                 .OrderBy(p => p.LastName)
                 .ToListAsync();
-
-
 
             var notifications = await db.Notifications
                 .AsNoTracking()
@@ -473,15 +384,13 @@ private void ProjectPage()
             var appointments = await db.Appointments
                 .AsNoTracking()
                 .Include(a => a.Patient)
-             .Where(a =>
-    a.ScheduledStart.Date>=DateTime.Today)
+                .Where(a => a.ScheduledStart.Date>=DateTime.Today)
                 .OrderBy(a => a.ScheduledStart)
                 .ToListAsync();
 
             // =====================================================
             // KPI CALCULATION
             // =====================================================
-
             TotalPatients=_allPatients.Count;
             ActiveTherapies=cycles.Count(x => x.Status==TherapyStatus.Active);
             CompletedCycles=cycles.Count(x => x.Status==TherapyStatus.Completed);
@@ -494,10 +403,13 @@ private void ProjectPage()
                 (x.Appointments.Any(a => a.ScheduledStart<DateTime.Now)
                  &&x.Status!=TherapyStatus.Completed));
 
+            // Churned patients — was declared but never actually computed before
+            ChurnedCount=_allPatients.Count(p =>
+                p.Status.ToString().Equals(ChurnedStatusName, StringComparison.OrdinalIgnoreCase));
+
             // =====================================================
             // ADHERENCE KPI
             // =====================================================
-
             var tracked = cycles.Count(x =>
                 x.Status==TherapyStatus.Completed||
                 x.Status==TherapyStatus.Active||
@@ -505,9 +417,7 @@ private void ProjectPage()
                 x.Status==TherapyStatus.Suspended||
                 x.Status==TherapyStatus.Scheduled);
 
-            var rate = tracked==0
-                ? 0
-                : (double)CompletedCycles/tracked;
+            var rate = tracked==0 ? 0 : (double)CompletedCycles/tracked;
 
             AdherenceProgress=rate;
             CompletionPercentage=$"{Math.Round(rate*100)}%";
@@ -529,110 +439,104 @@ private void ProjectPage()
                 _ => Colors.Red
             };
 
+            // KPI tile variants — reuse the same figures computed above, no extra queries
+            CriticalAlertsVariant=CriticalAlerts>0 ? MetricTileVariant.Danger : MetricTileVariant.Success;
+            OverdueCyclesVariant=OverdueCycles>0 ? MetricTileVariant.Danger : MetricTileVariant.Success;
+            MissedCyclesVariant=MissedCycles>0 ? MetricTileVariant.Warning : MetricTileVariant.Success;
+            AdherenceVariant=rate switch
+            {
+                >=0.90 => MetricTileVariant.Success,
+                >=0.75 => MetricTileVariant.Info,
+                >=0.60 => MetricTileVariant.Warning,
+                _ => MetricTileVariant.Danger
+            };
+
             // =====================================================
             // WEEKLY TREND (REAL DATA)
             // =====================================================
-
             InitializeChartState();
 
-            // =====================================================
-            // WEEKLY LABELS BASE
-            // =====================================================
             var last7Days = Enumerable.Range(0, 7)
                 .Select(i => DateTime.Today.AddDays(-6+i))
                 .ToList();
 
-            ChartLabels=last7Days
-                .Select(d => d.ToString("ddd"))
-                .ToList();
+            ChartLabels=last7Days.Select(d => d.ToString("ddd")).ToList();
 
-
-            // =====================================================
-            // CHART DATA (REAL BUSINESS DATA — NOT HARDCODED)
-            // =====================================================
-
-            // =====================================================
-            // PATIENT TREND (REAL DATA EXAMPLE)
-            // =====================================================
             PatientTrend=new ObservableCollection<ChartPoint>(
                 last7Days.Select(day => new ChartPoint
                 {
                     Label=day.ToString("ddd"),
-                    Value=_allPatients.Count(p =>
-                        p.CreatedAt.Date==day.Date) // adjust if no CreatedAt
+                    Value=_allPatients.Count(p => p.CreatedAt.Date==day.Date)
                 })
             );
 
-            // =====================================================
-            // APPOINTMENT TREND
-            // =====================================================
             AppointmentTrend=new ObservableCollection<ChartPoint>(
                 last7Days.Select(day => new ChartPoint
                 {
                     Label=day.ToString("ddd"),
-                    Value=appointments.Count(a =>
-                        a.ScheduledStart.Date==day.Date)
+                    Value=appointments.Count(a => a.ScheduledStart.Date==day.Date)
                 })
             );
 
-            // =====================================================
-            // THERAPY STATS
-            // =====================================================
             TherapyStats=new ObservableCollection<ChartPoint>
-{
-    new() { Label = "\\Завршени", Value = cycles.Count(x => x.Status == TherapyStatus.Completed) },
-    new() { Label = "Во тек", Value = cycles.Count(x => x.Status == TherapyStatus.Active) },
-    new() { Label = "Чекаат", Value = cycles.Count(x => x.Status == TherapyStatus.Scheduled) }
-};
+            {
+                new() { Label = "Завршени", Value = cycles.Count(x => x.Status == TherapyStatus.Completed) },
+                new() { Label = "Во тек", Value = cycles.Count(x => x.Status == TherapyStatus.Active) },
+                new() { Label = "Чекаат", Value = cycles.Count(x => x.Status == TherapyStatus.Scheduled) }
+            };
 
             // =====================================================
             // SEARCH RESET
+            // Was doing this twice (once in a now-removed branch, once unconditionally).
+            // ApplySearch() already rebuilds _searchResults/TotalPages/CurrentPage from
+            // scratch, so a single call covers both the "no search text" and "has search
+            // text" cases — no need to special-case the empty string here.
             // =====================================================
-
-            if(string.IsNullOrWhiteSpace(PatientSearchText))
-            {
-                // Populate search results with all loaded patients if search string is empty
-                _searchResults=_allPatients.ToList();
-                TotalPages=(int)Math.Ceiling((double)_searchResults.Count/PageSize);
-                CurrentPage=1;
-                HasSearchResults=false;
-                ProjectPage(); // This slices the list and populates FilteredPatients
-            }
-            _searchResults=_allPatients.ToList();
-
+            _searchResults=new List<Patient>();
+            FilteredPatients=new ObservableCollection<Patient>();
+            FilteredPatientsCount="";
+            TotalPages=0;
             CurrentPage=1;
-
-            ApplySearch();
-
 
             // =====================================================
             // APPOINTMENTS UI MODEL
             // =====================================================
-
-            Appointments=new ObservableCollection<DashboardAppointmentItem>(
-    appointments.Take(5).Select(a => new DashboardAppointmentItem
-    {
-        Source=a,
-        PatientName=$"{a.Patient.FirstName} {a.Patient.LastName}",
-        ScheduledStart=a.ScheduledStart,
-        Time=a.ScheduledStart.ToString("HH:mm"),
-        RelativeDay=a.ScheduledStart.Date==DateTime.Today ? "Денес" : " Друг Ден",
-        StatusColor=a.ScheduledStart<DateTime.Now.AddHours(1) ? "#DC2626" : "#2563EB"
-    })
-);
+            var items  = appointments.Take(5).Select(a => new DashboardAppointmentItem
+            {
+                Source=a,
+                PatientName=$"{a.Patient.FirstName} {a.Patient.LastName}",
+                ScheduledStart=a.ScheduledStart,
+                Time=a.ScheduledStart.ToString("HH:mm"),
+                RelativeDay=a.ScheduledStart.Date==DateTime.Today ? "Денес" : " Друг Ден",
+                StatusColor=a.ScheduledStart<DateTime.Now.AddHours(1) ? "#DC2626" : "#2563EB"
+            });
 
             // =====================================================
             // NOTIFICATIONS
             // =====================================================
+            var notificationItems = notifications.Select(n => new DashboardNotification
+            {
+                Title=n.Title,
+                Time=GetRelativeTime(n.CreatedAt),
+                Level=MapSeverity(n.Severity.ToString())
+            }).ToList();
 
-            Notifications=new ObservableCollection<DashboardNotification>(
-                notifications.Select(n => new DashboardNotification
-                {
-                    Title=n.Title,
-                    Time=GetRelativeTime(n.CreatedAt),
-                    Level=MapSeverity(n.Severity.ToString())
-                })
-            );
+            //MainThread.BeginInvokeOnMainThread(() =>
+            //{
+            //    Appointments.Clear();
+            //    foreach(var item in appointmentItems) Appointments.Add(item);
+            //    Notifications=new ObservableCollection<DashboardNotification>(notificationItems);
+            //});
+
+    
+
+      
+          
+            Appointments=new ObservableCollection<DashboardAppointmentItem>(items);
+          
+
+           
+            Notifications=new ObservableCollection<DashboardNotification>(notificationItems);
 
             InitializeSparkControls();
         }
@@ -649,7 +553,6 @@ private void ProjectPage()
     // =========================================================
     // NAVIGATION
     // =========================================================
-
     [RelayCommand]
     private async Task NavigateToPatients(string? statusFilter = null)
     {
@@ -675,7 +578,6 @@ private void ProjectPage()
         await Shell.Current.GoToAsync(AppRoutes.Appointments.List, query);
     }
 
-    // was missing entirely even though XAML binds NavigateToTherapiesCommand
     [RelayCommand]
     private async Task NavigateToTherapies(string? statusFilter = null)
     {
@@ -707,7 +609,6 @@ private void ProjectPage()
         await navigationService.GoToAsync(AppRoutes.Appointments.Detail);
     }
 
-
     [RelayCommand]
     private async Task NewAppointment()
     {
@@ -723,13 +624,41 @@ private void ProjectPage()
         await navigationService.GoToAsync(AppRoutes.Appointments.Detail);
     }
 
+    /// <summary>
+    /// "+ Преглед" in the header used to point at RefreshCommand, which just reloaded
+    /// the dashboard — not what the button says. Wired to a real (stubbed) encounter
+    /// flow instead. Swap the TODO alert for EnsureEncounterAsync/Encounter navigation
+    /// once that entity work lands.
+    /// </summary>
+    [RelayCommand]
+    private async Task NewEncounter()
+    {
+        if(!CanManageAppointments)
+        {
+            await _userDialogService.ShowAlertAsync(
+                "Пристапот е одбиен",
+                "Немате авторизација за додавање на нов преглед.",
+                "OK");
+            return;
+        }
+
+        // TODO: replace with real navigation once the Encounter entity/EnsureEncounterAsync
+        // flow is finalized (see EHMR.Application pending work).
+        await _userDialogService.ShowAlertAsync(
+            "Наскоро",
+            "Модулот за нов преглед сѐ уште не е поврзан.",
+            "OK");
+    }
+
     [RelayCommand]
     private async Task OpenKpi(string type)
     {
         switch(type)
         {
-            case "patients": await NavigateToPatients(AppRoutes.Patients.List); break;
-            case "therapies": await Shell.Current.GoToAsync(AppRoutes.Therapy.List); break;
+            // Bug fix: this used to call NavigateToPatients(AppRoutes.Patients.List),
+            // shoving a route string into the statusFilter parameter.
+            case "patients": await NavigateToPatients(); break;
+            case "therapies": await NavigateToTherapies(); break;
             case "appointments": await NavigateToAppointments(); break;
             case "alerts": await NavigateToAlerts(); break;
         }
@@ -741,20 +670,18 @@ private void ProjectPage()
         _selectedPatient.SelectedItem=null;
         await navigationService.GoToAsync(AppRoutes.Patients.Detail);
     }
+
     [RelayCommand]
-    private async Task Select(Patient? patient)
-    {
-        await OpenPatient(patient);
-    }
+    private async Task Select(Patient? patient) => await OpenPatient(patient);
 
     [RelayCommand]
     private async Task Edit(Patient? patient)
     {
         if(patient is null) return;
         _selectedPatient.SelectedItem=patient;
-        // Assuming your edit page routes to details or a dedicated editor page
         await navigationService.GoToAsync(AppRoutes.Patients.Detail);
     }
+
     // =========================================================
     // HELPERS
     // =========================================================
@@ -797,11 +724,9 @@ private void ProjectPage()
         CurrentPage=1;
         ApplySearch();
     }
-
     [RelayCommand]
     private void ClearFilters()
     {
- 
         SelectedStatus="All";
         SelectedGender="All";
         SelectedBloodType="All";
@@ -815,8 +740,8 @@ private void ProjectPage()
         OnPropertyChanged(nameof(SelectedAgeGroupDisplay));
 
         CurrentPage=1;
-        PatientSearchText="";
-        ApplySearch();
+        PatientSearchText="";   // this alone now resets the grid via the hook above
+        SyncSparkPickersFromFilters();
     }
     private NotificationLevel MapSeverity(string dbSeverity) =>
         dbSeverity?.ToLower() switch
@@ -853,71 +778,94 @@ private void ProjectPage()
     private const string ChurnedStatusName = "Inactive";
     private const string EncounterStatusName = "Inactive";
     private const string WarningStatusName = "Inactive";
-    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
-    private int churnedCount;
+
+    [ObservableProperty] private int churnedCount;
 
     private void BuildSparkTabs()
     {
+        Tabs.Clear();
+
         _allPatientsTab=new SparkTabItem { Title="Сите пациенти", IsSelected=true };
-        _churnedTab=new SparkTabItem { Title="Неактивни" };
-        _encounters=new SparkTabItem { Title="Прегледи" };
-        //_churnedTab=new SparkTabItem { Title="Терапии" };
+        var activeTherapiesTab = new SparkTabItem { Title="Активни терапии" };
+        var upcomingTab = new SparkTabItem { Title="Закажани прегледи" };
         _warning=new SparkTabItem { Title="Критични" };
+        var completedTab = new SparkTabItem { Title="Завршени циклуси" };
+        var overdueTab = new SparkTabItem { Title="Задоцнети циклуси" };
+        var missedTab = new SparkTabItem { Title="Пропуштени циклуси" };
+        _encounters=new SparkTabItem { Title="Прегледи" };
+        _churnedTab=new SparkTabItem { Title="Неактивни" };
 
-        // Tabs act as quick status filters over the existing grid, same as the "All Users"/"Churned"
-        // tabs in the mock — they don't navigate away. Swap the bodies for NavigateToPatients/
-        // NavigateToChurned if you'd rather have them jump to a different page instead.
-        _allPatientsTab.Command=new RelayCommand(() =>
-        {
-            _allPatientsTab.IsSelected=true;
-            _churnedTab.IsSelected=false;
-            _warning.IsSelected=false;
-            _encounters.IsSelected=false;
-            SelectedStatusDisplay =PatientFilterLookups.Status.ToDisplay("All");
-        });
+        _allPatientsTab.Command=new RelayCommand(() => SelectTab(_allPatientsTab, () =>
+            SelectedStatusDisplay=PatientFilterLookups.Status.ToDisplay("All")));
 
-        _churnedTab.Command=new RelayCommand(() =>
-        {
-            _allPatientsTab.IsSelected=false;
-            _churnedTab.IsSelected=true;
-            _warning.IsSelected=false;
-            _encounters.IsSelected=false;
-            SelectedStatusDisplay=PatientFilterLookups.Status.ToDisplay(ChurnedStatusName);
-        });
-        _encounters.Command=new RelayCommand(() =>
-        {
-            _allPatientsTab.IsSelected=false;
-            _encounters.IsSelected=true;
-            _warning.IsSelected=false;
-            _churnedTab.IsSelected=false;
-            SelectedStatusDisplay=PatientFilterLookups.Status.ToDisplay(EncounterStatusName);
-        });
-        _warning.Command=new RelayCommand(() =>
-        {
-            _allPatientsTab.IsSelected=false;
-            _encounters.IsSelected=false;
-            _warning.IsSelected=true;
-            _churnedTab.IsSelected=false;
-            SelectedStatusDisplay=PatientFilterLookups.Status.ToDisplay(WarningStatusName);
-        });
+        activeTherapiesTab.Command=new RelayCommand(() => SelectTab(activeTherapiesTab,
+            () => NavigateToTherapiesCommand.Execute("Active")));
+
+        upcomingTab.Command=new RelayCommand(() => SelectTab(upcomingTab,
+            () => NavigateToAppointmentsCommand.Execute(null)));
+
+        _warning.Command=new RelayCommand(() => SelectTab(_warning,
+            () => NavigateToAlertsCommand.Execute(null)));
+
+        completedTab.Command=new RelayCommand(() => SelectTab(completedTab,
+            () => NavigateToTherapiesCommand.Execute("Completed")));
+
+        overdueTab.Command=new RelayCommand(() => SelectTab(overdueTab,
+            () => NavigateToTherapiesCommand.Execute("Overdue")));
+
+        missedTab.Command=new RelayCommand(() => SelectTab(missedTab,
+            () => NavigateToTherapiesCommand.Execute("Missed")));
+
+        _encounters.Command=new RelayCommand(() => SelectTab(_encounters,
+            () => SelectedStatusDisplay=PatientFilterLookups.Status.ToDisplay(EncounterStatusName)));
+
+        _churnedTab.Command=new RelayCommand(() => SelectTab(_churnedTab,
+            () => SelectedStatusDisplay=PatientFilterLookups.Status.ToDisplay(ChurnedStatusName)));
+
         Tabs.Add(_allPatientsTab);
+        Tabs.Add(activeTherapiesTab);
+        Tabs.Add(upcomingTab);
         Tabs.Add(_warning);
-
+        Tabs.Add(completedTab);
+        Tabs.Add(overdueTab);
+        Tabs.Add(missedTab);
         Tabs.Add(_encounters);
         Tabs.Add(_churnedTab);
+
+        _activeTherapiesTab=activeTherapiesTab;
+        _upcomingTab=upcomingTab;
+        _completedTab=completedTab;
+        _overdueTab=overdueTab;
+        _missedTab=missedTab;
 
         RefreshSparkTabCounts();
     }
 
-    /// <summary>Call after TotalPatients/ChurnedCount change (already called at the end of LoadGlobalAsync below).</summary>
+    private SparkTabItem _activeTherapiesTab, _upcomingTab, _completedTab, _overdueTab, _missedTab;
+
+    /// <summary>Marks one tab selected and clears the rest, then runs the tab's own action.</summary>
+    private void SelectTab(SparkTabItem tab, Action action)
+    {
+        foreach(var t in Tabs) t.IsSelected=false;
+        tab.IsSelected=true;
+        action();
+    }
+
     private void RefreshSparkTabCounts()
     {
         if(_allPatientsTab==null) return;
         _allPatientsTab.Value=TotalPatients.ToString("N0");
-        _churnedTab.Value=ChurnedCount.ToString("N0");
+        _activeTherapiesTab.Value=ActiveTherapies.ToString("N0");
+        _upcomingTab.Value=UpcomingAppointmentsCount.ToString("N0");
         _warning.Value=CriticalAlerts.ToString("N0");
+        _completedTab.Value=CompletedCycles.ToString("N0");
+        _overdueTab.Value=OverdueCycles.ToString("N0");
+        _missedTab.Value=MissedCycles.ToString("N0");
         _encounters.Value=Appointments.Count.ToString("N0");
+        _churnedTab.Value=ChurnedCount.ToString("N0");
     }
+
+  
 
     // ============================================================
     // PICKERS  (Status / Gender / BloodType / City / AgeGroup)
@@ -928,6 +876,7 @@ private void ProjectPage()
 
     private void BuildSparkPickers()
     {
+        Pickers.Clear();
         _statusPicker=MakePicker("Статус", StatusFilters, SelectedStatusDisplay,
             selected => SelectedStatusDisplay=selected);
 
@@ -965,7 +914,6 @@ private void ProjectPage()
         return picker;
     }
 
-    /// <summary>Call after ClearFilters() resets the SelectedXDisplay properties, so the pickers show "Сите" again.</summary>
     private void SyncSparkPickersFromFilters()
     {
         if(_statusPicker==null) return;
@@ -983,6 +931,7 @@ private void ProjectPage()
 
     private void BuildSparkButtons()
     {
+        Buttons.Clear();
         Buttons.Add(new SparkButtonItem
         {
             Label="✕ Исчисти",
@@ -994,78 +943,37 @@ private void ProjectPage()
     // ============================================================
     // GRID  (columns match ЕМБГ / ПАЦИЕНТ / ПОЛ / ВОЗРАСТ / КРВ / ТЕЛЕФОН / СТАТУС / АКЦИИ)
     // ============================================================
-    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
-    private ObservableCollection<SparkGridColumn> gridColumns = new();
-
-    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
-    private ObservableCollection<SparkGridRow> gridRows = new();
+    [ObservableProperty] private ObservableCollection<SparkGridColumn> gridColumns = new();
+    [ObservableProperty] private ObservableCollection<SparkGridRow> gridRows = new();
 
     private void BuildSparkGridColumns()
     {
+        GridColumns.Clear();
         GridColumns=new ObservableCollection<SparkGridColumn>
-{
-    new()
-    {
-        Header = "ЕМБГ",
-        Key = "NationalId",
-        Width = new GridLength(1.3, GridUnitType.Star)
-    },
-
-    new()
-    {
-        Header = "ПАЦИЕНТ",
-        Key = "FullName",
-        Width = new GridLength(2.8, GridUnitType.Star)
-    },
-
-    new()
-    {
-        Header = "ПОЛ",
-        Key = "Gender",
-        Width = new GridLength(0.8, GridUnitType.Star)
-    },
-
-    new()
-    {
-        Header = "ВОЗРАСТ",
-        Key = "Age",
-        CellType = SparkGridCellType.Number,
-        Width = new GridLength(0.9, GridUnitType.Star)
-    },
-
-    new()
-    {
-        Header = "КРВ",
-        Key = "BloodType",
-        Width = new GridLength(0.8, GridUnitType.Star)
-    },
-
-    new()
-    {
-        Header = "ТЕЛЕФОН",
-        Key = "Phone",
-        Width = new GridLength(1.5, GridUnitType.Star)
-    },
-
-    new()
-    {
-        Header = "СТАТУС",
-        Key = "Status",
-        CellType = SparkGridCellType.Badge,
-        Width = new GridLength(1.2, GridUnitType.Star)
-    },
-
-    new()
-    {
-        Header = "АКЦИИ",
-        Key = "Actions",
-        CellType = SparkGridCellType.Actions,
-        Width = new GridLength(0.9, GridUnitType.Star)
+        {
+            new() { Header = "ЕМБГ", Key = "NationalId", Width = new GridLength(1.3, GridUnitType.Star) },
+            new() { Header = "ПАЦИЕНТ", Key = "FullName", Width = new GridLength(2.8, GridUnitType.Star) },
+            new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.8, GridUnitType.Star) },
+            new() { Header = "ВОЗРАСТ", Key = "Age", CellType = SparkGridCellType.Number, Width = GridLength.Auto },
+            new() { Header = "КРВ", Key = "BloodType", Width = new GridLength(0.8, GridUnitType.Star) },
+            new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.5, GridUnitType.Star) },
+            new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1.2, GridUnitType.Star) },
+            new() { Header = "АКЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
+        };
     }
-};
-    }
+    partial void OnPatientSearchTextChanged(string value)
+    {
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            FilteredPatients=new ObservableCollection<Patient>();
+            FilteredPatientsCount="";
+            TotalPages=0;
+            CurrentPage=1;
+            return;
+        }
 
-    /// <summary>CommunityToolkit hook — fires automatically whenever FilteredPatients is reassigned (ProjectPage() does this).</summary>
+        ApplySearch();
+    }
     partial void OnFilteredPatientsChanged(ObservableCollection<Patient> value) => RefreshSparkGridRows();
 
     private void RefreshSparkGridRows()
@@ -1096,10 +1004,7 @@ private void ProjectPage()
     };
 
     // ============================================================
-    // WIRING — call this once from the constructor (after the existing
-    // field assignments), and call RefreshSparkTabCounts() at the end of
-    // LoadGlobalAsync (right after TotalPatients/ChurnedCount are set),
-    // and SyncSparkPickersFromFilters() at the end of ClearFilters().
+    // WIRING
     // ============================================================
     private void InitializeSparkControls()
     {

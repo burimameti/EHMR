@@ -149,19 +149,24 @@ public partial class FFButton : ContentView
         switch(ButtonKind)
         {
             case FFButtonKind.Primary:
-                BackgroundColorEx=Color.FromArgb("#2563EB");
+                BackgroundColorEx=Color.FromArgb("#67D0DD");
                 TextColorEx=Colors.White;
                 BorderColor=Colors.Transparent;
                 BorderThickness=0;
                 break;
 
             case FFButtonKind.Secondary:
-                BackgroundColorEx=Color.FromArgb("#F1F5F9");
+                BackgroundColorEx=Color.FromArgb("#90A1AD");
                 TextColorEx=Color.FromArgb("#334155");
                 BorderColor=Color.FromArgb("#E2E8F0");
                 BorderThickness=1;
                 break;
-
+            case FFButtonKind.Green:
+                BackgroundColorEx=Color.FromArgb("#DAF6BA");
+                TextColorEx=Color.FromArgb("#334155");
+                BorderColor=Color.FromArgb("#E2E8F0");
+                BorderThickness=1;
+                break;
             case FFButtonKind.Danger:
                 BackgroundColorEx=Color.FromArgb("#EF4444");
                 TextColorEx=Colors.White;
@@ -171,7 +176,7 @@ public partial class FFButton : ContentView
 
             case FFButtonKind.Ghost:
                 BackgroundColorEx=Colors.Transparent;
-                TextColorEx=Color.FromArgb("#64748B");
+                TextColorEx=Color.FromArgb("#B4CAD9");
                 BorderColor=Color.FromArgb("#E2E8F0");
                 BorderThickness=1;
                 break;
@@ -214,5 +219,5 @@ public enum FFButtonKind
     Primary,
     Secondary,
     Danger,
-    Ghost
+    Ghost,Green
 }

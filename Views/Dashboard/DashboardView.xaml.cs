@@ -1,10 +1,6 @@
 ﻿using EHMR.Domain.Entities;
-using EHMR.Resources.Controls;
 using EHMR.ViewModels;
-using EHMR.ViewModels.Patients;
 using System.Diagnostics;
-using System.Windows.Input;
-
 namespace EHMR.Views;
 
 public partial class DashboardView : ContentPage
@@ -46,8 +42,24 @@ public partial class DashboardView : ContentPage
         {
             Debug.WriteLine($"VM found: {vm.GetHashCode()}");
             _=vm.Initialize();
+          //  ForceCollectionViewRefresh();
         }
     }
+
+    //private void ForceCollectionViewRefresh()
+    //{
+    //    // Known MAUI/WinUI bug: CollectionView doesn't invalidate its native panel
+    //    // on first ItemsSource assignment. Toggling IsVisible forces a full
+    //    // re-measure/re-render pass.
+    //    AppointmentsCollectionView.IsVisible=false;
+    //    NotificationsCollectionView.IsVisible=false;
+
+    //    Dispatcher.Dispatch(() =>
+    //    {
+    //        AppointmentsCollectionView.IsVisible=true;
+    //        NotificationsCollectionView.IsVisible=true;
+    //    });
+    //}
     private void OnSelectedStatusChanged(object sender, EventArgs e)
     {
         var picker = (Picker)sender;
@@ -131,7 +143,7 @@ public partial class DashboardView : ContentPage
         if(picker.SelectedIndex<0)
             return;
 
-        if(BindingContext is not PatientListViewModel vm)
+        if(BindingContext is not DashboardViewModel vm)
             return;
 
         if(vm.BloodTypeFilters.Count<=picker.SelectedIndex)

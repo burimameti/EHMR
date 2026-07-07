@@ -14,6 +14,7 @@ namespace EHMR.Views
 
             InitializeComponent();
             BindingContext=_viewModel;
+            MenuHost.Content = this.menuView;
         }
 
         protected void OnAppearing()
@@ -21,7 +22,7 @@ namespace EHMR.Views
             base.OnAppearing();
             if(BindingContext is MedicineListViewModel vm)
             {
-                _=vm.LoadMedicinesAsync();
+                _=vm.LoadAsync();
             }
         }
     }

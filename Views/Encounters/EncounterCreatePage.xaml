@@ -6,7 +6,7 @@
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	xmlns:entities="clr-namespace:EHMR.Domain.Entities"
 	x:Name="PageRoot"
-	BackgroundColor="#F6F7FB">
+	BackgroundColor="{StaticResource SparkBackgroundAlt}">
 
 	<Grid ColumnDefinitions="285,*">
 
@@ -17,34 +17,56 @@
 		<Grid
 			Grid.Column="1"
 			Padding="24"
-			BackgroundColor="{StaticResource Gray200}"
+			BackgroundColor="{StaticResource SparkBackgroundAlt}"
 			RowDefinitions="Auto,*"
 			RowSpacing="20">
 
+			<!--  HEADER — SparkRadiusLg (12), matches list-page header cards  -->
 			<Border
 				Padding="20"
-				BackgroundColor="{StaticResource White}"
-				StrokeShape="RoundRectangle 12"
+				BackgroundColor="{StaticResource SparkBackground}"
+				StrokeShape="RoundRectangle 1"
 				StrokeThickness="0">
 
-				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+				<Grid
+					ColumnDefinitions="Auto,*,Auto"
+					ColumnSpacing="18"
+					VerticalOptions="Center">
 
-					<VerticalStackLayout Spacing="4" VerticalOptions="Center">
+					<Border
+						BackgroundColor="{StaticResource SparkTabActiveBg}"
+						HeightRequest="52"
+						StrokeShape="RoundRectangle 26"
+						StrokeThickness="0"
+						WidthRequest="52">
+						<Label
+							FontFamily="FASolid"
+							FontSize="20"
+							HorizontalOptions="Center"
+							Text="&#xf0f1;"
+							TextColor="{StaticResource SparkAccentTeal}"
+							VerticalOptions="Center" />
+					</Border>
+
+					<VerticalStackLayout
+						Grid.Column="1"
+						Spacing="4"
+						VerticalOptions="Center">
 						<Label
 							FontAttributes="Bold"
 							FontFamily="Segoe UI"
 							FontSize="20"
 							Text="Нов Преглед"
-							TextColor="{StaticResource Gray600}" />
+							TextColor="{StaticResource SparkTextPrimary}" />
 						<Label
 							FontFamily="Segoe UI"
 							FontSize="12"
 							Text="Внесете ги основните и медицинските детали за тековниот преглед"
-							TextColor="{StaticResource Gray700}" />
+							TextColor="{StaticResource SparkTextSecondary}" />
 					</VerticalStackLayout>
 
 					<HorizontalStackLayout
-						Grid.Column="1"
+						Grid.Column="2"
 						Spacing="10"
 						VerticalOptions="Center">
 						<controls:FFButton
@@ -63,14 +85,15 @@
 				</Grid>
 			</Border>
 
+			<!--  MAIN PANEL — SparkRadiusXl (16), the page-level card wrapper  -->
 			<Border
 				Grid.Row="1"
-				BackgroundColor="{StaticResource White}"
-				StrokeShape="RoundRectangle 16"
+				BackgroundColor="{StaticResource SparkBackground}"
+				StrokeShape="RoundRectangle 1"
 				StrokeThickness="0">
 
 				<ScrollView VerticalScrollBarVisibility="Never">
-					<VerticalStackLayout Padding="32" Spacing="28">
+					<VerticalStackLayout Padding="32" Spacing="1">
 
 						<VerticalStackLayout Spacing="16">
 							<Label
@@ -78,8 +101,8 @@
 								FontAttributes="Bold"
 								FontSize="13"
 								Text="ОСНОВНИ ИНФОРМАЦИИ"
-								TextColor="{StaticResource Gray800}" />
-							<BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
+								TextColor="{StaticResource SparkTextPrimary}" />
+							<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
 
 							<Grid ColumnDefinitions="*,*" ColumnSpacing="24">
 								<controls:FFPicker
@@ -97,14 +120,15 @@
 									SelectedItem="{Binding SelectedDoctor}" />
 							</Grid>
 						</VerticalStackLayout>
+
 						<VerticalStackLayout Spacing="16">
 							<Label
 								CharacterSpacing="1"
 								FontAttributes="Bold"
 								FontSize="13"
 								Text="ТИП И ПРИОРИТЕТ"
-								TextColor="{StaticResource Gray800}" />
-							<BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
+								TextColor="{StaticResource SparkTextPrimary}" />
+							<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
 
 							<Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="24">
 								<controls:FFPicker
@@ -129,20 +153,20 @@
 										FontAttributes="Bold"
 										FontSize="13"
 										Text="Датум на преглед"
-										TextColor="{StaticResource Gray600}" />
+										TextColor="{StaticResource SparkTextSecondary}" />
 									<Border
 										Grid.Row="1"
 										Padding="10,0"
-										BackgroundColor="{StaticResource Gray50}"
+										BackgroundColor="{StaticResource SparkBackground}"
 										HeightRequest="46"
-										Stroke="LightGray"
-										StrokeShape="RoundRectangle 10"
+										Stroke="{StaticResource SparkBorder}"
+										StrokeShape="RoundRectangle 6"
 										StrokeThickness="1">
 										<DatePicker
 											BackgroundColor="Transparent"
 											Date="{Binding ScheduledStartDate}"
 											FontSize="13"
-											TextColor="{StaticResource Gray800}"
+											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
 									</Border>
 								</Grid>
@@ -155,33 +179,34 @@
 										FontAttributes="Bold"
 										FontSize="13"
 										Text="Време"
-										TextColor="{StaticResource Gray600}" />
+										TextColor="{StaticResource SparkTextSecondary}" />
 									<Border
 										Grid.Row="1"
 										Padding="10,0"
-										BackgroundColor="{StaticResource Gray50}"
+										BackgroundColor="{StaticResource SparkBackground}"
 										HeightRequest="46"
-										Stroke="LightGray"
-										StrokeShape="RoundRectangle 10"
+										Stroke="{StaticResource SparkBorder}"
+										StrokeShape="RoundRectangle 6"
 										StrokeThickness="1">
 										<TimePicker
 											BackgroundColor="Transparent"
 											FontSize="13"
-											TextColor="{StaticResource Gray800}"
+											TextColor="{StaticResource SparkTextPrimary}"
 											Time="{Binding ScheduledStartTime}"
 											VerticalOptions="Center" />
 									</Border>
 								</Grid>
 							</Grid>
 						</VerticalStackLayout>
+
 						<VerticalStackLayout Spacing="16">
 							<Label
 								CharacterSpacing="1"
 								FontAttributes="Bold"
 								FontSize="13"
 								Text="ДЕТАЛИ ЗА ПРЕГЛЕДОТ"
-								TextColor="{StaticResource Gray800}" />
-							<BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
+								TextColor="{StaticResource SparkTextPrimary}" />
+							<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
 
 							<Grid ColumnDefinitions="*,*" ColumnSpacing="24">
 
@@ -193,21 +218,22 @@
 										FontAttributes="Bold"
 										FontSize="13"
 										Text="Причина за посета *"
-										TextColor="{StaticResource Gray600}" />
+										TextColor="{StaticResource SparkTextSecondary}" />
 									<Border
 										Grid.Row="1"
 										Padding="12,0"
-										BackgroundColor="{StaticResource Gray50}"
+										BackgroundColor="{StaticResource SparkBackground}"
 										HeightRequest="46"
-										Stroke="LightGray"
-										StrokeShape="RoundRectangle 10"
+										Stroke="{StaticResource SparkBorder}"
+										StrokeShape="RoundRectangle 6"
 										StrokeThickness="1">
 										<Entry
-											Background="Transparent"
+											BackgroundColor="Transparent"
 											FontSize="13"
 											Placeholder="Пр. Редовна контрола, Главоболка"
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
 											Text="{Binding Encounter.ReasonForVisit}"
-											TextColor="{StaticResource Gray800}"
+											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
 									</Border>
 								</Grid>
@@ -220,21 +246,22 @@
 										FontAttributes="Bold"
 										FontSize="13"
 										Text="Клинички белешки"
-										TextColor="{StaticResource Gray600}" />
+										TextColor="{StaticResource SparkTextSecondary}" />
 									<Border
 										Grid.Row="1"
 										Padding="12,6"
-										BackgroundColor="{StaticResource Gray50}"
-										Stroke="LightGray"
-										StrokeShape="RoundRectangle 10"
+										BackgroundColor="{StaticResource SparkBackground}"
+										Stroke="{StaticResource SparkBorder}"
+										StrokeShape="RoundRectangle 6"
 										StrokeThickness="1">
 										<Editor
 											AutoSize="TextChanges"
-											Background="Transparent"
+											BackgroundColor="Transparent"
 											FontSize="13"
 											Placeholder="Внесете детален извештај од прегледот..."
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
 											Text="{Binding Encounter.ClinicalNotes}"
-											TextColor="{StaticResource Gray800}" />
+											TextColor="{StaticResource SparkTextPrimary}" />
 									</Border>
 								</Grid>
 							</Grid>
@@ -246,14 +273,14 @@
 								FontAttributes="Bold"
 								FontSize="13"
 								Text="МКБ-10 ДИЈАГНОСТИКА"
-								TextColor="{StaticResource Gray800}" />
-							<BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
+								TextColor="{StaticResource SparkTextPrimary}" />
+							<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
 
 							<Grid ColumnDefinitions="*,*" ColumnSpacing="24">
 
 								<VerticalStackLayout Grid.Column="0" Spacing="12">
 
-									<controls:FFSearchBox Placeholder="Внесете шифра или називна МКБ 10 (Пр. I10)..." Text="{Binding MkbSearchText, Mode=TwoWay}" />
+									<controls:FFSearchBox Placeholder="Внесете шифра или назив на МКБ 10 (Пр. I10)..." Text="{Binding MkbSearchText, Mode=TwoWay}" />
 
 									<CollectionView
 										HeightRequest="180"
@@ -264,8 +291,8 @@
 												<Border
 													Margin="0,4"
 													Padding="12"
-													BackgroundColor="{StaticResource Gray200}"
-													StrokeShape="RoundRectangle 10"
+													BackgroundColor="{StaticResource SparkTabActiveBg}"
+													StrokeShape="RoundRectangle 12"
 													StrokeThickness="0">
 													<Border.GestureRecognizers>
 														<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMkbCommand}" CommandParameter="{Binding .}" />
@@ -275,11 +302,11 @@
 															FontAttributes="Bold"
 															FontSize="13"
 															Text="{Binding Code}"
-															TextColor="#2563EB" />
+															TextColor="{StaticResource SparkAccentTealDark}" />
 														<Label
 															FontSize="12"
 															Text="{Binding Description}"
-															TextColor="{StaticResource Gray700}" />
+															TextColor="{StaticResource SparkTextSecondary}" />
 													</VerticalStackLayout>
 												</Border>
 											</DataTemplate>
@@ -288,11 +315,6 @@
 								</VerticalStackLayout>
 
 								<VerticalStackLayout Grid.Column="1" Spacing="14">
-									<!--<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Избрани примарни/секундарни дијагнози"
-										TextColor="{StaticResource Gray600}" />-->
 									<FlexLayout
 										BindableLayout.ItemsSource="{Binding Diagnoses}"
 										Direction="Row"
@@ -300,19 +322,21 @@
 										Wrap="Wrap">
 										<BindableLayout.ItemTemplate>
 											<DataTemplate x:DataType="entities:Diagnosis">
+												<!--  SparkRadiusPill (20) — intentional pill-shaped chip, kept as-is  -->
 												<Border
 													Margin="4"
 													Padding="10,6"
-													BackgroundColor="#EFF6FF"
-													Stroke="#BFDBFE"
-													StrokeShape="RoundRectangle 20">
+													BackgroundColor="{StaticResource SparkTabActiveBg}"
+													Stroke="{StaticResource SparkAccentTeal}"
+													StrokeShape="RoundRectangle 12">
 													<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
 														<Label
 															FontAttributes="Bold"
 															FontSize="13"
 															Text="{Binding Mkb10Code.Code}"
-															TextColor="#1D4ED8"
+															TextColor="{StaticResource SparkAccentTealDark}"
 															VerticalOptions="Center" />
+														<!--  Circular remove button — radius 9 = half of 18×18, not part of card/input scale  -->
 														<Button
 															Padding="0"
 															BackgroundColor="Transparent"
@@ -322,7 +346,7 @@
 															FontSize="10"
 															HeightRequest="18"
 															Text="✕"
-															TextColor="#1D4ED8"
+															TextColor="{StaticResource SparkAccentTealDark}"
 															WidthRequest="18" />
 													</HorizontalStackLayout>
 												</Border>
@@ -335,19 +359,21 @@
 											FontAttributes="Bold"
 											FontSize="13"
 											Text="Дополнителен наод / Слободен текст"
-											TextColor="{StaticResource Gray600}" />
+											TextColor="{StaticResource SparkTextSecondary}" />
 										<Border
 											Padding="12,6"
-											BackgroundColor="{StaticResource Gray50}"
-											StrokeShape="RoundRectangle 10"
-											StrokeThickness="0">
-
+											BackgroundColor="{StaticResource SparkBackground}"
+											Stroke="{StaticResource SparkBorder}"
+											StrokeShape="RoundRectangle 6"
+											StrokeThickness="1">
 											<Editor
 												AutoSize="TextChanges"
-												Background="Transparent"
+												BackgroundColor="Transparent"
 												FontSize="13"
-												Placeholder="Додадете специфични забелешки или дијагнози надвор од МКД системот..."
-												Text="{Binding EncounterDiagnosisNotes}" />
+												Placeholder="Додадете специфични забелешки или дијагнози надвор од МКБ системот..."
+												PlaceholderColor="{StaticResource SparkTextSecondary}"
+												Text="{Binding EncounterDiagnosisNotes}"
+												TextColor="{StaticResource SparkTextPrimary}" />
 										</Border>
 									</VerticalStackLayout>
 								</VerticalStackLayout>

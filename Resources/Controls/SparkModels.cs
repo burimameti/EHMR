@@ -5,6 +5,21 @@ using System.Windows.Input;
 
 namespace EHMR.Resources.Controls
 {
+    public static class SparkBadgeToneHelper
+    {
+        public static SparkBadgeTone StatusToTone(string status)
+    {
+        return status?.ToLowerInvariant() switch
+        {
+            "active" => SparkBadgeTone.Neutral,
+            "inactive" => SparkBadgeTone.Danger,
+            "discharged" => SparkBadgeTone.Danger,
+            "missed" => SparkBadgeTone.Danger,
+            "completed" => SparkBadgeTone.Success,
+            "scheduled" => SparkBadgeTone.Neutral,
+            _ => SparkBadgeTone.Neutral
+        };
+    } }
     /// <summary>How a cell's value should be rendered.</summary>
     public enum SparkGridCellType
     {
@@ -23,7 +38,7 @@ namespace EHMR.Resources.Controls
     {
         Neutral,
         Success,
-        Danger
+        Danger, Warning
     }
     public abstract class SparkBindableBase : INotifyPropertyChanged
     {

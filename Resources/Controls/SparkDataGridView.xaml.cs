@@ -1,9 +1,7 @@
 ﻿
 using Microsoft.Maui.Controls.Shapes;
-
 using System.Collections.ObjectModel;
 using System.Globalization;
-
 using System.Windows.Input;
 
 namespace EHMR.Resources.Controls
@@ -202,7 +200,6 @@ public bool AllowHorizontalScroll
         private static readonly Color BadgeSuccessText = Color.FromArgb("#3CB35B");
         private static readonly Color BadgeDangerBg = Color.FromArgb("#FDE8E8");
         private static readonly Color BadgeDangerText = Color.FromArgb("#E0554F");
-
         private void BuildGrid()
         {
             GridRoot.Children.Clear();
@@ -228,7 +225,11 @@ public bool AllowHorizontalScroll
             });
 
             for(int c = 0; c<Columns.Count; c++)
+            {
                 AddHeaderCell(Columns[c], c);
+                if(c<Columns.Count-1)
+                    AddColumnDivider(0, c);
+            }
 
             // Rows
             var rows = Rows??new ObservableCollection<SparkGridRow>();
@@ -244,11 +245,16 @@ public bool AllowHorizontalScroll
                 var rowBg = r%2==0 ? RowBg : RowAltBg;
 
                 for(int c = 0; c<Columns.Count; c++)
+                {
                     AddDataCell(Columns[c], rows[r], c, rowIndex, rowBg);
+                    if(c<Columns.Count-1)
+                        AddColumnDivider(rowIndex, c);
+                }
 
                 AddRowDivider(rowIndex);
                 AttachRowTap(rows[r], rowIndex);
             }
+
             System.Diagnostics.Debug.WriteLine($"Children = {GridRoot.Children.Count}");
             System.Diagnostics.Debug.WriteLine($"Rows = {GridRoot.RowDefinitions.Count}");
             System.Diagnostics.Debug.WriteLine($"Columns = {GridRoot.ColumnDefinitions.Count}");
@@ -271,9 +277,20 @@ public bool AllowHorizontalScroll
             Grid.SetColumnSpan(divider, Columns.Count);
             GridRoot.Children.Add(divider);
         }
-
-        private void AddHeaderCell(SparkGridColumn column, int columnIndex)
+        private void AddColumnDivider(int rowIndex, int columnIndex)
         {
+            var divider = new BoxView
+            {
+                Color=BorderColor,
+                WidthRequest=1,
+                HorizontalOptions=LayoutOptions.End
+            };
+            Grid.SetRow(divider, rowIndex);
+            Grid.SetColumn(divider, columnIndex);
+            GridRoot.Children.Add(divider);
+        }
+       private void AddHeaderCell(SparkGridColumn column, int columnIndex)
+       {
             var border = new Border
             {
                 BackgroundColor=Colors.Transparent,
@@ -286,7 +303,14 @@ public bool AllowHorizontalScroll
             {
                 Spacing=4,
                 VerticalOptions=LayoutOptions.Center,
-                HorizontalOptions=column.RightAlign ? LayoutOptions.End : LayoutOptions.Start
+                // Badge/Actions headers center over their centered data cells;
+                // everything else stays start-aligned to match its data cells.
+                HorizontalOptions=column.CellType switch
+                {
+                    SparkGridCellType.Badge => LayoutOptions.Center,
+                    SparkGridCellType.Actions => LayoutOptions.Center,
+                    _ => LayoutOptions.Start
+                }
             };
 
             row.Children.Add(new Label
@@ -326,7 +350,7 @@ public bool AllowHorizontalScroll
         }
 
         public static readonly BindableProperty PageInfoTextProperty =
-    BindableProperty.Create(
+        BindableProperty.Create(
         nameof(PageInfoText),
         typeof(string),
         typeof(SparkDataGridView),
@@ -344,28 +368,14 @@ public bool AllowHorizontalScroll
         }
 
         private void AddDataCell(
-      SparkGridColumn column,
-      SparkGridRow row,
-      int columnIndex,
-      int rowIndex,
-      Color rowBg)
+         SparkGridColumn column,
+         SparkGridRow row,
+         int columnIndex,
+         int rowIndex,
+         Color rowBg)
         {
             row.TryGetValue(column.Key, out var value);
 
-            System.Diagnostics.Debug.WriteLine(
-                $"{column.Key} -> {value??"NULL"}");
-            //var border = new Border
-            //{
-            //    BackgroundColor=Colors.Lime,
-            //    Stroke=Colors.Red,
-            //    StrokeThickness=2,
-            //    HeightRequest=50,
-            //    Content=new Label
-            //    {
-            //        Text="TEST",
-            //        TextColor=Colors.Black
-            //    }
-            //};
             var border = new Border
             {
                 BackgroundColor=rowBg,
@@ -397,7 +407,15 @@ public bool AllowHorizontalScroll
                     BuildText(value?.ToString()??string.Empty, false)
             };
 
-            content.HorizontalOptions=LayoutOptions.Fill;
+            // Badge and Actions cells center to match their centered headers;
+            // Text/Currency/Number/Avatar fill and let their own content alignment
+            // (set inside BuildText/BuildAvatar) control the actual text position.
+            content.HorizontalOptions=column.CellType switch
+            {
+                SparkGridCellType.Badge => LayoutOptions.Center,
+                SparkGridCellType.Actions => LayoutOptions.Center,
+                _ => LayoutOptions.Fill
+            };
             content.VerticalOptions=LayoutOptions.Center;
 
             Grid.SetRow(border, rowIndex);
@@ -409,35 +427,54 @@ public bool AllowHorizontalScroll
         }
         private View BuildActions(SparkGridRow row)
         {
-            var stack = new HorizontalStackLayout { Spacing=8, HorizontalOptions=LayoutOptions.Center };
+            return new HorizontalStackLayout
+            {
+                Spacing=8,
+                HorizontalOptions=LayoutOptions.Center,
+                VerticalOptions=LayoutOptions.Center,
+                Children=
+        {
+            RowTappedCommand != null
+                ? BuildActionIcon("Преглед", RowTappedCommand, row, "#69D3DD")
+                : null,
 
-            if(RowTappedCommand!=null)
-                stack.Children.Add(BuildActionIcon("\uD83D\uDC41", RowTappedCommand, row)); // 👁 view
-
-            if(EditRowCommand!=null)
-                stack.Children.Add(BuildActionIcon("\u270E", EditRowCommand, row)); // ✎ edit
-
-            return stack;
+            EditRowCommand != null
+                ? BuildActionIcon("Промени", EditRowCommand, row, "#8FA2AB")
+                : null
+        }
+            };
         }
 
-        private static View BuildActionIcon(string glyph, ICommand command, SparkGridRow row)
+        private static View BuildActionIcon(string text, ICommand command, SparkGridRow row, string color)
         {
-            var label = new Label
+            return new Border
             {
-                Text=glyph,
-                FontSize=15,
-                TextColor=RowMutedTextColor,
-                WidthRequest=28,
-                HeightRequest=28,
-                HorizontalTextAlignment=TextAlignment.Center,
-                VerticalTextAlignment=TextAlignment.Center
+                Padding=new Thickness(4, 4),
+                BackgroundColor=Color.FromArgb(color),
+                StrokeThickness=0,
+                StrokeShape=new RoundRectangle { CornerRadius=12 },
+                HorizontalOptions=LayoutOptions.Center,
+                VerticalOptions=LayoutOptions.Center,
+                MinimumWidthRequest=90, MinimumHeightRequest=26,
+
+                Content=new Label
+                {
+                    Text=text,
+                    FontSize=11,
+                    TextColor=Colors.White,
+                    HorizontalTextAlignment=TextAlignment.Center,
+                    VerticalTextAlignment=TextAlignment.Center
+                },
+
+                GestureRecognizers=
+        {
+            new TapGestureRecognizer
+            {
+                Command = command,
+                CommandParameter = row.Tag ?? row
+            }
+        }
             };
-            label.GestureRecognizers.Add(new TapGestureRecognizer
-            {
-                Command=command,
-                CommandParameter=row.Tag??row
-            });
-            return label;
         }
 
         private void AttachRowTap(SparkGridRow row, int rowIndex)
@@ -462,47 +499,21 @@ public bool AllowHorizontalScroll
             }
         }
 
-        private Label BuildText(string text, bool rightAlign)
+        private Label BuildText(string text, bool rightAlign = false)
         {
             return new Label
             {
                 Text=text,
                 TextColor=Colors.Black,
                 FontSize=13,
+                Margin=new Thickness(4, 0, 0, 0),
                 HorizontalOptions=LayoutOptions.Fill,
                 VerticalOptions=LayoutOptions.Center,
-                HorizontalTextAlignment=rightAlign
-            ? TextAlignment.End
-            : TextAlignment.Start,
+                HorizontalTextAlignment=TextAlignment.Start,
                 VerticalTextAlignment=TextAlignment.Center,
                 LineBreakMode=LineBreakMode.TailTruncation,
                 MaxLines=1
             };
-        
-            //return new Label
-            //{
-            //    Text=text,
-            //    FontSize=20,
-            //    TextColor=Colors.Red,
-            //    BackgroundColor=Colors.Yellow
-            //};
-            //return new Label
-            //{
-            //    Text=text,
-            //    FontSize=13,
-
-            //    HorizontalOptions=LayoutOptions.Fill,
-            //    VerticalOptions=LayoutOptions.Center,
-
-            //    HorizontalTextAlignment=rightAlign
-            //        ? TextAlignment.End
-            //        : TextAlignment.Start,
-
-            //    VerticalTextAlignment=TextAlignment.Center,
-
-            //    LineBreakMode=LineBreakMode.TailTruncation,
-            //    MaxLines=1
-            //};
         }
         private static View BuildBadge(SparkBadgeValue badge)
         {
@@ -520,15 +531,16 @@ public bool AllowHorizontalScroll
                 BackgroundColor=bg,
                 Stroke=Colors.Transparent,
                 Padding=new Thickness(8, 3),
-                HorizontalOptions=LayoutOptions.Start,
-                StrokeShape=new RoundRectangle { CornerRadius=4 }
+                HorizontalOptions=LayoutOptions.Center,
+                StrokeShape=new RoundRectangle { CornerRadius=10 }
             };
             pill.Content=new Label
             {
                 Text=badge.Text,
                 TextColor=fg,
                 FontSize=12,
-                FontAttributes=FontAttributes.Bold
+                FontAttributes=FontAttributes.Bold,
+                HorizontalTextAlignment=TextAlignment.Center
             };
             return pill;
         }

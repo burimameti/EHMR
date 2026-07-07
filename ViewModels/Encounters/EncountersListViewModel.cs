@@ -5,21 +5,25 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
+using EHMR.Resources.Controls;
 using EHMR.ViewModels.Constants;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.ObjectModel;
 
-namespace EHMR.ViewModels;
+namespace EHMR.ViewModels.Encounters;
 
-public partial class EncounterListViewModel : BaseViewModel<Encounter>
+public partial class EncounterListViewModel : BaseViewModel<Encounter>, IQueryAttributable
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
     private readonly ISelectedItemService<Encounter> _selectedItemService;
-    private readonly IAuthorizationService _authorization;
 
     private string _pendingSearch = string.Empty;
     private string _pendingStatus = string.Empty;
+
+    // NOTE: local CurrentPage/TotalPages/PageSize removed — they were shadowing
+    // BaseViewModel<T>'s paging properties (const PageSize=10 in particular never
+    // actually reached the base's real PageSize, which stayed at its default 25).
+    // PageSize is now set on the base property in the constructor.
 
     // =====================================================
     // BACKING FIELDS FOR INTERNAL KEYS
@@ -28,60 +32,60 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>
     [ObservableProperty] private string selectedPriority = "All";
     [ObservableProperty] private string selectedEncounterType = "All";
     [ObservableProperty] private string selectedDoctor = "All";
- 
 
-    [ObservableProperty] private bool canCreateEncounter;
-    [ObservableProperty] private bool canUpdateEncounter;
-    [ObservableProperty] private bool canDeleteEncounter;
+    /// <summary>Module key used by BaseViewModel&lt;T&gt;.EvaluatePermissions().</summary>
+    protected override string ModuleName => "encounters";
+
+    // Aliases kept for XAML compatibility — forward to the base class's Can* flags.
+    public bool CanCreateEncounter => CanCreate;
+    public bool CanUpdateEncounter => CanUpdate;
+    public bool CanDeleteEncounter => CanDelete;
 
     // =====================================================
     // CACHED UI LOOKUPS
     // =====================================================
-    public ObservableCollection<string> StatusFilters { get; } = new ObservableCollection<string>(new[] { "Сите" }.Concat(EncounterStatusSchema.Display.Values.ToObservableCollection()));
-    public ObservableCollection<string> PriorityFilters { get; } = new ObservableCollection<string>(new[] { "Сите" }.Concat(EncounterPrioritySchema.Display.Values.ToObservableCollection()));
-    public ObservableCollection<string> EncounterTypeFilters { get; } = new ObservableCollection<string>(new[] { "Сите" }.Concat(EncounterTypeSchema.Display.Values));
+    public ObservableCollection<string> StatusFilters
+    {
+        get;
+    } =
+        new(new[] { "Сите" }.Concat(EncounterStatusSchema.Display.Values.ToObservableCollection()));
+    public ObservableCollection<string> PriorityFilters
+    {
+        get;
+    } =
+        new(new[] { "Сите" }.Concat(EncounterPrioritySchema.Display.Values.ToObservableCollection()));
+    public ObservableCollection<string> EncounterTypeFilters
+    {
+        get;
+    } =
+        new(new[] { "Сите" }.Concat(EncounterTypeSchema.Display.Values));
 
     // =====================================================
-    // DISPLAY PROPERTIES (BIND THESE IN XAML LIKE PATIENTS)
+    // DATE FILTER
     // =====================================================
-
-    // 1. Plain private backing fields (No attributes)
     private bool _filterByDate;
     private DateTime _filterDate = DateTime.Today;
 
-    // 2. Manual Property for the Checkbox/Toggle
     public bool FilterByDate
     {
         get => _filterByDate;
         set
         {
             if(SetProperty(ref _filterByDate, value))
-            {
-                CurrentPage=1;
-                ApplyPipeline();
-                RefreshStatistics();
-            }
+                ApplyPipeline(); // OnPipelineApplied() now handles RefreshStatistics()
         }
     }
 
-    // 3. Manual Property for the Date Picker
     public DateTime FilterDate
     {
         get => _filterDate;
         set
         {
-            if(SetProperty(ref _filterDate, value))
-            {
-                // Only update the list if the user actually wants to filter by date
-                if(FilterByDate)
-                {
-                    CurrentPage=1;
-                    ApplyPipeline();
-                    RefreshStatistics();
-                }
-            }
+            if(SetProperty(ref _filterDate, value)&&FilterByDate)
+                ApplyPipeline();
         }
     }
+
     public string SelectedStatusDisplay
     {
         get => EncounterStatusSchema.ToDisplay(SelectedStatus);
@@ -89,11 +93,8 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>
         {
             var internalValue = EncounterStatusSchema.ToKeyFromDisplay(value);
             if(SelectedStatus==internalValue) return;
-
             SelectedStatus=internalValue;
-            CurrentPage=1;
             ApplyPipeline();
-            RefreshStatistics();
             OnPropertyChanged();
         }
     }
@@ -105,11 +106,8 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>
         {
             var internalValue = EncounterPrioritySchema.ToKeyFromDisplay(value);
             if(SelectedPriority==internalValue) return;
-
             SelectedPriority=internalValue;
-            CurrentPage=1;
             ApplyPipeline();
-            RefreshStatistics();
             OnPropertyChanged();
         }
     }
@@ -121,17 +119,177 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>
         {
             var internalValue = EncounterTypeSchema.ToKeyFromDisplay(value);
             if(SelectedEncounterType==internalValue) return;
-
             SelectedEncounterType=internalValue;
-            CurrentPage=1;
             ApplyPipeline();
-            RefreshStatistics();
             OnPropertyChanged();
         }
     }
 
     // =====================================================
-    // STATS
+    // SPARK GRID
+    // =====================================================
+    [ObservableProperty] private ObservableCollection<Encounter> filteredEncounters = new();
+    [ObservableProperty] private ObservableCollection<SparkGridColumn> gridColumns = new();
+    [ObservableProperty] private ObservableCollection<SparkGridRow> gridRows = new();
+
+    protected override void OnPageProjected(ObservableCollection<Encounter> page)
+        => FilteredEncounters=page;
+
+    partial void OnFilteredEncountersChanged(ObservableCollection<Encounter> value) => RefreshSparkGridRows();
+
+    private void BuildSparkGridColumns()
+    {
+        GridColumns=new ObservableCollection<SparkGridColumn>
+        {
+            new() { Header = "БРОЈ", Key = "EncounterNumber", Width = new GridLength(1.1, GridUnitType.Star) },
+            new() { Header = "ПАЦИЕНТ", Key = "PatientName", Width = new GridLength(2, GridUnitType.Star) },
+            new() { Header = "ДОКТОР", Key = "DoctorName", Width = new GridLength(1.8, GridUnitType.Star) },
+            new() { Header = "ТИП", Key = "EncounterType", Width = new GridLength(1.2, GridUnitType.Star) },
+            new() { Header = "ПРИОРИТЕТ", Key = "Priority", CellType = SparkGridCellType.Badge, Width = new GridLength(1, GridUnitType.Star) },
+            new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1.3, GridUnitType.Star) },
+            new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1.2, GridUnitType.Star) },
+            new() { Header = "АКЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
+        };
+    }
+
+    private void RefreshSparkGridRows()
+    {
+        var rows = new ObservableCollection<SparkGridRow>();
+
+        foreach(var e in FilteredEncounters)
+        {
+            var row = new SparkGridRow { Tag=e };
+            row["EncounterNumber"]=e.EncounterNumber;
+            row["PatientName"]=e.Patient!=null ? $"{e.Patient.FirstName} {e.Patient.LastName}" : "";
+            row["DoctorName"]=e.Doctor?.User!=null ? $"{e.Doctor.User.FirstName} {e.Doctor.User.LastName}" : "";
+            row["EncounterType"]=e.EncounterType;
+            row["Priority"]=new SparkBadgeValue(e.Priority, PriorityToTone(e.Priority));
+            row["Date"]=(e.ScheduledStart??e.EncounterDate).ToString("dd.MM.yyyy HH:mm");
+            row["Status"]=new SparkBadgeValue(e.Status.ToString(), StatusToTone(e.Status));
+            rows.Add(row);
+        }
+
+        GridRows=rows;
+    }
+
+    private static SparkBadgeTone PriorityToTone(string priority) => priority?.ToLowerInvariant() switch
+    {
+        "stat" or "emergency" => SparkBadgeTone.Danger,
+        "urgent" => SparkBadgeTone.Warning,
+        _ => SparkBadgeTone.Neutral
+    };
+
+    private static SparkBadgeTone StatusToTone(EncounterStatus status) => status switch
+    {
+        EncounterStatus.Completed => SparkBadgeTone.Success,
+        EncounterStatus.Cancelled or EncounterStatus.NoShow => SparkBadgeTone.Danger,
+        EncounterStatus.InProgress => SparkBadgeTone.Warning,
+        _ => SparkBadgeTone.Neutral
+    };
+
+    // ============================================================
+    // PICKERS (Pickers collection + MakePicker helper now live in BaseViewModel<T>)
+    // ============================================================
+    private SparkPickerItem _statusPicker, _priorityPicker, _typePicker;
+
+    private void BuildSparkPickers()
+    {
+        Pickers.Clear();
+        _statusPicker=MakePicker("Статус", StatusFilters, SelectedStatusDisplay,
+            selected => SelectedStatusDisplay=selected);
+
+        _priorityPicker=MakePicker("Приоритет", PriorityFilters, SelectedPriorityDisplay,
+            selected => SelectedPriorityDisplay=selected);
+
+        _typePicker=MakePicker("Тип", EncounterTypeFilters, SelectedEncounterTypeDisplay,
+            selected => SelectedEncounterTypeDisplay=selected);
+
+        Pickers.Add(_statusPicker);
+        Pickers.Add(_priorityPicker);
+        Pickers.Add(_typePicker);
+    }
+
+    protected override void SyncSparkPickersFromFilters()
+    {
+        if(_statusPicker==null) return;
+        _statusPicker.SelectedItem=SelectedStatusDisplay;
+        _priorityPicker.SelectedItem=SelectedPriorityDisplay;
+        _typePicker.SelectedItem=SelectedEncounterTypeDisplay;
+    }
+
+    // Buttons collection lives in BaseViewModel<T>; only content differs here,
+    // and it's identical to the base default — so no override needed at all.
+    // (Left BuildSparkButtons out entirely; base's default "✕ Исчисти" button applies.)
+
+    // ============================================================
+    // TABS (entity-specific — no base equivalent yet)
+    // ============================================================
+    private SparkTabItem _allTab, _waitingTab, _inProgressTab, _completedTab, _cancelledTab;
+    public ObservableCollection<SparkTabItem> Tabs { get; } = new();
+
+    private void BuildSparkTabs()
+    {
+        Tabs.Clear();
+
+        _allTab=new SparkTabItem { Title="Сите прегледи", IsSelected=true };
+        _waitingTab=new SparkTabItem { Title="Закажани" };
+        _inProgressTab=new SparkTabItem { Title="Во тек" };
+        _completedTab=new SparkTabItem { Title="Завршени" };
+        _cancelledTab=new SparkTabItem { Title="Откажани" };
+
+        _allTab.Command=new RelayCommand(() => SelectTab(_allTab,
+            () => SelectedStatusDisplay=EncounterStatusSchema.ToDisplay("All")));
+
+        _waitingTab.Command=new RelayCommand(() => SelectTab(_waitingTab,
+            () => SelectedStatusDisplay=EncounterStatusSchema.ToDisplay(nameof(EncounterStatus.Scheduled))));
+
+        _inProgressTab.Command=new RelayCommand(() => SelectTab(_inProgressTab,
+            () => SelectedStatusDisplay=EncounterStatusSchema.ToDisplay(nameof(EncounterStatus.InProgress))));
+
+        _completedTab.Command=new RelayCommand(() => SelectTab(_completedTab,
+            () => SelectedStatusDisplay=EncounterStatusSchema.ToDisplay(nameof(EncounterStatus.Completed))));
+
+        _cancelledTab.Command=new RelayCommand(() => SelectTab(_cancelledTab,
+            () => SelectedStatusDisplay=EncounterStatusSchema.ToDisplay(nameof(EncounterStatus.Cancelled))));
+
+        Tabs.Add(_allTab);
+        Tabs.Add(_waitingTab);
+        Tabs.Add(_inProgressTab);
+        Tabs.Add(_completedTab);
+        Tabs.Add(_cancelledTab);
+
+        RefreshSparkTabCounts();
+    }
+
+    private void SelectTab(SparkTabItem tab, Action action)
+    {
+        foreach(var t in Tabs) t.IsSelected=false;
+        tab.IsSelected=true;
+        action();
+        SyncSparkPickersFromFilters();
+    }
+
+    private void RefreshSparkTabCounts()
+    {
+        if(_allTab==null) return;
+        _allTab.Value=TotalEncounters.ToString("N0");
+        _waitingTab.Value=WaitingCount.ToString("N0");
+        _inProgressTab.Value=InProgressCount.ToString("N0");
+        _completedTab.Value=CompletedCount.ToString("N0");
+        _cancelledTab.Value=CancelledCount.ToString("N0");
+    }
+
+    private void InitializeSparkControls()
+    {
+        BuildSparkTabs();
+        BuildSparkPickers();
+        BuildSparkButtons(); // base default, unless you want a custom set later
+        BuildSparkGridColumns();
+        RefreshSparkGridRows();
+    }
+
+    // =====================================================
+    // STATS — now refreshed automatically via OnPipelineApplied()
     // =====================================================
     [ObservableProperty] private int totalEncounters;
     [ObservableProperty] private int waitingCount;
@@ -139,6 +297,25 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>
     [ObservableProperty] private int completedCount;
     [ObservableProperty] private int cancelledCount;
 
+    protected override void OnPipelineApplied() => RefreshStatistics();
+
+    private void RefreshStatistics()
+    {
+        var data = AllItems;
+        if(data==null) return;
+
+        TotalEncounters=data.Count;
+        WaitingCount=data.Count(x => x.Status==EncounterStatus.Scheduled);
+        InProgressCount=data.Count(x => x.Status==EncounterStatus.InProgress);
+        CompletedCount=data.Count(x => x.Status==EncounterStatus.Completed);
+        CancelledCount=data.Count(x => x.Status==EncounterStatus.Cancelled);
+
+        RefreshSparkTabCounts();
+    }
+
+    // =====================================================
+    // CTOR
+    // =====================================================
     public EncounterListViewModel(
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
         INavigationService navigationService,
@@ -149,10 +326,10 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>
         : base(navigationService, userDialogService, menuService, authService)
     {
         _dbFactory=dbFactory;
-        _authorization=authService;
         _selectedItemService=selectedItemService;
-
-        EvaluatePermissions();
+  
+        PageSize=10; // sets BaseViewModel<T>.PageSize
+        EvaluatePermissions(); // base method, uses ModuleName
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -181,9 +358,10 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>
                 .ToListAsync();
 
             AllItems=loadedItems;
+            InitializeSparkControls();
+
             ApplyPendingQuery();
-            ApplyPipeline();
-            RefreshStatistics();
+            ApplyPipeline(); // OnPipelineApplied() runs RefreshStatistics() automatically
         }
         catch(Exception ex)
         {
@@ -203,42 +381,26 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>
         if(!string.IsNullOrWhiteSpace(_pendingStatus))
             SelectedStatus=_pendingStatus;
 
-        CurrentPage=1;
         _pendingSearch=string.Empty;
         _pendingStatus=string.Empty;
     }
 
     // =====================================================
-    // EXPLICIT FILTER CHANGE TRIGGERS (FOR MANUAL PICKER ACTIONS)
+    // PIPELINE HOOKS
     // =====================================================
-    [RelayCommand]
-    private void SelectedStatusChanged(string? value)
+    protected override IEnumerable<Encounter> ApplySearch(IEnumerable<Encounter> query, string search)
     {
-        SelectedStatus=EncounterStatusSchema.ToKeyFromDisplay(value??string.Empty);
-        CurrentPage=1;
-        ApplyPipeline();
-        RefreshStatistics();
+        if(string.IsNullOrWhiteSpace(search)) return query;
+
+        var term = search.Trim();
+        return query.Where(x =>
+            (x.EncounterNumber??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
+            (x.Patient!=null&&(x.Patient.FirstName+" "+x.Patient.LastName).Contains(term, StringComparison.OrdinalIgnoreCase))||
+            (x.Doctor!=null&&(x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(term, StringComparison.OrdinalIgnoreCase))||
+            (x.ChiefComplaint??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
+            (x.ReasonForVisit??"").Contains(term, StringComparison.OrdinalIgnoreCase)
+        );
     }
-
-    [RelayCommand]
-    private void SelectedPriorityChanged(string? value)
-    {
-        SelectedPriority=EncounterPrioritySchema.ToKeyFromDisplay(value??string.Empty);
-        CurrentPage=1;
-        ApplyPipeline();
-        RefreshStatistics();
-    }
-
-    [RelayCommand]
-    private void SelectedEncounterTypeChanged(string? value)
-    {
-        SelectedEncounterType=EncounterTypeSchema.ToKeyFromDisplay(value??string.Empty);
-        CurrentPage=1;
-        ApplyPipeline();
-        RefreshStatistics();
-    }
-
-
 
     protected override IEnumerable<Encounter> ApplyFilters(IEnumerable<Encounter> query)
     {
@@ -259,37 +421,17 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>
         }
 
         if(FilterByDate)
-        {
             query=query.Where(x => (x.ScheduledStart??x.EncounterDate).Date==FilterDate.Date);
-        }
 
-        if(!string.IsNullOrWhiteSpace(SearchText))
-        {
-            var term = SearchText.Trim();
-            query=query.Where(x =>
-                (x.EncounterNumber??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
-                (x.Patient!=null&&(x.Patient.FirstName+" "+x.Patient.LastName).Contains(term, StringComparison.OrdinalIgnoreCase))||
-                (x.Doctor!=null&&(x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(term, StringComparison.OrdinalIgnoreCase))||
-                (x.ChiefComplaint??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
-                (x.ReasonForVisit??"").Contains(term, StringComparison.OrdinalIgnoreCase)
-            );
-        }
-
-        return query.OrderByDescending(x => x.ScheduledStart??x.EncounterDate);
+        return query;
     }
 
-    private void RefreshStatistics()
-    {
-        var data = AllItems;
-        if(data==null) return;
+    protected override IEnumerable<Encounter> ApplySort(IEnumerable<Encounter> query)
+        => query.OrderByDescending(x => x.ScheduledStart??x.EncounterDate);
 
-        TotalEncounters=data.Count;
-        WaitingCount=data.Count(x => x.Status==EncounterStatus.Scheduled);
-        InProgressCount=data.Count(x => x.Status==EncounterStatus.InProgress);
-        CompletedCount=data.Count(x => x.Status==EncounterStatus.Completed);
-        CancelledCount=data.Count(x => x.Status==EncounterStatus.Cancelled);
-    }
-
+    // =====================================================
+    // COMMANDS
+    // =====================================================
     [RelayCommand] private async Task NewEncounter() => await NavigationService.GoToAsync(AppRoutes.Encounters.Create);
 
     [RelayCommand]
@@ -308,52 +450,27 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>
         await NavigationService.GoToAsync(AppRoutes.Encounters.Edit);
     }
 
-    private bool _isClearingFilters = false;
-    [RelayCommand]
-    private void ClearFilters()
+    // ClearFilters command now lives in BaseViewModel<T>: it calls
+    // ResetFilters() → ApplyPipeline() → SyncSparkPickersFromFilters().
+    // OnPipelineApplied() (above) takes care of RefreshStatistics() automatically,
+    // so no separate stats call or reentrancy guard is needed here.
+    protected override void ResetFilters()
     {
-        // If we are already clearing, ignore any accidental cascading UI triggers
-        if(_isClearingFilters) return;
+        SearchText=string.Empty;
 
-        try
-        {
-            _isClearingFilters=true;
+        // Set fields directly (not via the *Display setters) to avoid firing
+        // ApplyPipeline() multiple times before the base command runs it once.
+        SelectedStatus="All";
+        SelectedPriority="All";
+        SelectedEncounterType="All";
+        SelectedDoctor="All";
+        _filterByDate=false;   // direct field set — skips FilterByDate's own ApplyPipeline() call
+        _filterDate=DateTime.Today;
 
-            // 1. Reset all backing fields silently
-            SearchText=string.Empty;
-            CurrentPage=1;
-
-            SelectedStatus="All";
-            SelectedPriority="All";
-            SelectedEncounterType="All";
-            SelectedDoctor="All";
-
-            FilterByDate =false;
-            FilterDate=DateTime.Today;
-
-            // 2. Notify UI bindings in a single batch
-            OnPropertyChanged(nameof(SearchText));
-            OnPropertyChanged(nameof(FilterByDate));
-            OnPropertyChanged(nameof(FilterDate));
-            OnPropertyChanged(nameof(SelectedStatusDisplay));
-            OnPropertyChanged(nameof(SelectedPriorityDisplay));
-            OnPropertyChanged(nameof(SelectedEncounterTypeDisplay));
-
-            // 3. Process data exactly once
-            ApplyPipeline();
-           CurrentPage=1;
-            RefreshStatistics();
-        }
-        finally
-        {
-            _isClearingFilters=false;
-        }
-    }
-    private void EvaluatePermissions()
-    {
-        var hasModule = _authorization.CanAccessModule("encounters");
-        CanCreateEncounter=hasModule;
-        CanUpdateEncounter=hasModule;
-        CanDeleteEncounter=hasModule;
+        OnPropertyChanged(nameof(FilterByDate));
+        OnPropertyChanged(nameof(FilterDate));
+        OnPropertyChanged(nameof(SelectedStatusDisplay));
+        OnPropertyChanged(nameof(SelectedPriorityDisplay));
+        OnPropertyChanged(nameof(SelectedEncounterTypeDisplay));
     }
 }

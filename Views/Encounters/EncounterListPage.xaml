@@ -4,304 +4,67 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
-	xmlns:converters="clr-namespace:EHMR.Converters"
-	xmlns:entities="clr-namespace:EHMR.Domain.Entities"
-	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Encounters"
 	x:Name="PageRoot"
 	x:DataType="viewModels:EncounterListViewModel">
-
 	<Grid ColumnDefinitions="285,*">
-
+		<!--  ================= LEFT MENU =================  -->
 		<Border Grid.Column="0" StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
-
+		<!--  ================= MAIN =================  -->
 		<Grid
 			Grid.Column="1"
-			Padding="16,16"
+			Padding="24"
 			BackgroundColor="{StaticResource Gray200}"
 			RowDefinitions="Auto,Auto,*"
-			RowSpacing="20">
-
+			RowSpacing="16">
+			<!--  HEADER  -->
 			<Border
 				Grid.Row="0"
-				Padding="12"
-				BackgroundColor="{StaticResource White}"
-				StrokeShape="RoundRectangle 16"
-				StrokeThickness="0">
-
-				<Grid ColumnDefinitions="*,Auto">
-					<controls:FFPageHeader Title="Регистар на прегледи" Subtitle="Преглед и управување на прегледи" />
-					<HorizontalStackLayout
+				Padding="20"
+				StrokeShape="RoundRectangle 0"
+				Style="{StaticResource SurfaceCard}">
+				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+					<controls:FFPageHeader Title="Регистар на прегледи" Subtitle="Преглед, пребарување и управување со прегледи" />
+					<Button
 						Grid.Column="1"
-						Spacing="10"
-						VerticalOptions="Center">
-						<Button
-							Command="{Binding NewEncounterCommand}"
-							HeightRequest="45"
-							Style="{StaticResource PrimaryButtonStyle}"
-							Text="Нов Преглед"
-							WidthRequest="150" />
-						<Button Command="{Binding ClearFiltersCommand}" Style="{StaticResource EhmrIconButton}" />
-					</HorizontalStackLayout>
+						BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
+						Command="{Binding NewEncounterCommand}"
+						HeightRequest="45"
+						Style="{StaticResource TabButtonActiveStyle}"
+						Text="Нов Преглед"
+						WidthRequest="150" />
 				</Grid>
-
 			</Border>
-			<Border
-				Grid.Row="1"
-				Padding="10"
-				BackgroundColor="{StaticResource White}"
-				StrokeShape="RoundRectangle 12"
-				StrokeThickness="1">
-				<Border
-					Padding="16,16"
-					StrokeShape="RoundRectangle 12"
-					StrokeThickness="0">
-					<Grid ColumnDefinitions="2*,1.2*,1.2*,1.2*,1.2*,Auto" ColumnSpacing="{StaticResource Space16}">
-
-						<controls:FFSearchBox
-							Placeholder="Пациент, ЕМБГ..."
-							Text="{Binding SearchText, Mode=TwoWay}"
-							VerticalOptions="Center" />
-
-						<controls:FFPicker
-							Grid.Column="1"
-							ItemsSource="{Binding StatusFilters}"
-							Label="Статус"
-							Placeholder="Сите"
-							SelectedItem="{Binding SelectedStatusDisplay, Mode=TwoWay}" />
-
-						<controls:FFPicker
-							Grid.Column="2"
-							ItemsSource="{Binding PriorityFilters}"
-							Label="Приоритет"
-							Placeholder="Сите"
-							SelectedItem="{Binding SelectedPriorityDisplay, Mode=TwoWay}" />
-
-						<controls:FFPicker
-							Grid.Column="3"
-							ItemsSource="{Binding EncounterTypeFilters}"
-							Label="Тип"
-							Placeholder="Сите"
-							SelectedItem="{Binding SelectedEncounterTypeDisplay, Mode=TwoWay}" />
-
-						<controls:FFDatePicker
-							Grid.Column="4"
-							IsFilterActive="{Binding FilterByDate, Mode=TwoWay}"
-							Label="Датум"
-							SelectedDate="{Binding FilterDate, Mode=TwoWay}"
-							VerticalOptions="Center" />
-
-						<VerticalStackLayout
-							Grid.Column="5"
-							HeightRequest="40"
-							VerticalOptions="End">
-							<Border
-								Padding="12,0"
-								HeightRequest="36"
-								StrokeShape="RoundRectangle 8"
-								StrokeThickness="0">
-								<Border.GestureRecognizers>
-									<TapGestureRecognizer Command="{Binding ClearFiltersCommand}" />
-								</Border.GestureRecognizers>
-								<Label
-									FontAttributes="Bold"
-									FontSize="12"
-									HorizontalTextAlignment="Center"
-									Text="✕ Исчисти"
-									TextColor="White"
-									VerticalTextAlignment="Center" />
-							</Border>
-						</VerticalStackLayout>
-
-					</Grid>
-				</Border>
+			<!--  SEARCH / FILTER  -->
+			<Border Grid.Row="1" Padding="0">
+				<Grid ColumnSpacing="5" RowSpacing="20">
+					<VerticalStackLayout>
+						<Border Margin="0,8,0,8" Padding="0">
+							<controls:SparkExplorerHeaderView
+								Buttons="{Binding Buttons}"
+								Pickers="{Binding Pickers}"
+								SearchPlaceholder="Пребарување на прегледи..."
+								SearchText="{Binding SearchText}"
+								Tabs="{Binding Tabs}" />
+						</Border>
+						<Border>
+							<controls:SparkDataGridView
+								x:Name="EncounterGrid"
+								Columns="{Binding GridColumns}"
+								CurrentPage="{Binding CurrentPage}"
+								EditRowCommand="{Binding EditEncounterCommand}"
+								NextPageCommand="{Binding NextPageCommand}"
+								PageChangedCommand="{Binding PageChangedCommand}"
+								PreviousPageCommand="{Binding PreviousPageCommand}"
+								RowTappedCommand="{Binding OpenEncounterCommand}"
+								Rows="{Binding GridRows}"
+								TotalPages="{Binding TotalPages}" />
+						</Border>
+					</VerticalStackLayout>
+				</Grid>
 			</Border>
-			<Border
-				Grid.Row="2"
-				Padding="10"
-				BackgroundColor="{StaticResource White}"
-				StrokeShape="RoundRectangle 12"
-				StrokeThickness="0">
-
-
-				<controls:FFDataGrid
-					x:Name="EncounterGrid"
-					CurrentPage="{Binding CurrentPage, Mode=TwoWay}"
-					IsLoading="{Binding IsBusy}"
-					ItemsSource="{Binding Items}"
-					NextPageCommand="{Binding NextPageCommand}"
-					PagedItems="{Binding Items}"
-					PrevPageCommand="{Binding PreviousPageCommand}"
-					RowCommand="{Binding SelectCommand}"
-					TotalItems="{Binding Items.Count}"
-					TotalPages="{Binding TotalPages}"
-					Variant="CoolBlueLight">
-
-					<controls:FFDataGrid.HeaderContent>
-						<Grid
-							Padding="18,0"
-							ColumnDefinitions="2*,2*,1*,1*,1*,160"
-							ColumnSpacing="14"
-							HeightRequest="38">
-
-							<Grid.Resources>
-								<Style TargetType="Label">
-									<Setter Property="FontSize" Value="10" />
-									<Setter Property="FontAttributes" Value="Bold" />
-									<Setter Property="CharacterSpacing" Value="0.8" />
-									<Setter Property="VerticalOptions" Value="Center" />
-									<Setter Property="TextColor" Value="{Binding HeaderForeground, Source={x:Reference EncounterGrid}, Converter={StaticResource BrushToColorConverter}}" />
-								</Style>
-							</Grid.Resources>
-
-							<Label Text="ПАЦИЕНТ" />
-							<Label Grid.Column="1" Text="ДОКТОР" />
-							<Label
-								Grid.Column="2"
-								HorizontalTextAlignment="Center"
-								Text="ДАТУМ" />
-							<Label
-								Grid.Column="3"
-								HorizontalTextAlignment="Center"
-								Text="ВРЕМЕ" />
-							<Label
-								Grid.Column="4"
-								HorizontalTextAlignment="Center"
-								Text="СТАТУС" />
-							<Label
-								Grid.Column="5"
-								HorizontalTextAlignment="Center"
-								Text="АКЦИИ" />
-						</Grid>
-					</controls:FFDataGrid.HeaderContent>
-
-					<controls:FFDataGrid.RowTemplate>
-						<DataTemplate x:DataType="entities:Encounter">
-							<Grid HeightRequest="46" RowDefinitions="*,1">
-								<Grid
-									Grid.Row="0"
-									Padding="18,0"
-									ColumnDefinitions="2*,2*,1*,1*,1*,160"
-									ColumnSpacing="14">
-
-									<VerticalStackLayout Spacing="1" VerticalOptions="Center">
-										<Label
-											FontAttributes="Bold"
-											FontSize="13"
-											LineBreakMode="TailTruncation"
-											Text="{Binding Patient.FullName}"
-											TextColor="{Binding PrimaryTextColor, Source={x:Reference EncounterGrid}}" />
-										<Label
-											FontSize="11"
-											LineBreakMode="TailTruncation"
-											Text="{Binding Patient.NationalId}"
-											TextColor="{Binding SecondaryTextColor, Source={x:Reference EncounterGrid}}" />
-									</VerticalStackLayout>
-
-									<VerticalStackLayout
-										Grid.Column="1"
-										Spacing="1"
-										VerticalOptions="Center">
-										<Label
-											FontAttributes="Bold"
-											FontSize="13"
-											LineBreakMode="TailTruncation"
-											Text="{Binding Doctor.FullName}"
-											TextColor="{Binding PrimaryTextColor, Source={x:Reference EncounterGrid}}" />
-										<Label
-											FontSize="11"
-											LineBreakMode="TailTruncation"
-											Text="{Binding Doctor.Specialty}"
-											TextColor="{Binding SecondaryTextColor, Source={x:Reference EncounterGrid}}" />
-									</VerticalStackLayout>
-
-									<Label
-										Grid.Column="2"
-										FontSize="13"
-										HorizontalTextAlignment="Center"
-										Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}"
-										TextColor="{Binding PrimaryTextColor, Source={x:Reference EncounterGrid}}"
-										VerticalOptions="Center" />
-
-									<Label
-										Grid.Column="3"
-										FontSize="13"
-										HorizontalTextAlignment="Center"
-										Text="{Binding EncounterDate, StringFormat='{0:HH:mm}'}"
-										TextColor="{Binding PrimaryTextColor, Source={x:Reference EncounterGrid}}"
-										VerticalOptions="Center" />
-
-									<Border
-										Grid.Column="4"
-										Padding="8,3"
-										BackgroundColor="{Binding Status, Converter={converters:EncounterStatusToBgConverter}}"
-										HorizontalOptions="Center"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="0"
-										VerticalOptions="Center">
-										<Label
-											FontAttributes="Bold"
-											FontSize="11"
-											Text="{Binding Status, Converter={converters:EncounterStatusToTextConverter}}"
-											TextColor="{Binding Status, Converter={converters:EncounterStatusToColorConverter}}" />
-									</Border>
-
-									<HorizontalStackLayout
-										Grid.Column="5"
-										HorizontalOptions="Center"
-										Spacing="6"
-										VerticalOptions="Center">
-										<Button
-											BackgroundColor="{Binding DividerBrush, Source={x:Reference EncounterGrid}, Converter={StaticResource BrushToColorConverter}}"
-											Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EncounterListViewModel}}, Path=OpenEncounterCommand}"
-											CommandParameter="{Binding .}"
-											CornerRadius="6"
-											FontSize="12"
-											HeightRequest="30"
-											Text="👁"
-											TextColor="{Binding PrimaryTextColor, Source={x:Reference EncounterGrid}}"
-											WidthRequest="32" />
-										<Button
-											BackgroundColor="{Binding AccentBrush, Source={x:Reference EncounterGrid}, Converter={StaticResource BrushToColorConverter}}"
-											Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EncounterListViewModel}}, Path=EditEncounterCommand}"
-											CommandParameter="{Binding .}"
-											CornerRadius="6"
-											FontSize="12"
-											HeightRequest="30"
-											Text="✎"
-											TextColor="{Binding PrimaryTextColor, Source={x:Reference EncounterGrid}}"
-											WidthRequest="32" />
-									</HorizontalStackLayout>
-
-								</Grid>
-
-								<BoxView
-									Grid.Row="1"
-									HeightRequest="1"
-									VerticalOptions="End"
-									Color="{Binding DividerBrush, Source={x:Reference EncounterGrid}, Converter={StaticResource BrushToColorConverter}}" />
-
-								<VisualStateManager.VisualStateGroups>
-									<VisualStateGroupList>
-										<VisualStateGroup x:Name="CommonStates">
-											<VisualState x:Name="Normal" />
-											<VisualState x:Name="Selected">
-												<VisualState.Setters>
-													<Setter Property="BackgroundColor" Value="{Binding SelectedRowBackground, Source={x:Reference EncounterGrid}, Converter={StaticResource BrushToColorConverter}}" />
-												</VisualState.Setters>
-											</VisualState>
-										</VisualStateGroup>
-									</VisualStateGroupList>
-								</VisualStateManager.VisualStateGroups>
-							</Grid>
-						</DataTemplate>
-					</controls:FFDataGrid.RowTemplate>
-
-				</controls:FFDataGrid>
-
-			</Border>
-
 		</Grid>
 	</Grid>
 </ContentPage>

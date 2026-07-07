@@ -1,20 +1,36 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using EHMR.Domain.Entities;
+using EHMR.Domain.Interfaces;
 using EHMR.Services;
-using EHMR.ViewModels.Encounters;
+
 namespace EHMR.ViewModels.Encounters;
 public partial class EncounterEditViewModel : EncounterBaseViewModel
 {
-    public EncounterEditViewModel(IEncounterDetailService service)
+    private readonly ISelectedItemService<Encounter> _selectedItemService;
+
+    public EncounterEditViewModel(
+        IEncounterDetailService service,
+        ISelectedItemService<Encounter> selectedItemService)
         : base(service)
     {
+              PageTitle="Промени Преглед";
+        _selectedItemService=selectedItemService;
     }
 
-    public async Task LoadAsync(Guid id)
+    public async Task LoadAsync()
     {
-        await InitializeAsync(id);
+        var selected = _selectedItemService.SelectedItem;
+        if(selected==null||selected.Id==Guid.Empty)
+        {
+            OnError("Не е избран преглед за промена.");
+            return;
+        }
 
-        IsEditMode=true;
-        IsReadOnly=false;
+        await InitializeAsync(selected.Id);
+        IsEditMode=false;
+        IsReadOnly=true;
+
+        _selectedItemService.SelectedItem=null; // consume it — sprechava stale ID на следна навигација
     }
     [RelayCommand]
     public async Task SaveAsync()
@@ -25,6 +41,6 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
                 Encounter,
                 Diagnoses.ToList(),
                 Prescriptions.ToList());
-        }, "Unable to save encounter");
+        }, "Неусшено зачувување");
     }
 }

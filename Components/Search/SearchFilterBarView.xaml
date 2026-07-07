@@ -1,76 +1,48 @@
 <ContentView
+	x:Class="EHMR.Components.Search.SearchFilterBarView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-x:Class="EHMR.Components.Search.SearchFilterBarView"
+	<Border Style="{StaticResource DashboardCard}">
+		<Grid ColumnDefinitions="*,90,170,170,130,120" ColumnSpacing="8">
 
-xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-
-xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
-
-	<Border
-Style="{StaticResource DashboardCard}">
-		<Grid ColumnDefinitions="*,90,170,170,130,120"
-ColumnSpacing="8">
-
-			<!-- SEARCH -->
+			<!--  SEARCH  -->
 
 			<VerticalStackLayout>
-				<Label Text="ПРЕБАРУВАЊЕ" Style="{StaticResource InputLabel}" />
+				<Label Style="{StaticResource InputLabel}" Text="ПРЕБАРУВАЊЕ" />
 
 				<Border Style="{StaticResource InputBorderStyle}">
 
 					<Grid ColumnDefinitions="Auto,*">
-						<Label Text="&#xf002;" FontFamily="FASolid"
-TextColor="{StaticResource TextMuted}" />
+						<Label
+							FontFamily="FASolid"
+							Text="&#xf002;"
+							TextColor="{StaticResource TextMuted}" />
 
 						<Entry
-
-Grid.Column="1"
-
-Placeholder="Пребарај пациент или доктор..."
-
-Text="{Binding SearchText}" />
+							Grid.Column="1"
+							Placeholder="Пребарај пациент или доктор..."
+							Text="{Binding SearchText}" />
 					</Grid>
 				</Border>
 			</VerticalStackLayout>
 
-			<!-- DATE FILTER -->
+			<!--  DATE FILTER  -->
 
 			<VerticalStackLayout>
 
-				<Label
+				<Label Style="{StaticResource InputLabel}" Text="ФИЛТЕР" />
 
-Text="ФИЛТЕР"
-
-Style="{StaticResource InputLabel}" />
-
-				<CheckBox
-
-IsChecked="{Binding FilterByDate}" />
+				<CheckBox IsChecked="{Binding FilterByDate}" />
 			</VerticalStackLayout>
 
-			<DatePicker
+			<DatePicker Date="{Binding FilterDate}" IsEnabled="{Binding FilterByDate}" />
 
-Date="{Binding FilterDate}"
+			<Picker ItemsSource="{Binding StatusFilters}" SelectedItem="{Binding SelectedStatus}" />
 
-IsEnabled="{Binding FilterByDate}" />
+			<Button Command="{Binding ClearFiltersCommand}" Text="Исчисти" />
 
-			<Picker
-
-ItemsSource="{Binding StatusFilters}"
-
-SelectedItem="{Binding SelectedStatus}" />
-
-			<Button
-
-Text="Исчисти"
-
-Command="{Binding ClearFiltersCommand}" />
-
-			<Button
-
-Text="＋ Нов"
-
-Command="{Binding AddCommand}" />
+			<Button Command="{Binding AddCommand}" Text="＋ Нов" />
 		</Grid>
 	</Border>
 </ContentView>

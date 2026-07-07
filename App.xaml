@@ -19,7 +19,7 @@
 			<converters:StatusDisplayConverter x:Key="StatusDisplayConverter " />
 			<converters:HighlightMatchConverter x:Key="HighlightMatchConverter" />
 			<converters:SearchEntityTypeToIconConverter x:Key="SearchEntityTypeToIconConverter" />
-
+			<converters:BoolToTabBackgroundConverter x:Key="BoolToTabBackgroundConverter" />
 			<converters:EncounterStatusToTextConverter x:Key="EncounterStatusToTextConverter" />
 			<converters:EncounterStatusToColorConverter x:Key="EncounterStatusToColorConverter" />
 			<converters:EncounterStatusToBgConverter x:Key="EncounterStatusToBgConverter" />
@@ -29,8 +29,15 @@
 			<converters:PatientStatusToBgConverter x:Key="PatientStatusToBgConverter" />
 			<converters:PatientStatusToColorConverter x:Key="PatientStatusToColorConverter" />
 			<converters:AppointmentStatusToPillFgConverter x:Key="AppointmentStatusToPillFgConverter" />
+
 			<converters:AppointmentStatusDisplayConverter x:Key="AppointmentStatusDisplayConverter" />
 			<converters:AppointmentStatusToPillBgConverter x:Key="AppointmentStatusToPillBgConverter" />
+			<converters:BoolToActiveBackgroundConverter x:Key="BoolToActiveBackgroundConverter" />
+			<converters:AppointmentStatusConverter x:Key="AppointmentStatusConverter" />
+			<converters:AppointmentsInitialsConverter x:Key="AppointmentsInitialsConverter" />
+			<converters:AppointmentStatusToColorConverter x:Key="AppointmentStatusToColorConverter" />
+			<converters:AppointmentInvertedBoolConverter x:Key="AppointmentInvertedBoolConverter" />
+
 			<converters:PatientStatusToLabelConverter x:Key="PatientStatusToLabelConverter" />
 			<converters:PatientStatusToTextColorConverter x:Key="PatientStatusToTextColorConverter" />
 			<converters:PatientStatusDisplayConverter x:Key="PatientStatusDisplayConverter" />

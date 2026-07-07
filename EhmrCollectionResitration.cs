@@ -15,6 +15,7 @@ using EHMR.ViewModels.Therapies;
 using EHMR.Views;
 using EHMR.Views.Appointments;
 using EHMR.Views.Encounters;
+using EHMR.Views.Protocols;
 using EHMR.Views.Therapies;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -269,7 +270,7 @@ namespace EHMR
             //services.AddTransient<TherapyPlanningPage>();
 
             services.AddTransient<TherapyCyclesPage>();
-            services.AddTransient<TherapyCyclesViewModel>();
+            services.AddTransient<TherapyCycleListViewModel>();
 
             services.AddTransient<MedicineDetailFormPage>();
             services.AddTransient<MedicineListPage>();

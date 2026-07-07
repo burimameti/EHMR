@@ -3,6 +3,8 @@ using SkiaSharp.Views.Maui.Controls.Hosting;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using SolidColorBrush = Microsoft.UI.Xaml.Media.SolidColorBrush;
+using EHMR.Domain.SparkForm;
+
 
 #if WINDOWS
 using Microsoft.UI.Xaml.Media;
@@ -69,7 +71,7 @@ namespace EHMR
             builder.Services.AddSingleton<AppShell>();
             builder.Services.AddSingleton<App>();
             builder.Services.RegisterEHMR();
-
+            SparkTemplateInitializer.Register();
             // =====================================================
             // BUILD APP
             // =====================================================

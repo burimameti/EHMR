@@ -1,6 +1,6 @@
 ﻿using EHMR.ViewModels;
 
-namespace EHMR.Views.Therapies
+namespace EHMR.Views.Protocols
 {
     public partial class ProtocolRegistryPage : ContentPage
     {

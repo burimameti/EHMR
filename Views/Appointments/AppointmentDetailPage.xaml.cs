@@ -16,14 +16,23 @@ public partial class AppointmentDetailPage : ContentPage
         _menu=menu;
 
         BindingContext=_viewModel;
-        MenuHost.Content=menu;
+        //MenuHost.Content=menu;
     }
-
-    private void OnDiagnosisSearchTextChanged(object sender, TextChangedEventArgs e)
+    private async void OnDiagnosisSearchTextChanged(object sender, TextChangedEventArgs e)
     {
-        _viewModel.SearchDiagnosesCommand.Execute(e.NewTextValue);
+        if(_viewModel.SearchDiagnosesCommand.CanExecute(e.NewTextValue))
+            await _viewModel.SearchDiagnosesCommand.ExecuteAsync(e.NewTextValue);
     }
 
+    private async void OnPatientPickerChanged(object sender, EventArgs e)
+    {
+        if(sender is Picker { SelectedItem: EHMR.Domain.Entities.Patient patient })
+        {
+            if(_viewModel.PatientChangedCommand.CanExecute(patient))
+                await _viewModel.PatientChangedCommand.ExecuteAsync(patient);
+        }
+    }
+  
     private void OnPatientSelectedIndexChanged(object sender, EventArgs e)
     {
         var picker = (Picker)sender;

@@ -86,6 +86,87 @@
 	  <MauiXaml Update="Resources\Controls\SparkExplorerHeaderView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Controls\SparkFieldView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Controls\SparkFormView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Controls\SparkSectionView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\SparkTemplateDictionary.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\AttachmentTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\BarcodeTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\CheckBoxTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\ComboTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\CurrencyTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\DateTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\DateTimeTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\DecimalTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\EmailTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\ImageTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\LookupTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\MultilineTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\NumericTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\PasswordTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\PhoneTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\QrCodeTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\RatingTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\RichTextTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\SearchTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\SignatureTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\TextTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\TimeTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkForm\Templates\ToggleTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Resources\Controls\SparkStyles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -299,10 +380,10 @@
 	  <MauiXaml Update="Views\RootLayoutPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Therapies\ProtocolDetailFormPage.xaml">
+	  <MauiXaml Update="Views\Protocols\ProtocolDetailFormPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Therapies\ProtocolRegistryPage.xaml">
+	  <MauiXaml Update="Views\Protocols\ProtocolRegistryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Therapies\TherapyCyclesPage.xaml">
@@ -362,10 +443,10 @@
 	  <Compile Update="Views\RootLayoutPage.xaml.cs">
 	    <DependentUpon>RootLayoutPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Therapies\ProtocolDetailFormPage.xaml.cs">
+	  <Compile Update="Views\Protocols\ProtocolDetailFormPage.xaml.cs">
 	    <DependentUpon>ProtocolDetailFormPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Therapies\ProtocolRegistryPage.xaml.cs">
+	  <Compile Update="Views\Protocols\ProtocolRegistryPage.xaml.cs">
 	    <DependentUpon>ProtocolRegistryPage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\Therapies\TherapyCyclesPage.xaml.cs">
@@ -388,6 +469,7 @@
 	<ItemGroup>
 	  <Folder Include="Domain\NewFolder\" />
 	  <Folder Include="Resources\Controls\Actions\" />
+	  <Folder Include="Resources\Controls\SparkForm\Services\" />
 	  <Folder Include="Views\Ter\" />
 	</ItemGroup>
 
