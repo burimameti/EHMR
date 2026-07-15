@@ -1,181 +1,108 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
-using EHMR.Domain.Entities.Rbac;
+using EHMR.Resources.Controls;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 
 namespace EHMR.ViewModels;
 
-public partial class CalendarDashboardViewModel : ObservableObject
+public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQueryAttributable
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
-    private readonly INavigationService _navigationService;
-    private readonly ISelectedItemService<Appointment> _appointmentSelectionService;
-    private readonly ISelectedItemService<TherapyCycle> _cycleSelectionService;
 
     private DateTime _currentDate;
 
+    protected override string ModuleName => "Calendar";
+
     [ObservableProperty] private string _currentMonthYearText = string.Empty;
-    [ObservableProperty] private int _criticalCyclesCount;
-    [ObservableProperty] private string _adherenceRateText = "0% Извршеност";
-    [ObservableProperty] private double _adherenceRateValue;
-    [ObservableProperty] private int _activePlansCount;
-    [ObservableProperty] private int _todaysAppointmentsCount;
+    [ObservableProperty] private bool _isViewingCurrentMonth = true;
+
+    [ObservableProperty] private int _monthlyEncountersCount;
+    [ObservableProperty] private int _todaysEncountersCount;
+    [ObservableProperty] private int _upcomingEncountersCount;
 
     [ObservableProperty] private CalendarDayDto? _selectedCalendarDay;
-    [ObservableProperty] private CalendarEventDto? _selectedCalendarEvent;
 
-    // View States
     [ObservableProperty] private bool _isMonthViewActive = true;
-
     [ObservableProperty] private bool _isDayViewActive;
-    [ObservableProperty] private bool _isEventViewActive;
     [ObservableProperty] private bool _isStatsViewActive = true;
 
-    [ObservableProperty] private ObservableCollection<HourlyTimelineSlotDto> _hourlyTimelineSlots = new();
-    public ObservableCollection<CalendarDayDto> CalendarDays { get; set; } = new();
-    public ObservableCollection<OverdueCycleDto> CriticalCycles { get; set; } = new();
+    private DateTime _startOfMonth;
+    private DateTime _endOfMonth;
+    [ObservableProperty]
+    private CalendarMode currentMode;
 
-    public bool CanDeleteAppointments => CurrentUserRole=="Admin"||CurrentUserRole=="Doctor";
+    [ObservableProperty] private ObservableCollection<HourlyTimelineSlotDto> _hourlyTimelineSlots = new();
+
+    public ObservableCollection<CalendarDayDto> CalendarDays { get; } = new();
+
+    // Buttons доаѓа од BaseViewModel<T> — не се redeclara тука.
+
+    public bool CanDeleteEncounters => CurrentUserRole=="Admin"||CurrentUserRole=="Doctor";
     public string CurrentUserRole { get; set; } = "Doctor";
 
     public CalendarDashboardViewModel(
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
         INavigationService navigationService,
-        ISelectedItemService<Appointment> appointmentSelectionService,
-        ISelectedItemService<TherapyCycle> cycleSelectionService)
+        IUserDialogService dialog,
+        IMenuService menu,
+        IAuthorizationService authorization,
+        ISelectedItemService<Encounter> encounterSelect)
+        : base(navigationService, dialog, menu, authorization, encounterSelect)
     {
         _dbFactory=dbFactory;
-        _navigationService=navigationService;
-        _appointmentSelectionService=appointmentSelectionService;
-        _cycleSelectionService=cycleSelectionService;
 
         _currentDate=DateTime.Today;
+        EvaluatePermissions();
+        BuildSparkButtons();
     }
 
-    [RelayCommand]
-    private void SwitchToMonthView()
-    {
-        IsMonthViewActive=true;
-        IsDayViewActive=false;
-        IsStatsViewActive=true;
-    }
+    // ═══════════════════════════════════════════ COMMANDS ═══════════════════════════════════════════
 
     [RelayCommand]
-    private void SwitchToDayView()
+    private void SelectCalendarDay(CalendarDayDto? day)
     {
-        if(SelectedCalendarDay==null)
-        {
-            var todayDto = CalendarDays.FirstOrDefault(d => d.IsToday);
-            if(todayDto!=null)
-            {
-                SelectedCalendarDay=todayDto;
-            }
-        }
+        if(day==null||day.IsEmptySlot)
+            return;
 
+        SelectedCalendarDay=day;
         IsMonthViewActive=false;
         IsDayViewActive=true;
         IsStatsViewActive=false;
 
-        if(SelectedCalendarDay!=null)
-        {
-            BuildHourlyTimeline(SelectedCalendarDay);
-        }
+        BuildHourlyTimeline();
     }
 
     [RelayCommand]
-    private void CloseContextPanel()
+    private void CloseDayView()
     {
         IsDayViewActive=false;
-        IsEventViewActive=false;
+        IsMonthViewActive=true;
         IsStatsViewActive=true;
+
         SelectedCalendarDay=null;
-        SelectedCalendarEvent=null;
-    }
 
-    // Нов релеј команда со која овозможуваме затворање од горното мени во XAML
-    [RelayCommand]
-    private void CloseDayView() => CloseContextPanel();
-
-    public void BuildHourlyTimeline(CalendarDayDto selectedDay)
-    {
-        if(selectedDay==null) return;
-
-        var tempSlots = new List<HourlyTimelineSlotDto>();
-
-        // Го менуваме опсегот за да го опфати целиот ден (0-23)
-        for(int hour = 0; hour<=23; hour++)
-        {
-            var eventsInHour = selectedDay.Events
-                .Where(e => e.ScheduledTime.Hour==hour)
-                .ToList();
-
-            var slot = new HourlyTimelineSlotDto
-            {
-                HourText=$"{hour:D2}:00",
-                HourValue=hour,
-                SlotEvents=new ObservableCollection<CalendarEventDto>(eventsInHour)
-            };
-
-            tempSlots.Add(slot);
-        }
-
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            HourlyTimelineSlots.Clear();
-            foreach(var slot in tempSlots)
-            {
-                HourlyTimelineSlots.Add(slot);
-            }
-        });
+        HourlyTimelineSlots.Clear();
     }
 
     [RelayCommand]
-    private async Task CreateNewAppointmentForSelectedDayAsync()
+    private void ChangeMode(CalendarMode section)
     {
-        if(SelectedCalendarDay==null) return;
-        var targetDate = new DateTime(_currentDate.Year, _currentDate.Month, SelectedCalendarDay.DayNumber);
-
-        _appointmentSelectionService.SelectedItem=null;
-        await _navigationService.GoToAsync($"appointmentsdetail?date={targetDate.Ticks}");
-    }
-
-    // Специјална команда за креирање термин со точен изгласан час од Timeline-от
-    [RelayCommand]
-    private async Task CreateNewAppointmentForSpecificHourAsync(HourlyTimelineSlotDto slot)
-    {
-        if(SelectedCalendarDay==null||slot==null||slot.HourValue==-1) return;
-
-        var targetDateTime = new DateTime(_currentDate.Year, _currentDate.Month, SelectedCalendarDay.DayNumber, slot.HourValue, 0, 0);
-        _appointmentSelectionService.SelectedItem=null;
-        await _navigationService.GoToAsync($"{AppRoutes.Appointments.Detail}?date={targetDateTime.Ticks}");
+        CurrentMode=section;
     }
 
     [RelayCommand]
-    private async Task DeleteEventAsync(CalendarEventDto eventDto)
+    private async Task GoToTodayAsync()
     {
-        if(!CanDeleteAppointments||eventDto==null) return;
-
-        await using var db = await _dbFactory.CreateDbContextAsync();
-        if(eventDto.EventType=="Appointment")
-        {
-            var appointment = await db.Appointments.FirstOrDefaultAsync(a => a.Id==eventDto.Id);
-            if(appointment!=null)
-            {
-                db.Appointments.Remove(appointment);
-                await db.SaveChangesAsync();
-            }
-        }
-
+        _currentDate=DateTime.Today;
         await LoadDashboardDataAsync();
-        CloseContextPanel();
+
+        var todayDay = CalendarDays.FirstOrDefault(x => x.IsToday);
+        SelectCalendarDay(todayDay);
     }
 
     [RelayCommand]
@@ -184,261 +111,447 @@ public partial class CalendarDashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task PreviousMonthAsync() => await ChangeMonth(-1);
 
-    [RelayCommand]
-    private async Task CurrentMonthAsync()
+    private async Task ChangeMonth(int months)
     {
-        _currentDate=DateTime.Today;
+        _currentDate=_currentDate.AddMonths(months);
         await LoadDashboardDataAsync();
     }
 
-    private async Task ChangeMonth(int monthsToId)
+    [RelayCommand]
+    private async Task CreateNewEncounterForSelectedDayAsync()
     {
-        _currentDate=_currentDate.AddMonths(monthsToId);
-        await LoadDashboardDataAsync();
+        var targetDate =
+            SelectedCalendarDay!=null
+                ? SelectedCalendarDay.Date
+                : DateTime.Today;
+
+        SelectedItemService.SelectedItem=null;
+        await NavigationService.GoToAsync($"{AppRoutes.Encounters.Create}?date={targetDate.Ticks}");
     }
 
-    // ОВИЕ СЕ КОМАНДИТЕ ШТО ТИ ГИ БАРАШЕ CODE-BEHIND ФАЈЛОТ СЕГА СЕ ТУКА ТОЧНО ДЕФИНИРАНИ
     [RelayCommand]
-    public async Task ProcessCycleSelectionAsync(Guid cycleId)
+    private async Task CreateNewEncounterForSpecificHourAsync(HourlyTimelineSlotDto slot)
+    {
+        if(SelectedCalendarDay==null||slot==null)
+            return;
+
+        var targetDateTime =
+            SelectedCalendarDay.Date.Date
+                .AddHours(slot.HourValue);
+
+        SelectedItemService.SelectedItem=null;
+        await NavigationService.GoToAsync($"{AppRoutes.Encounters.Create}?date={targetDateTime.Ticks}");
+    }
+
+    [RelayCommand]
+    public async Task ProcessEncounterSelectionAsync(Guid encounterId)
     {
         await using var db = await _dbFactory.CreateDbContextAsync();
-        var cycle = await db.TherapyCycles
-            .Include(c => c.Appointments)
-            .FirstOrDefaultAsync(c => c.Id==cycleId);
 
-        if(cycle!=null)
+        var encounter = await db.Encounters
+            .Include(x => x.Patient)
+            .Include(x => x.Doctor)
+                .ThenInclude(x => x.User)
+            .FirstOrDefaultAsync(x => x.Id==encounterId);
+
+        if(encounter==null)
+            return;
+
+        SelectedItemService.SelectedItem=encounter;
+        await NavigationService.GoToAsync(AppRoutes.Encounters.Detail);
+    }
+
+    [RelayCommand]
+    private async Task DeleteEncounterAsync(CalendarEventDto eventDto)
+    {
+        if(!CanDeleteEncounters||eventDto==null)
+            return;
+
+        await ExecuteSafeAsync(async () =>
         {
-            _cycleSelectionService.SelectedItem=cycle;
-            await _navigationService.GoToAsync(AppRoutes.Therapy.Detail);
+            await using var db = await _dbFactory.CreateDbContextAsync();
+            var encounter = await db.Encounters.FirstOrDefaultAsync(x => x.Id==eventDto.Id);
+            if(encounter!=null)
+            {
+                db.Encounters.Remove(encounter);
+                await db.SaveChangesAsync();
+            }
+
+            await LoadDashboardDataCoreAsync();
+            CloseDayView();
+        }, "Грешка при бришење на прегледот");
+    }
+
+    [RelayCommand]
+    private async Task ApplyCalendarSearchAsync() => await LoadDashboardDataAsync();
+
+    // ═══════════════════════════════════════════ SPARK WEEK TABS ═══════════════════════════════════════════
+
+    public ObservableCollection<SparkTabItem> WeekTabs { get; } = new();
+
+    private int? _highlightedWeekIndex;
+
+    private void BuildWeekTabs(List<CalendarDayDto> days)
+    {
+        WeekTabs.Clear();
+
+        var weekGroups = days
+            .Where(d => d.IsCurrentMonth)
+            .GroupBy(d => d.WeekIndex)
+            .OrderBy(g => g.Key)
+            .ToList();
+
+        int weekNumber = 1;
+        foreach(var group in weekGroups)
+        {
+            var weekIndex = group.Key;
+            var encounterCount = group.Sum(d => d.EventCount);
+
+            var tab = new SparkTabItem
+            {
+                Title=$"Недела {weekNumber}",
+                Value=encounterCount.ToString("N0")
+            };
+
+            tab.Command=new RelayCommand(() => ToggleWeekHighlight(tab, weekIndex));
+
+            WeekTabs.Add(tab);
+            weekNumber++;
         }
     }
 
-    [RelayCommand]
-    public async Task ProcessAppointmentSelectionAsync(Guid appointmentId)
+    private void ToggleWeekHighlight(SparkTabItem tab, int weekIndex)
     {
-        await using var db = await _dbFactory.CreateDbContextAsync();
-        var appointment = await db.Appointments
-            .Include(a => a.Patient)
-            .Include(a => a.Doctor)
-            .FirstOrDefaultAsync(a => a.Id==appointmentId);
-
-        if(appointment!=null)
+        if(_highlightedWeekIndex==weekIndex)
         {
-            _appointmentSelectionService.SelectedItem=appointment;
-            await _navigationService.GoToAsync(AppRoutes.Appointments.Detail);
+            _highlightedWeekIndex=null;
+            foreach(var t in WeekTabs) t.IsSelected=false;
         }
+        else
+        {
+            _highlightedWeekIndex=weekIndex;
+            foreach(var t in WeekTabs) t.IsSelected=false;
+            tab.IsSelected=true;
+        }
+
+        ApplyWeekHighlight();
     }
 
-    [RelayCommand]
-    public async Task ProcessGenericEventSelectionAsync(Guid eventId)
+    private void ApplyWeekHighlight()
     {
-        await App.Current.MainPage.DisplayAlert("Настан", $"Избравте општ настан со ID: {eventId}", "ОК");
+        foreach(var day in CalendarDays)
+            day.IsWeekHighlighted=_highlightedWeekIndex!=null&&day.WeekIndex==_highlightedWeekIndex;
     }
 
-    [RelayCommand]
-    private async Task CreateNewTherapyCycle()
-    {
-        // Логика за нов тераписки циклус рута
-        await _navigationService.GoToAsync(AppRoutes.Therapy.Detail);
-    }
+    // ═══════════════════════════════════════════ DATA LOAD ═══════════════════════════════════════════
 
     public async Task LoadDashboardDataAsync()
+        => await ExecuteSafeAsync(LoadDashboardDataCoreAsync, "Грешка при вчитување на календарот");
+
+    private async Task LoadDashboardDataCoreAsync()
     {
-        try
+        InitializeCurrentMonth();
+
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var encounters = await LoadMonthEncountersAsync(db);
+
+        UpdateStatistics(encounters);
+
+        var calendarDays = BuildCalendarDays(encounters);
+
+        MainThread.BeginInvokeOnMainThread(() =>
         {
-            var monthText = _currentDate.ToString("MMMM yyyy").ToUpper();
-            var startOfMonth = new DateTime(_currentDate.Year, _currentDate.Month, 1);
-            var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+            RefreshCalendar(calendarDays);
+            BuildWeekTabs(calendarDays);
+        });
+    }
 
-            await using var db = await _dbFactory.CreateDbContextAsync();
+    private void InitializeCurrentMonth()
+    {
+        _startOfMonth=new DateTime(
+            _currentDate.Year,
+            _currentDate.Month,
+            1);
 
-            var cyclesInMonth = await db.TherapyCycles
-                .Include(c => c.Appointments)
-                    .ThenInclude(s => s.Patient)
-                .AsNoTracking()
-                .Where(c =>
-                    c.Appointments.Any(x => x.ScheduledStart<=endOfMonth&&x.ScheduledEnd>=startOfMonth)
-                )
-                .ToListAsync();
+        _endOfMonth=_startOfMonth
+            .AddMonths(1)
+            .AddDays(-1);
 
-            var appointmentsInMonth = await db.Appointments
-                .Include(a => a.Patient)
-                .Include(a => a.Doctor)
-                .Where(a => a.ScheduledStart>=startOfMonth&&a.ScheduledStart<=endOfMonth)
-                .ToListAsync();
+        CurrentMonthYearText=
+            _startOfMonth
+                .ToString("MMMM yyyy")
+                .ToUpperInvariant();
 
-            var todayDate = DateTime.Today;
-            int todaysAppointmentsCount = appointmentsInMonth.Count(a => a.ScheduledStart.Date==todayDate);
+        IsViewingCurrentMonth=
+            _currentDate.Year==DateTime.Today.Year&&
+            _currentDate.Month==DateTime.Today.Month;
+    }
 
-            int dayOfWeekOffset = ((int)startOfMonth.DayOfWeek==0) ? 6 : (int)startOfMonth.DayOfWeek-1;
-            var tempDays = new List<CalendarDayDto>();
+    private void UpdateStatistics(List<Encounter> encounters)
+    {
+        var today = DateTime.Today;
 
-            for(int i = 0; i<dayOfWeekOffset; i++)
+        MonthlyEncountersCount=encounters.Count;
+
+        TodaysEncountersCount=encounters.Count(x =>
+            (x.ScheduledStart??x.EncounterDate).Date==today);
+
+        UpcomingEncountersCount=encounters.Count(x =>
+            (x.ScheduledStart??x.EncounterDate).Date>today);
+    }
+
+    private List<CalendarDayDto> BuildCalendarDays(List<Encounter> encounters)
+    {
+        var grouped = encounters
+            .GroupBy(x => (x.ScheduledStart??x.EncounterDate).Date)
+            .ToDictionary(x => x.Key, x => x.ToList());
+
+        var result = new List<CalendarDayDto>();
+
+        var firstDayOfMonth = _startOfMonth;
+        var lastDayOfMonth = _endOfMonth;
+
+        int offset = firstDayOfMonth.DayOfWeek switch
+        {
+            DayOfWeek.Sunday => 6,
+            _ => (int)firstDayOfMonth.DayOfWeek-1
+        };
+
+        for(int i = offset; i>0; i--)
+        {
+            var date = firstDayOfMonth.AddDays(-i);
+            result.Add(new CalendarDayDto
             {
-                tempDays.Add(new CalendarDayDto { DayNumber=0, IsIsEmptySlot=true });
-            }
-
-            for(int day = 1; day<=endOfMonth.Day; day++)
-            {
-                var targetDay = new DateTime(_currentDate.Year, _currentDate.Month, day);
-                var dayEvents = new List<CalendarEventDto>();
-
-                var dayCycles = cyclesInMonth
-                    .Where(c => c.Appointments.Any(x => x.ScheduledStart.Date==targetDay.Date))
-                    .Select(c => new CalendarEventDto
-                    {
-                        Id=c.Id,
-                        Title=$"{c.Patient.FullName} (Ц-#{c.CycleNumber})",
-                        ScheduledTime=c.Appointments
-                            .Where(x => x.ScheduledStart.Date==targetDay.Date)
-                            .OrderBy(x => x.ScheduledEnd)
-                            .Select(x => x.ScheduledEnd)
-                            .FirstOrDefault(),
-                        Status=(c.Status==TherapyStatus.Planned&&c.Appointments.Any(x => x.ScheduledStart.Date<DateTime.Today)) ? "Overdue" : c.Status.ToString(),
-                        EventType="Cycle"
-                    })
-                    .ToList();
-                dayEvents.AddRange(dayCycles);
-
-                var dayAppointments = appointmentsInMonth
-                    .Where(a => a.ScheduledStart.Date==targetDay.Date)
-                    .Select(a => new CalendarEventDto
-                    {
-                        Id=a.Id,
-                        Title=$"{a.Patient.LastName} ({a.ScheduledStart:HH:mm})",
-                        ScheduledTime=a.ScheduledStart,
-                        Status=a.Status.ToString(),
-                        EventType="Appointment"
-                    })
-                    .ToList();
-                dayEvents.AddRange(dayAppointments);
-
-                tempDays.Add(new CalendarDayDto
-                {
-                    DayNumber=day,
-                    IsToday=targetDay.Date==DateTime.Today,
-                    IsIsEmptySlot=false,
-                    Events=dayEvents,
-                    AppointmentCount=dayAppointments.Count,
-                    CompletedCount=dayCycles.Count(c => c.Status=="Completed"||c.Status==TherapyStatus.Completed.ToString()),
-                    MissedCount=dayCycles.Count(c => c.Status=="Overdue")
-                });
-            }
-
-            //var activePlans = await db.TreatmentPlans.CountAsync(p => p.Status==TherapyStatus.Active);
-
-            var overdue = db.TherapyCycles
-                .Include(p => p.Appointments);
-            var over = overdue
-                .Where(x =>
-                    x.Appointments.Any(a => a.ScheduledStart<DateTime.Today)&&
-                    (x.Status==TherapyStatus.Planned||x.Status==TherapyStatus.Active))
-                .Take(5)
-                .Select(c => new OverdueCycleDto
-                {
-                    PatientName=c.Patient.LastName,
-
-                    CycleInfo=$"Циклус {c.CycleNumber}",
-                    Status="ДОЦНИ"
-                }).ToListAsync();
-
-            var totalCycles = cyclesInMonth.Count;
-            var completedCycles = cyclesInMonth.Count(c => c.Status==TherapyStatus.Completed);
-
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                CurrentMonthYearText=monthText;
-
-                CalendarDays.Clear();
-                foreach(var d in tempDays) CalendarDays.Add(d);
-
-                //ActivePlansCount=activePlans;
-                TodaysAppointmentsCount=todaysAppointmentsCount;
-
-                CriticalCycles.Clear();
-                foreach(var item in over.Result) CriticalCycles.Add(item);
-                CriticalCyclesCount=CriticalCycles.Count;
-
-                if(totalCycles>0)
-                {
-                    AdherenceRateValue=(double)completedCycles/totalCycles;
-                    AdherenceRateText=$"{Math.Round(AdherenceRateValue*100)}%";
-                }
-                else
-                {
-                    AdherenceRateValue=0;
-                    AdherenceRateText="0%";
-                }
-
-                // Ако имаме тековно селектиран ден, обнови го неговиот преглед во реално време
-                if(SelectedCalendarDay!=null)
-                {
-                    var updatedDay = CalendarDays.FirstOrDefault(d => d.DayNumber==SelectedCalendarDay.DayNumber&&!d.IsIsEmptySlot);
-                    if(updatedDay!=null)
-                    {
-                        BuildHourlyTimeline(updatedDay);
-                    }
-                }
+                Date=date,
+                IsEmptySlot=true,
+                IsCurrentMonth=false
             });
         }
-        catch(Exception ex)
+
+        int totalDays = DateTime.DaysInMonth(_currentDate.Year, _currentDate.Month);
+
+        for(int day = 1; day<=totalDays; day++)
         {
-            System.Diagnostics.Debug.WriteLine($"Грешка: {ex.Message}");
+            var date = new DateTime(_currentDate.Year, _currentDate.Month, day);
+
+            grouped.TryGetValue(date.Date, out var dayEncounters);
+
+            var events = dayEncounters?
+                .OrderBy(x => x.ScheduledStart??x.EncounterDate)
+                .Select(CreateCalendarEvent)
+                .ToList()
+                ??new List<CalendarEventDto>();
+
+            result.Add(new CalendarDayDto
+            {
+                Date=date,
+                IsCurrentMonth=true,
+                IsEmptySlot=false,
+                Events=events
+            });
         }
+
+        int remaining = 42-result.Count;
+
+        for(int i = 1; i<=remaining; i++)
+        {
+            var date = lastDayOfMonth.AddDays(i);
+            result.Add(new CalendarDayDto
+            {
+                Date=date,
+                IsEmptySlot=true,
+                IsCurrentMonth=false
+            });
+        }
+
+        for(int i = 0; i<result.Count; i++)
+            result[i].WeekIndex=i/7;
+
+        return result;
+    }
+
+    private void RefreshCalendar(List<CalendarDayDto> days)
+    {
+        var previousSelected = SelectedCalendarDay?.Date;
+
+        CalendarDays.Clear();
+        foreach(var day in days)
+            CalendarDays.Add(day);
+
+        ApplyWeekHighlight();
+
+        if(previousSelected==null)
+            return;
+
+        SelectedCalendarDay=CalendarDays.FirstOrDefault(x => x.Date.Date==previousSelected.Value.Date);
+
+        if(SelectedCalendarDay!=null)
+            BuildHourlyTimeline();
+    }
+
+    private static (Color Background, Color Text) GetStatusColors(string status) => status switch
+    {
+        "Scheduled" => (Color.FromArgb("#DBEAFE"), Color.FromArgb("#1D4ED8")),
+        "CheckedIn" => (Color.FromArgb("#EDE9FE"), Color.FromArgb("#6D28D9")),
+        "InProgress" => (Color.FromArgb("#FEF3C7"), Color.FromArgb("#B45309")),
+        "Completed" => (Color.FromArgb("#DCFCE7"), Color.FromArgb("#15803D")),
+        "Cancelled" => (Color.FromArgb("#FEE2E2"), Color.FromArgb("#B91C1C")),
+        "NoShow" => (Color.FromArgb("#F3F4F6"), Color.FromArgb("#6B7280")),
+        _ => (Colors.LightGreen, Colors.DarkGreen)
+    };
+
+    private CalendarEventDto CreateCalendarEvent(Encounter encounter)
+    {
+        var (bg, text)=GetStatusColors(encounter.Status.ToString());
+
+        return new CalendarEventDto
+        {
+            Id=encounter.Id,
+            Title=encounter.Patient?.FullName??"",
+            Duration=TimeSpan.FromMinutes(30),
+            Subtitle=encounter.Doctor?.FullName??"",
+            PatientName=encounter.Patient?.FullName??"",
+            DoctorName=encounter.Doctor?.FullName??"",
+            ScheduledTime=encounter.ScheduledStart??encounter.EncounterDate,
+            Status=encounter.Status.ToString(),
+            EventType="Encounter",
+            IconGlyph="\uf073",
+            BackgroundColor=bg,
+            TextColor=text
+        };
+    }
+
+    private async Task<List<Encounter>> LoadMonthEncountersAsync(DesktopTherapyDbContext db)
+    {
+        var query = db.Encounters
+            .AsNoTracking()
+            .Include(x => x.Patient)
+            .Include(x => x.Doctor)
+                .ThenInclude(x => x.User)
+            .Where(x =>
+                (x.ScheduledStart??x.EncounterDate)>=_startOfMonth&&
+                (x.ScheduledStart??x.EncounterDate)<=_endOfMonth)
+            .AsQueryable();
+
+        if(!string.IsNullOrWhiteSpace(SearchText))
+        {
+            var term = SearchText.Trim();
+            query=query.Where(x =>
+                (x.Patient!=null&&(x.Patient.FirstName+" "+x.Patient.LastName).Contains(term))||
+                (x.EncounterNumber??"").Contains(term));
+        }
+
+        return await query.ToListAsync();
+    }
+
+    public void BuildHourlyTimeline()
+    {
+        HourlyTimelineSlots.Clear();
+
+        if(SelectedCalendarDay==null)
+            return;
+
+        var dayEvents = SelectedCalendarDay.Events;
+
+        for(int hour = 0; hour<24; hour++)
+        {
+            var eventsInHour = dayEvents
+                .Where(x => x.ScheduledTime.Hour==hour)
+                .OrderBy(x => x.ScheduledTime)
+                .ToList();
+
+            HourlyTimelineSlots.Add(new HourlyTimelineSlotDto
+            {
+                HourText=$"{hour:D2}:00",
+                HourValue=hour,
+                SlotEvents=new ObservableCollection<CalendarEventDto>(eventsInHour)
+            });
+        }
+    }
+
+    protected override void BuildSparkButtons()
+    {
+        Buttons.Clear();
+        Buttons.Add(new SparkButtonItem { IconGlyph="\uf053", Command=PreviousMonthCommand });
+        Buttons.Add(new SparkButtonItem { Label="Денес", Command=GoToTodayCommand });
+        Buttons.Add(new SparkButtonItem { IconGlyph="\uf054", Command=NextMonthCommand });
+        Buttons.Add(new SparkButtonItem { IconGlyph="\uf067", Label="Нов преглед", Command=CreateNewEncounterForSelectedDayCommand });
+    }
+
+    // ═══════════════════════════════════════════ BASE PIPELINE ═══════════════════════════════════════════
+
+    protected override IEnumerable<Encounter> ApplySearch(IEnumerable<Encounter> query, string search)
+    {
+        if(string.IsNullOrWhiteSpace(search))
+            return query;
+
+        search=search.Trim();
+
+        return query.Where(x =>
+            (x.Patient?.FullName??"").Contains(search, StringComparison.OrdinalIgnoreCase)||
+            (x.EncounterNumber??"").Contains(search, StringComparison.OrdinalIgnoreCase)||
+            (x.Doctor?.User?.LastName??"").Contains(search, StringComparison.OrdinalIgnoreCase));
+    }
+
+    protected override IEnumerable<Encounter> ApplyFilters(IEnumerable<Encounter> query) => query;
+
+    protected override IEnumerable<Encounter> ApplySort(IEnumerable<Encounter> query) =>
+        query.OrderBy(x => x.ScheduledStart??x.EncounterDate).ThenBy(x => x.Patient?.LastName);
+
+    protected override void OnPageProjected(ObservableCollection<Encounter> page)
+    {
+    }
+
+    protected override void ResetFilters() => SearchText=string.Empty;
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
     }
 }
 
-// ─── DATA TRANSFER OBJECTS ───
+// ═══════════════════════════════════════════ DTOs ═══════════════════════════════════════════
+// (непроменето)
+// ═══════════════════════════════════════════ DTOs ═══════════════════════════════════════════
 
 public class HourlyTimelineSlotDto
 {
-    public string HourText
-    {
-        get; set;
-    } // "09:00"
-
+    public string HourText { get; set; } = string.Empty;
     public int HourValue
     {
         get; set;
-    }   // 9
-
+    }
     public ObservableCollection<CalendarEventDto> SlotEvents { get; set; } = new();
 }
 
-public class CalendarDayDto
+public partial class CalendarDayDto : ObservableObject
 {
-    public int DayNumber
+    public DateTime Date
     {
         get; set;
     }
-
-    public bool IsToday
+    public int DayNumber => Date.Day;
+    public bool IsEmptySlot
     {
         get; set;
     }
-
-    public bool IsIsEmptySlot
+    public bool IsCurrentMonth
     {
         get; set;
     }
-
+    public bool IsToday => Date.Date==DateTime.Today;
+    public int EventCount => Events.Count;
     public List<CalendarEventDto> Events { get; set; } = new();
-    public string DisplayDayNumber => IsIsEmptySlot ? string.Empty : DayNumber.ToString();
+    public List<CalendarEventDto> VisibleEvents => Events.Take(3).ToList();
+    public bool HasHiddenEvents => Events.Count>3;
+    public int HiddenEventsCount => Math.Max(Events.Count-3, 0);
 
-    public int CompletedCount
+    public int WeekIndex
     {
         get; set;
     }
 
-    public int MissedCount
-    {
-        get; set;
-    }
-
-    public int AppointmentCount
-    {
-        get; set;
-    }
+    [ObservableProperty] private bool isWeekHighlighted;
 }
 
 public class CalendarEventDto
@@ -447,17 +560,24 @@ public class CalendarEventDto
     {
         get; set;
     }
-
     public string Title { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-
+    public string Subtitle { get; set; } = string.Empty;
     public DateTime ScheduledTime
     {
         get; set;
     }
-
+    public TimeSpan Duration
+    {
+        get; set;
+    }
     public string EventType { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
+    public string PatientName { get; set; } = string.Empty;
+    public string DoctorName { get; set; } = string.Empty;
+    public string Location { get; set; } = string.Empty;
+    public string IconGlyph { get; set; } = "\uf073";
+    public Color BackgroundColor { get; set; } = Colors.LightGreen;
+    public Color TextColor { get; set; } = Colors.DarkGreen;
 }
 
 public class OverdueCycleDto

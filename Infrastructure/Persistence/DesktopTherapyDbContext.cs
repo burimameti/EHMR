@@ -97,7 +97,12 @@ public class DesktopTherapyDbContext : TherapyTrackerDbContext
         public static readonly Guid Med2 = Guid.Parse("00000000-0000-0000-0000-000000002002");
         public static readonly Guid Med3 = Guid.Parse("00000000-0000-0000-0000-000000002003");
         public static readonly Guid Med4 = Guid.Parse("00000000-0000-0000-0000-000000002004");
-
+        public static readonly Guid Med5 = Guid.Parse("00000000-0000-0000-0000-000000002005");
+        public static readonly Guid Med6 = Guid.Parse("00000000-0000-0000-0000-000000002006");
+        public static readonly Guid Med7 = Guid.Parse("00000000-0000-0000-0000-000000002007");
+        public static readonly Guid Med8 = Guid.Parse("00000000-0000-0000-0000-000000002008");
+        public static readonly Guid Med9 = Guid.Parse("00000000-0000-0000-0000-000000002009");
+        public static readonly Guid Med10 = Guid.Parse("00000000-0000-0000-0000-000000002010");
         // ================= CYCLES =================
         public static readonly Guid Cycle1 = Guid.Parse("00000000-0000-0000-0000-000000003001");
 

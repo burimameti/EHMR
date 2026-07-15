@@ -1,5 +1,5 @@
 ﻿using EHMR.Domain.Entities;
-using EHMR.Infrastructure.Persistence;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace EHMR.Infrastructure.Persistence.Configs;

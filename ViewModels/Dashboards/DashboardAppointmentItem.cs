@@ -25,7 +25,5 @@ public partial class DashboardAppointmentItem : ObservableObject
     private string relativeDay
   = string.Empty;
 
-    [ObservableProperty]
-    private string statusColor
-    = string.Empty;
+    [ObservableProperty] private Color statusColor = Colors.Transparent;
 }

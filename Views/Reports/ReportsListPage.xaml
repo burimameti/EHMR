@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+	x:Class="EHMR.Views.Reports.ReportsListPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Reports"
+	x:DataType="viewModels:ReportListViewModel">
+
+
+	<Grid ColumnDefinitions="285,*">
+
+
+		<!--  ================= LEFT MENU =================  -->
+
+		<Border Grid.Column="0" StrokeThickness="0">
+
+			<ContentView x:Name="MenuHost" />
+
+		</Border>
+
+
+
+		<!--  ================= MAIN =================  -->
+
+		<Grid
+			Grid.Column="1"
+			Padding="24"
+			BackgroundColor="{StaticResource Gray200}"
+			RowDefinitions="Auto,Auto,Auto,*"
+			RowSpacing="16">
+
+
+
+			<!--  HEADER  -->
+
+			<Border Padding="20" Style="{StaticResource SurfaceCard}">
+
+				<Grid ColumnDefinitions="*,Auto">
+
+
+					<controls:FFPageHeader Title="Извештаи" Subtitle="Анализа, следење и системски извештаи" />
+
+
+					<Button
+						Grid.Column="1"
+						Command="{Binding GenerateReportCommand}"
+						HeightRequest="42"
+						Style="{StaticResource TabButtonActiveStyle}"
+						Text="Генерирај"
+						WidthRequest="140" />
+
+
+				</Grid>
+
+			</Border>
+
+
+
+			<!--  METRICS  -->
+
+			<Grid
+				Grid.Row="1"
+				ColumnDefinitions="*,*,*"
+				ColumnSpacing="16">
+
+
+				<Border Padding="20" Style="{StaticResource SurfaceCard}">
+
+					<VerticalStackLayout>
+
+						<Label
+							FontSize="13"
+							Text="{Binding Metric1Title}"
+							TextColor="{StaticResource SparkTextSecondary}" />
+
+
+						<Label
+							FontAttributes="Bold"
+							FontSize="28"
+							Text="{Binding Metric1Value}"
+							TextColor="{StaticResource SparkTextPrimary}" />
+
+					</VerticalStackLayout>
+
+				</Border>
+
+
+
+				<Border
+					Grid.Column="1"
+					Padding="20"
+					Style="{StaticResource SurfaceCard}">
+
+					<VerticalStackLayout>
+
+						<Label
+							FontSize="13"
+							Text="{Binding Metric2Title}"
+							TextColor="{StaticResource SparkTextSecondary}" />
+
+
+						<Label
+							FontAttributes="Bold"
+							FontSize="28"
+							Text="{Binding Metric2Value}"
+							TextColor="{StaticResource SparkDanger}" />
+
+					</VerticalStackLayout>
+
+				</Border>
+
+
+
+				<Border
+					Grid.Column="2"
+					Padding="20"
+					Style="{StaticResource SurfaceCard}">
+
+					<VerticalStackLayout>
+
+						<Label
+							FontSize="13"
+							Text="{Binding Metric3Title}"
+							TextColor="{StaticResource SparkTextSecondary}" />
+
+
+						<Label
+							FontAttributes="Bold"
+							FontSize="28"
+							Text="{Binding Metric3ValueText}"
+							TextColor="{StaticResource SparkAccentTeal}" />
+
+					</VerticalStackLayout>
+
+				</Border>
+
+
+			</Grid>
+
+
+
+
+
+			<!--  FILTERS  -->
+
+			<Border
+				Grid.Row="2"
+				Padding="0"
+				Style="{StaticResource SurfaceCard}">
+
+
+				<controls:SparkExplorerHeaderView
+					Buttons="{Binding Buttons}"
+					Pickers="{Binding Pickers}"
+					SearchCommand="{Binding SearchCommand}"
+					SearchPlaceholder="Пребарување во извештај..."
+					SearchText="{Binding SearchText}"
+					Tabs="{Binding Tabs}" />
+
+
+			</Border>
+
+
+
+
+
+
+			<!--  GRID  -->
+
+			<Border Grid.Row="3" Style="{StaticResource SurfaceCard}">
+
+
+				<controls:SparkDataGridView
+					Columns="{Binding GridColumns}"
+					CurrentPage="{Binding CurrentPage}"
+					NextPageCommand="{Binding NextPageCommand}"
+					PageChangedCommand="{Binding PageChangedCommand}"
+					PreviousPageCommand="{Binding PreviousPageCommand}"
+					Rows="{Binding GridRows}"
+					TotalPages="{Binding TotalPages}" />
+
+
+			</Border>
+
+
+
+
+		</Grid>
+
+
+
+	</Grid>
+
+
+</ContentPage>

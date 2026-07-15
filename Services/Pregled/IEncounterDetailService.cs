@@ -8,8 +8,13 @@ public interface IEncounterDetailService
     Task<EncounterDetailDto> GetEncounter(Guid id);
     Task<List<Patient>> GetPatients();
     Task<List<Doctor>> GetDoctors();
-    Task<EncounterPatientContextDto> GetPatientContext(Guid patientId);
+    Task<PatientContextDto> GetPatientContext(Guid patientId);
+    Task<Appointment?> GetAppointment(Guid id);
+    Task<IEnumerable<Appointment?>> GetAppointments(Guid appointmentId);
+    Task<List<TherapyCycle>> GetTherapyCycles(Guid patientId);
+    Task<Appointment> CreateAppointment(Appointment appointment);
 
+    Task<TherapyCycle> CreateTherapyCycle(TherapyCycle cycle);
     Task<List<Mkb10Code>> SearchDiagnoses(
         string query,
         CancellationToken token);

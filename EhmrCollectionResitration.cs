@@ -1,6 +1,8 @@
 ﻿using EHMR.Abstraction;
+using EHMR.Domain.Entities.Reports;
 using EHMR.Domain.Interfaces;
 using EHMR.Domain.Search;
+using EHMR.Domain.SparkForm;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Infrastructure.Persistence.Configs;
 using EHMR.Infrastructure.Persistence.Seeders;
@@ -8,14 +10,22 @@ using EHMR.Infrastructure.Services;
 using EHMR.Services;
 using EHMR.ViewModels;
 using EHMR.ViewModels.Appointments;
+
 using EHMR.ViewModels.Encounters;
+using EHMR.ViewModels.Mkb10;
 using EHMR.ViewModels.Patients;
+using EHMR.ViewModels.Prescriptions;
+using EHMR.ViewModels.Reports;
 using EHMR.ViewModels.Support;
 using EHMR.ViewModels.Therapies;
 using EHMR.Views;
 using EHMR.Views.Appointments;
 using EHMR.Views.Encounters;
+using EHMR.Views.Mkb10;
+using EHMR.Views.Patients;
+using EHMR.Views.Prescription;
 using EHMR.Views.Protocols;
+using EHMR.Views.Reports;
 using EHMR.Views.Therapies;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -82,14 +92,23 @@ namespace EHMR
             services.AddScoped<IEntitySeeder, MedicineSeeder>();
             services.AddScoped<IEntitySeeder, NotificationSeeder>();
             services.AddScoped<IEntitySeeder, InventorySeeder>();
-
+            services.AddScoped<IEntitySeeder, PatientMedicineSeeder>();
             services.AddScoped<IEntitySeeder, TherapyProtocolSeeder>();
             //  services.AddScoped<IEntitySeeder, TherapyProtocolMedicineSeeder>();
 
             services.AddScoped<IEntitySeeder, TherapyCycleSeeder>();
 
             services.AddScoped<IEntitySeeder, PrescriptionSeeder>();
+            services.AddSingleton<IReportProvider, MissedTherapiesReportProvider>();
 
+           services.AddSingleton<IReportProvider, PatientsReportProvider>();
+
+            services.AddSingleton<IReportProvider, AppointmentStatusesReportProvider>();
+
+            services.AddSingleton<IReportProvider, AuditReportProvider>();
+
+
+            services.AddSingleton<ReportRegistry>();
             services.AddSingleton<Mkb10ImportService>();
             services.AddScoped<SeederRunner>();
 
@@ -118,6 +137,7 @@ namespace EHMR
             // services.AddSingleton<IDocumentService, DocumentService>();
             // services.AddSingleton<IPrescriptionService, PrescriptionService>();
             services.AddSingleton<INavigationCoordinator, NavigationCoordinator>();
+            services.AddScoped<IReportHistoryService, ReportHistoryService>();
             services.AddSingleton<IUserDialogService, UserDialogService>();
             services.AddScoped<IAppointmentDetailService, AppointmentDetailService>();
             services.AddScoped<ITherapyService, TherapyService>();
@@ -137,7 +157,12 @@ namespace EHMR
             services.AddSingleton<INavigationDataStore, NavigationDataStore>();
             services.AddSingleton<INavigationEvents, NavigationEvents>();
             services.AddSingleton<IMenuService, MenuService>();
-           // services.AddSingleton<ThemeService>();
+            services.AddSingleton<IPrescriptionService, PrescriptionService>();
+            services.AddSingleton<IDoctorService, DoctorService>();
+            services.AddSingleton<IMkb10CodeService, Mkb10CodeService>();
+            services.AddSingleton<ISparkFormBuilder, SparkFormBuilder>();
+            services.AddSingleton<IReportExportService, ReportExportService>();
+            // services.AddSingleton<ThemeService>();
             services.AddSingleton<IFileDialogService, MauiFileDialogService>();
 
             return services;
@@ -235,13 +260,12 @@ namespace EHMR
             //services.AddTransient<MenuPage>();
             services.AddTransient<MenuView>();
             // services.AddTransient<AppHeader>();
+            services.AddSingleton<MenuViewModel>();
 
             services.AddTransient<LoginView>();
             //services.AddTransient<RegisterPage>();
-            services.AddTransient<MedicinePage>();
-            services.AddTransient<PatientListPage>();
-            //services.AddTransient<GetStarted>();
-            services.AddTransient<PatientDetailFormPage>();
+
+         
 
             services.AddTransient<DashboardViewModel>();
             services.AddTransient<DashboardView>();
@@ -251,45 +275,75 @@ namespace EHMR
             //services.AddTransient<DashboardViewModel>();
             //services.AddTransient<LogoutViewModel>();
 
-            services.AddSingleton<MenuViewModel>();
-            services.AddSingleton<ReportPage>();
-            services.AddSingleton<ReportViewModel>();
+         
+
 
             services.AddTransient<AppointmentListPage>();
             services.AddTransient<AppointmentListViewModel>();
+            services.AddTransient<DoctorsDetailViewModel>();
+            services.AddTransient<DoctorsListViewModel>();
             services.AddTransient<AppointmentDetailPage>();
             services.AddTransient<AppointmentDetailViewModel>();
+
             services.AddTransient<CalendarDashboardPage>();
             services.AddTransient<CalendarDashboardViewModel>();
 
-            services.AddTransient<TherapyDetailsViewModel>();
-            services.AddTransient<TherapyDetailsPage>();
-            services.AddTransient<ProtocolRegistryPage>();
-            services.AddTransient<ProtocolRegistryViewModel>();
-            //services.AddTransient<TherapyPlanningViewModel>();
-            //services.AddTransient<TherapyPlanningPage>();
-
-            services.AddTransient<TherapyCyclesPage>();
-            services.AddTransient<TherapyCycleListViewModel>();
-
-            services.AddTransient<MedicineDetailFormPage>();
-            services.AddTransient<MedicineListPage>();
-            services.AddTransient<MedicineDetailFormViewModel>();
-            services.AddTransient<MedicineListViewModel>();
-
-
-
-            ///
-
             services.AddTransient<EncounterCreateViewModel>();
             services.AddTransient<EncounterDetailViewModel>();
-            services.AddTransient<EncounterListViewModel>();
+            services.AddTransient<EncountersListViewModel>();
             services.AddTransient<EncounterEditViewModel>();
 
             services.AddTransient<EncounterDetailPage>();
             services.AddTransient<EncounterListPage>();
             services.AddTransient<EncounterCreatePage>();
             services.AddTransient<EncounterEditPage>();
+
+            services.AddTransient<MedicineDetailFormPage>();
+            services.AddTransient<MedicineListPage>();
+
+            services.AddTransient<MedicineDetailFormViewModel>();
+            services.AddTransient<MedicineListViewModel>();
+
+            services.AddTransient<PatientListPage>();
+            services.AddTransient<PatientDetailFormPage>();
+
+            services.AddTransient<PatientListViewModel>();
+            services.AddTransient<PatientDetailFormViewModel>();
+
+            services.AddTransient<Mkb10CodeDetailViewModel>();
+            services.AddTransient<Mkb10CodeListViewModel>();
+
+            services.AddTransient<Mkb10CodeListPage>();
+            services.AddTransient<Mkb10CodeDetailPage>();
+
+            services.AddTransient<TherapyDetailsViewModel>();
+            services.AddTransient<TherapyDetailsPage>();
+
+  
+            //services.AddTransient<TherapyPlanningViewModel>();
+            //services.AddTransient<TherapyPlanningPage>();
+
+            services.AddTransient<TherapyCyclesPage>();
+            services.AddTransient<TherapyCycleListViewModel>();
+
+            services.AddTransient<PrescriptionListViewModel>();
+            services.AddTransient<PrescriptionDetailFormViewModel>();
+            services.AddTransient<PrescriptionDetailFormPage>();
+            services.AddTransient<PrescriptionListPage>();
+
+
+            services.AddTransient<ProtocolRegistryPage>();
+            services.AddTransient<ProtocolRegistryViewModel>();
+
+            services.AddSingleton<ReportPage>();
+            services.AddSingleton<DashboardReportPage>();
+            services.AddTransient<ReportViewModel>();
+            services.AddTransient<ReportListViewModel>();
+
+
+            ///
+
+
             services.AddTransient<UsersViewModel>();
             services.AddTransient<UsersPage>();
             services.AddTransient<UserEditViewModel>();

@@ -1,167 +1,311 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:EHMR.ViewModels"
-             x:Class="EHMR.Views.Therapies.ProtocolDetailFormPage"
-             x:DataType="viewModels:ProtocolDetailFormViewModel"
-             BackgroundColor="#F4F7FC">
+<ContentPage
+	x:Class="EHMR.Views.Therapies.ProtocolDetailFormPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+	x:DataType="viewModels:ProtocolDetailFormViewModel">
 
-	<Grid ColumnDefinitions="240,*">
+	<Grid ColumnDefinitions="285,*">
 
-		<!-- СТРАНИЧНО МЕНИ -->
-		<Border Grid.Column="0" BackgroundColor="#0A192F" StrokeThickness="0">
+		<!--  ─── LEFT MENU SIDEBAR ───  -->
+		<Border Grid.Column="0" StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
-		<!-- ГЛАВЕН ДЕЛ -->
-		<Grid Grid.Column="1" RowDefinitions="72,*">
+		<!--  ─── MAIN CONTENT AREA ───  -->
+		<Grid
+			Grid.Column="1"
+			Padding="24"
+			BackgroundColor="{StaticResource Gray200}"
+			RowDefinitions="Auto,*"
+			RowSpacing="20">
 
-			<!-- ТОП БАР -->
-			<Border Grid.Row="0" BackgroundColor="#FFFFFF" Stroke="#E2E8F0" StrokeThickness="1">
-				<Grid Padding="24,0" ColumnDefinitions="*,Auto">
-					<VerticalStackLayout Spacing="2" VerticalOptions="Center">
-						<Label Text="{Binding PageTitle}" FontSize="20" FontAttributes="Bold" TextColor="#1E293B" />
-						<Label Text="Дефинирање на стандардизирани чекори, времетраење и клинички таргети за третманот" FontSize="13" TextColor="#64748B" />
+			<!--  =========================================================  -->
+			<!--  PAGE HEADER  -->
+			<!--  =========================================================  -->
+			<Border
+				Padding="28"
+				BackgroundColor="{StaticResource SparkBackground}"
+				Stroke="{StaticResource SparkBorder}"
+				StrokeShape="RoundRectangle 0">
+
+				<Grid ColumnDefinitions="*,Auto">
+
+					<VerticalStackLayout Spacing="6" VerticalOptions="Center">
+						<Label
+							FontAttributes="Bold"
+							FontSize="28"
+							Text="{Binding PageTitle}"
+							TextColor="{StaticResource SparkTextPrimary}" />
+						<Label
+							FontSize="14"
+							Text="Дефинирање на стандардизирани чекори, времетраење и клинички таргети за третманот"
+							TextColor="{StaticResource SparkTextSecondary}" />
 					</VerticalStackLayout>
 
-					<!-- Акциски копчиња -->
-					<HorizontalStackLayout Grid.Column="1" Spacing="12" VerticalOptions="Center">
-						<Button Text="Откажи"
-                                HeightRequest="38"
-                                Padding="24,0"
-                                CornerRadius="6"
-                                FontSize="13"
-                                FontAttributes="Bold"
-                                BackgroundColor="#FFFFFF"
-                                BorderColor="#CBD5E1"
-                                BorderWidth="1"
-                                TextColor="#475569"
-                                Command="{Binding CancelCommand}" />
+					<!--  ACTIONS  -->
+					<HorizontalStackLayout
+						Grid.Column="1"
+						Spacing="12"
+						VerticalOptions="Center">
+						<controls:FFButton
+							ButtonKind="Secondary"
+							Command="{Binding CancelCommand}"
+							HeightRequestEx="38"
+							Text="Откажи"
+							WidthRequest="140" />
 
-						<Button Text="Зачувај"
-                                HeightRequest="38"
-                                Padding="24,0"
-                                CornerRadius="6"
-                                FontSize="13"
-                                FontAttributes="Bold"
-                                BackgroundColor="#0B57D0" 
-                                TextColor="White"
-                                Command="{Binding SaveCommand}" />
+						<controls:FFButton
+							ButtonKind="Primary"
+							Command="{Binding SaveCommand}"
+							HeightRequestEx="38"
+							Text="Зачувај"
+							TextColorEx="White"
+							WidthRequest="140" />
 					</HorizontalStackLayout>
 				</Grid>
 			</Border>
 
-			<!-- ГЛАВНА ФОРМА -->
-			<ScrollView Grid.Row="1" Padding="24">
-				<Grid ColumnDefinitions="*, 380" ColumnSpacing="24">
+			<!--  =========================================================  -->
+			<!--  FORM CONTENT WORKSPACE  -->
+			<!--  =========================================================  -->
+			<Border
+				Grid.Row="1"
+				BackgroundColor="{StaticResource SparkBackground}"
+				StrokeShape="RoundRectangle 1"
+				StrokeThickness="0">
+				<ScrollView>
+					<Grid
+						Padding="32"
+						ColumnDefinitions="*,380"
+						ColumnSpacing="24">
 
-					<!-- ЛЕВА СТРАНА: Внесување податоци -->
-					<VerticalStackLayout Grid.Column="0" Spacing="24">
+						<!--  ЛЕВА СТРАНА: Внесување податоци  -->
+						<VerticalStackLayout Grid.Column="0" Spacing="24">
 
-						<!-- ГЛАВНА КАРТИЧКА СО ЗАТЕМНЕТ ХЕДЕР -->
-						<Border BackgroundColor="#FFFFFF" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-							<VerticalStackLayout>
+							<VerticalStackLayout Spacing="12">
+								<Label
+									CharacterSpacing="1"
+									FontAttributes="Bold"
+									FontSize="13"
+									Text="ОСНОВНИ ПОДАТОЦИ ЗА ПРОТОКОЛОТ"
+									TextColor="{StaticResource SparkTextPrimary}" />
+								<BoxView
+									Margin="0,10"
+									HeightRequest="1"
+									Color="{StaticResource SparkBorder}" />
 
-								<!-- Хедер на картичката (Затемнет SaaS стил) -->
-								<Border BackgroundColor="#F8FAFC" Padding="18,14" Stroke="#E2E8F0" StrokeThickness="1">
-									<Label Text="Основни податоци за протоколот" FontSize="14" FontAttributes="Bold" TextColor="#0F172A" />
-								</Border>
-
-								<!-- Тело на картичката со инпути -->
-								<VerticalStackLayout Padding="20" Spacing="20">
-
-									<!-- Поле 1: Име на Протоколот -->
-									<VerticalStackLayout Spacing="6">
-										<Label Text="Наслов на медицинскиот протокол *" FontSize="12" FontAttributes="Bold" TextColor="#64748B" />
-										<!-- Fancy инпут со долна линија -->
-										<Border HeightRequest="38" BackgroundColor="Transparent" Stroke="#CBD5E1" StrokeThickness="2">
-											<Entry Text="{Binding CurrentProtocol.Name, Mode=TwoWay}" Placeholder="Пр. Протокол за третман на секундарна хипертензија" PlaceholderColor="#94A3B8" FontSize="13" TextColor="#1E293B" Margin="4,0" VerticalOptions="Center" />
-										</Border>
-									</VerticalStackLayout>
-
-									<Grid ColumnDefinitions="*, *" ColumnSpacing="20">
-										<!-- Поле 2: Категорија -->
-										<VerticalStackLayout Grid.Column="0" Spacing="6">
-											<Label Text="Медицинска категорија *" FontSize="12" FontAttributes="Bold" TextColor="#64748B" />
-											<!-- Fancy инпут со долна линија -->
-											<Border HeightRequest="38" BackgroundColor="Transparent" Stroke="#CBD5E1" StrokeThickness="2">
-												<Entry Text="{Binding CurrentProtocol.DiseaseCategory, Mode=TwoWay}" Placeholder="Пр. Кардиологија" PlaceholderColor="#94A3B8" FontSize="13" TextColor="#1E293B" Margin="4,0" VerticalOptions="Center" />
-											</Border>
-										</VerticalStackLayout>
-
-										<!-- Поле 3: Времетраење -->
-										<VerticalStackLayout Grid.Column="1" Spacing="6">
-											<Label Text="Стандардно времетраење (денови)" FontSize="12" FontAttributes="Bold" TextColor="#64748B" />
-											<!-- Fancy инпут со долна линија -->
-											<Border HeightRequest="38" BackgroundColor="Transparent" Stroke="#CBD5E1" StrokeThickness="2">
-												<Entry Text="{Binding CurrentProtocol.DurationInDays, Mode=TwoWay}" Keyboard="Numeric" Placeholder="Пр. 30" PlaceholderColor="#94A3B8" FontSize="13" TextColor="#1E293B" Margin="4,0" VerticalOptions="Center" />
-											</Border>
-										</VerticalStackLayout>
-									</Grid>
-
-									<!-- Поле 4: Опис -->
-									<VerticalStackLayout Spacing="6">
-										<Label Text="Детален клинички опис и индикации" FontSize="12" FontAttributes="Bold" TextColor="#64748B" />
-										<!-- Fancy Editor со комплетна суптилна долна рамка -->
-										<Border HeightRequest="100" BackgroundColor="#FAFAFA" Stroke="#CBD5E1" StrokeThickness="2" Padding="4">
-											<Editor Text="{Binding CurrentProtocol.Description, Mode=TwoWay}" Placeholder="Внесете ги главните индикации, симптоматологија..." PlaceholderColor="#94A3B8" FontSize="13" TextColor="#1E293B" AutoSize="Disabled" />
-										</Border>
-									</VerticalStackLayout>
-
-								</VerticalStackLayout>
-							</VerticalStackLayout>
-						</Border>
-
-						<!-- Иднa Секција -->
-						<Border BackgroundColor="#F8FAFC" Padding="20" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 8" StrokeDashArray="4,4">
-							<VerticalStackLayout Spacing="8" HorizontalOptions="Center">
-								<Label Text="💊 Поврзани Лекови и Упатство за употреба" FontSize="14" FontAttributes="Bold" TextColor="#475569" HorizontalOptions="Center" />
-								<Label Text="Во следната фаза, тука ќе можете да закачувате конкретни лекови со дефинирани интервали." FontSize="12" TextColor="#64748B" HorizontalTextAlignment="Center" />
-							</VerticalStackLayout>
-						</Border>
-					</VerticalStackLayout>
-
-					<!-- ДЕСНА СТРАНА: Системски информации -->
-					<VerticalStackLayout Grid.Column="1" Spacing="24">
-
-						<Border BackgroundColor="#FFFFFF" Stroke="#E2E8F0" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-							<VerticalStackLayout>
-
-								<!-- Хедер на десна картичка -->
-								<Border BackgroundColor="#F8FAFC" Padding="18,14" Stroke="#E2E8F0" StrokeThickness="1">
-									<Label Text="⚙️ Системски Запис" FontSize="14" FontAttributes="Bold" TextColor="#0F172A" />
-								</Border>
-
-								<VerticalStackLayout Padding="20" Spacing="14">
-									<!-- Креирано од -->
-									<Grid ColumnDefinitions="*,Auto">
-										<Label Text="Креирано од доктор:" FontSize="12" TextColor="#64748B" />
-										<Label Grid.Column="1" Text="{Binding CurrentProtocol.CreatedByDoctor}" FontSize="12" FontAttributes="Bold" TextColor="#334155" />
-									</Grid>
-
-									<!-- Датум на креирање -->
-									<Grid ColumnDefinitions="*,Auto">
-										<Label Text="Датум на запис:" FontSize="12" TextColor="#64748B" />
-										<Label Grid.Column="1" Text="{Binding CurrentProtocol.CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" FontSize="12" TextColor="#334155" />
-									</Grid>
-
-									<!-- Верзии Индикатор -->
-									<Border BackgroundColor="#EFF6FF" Stroke="#BFDBFE" StrokeThickness="1" Padding="12" StrokeShape="RoundRectangle 6" Margin="0,4,0,0">
-										<Grid ColumnDefinitions="Auto, *">
-											<Label Text="🛡️" FontSize="16" VerticalOptions="Center" Margin="0,0,10,0" />
-											<VerticalStackLayout Grid.Column="1" Spacing="2">
-												<Label Text="Контрола на верзии" FontSize="11" FontAttributes="Bold" TextColor="#1E40AF" />
-												<Label Text="Измените нема да ги променат активните планови." FontSize="11" TextColor="#1E40AF" />
-											</VerticalStackLayout>
-										</Grid>
+								<!--  Наслов  -->
+								<VerticalStackLayout Spacing="8">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Наслов на медицинскиот протокол *"
+										TextColor="{StaticResource SparkTextSecondary}" />
+									<Border
+										Padding="12,0"
+										BackgroundColor="{StaticResource SparkBackground}"
+										HeightRequest="46"
+										Stroke="{StaticResource SparkBorder}"
+										StrokeShape="RoundRectangle 6"
+										StrokeThickness="1">
+										<Entry
+											BackgroundColor="Transparent"
+											FontSize="13"
+											Placeholder="Пр. Протокол за третман на секундарна хипертензија"
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
+											Text="{Binding CurrentProtocol.Name, Mode=TwoWay}"
+											TextColor="{StaticResource SparkTextPrimary}"
+											VerticalOptions="Center" />
 									</Border>
 								</VerticalStackLayout>
 
+								<Grid ColumnDefinitions="*,*" ColumnSpacing="20">
+									<!--  Категорија  -->
+									<VerticalStackLayout Grid.Column="0" Spacing="8">
+										<Label
+											FontAttributes="Bold"
+											FontSize="13"
+											Text="Медицинска категорија *"
+											TextColor="{StaticResource SparkTextSecondary}" />
+										<Border
+											Padding="12,0"
+											BackgroundColor="{StaticResource SparkBackground}"
+											HeightRequest="46"
+											Stroke="{StaticResource SparkBorder}"
+											StrokeShape="RoundRectangle 6"
+											StrokeThickness="1">
+											<Entry
+												BackgroundColor="Transparent"
+												FontSize="13"
+												Placeholder="Пр. Кардиологија"
+												PlaceholderColor="{StaticResource SparkTextSecondary}"
+												Text="{Binding CurrentProtocol.DiseaseCategory, Mode=TwoWay}"
+												TextColor="{StaticResource SparkTextPrimary}"
+												VerticalOptions="Center" />
+										</Border>
+									</VerticalStackLayout>
+
+									<!--  Времетраење  -->
+									<VerticalStackLayout Grid.Column="1" Spacing="8">
+										<Label
+											FontAttributes="Bold"
+											FontSize="13"
+											Text="Стандардно времетраење (денови)"
+											TextColor="{StaticResource SparkTextSecondary}" />
+										<Border
+											Padding="12,0"
+											BackgroundColor="{StaticResource SparkBackground}"
+											HeightRequest="46"
+											Stroke="{StaticResource SparkBorder}"
+											StrokeShape="RoundRectangle 6"
+											StrokeThickness="1">
+											<Entry
+												BackgroundColor="Transparent"
+												FontSize="13"
+												Keyboard="Numeric"
+												Placeholder="Пр. 30"
+												PlaceholderColor="{StaticResource SparkTextSecondary}"
+												Text="{Binding CurrentProtocol.DurationInDays, Mode=TwoWay}"
+												TextColor="{StaticResource SparkTextPrimary}"
+												VerticalOptions="Center" />
+										</Border>
+									</VerticalStackLayout>
+								</Grid>
+
+								<!--  Опис  -->
+								<VerticalStackLayout Spacing="8">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Детален клинички опис и индикации"
+										TextColor="{StaticResource SparkTextSecondary}" />
+									<Border
+										Padding="12,8"
+										BackgroundColor="{StaticResource SparkBackground}"
+										HeightRequest="100"
+										Stroke="{StaticResource SparkBorder}"
+										StrokeShape="RoundRectangle 6"
+										StrokeThickness="1">
+										<Editor
+											AutoSize="Disabled"
+											BackgroundColor="Transparent"
+											FontSize="13"
+											Placeholder="Внесете ги главните индикации, симптоматологија..."
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
+											Text="{Binding CurrentProtocol.Description, Mode=TwoWay}"
+											TextColor="{StaticResource SparkTextPrimary}" />
+									</Border>
+								</VerticalStackLayout>
 							</VerticalStackLayout>
-						</Border>
-					</VerticalStackLayout>
-				</Grid>
-			</ScrollView>
+
+							<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
+
+							<!--  Иднa Секција  -->
+							<Border
+								Padding="20"
+								BackgroundColor="{StaticResource SparkBackgroundAlt}"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 12"
+								StrokeThickness="1">
+								<VerticalStackLayout HorizontalOptions="Center" Spacing="8">
+									<Label
+										FontAttributes="Bold"
+										FontSize="14"
+										HorizontalOptions="Center"
+										Text="💊 Поврзани лекови и упатство за употреба"
+										TextColor="{StaticResource SparkTextPrimary}" />
+									<Label
+										FontSize="12"
+										HorizontalTextAlignment="Center"
+										Text="Во следната фаза, тука ќе можете да закачувате конкретни лекови со дефинирани интервали."
+										TextColor="{StaticResource SparkTextSecondary}" />
+								</VerticalStackLayout>
+							</Border>
+						</VerticalStackLayout>
+
+						<!--  ДЕСНА СТРАНА: Системски информации  -->
+						<VerticalStackLayout Grid.Column="1" Spacing="12">
+
+							<Label
+								CharacterSpacing="1"
+								FontAttributes="Bold"
+								FontSize="13"
+								Text="СИСТЕМСКИ ЗАПИС"
+								TextColor="{StaticResource SparkAccentTeal}" />
+							<BoxView
+								Margin="0,10"
+								HeightRequest="1"
+								Color="{StaticResource SparkBorder}" />
+
+							<Border
+								Padding="20"
+								BackgroundColor="{StaticResource SparkBackgroundAlt}"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 12"
+								StrokeThickness="1">
+								<VerticalStackLayout Spacing="14">
+									<Grid ColumnDefinitions="*,Auto">
+										<Label
+											FontSize="13"
+											Text="Креирано од доктор:"
+											TextColor="{StaticResource SparkTextSecondary}" />
+										<Label
+											Grid.Column="1"
+											FontAttributes="Bold"
+											FontSize="13"
+											Text="{Binding CurrentProtocol.CreatedByDoctor}"
+											TextColor="{StaticResource SparkTextPrimary}" />
+									</Grid>
+
+									<Grid ColumnDefinitions="*,Auto">
+										<Label
+											FontSize="13"
+											Text="Датум на запис:"
+											TextColor="{StaticResource SparkTextSecondary}" />
+										<Label
+											Grid.Column="1"
+											FontSize="13"
+											Text="{Binding CurrentProtocol.CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+											TextColor="{StaticResource SparkTextPrimary}" />
+									</Grid>
+								</VerticalStackLayout>
+							</Border>
+
+							<!--  Верзии Индикатор  -->
+							<Border
+								Padding="16"
+								BackgroundColor="{StaticResource SparkBackgroundAlt}"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 12"
+								StrokeThickness="1">
+								<Grid ColumnDefinitions="Auto,*">
+									<Label
+										Margin="0,0,12,0"
+										FontFamily="FASolid"
+										FontSize="16"
+										Text="&#xf3ed;"
+										TextColor="{StaticResource SparkAccentTeal}"
+										VerticalOptions="Center" />
+									<VerticalStackLayout Grid.Column="1" Spacing="2">
+										<Label
+											FontAttributes="Bold"
+											FontSize="12"
+											Text="Контрола на верзии"
+											TextColor="{StaticResource SparkTextPrimary}" />
+										<Label
+											FontSize="11"
+											Text="Измените нема да ги променат активните планови."
+											TextColor="{StaticResource SparkTextSecondary}" />
+									</VerticalStackLayout>
+								</Grid>
+							</Border>
+						</VerticalStackLayout>
+					</Grid>
+				</ScrollView>
+			</Border>
 		</Grid>
 	</Grid>
 </ContentPage>

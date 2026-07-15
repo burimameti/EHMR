@@ -3,9 +3,12 @@ using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Views;
 using EHMR.Views.Appointments;
+using EHMR.Views.Doctors;
 using EHMR.Views.Encounters;
+using EHMR.Views.Patients;
 using EHMR.Views.Prescription;
 using EHMR.Views.Protocols;
+using EHMR.Views.Reports;
 using EHMR.Views.Therapies;
 
 namespace EHMR;
@@ -115,7 +118,8 @@ public partial class AppShell : Shell
         // Patients
         Routing.RegisterRoute(AppRoutes.Patients.List, typeof(PatientListPage));
         Routing.RegisterRoute(AppRoutes.Patients.Detail, typeof(PatientDetailFormPage));
-
+        Routing.RegisterRoute(AppRoutes.Doctors.List, typeof(DoctorsListPage));
+        Routing.RegisterRoute(AppRoutes.Doctors.Detail, typeof(DoctorsDetailPage));
         // Appointments
         Routing.RegisterRoute(AppRoutes.Appointments.List, typeof(AppointmentListPage));
         Routing.RegisterRoute(AppRoutes.Appointments.Detail, typeof(AppointmentDetailPage));
@@ -126,16 +130,17 @@ public partial class AppShell : Shell
 
         // Prescriptions
         Routing.RegisterRoute(AppRoutes.Prescriptions.List, typeof(PrescriptionListPage));
+        Routing.RegisterRoute(AppRoutes.Prescriptions.Detail, typeof(PrescriptionDetailFormPage));
 
         // Calendar
         Routing.RegisterRoute(AppRoutes.Calendar, typeof(CalendarDashboardPage));
 
         // Reports
-        Routing.RegisterRoute(AppRoutes.Reports.List, typeof(ReportPage));
-
+        Routing.RegisterRoute(AppRoutes.Reports.List, typeof(ReportHistoryPage));
+        Routing.RegisterRoute(AppRoutes.Reports.Detail, typeof(DashboardReportPage));
         // Users
         Routing.RegisterRoute(AppRoutes.Users.List, typeof(UsersPage));
-
+        Routing.RegisterRoute(AppRoutes.Users.Detail, typeof(UserEditPage));
         // Therapy
         Routing.RegisterRoute(AppRoutes.Therapy.Detail, typeof(TherapyDetailsPage));
         Routing.RegisterRoute(AppRoutes.Therapy.List, typeof(TherapyCyclesPage));
@@ -145,7 +150,6 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(AppRoutes.Protocols.Detail, typeof(ProtocolDetailFormPage));
 
         Routing.RegisterRoute(AppRoutes.Encounters.Edit, typeof(EncounterEditPage));
-
         Routing.RegisterRoute(AppRoutes.Encounters.Create, typeof(EncounterCreatePage));
         Routing.RegisterRoute(AppRoutes.Encounters.List, typeof(EncounterListPage));
         Routing.RegisterRoute(AppRoutes.Encounters.Detail, typeof(EncounterDetailPage));

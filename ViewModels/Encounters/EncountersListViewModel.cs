@@ -12,34 +12,24 @@ using System.Collections.ObjectModel;
 
 namespace EHMR.ViewModels.Encounters;
 
-public partial class EncounterListViewModel : BaseViewModel<Encounter>, IQueryAttributable
+public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryAttributable
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
-    private readonly ISelectedItemService<Encounter> _selectedItemService;
 
     private string _pendingSearch = string.Empty;
     private string _pendingStatus = string.Empty;
 
-    // NOTE: local CurrentPage/TotalPages/PageSize removed — they were shadowing
-    // BaseViewModel<T>'s paging properties (const PageSize=10 in particular never
-    // actually reached the base's real PageSize, which stayed at its default 25).
-    // PageSize is now set on the base property in the constructor.
-
-    // =====================================================
-    // BACKING FIELDS FOR INTERNAL KEYS
-    // =====================================================
     [ObservableProperty] private string selectedStatus = "All";
     [ObservableProperty] private string selectedPriority = "All";
     [ObservableProperty] private string selectedEncounterType = "All";
     [ObservableProperty] private string selectedDoctor = "All";
 
-    /// <summary>Module key used by BaseViewModel&lt;T&gt;.EvaluatePermissions().</summary>
     protected override string ModuleName => "encounters";
+    protected override string PermissionDeniedMessage => "Немате авторизација за креирање прегледи.";
 
-    // Aliases kept for XAML compatibility — forward to the base class's Can* flags.
-    public bool CanCreateEncounter => CanCreate;
-    public bool CanUpdateEncounter => CanUpdate;
-    public bool CanDeleteEncounter => CanDelete;
+    // Base DetailRoute is not used directly here since Select/New/Edit each
+    // navigate to a different route (Detail/Create/Edit) — see overrides below.
+    protected override string DetailRoute => AppRoutes.Encounters.Detail;
 
     // =====================================================
     // CACHED UI LOOKUPS
@@ -72,7 +62,7 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>, IQueryAt
         set
         {
             if(SetProperty(ref _filterByDate, value))
-                ApplyPipeline(); // OnPipelineApplied() now handles RefreshStatistics()
+                ApplyPipeline();
         }
     }
 
@@ -132,9 +122,6 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>, IQueryAt
     [ObservableProperty] private ObservableCollection<SparkGridColumn> gridColumns = new();
     [ObservableProperty] private ObservableCollection<SparkGridRow> gridRows = new();
 
-    protected override void OnPageProjected(ObservableCollection<Encounter> page)
-        => FilteredEncounters=page;
-
     partial void OnFilteredEncountersChanged(ObservableCollection<Encounter> value) => RefreshSparkGridRows();
 
     private void BuildSparkGridColumns()
@@ -155,20 +142,42 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>, IQueryAt
     private void RefreshSparkGridRows()
     {
         var rows = new ObservableCollection<SparkGridRow>();
-
         foreach(var e in FilteredEncounters)
         {
             var row = new SparkGridRow { Tag=e };
             row["EncounterNumber"]=e.EncounterNumber;
             row["PatientName"]=e.Patient!=null ? $"{e.Patient.FirstName} {e.Patient.LastName}" : "";
             row["DoctorName"]=e.Doctor?.User!=null ? $"{e.Doctor.User.FirstName} {e.Doctor.User.LastName}" : "";
-            row["EncounterType"]=e.EncounterType;
-            row["Priority"]=new SparkBadgeValue(e.Priority, PriorityToTone(e.Priority));
+            row["EncounterType"]=EncounterTypeSchema.ToDisplay(e.EncounterType);
+            row["Priority"]=new SparkBadgeValue(
+                EncounterPrioritySchema.ToDisplay(e.Priority),
+                PriorityToTone(e.Priority));
             row["Date"]=(e.ScheduledStart??e.EncounterDate).ToString("dd.MM.yyyy HH:mm");
-            row["Status"]=new SparkBadgeValue(e.Status.ToString(), StatusToTone(e.Status));
+            row["Status"]=new SparkBadgeValue(
+                EncounterStatusSchema.ToDisplay(e.Status.ToString()),
+                StatusToTone(e.Status));
+
+            // Select goes to Detail (view), Edit goes to a different route (Edit) —
+            // can't use AddDefaultActions here since both actions use base commands
+            // that point at the same DetailRoute; these navigate to different routes.
+            var actions = new List<SparkButtonItem>
+            {
+                new SparkButtonItem
+                {
+                    IsPrimary=true,
+                    IconGlyph="👁",
+                    Label="Детали",
+                    Command=SelectCommand,
+                    CommandParameter=e
+                }
+            };
+
+            if(CanUpdate)
+                actions.Add(new SparkButtonItem { IconGlyph="✎", Label="Промени", Command=EditCommand, CommandParameter=e });
+
+            row["Actions"]=actions;
             rows.Add(row);
         }
-
         GridRows=rows;
     }
 
@@ -188,7 +197,7 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>, IQueryAt
     };
 
     // ============================================================
-    // PICKERS (Pickers collection + MakePicker helper now live in BaseViewModel<T>)
+    // PICKERS
     // ============================================================
     private SparkPickerItem _statusPicker, _priorityPicker, _typePicker;
 
@@ -217,15 +226,12 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>, IQueryAt
         _typePicker.SelectedItem=SelectedEncounterTypeDisplay;
     }
 
-    // Buttons collection lives in BaseViewModel<T>; only content differs here,
-    // and it's identical to the base default — so no override needed at all.
-    // (Left BuildSparkButtons out entirely; base's default "✕ Исчисти" button applies.)
+    // Buttons collection lives in BaseViewModel<T>; base default "✕ Исчисти" applies.
 
     // ============================================================
-    // TABS (entity-specific — no base equivalent yet)
+    // TABS
     // ============================================================
     private SparkTabItem _allTab, _waitingTab, _inProgressTab, _completedTab, _cancelledTab;
-    public ObservableCollection<SparkTabItem> Tabs { get; } = new();
 
     private void BuildSparkTabs()
     {
@@ -283,13 +289,13 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>, IQueryAt
     {
         BuildSparkTabs();
         BuildSparkPickers();
-        BuildSparkButtons(); // base default, unless you want a custom set later
+        BuildSparkButtons();
         BuildSparkGridColumns();
         RefreshSparkGridRows();
     }
 
     // =====================================================
-    // STATS — now refreshed automatically via OnPipelineApplied()
+    // STATS
     // =====================================================
     [ObservableProperty] private int totalEncounters;
     [ObservableProperty] private int waitingCount;
@@ -297,39 +303,22 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>, IQueryAt
     [ObservableProperty] private int completedCount;
     [ObservableProperty] private int cancelledCount;
 
-    protected override void OnPipelineApplied() => RefreshStatistics();
-
-    private void RefreshStatistics()
-    {
-        var data = AllItems;
-        if(data==null) return;
-
-        TotalEncounters=data.Count;
-        WaitingCount=data.Count(x => x.Status==EncounterStatus.Scheduled);
-        InProgressCount=data.Count(x => x.Status==EncounterStatus.InProgress);
-        CompletedCount=data.Count(x => x.Status==EncounterStatus.Completed);
-        CancelledCount=data.Count(x => x.Status==EncounterStatus.Cancelled);
-
-        RefreshSparkTabCounts();
-    }
-
     // =====================================================
     // CTOR
     // =====================================================
-    public EncounterListViewModel(
+    public EncountersListViewModel(
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
         INavigationService navigationService,
         IUserDialogService userDialogService,
         IMenuService menuService,
         IAuthorizationService authService,
         ISelectedItemService<Encounter> selectedItemService)
-        : base(navigationService, userDialogService, menuService, authService)
+        : base(navigationService, userDialogService, menuService, authService, selectedItemService)
     {
         _dbFactory=dbFactory;
-        _selectedItemService=selectedItemService;
-  
-        PageSize=10; // sets BaseViewModel<T>.PageSize
-        EvaluatePermissions(); // base method, uses ModuleName
+
+        PageSize=10;
+        EvaluatePermissions();
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -361,7 +350,7 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>, IQueryAt
             InitializeSparkControls();
 
             ApplyPendingQuery();
-            ApplyPipeline(); // OnPipelineApplied() runs RefreshStatistics() automatically
+            ApplyPipeline();
         }
         catch(Exception ex)
         {
@@ -373,13 +362,47 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>, IQueryAt
         }
     }
 
+    protected override void OnPageProjected(ObservableCollection<Encounter> page)
+    {
+        FilteredEncounters=page;
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            RefreshSparkGridRows();
+        });
+    }
+
     private void ApplyPendingQuery()
     {
         if(!string.IsNullOrWhiteSpace(_pendingSearch))
             SearchText=_pendingSearch;
 
         if(!string.IsNullOrWhiteSpace(_pendingStatus))
+        {
             SelectedStatus=_pendingStatus;
+            OnPropertyChanged(nameof(SelectedStatusDisplay));
+
+            if(Tabs!=null&&Tabs.Count>0)
+            {
+                foreach(var t in Tabs) t.IsSelected=false;
+
+                SparkTabItem? targetTab = null;
+
+                if(string.Equals(_pendingStatus, "All", StringComparison.OrdinalIgnoreCase))
+                    targetTab=_allTab;
+                else if(string.Equals(_pendingStatus, "Scheduled", StringComparison.OrdinalIgnoreCase))
+                    targetTab=_waitingTab;
+                else if(string.Equals(_pendingStatus, "InProgress", StringComparison.OrdinalIgnoreCase))
+                    targetTab=_inProgressTab;
+                else if(string.Equals(_pendingStatus, "Completed", StringComparison.OrdinalIgnoreCase))
+                    targetTab=_completedTab;
+                else if(string.Equals(_pendingStatus, "Cancelled", StringComparison.OrdinalIgnoreCase))
+                    targetTab=_cancelledTab;
+
+                if(targetTab!=null)
+                    targetTab.IsSelected=true;
+            }
+        }
 
         _pendingSearch=string.Empty;
         _pendingStatus=string.Empty;
@@ -430,41 +453,51 @@ public partial class EncounterListViewModel : BaseViewModel<Encounter>, IQueryAt
         => query.OrderByDescending(x => x.ScheduledStart??x.EncounterDate);
 
     // =====================================================
-    // COMMANDS
+    // NAVIGATION — override base because routes differ (Create/Detail/Edit)
     // =====================================================
-    [RelayCommand] private async Task NewEncounter() => await NavigationService.GoToAsync(AppRoutes.Encounters.Create);
-
-    [RelayCommand]
-    private async Task OpenEncounter(Encounter? encounter)
+    protected override async Task New()
     {
-        if(encounter==null) return;
-        _selectedItemService.SelectedItem=encounter;
+        if(!CanCreate)
+        {
+            await UserDialogService.ShowAlertAsync(PermissionDeniedTitle, PermissionDeniedMessage, "OK");
+            return;
+        }
+
+        SelectedItemService.SelectedItem=default;
+        await NavigationService.GoToAsync(AppRoutes.Encounters.Create);
+    }
+
+    protected override async Task Select(Encounter item)
+    {
+        if(item is null) return;
+
+        SelectedItemService.SelectedItem=item;
         await NavigationService.GoToAsync(AppRoutes.Encounters.Detail);
     }
 
-    [RelayCommand]
-    private async Task EditEncounter(Encounter? encounter)
+    protected override async Task Edit(Encounter item)
     {
-        if(encounter==null) return;
-        _selectedItemService.SelectedItem=encounter;
+        if(item is null) return;
+
+        if(!CanUpdate)
+        {
+            await UserDialogService.ShowAlertAsync(PermissionDeniedTitle, "Немате авторизација за уредување прегледи.", "OK");
+            return;
+        }
+
+        SelectedItemService.SelectedItem=item;
         await NavigationService.GoToAsync(AppRoutes.Encounters.Edit);
     }
 
-    // ClearFilters command now lives in BaseViewModel<T>: it calls
-    // ResetFilters() → ApplyPipeline() → SyncSparkPickersFromFilters().
-    // OnPipelineApplied() (above) takes care of RefreshStatistics() automatically,
-    // so no separate stats call or reentrancy guard is needed here.
     protected override void ResetFilters()
     {
         SearchText=string.Empty;
 
-        // Set fields directly (not via the *Display setters) to avoid firing
-        // ApplyPipeline() multiple times before the base command runs it once.
         SelectedStatus="All";
         SelectedPriority="All";
         SelectedEncounterType="All";
         SelectedDoctor="All";
-        _filterByDate=false;   // direct field set — skips FilterByDate's own ApplyPipeline() call
+        _filterByDate=false;
         _filterDate=DateTime.Today;
 
         OnPropertyChanged(nameof(FilterByDate));

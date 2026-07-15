@@ -1,49 +1,35 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
 <ContentView
 	x:Class="EHMR.Resources.Controls.FFButton"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	x:Name="Root">
-
 	<Border
 		x:Name="Container"
 		Padding="{Binding ContentPadding, Source={x:Reference Root}}"
 		BackgroundColor="{Binding BackgroundColorEx, Source={x:Reference Root}}"
-		HorizontalOptions="Center"
+		HorizontalOptions="{Binding HorizontalOptionsEx, Source={x:Reference Root}}"
 		MinimumHeightRequest="{Binding HeightRequestEx, Source={x:Reference Root}}"
-		MinimumWidthRequest="180"
+		MinimumWidthRequest="{Binding WidthRequestEx, Source={x:Reference Root}}"
 		Stroke="{Binding BorderColor, Source={x:Reference Root}}"
 		StrokeThickness="{Binding BorderThickness, Source={x:Reference Root}}"
 		VerticalOptions="Center">
-
-
 		<Border.Shadow>
 			<Shadow
 				Brush="#224AA74A"
 				Radius="10"
 				Offset="0,4" />
 		</Border.Shadow>
-
-
 		<Border.StrokeShape>
 			<RoundRectangle CornerRadius="{Binding CornerRadius, Source={x:Reference Root}}" />
 		</Border.StrokeShape>
-
-
 		<Border.GestureRecognizers>
-
 			<TapGestureRecognizer Tapped="OnTapped" />
-
 		</Border.GestureRecognizers>
-
-
 		<Grid
 			ColumnDefinitions="Auto,*"
 			ColumnSpacing="8"
 			HorizontalOptions="Center">
-
-
 			<ActivityIndicator
 				Grid.Column="0"
 				HeightRequest="16"
@@ -51,21 +37,15 @@
 				IsVisible="{Binding IsLoading, Source={x:Reference Root}}"
 				WidthRequest="16"
 				Color="{Binding TextColorEx, Source={x:Reference Root}}" />
-
-
 			<Label
 				Grid.Column="1"
-				FontAttributes="Bold"
+				FontAttributes="{Binding FontAttributesEx, Source={x:Reference Root}}"
+				FontFamily="{Binding FontFamily, Source={x:Reference Root}}"
 				FontSize="{Binding FontSizeEx, Source={x:Reference Root}}"
 				HorizontalTextAlignment="Center"
 				Text="{Binding Text, Source={x:Reference Root}}"
 				TextColor="{Binding TextColorEx, Source={x:Reference Root}}"
 				VerticalOptions="Center" />
-
-
 		</Grid>
-
-
 	</Border>
-
 </ContentView>

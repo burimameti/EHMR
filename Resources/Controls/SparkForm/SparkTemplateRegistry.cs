@@ -2,18 +2,16 @@
 
 public static class SparkTemplateRegistry
 {
-    private static readonly Dictionary<SparkFieldType, ISparkFieldTemplate> Templates = new();
+    private static readonly Dictionary<SparkFieldType, ISparkFieldTemplate> _templates = new();
 
 
     public static void Register(
         SparkFieldType type,
         ISparkFieldTemplate template)
     {
-        if(template==null)
-            throw new ArgumentNullException(nameof(template));
+        ArgumentNullException.ThrowIfNull(template);
 
-
-        Templates[type]=template;
+        _templates[type]=template;
     }
 
 
@@ -21,11 +19,11 @@ public static class SparkTemplateRegistry
     public static ISparkFieldTemplate Resolve(
         SparkFieldType type)
     {
-        if(Templates.TryGetValue(type, out var template))
+        if(_templates.TryGetValue(type, out var template))
             return template;
 
 
-        if(Templates.TryGetValue(
+        if(_templates.TryGetValue(
             SparkFieldType.Text,
             out var fallback))
             return fallback;
@@ -40,20 +38,20 @@ public static class SparkTemplateRegistry
     public static bool Exists(
         SparkFieldType type)
     {
-        return Templates.ContainsKey(type);
+        return _templates.ContainsKey(type);
     }
 
 
 
     public static IReadOnlyDictionary<SparkFieldType, ISparkFieldTemplate> All()
     {
-        return Templates;
+        return _templates;
     }
 
 
 
     public static void Clear()
     {
-        Templates.Clear();
+        _templates.Clear();
     }
 }

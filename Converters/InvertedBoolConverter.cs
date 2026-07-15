@@ -31,13 +31,40 @@ namespace EHMR.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
                  => throw new NotImplementedException();
     }
+    public class GreaterThanOneConverter : IValueConverter
+    {
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if(value is int i)
+                return i>1;
 
+            if(value is double d)
+                return d>1;
+
+            return false;
+        }
+
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
     public class InvertedBoolConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            => value is bool b&&!b;
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if(value is bool b)
+                return !b;
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => value is bool b&&!b;
+            return true;
+        }
+
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if(value is bool b)
+                return !b;
+
+            return false;
+        }
     }
 }

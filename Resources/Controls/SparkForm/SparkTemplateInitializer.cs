@@ -53,7 +53,7 @@ public sealed class PasswordTemplate : SparkTemplateBase
             context,
             Keyboard.Default);
 
-        entry.IsPassword=true;
+        entry.IsPassword = true;
 
         return entry;
     }
@@ -114,7 +114,7 @@ public sealed class DateTemplate : SparkTemplateBase
         return BindValue(
             new DatePicker
             {
-                Format="dd/MM/yyyy"
+                Format = "dd/MM/yyyy"
             },
             DatePicker.DateProperty);
     }
@@ -130,7 +130,7 @@ public sealed class DateTimeTemplate : SparkTemplateBase
         return BindValue(
             new DatePicker
             {
-                Format="dd/MM/yyyy HH:mm"
+                Format = "dd/MM/yyyy HH:mm"
             },
             DatePicker.DateProperty);
     }
@@ -164,7 +164,7 @@ public sealed class ComboTemplate : SparkTemplateBase
     {
         var picker = new Picker
         {
-            Title=context.Label
+            Title = context.Label
         };
 
 
@@ -192,7 +192,7 @@ public sealed class LookupTemplate : SparkTemplateBase
     {
         var search = new SearchBar
         {
-            Placeholder=context.Label
+            Placeholder = context.Label
         };
 
 
@@ -215,8 +215,8 @@ public sealed class SearchTemplate : SparkTemplateBase
     {
         var search = new SearchBar
         {
-            Placeholder=
-                context.Placeholder??context.Label
+            Placeholder =
+                context.Placeholder ?? context.Label
         };
 
 
@@ -239,7 +239,7 @@ public sealed class AutoCompleteTemplate : SparkTemplateBase
     {
         return new SearchBar
         {
-            Placeholder=context.Label
+            Placeholder = context.Label
         };
     }
 }
@@ -292,7 +292,7 @@ public sealed class CheckBoxTemplate : SparkTemplateBase
         return BindValue(
             new CheckBox
             {
-                HorizontalOptions=
+                HorizontalOptions =
                     LayoutOptions.Start
             },
             CheckBox.IsCheckedProperty);
@@ -309,7 +309,7 @@ public sealed class RadioTemplate : SparkTemplateBase
         return BindValue(
             new RadioButton
             {
-                Content=context.Label
+                Content = context.Label
             },
             RadioButton.IsCheckedProperty);
     }
@@ -330,7 +330,7 @@ public sealed class AttachmentTemplate : SparkTemplateBase
     {
         return new Button
         {
-            Text="Attach File"
+            Text = "Attach File"
         };
     }
 }
@@ -374,15 +374,15 @@ public sealed class BarcodeTemplate : SparkTemplateBase
     {
         return new Border
         {
-            StrokeShape=
+            StrokeShape =
                 new RoundRectangle
                 {
-                    CornerRadius=8
+                    CornerRadius = 8
                 },
 
-            Content=new Label
+            Content = new Label
             {
-                Text="Barcode"
+                Text = "Barcode"
             }
         };
     }
@@ -397,15 +397,15 @@ public sealed class QrCodeTemplate : SparkTemplateBase
     {
         return new Border
         {
-            StrokeShape=
+            StrokeShape =
                 new RoundRectangle
                 {
-                    CornerRadius=8
+                    CornerRadius = 8
                 },
 
-            Content=new Label
+            Content = new Label
             {
-                Text="QR Code"
+                Text = "QR Code"
             }
         };
     }
@@ -426,7 +426,7 @@ public sealed class LabelTemplate : SparkTemplateBase
     {
         return new Label
         {
-            Text=context.Label
+            Text = context.Label
         };
     }
 }
@@ -440,17 +440,17 @@ public sealed class BadgeTemplate : SparkTemplateBase
     {
         return new Border
         {
-            StrokeShape=
+            StrokeShape =
                 new RoundRectangle
                 {
-                    CornerRadius=12
+                    CornerRadius = 12
                 },
 
-            Padding=8,
+            Padding = 8,
 
-            Content=new Label
+            Content = new Label
             {
-                Text=context.Label
+                Text = context.Label
             }
         };
     }
@@ -465,7 +465,7 @@ public sealed class ReadOnlyTemplate : SparkTemplateBase
     {
         return new Label
         {
-            Text=context.Value?.ToString()
+            Text = context.Value?.ToString()
         };
     }
 }
@@ -493,8 +493,8 @@ public sealed class RatingTemplate : SparkTemplateBase
         return BindValue(
             new Slider
             {
-                Minimum=0,
-                Maximum=5
+                Minimum = 0,
+                Maximum = 5
             },
             Slider.ValueProperty);
     }
@@ -510,8 +510,8 @@ public sealed class SliderTemplate : SparkTemplateBase
         return BindValue(
             new Slider
             {
-                Minimum=0,
-                Maximum=100
+                Minimum = 0,
+                Maximum = 100
             },
             Slider.ValueProperty);
     }

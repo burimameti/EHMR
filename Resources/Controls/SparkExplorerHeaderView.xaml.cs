@@ -116,7 +116,7 @@ namespace EHMR.Resources.Controls
                 nameof(SearchPlaceholder),
                 typeof(string),
                 typeof(SparkExplorerHeaderView),
-                "Search...");
+                "Пребарување...");
 
         public string SearchPlaceholder
         {

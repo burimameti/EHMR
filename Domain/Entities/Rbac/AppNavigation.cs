@@ -11,50 +11,63 @@ public static class AppNavigation
         // ==========================
         new()
         {
-            GroupTitle = "Dashboard",
+            GroupTitle = "Почента страна",
             Route = AppRoutes.Dashboard,
             Module = Modules.Dashboard,
             Icon = new IconDefinition { Glyph = "\uf00a", Font = IconFontType.FontAwesomeSolid } // Grid / Home
         },
 
-        // ==========================
-        // PATIENTS
-        // ==========================
-        new()
-        {
-            GroupTitle = "Пациенти",
-            Module = Modules.Patients,
-            Icon = new IconDefinition { Glyph = "\uf0c0", Font = IconFontType.FontAwesomeSolid }, // Users
-            Items =
-            [
-                new()
-                {
-                    Title = "Листа на пациенти",
-                    Route = AppRoutes.Patients.List,
-                    Module = Modules.Patients,
-                    Icon = new IconDefinition { Glyph = "\uf2bd", Font = IconFontType.FontAwesomeSolid } // User Card
-                }
-            ]
-        },
 
+    
+          new()
+        {
+        //    GroupTitle = "Календар",
+        //    Module = Modules.Calendar,
+        //    Icon = new IconDefinition { Glyph = "\uf073", Font = IconFontType.FontAwesomeSolid }, // Calendar
+        //    Items =
+        //    [
+        //        new()
+        //        {
+                    GroupTitle = "Календар",
+                    Route = AppRoutes.Calendar,
+                    Module = Modules.Calendar,
+                    Icon = new IconDefinition { Glyph = "\uf133", Font = IconFontType.FontAwesomeSolid } // Alternative Calendar
+            //    }
+            //]
+        },
         // ==========================
         // ENCOUNTERS (ПРЕГЛЕДИ)
         // ==========================
         new()
         {
-            GroupTitle = "Прегледи",
-            Module = Modules.Encounters,
-            Icon = new IconDefinition { Glyph = "\uf0f1", Font = IconFontType.FontAwesomeSolid }, // Stethoscope
-            Items =
-            [
-                new()
-                {
-                    Title = "Листа на прегледи",
+           // GroupTitle = "Прегледи",
+           // Module = Modules.Encounters,
+           // Icon = new IconDefinition { Glyph = "\uf0f1", Font = IconFontType.FontAwesomeSolid }, // Stethoscope
+            //Items =
+            //[
+                //new()
+               // {
+                         GroupTitle = "Прегледи",
+                   // Title = "Листа на прегледи",
                     Route = AppRoutes.Encounters.List,
                     Module = Modules.Encounters,
                     Icon = new IconDefinition { Glyph = "\uf0ae", Font = IconFontType.FontAwesomeSolid } // Tasks / List
-                }
-            ]
+               // }
+            //]
+        },  new()
+        {
+            //GroupTitle = "Пациенти",
+            //Module = Modules.Patients,
+            //Icon = new IconDefinition { Glyph = "\uf0c0", Font = IconFontType.FontAwesomeSolid }, // Users
+            //Items =
+            //[
+               
+                    GroupTitle = "Пациенти",
+                    Route = AppRoutes.Patients.List,
+                    Module = Modules.Patients,
+                    Icon = new IconDefinition { Glyph = "\uf2bd", Font = IconFontType.FontAwesomeSolid } // User Card
+                
+            //]
         },
 
         // ==========================
@@ -62,19 +75,19 @@ public static class AppNavigation
         // ==========================
         new()
         {
-            GroupTitle = "Термин",
-            Module = Modules.Appointments,
-            Icon = new IconDefinition { Glyph = "\uf274", Font = IconFontType.FontAwesomeSolid }, // Calendar Check
-            Items =
-            [
-                new()
-                {
-                    Title = "Листа на термини",
+            //GroupTitle = "Термин",
+            //Module = Modules.Appointments,
+            //Icon = new IconDefinition { Glyph = "\uf274", Font = IconFontType.FontAwesomeSolid }, // Calendar Check
+            //Items =
+            //[
+            //    new()
+            //    {
+                    GroupTitle = "Термини",
                     Route = AppRoutes.Appointments.List,
                     Module = Modules.Appointments,
                     Icon = new IconDefinition { Glyph = "\uf017", Font = IconFontType.FontAwesomeSolid } // Clock
-                }
-            ]
+            //    }
+            //]
         },
 
         // ==========================
@@ -82,19 +95,19 @@ public static class AppNavigation
         // ==========================
         new()
         {
-            GroupTitle = "Терапии",
-            Module = Modules.Therapy,
-            Icon = new IconDefinition { Glyph = "\uf0c3", Font = IconFontType.FontAwesomeSolid }, // Flask / Vial
-            Items =
-            [
-                new()
-                {
-                    Title = "Терапевтски циклуси",
+            //GroupTitle = "Терапии",
+            //Module = Modules.Therapy,
+            //Icon = new IconDefinition { Glyph = "\uf0c3", Font = IconFontType.FontAwesomeSolid }, // Flask / Vial
+            //Items =
+            //[
+            //    new()
+            //    {
+                    GroupTitle = "Циклуси",
                     Route = AppRoutes.Therapy.List,
                     Module = Modules.Therapy,
                     Icon = new IconDefinition { Glyph = "\uf1b1", Font = IconFontType.FontAwesomeSolid } // Cubes
-                }
-            ]
+            //    }
+            //]
         },
 
         // ==========================
@@ -102,27 +115,85 @@ public static class AppNavigation
         // ==========================
         new()
         {
-            GroupTitle = "Протоколи",
-            Module = Modules.Protocols,
-            Icon = new IconDefinition { Glyph = "\uf15c", Font = IconFontType.FontAwesomeSolid }, // File Medical
-            Items =
-            [
-                new()
-                {
-                    Title = "Регистар на протоколи",
+            //GroupTitle = "Протоколи",
+            //Module = Modules.Protocols,
+            //Icon = new IconDefinition { Glyph = "\uf15c", Font = IconFontType.FontAwesomeSolid }, // File Medical
+            //Items =
+            //[
+            //    new()
+            //    {
+                    GroupTitle = "Протоколи",
                     Route = AppRoutes.Protocols.List,
                     Module = Modules.Protocols,
                     Icon = new IconDefinition { Glyph = "\uf03a", Font = IconFontType.FontAwesomeSolid } // List
-                }
-            ]
+            //    }
+            //]
         },
 
         // ==========================
         // MKB-10
         // ==========================
+     
+         new(){ GroupTitle = "Рецепти",
+                    Route = AppRoutes.Prescriptions.List,
+                    Module = Modules.Inventory,
+                    Icon = new IconDefinition { Glyph = "\uf461", Font = IconFontType.FontAwesomeSolid } // Prescription Clipboard
+            //    }
+            //]
+        },
+        // ==========================
+        // MEDICINES
+        // ==========================
         new()
         {
-            GroupTitle = "МКБ-10",
+            //GroupTitle = "Лекови",
+            //Module = Modules.Inventory,
+            //Icon = new IconDefinition { Glyph = "\uf46b", Font = IconFontType.FontAwesomeSolid }, // Pill
+            //Items =
+            //[
+            //    new()
+            //    {
+                    GroupTitle = "Листа на лекови",
+                    Route = AppRoutes.Medicines.List,
+                    Module = Modules.Inventory,
+                    Icon = new IconDefinition { Glyph = "\uf484", Font = IconFontType.FontAwesomeSolid } // Medicine Bottle
+                //},
+                //new()
+                //{
+                   
+            //    }
+            //]
+        },//new()
+                //{
+                  
+
+        // ==========================
+        // REPORTS
+        // ==========================
+        new (){
+        //{
+        //    GroupTitle = "Извештаи",
+        //    Module = Modules.Reports,
+        //    Icon = new IconDefinition { Glyph = "\uf201", Font = IconFontType.FontAwesomeSolid }, // Chart Line
+        //    Items =
+        //    [
+        //        new()
+        //        {
+                    GroupTitle = "Извештаи",
+                    Route = AppRoutes.Reports.List,
+                    Module = Modules.Reports,
+                    Icon = new IconDefinition { Glyph = "\uf1c3", Font = IconFontType.FontAwesomeSolid } // File Excel
+            //    }
+            //]
+        },
+
+        // ==========================
+        // CALENDAR
+        // ==========================
+      
+           new()
+        {
+            GroupTitle = "ИМПОРТ МКБ-10",
             Module = Modules.MKBCodes,
             Icon = new IconDefinition { Glyph = "\uf02d", Font = IconFontType.FontAwesomeSolid }, // Book
             Items =
@@ -136,74 +207,6 @@ public static class AppNavigation
                 }
             ]
         },
-
-        // ==========================
-        // MEDICINES
-        // ==========================
-        new()
-        {
-            GroupTitle = "Лекови",
-            Module = Modules.Inventory,
-            Icon = new IconDefinition { Glyph = "\uf46b", Font = IconFontType.FontAwesomeSolid }, // Pill
-            Items =
-            [
-                new()
-                {
-                    Title = "Листа на лекови",
-                    Route = AppRoutes.Medicines.List,
-                    Module = Modules.Inventory,
-                    Icon = new IconDefinition { Glyph = "\uf484", Font = IconFontType.FontAwesomeSolid } // Medicine Bottle
-                },
-                new()
-                {
-                    Title = "Рецепти",
-                    Route = AppRoutes.Prescriptions.List,
-                    Module = Modules.Inventory,
-                    Icon = new IconDefinition { Glyph = "\uf461", Font = IconFontType.FontAwesomeSolid } // Prescription Clipboard
-                }
-            ]
-        },
-
-        // ==========================
-        // REPORTS
-        // ==========================
-        new()
-        {
-            GroupTitle = "Извештаи",
-            Module = Modules.Reports,
-            Icon = new IconDefinition { Glyph = "\uf201", Font = IconFontType.FontAwesomeSolid }, // Chart Line
-            Items =
-            [
-                new()
-                {
-                    Title = "Извештаи",
-                    Route = AppRoutes.Reports.List,
-                    Module = Modules.Reports,
-                    Icon = new IconDefinition { Glyph = "\uf1c3", Font = IconFontType.FontAwesomeSolid } // File Excel
-                }
-            ]
-        },
-
-        // ==========================
-        // CALENDAR
-        // ==========================
-        new()
-        {
-            GroupTitle = "Календар",
-            Module = Modules.Calendar,
-            Icon = new IconDefinition { Glyph = "\uf073", Font = IconFontType.FontAwesomeSolid }, // Calendar
-            Items =
-            [
-                new()
-                {
-                    Title = "Календар",
-                    Route = AppRoutes.Calendar,
-                    Module = Modules.Calendar,
-                    Icon = new IconDefinition { Glyph = "\uf133", Font = IconFontType.FontAwesomeSolid } // Alternative Calendar
-                }
-            ]
-        },
-
         // ==========================
         // ADMINISTRATION
         // ==========================
@@ -220,7 +223,15 @@ public static class AppNavigation
                     Route = AppRoutes.Users.List,
                     Module = Modules.Administration,
                     Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
+                },
+                 new()
+                {
+                    Title = "Доктори",
+                    Route = AppRoutes.Doctors.List,
+                    Module = Modules.Doctors,
+                    Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
                 }
+
             ]
         }
     ];

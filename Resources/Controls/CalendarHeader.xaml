@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentView
+	x:Class="EHMR.Resources.Controls.CalendarHeader"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:sc="clr-namespace:EHMR.Resources.Controls"
+	x:Name="Root">
+
+	<VerticalStackLayout>
+
+		<!--  ============ ROW 1: TABS + TRAILING ============  -->
+		<Border
+			Padding="0"
+			BackgroundColor="{StaticResource SparkBadgeNeutralBg}"
+			Stroke="{StaticResource SparkBorder}"
+			StrokeThickness="0">
+
+
+			<Grid
+				x:Name="ExplorerGrid"
+				Padding="0"
+				ColumnSpacing="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<!--  0: tabs  -->
+					<ColumnDefinition Width="1" />
+					<!--  1: divider  -->
+					<ColumnDefinition Width="*" />
+					<!--  2: spacer  -->
+					<ColumnDefinition Width="Auto" />
+					<!--  3: trailing  -->
+				</Grid.ColumnDefinitions>
+
+				<!--  ============ 0: TABS ============  -->
+				<ScrollView
+					Grid.Column="0"
+					HorizontalScrollBarVisibility="Never"
+					Orientation="Both">
+					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Tabs, Source={x:Reference Root}}" Spacing="0">
+						<BindableLayout.ItemTemplate>
+							<DataTemplate x:DataType="sc:SparkTabItem">
+								<Grid
+									Padding="26,0"
+									HeightRequest="60"
+									MinimumWidthRequest="167"
+									RowDefinitions="*,4"
+									WidthRequest="-1">
+									<Grid.GestureRecognizers>
+										<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
+									</Grid.GestureRecognizers>
+
+									<!--  TAB BACKGROUND STATE  -->
+									<Grid.Triggers>
+										<DataTrigger
+											Binding="{Binding IsSelected}"
+											TargetType="Grid"
+											Value="True">
+											<Setter Property="BackgroundColor" Value="{StaticResource SparkBackgroundAlt}" />
+										</DataTrigger>
+										<DataTrigger
+											Binding="{Binding IsSelected}"
+											TargetType="Grid"
+											Value="False">
+											<Setter Property="BackgroundColor" Value="{StaticResource SparkButtonSecondaryBg}" />
+										</DataTrigger>
+									</Grid.Triggers>
+
+									<Label
+										Grid.Row="0"
+										FontSize="14"
+										HorizontalOptions="Center"
+										VerticalOptions="Center">
+										<Label.FormattedText>
+											<FormattedString>
+												<Span Text="{Binding Title}" />
+												<Span Text=" " />
+												<Span Text="{Binding Value, StringFormat='({0})'}" />
+											</FormattedString>
+										</Label.FormattedText>
+										<Label.Triggers>
+											<DataTrigger
+												Binding="{Binding IsSelected}"
+												TargetType="Label"
+												Value="True">
+												<Setter Property="TextColor" Value="{StaticResource SparkAccentTeal}" />
+												<Setter Property="FontAttributes" Value="Bold" />
+											</DataTrigger>
+											<DataTrigger
+												Binding="{Binding IsSelected}"
+												TargetType="Label"
+												Value="False">
+												<Setter Property="TextColor" Value="{StaticResource SparkBackground}" />
+											</DataTrigger>
+										</Label.Triggers>
+									</Label>
+
+									<BoxView Grid.Row="1" HorizontalOptions="Fill">
+										<BoxView.Triggers>
+											<DataTrigger
+												Binding="{Binding IsSelected}"
+												TargetType="BoxView"
+												Value="True">
+												<Setter Property="Color" Value="{StaticResource SparkAccentTeal}" />
+											</DataTrigger>
+										</BoxView.Triggers>
+									</BoxView>
+								</Grid>
+							</DataTemplate>
+						</BindableLayout.ItemTemplate>
+					</HorizontalStackLayout>
+				</ScrollView>
+
+				<!--  ============ 1: DIVIDER ============  -->
+				<BoxView
+					Grid.Column="1"
+					BackgroundColor="{StaticResource SparkBorder}"
+					WidthRequest="1" />
+
+
+
+			</Grid>
+		</Border>
+
+
+
+	</VerticalStackLayout>
+</ContentView>

@@ -18,6 +18,7 @@ public partial class UserEditViewModel : ObservableObject
     private readonly IUserService _service;
     private readonly ISelectedItemService<UserAdminDto> _userSelectionService;
     private readonly IUserDialogService _dialogService;
+    private readonly IAuthStateService _authStateService;
 
     private UserAdminDto? _originalUser;
     private bool _isNewUserMode;
@@ -35,9 +36,36 @@ public partial class UserEditViewModel : ObservableObject
     [ObservableProperty]
     private string _pageTitle = string.Empty;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanShowEditButton))]
+    [NotifyPropertyChangedFor(nameof(CanShowDeleteButton))]
+    private bool _canManageTargetUser = true;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanShowDeleteButton))]
+    private bool _isSelfEdit;
+
     public bool IsEditMode => !IsReadOnly;
 
-    public List<UserRole> Roles => Enum.GetValues<UserRole>().ToList();
+    // Едит копчето се гледа само ако е read-only И актерот смее да управува со тој корисник
+    public bool CanShowEditButton => IsReadOnly&&CanManageTargetUser;
+
+    // Delete копче: само за постоечки корисници, не за себе, и само ако актерот смее да управува
+    public bool CanShowDeleteButton => !_isNewUserMode&&CanManageTargetUser&&!IsSelfEdit;
+
+    // Roles picker - само улогите што actor-от смее да ги додели
+    public List<UserRole> Roles
+    {
+        get
+        {
+            var actorRole = _authStateService.CurrentUser?.Role;
+
+            return actorRole is null
+                ? Enum.GetValues<UserRole>().ToList()
+                : RoleHierarchy.AssignableRolesFor(actorRole.Value).ToList();
+        }
+    }
+
     public List<UserPosition> Positions => Enum.GetValues<UserPosition>().ToList();
 
     private UserRole _selectedRole;
@@ -61,11 +89,13 @@ public partial class UserEditViewModel : ObservableObject
     public UserEditViewModel(
         IUserService service,
         ISelectedItemService<UserAdminDto> userSelectionService,
-        IUserDialogService dialogService)
+        IUserDialogService dialogService,
+        IAuthStateService authStateService)
     {
         _service=service;
         _userSelectionService=userSelectionService;
         _dialogService=dialogService;
+        _authStateService=authStateService;
     }
 
     public async Task InitializeAsync()
@@ -84,6 +114,8 @@ public partial class UserEditViewModel : ObservableObject
 
     private void InitializeForm(UserAdminDto? selectedUser, List<string> allSystemModules)
     {
+        var actor = _authStateService.CurrentUser;
+
         if(selectedUser==null)
         {
             _isNewUserMode=true;
@@ -100,8 +132,10 @@ public partial class UserEditViewModel : ObservableObject
                 Modules=new List<string>()
             };
 
-            PageTitle="➕ Нова Корисничка Сметка";
+            PageTitle="➕ Нов";
             IsReadOnly=false;
+            IsSelfEdit=false;
+            CanManageTargetUser=true;
         }
         else
         {
@@ -111,6 +145,13 @@ public partial class UserEditViewModel : ObservableObject
             User=CloneUser(selectedUser);
             PageTitle=$"Корисник: {User.Username}";
             IsReadOnly=true;
+
+            IsSelfEdit=actor!=null&&actor.Id==selectedUser.Id;
+
+            // Дозволата се проверува спрема ОРИГИНАЛНАТА улога на корисникот,
+            // не спрема таа што евентуално ќе се избере во picker-от
+            CanManageTargetUser=actor==null
+                ||RoleHierarchy.CanManage(actor.Role, selectedUser.Role);
         }
 
         SystemPermissions.Clear();
@@ -122,6 +163,9 @@ public partial class UserEditViewModel : ObservableObject
 
         _selectedRole=User.Role;
         OnPropertyChanged(nameof(SelectedRole));
+        OnPropertyChanged(nameof(Roles));
+        OnPropertyChanged(nameof(CanShowEditButton));
+        OnPropertyChanged(nameof(CanShowDeleteButton));
 
         if(_isNewUserMode)
         {
@@ -132,6 +176,9 @@ public partial class UserEditViewModel : ObservableObject
     [RelayCommand]
     public void ToggleEditMode()
     {
+        if(!CanManageTargetUser)
+            return;
+
         IsReadOnly=false;
         PageTitle=$"✎ Уреди: {User.Username}";
     }
@@ -183,6 +230,27 @@ public partial class UserEditViewModel : ObservableObject
             return;
         }
 
+        // --- Server/ViewModel-side RBAC проверки (не се потпираме само на UI binding-от) ---
+        if(!CanManageTargetUser)
+        {
+            await _dialogService.ShowAlertAsync("Пристап одбиен", "Немате доволно овластувања за оваа промена.", "OK");
+            return;
+        }
+
+        var actor = _authStateService.CurrentUser;
+
+        if(actor!=null&&!RoleHierarchy.AssignableRolesFor(actor.Role).Contains(User.Role))
+        {
+            await _dialogService.ShowAlertAsync("Пристап одбиен", "Не смеете да доделите таа улога.", "OK");
+            return;
+        }
+
+        if(!_isNewUserMode&&IsSelfEdit&&_originalUser!=null&&User.Role!=_originalUser.Role)
+        {
+            await _dialogService.ShowAlertAsync("Не е дозволено", "Не можете сами да си ја промените улогата.", "OK");
+            return;
+        }
+
         try
         {
             User.Modules=SystemPermissions
@@ -219,6 +287,45 @@ public partial class UserEditViewModel : ObservableObject
         catch(Exception ex)
         {
             await _dialogService.ShowAlertAsync("Грешка при зачувување", ex.Message, "ОК");
+        }
+    }
+
+    [RelayCommand]
+    public async Task DeleteAsync()
+    {
+        if(_isNewUserMode||_originalUser==null)
+            return;
+
+        if(!CanManageTargetUser)
+        {
+            await _dialogService.ShowAlertAsync("Пристап одбиен", "Немате доволно овластувања да го избришете овој корисник.", "OK");
+            return;
+        }
+
+        if(IsSelfEdit)
+        {
+            await _dialogService.ShowAlertAsync("Не е дозволено", "Не можете да го избришете сопствениот кориснички профил.", "OK");
+            return;
+        }
+
+        var confirmed = await _dialogService.ShowConfirmationAsync(
+            "Бришење корисник",
+            $"Дали сте сигурни дека сакате да го избришете корисникот '{_originalUser.Username}'?",
+            "Избриши",
+            "Откажи");
+
+        if(!confirmed)
+            return;
+
+        try
+        {
+            await _service.DeleteAsync(_originalUser.Id);
+            await _dialogService.ShowAlertAsync("Успешно", "Корисникот е избришан.", "ОК");
+            await Shell.Current.GoToAsync("..");
+        }
+        catch(Exception ex)
+        {
+            await _dialogService.ShowAlertAsync("Грешка при бришење", ex.Message, "ОК");
         }
     }
 

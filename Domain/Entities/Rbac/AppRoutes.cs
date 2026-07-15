@@ -11,6 +11,18 @@
             public const string List = "patientslist";
             public const string Detail = "patientsdetail";
         }
+
+        public static class Doctors
+        {
+            public const string List = "doctorslist";
+            public const string Detail = "doctorsdetail";
+        }
+        public static class Mkb10
+        {
+            public const string List = "mkb10Codelist";
+            public const string Detail = "mkb10Codedetail";
+
+        }
         public static class Encounters
         {
             public const string List = "encounterslist";
@@ -72,7 +84,7 @@
 
         public static class Reports
         {
-            public const string List = "reportslist"; public const string Detail = "reportsdetail";
+            public const string List = "reportlist"; public const string Detail = "reportdetail";
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Resources.Controls;
 using System.Collections.ObjectModel;
@@ -10,34 +12,49 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
 {
     // ================= SERVICES =================
     protected readonly INavigationService NavigationService;
-
     protected readonly IUserDialogService UserDialogService;
     protected readonly IMenuService MenuService;
     protected readonly IAuthorizationService AuthService;
+    protected readonly ISelectedItemService<T> SelectedItemService;
 
     protected SynchronizationContext? UiContext;
 
+    protected virtual string DetailRoute =>
+        throw new NotImplementedException($"Override {nameof(DetailRoute)} во derived VM.");
+
+    // Override во derived VM ако сакаш поинаков текст по модул
+    protected virtual string PermissionDeniedTitle => "Пристапот е одбиен";
+    protected virtual string PermissionDeniedMessage => "Немате авторизација за оваа акција.";
+
     // ================= DATA =================
     protected List<T> AllItems = new();
-
     protected List<T> FilteredItems = new();
 
     [ObservableProperty] private ObservableCollection<T> items = new();
-    [ObservableProperty] private ObservableCollection<T> pagedItems = new();
+
     // ================= STATE =================
     [ObservableProperty] private bool isBusy;
-
     [ObservableProperty] private bool isRefreshing;
     [ObservableProperty] private bool hasItems;
     [ObservableProperty] private string errorMessage = string.Empty;
     [ObservableProperty] private bool hasError;
 
-    // ================= PAGING =================
-
+    // ================= PAGINATION =================
     public int TotalItems => FilteredItems.Count;
+
+    public int TotalPages =>
+        PageSize<=0
+            ? 0
+            : (int)Math.Ceiling((double)TotalItems/PageSize);
+
+    public string PageInfoText =>
+        TotalPages<=0
+            ? string.Empty
+            : $"Страна {CurrentPage} од {TotalPages}";
 
     public bool HasNextPage => CurrentPage<TotalPages;
     public bool HasPreviousPage => CurrentPage>1;
+
     // ================= PERMISSIONS =================
     [ObservableProperty] private bool canCreate;
     [ObservableProperty] private bool canUpdate;
@@ -47,20 +64,16 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         INavigationService navigationService,
         IUserDialogService userDialogService,
         IMenuService menuService,
-        IAuthorizationService authService)
+        IAuthorizationService authService,
+        ISelectedItemService<T> selectedItemService)
     {
         NavigationService=navigationService;
         UserDialogService=userDialogService;
         MenuService=menuService;
         AuthService=authService;
+        SelectedItemService=selectedItemService;
 
         UiContext=SynchronizationContext.Current;
-    }
-    [RelayCommand]
-    private void PageChanged(int page)
-    {
-        if(page<1||page>TotalPages||page==CurrentPage) return;
-        CurrentPage=page;
     }
 
     protected abstract string ModuleName
@@ -70,11 +83,43 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
 
     protected void EvaluatePermissions()
     {
-        var has = AuthService.CanAccessModule(ModuleName);
-        CanCreate=has;
-        CanUpdate=has;
-        CanDelete=has;
+        CanCreate=AuthService.CanPerform(ModuleName, ModuleAction.Create);
+        CanUpdate=AuthService.CanPerform(ModuleName, ModuleAction.Edit);
+        CanDelete=AuthService.CanPerform(ModuleName, ModuleAction.Delete);
     }
+
+    // ================= SELECT / NEW / EDIT =================
+    [RelayCommand]
+    protected virtual async Task Select(T item)
+    {
+        SelectedItemService.SelectedItem=item;
+        await NavigationService.GoToAsync(DetailRoute);
+    }
+
+    [RelayCommand]
+    protected virtual async Task New()
+    {
+        if(!CanCreate)
+        {
+            await UserDialogService.ShowAlertAsync(PermissionDeniedTitle, PermissionDeniedMessage, "OK");
+            return;
+        }
+        SelectedItemService.SelectedItem=default;
+        await NavigationService.GoToAsync(DetailRoute);
+    }
+
+    [RelayCommand]
+    protected virtual async Task Edit(T item)
+    {
+        if(!CanUpdate)
+        {
+            await UserDialogService.ShowAlertAsync(PermissionDeniedTitle, PermissionDeniedMessage, "OK");
+            return;
+        }
+        SelectedItemService.SelectedItem=item;
+        await NavigationService.GoToAsync(DetailRoute);
+    }
+
     // ================= CORE PIPELINE =================
     protected void ApplyPipeline()
     {
@@ -86,15 +131,17 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
 
         FilteredItems=query.ToList();
 
-        _currentPage=1;
+        CurrentPage=1;
+
         RefreshPage();
 
-        OnPipelineApplied(); // new hook — runs after every filter/search/sort/page refresh
+        OnPipelineApplied();
     }
 
     protected virtual void OnPipelineApplied()
     {
     }
+
     protected void RefreshPage()
     {
         var page = FilteredItems
@@ -105,12 +152,9 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         Items=new ObservableCollection<T>(page);
         HasItems=Items.Any();
 
-        OnPropertyChanged(nameof(TotalItems));
-        OnPropertyChanged(nameof(TotalPages));
-        OnPropertyChanged(nameof(HasNextPage));
-        OnPropertyChanged(nameof(HasPreviousPage));
+        RefreshPaginationNotifications();
 
-        OnPageProjected(Items);   // new hook
+        OnPageProjected(Items);
     }
 
     protected virtual void OnPageProjected(ObservableCollection<T> page)
@@ -150,12 +194,14 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         {
             if(SetProperty(ref _currentPage, value))
             {
+                RefreshPaginationNotifications();
                 RefreshPage();
             }
         }
     }
 
-    private int _pageSize = 25;
+    private int _pageSize = 10;
+
     public int PageSize
     {
         get => _pageSize;
@@ -163,32 +209,21 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         {
             if(SetProperty(ref _pageSize, value))
             {
-                CurrentPage=1;   // important reset
+                CurrentPage=1;
+                RefreshPaginationNotifications();
                 RefreshPage();
             }
         }
     }
-    public int TotalPages =>
-           PageSize<=0 ? 0 : (int)Math.Ceiling((double)TotalItems/PageSize);
-
-    public bool IsGridView
-    {
-        get; set;
-    }
-
-    public bool IsListView => !IsGridView;
-
-    public int TotalRecords
-    {
-        get;
-    }
-
-    public int FilteredRecords
-    {
-        get;
-    }
 
     // ================= PAGINATION COMMANDS =================
+    [RelayCommand]
+    private void PageChanged(int page)
+    {
+        if(page<1||page>TotalPages||page==CurrentPage) return;
+        CurrentPage=page;
+    }
+
     [RelayCommand]
     public void NextPage()
     {
@@ -271,7 +306,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         });
     }
 
-    // ================= SPARK PICKERS (shared helper only — content is entity-specific) =================
+    // ================= SPARK PICKERS =================
     public ObservableCollection<SparkPickerItem> Pickers { get; } = new();
 
     protected static SparkPickerItem MakePicker(string placeholder, IEnumerable<string> items,
@@ -293,15 +328,97 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     {
     }
 
+    protected void RefreshPaginationNotifications()
+    {
+        OnPropertyChanged(nameof(TotalItems));
+        OnPropertyChanged(nameof(TotalPages));
+        OnPropertyChanged(nameof(PageInfoText));
+        OnPropertyChanged(nameof(HasNextPage));
+        OnPropertyChanged(nameof(HasPreviousPage));
+    }
+
     // ================= CLEAR FILTERS =================
     [RelayCommand]
     protected void ClearFilters()
     {
         ResetFilters();
-        ApplyPipeline();               // recomputes filters/search/sort and resets CurrentPage=1 internally
+        ApplyPipeline();
         SyncSparkPickersFromFilters();
     }
 
-    /// <summary>Reset all entity-specific filter fields (and search text) back to defaults.</summary>
     protected abstract void ResetFilters();
+
+    protected virtual void AddDefaultActions(T item, SparkGridRow row, string detailLabel = "Детали", string editLabel = "✎")
+    {
+        var actions = new List<SparkButtonItem>
+    {
+        new SparkButtonItem
+        {
+            IsPrimary=true,
+            IconGlyph="👁",
+            Label=detailLabel,
+            Command=SelectCommand,
+            CommandParameter=item
+        }
+    };
+
+        if(CanUpdate)
+            actions.Add(new SparkButtonItem { Label=editLabel, Command=EditCommand, CommandParameter=item });
+
+        row["Actions"]=actions;
+    }
+
+    // BaseViewModel<T>
+    // ================= GENERIC TAB FILTERS =================
+    public ObservableCollection<SparkTabItem> Tabs { get; } = new();
+
+    protected readonly Dictionary<string, SparkTabItem> TabsByKey = new();
+
+    /// <summary>
+    /// Гради tabs од произволна листа опции. Derived VM одлучува label/key/selection/onSelect,
+    /// база само раководи со UI state (selection toggle, dictionary lookup).
+    /// </summary>
+    protected void BuildTabFilters<TOption>(
+        IEnumerable<TOption> options,
+        Func<TOption, string> keySelector,
+        Func<TOption, string> labelSelector,
+        Func<TOption, bool> isSelectedSelector,
+        Action<TOption> onSelect)
+    {
+        Tabs.Clear();
+        TabsByKey.Clear();
+
+        foreach(var option in options)
+        {
+            var tab = new SparkTabItem
+            {
+                Title=labelSelector(option),
+                IsSelected=isSelectedSelector(option)
+            };
+
+            tab.Command=new RelayCommand(() => SelectTab(tab, () => onSelect(option)));
+
+            Tabs.Add(tab);
+            TabsByKey[keySelector(option)]=tab;
+        }
+    }
+
+    protected void SelectTab(SparkTabItem tab, Action action)
+    {
+        foreach(var t in Tabs) t.IsSelected=false;
+        tab.IsSelected=true;
+        action();
+    }
+
+    protected void RefreshTabCount(string key, int count)
+    {
+        if(TabsByKey.TryGetValue(key, out var tab))
+            tab.Value=count.ToString("N0");
+    }
+
+    protected void SyncTabsFromKey(string selectedKey)
+    {
+        foreach(var (key, tab) in TabsByKey)
+            tab.IsSelected=key==selectedKey;
+    }   
 }

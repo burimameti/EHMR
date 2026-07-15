@@ -1,36 +1,39 @@
-﻿using EHMR.Domain.Interfaces;
-using EHMR.Domain.SparkForm;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using EHMR.Domain.Interfaces;
 
-
-namespace EHMR.ViewModels.SparkForm
+namespace EHMR.ViewModels
 {
-    public abstract partial class BaseDetailViewModel<TEntity>
-     : BaseFormViewModel<TEntity>
-     where TEntity : class, new()
+    // Shared by BOTH hand-authored detail pages (like Appointment) and
+    // SparkForm-reflection-driven ones. No FormBuilder dependency here.
+    public abstract partial class BaseDetailViewModel<T> : BaseViewModel<T>
+        where T : class, new()
     {
         protected BaseDetailViewModel(
             INavigationService navigationService,
             IUserDialogService dialogService,
             IMenuService menuService,
             IAuthorizationService authService,
-            ISparkFormBuilder formBuilder)
-            : base(
-                navigationService,
-                dialogService,
-                menuService,
-                authService,
-                formBuilder)
+            ISelectedItemService<T> selectedItemService)
+            : base(navigationService, dialogService, menuService, authService, selectedItemService)
         {
-            FormMode=SparkFormMode.Detail;
         }
 
-        public virtual async Task LoadAsync(TEntity entity)
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsEditMode))]
+        private bool isReadOnly = true;
+
+        public bool IsEditMode => !IsReadOnly;
+
+        protected sealed override IEnumerable<T> ApplyFilters(IEnumerable<T> query) => query;
+
+        protected sealed override void ResetFilters()
         {
-            Item=entity;
+        }
 
-            BuildForm();
-
-            await Task.CompletedTask;
+        protected virtual void ToggleEdit()
+        {
+            if(!CanUpdate) return;
+            IsReadOnly=false;
         }
     }
 }

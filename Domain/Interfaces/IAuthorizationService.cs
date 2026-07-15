@@ -9,12 +9,14 @@ public interface IAuthorizationService
     {
         get;
     }
-
+    bool CanPerform(string module, ModuleAction action);
     bool HasRole(UserRole role);
-
     bool HasModule(string module);
-
     bool CanAccessModule(string module);
-
     bool CanAccessRoute(string route);
+
+    // --- RBAC: управување со корисници ---
+    bool CanManageUser(UserRole targetRole);
+    bool CanAssignRole(UserRole targetRole);
+    IEnumerable<UserRole> GetAssignableRoles();
 }

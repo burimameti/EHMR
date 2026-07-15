@@ -1,114 +1,115 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
 <ContentPage
-    x:Class="EHMR.Views.Prescription.PrescriptionDetailFormPage"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:viewModels="clr-namespace:EHMR.ViewModels.Prescriptions"
-    xmlns:models="clr-namespace:EHMR.Domain.Entities"
-    x:DataType="viewModels:PrescriptionDetailFormViewModel"
-    Style="{StaticResource PageBackgroundStyle}">
+	x:Class="EHMR.Views.Prescription.PrescriptionDetailFormPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:models="clr-namespace:EHMR.Domain.Entities"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Prescriptions"
+	x:DataType="viewModels:PrescriptionDetailFormViewModel"
+	Style="{StaticResource PageBackgroundStyle}">
 
 	<Grid ColumnDefinitions="295,*">
 
-		<!-- LEFT MENU -->
-		<Border Grid.Column="0" BackgroundColor="#0F172A" StrokeThickness="0">
+		<!--  LEFT MENU  -->
+		<Border
+			Grid.Column="0"
+			BackgroundColor="#0F172A"
+			StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
-		<!-- MAIN AREA -->
+		<!--  MAIN AREA  -->
 		<Grid Grid.Column="1" RowDefinitions="72,*">
 
-			<!-- HEADER -->
+			<!--  HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageHeaderContainer}">
 				<Grid ColumnDefinitions="*,Auto">
 
 					<VerticalStackLayout VerticalOptions="Center">
-						<Label Text="{Binding PageTitle}" Style="{StaticResource PageHeaderTitle}" />
-						<Label Text="Управување со рецепти и терапија" Style="{StaticResource PageHeaderSubtitle}" />
+						<Label Style="{StaticResource PageHeaderTitle}" Text="{Binding PageTitle}" />
+						<Label Style="{StaticResource PageHeaderSubtitle}" Text="Управување со рецепти и терапија" />
 					</VerticalStackLayout>
 
-					<!-- ACTIONS -->
-					<HorizontalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
+					<!--  ACTIONS  -->
+					<HorizontalStackLayout
+						Grid.Column="1"
+						Spacing="10"
+						VerticalOptions="Center">
 
-						<Button Text="⟲"
-                                Style="{StaticResource SecondaryButtonStyle}"
-                                Command="{Binding ToggleEditModeCommand}" />
+						<!--  Измени режим копче (Се крие ако е нов рецепт бидејќи веќе е во едит режим)  -->
+						<Button
+							Command="{Binding ToggleEditModeCommand}"
+							IsVisible="{Binding Id, Converter={StaticResource GuidToBoolConverter}}"
+							Style="{StaticResource SecondaryButtonStyle}"
+							Text="✏ Измени" />
 
-						<Button Text="Назад"
-                                Style="{StaticResource SecondaryButtonStyle}"
-                                Command="{Binding BackCommand}" />
+						<Button
+							Command="{Binding BackCommand}"
+							Style="{StaticResource SecondaryButtonStyle}"
+							Text="Назад" />
 
-						<Button Text="Зачувај"
-                                Style="{StaticResource PrimaryButtonStyle}"
-                                Command="{Binding SaveCommand}"
-                                IsVisible="{Binding IsReadOnly, Converter={StaticResource InverseBoolConverter}}" />
+						<Button
+							Command="{Binding SaveCommand}"
+							IsVisible="{Binding IsReadOnly, Converter={StaticResource InverseBoolConverter}}"
+							Style="{StaticResource TabButtonStyle}"
+							Text="Зачувај" />
 					</HorizontalStackLayout>
 				</Grid>
 			</Border>
 
-			<!-- BODY -->
-			<Grid Grid.Row="1"
-      Padding="{StaticResource SpaceLg}"
-      RowDefinitions="Auto,Auto,Auto,*">
+			<!--  BODY  -->
+			<ScrollView Grid.Row="1" Padding="{StaticResource SpaceLg}">
+				<VerticalStackLayout Spacing="20">
 
-				<!-- Patient -->
-				<Border Style="{StaticResource ToolbarContainer}">
-					<VerticalStackLayout>
-						<Label Text="Пациент"
-                   Style="{StaticResource InputLabel}" />
+					<!--  Patient Picker (Refined style to use FullName binding)  -->
+					<Border Style="{StaticResource ToolbarContainer}">
+						<VerticalStackLayout Spacing="5">
+							<Label Style="{StaticResource InputLabel}" Text="Пациент" />
+							<Picker
+								Title="Избери Пациент"
+								IsEnabled="{Binding IsReadOnly, Converter={StaticResource InverseBoolConverter}}"
+								ItemDisplayBinding="{Binding FullName}"
+								ItemsSource="{Binding PatientsList}"
+								SelectedItem="{Binding SelectedPatient}" />
+						</VerticalStackLayout>
+					</Border>
 
-						<Picker
-                ItemsSource="{Binding PatientsList}"
-                SelectedItem="{Binding SelectedPatient}"
-                ItemDisplayBinding="{Binding FirstName}"
-                IsEnabled="{Binding IsReadOnly, Converter={StaticResource InverseBoolConverter}}" />
-					</VerticalStackLayout>
-				</Border>
+					<!--  Medication Entry  -->
+					<Border Style="{StaticResource ToolbarContainer}">
+						<VerticalStackLayout Spacing="5">
+							<Label Style="{StaticResource InputLabel}" Text="Лек / Медикамент" />
+							<Entry
+								IsReadOnly="{Binding IsReadOnly}"
+								Placeholder="Внесете име на лек..."
+								Text="{Binding Medication}" />
+						</VerticalStackLayout>
+					</Border>
 
-				<!-- Medication -->
-				<Border Grid.Row="1"
-            Style="{StaticResource ToolbarContainer}">
-					<VerticalStackLayout>
+					<!--  Dosage Entry  -->
+					<Border Style="{StaticResource ToolbarContainer}">
+						<VerticalStackLayout Spacing="5">
+							<Label Style="{StaticResource InputLabel}" Text="Дозирање" />
+							<Entry
+								IsReadOnly="{Binding IsReadOnly}"
+								Placeholder="Пр. 2 пати по 1 таблета на ден"
+								Text="{Binding Dosage}" />
+						</VerticalStackLayout>
+					</Border>
 
-						<Label Text="Лек"
-                   Style="{StaticResource InputLabel}" />
+					<!--  Instructions Editor  -->
+					<Border Style="{StaticResource ToolbarContainer}">
+						<VerticalStackLayout Spacing="5">
+							<Label Style="{StaticResource InputLabel}" Text="Инструкции и Напомени" />
+							<Editor
+								HeightRequest="150"
+								IsReadOnly="{Binding IsReadOnly}"
+								Placeholder="Внесете дополнителни медицински инструкции за употреба..."
+								Text="{Binding Instructions}" />
+						</VerticalStackLayout>
+					</Border>
 
-						<Entry
-                Text="{Binding Medication}"
-                IsReadOnly="{Binding IsReadOnly}" />
-					</VerticalStackLayout>
-				</Border>
-
-				<!-- Dosage -->
-				<Border Grid.Row="2"
-            Style="{StaticResource ToolbarContainer}">
-					<VerticalStackLayout>
-
-						<Label Text="Дозирање"
-                   Style="{StaticResource InputLabel}" />
-
-						<Entry
-                Text="{Binding Dosage}"
-                IsReadOnly="{Binding IsReadOnly}" />
-					</VerticalStackLayout>
-				</Border>
-
-				<!-- Instructions -->
-				<Border Grid.Row="3"
-            Style="{StaticResource ToolbarContainer}">
-					<VerticalStackLayout>
-
-						<Label Text="Инструкции"
-                   Style="{StaticResource InputLabel}" />
-
-						<Editor
-                HeightRequest="150"
-                Text="{Binding Instructions}"
-                IsReadOnly="{Binding IsReadOnly}" />
-					</VerticalStackLayout>
-				</Border>
-			</Grid>
+				</VerticalStackLayout>
+			</ScrollView>
 		</Grid>
 	</Grid>
 </ContentPage>

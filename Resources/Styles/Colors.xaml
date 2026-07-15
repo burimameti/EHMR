@@ -50,7 +50,7 @@
 	<Color x:Key="EpicSecondaryText">#1E40AF</Color>
 	<Color x:Key="EpicSecondaryDarkText">#1E3A8A</Color>
 	<Color x:Key="EpicSecondaryLightText">#93C5FD</Color>
-	<Color x:Key="TextPrimary">#16252B</Color>
+
 	<Color x:Key="TextSecondary">#52696E</Color>
 	<Color x:Key="TextMuted">#8AA0A4</Color>
 	<Color x:Key="TextPlaceholder">#AFC2C5</Color>
@@ -80,7 +80,7 @@
 	<Color x:Key="Danger">#D64545</Color>
 	<Color x:Key="Success">#1F9D6F</Color>
 	<Color x:Key="Warning">#D98E2B</Color>
-	<Color x:Key="Info">#2B6CB0</Color>
+
 
 	<!--  Stat card accents (soft tinted backgrounds, dark-enough text accent color)  -->
 	<Color x:Key="StatBlue">#2B6CB0</Color>
@@ -98,7 +98,7 @@
 	<Color x:Key="MedicalRed">#D6334B</Color>
 
 	<Color x:Key="Transparent">Transparent</Color>
-
+	<Color x:Key="Gray50">#F8FAFC</Color>
 	<Color x:Key="Gray100">#F8FAFC</Color>
 	<Color x:Key="Gray200">#F1F5F9</Color>
 	<Color x:Key="Gray300">#E2E8F0</Color>

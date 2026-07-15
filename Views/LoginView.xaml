@@ -31,9 +31,9 @@
 				<Ellipse
 					AbsoluteLayout.LayoutBounds="0.1,0.2,400,400"
 					AbsoluteLayout.LayoutFlags="PositionProportional"
-					Fill="#0C87FD"
+					Fill="#016893"
 					HeightRequest="400"
-					Opacity="0.1"
+					Opacity="0.6"
 					WidthRequest="400" />
 
 				<Ellipse
@@ -67,7 +67,7 @@
 						FontAttributes="Bold"
 						FontSize="28"
 						HorizontalOptions="Center"
-						Text="EH"
+						Text="Е-МК"
 						TextColor="White"
 						VerticalOptions="Center" />
 				</Border>
@@ -93,7 +93,7 @@
 						Grid.Column="0"
 						Padding="20"
 						BackgroundColor="{StaticResource LoginCardAlt}"
-						Stroke="{StaticResource LoginBorder}"
+						Stroke="{StaticResource LoginAccent}"
 						StrokeThickness="1.5">
 
 						<Border.Shadow>
@@ -124,7 +124,7 @@
 						Grid.Column="1"
 						Padding="20"
 						BackgroundColor="{StaticResource LoginCardAlt}"
-						Stroke="{StaticResource LoginBorder}"
+						Stroke="{StaticResource LoginAccent}"
 						StrokeThickness="1.5">
 
 						<Border.Shadow>
@@ -157,7 +157,7 @@
 				<Border
 					Padding="24"
 					BackgroundColor="{StaticResource LoginCardAlt}"
-					Stroke="{StaticResource LoginBorder}"
+					Stroke="{StaticResource LoginAccent}"
 					StrokeThickness="1.5">
 
 					<Border.Shadow>
@@ -202,6 +202,7 @@
 		<Grid Grid.Column="1" Padding="40">
 
 			<Border
+				BackgroundColor="{StaticResource LoginBorder}"
 				HorizontalOptions="Fill"
 				Style="{StaticResource LoginCard}"
 				VerticalOptions="Center">
@@ -229,7 +230,7 @@
 							<Label
 								FontSize="14"
 								Text="За да се најавите ве молиме користете ја е-поштата и лозинката дадена од Администрацијата"
-								TextColor="{StaticResource LoginMuted}" />
+								TextColor="{StaticResource LoginAccent}" />
 						</VerticalStackLayout>
 
 						<!--  USERNAME  -->
@@ -239,7 +240,7 @@
 								FontAttributes="Bold"
 								FontSize="13"
 								Text="Корисничко име или Е-пошта"
-								TextColor="{StaticResource LoginMuted}" />
+								TextColor="{StaticResource White}" />
 
 							<Border
 								Margin="0,8,0,0"
@@ -275,7 +276,7 @@
 								FontAttributes="Bold"
 								FontSize="13"
 								Text="Лозинка"
-								TextColor="{StaticResource LoginMuted}" />
+								TextColor="{StaticResource White}" />
 
 							<Border Style="{StaticResource LoginInputBorder}">
 
@@ -305,12 +306,14 @@
 						<!--  OPTIONS  -->
 						<Grid ColumnDefinitions="*,Auto">
 
-							<HorizontalStackLayout Spacing="6">
+							<HorizontalStackLayout HorizontalOptions="Start" Spacing="6">
 								<CheckBox IsChecked="{Binding RememberMe}" Color="{StaticResource LoginAccent}" />
 								<Label
+									Margin="-80,5,22,0"
 									FontSize="13"
+									HorizontalOptions="Start"
 									Text="Запамти"
-									TextColor="{StaticResource LoginMuted}" />
+									TextColor="{StaticResource White}" />
 							</HorizontalStackLayout>
 
 							<Label

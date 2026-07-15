@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EHMR.Domain.Entities.Reports
+﻿namespace EHMR.Domain.Entities.Reports
 {
+
     public enum ReportType
     {
         MissedTherapies,
@@ -14,44 +9,149 @@ namespace EHMR.Domain.Entities.Reports
         Patients
     }
 
+
     public enum ReportCategory
     {
         Clinical,
         Operational,
-        SecurityAuditing, MissedTherapies,
-        Auditing,
-        AppointmentStatuses,
-        Patients
+        Security
     }
 
-    public class ReportDefinition
+
+
+    public sealed class ReportDefinition
     {
-        public string Id { get; set; } = string.Empty;
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string Icon { get; set; } = "📊";
+
+        public string Key
+        {
+            get;
+            init;
+        }
+            = string.Empty;
+
+
+
+        public string Title
+        {
+            get;
+            init;
+        }
+            = string.Empty;
+
+
+
+        public string Description
+        {
+            get;
+            init;
+        }
+            = string.Empty;
+
+
+
+        public string Icon
+        {
+            get;
+            init;
+        }
+            = string.Empty;
+
+
 
         public ReportCategory Category
         {
-            get; set;
+            get;
+            init;
         }
 
-        public string RolesRequired { get; set; } = "Admin, Doctor, Operator";
+
+
+        public ReportType Type
+        {
+            get;
+            init;
+        }
+
+
+
+        public Type ProviderType
+        {
+            get;
+            init;
+        }
+            = null!;
+
     }
 
-    public class DynamicReportColumn
+
+
+
+
+    public sealed class DynamicReportColumn
     {
-        public string HeaderName { get; set; } = string.Empty;
-        public string Width { get; set; } = "*";
+
+        public string HeaderName
+        {
+            get;
+            init;
+        }
+            = string.Empty;
+
+
+
+        public string Key
+        {
+            get;
+            init;
+        }
+            = string.Empty;
+
+
+
+        public double Width
+        {
+            get;
+            init;
+        }
+            = 160;
+
     }
 
-    public class DynamicReportRow
+
+
+
+
+    public sealed class DynamicReportRow
     {
-        public List<string> Cells { get; set; } = new();
+
+        public List<string> Cells
+        {
+            get;
+            init;
+        }
+            = new();
+
+
 
         public bool IsAlertSeverity
         {
-            get; set;
+            get;
+            init;
         }
+
+
+
+        public string this[int index]
+        {
+            get
+            {
+                if(index<0||index>=Cells.Count)
+                    return string.Empty;
+
+                return Cells[index];
+            }
+        }
+
     }
+
 }

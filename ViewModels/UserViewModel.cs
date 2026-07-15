@@ -12,9 +12,10 @@ namespace EHMR.ViewModels;
 public partial class UsersViewModel : BaseViewModel<UserAdminDto>
 {
     private readonly IUserService _userService;
-    private readonly ISelectedItemService<UserAdminDto> _userSelectionService;
 
     protected override string ModuleName => "users";
+    protected override string DetailRoute => AppRoutes.Users.Detail;
+    protected override string PermissionDeniedMessage => "Немате авторизација за додавање нов корисник.";
 
     public ICommand SearchCommand
     {
@@ -26,18 +27,17 @@ public partial class UsersViewModel : BaseViewModel<UserAdminDto>
         INavigationService navigationService,
         IUserDialogService userDialogService,
         IMenuService menuService,
-        ISelectedItemService<UserAdminDto> userSelectionService,
+        ISelectedItemService<UserAdminDto> selectedItemService,
         IAuthorizationService authService)
-        : base(navigationService, userDialogService, menuService, authService)
+        : base(navigationService, userDialogService, menuService, authService, selectedItemService)
     {
         _userService=userService;
-        _userSelectionService=userSelectionService;
 
         PageSize=10;
         SearchCommand=new Command<string>(query => SearchText=query);
 
         EvaluatePermissions();
-        BuildSparkGridColumns(); // static columns — no need to rebuild per load
+        BuildSparkGridColumns();
     }
 
     // ================= LOAD =================
@@ -82,7 +82,6 @@ public partial class UsersViewModel : BaseViewModel<UserAdminDto>
     // ================= FILTERS =================
     protected override IEnumerable<UserAdminDto> ApplyFilters(IEnumerable<UserAdminDto> query)
     {
-        // Add future filters here (role, status, etc.)
         return query;
     }
 
@@ -95,7 +94,6 @@ public partial class UsersViewModel : BaseViewModel<UserAdminDto>
     protected override void ResetFilters()
     {
         SearchText=string.Empty;
-        // Add resets here alongside any future filter added to ApplyFilters above.
     }
 
     // ================= SPARK GRID =================
@@ -127,36 +125,12 @@ public partial class UsersViewModel : BaseViewModel<UserAdminDto>
             row["Status"]=new SparkBadgeValue(
                 u.IsActive ? "АКТИВЕН" : "НЕАКТИВЕН",
                 u.IsActive ? SparkBadgeTone.Success : SparkBadgeTone.Danger);
+
+            AddDefaultActions(u, row);
+
             rows.Add(row);
         }
 
         GridRows=rows;
-    }
-
-    // ================= ACTIONS =================
-    // Renamed Create → Add and SelectUser → Select to match the naming convention
-    // every other list screen uses (AddCommand / SelectCommand / EditCommand),
-    // so the SparkDataGridView bindings line up the same way they do on PatientListPage.
-    [RelayCommand]
-    private async Task Add()
-    {
-        _userSelectionService.SelectedItem=null;
-        await NavigationService.GoToAsync(AppRoutes.Users.Detail);
-    }
-
-    [RelayCommand]
-    private async Task Select(UserAdminDto user)
-    {
-        if(user==null) return;
-        _userSelectionService.SelectedItem=user;
-        await NavigationService.GoToAsync(AppRoutes.Users.Detail);
-    }
-
-    [RelayCommand]
-    private async Task Edit(UserAdminDto user)
-    {
-        if(user==null) return;
-        _userSelectionService.SelectedItem=user;
-        await NavigationService.GoToAsync(AppRoutes.Users.Detail);
     }
 }

@@ -1,196 +1,193 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:viewModels="clr-namespace:EHMR.ViewModels.Therapies"
-    xmlns:entities="clr-namespace:EHMR.Domain.Entities"
-    x:Class="EHMR.Views.Therapies.TherapyDetailsPage"
-    x:DataType="viewModels:TherapyDetailsViewModel"
-    BackgroundColor="#F8FAFC">
+	x:Class="EHMR.Views.Therapies.TherapyDetailsPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:entities="clr-namespace:EHMR.Domain.Entities"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Therapies"
+	x:DataType="viewModels:TherapyDetailsViewModel"
+	BackgroundColor="#F8FAFC">
 
 	<Grid ColumnDefinitions="240,*">
 
-		<!-- LEFT MENU -->
+		<!--  LEFT MENU  -->
 		<Border
-            Grid.Column="0"
-            BackgroundColor="#0F172A"
-            StrokeThickness="0">
+			Grid.Column="0"
+			BackgroundColor="#0F172A"
+			StrokeThickness="0">
 
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
-		<!-- MAIN CONTENT -->
+		<!--  MAIN CONTENT  -->
 		<Grid
-            Grid.Column="1"
-            Padding="20"
-            ColumnDefinitions="380,*"
-            ColumnSpacing="20">
+			Grid.Column="1"
+			Padding="20"
+			ColumnDefinitions="380,*"
+			ColumnSpacing="20">
 
-			<!-- LEFT SIDE -->
+			<!--  LEFT SIDE  -->
 			<Border
-                BackgroundColor="White"
-                Stroke="#E2E8F0"
-                StrokeShape="RoundRectangle 12"
-                Padding="20">
+				Padding="20"
+				BackgroundColor="White"
+				Stroke="#E2E8F0"
+				StrokeShape="RoundRectangle 12">
 
 				<VerticalStackLayout Spacing="20">
 
 					<Label
-                        Text="{Binding PageTitle}"
-                        FontSize="22"
-                        FontAttributes="Bold"
-                        TextColor="#0F172A" />
+						FontAttributes="Bold"
+						FontSize="22"
+						Text="{Binding PageTitle}"
+						TextColor="#0F172A" />
 
-					<BoxView HeightRequest="1"
-                             Color="#E2E8F0" />
+					<BoxView HeightRequest="1" Color="#E2E8F0" />
 
-					<!-- Patient -->
+					<!--  Patient  -->
 					<VerticalStackLayout Spacing="5">
 
 						<Label
-                            Text="Пациент"
-                            FontAttributes="Bold"
-                            TextColor="#64748B" />
+							FontAttributes="Bold"
+							Text="Пациент"
+							TextColor="#64748B" />
 
 						<Label
-                            Text="{Binding Patient.FullName}"
-                            FontSize="16"
-                            TextColor="#0F172A" />
+							FontSize="16"
+							Text="{Binding Patient.FullName}"
+							TextColor="#0F172A" />
 					</VerticalStackLayout>
 
-					<!-- Cycle Number -->
+					<!--  Cycle Number  -->
 					<VerticalStackLayout Spacing="5">
 
 						<Label
-                            Text="Број на циклус"
-                            FontAttributes="Bold"
-                            TextColor="#64748B" />
+							FontAttributes="Bold"
+							Text="Број на циклус"
+							TextColor="#64748B" />
 
-						<Entry
-                            Text="{Binding CycleNumber}"
-                            Keyboard="Numeric" />
+						<Entry Keyboard="Numeric" Text="{Binding CycleNumber}" />
 					</VerticalStackLayout>
 
-					<!-- Selected cycle -->
+					<!--  Selected cycle  -->
 					<VerticalStackLayout Spacing="5">
 
 						<Label
-                            Text="Избран циклус"
-                            FontAttributes="Bold"
-                            TextColor="#64748B" />
+							FontAttributes="Bold"
+							Text="Избран циклус"
+							TextColor="#64748B" />
 
 						<Label
-                            Text="{Binding SelectedCycle.Status}"
-                            FontAttributes="Bold"
-                            TextColor="#2563EB" />
+							FontAttributes="Bold"
+							Text="{Binding SelectedCycle.Status}"
+							TextColor="#2563EB" />
 					</VerticalStackLayout>
 
 					<Button
-                        Text="➕ Креирај циклус"
-                        Command="{Binding CreateCycleCommand}"
-                        BackgroundColor="#10B981"
-                        TextColor="White"
-                        HeightRequest="45"
-                        CornerRadius="10" />
+						BackgroundColor="#10B981"
+						Command="{Binding CreateCycleCommand}"
+						CornerRadius="10"
+						HeightRequest="45"
+						IsVisible="{Binding CanCreate}"
+						Text="➕ Креирај циклус"
+						TextColor="White" />
 
 					<Button
-                        Text="💾 Зачувај"
-                        Command="{Binding SaveCycleCommand}"
-                        BackgroundColor="#2563EB"
-                        TextColor="White"
-                        HeightRequest="45"
-                        CornerRadius="10" />
+						BackgroundColor="#2563EB"
+						Command="{Binding SaveCycleCommand}"
+						CornerRadius="10"
+						HeightRequest="45"
+						IsVisible="{Binding CanUpdate}"
+						Text="💾 Зачувај"
+						TextColor="White" />
 
 					<Button
-                        Text="🗑 Избриши"
-                        Command="{Binding DeleteCycleCommand}"
-                        BackgroundColor="#DC2626"
-                        TextColor="White"
-                        HeightRequest="45"
-                        CornerRadius="10" />
+						BackgroundColor="#DC2626"
+						Command="{Binding DeleteCycleCommand}"
+						CornerRadius="10"
+						HeightRequest="45"
+						Text="🗑 Избриши"
+						TextColor="White" />
 				</VerticalStackLayout>
 			</Border>
 
-			<!-- RIGHT SIDE -->
+			<!--  RIGHT SIDE  -->
 			<Border
-                Grid.Column="1"
-                BackgroundColor="White"
-                Stroke="#E2E8F0"
-                StrokeShape="RoundRectangle 12"
-                Padding="20">
+				Grid.Column="1"
+				Padding="20"
+				BackgroundColor="White"
+				Stroke="#E2E8F0"
+				StrokeShape="RoundRectangle 12">
 
 				<Grid RowDefinitions="Auto,*">
 
 					<Label
-                        Text="Терапевтски циклуси"
-                        FontSize="18"
-                        FontAttributes="Bold"
-                        TextColor="#0F172A" />
+						FontAttributes="Bold"
+						FontSize="18"
+						Text="Терапевтски циклуси"
+						TextColor="#0F172A" />
 
 					<CollectionView
-                        Grid.Row="1"
-                        ItemsSource="{Binding Cycles}"
-                        SelectionMode="Single"
-                        SelectedItem="{Binding SelectedCycle}">
+						Grid.Row="1"
+						ItemsSource="{Binding Cycles}"
+						SelectedItem="{Binding SelectedCycle}"
+						SelectionMode="Single">
 
 						<CollectionView.ItemTemplate>
 
 							<DataTemplate x:DataType="entities:TherapyCycle">
 
 								<Border
-                                    Margin="0,5"
-                                    Padding="15"
-                                    BackgroundColor="#F8FAFC"
-                                    Stroke="#E2E8F0"
-                                    StrokeShape="RoundRectangle 10">
+									Margin="0,5"
+									Padding="15"
+									BackgroundColor="#F8FAFC"
+									Stroke="#E2E8F0"
+									StrokeShape="RoundRectangle 10">
 
 									<Grid ColumnDefinitions="60,*,Auto">
 
-										<!-- Number -->
+										<!--  Number  -->
 										<Border
-                                            BackgroundColor="#2563EB"
-                                            WidthRequest="40"
-                                            HeightRequest="40"
-                                            StrokeShape="RoundRectangle 20">
+											BackgroundColor="#2563EB"
+											HeightRequest="40"
+											StrokeShape="RoundRectangle 20"
+											WidthRequest="40">
 
 											<Label
-                                                Text="{Binding CycleNumber}"
-                                                TextColor="White"
-                                                FontAttributes="Bold"
-                                                HorizontalOptions="Center"
-                                                VerticalOptions="Center" />
+												FontAttributes="Bold"
+												HorizontalOptions="Center"
+												Text="{Binding CycleNumber}"
+												TextColor="White"
+												VerticalOptions="Center" />
 										</Border>
 
-										<!-- Patient -->
+										<!--  Patient  -->
 										<VerticalStackLayout
-                                            Grid.Column="1"
-                                            Margin="15,0"
-                                            Spacing="3">
+											Grid.Column="1"
+											Margin="15,0"
+											Spacing="3">
 
 											<Label
-                                                Text="{Binding Patient.FullName}"
-                                                FontSize="16"
-                                                FontAttributes="Bold"
-                                                TextColor="#0F172A" />
+												FontAttributes="Bold"
+												FontSize="16"
+												Text="{Binding Patient.FullName}"
+												TextColor="#0F172A" />
 
-											<Label
-                                                Text="{Binding Status}"
-                                                TextColor="#64748B" />
+											<Label Text="{Binding Status}" TextColor="#64748B" />
 										</VerticalStackLayout>
 
-										<!-- Appointments count -->
+										<!--  Appointments count  -->
 										<Border
-                                            Grid.Column="2"
-                                            BackgroundColor="#DBEAFE"
-                                            Padding="10,5"
-                                            StrokeThickness="0"
-                                            StrokeShape="RoundRectangle 8">
+											Grid.Column="2"
+											Padding="10,5"
+											BackgroundColor="#DBEAFE"
+											StrokeShape="RoundRectangle 8"
+											StrokeThickness="0">
 
 											<Label
-                                                Text="{Binding Appointments.Count, StringFormat='Термини: {0}'}"
-                                                TextColor="#1D4ED8"
-                                                FontAttributes="Bold" />
+												FontAttributes="Bold"
+												Text="{Binding Appointments.Count, StringFormat='Термини: {0}'}"
+												TextColor="#1D4ED8" />
 										</Border>
 									</Grid>
 								</Border>

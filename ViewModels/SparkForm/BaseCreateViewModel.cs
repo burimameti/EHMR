@@ -17,13 +17,13 @@ namespace EHMR.ViewModels.SparkForm
             INavigationService navigationService,
             IUserDialogService dialogService,
             IMenuService menuService,
-            IAuthorizationService authService,
+            IAuthorizationService authService, ISelectedItemService<TEntity> selectedItemService,
             ISparkFormBuilder formBuilder)
             : base(
                 navigationService,
                 dialogService,
                 menuService,
-                authService,
+                authService,selectedItemService,
                 formBuilder)
         {
             FormMode=SparkFormMode.Create;
@@ -31,15 +31,5 @@ namespace EHMR.ViewModels.SparkForm
             BuildForm();
         }
 
-        [RelayCommand]
-        protected virtual async Task SaveAsync()
-        {
-        }
-
-        [RelayCommand]
-        protected virtual async Task CancelAsync()
-        {
-            await NavigationService.GoBackAsync();
-        }
     }
 }

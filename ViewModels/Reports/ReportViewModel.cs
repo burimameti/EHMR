@@ -1,12 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
-using EHMR.Domain.Entities.Reports;
 using EHMR.Domain.Entities.Rbac;
+using EHMR.Domain.Entities.Reports;
 using EHMR.Domain.Interfaces;
-using EHMR.Infrastructure.Persistence;
-using EHMR.Services;
-using Microsoft.EntityFrameworkCore;
+using EHMR.Resources.Controls;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -14,97 +12,380 @@ namespace EHMR.ViewModels;
 
 public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 {
-    private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
-
-    private bool _suppressAdvancedFilterSideEffects;
+    #region Services
+    private readonly IReportHistoryService _reportHistoryService;
+    private readonly ReportRegistry _registry;
+    private readonly IReportExportService _reportExportService;
+    private IReportProvider? _activeProvider;
     private ReportDefinition? _activeReport;
 
-    // ---- Hub state ----
-    [ObservableProperty] private bool isShowingDetails;
-    [ObservableProperty] private string hubSearchText = string.Empty;
-    [ObservableProperty] private string userName = ""; // TODO: wire to your real session/user service
+    [ObservableProperty]
+    private string activeReportTitle = string.Empty;
+
+    [ObservableProperty]
+    private string activeReportIcon = string.Empty;
+    #endregion
+
+    #region Hub
+
+    [ObservableProperty]
+    private bool isShowingDetails;
+
+    [ObservableProperty]
+    private string hubSearchText = string.Empty;
 
     public ObservableCollection<ReportDefinition> AvailableReports { get; } = new();
-    private readonly List<ReportDefinition> _allReportDefinitions;
 
-    // ---- Details state ----
-    [ObservableProperty] private DateTime startDate = DateTime.Today.AddMonths(-1);
-    [ObservableProperty] private DateTime endDate = DateTime.Today;
-    [ObservableProperty] private string advancedFilterText = string.Empty;
+    public ObservableCollection<string> CategoryOptions { get; } = new();
 
-    [ObservableProperty] private string metric1Title = "Вкупно записи";
-    [ObservableProperty] private int metric1Value;
-    [ObservableProperty] private string metric2Title = "Критични аларми";
-    [ObservableProperty] private int metric2Value;
-    [ObservableProperty] private string metric3Title = "Стапка на доследност";
-    [ObservableProperty] private int metric3Value;
+    public ObservableCollection<string> TypeOptions { get; } = new();
 
-    public ObservableCollection<DynamicReportColumn> FormattedColumns { get; } = new();
+    #endregion
+
+    #region Filters
+
+    [ObservableProperty]
+    private string selectedCategory = "Сите";
+
+    [ObservableProperty]
+    private string selectedType = "Сите";
+
+    [ObservableProperty]
+    private string userName = string.Empty;
+
+    [ObservableProperty]
+    private DateTime startDate = DateTime.Today.AddMonths(-1);
+
+    [ObservableProperty]
+    private DateTime endDate = DateTime.Today;
+
+    #endregion
+    #region Period Selection
+
+    public ObservableCollection<string> PeriodTypeOptions
+    {
+        get;
+    } = new()
+    {
+        "Месечно", "Квартално", "Полугодишно", "Годишно", "Прилагодено"
+    };
+
+    [ObservableProperty]
+    private string selectedPeriodTypeLabel = "Месечно";
+
+    public bool IsCustomPeriod => SelectedPeriodTypeLabel=="Прилагодено";
+
+    partial void OnSelectedPeriodTypeLabelChanged(string value)
+    {
+        OnPropertyChanged(nameof(IsCustomPeriod));
+        RecalculatePeriodRange();
+    }
+
+    private void RecalculatePeriodRange()
+    {
+        var today = DateTime.Today;
+
+        switch(SelectedPeriodTypeLabel)
+        {
+            case "Месечно":
+                StartDate=new DateTime(today.Year, today.Month, 1);
+                EndDate=StartDate.AddMonths(1).AddDays(-1);
+                break;
+
+            case "Квартално":
+                var q = (today.Month-1)/3;
+                StartDate=new DateTime(today.Year, q*3+1, 1);
+                EndDate=StartDate.AddMonths(3).AddDays(-1);
+                break;
+
+            case "Полугодишно":
+                StartDate=today.Month<=6
+                    ? new DateTime(today.Year, 1, 1)
+                    : new DateTime(today.Year, 7, 1);
+                EndDate=StartDate.AddMonths(6).AddDays(-1);
+                break;
+
+            case "Годишно":
+                StartDate=new DateTime(today.Year, 1, 1);
+                EndDate=new DateTime(today.Year, 12, 31);
+                break;
+
+            case "Прилагодено":
+                return;
+        }
+    }
+
+    [RelayCommand]
+    private async Task ApplyPeriodAndRegenerateAsync()
+    {
+        await GenerateReportAsync();
+    }
+
+    #endregion
+    #region Hub KPI
+
+    [ObservableProperty]
+    private int hubTotalTemplates;
+
+    [ObservableProperty]
+    private int hubTotalCategories;
+
+    [ObservableProperty]
+    private int hubGeneratedToday;
+
+    [ObservableProperty]
+    private int hubFailedToday;
+
+    #endregion
+
+    #region Hub Grid - Templates
+
+    [ObservableProperty]
+    private ObservableCollection<SparkGridColumn> templateColumns = new();
+
+    [ObservableProperty]
+    private ObservableCollection<SparkGridRow> templateRows = new();
+
+    [ObservableProperty]
+    private int templateCurrentPage = 1;
+
+    [ObservableProperty]
+    private int templateTotalPages = 1;
+
+    private const int TemplatePageSize = 6;
+
+    private List<ReportDefinition> _filteredTemplates = new();
+
+    #endregion
+
+    #region Hub - History Activity Feed
+
+    public ObservableCollection<SparkActivityItem> HistoryActivity { get; } = new();
+
+    private readonly List<SparkActivityItem> _allHistoryActivity = new();
+
+    [ObservableProperty]
+    private int historyCurrentPage = 1;
+
+    [ObservableProperty]
+    private int historyTotalPages = 1;
+
+    private const int HistoryPageSize = 8;
+
+    #endregion
+
+    #region Detail - Metrics
+
+    [ObservableProperty]
+    private string metric1Title = "Вкупно записи";
+
+    [ObservableProperty]
+    private int metric1Value;
+
+    [ObservableProperty]
+    private string metric2Title = "Критични";
+
+    [ObservableProperty]
+    private int metric2Value;
+
+    [ObservableProperty]
+    private string metric3Title = "Статистика";
+
+    [ObservableProperty]
+    private int metric3Value;
+
+    #endregion
+
+    #region Detail - Grid
+
     public ObservableCollection<DynamicReportRow> ProcessedRows { get; } = new();
+
+    [ObservableProperty]
+    private ObservableCollection<SparkGridColumn> gridColumns = new();
+
+    [ObservableProperty]
+    private ObservableCollection<SparkGridRow> gridRows = new();
+
+    // Tabs доаѓа од BaseViewModel<T> — не се redeclara тука.
 
     protected override string ModuleName => Modules.Reports;
 
+    #endregion
+
     public ReportViewModel(
-        IDbContextFactory<DesktopTherapyDbContext> dbFactory,
+        ReportRegistry registry,
         INavigationService navigationService,
+        IReportExportService reportExportService,
         IUserDialogService userDialogService,
         IMenuService menuService,
-        IAuthorizationService authService)
-        : base(navigationService, userDialogService, menuService, authService)
+        IReportHistoryService reportHistoryService,
+        IAuthorizationService authService,
+        ISelectedItemService<DynamicReportRow> selectedItemService)
+        : base(navigationService, userDialogService, menuService, authService, selectedItemService)
     {
-        _dbFactory=dbFactory;
+        _registry=registry;
+        _reportHistoryService=reportHistoryService;
+        _reportExportService=reportExportService;
+        PageSize=10;
 
-        _allReportDefinitions=
-        [
-            new() {   Icon = "⏱️", Title = "Пропуштени терапии",  Category = ReportCategory.MissedTherapies,  Description = "Циклуси означени како пропуштени во избраниот период." },
-            new() { Icon = "🛡️", Title = "Aудит",                Category = ReportCategory.SecurityAuditing,    Description = "Хронолошки преглед на системски акции и настани." },
-            new() { Icon = "📅", Title = "Статус на термини",   Category = ReportCategory.AppointmentStatuses,   Description = "Статус на закажани, завршени и откажани прегледи." },
-            new() { Icon = "🧑‍⚕️", Title = "Пациенти",           Category = ReportCategory.Patients,   Description = "Ново регистрирани пациенти во избраниот период." }
-        ];
-
-        RefreshAvailableReports();
+        BuildTemplateGridColumns();
+        InitializeSparkControls();
+        LoadReports();
+        LoadHistorySeed();
 
         PropertyChanged+=OnViewModelPropertyChanged;
 
         EvaluatePermissions();
     }
 
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    // =====================================================
+    // REPORT HUB
+    // =====================================================
+
+    private void LoadReports()
     {
-        if(e.PropertyName==nameof(HubSearchText))
+        AvailableReports.Clear();
+
+        foreach(var provider in _registry.Providers)
         {
-            RefreshAvailableReports();
-            return;
+            AvailableReports.Add(new ReportDefinition
+            {
+                Key=provider.Key,
+                Title=provider.Title,
+                Description=provider.Description,
+                Icon=provider.Icon,
+                Category=provider.Category,
+                Type=provider.Type,
+                ProviderType=provider.GetType()
+            });
         }
 
-        if(e.PropertyName==nameof(AdvancedFilterText))
+        BuildFilterOptions();
+        RefreshAvailableReports();
+    }
+
+    private void BuildFilterOptions()
+    {
+        CategoryOptions.Clear();
+        CategoryOptions.Add("Сите");
+
+        foreach(var category in _registry.Providers
+            .Select(x => x.Category.ToString())
+            .Distinct()
+            .OrderBy(x => x))
         {
-            if(_suppressAdvancedFilterSideEffects) return;
-            ApplyPipeline();
+            CategoryOptions.Add(category);
+        }
+
+        TypeOptions.Clear();
+        TypeOptions.Add("Сите");
+
+        foreach(var type in _registry.Providers
+            .Select(x => x.Type.ToString())
+            .Distinct()
+            .OrderBy(x => x))
+        {
+            TypeOptions.Add(type);
         }
     }
 
     private void RefreshAvailableReports()
     {
-        var term = HubSearchText?.Trim()??"";
-        var filtered = string.IsNullOrWhiteSpace(term)
-            ? _allReportDefinitions
-            : _allReportDefinitions.Where(r =>
-                r.Title.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                r.Category.ToString().Equals(term, StringComparison.OrdinalIgnoreCase)).ToList();
+        var query = _registry.Providers.AsEnumerable();
+
+        if(!string.IsNullOrWhiteSpace(HubSearchText))
+        {
+            var search = HubSearchText.Trim();
+
+            query=query.Where(x =>
+                x.Title.Contains(search, StringComparison.OrdinalIgnoreCase)||
+                x.Description.Contains(search, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if(SelectedCategory!="Сите")
+        {
+            query=query.Where(x =>
+                x.Category.ToString().Equals(SelectedCategory, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if(SelectedType!="Сите")
+        {
+            query=query.Where(x =>
+                x.Type.ToString().Equals(SelectedType, StringComparison.OrdinalIgnoreCase));
+        }
 
         AvailableReports.Clear();
-        foreach(var r in filtered) AvailableReports.Add(r);
+
+        foreach(var provider in query)
+        {
+            AvailableReports.Add(new ReportDefinition
+            {
+                Key=provider.Key,
+                Title=provider.Title,
+                Description=provider.Description,
+                Icon=provider.Icon,
+                Category=provider.Category,
+                Type=provider.Type,
+                ProviderType=provider.GetType()
+            });
+        }
+
+        _filteredTemplates=AvailableReports.ToList();
+
+        TemplateCurrentPage=1;
+        TemplateTotalPages=Math.Max(1, (int)Math.Ceiling(_filteredTemplates.Count/(double)TemplatePageSize));
+
+        RefreshTemplateGridRows();
+        CalculateHubMetrics();
+    }
+
+    // =====================================================
+    // EVENTS
+    // =====================================================
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if(e.PropertyName==nameof(HubSearchText)||
+            e.PropertyName==nameof(SelectedCategory)||
+            e.PropertyName==nameof(SelectedType))
+        {
+            RefreshAvailableReports();
+            return;
+        }
+
+        if(e.PropertyName==nameof(SearchText))
+        {
+            ApplyPipeline();
+        }
     }
 
     [RelayCommand]
     private async Task SelectReport(ReportDefinition report)
     {
-        if(report is null) return;
+        if(report==null)
+            return;
 
         _activeReport=report;
-        BuildColumnsFor(report.Category);
+        _activeProvider=_registry.Resolve(report.Key);
+        if(_activeProvider==null) return;
+
+        ActiveReportTitle=report.Title;
+        ActiveReportIcon=report.Icon;
+
+        _activeProvider.FiltersChanged+=OnProviderFiltersChanged;
+
+        InitializeSparkControls();
+
+        SelectedPeriodTypeLabel="Месечно";
+        RecalculatePeriodRange();
+
         IsShowingDetails=true;
+
+        await GenerateReportAsync();
+    }
+
+    private async void OnProviderFiltersChanged()
+    {
         await GenerateReportAsync();
     }
 
@@ -112,281 +393,493 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     private void BackToHub()
     {
         IsShowingDetails=false;
+
+        if(_activeProvider!=null)
+            _activeProvider.FiltersChanged-=OnProviderFiltersChanged;
+
+        _activeProvider=null;
         _activeReport=null;
+        ActiveReportTitle=string.Empty;
+        ActiveReportIcon=string.Empty;
+        ProcessedRows.Clear();
+
+        GridColumns.Clear();
+        GridRows.Clear();
+        Tabs.Clear();
+        Pickers.Clear();
+        Buttons.Clear();
     }
 
-    // ============================================================
-    // DATA LOAD
-    // ============================================================
     [RelayCommand]
-    public async Task ExecuteReportGenerationAsync() => await GenerateReportAsync();
-
-    private async Task GenerateReportAsync()
+    private void CreateNewTemplate()
     {
-        if(IsBusy||_activeReport is null) return;
-        try
+        // TODO: отвори wizard за нов report template кога ќе биде готов report builder-от.
+    }
+
+    // =====================================================
+    // HUB - TEMPLATES GRID
+    // =====================================================
+
+    private void BuildTemplateGridColumns()
+    {
+        TemplateColumns.Clear();
+
+        TemplateColumns.Add(new SparkGridColumn { Header="НАСЛОВ", Key="Title", Width=new GridLength(220) });
+        TemplateColumns.Add(new SparkGridColumn { Header="КАТЕГОРИЈА", Key="Category", Width=new GridLength(150) });
+        TemplateColumns.Add(new SparkGridColumn { Header="ТИП", Key="Type", Width=new GridLength(150) });
+        TemplateColumns.Add(new SparkGridColumn { Header="ОПИС", Key="Description", Width=GridLength.Star });
+        TemplateColumns.Add(new SparkGridColumn
         {
-            IsBusy=true;
-            ClearError();
+            Header="",
+            Key="Action",
+            CellType=SparkGridCellType.Actions,
+            Width=new GridLength(140)
+        });
+    }
 
-            var startRange = StartDate.Date;
-            var endRange = EndDate.Date.AddDays(1).AddTicks(-1);
+    private void RefreshTemplateGridRows()
+    {
+        var rows = new ObservableCollection<SparkGridRow>();
 
-            await using var db = await _dbFactory.CreateDbContextAsync();
+        var page = _filteredTemplates
+            .Skip((TemplateCurrentPage-1)*TemplatePageSize)
+            .Take(TemplatePageSize);
 
-            AllItems=_activeReport.Category switch
+        foreach(var template in page)
+        {
+            var row = new SparkGridRow { Tag=template };
+
+            row["Title"]=template.Title;
+            row["Category"]=template.Category.ToString();
+            row["Type"]=template.Type.ToString();
+            row["Description"]=template.Description;
+            row["Action"]=new SparkButtonItem
             {
-                ReportCategory.MissedTherapies => await LoadMissedTherapiesAsync(db, startRange, endRange),
-                ReportCategory.Auditing => await LoadAuditingAsync(db, startRange, endRange),
-                ReportCategory.AppointmentStatuses => await LoadAppointmentStatusesAsync(db, startRange, endRange),
-                ReportCategory.Patients => await LoadPatientsAsync(db, startRange, endRange),
-                _ => []
+                Label="Генерирај",
+                IsPrimary=true,
+                Command=SelectReportCommand,
+                CommandParameter=template
             };
 
-            ApplyPipeline();
-            RecomputeMetrics();
+            rows.Add(row);
         }
-        catch(Exception ex)
-        {
-            OnError($"Грешка при генерирање извештај: {ex.Message}");
-        }
-        finally
-        {
-            IsBusy=false;
-        }
+
+        TemplateRows=rows;
     }
 
-    private static async Task<List<DynamicReportRow>> LoadMissedTherapiesAsync(
-        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
+    [RelayCommand]
+    private void TemplateNextPage()
     {
-        var data = await db.TherapyCycles
-            .Include(p => p.Patient)
-            .AsNoTracking()
-            .Where(c => c.Status==TherapyStatus.Missed
-                        &&c.StartDate>=startRange&&c.EndDate<=endRange)
-            .OrderByDescending(c => c.EndDate)
-            .ToListAsync();
+        if(TemplateCurrentPage>=TemplateTotalPages)
+            return;
 
-        return data.Select(c => new DynamicReportRow
-        {
-            Cells=
-            [
-                c.Patient.NationalId,
-                c.Patient.FullName,
-                $"Ц-#{c.CycleNumber}",
-                c.StartDate.Value.ToString("dd.MM.yyyy"),
-                string.IsNullOrEmpty(c.Notes) ? "Нема внесено причина од лекар!" : c.Notes
-            ],
-            IsAlertSeverity=string.IsNullOrEmpty(c.Notes)
-        }).ToList();
+        TemplateCurrentPage++;
+        RefreshTemplateGridRows();
     }
 
-    // NOTE: AuditLog entity guessed — adjust field names to match the real entity.
-    private static async Task<List<DynamicReportRow>> LoadAuditingAsync(
-        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
+    [RelayCommand]
+    private void TemplatePreviousPage()
     {
-        var data = await db.AuditLogs
-            .AsNoTracking()
-            .Where(a => a.Timestamp>=startRange&&a.Timestamp<=endRange)
-            .OrderByDescending(a => a.Timestamp)
-            .ToListAsync();
+        if(TemplateCurrentPage<=1)
+            return;
 
-        return data.Select(a => new DynamicReportRow
-        {
-            Cells=
-            [
-                a.Description,
-                a.Action,
-                a.Data,
-                a.Timestamp.ToString("dd.MM.yyyy HH:mm"),
-                a.EntityName
-            ],
-            IsAlertSeverity=a.AfterValue is null || a.BeforeValue is null
-        }).ToList();
+        TemplateCurrentPage--;
+        RefreshTemplateGridRows();
     }
 
-    private static async Task<List<DynamicReportRow>> LoadAppointmentStatusesAsync(
-        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
-    {
-        var data = await db.Appointments
-            .Include(a => a.Patient)
-            .Include(a => a.Doctor).ThenInclude(d => d.User)
-            .AsNoTracking()
-            .Where(a => a.ScheduledStart>=startRange&&a.ScheduledStart<=endRange)
-            .OrderByDescending(a => a.ScheduledStart)
-            .ToListAsync();
+    // =====================================================
+    // HUB - HISTORY ACTIVITY FEED
+    // =====================================================
 
-        return data.Select(a => new DynamicReportRow
-        {
-            Cells=
-            [
-                a.Patient?.FullName??"",
-                a.Doctor?.FullName??"",
-                StatusLabel(a.Status),
-                a.ScheduledStart.ToString("dd.MM.yyyy HH:mm"),
-                a.ReasonForVisit??""
-            ],
-            IsAlertSeverity=a.Status is AppointmentStatus.Cancelled or AppointmentStatus.Missed
-        }).ToList();
+    private void LoadHistorySeed()
+    {
+        HistoryTotalPages=1;
+        RefreshHistoryActivity();
     }
 
-    // NOTE: Patient fields guessed (IdNumber/Department/CreatedAt/Diagnosis/Allergies) — adjust to match the real entity.
-    private static async Task<List<DynamicReportRow>> LoadPatientsAsync(
-        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
+    private void RefreshHistoryActivity()
     {
-        var data = await db.Patients
-            .AsNoTracking()
-            .Where(p => p.CreatedAt>=startRange&&p.CreatedAt<=endRange)
-            .OrderByDescending(p => p.CreatedAt)
-            .ToListAsync();
+        HistoryActivity.Clear();
 
-        return data.Select(p => new DynamicReportRow
-        {
-            Cells=
-            [
-                p.FullName,
-                p.Phone,
-                p.SSN??"",p.Address, p.City,
-                p.CreatedAt.ToString("dd.MM.yyyy"),
-                $"Dg: {p.Diagnoses.Select(x=>x.Mkb10CodeId)}. Алергии: {(string.IsNullOrEmpty(p.Allergies) ? "нема" : p.Allergies)}"
-            ],
-            IsAlertSeverity=!string.IsNullOrEmpty(p.Allergies)
-        }).ToList();
+        var page = _allHistoryActivity
+            .Skip((HistoryCurrentPage-1)*HistoryPageSize)
+            .Take(HistoryPageSize);
+
+        foreach(var item in page)
+            HistoryActivity.Add(item);
     }
 
-    private void RecomputeMetrics()
+    [RelayCommand]
+    private void HistoryNextPage()
     {
-        Metric1Value=AllItems.Count;
-        Metric2Value=AllItems.Count(x => x.IsAlertSeverity);
-        Metric3Value=Metric1Value>0
-            ? (int)Math.Round((double)(Metric1Value-Metric2Value)/Metric1Value*100)
-            : 100;
+        if(HistoryCurrentPage>=HistoryTotalPages)
+            return;
+
+        HistoryCurrentPage++;
+        RefreshHistoryActivity();
     }
 
-    private static string StatusLabel(AppointmentStatus status) => status switch
+    [RelayCommand]
+    private void HistoryPreviousPage()
     {
-        AppointmentStatus.Scheduled => "Закажан",
-        AppointmentStatus.CheckedIn => "Пријавен",
-        AppointmentStatus.Completed => "Завршен",
-        AppointmentStatus.Cancelled => "Откажан",
-        AppointmentStatus.Missed => "Пропуштен",
-        AppointmentStatus.InProgress => "Во тек",
-        AppointmentStatus.ReScheduled => "Презакажан",
-        _ => status.ToString()
-    };
+        if(HistoryCurrentPage<=1)
+            return;
 
-    private void BuildColumnsFor(ReportCategory type)
+        HistoryCurrentPage--;
+        RefreshHistoryActivity();
+    }
+
+    private void AddHistoryEntry(string format, bool succeeded)
     {
-        var (h1, h2, h3, h4, h5)=type switch
+        if(_activeReport==null)
+            return;
+
+        var who = string.IsNullOrWhiteSpace(UserName) ? "Систем" : UserName;
+        var statusText = succeeded ? "успешно генериран" : "неуспешно генериран";
+
+        var activity = new SparkActivityItem
         {
-            ReportCategory.MissedTherapies => ("ПАЦИЕНТ", "ПРОТОКОЛ", "ЦИКЛУС", "ИСТЕЧЕН РОК", "ОБРАЗЛОЖЕНИЕ"),
-            ReportCategory.Auditing => ("КОРИСНИК", "АКЦИЈА / НАСТАН", "МОДУЛ", "ВРЕМЕ", "ДЕТАЛИ ОД АУДИТ ПАТЕКА"),
-            ReportCategory.AppointmentStatuses => ("ПАЦИЕНТ", "ДОКТОР / ТЕРАПЕВТ", "СТАТУС", "ТЕРМИН", "ЗАБЕЛЕШКА ОД ПРЕГЛЕД"),
-            ReportCategory.Patients => ("ПАЦИЕНТ (ИМЕ/ПРЕЗИМЕ)", "МАТИЧЕН БРОЈ", "ОДДЕЛЕНИЕ", "КРЕИРАН НА", "ДИЈАГНОЗА / АЛЕРГИИ"),
-            _ => ("", "", "", "", "")
+            Title=$"{_activeReport.Title} — {format}",
+            Timestamp=DateTime.Now.ToString("dd.MM.yyyy HH:mm"),
+            Description=$"{statusText} од {who}",
+            IconGlyph=succeeded ? "\uf00c" : "\uf00d"
         };
 
-        FormattedColumns.Clear();
-        FormattedColumns.Add(new DynamicReportColumn { HeaderName=h1 });
-        FormattedColumns.Add(new DynamicReportColumn { HeaderName=h2 });
-        FormattedColumns.Add(new DynamicReportColumn { HeaderName=h3 });
-        FormattedColumns.Add(new DynamicReportColumn { HeaderName=h4 });
-        FormattedColumns.Add(new DynamicReportColumn { HeaderName=h5 });
+        _allHistoryActivity.Insert(0, activity);
+
+        HistoryTotalPages=Math.Max(1, (int)Math.Ceiling(_allHistoryActivity.Count/(double)HistoryPageSize));
+        HistoryCurrentPage=1;
+
+        RefreshHistoryActivity();
+        CalculateHubMetrics();
     }
 
-    // ================= PIPELINE HOOKS =================
+    // =====================================================
+    // HUB KPI
+    // =====================================================
+
+    private void CalculateHubMetrics()
+    {
+        var todayPrefix = DateTime.Today.ToString("dd.MM.yyyy");
+
+        HubTotalTemplates=_registry.Providers.Count();
+        HubTotalCategories=_registry.Providers.Select(x => x.Category.ToString()).Distinct().Count();
+        HubGeneratedToday=_allHistoryActivity.Count(x => x.Timestamp.StartsWith(todayPrefix));
+        HubFailedToday=_allHistoryActivity.Count(x => x.IconGlyph=="\uf00d"&&x.Timestamp.StartsWith(todayPrefix));
+    }
+
+    // =====================================================
+    // SPARK INITIALIZATION (Detail)
+    // =====================================================
+
+    private void InitializeSparkControls()
+    {
+        BuildSparkTabs();
+        BuildSparkPickers();
+        BuildSparkButtons();
+        BuildSparkGridColumns();
+    }
+
+    private void BuildSparkTabs()
+    {
+        Tabs.Clear();
+
+        if(_activeProvider==null)
+            return;
+
+        foreach(var tab in _activeProvider.BuildTabs())
+            Tabs.Add(tab);
+    }
+
+    private void BuildSparkPickers()
+    {
+        Pickers.Clear();
+
+        if(_activeProvider==null)
+            return;
+
+        foreach(var picker in _activeProvider.BuildPickers())
+            Pickers.Add(picker);
+    }
+
+    protected override void BuildSparkButtons()
+    {
+        Buttons.Clear();
+
+        if(_activeProvider==null)
+            return;
+
+        foreach(var button in _activeProvider.BuildButtons())
+            Buttons.Add(button);
+    }
+
+    private void BuildSparkGridColumns()
+    {
+        int width = 130;
+        GridColumns.Clear();
+
+        if(_activeProvider==null)
+            return;
+
+        foreach(var column in _activeProvider.Columns)
+            GridColumns.Add(column);
+
+        if(_activeProvider.Type==ReportType.Patients)
+        {
+            width=170;
+        }
+
+        GridColumns.Add(new SparkGridColumn
+        {
+            Header="Предупредување",
+            Key="Alert",
+            CellType=SparkGridCellType.Badge,
+            Width=new GridLength(width)
+        });
+    }
+
+    private void RefreshSparkGridRows()
+    {
+        var rows = new ObservableCollection<SparkGridRow>();
+
+        foreach(var reportRow in ProcessedRows)
+        {
+            var row = new SparkGridRow { Tag=reportRow };
+
+            for(int i = 0; i<reportRow.Cells.Count&&i<GridColumns.Count; i++)
+                row[GridColumns[i].Key]=reportRow.Cells[i];
+
+            row["Alert"]=reportRow.IsAlertSeverity
+                ? new SparkBadgeValue("КРИТИЧНО", SparkBadgeTone.Danger)
+                : new SparkBadgeValue("OK", SparkBadgeTone.Success);
+
+            rows.Add(row);
+        }
+
+        GridRows=rows;
+    }
+
+    private void CalculateMetrics()
+    {
+        if(_activeProvider==null)
+            return;
+
+        var metrics = _activeProvider.CalculateMetrics(AllItems);
+
+        Metric1Title=metrics.Title1;
+        Metric1Value=metrics.Value1;
+
+        Metric2Title=metrics.Title2;
+        Metric2Value=metrics.Value2;
+
+        Metric3Title=metrics.Title3;
+        Metric3Value=metrics.Value3;
+    }
+
+    // =====================================================
+    // PIPELINE (Detail)
+    // =====================================================
+
     protected override IEnumerable<DynamicReportRow> ApplySearch(IEnumerable<DynamicReportRow> items, string search)
     {
-        var term = AdvancedFilterText?.Trim()??"";
-        if(string.IsNullOrWhiteSpace(term)) return items;
+        if(string.IsNullOrWhiteSpace(search))
+            return items;
 
-        return items.Where(row => row.Cells.Any(c => c?.Contains(term, StringComparison.OrdinalIgnoreCase)??false));
+        return items.Where(row =>
+            row.Cells.Any(cell => cell?.ToString()?.Contains(search, StringComparison.OrdinalIgnoreCase)==true));
     }
 
     protected override IEnumerable<DynamicReportRow> ApplyFilters(IEnumerable<DynamicReportRow> items) => items;
 
-    protected override IEnumerable<DynamicReportRow> ApplySort(IEnumerable<DynamicReportRow> query) => query;
+    protected override IEnumerable<DynamicReportRow> ApplySort(IEnumerable<DynamicReportRow> items) => items;
 
     protected override void ResetFilters()
     {
-        _suppressAdvancedFilterSideEffects=true;
-        AdvancedFilterText=string.Empty;
-        _suppressAdvancedFilterSideEffects=false;
-    }
-
-    // No Spark header/buttons on this page — satisfy base abstract members with no-ops.
-    protected override void SyncSparkPickersFromFilters()
-    {
-    }
-    protected override void BuildSparkButtons()
-    {
+        SearchText=string.Empty;
     }
 
     protected override void OnPageProjected(ObservableCollection<DynamicReportRow> page)
     {
         ProcessedRows.Clear();
-        foreach(var row in page) ProcessedRows.Add(row);
+
+        foreach(var row in page)
+            ProcessedRows.Add(row);
+
+        RefreshSparkGridRows();
     }
 
-    // ============================================================
+    // =====================================================
+    // REPORT GENERATION
+    // =====================================================
+
+    [RelayCommand]
+    public async Task ExecuteReportGenerationAsync()
+    {
+        await GenerateReportAsync();
+    }
+
+    private async Task GenerateReportAsync()
+    {
+        if(_activeProvider==null)
+            return;
+
+        await ExecuteSafeAsync(async () =>
+        {
+            AllItems=await _activeProvider.GenerateAsync(StartDate.Date, EndDate.Date.AddDays(1));
+
+            ApplyPipeline();
+
+            CalculateMetrics();
+        }, "Грешка при генерирање извештај");
+    }
+
+    // =====================================================
     // EXPORT
-    // ============================================================
+    // =====================================================
+
     [RelayCommand]
-    public async Task ExportToPdfAsync()
+    private async Task ExportToPdfAsync()
     {
-        if(IsBusy||_activeReport is null) return;
-        try
+        if(_activeProvider==null)
+            return;
+
+        await ExecuteSafeAsync(async () =>
         {
-            IsBusy=true;
-
-            var headers = FormattedColumns.Select(c => c.HeaderName).ToList();
-            var htmlBlueprint = $@"
-            <html>
-            <head>
-                <style>
-                    body {{ font-family: Arial, sans-serif; padding: 30px; color: #0F172A; }}
-                    h2 {{ color: #2563EB; border-bottom: 2px solid #E2E8F0; padding-bottom: 10px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 20px; }}
-                    th {{ background-color: #0F172A; color: white; padding: 12px; text-align: left; font-size: 12px; }}
-                    td {{ padding: 12px; border-bottom: 1px solid #E2E8F0; font-size: 13px; }}
-                    .alert {{ background-color: #FEF2F2; color: #991B1B; padding: 6px; border-radius: 4px; }}
-                </style>
-            </head>
-            <body>
-                <h2>ИЗВЕШТАЈ: {_activeReport.Title}</h2>
-                <p>Опсег: {StartDate:dd.MM.yyyy} до {EndDate:dd.MM.yyyy}</p>
-                <table>
-                    <thead><tr>{string.Join("", headers.Select(h => $"<th>{h}</th>"))}</tr></thead>
-                    <tbody>";
-
-            foreach(var row in AllItems)
+            try
             {
-                var cellsHtml = string.Join("", row.Cells.Select(c => $"<td>{c}</td>"));
-                htmlBlueprint+=$"<tr class='{(row.IsAlertSeverity ? "alert" : "")}'>{cellsHtml}</tr>";
+                var path = await _reportExportService.ExportToPdfAsync(
+                    ActiveReportTitle,
+                    GridColumns.ToList(),
+                    BuildExportRows());
+
+                await UserDialogService.ShowAlertAsync(
+                    "PDF Export",
+                    $"Извештајот е зачуван: {path}",
+                    "OK");
+
+                await _reportHistoryService.AddAsync(new ReportHistory
+                {
+                    ReportKey=_activeProvider.Key,
+                    ReportTitle=ActiveReportTitle,
+                    Format="PDF",
+                    FileName=Path.GetFileName(path),
+                    FilePath=path,
+                    FileSize=new FileInfo(path).Length,
+                    GeneratedBy=UserName,
+                    Success=true,
+                    MachineName=Environment.MachineName,
+                    StartDate=StartDate,
+                    EndDate=EndDate
+                });
             }
-
-            htmlBlueprint+="</tbody></table></body></html>";
-
-            string fileName = $"Report_{_activeReport.Category}_{DateTime.Now:yyyyMMdd_HHmmss}.html";
-            string targetFile = Path.Combine(FileSystem.CacheDirectory, fileName);
-            await File.WriteAllTextAsync(targetFile, htmlBlueprint);
-
-            await Launcher.Default.OpenAsync(new OpenFileRequest { File=new ReadOnlyFile(targetFile) });
-        }
-        catch(Exception ex)
-        {
-            OnError($"Грешка при извоз на PDF: {ex.Message}");
-        }
-        finally
-        {
-            IsBusy=false;
-        }
+            catch
+            {
+                AddHistoryEntry("PDF", succeeded: false);
+                throw;
+            }
+        }, "Грешка при PDF export");
     }
 
     [RelayCommand]
-    public async Task ExportToExcelAsync()
+    private async Task ExportToExcelAsync()
     {
-        // TODO: wire real XLSX export (e.g. ClosedXML) — placeholder to satisfy the binding for now.
-        await UserDialogService.ShowAlertAsync("Извоз во Excel", "Извозот во Excel сè уште не е имплементиран.", "OK");
+        if(_activeProvider==null)
+            return;
+
+        await ExecuteSafeAsync(async () =>
+        {
+            try
+            {
+                var path = await _reportExportService.ExportToExcelAsync(
+                    ActiveReportTitle,
+                    GridColumns.ToList(),
+                    BuildExportRows());
+
+                await UserDialogService.ShowAlertAsync(
+                    "Excel Export",
+                    $"Извештајот е зачуван: {path}",
+                    "OK");
+
+                await _reportHistoryService.AddAsync(new ReportHistory
+                {
+                    ReportKey=_activeProvider.Key,
+                    ReportTitle=ActiveReportTitle,
+                    Format="EXCEL",
+                    FileName=Path.GetFileName(path),
+                    FilePath=path,
+                    FileSize=new FileInfo(path).Length,
+                    GeneratedBy=UserName,
+                    Success=true,
+                    MachineName=Environment.MachineName,
+                    StartDate=StartDate,
+                    EndDate=EndDate
+                });
+            }
+            catch
+            {
+                AddHistoryEntry("Excel", succeeded: false);
+                throw;
+            }
+        }, "Грешка при Excel export");
+    }
+
+    private List<SparkGridRow> BuildExportRows()
+    {
+        var rows = new List<SparkGridRow>();
+
+        foreach(var reportRow in FilteredItems)
+        {
+            var row = new SparkGridRow { Tag=reportRow };
+
+            for(int i = 0; i<reportRow.Cells.Count&&i<GridColumns.Count; i++)
+                row[GridColumns[i].Key]=reportRow.Cells[i];
+
+            row["Alert"]=reportRow.IsAlertSeverity
+                ? new SparkBadgeValue("КРИТИЧНО", SparkBadgeTone.Danger)
+                : new SparkBadgeValue("OK", SparkBadgeTone.Success);
+
+            rows.Add(row);
+        }
+
+        return rows;
+    }
+
+    // =====================================================
+    // RESET / DISPOSE
+    // =====================================================
+
+    public void ClearReportState()
+    {
+        IsShowingDetails=false;
+
+        if(_activeProvider!=null)
+            _activeProvider.FiltersChanged-=OnProviderFiltersChanged;
+
+        _activeProvider=null;
+        _activeReport=null;
+
+        SearchText=string.Empty;
+
+        ProcessedRows.Clear();
+
+        GridColumns.Clear();
+        GridRows.Clear();
+
+        Tabs.Clear();
+        Pickers.Clear();
+        Buttons.Clear();
+
+        AllItems.Clear();
+    }
+
+    // Базата има non-virtual Dispose(), па ова не е вистински override.
+    // 'new' е тука само за да не крие тивко (CS0108); disposal преку
+    // BaseViewModel<T> или IDisposable референца НЕМА да го повика ова.
+    // Препорака: смени во базата 'public void Dispose()' -> 'public virtual void Dispose()'.
+    public new void Dispose()
+    {
+        PropertyChanged-=OnViewModelPropertyChanged;
+
+        base.Dispose();
     }
 }

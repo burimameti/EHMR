@@ -13,29 +13,13 @@ namespace EHMR.ViewModels.Therapies;
 public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
 {
     private readonly ITherapyService _therapyService;
-    private readonly ISelectedItemService<TherapyCycle> _selectedItemService;
 
     private bool _suppressSearchTextSideEffects;
 
-    [ObservableProperty] private TherapyCycle? selectedCycle;
-
     protected override string ModuleName => Modules.Therapy;
-    public ObservableCollection<SparkTabItem> Tabs { get; } = new();
-    public bool CanManageCycles => CanCreate;
-
-    public IReadOnlyList<TherapyCycleStatusOption> StatusFilters
-    {
-        get;
-    } =
-    [
-        new() { Filter = TherapyCycleStatusFilter.All,       Label = "Сите" },
-        // TODO: swap these for the real TherapyStatus enum members
-        new() { Filter = TherapyCycleStatusFilter.Active,    Label = "Активен" },
-        new() { Filter = TherapyCycleStatusFilter.Completed, Label = "Завршен" },
-        new() { Filter = TherapyCycleStatusFilter.Canceled, Label = "Прекинат" },
-                new() { Filter = TherapyCycleStatusFilter.Suspended, Label = "Одбиен" },
-        new() { Filter = TherapyCycleStatusFilter.Missed,    Label = "Пропуштен" }
-    ];
+    protected override string DetailRoute => AppRoutes.Therapy.Detail;
+    protected override string PermissionDeniedMessage =>
+        "Немате авторизација за додавање на нов терапевтски циклус.";
 
     private TherapyCycleStatusOption _selectedStatus;
 
@@ -58,10 +42,9 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
         IMenuService menuService,
         ISelectedItemService<TherapyCycle> selectedItemService,
         IAuthorizationService authService)
-        : base(navigationService, userDialogService, menuService, authService)
+        : base(navigationService, userDialogService, menuService, authService, selectedItemService)
     {
         _therapyService=therapyService;
-        _selectedItemService=selectedItemService;
         _selectedStatus=StatusFilters.First(x => x.Filter==TherapyCycleStatusFilter.All);
 
         PageSize=10;
@@ -91,8 +74,6 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
             var items = await _therapyService.GetCyclesAsync();
             AllItems=items;
 
-            // Tabs/pickers were built in the ctor, before AllItems existed —
-            // counts need a refresh now that real data is in.
             RefreshSparkTabCounts();
 
             ApplyPipeline();
@@ -107,35 +88,6 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
         }
     }
 
-    [RelayCommand]
-    private async Task SelectAsync(TherapyCycle cycle)
-    {
-        _selectedItemService.SelectedItem=cycle;
-        // TODO: confirm the actual route
-        await NavigationService.GoToAsync(AppRoutes.Therapy.Detail);
-    }
-
-    [RelayCommand]
-    private async Task NewCycle()
-    {
-        if(!CanManageCycles)
-        {
-            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за додавање на нов терапевтски циклус.", "OK");
-            return;
-        }
-
-        _selectedItemService.SelectedItem=null;
-        await NavigationService.GoToAsync(AppRoutes.Therapy.Detail);
-    }
-
-    protected override void ResetFilters()
-    {
-        _suppressSearchTextSideEffects=true;
-        SearchText=string.Empty;
-        _suppressSearchTextSideEffects=false;
-
-        SelectedStatus=StatusFilters.First(x => x.Filter==TherapyCycleStatusFilter.All);
-    }
 
     // ================= PIPELINE HOOKS =================
     protected override IEnumerable<TherapyCycle> ApplySearch(IEnumerable<TherapyCycle> items, string search)
@@ -153,7 +105,6 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
     {
         if(SelectedStatus.Filter==TherapyCycleStatusFilter.All) return items;
 
-        // TODO: match against real TherapyStatus enum values
         var status = Enum.Parse<TherapyStatus>(SelectedStatus.Filter.ToString());
         return items.Where(x => x.Status==status);
     }
@@ -162,62 +113,44 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
         query.OrderByDescending(x => x.StartDate);
 
     // ============================================================
-    // TABS  (status breakdown w/ live counts — same shape as
-    // Patients/Appointments; here every non-"All" filter maps
-    // 1:1 to a TherapyStatus value, no merged buckets needed.)
-    // ============================================================
-    private readonly Dictionary<TherapyCycleStatusFilter, SparkTabItem> _statusTabsByFilter = new();
+    // TABS
+    // ============================================================  
 
     private void BuildSparkTabs()
     {
-        Tabs.Clear();
-        _statusTabsByFilter.Clear();
-
-        foreach(var option in StatusFilters)
-        {
-            var tab = new SparkTabItem
-            {
-                Title=option.Label,
-                IsSelected=SelectedStatus.Filter==option.Filter
-            };
-
-            tab.Command=new RelayCommand(() => SelectTab(tab, () => SelectedStatus=option));
-
-            Tabs.Add(tab);
-            _statusTabsByFilter[option.Filter]=tab;
-        }
+        BuildTabFilters(
+            StatusFilters,
+            keySelector: o => o.Filter.ToString(),
+            labelSelector: o => o.Label,
+            isSelectedSelector: o => SelectedStatus.Filter==o.Filter,
+            onSelect: o => SelectedStatus=o);
 
         RefreshSparkTabCounts();
     }
-
-    /// <summary>Marks one tab selected and clears the rest, then runs the tab's own action.</summary>
-    private void SelectTab(SparkTabItem tab, Action action)
-    {
-        foreach(var t in Tabs) t.IsSelected=false;
-        tab.IsSelected=true;
-        action();
-    }
-
-    /// <summary>Counts come from AllItems (the full unfiltered set), not the current search/status result.</summary>
     private void RefreshSparkTabCounts()
     {
-        foreach(var (filter, tab) in _statusTabsByFilter)
+        foreach(var option in StatusFilters)
         {
-            var count = filter==TherapyCycleStatusFilter.All
+            var count = option.Filter==TherapyCycleStatusFilter.All
                 ? AllItems.Count
-                : AllItems.Count(x => x.Status==Enum.Parse<TherapyStatus>(filter.ToString()));
+                : AllItems.Count(x => x.Status==Enum.Parse<TherapyStatus>(option.Filter.ToString()));
 
-            tab.Value=count.ToString("N0");
+            RefreshTabCount(option.Filter.ToString(), count);
         }
     }
 
-    /// <summary>Keeps tab highlighting correct regardless of whether SelectedStatus changed via a tab tap or the Picker.</summary>
-    private void SyncSparkTabsFromFilters()
-    {
-        foreach(var (filter, tab) in _statusTabsByFilter)
-            tab.IsSelected=filter==SelectedStatus.Filter;
-    }
 
+    private void SyncSparkTabsFromFilters()
+     => SyncTabsFromKey(SelectedStatus.Filter.ToString());
+
+    protected override void ResetFilters()
+    {
+        _suppressSearchTextSideEffects=true;
+        SearchText=string.Empty;
+        _suppressSearchTextSideEffects=false;
+
+        SelectedStatus=StatusFilters.First(x => x.Filter==TherapyCycleStatusFilter.All);
+    }
     // ============================================================
     // SPARK CONTROLS
     // ============================================================
@@ -253,17 +186,6 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
         _statusPicker.SelectedItem=SelectedStatus.Label;
     }
 
-    protected override void BuildSparkButtons()
-    {
-        Buttons.Clear();
-        Buttons.Add(new SparkButtonItem
-        {
-            Label="✕ Исчисти",
-            IsPrimary=true,
-            Command=ClearFiltersCommand
-        });
-    }
-
     private void BuildSparkGridColumns()
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
@@ -280,7 +202,6 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
     protected override void OnPageProjected(ObservableCollection<TherapyCycle> page)
     {
         var rows = new ObservableCollection<SparkGridRow>();
-
         foreach(var c in page)
         {
             var row = new SparkGridRow { Tag=c };
@@ -289,13 +210,25 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
             row["StartDate"]=c.StartDate?.ToString("dd.MM.yyyy")??"";
             row["EndDate"]=c.EndDate?.ToString("dd.MM.yyyy")??"";
             row["Status"]=new SparkBadgeValue(StatusLabel(c.Status), StatusToTone(c.Status));
+            AddDefaultActions(c, row);
+
             rows.Add(row);
         }
-
         GridRows=rows;
     }
 
-    // TODO: replace with real TherapyStatus enum members
+    public IReadOnlyList<TherapyCycleStatusOption> StatusFilters
+    {
+        get;
+    } =
+    [
+        new() { Filter = TherapyCycleStatusFilter.All,       Label = "Сите" },
+        new() { Filter = TherapyCycleStatusFilter.Active,    Label = "Активен" },
+        new() { Filter = TherapyCycleStatusFilter.Completed, Label = "Завршен" },
+        new() { Filter = TherapyCycleStatusFilter.Canceled, Label = "Прекинат" },
+        new() { Filter = TherapyCycleStatusFilter.Suspended, Label = "Одбиен" },
+        new() { Filter = TherapyCycleStatusFilter.Missed,    Label = "Пропуштен" }
+    ];
     private static string StatusLabel(TherapyStatus? status) => status switch
     {
         TherapyStatus.Planned => "Планиран",

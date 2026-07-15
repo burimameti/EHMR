@@ -38,12 +38,13 @@
 				StrokeShape="RoundRectangle 0"
 				Style="{StaticResource SurfaceCard}">
 				<Grid ColumnDefinitions="*,Auto">
-					<controls:FFPageHeader Title="Тераписки Циклуси" Subtitle="Следење, модификација и ескалација на активни терапии" />
+					<controls:FFPageHeader Title="Циклуси на терапи" Subtitle="Следење, на циклуси" />
 					<Button
 						Grid.Column="1"
 						BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
 						Command="{Binding NewCycleCommand}"
 						HeightRequest="45"
+						IsVisible="{Binding CanCreate}"
 						Style="{StaticResource TabButtonActiveStyle}"
 						Text="Нов Циклус"
 						WidthRequest="160" />
@@ -284,7 +285,7 @@
 									<!--  Appointments count (read-only info strip)  -->
 									<Border
 										Padding="14,10"
-										BackgroundColor="{StaticResource InfoBackground}"
+										BackgroundColor="{StaticResource Info}"
 										StrokeShape="RoundRectangle 10"
 										StrokeThickness="0">
 										<HorizontalStackLayout Spacing="10">

@@ -14,9 +14,10 @@ namespace EHMR.ViewModels;
 public partial class MedicineListViewModel : BaseViewModel<Medicine>
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
-    private readonly ISelectedItemService<Medicine> _medicineSelectionService;
 
     protected override string ModuleName => "medicines";
+    protected override string DetailRoute => AppRoutes.Medicines.Detail;
+    protected override string PermissionDeniedMessage => "Немате авторизација за додавање нов медикамент.";
 
     public ICommand SearchCommand
     {
@@ -31,22 +32,19 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
         IUserDialogService userDialogService,
         IMenuService menuService,
         IAuthorizationService authService,
-        ISelectedItemService<Medicine> medicineSelectionService)
-        : base(navigationService, userDialogService, menuService, authService)
+        ISelectedItemService<Medicine> selectedItemService)
+        : base(navigationService, userDialogService, menuService, authService, selectedItemService)
     {
         _dbFactory=dbFactory;
-        _medicineSelectionService=medicineSelectionService;
 
         PageSize=10;
         SearchCommand=new Command<string>(query => SearchText=query);
 
         EvaluatePermissions();
         BuildSparkGridColumns();
-        // NOTE: no fire-and-forget load here anymore — the view calls LoadAsync
-        // from OnAppearing, same as every other list page, so failures surface
-        // through ErrorMessage/HasError instead of vanishing silently.
+        BuildSparkButtons();
     }
-
+   
     // ================= LOAD =================
     [RelayCommand]
     public async Task LoadAsync()
@@ -127,32 +125,9 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
             row["GenericName"]=m.GenericName;
             row["DosageForm"]=m.DosageForm;
             row["DefaultDosage"]=m.DefaultDosage;
+            AddDefaultActions(m, row);
             rows.Add(row);
         }
         GridRows=rows;
-    }
-
-    // ================= ACTIONS =================
-    [RelayCommand]
-    private async Task Add()
-    {
-        _medicineSelectionService.SelectedItem=null; // signal "create"
-        await NavigationService.GoToAsync(AppRoutes.Medicines.Detail); // bug fix: was routing to .List (itself)
-    }
-
-    [RelayCommand]
-    private async Task Select(Medicine medicine)
-    {
-        if(medicine==null) return;
-        _medicineSelectionService.SelectedItem=medicine;
-        await NavigationService.GoToAsync(AppRoutes.Medicines.Detail); // bug fix: was a hardcoded route string
-    }
-
-    [RelayCommand]
-    private async Task Edit(Medicine medicine)
-    {
-        if(medicine==null) return;
-        _medicineSelectionService.SelectedItem=medicine;
-        await NavigationService.GoToAsync(AppRoutes.Medicines.Detail);
     }
 }

@@ -33,6 +33,7 @@
 						BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
 						Command="{Binding AddCommand}"
 						HeightRequest="45"
+						IsVisible="{Binding CanCreate}"
 						Style="{StaticResource TabButtonActiveStyle}"
 						Text="Нов Протокол"
 						WidthRequest="170" />
@@ -72,13 +73,14 @@
 								x:Name="ProtocolGrid"
 								Columns="{Binding GridColumns}"
 								CurrentPage="{Binding CurrentPage}"
-							
 								EditRowCommand="{Binding EditCommand}"
 								NextPageCommand="{Binding NextPageCommand}"
 								PageChangedCommand="{Binding PageChangedCommand}"
 								PreviousPageCommand="{Binding PreviousPageCommand}"
 								RowTappedCommand="{Binding SelectCommand}"
 								Rows="{Binding GridRows}"
+								ShowPagination="True"
+								ShowRowNumbers="True"
 								TotalPages="{Binding TotalPages}" />
 						</Border>
 					</VerticalStackLayout>

@@ -4,85 +4,229 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Maui.Graphics;
 
 namespace EHMR.ViewModels;
 
 public partial class MedicineDetailFormViewModel : ObservableObject
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
-    private readonly ISelectedItemService<Medicine> _medicineSelectionService;
+    private readonly ISelectedItemService<Medicine> _selectionService;
     private readonly INavigationService _navigationService;
-    private readonly IUserDialogService _userDialogService;
+    private readonly IUserDialogService _dialogService;
 
-    [ObservableProperty] private Medicine _medicine = null!;
-    [ObservableProperty] private string _pageTitle = string.Empty;
-    [ObservableProperty] private bool _isReadOnly = true;
+    private Medicine? _originalMedicine;
+    private bool _isNewMode;
 
-    private bool _isNewMode = false;
+    #region Observable Properties
+
+    [ObservableProperty]
+    private Medicine medicine = new();
+
+    [ObservableProperty]
+    private bool isBusy;
+
+    [ObservableProperty]
+    private bool isReadOnly = true;
+
+    [ObservableProperty]
+    private string pageTitle = string.Empty;
+
+    [ObservableProperty]
+    private string pageSubtitle = string.Empty;
+
+    #endregion
+
+    #region Computed Properties
+
     public bool IsEditMode => !IsReadOnly;
+
+    public string HeaderTitle =>
+        _isNewMode
+            ? "➕ Нов лек"
+            : $"💊 {Medicine.Name}";
+
+    public string HeaderSubtitle =>
+        _isNewMode
+            ? "Креирање на нов лек"
+            : $"Генеричко име: {Medicine.GenericName}";
+
+    public Color InputBackground =>
+        IsReadOnly
+            ? Color.FromArgb("#F8FAFC")
+            : Colors.White;
+
+    public Color InputBorder =>
+        IsReadOnly
+            ? Color.FromArgb("#E5E7EB")
+            : Color.FromArgb("#4F8CFF");
+
+    #endregion
 
     public MedicineDetailFormViewModel(
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
-        ISelectedItemService<Medicine> medicineSelectionService,
+        ISelectedItemService<Medicine> selectionService,
         INavigationService navigationService,
-        IUserDialogService userDialogService)
+        IUserDialogService dialogService)
     {
         _dbFactory=dbFactory;
-        _medicineSelectionService=medicineSelectionService;
+        _selectionService=selectionService;
         _navigationService=navigationService;
-        _userDialogService=userDialogService;
+        _dialogService=dialogService;
 
-        InitializeForm();
+        Initialize();
     }
 
-    private void InitializeForm()
+    private void Initialize()
     {
-        var selected = _medicineSelectionService.SelectedItem;
+        var selected = _selectionService.SelectedItem;
+
         if(selected==null)
         {
             Medicine=new Medicine();
-            PageTitle="➕ Додај нов лек во шифрарник";
-            IsReadOnly=false;
+
+            _originalMedicine=MedicineExtensions.Clone(selected);
+
             _isNewMode=true;
+            IsReadOnly=false;
+
+            PageTitle="Нов лек";
+            PageSubtitle="Внес на нов лек";
         }
         else
         {
-            Medicine=selected;
-            PageTitle=$"Преглед: {Medicine.Name}";
-            IsReadOnly=true;
+            Medicine=selected.Clone();
+
+            _originalMedicine=selected.Clone();
+
             _isNewMode=false;
+            IsReadOnly=true;
+
+            PageTitle="Детали за лек";
+            PageSubtitle=selected.Name;
         }
+
+        RefreshState();
+    }
+
+    partial void OnIsReadOnlyChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsEditMode));
+        OnPropertyChanged(nameof(InputBackground));
+        OnPropertyChanged(nameof(InputBorder));
+    }
+
+    partial void OnMedicineChanged(Medicine value)
+    {
+        OnPropertyChanged(nameof(HeaderTitle));
+        OnPropertyChanged(nameof(HeaderSubtitle));
+    }
+
+    private void RefreshState()
+    {
+        OnPropertyChanged(nameof(HeaderTitle));
+        OnPropertyChanged(nameof(HeaderSubtitle));
+        OnPropertyChanged(nameof(InputBackground));
+        OnPropertyChanged(nameof(InputBorder));
+        OnPropertyChanged(nameof(IsEditMode));
     }
 
     [RelayCommand]
     private void ToggleEdit()
     {
-        IsReadOnly=false; PageTitle=$"Измени: {Medicine.Name}";
+        IsReadOnly=false;
+
+        PageTitle="Измена на лек";
+        PageSubtitle=Medicine.Name;
+
+        RefreshState();
+    }
+
+    [RelayCommand]
+    private async Task CancelAsync()
+    {
+        if(_isNewMode)
+        {
+            await _navigationService.GoToAsync("..");
+            return;
+        }
+
+        if(_originalMedicine!=null)
+            Medicine=_originalMedicine.Clone();
+
+        IsReadOnly=true;
+
+        PageTitle="Детали за лек";
+        PageSubtitle=Medicine.Name;
+
+        RefreshState();
     }
 
     [RelayCommand]
     private async Task SaveAsync()
     {
+        if(IsBusy)
+            return;
+
         if(string.IsNullOrWhiteSpace(Medicine.Name))
         {
-            await _userDialogService.ShowAlertAsync("Грешка", "Името на лекот е задолжително!", "ОК");
+            await _dialogService.ShowAlertAsync(
+                "Валидација",
+                "Името на лекот е задолжително.",
+                "ОК");
+
             return;
         }
 
         try
         {
-            await using var db = await _dbFactory.CreateDbContextAsync();
-            if(_isNewMode) await db.Set<Medicine>().AddAsync(Medicine);
-            else db.Set<Medicine>().Update(Medicine);
+            IsBusy=true;
 
-            await db.SaveChangesAsync();
+            await using var db = await _dbFactory.CreateDbContextAsync();
+
+            if(_isNewMode)
+            {
+                await db.Set<Medicine>().AddAsync(Medicine);
+
+                await db.SaveChangesAsync();
+
+                await _dialogService.ShowAlertAsync(
+                    "Успешно",
+                    "Лекот е успешно додаден.",
+                    "ОК");
+            }
+            else
+            {
+                db.Set<Medicine>().Update(Medicine);
+
+                await db.SaveChangesAsync();
+
+                await _dialogService.ShowAlertAsync(
+                    "Успешно",
+                    "Промените се успешно зачувани.",
+                    "ОК");
+            }
+
+            _selectionService.SelectedItem=Medicine;
+
+            _originalMedicine=Medicine.Clone();
+
+            IsReadOnly=true;
+
+            RefreshState();
+
             await _navigationService.GoToAsync("..");
         }
         catch(Exception ex)
         {
-            await _userDialogService.ShowAlertAsync("Грешка при зачувување", ex.Message, "ОК");
+            await _dialogService.ShowAlertAsync(
+                "Грешка",
+                ex.Message,
+                "ОК");
+        }
+        finally
+        {
+            IsBusy=false;
         }
     }
-
-    [RelayCommand] private async Task CancelAsync() => await _navigationService.GoToAsync("..");
 }

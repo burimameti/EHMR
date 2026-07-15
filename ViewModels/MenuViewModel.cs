@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Constants;
+using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using System.Collections.ObjectModel;
@@ -23,15 +24,44 @@ public partial class MenuViewModel : ObservableObject, IDisposable
         _auth=auth;
         _menuService=menuService;
         _navigation=navigation;
-
         _auth.AuthStateChanged+=OnAuthChanged;
-
+        ApplyUserInfo();
         _=RefreshMenuAsync();
     }
 
     private async void OnAuthChanged(object? sender, EventArgs e)
     {
+        ApplyUserInfo();
         await RefreshMenuAsync();
+    }
+
+    // ============== USER CARD INFO ==============
+
+    [ObservableProperty]
+    private string userName = "Гостин";
+
+    [ObservableProperty]
+    private string userRole = string.Empty;
+
+    [ObservableProperty]
+    private string userInitial = "?";
+
+    private void ApplyUserInfo()
+    {
+        var user = _auth.CurrentUser;
+        if(user==null)
+        {
+            UserName="Гостин";
+            UserRole=string.Empty;
+            UserInitial="?";
+            return;
+        }
+
+        UserName=user.FirstName??user.Username??"Корисник";
+        UserRole=user.Role.ToString() ?? "Нема привилегии";
+        UserInitial=!string.IsNullOrWhiteSpace(UserName)
+            ? UserName.Trim()[0].ToString().ToUpper()
+            : "?";
     }
 
     [RelayCommand]
@@ -39,12 +69,9 @@ public partial class MenuViewModel : ObservableObject, IDisposable
     {
         if(item==null||string.IsNullOrWhiteSpace(item.Route))
             return;
-
         if(ActiveRoute==item.Route)
             return;
-
         ActiveRoute=item.Route;
-
         await _navigation.GoToAsync(item.Route);
     }
 
@@ -53,18 +80,13 @@ public partial class MenuViewModel : ObservableObject, IDisposable
     {
         if(group==null)
             return;
-
-        // директен линк
         if(group.Items.Count==0)
         {
             ActiveRoute=group.Route;
-
             if(!string.IsNullOrWhiteSpace(group.Route))
                 await _navigation.GoToAsync(group.Route);
-
             return;
         }
-
         group.IsExpanded=!group.IsExpanded;
     }
 
@@ -73,16 +95,12 @@ public partial class MenuViewModel : ObservableObject, IDisposable
         try
         {
             var groups = await _menuService.UpdateMenuAsync();
-
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
                 Items.Clear();
-
                 foreach(var group in groups)
                     Items.Add(group);
-
                 ActiveRoute??=AppRoutes.Dashboard;
-
                 ApplyActiveState();
             });
         }
@@ -94,7 +112,6 @@ public partial class MenuViewModel : ObservableObject, IDisposable
     }
 
     private string? _activeRoute;
-
     public string? ActiveRoute
     {
         get => _activeRoute;
@@ -111,7 +128,6 @@ public partial class MenuViewModel : ObservableObject, IDisposable
     {
         foreach(var group in Items)
         {
-            // group without children
             if(group.Items.Count==0)
             {
                 group.IsActive=
@@ -119,14 +135,10 @@ public partial class MenuViewModel : ObservableObject, IDisposable
                     group.Route.Equals(
                         ActiveRoute,
                         StringComparison.OrdinalIgnoreCase);
-
                 group.IsExpanded=false;
-
                 continue;
             }
-
             bool hasActiveChild = false;
-
             foreach(var item in group.Items)
             {
                 item.IsActive=
@@ -134,14 +146,21 @@ public partial class MenuViewModel : ObservableObject, IDisposable
                     item.Route.Equals(
                         ActiveRoute,
                         StringComparison.OrdinalIgnoreCase);
-
                 if(item.IsActive)
                     hasActiveChild=true;
             }
-
             group.IsActive=hasActiveChild;
             group.IsExpanded=hasActiveChild;
         }
+    }
+
+    // ============== LOGOUT ==============
+
+    [RelayCommand]
+    private async Task LogoutAsync()
+    {
+        _auth.Clear();
+        await _navigation.GoToAsync($"//{AppRoutes.Login}");
     }
 
     public void Dispose()

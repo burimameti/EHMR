@@ -13,14 +13,27 @@ public class AuthorizationService : IAuthorizationService
     {
         _auth=auth;
     }
+    public bool CanPerform(string module, ModuleAction action)
+    {
+        if(!IsAuthenticated||_auth.CurrentUser==null)
+            return false;
 
+        // Мора прво воопшто да има пристап до модулот (explicit Modules override или role default)
+        if(!CanAccessModule(module))
+            return false;
+
+        if(HasRole(UserRole.SuperAdmin))
+            return true;
+
+        var allowed = RolePermissionMatrix.GetActions(module, _auth.CurrentUser.Role);
+        return allowed.HasFlag(action);
+    }
     public bool IsAuthenticated
         => _auth.IsAuthenticated;
 
     // ===================================
     // ROLE
     // ===================================
-
     public bool HasRole(UserRole role)
     {
         return _auth.CurrentUser?.Role==role;
@@ -29,7 +42,6 @@ public class AuthorizationService : IAuthorizationService
     // ===================================
     // MODULE
     // ===================================
-
     public bool HasModule(string module)
     {
         return _auth.CurrentUser?.IsAuthorizedToModule(module)==true;
@@ -53,7 +65,6 @@ public class AuthorizationService : IAuthorizationService
     // ===================================
     // ROUTE SECURITY
     // ===================================
-
     public bool CanAccessRoute(string route)
     {
         if(string.IsNullOrWhiteSpace(route))
@@ -77,9 +88,45 @@ public class AuthorizationService : IAuthorizationService
     }
 
     // ===================================
-    // ROUTE → MODULE
+    // RBAC: УПРАВУВАЊЕ СО КОРИСНИЦИ
     // ===================================
 
+    /// <summary>
+    /// Дали тековно најавениот корисник смее да управува (edit/delete) со корисник кој ја има улогата targetRole.
+    /// </summary>
+    public bool CanManageUser(UserRole targetRole)
+    {
+        if(!IsAuthenticated||_auth.CurrentUser==null)
+            return false;
+
+        return RoleHierarchy.CanManage(_auth.CurrentUser.Role, targetRole);
+    }
+
+    /// <summary>
+    /// Дали тековно најавениот корисник смее да ја додели улогата targetRole на некого.
+    /// </summary>
+    public bool CanAssignRole(UserRole targetRole)
+    {
+        if(!IsAuthenticated||_auth.CurrentUser==null)
+            return false;
+
+        return RoleHierarchy.AssignableRolesFor(_auth.CurrentUser.Role).Contains(targetRole);
+    }
+
+    /// <summary>
+    /// Сите улоги што тековно најавениот корисник смее да ги додели.
+    /// </summary>
+    public IEnumerable<UserRole> GetAssignableRoles()
+    {
+        if(!IsAuthenticated||_auth.CurrentUser==null)
+            return Enumerable.Empty<UserRole>();
+
+        return RoleHierarchy.AssignableRolesFor(_auth.CurrentUser.Role);
+    }
+
+    // ===================================
+    // ROUTE → MODULE
+    // ===================================
     private string? ResolveModule(string route)
     {
         route=Normalize(route);

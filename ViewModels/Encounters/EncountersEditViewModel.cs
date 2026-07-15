@@ -1,20 +1,24 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Services;
 
 namespace EHMR.ViewModels.Encounters;
+
 public partial class EncounterEditViewModel : EncounterBaseViewModel
 {
     private readonly ISelectedItemService<Encounter> _selectedItemService;
 
     public EncounterEditViewModel(
         IEncounterDetailService service,
+        INavigationService navigationService,
+        IUserDialogService userDialogService,
         ISelectedItemService<Encounter> selectedItemService)
-        : base(service)
+        : base(service, navigationService, userDialogService)
     {
-              PageTitle="Промени Преглед";
         _selectedItemService=selectedItemService;
+        PageTitle="Промена на преглед";
     }
 
     public async Task LoadAsync()
@@ -27,20 +31,26 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         }
 
         await InitializeAsync(selected.Id);
-        IsEditMode=false;
-        IsReadOnly=true;
 
-        _selectedItemService.SelectedItem=null; // consume it — sprechava stale ID на следна навигација
+        // load the cycle picker for this encounter's patient and preselect its current cycle
+        await LoadTherapyCyclesForPatientAsync(Encounter.PatientId);
+
+        IsEditMode=true;
+        IsReadOnly=false;
+
+        _selectedItemService.SelectedItem=null; // consume — prevents stale ID on next navigation
     }
+
     [RelayCommand]
     public async Task SaveAsync()
     {
         await ExecuteSafeAsync(async () =>
         {
-            await EncounterService.SaveEncounter(
-                Encounter,
-                Diagnoses.ToList(),
-                Prescriptions.ToList());
-        }, "Неусшено зачувување");
+            Encounter.TherapyCycleId=SelectedTherapyCycle?.Id;
+
+            await EncounterService.SaveEncounter(Encounter, Diagnoses.ToList(), Prescriptions.ToList());
+            await UserDialogService.ShowMessageAsync("Податоци за преглед се успешно зачувани", "");
+            await NavigationService.GoToAsync(AppRoutes.Encounters.List);
+        }, "Неуспешно зачувување");
     }
 }

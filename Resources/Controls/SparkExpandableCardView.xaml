@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+	x:Class="EHMR.Resources.Controls.SparkExpandableCard"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	x:Name="Root">
+	<Border
+		x:Name="CardContainer"
+		Padding="0"
+		BackgroundColor="{StaticResource SparkBackground}"
+		Stroke="{StaticResource SparkBorder}"
+		StrokeShape="RoundRectangle 12"
+		StrokeThickness="1">
+		<Border.Shadow>
+			<Shadow
+				Brush="Black"
+				Opacity="0.06"
+				Radius="6"
+				Offset="0,2" />
+		</Border.Shadow>
+
+		<Grid RowSpacing="0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+
+			<!--  HEADER — мал, чист, секогаш читлив текст  -->
+			<Border
+				x:Name="HeaderContainer"
+				Grid.Row="0"
+				Padding="12,16"
+				BackgroundColor="{StaticResource SparkBorder}"
+				StrokeShape="RoundRectangle 16"
+				StrokeThickness="0">
+				<Border.GestureRecognizers>
+					<TapGestureRecognizer Tapped="ExpandTapped" />
+				</Border.GestureRecognizers>
+
+				<Grid ColumnSpacing="10">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="32" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="28" />
+					</Grid.ColumnDefinitions>
+
+					<!--  ICON  -->
+					<Border
+						x:Name="IconContainer"
+						Grid.Column="0"
+						BackgroundColor="{StaticResource SparkAccentTealBg}"
+						HeightRequest="30"
+						StrokeShape="RoundRectangle 9"
+						StrokeThickness="0"
+						WidthRequest="30">
+						<Label
+							FontSize="14"
+							HorizontalOptions="Center"
+							Text="{Binding Icon, Source={x:Reference Root}}"
+							TextColor="{StaticResource SparkAccentTealDark}"
+							VerticalOptions="Center" />
+					</Border>
+
+					<!--  TITLE / SUBTITLE  -->
+					<VerticalStackLayout
+						Grid.Column="1"
+						Spacing="1"
+						VerticalOptions="Center">
+						<Label
+							FontAttributes="Bold"
+							FontSize="13"
+							LineBreakMode="TailTruncation"
+							Text="{Binding Title, Source={x:Reference Root}}"
+							TextColor="{StaticResource SparkTextPrimary}" />
+						<Label
+							FontSize="11"
+							LineBreakMode="TailTruncation"
+							Text="{Binding Subtitle, Source={x:Reference Root}}"
+							TextColor="{StaticResource SparkTextSecondary}" />
+					</VerticalStackLayout>
+
+					<!--  EXPAND BUTTON  -->
+					<Border
+						Grid.Column="2"
+						BackgroundColor="{StaticResource SparkAccentTealBg}"
+						HeightRequest="26"
+						StrokeShape="RoundRectangle 13"
+						StrokeThickness="0"
+						WidthRequest="26">
+						<Label
+							x:Name="ExpandIcon"
+							FontAttributes="Bold"
+							FontSize="12"
+							HorizontalOptions="Center"
+							HorizontalTextAlignment="Center"
+							Text="&#9662;"
+							TextColor="{StaticResource SparkAccentTealDark}"
+							VerticalOptions="Center"
+							VerticalTextAlignment="Center" />
+					</Border>
+				</Grid>
+			</Border>
+
+			<!--  CONTENT  -->
+			<Grid
+				x:Name="ExpandableArea"
+				Grid.Row="1"
+				IsVisible="False"
+				Opacity="0">
+				<Border
+					Margin="10,0,10,10"
+					Padding="10"
+					BackgroundColor="{StaticResource SparkBackground}"
+					Stroke="{StaticResource SparkBorder}"
+					StrokeShape="RoundRectangle 8"
+					StrokeThickness="1">
+					<ContentPresenter x:Name="ContentHost" />
+				</Border>
+			</Grid>
+		</Grid>
+	</Border>
+</ContentView>

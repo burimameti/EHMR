@@ -19,4 +19,5 @@ public interface IAuthStateService
     void SetUser(User user);
 
     void Clear();
+
 }

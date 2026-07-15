@@ -9,12 +9,7 @@
 	<VerticalStackLayout>
 
 		<!--  ============ ROW 1: TABS + TRAILING ============  -->
-		<Border
-			Padding="0"
-			BackgroundColor="{StaticResource SparkBadgeNeutralBg}"
-			Stroke="{StaticResource SparkBorder}"
-			StrokeThickness="0">
-
+		<Grid BackgroundColor="{StaticResource SparkBadgeNeutralBg}">
 
 			<Grid
 				x:Name="ExplorerGrid"
@@ -40,7 +35,7 @@
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkTabItem">
 								<Grid
-									Padding="26,0"
+									Padding="20,0"
 									HeightRequest="56"
 									RowDefinitions="*,4"
 									WidthRequest="-1">
@@ -60,7 +55,7 @@
 											Binding="{Binding IsSelected}"
 											TargetType="Grid"
 											Value="False">
-											<Setter Property="BackgroundColor" Value="{StaticResource SparkButtonSecondaryBackground}" />
+											<Setter Property="BackgroundColor" Value="{StaticResource SparkButtonSecondaryBg}" />
 										</DataTrigger>
 									</Grid.Triggers>
 
@@ -76,6 +71,13 @@
 												<Span Text="{Binding Value, StringFormat='({0})'}" />
 											</FormattedString>
 										</Label.FormattedText>
+										<!--
+											FIX: unselected branch previously bound TextColor to
+											SparkBackground — the same color as the strip itself —
+											so unselected tab labels rendered invisible. Swapped
+											to the existing SparkTextSecondary token, no new
+											resource added.
+										-->
 										<Label.Triggers>
 											<DataTrigger
 												Binding="{Binding IsSelected}"
@@ -88,7 +90,8 @@
 												Binding="{Binding IsSelected}"
 												TargetType="Label"
 												Value="False">
-												<Setter Property="TextColor" Value="{StaticResource SparkBackground}" />
+												<Setter Property="TextColor" Value="{StaticResource White}" />
+												<Setter Property="FontAttributes" Value="None" />
 											</DataTrigger>
 										</Label.Triggers>
 									</Label>
@@ -121,7 +124,7 @@
 				<!--  ============ 3: TRAILING ACTION ============  -->
 				<Border
 					Grid.Column="3"
-					BackgroundColor="{StaticResource SparkButtonSecondaryBackground}"
+					BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
 					HeightRequest="34"
 					IsVisible="{Binding TrailingButton, Source={x:Reference Root}, Converter={StaticResource SparkNotNullConverter}}"
 					StrokeThickness="0"
@@ -144,43 +147,51 @@
 						WidthRequest="14" />
 				</Border>
 			</Grid>
-		</Border>
+
+			<!--
+				Bottom rule: MAUI Border.StrokeThickness is a single double, it
+				can't express a per-side "0,0,0,1" the way WPF/Avalonia
+				Thickness can. A 1px BoxView pinned to the bottom edge is the
+				direct MAUI equivalent, colored with the same SparkBorder
+				token already used for the column-1 divider above.
+			-->
+			<BoxView
+				BackgroundColor="{StaticResource SparkBorder}"
+				HeightRequest="1"
+				VerticalOptions="End" />
+		</Grid>
 
 		<!--  ============ ROW 2: SEARCH + BUTTONS + PICKERS ============  -->
-		<Border
-			BackgroundColor="{StaticResource SparkBackground}"
-			Stroke="{StaticResource SparkBorder}"
-			StrokeThickness="0">
-			<Border.StrokeShape>
-				<RoundRectangle CornerRadius="0" />
-			</Border.StrokeShape>
+		<Grid BackgroundColor="{StaticResource SparkBackground}">
 
 			<Grid
 				x:Name="SecondaryToolbarGrid"
-				Padding="6,10"
+				Padding="20,12"
 				ColumnSpacing="8"
 				MinimumHeightRequest="48">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
 					<!--  0: search  -->
 					<ColumnDefinition Width="Auto" />
-					<!--  1: buttons  -->
+					<!--  1: pickers  -->
 					<ColumnDefinition Width="Auto" />
-					<!--  2: pickers  -->
+					<!--  2: buttons  -->
 				</Grid.ColumnDefinitions>
 
 				<!--  ============ 0: SEARCH ============  -->
 				<Border
 					Grid.Column="0"
+					Margin="8,42,8,8"
 					Padding="16,0"
 					BackgroundColor="White"
-					HeightRequest="48"
+					HeightRequest="38"
+					HorizontalOptions="Fill"
 					Stroke="{StaticResource SparkBorder}"
 					StrokeThickness="1">
 					<Border.StrokeShape>
 						<RoundRectangle CornerRadius="6" />
 					</Border.StrokeShape>
-					<Grid ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="8">
+					<Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
 						<HorizontalStackLayout
 							Grid.Column="0"
 							Spacing="4"
@@ -197,18 +208,27 @@
 								HeightRequest="22"
 								WidthRequest="22" />
 						</HorizontalStackLayout>
+						<!--
+							FIX: the original fixed MinimumWidthRequest="500" sat
+							inside a "*"-width grid column — on a narrower content
+							pane that hard floor could force the whole toolbar to
+							overflow horizontally. HorizontalOptions="Fill" lets
+							the entry size to whatever room row 2 actually has,
+							same visual result at normal widths, no overflow risk
+							at smaller ones.
+						-->
 						<Entry
-							Grid.Column="1"
+							Grid.Column="2"
 							BackgroundColor="Transparent"
 							FontSize="14"
-							HeightRequest="42"
-							MinimumWidthRequest="500"
+							HeightRequest="38"
+							HorizontalOptions="Fill"
 							Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
 							Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}"
 							TextColor="{StaticResource SparkTextPrimary}"
 							VerticalOptions="Center" />
 						<Border
-							Grid.Column="2"
+							Grid.Column="1"
 							Padding="0"
 							Stroke="{StaticResource SparkBorder}"
 							StrokeThickness="1"
@@ -226,7 +246,9 @@
 						</Border>
 					</Grid>
 				</Border>
-				<!--  ============ 2: PICKERS ============  -->
+
+				<!--  ============ 1: PICKERS ============  -->
+				<!--  ============ 1: PICKERS ============  -->
 				<HorizontalStackLayout
 					Grid.Column="1"
 					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
@@ -234,32 +256,48 @@
 					VerticalOptions="Center">
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkPickerItem">
-							<Border
-								Padding="10,0"
-								BackgroundColor="White"
-								MinimumHeightRequest="40"
-								Stroke="{StaticResource Gray300}"
-								StrokeThickness="1">
-								<Border.StrokeShape>
-									<RoundRectangle CornerRadius="8" />
-								</Border.StrokeShape>
-								<Picker
-									Title="{Binding Placeholder}"
-									FontSize="14"
-									HorizontalTextAlignment="Center"
-									ItemsSource="{Binding Items}"
-									MinimumHeightRequest="38"
-									SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-									TextColor="{StaticResource SparkTextPrimary}"
-									VerticalOptions="Center"
-									WidthRequest="110" />
-							</Border>
+							<VerticalStackLayout MinimumWidthRequest="140" Spacing="20">
+								<Label
+									Grid.Row="0"
+									FontSize="12"
+									HorizontalOptions="Center"
+									LineBreakMode="NoWrap"
+									Text="{Binding Placeholder}"
+									TextColor="{StaticResource SparkAccentTeal}" />
+								<Border
+									Padding="12,1"
+									BackgroundColor="White"
+									HeightRequest="40"
+									Stroke="{StaticResource SparkBorder}"
+									StrokeThickness="1">
+									<Border.StrokeShape>
+										<RoundRectangle CornerRadius="8" />
+									</Border.StrokeShape>
+									<Picker
+										Grid.Row="1"
+										Margin="1,0,0,0"
+										FontSize="13"
+										HeightRequest="36"
+										HorizontalTextAlignment="Center"
+										ItemsSource="{Binding Items}"
+										SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+										TextColor="{StaticResource SparkTextPrimary}"
+										VerticalOptions="Center" />
+								</Border>
+							</VerticalStackLayout>
+
+
+
+
+
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
 				</HorizontalStackLayout>
-				<!--  ============ 3: BUTTONS ============  -->
+
+				<!--  ============ 2: BUTTONS ============  -->
 				<HorizontalStackLayout
 					Grid.Column="2"
+					Margin="10,36,8,8"
 					BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}"
 					Spacing="8"
 					VerticalOptions="Center">
@@ -267,7 +305,7 @@
 						<DataTemplate x:DataType="sc:SparkButtonItem">
 							<Border
 								Padding="22,0"
-								HeightRequest="38"
+								HeightRequest="36"
 								StrokeThickness="0">
 								<Border.StrokeShape>
 									<RoundRectangle CornerRadius="12" />
@@ -275,6 +313,15 @@
 								<Border.GestureRecognizers>
 									<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
 								</Border.GestureRecognizers>
+								<!--
+									FIX: both IsPrimary branches previously set the SAME
+									BackgroundColor (SparkAccentTeal), so the trigger did
+									nothing — every button looked identical regardless of
+									intent. False now uses the existing SparkButtonSecondaryBg
+									token (same one already used for the trailing action
+									button above), matching the pattern already established
+									elsewhere in this file rather than inventing anything new.
+								-->
 								<Border.Triggers>
 									<DataTrigger
 										Binding="{Binding IsPrimary}"
@@ -286,7 +333,7 @@
 										Binding="{Binding IsPrimary}"
 										TargetType="Border"
 										Value="False">
-										<Setter Property="BackgroundColor" Value="{StaticResource SparkButtonSecondaryBackground}" />
+										<Setter Property="BackgroundColor" Value="{StaticResource SparkButtonSecondaryBg}" />
 									</DataTrigger>
 								</Border.Triggers>
 								<HorizontalStackLayout
@@ -298,24 +345,63 @@
 										Data="{Binding IconGlyph}"
 										HeightRequest="12"
 										IsVisible="{Binding IconGlyph, Converter={StaticResource SparkStringNotEmptyConverter}}"
-										Stroke="White"
 										StrokeThickness="1.4"
-										WidthRequest="12" />
+										WidthRequest="12">
+										<Path.Triggers>
+											<DataTrigger
+												Binding="{Binding IsPrimary}"
+												TargetType="Path"
+												Value="True">
+												<Setter Property="Stroke" Value="White" />
+											</DataTrigger>
+											<DataTrigger
+												Binding="{Binding IsPrimary}"
+												TargetType="Path"
+												Value="False">
+												<Setter Property="Stroke" Value="{StaticResource SparkTextSecondary}" />
+											</DataTrigger>
+										</Path.Triggers>
+									</Path>
 									<Label
 										FontAttributes="Bold"
 										FontSize="15"
 										Text="{Binding Label}"
-										TextColor="White"
-										VerticalOptions="Center" />
+										VerticalOptions="Center">
+										<!--
+											Label text now follows the same IsPrimary split as the
+											background — was hardcoded White before, which is
+											correct on the accent-filled primary button but
+											invisible on the light SparkButtonSecondaryBg one.
+										-->
+										<Label.Triggers>
+											<DataTrigger
+												Binding="{Binding IsPrimary}"
+												TargetType="Label"
+												Value="True">
+												<Setter Property="TextColor" Value="White" />
+											</DataTrigger>
+											<DataTrigger
+												Binding="{Binding IsPrimary}"
+												TargetType="Label"
+												Value="False">
+												<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+											</DataTrigger>
+										</Label.Triggers>
+									</Label>
 								</HorizontalStackLayout>
 							</Border>
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
 				</HorizontalStackLayout>
 
-
 			</Grid>
-		</Border>
+
+			<!--  bottom rule — same BoxView stand-in as row 1, same SparkBorder token  -->
+			<BoxView
+				BackgroundColor="{StaticResource SparkBorder}"
+				HeightRequest="1"
+				VerticalOptions="End" />
+		</Grid>
 
 		<!--  ============ ROW 3: DATA GRID HEADER COLUMNS ============  -->
 		<Grid

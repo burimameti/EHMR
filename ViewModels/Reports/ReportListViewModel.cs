@@ -5,14 +5,13 @@ using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
-using EHMR.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace EHMR.ViewModels.Reports;
 
-public partial class ReportViewModel : BaseViewModel<GenericReportRow>
+public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
 
@@ -75,13 +74,14 @@ public partial class ReportViewModel : BaseViewModel<GenericReportRow>
         }
     }
 
-    public ReportViewModel(
+    public ReportListViewModel(
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
         INavigationService navigationService,
         IUserDialogService userDialogService,
         IMenuService menuService,
-        IAuthorizationService authService)
-        : base(navigationService, userDialogService, menuService, authService)
+        IAuthorizationService authService,
+        ISelectedItemService<GenericReportRow> selectedItemService)
+        : base(navigationService, userDialogService, menuService, authService, selectedItemService)
     {
         _dbFactory=dbFactory;
         _selectedReportType=ReportTypes.First(x => x.Type==ReportType.MissedTherapies);
@@ -210,8 +210,6 @@ public partial class ReportViewModel : BaseViewModel<GenericReportRow>
         }).ToList();
     }
 
-    // NOTE: AuditLog entity guessed — Timestamp/UserFullName/Action/Module/Details/IsSecurityCritical.
-    // Adjust field names once you confirm the real entity shape.
     private static async Task<List<GenericReportRow>> LoadAuditingAsync(
         DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
     {
@@ -228,7 +226,7 @@ public partial class ReportViewModel : BaseViewModel<GenericReportRow>
             HighlightValue=a.AfterValue,
             DateValue=a.Timestamp.ToString("dd.MM.yyyy HH:mm"),
             InformationalText=a.Description,
-            IsAlertSeverity=a.AfterValue!=a.BeforeValue // simplistic assumption; adjust as needed
+            IsAlertSeverity=a.AfterValue!=a.BeforeValue
         }).ToList();
     }
 
@@ -254,8 +252,6 @@ public partial class ReportViewModel : BaseViewModel<GenericReportRow>
         }).ToList();
     }
 
-    // NOTE: Patient fields guessed — IdNumber/Department/CreatedAt/Diagnosis/Allergies.
-    // Adjust once you confirm the real Patient entity shape.
     private static async Task<List<GenericReportRow>> LoadPatientsAsync(
         DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
     {
@@ -271,7 +267,7 @@ public partial class ReportViewModel : BaseViewModel<GenericReportRow>
             SecondaryHeader=p.NationalId,
             HighlightValue=p.Phone??"",
             DateValue=p.CreatedAt.ToString("dd.MM.yyyy"),
-            InformationalText=$"Dg: {p.Diagnoses.Select(x=>x.Mkb10Code.Code)}. Алергии: {(string.IsNullOrEmpty(p.Allergies) ? "нема" : p.Allergies)}",
+            InformationalText=$"Dg: {p.Diagnoses.Select(x => x.Mkb10Code.Code)}. Алергии: {(string.IsNullOrEmpty(p.Allergies) ? "нема" : p.Allergies)}",
             IsAlertSeverity=!string.IsNullOrEmpty(p.Allergies)
         }).ToList();
     }
@@ -318,7 +314,7 @@ public partial class ReportViewModel : BaseViewModel<GenericReportRow>
     }
 
     protected override IEnumerable<GenericReportRow> ApplySort(IEnumerable<GenericReportRow> query) =>
-        query; // already ordered by the DB query per report type
+        query;
 
     protected override void ResetFilters()
     {

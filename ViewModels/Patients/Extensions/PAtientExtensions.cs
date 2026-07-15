@@ -23,6 +23,11 @@ namespace EHMR.ViewModels.Patients.Extensions
         {
             get;
         }
+        public static FilterLookup Empty
+        {
+            get;
+            internal set;
+        }
 
         public FilterLookup(IEnumerable<(string Display, string Internal)> pairs)
         {
@@ -50,7 +55,10 @@ namespace EHMR.ViewModels.Patients.Extensions
     }
 
     /// <summary>
-    /// Static factory for the fixed (non-data-driven) patient filter lookups.
+    /// Static factory for the fixed (non-data-driven) patient FILTER lookups —
+    /// these all include a "Сите" (All) entry since they drive the list page's
+    /// dropdown filters, not data entry. For the create/edit FORM, use
+    /// PatientEnumLookups instead (no "All" option there).
     /// City is excluded here since it's built dynamically from MacedoniaCityLookup.
     /// </summary>
     public static class PatientFilterLookups
@@ -62,7 +70,9 @@ namespace EHMR.ViewModels.Patients.Extensions
         {
         ("Сите", "All"),
         ("Активен", "Active"),
-        ("Неактивен", "Inactive")
+        ("Неактивен", "Inactive"),
+        ("Хроничен", "Chronic"),
+        ("Починат", "Deceased")
     });
 
         public static FilterLookup Gender
@@ -72,7 +82,8 @@ namespace EHMR.ViewModels.Patients.Extensions
         {
         ("Сите", "All"),
         ("Машки", "Male"),
-        ("Женски", "Female")
+        ("Женски", "Female"),
+        ("Друго", "Other")
     });
 
         public static FilterLookup BloodType
@@ -120,6 +131,7 @@ namespace EHMR.ViewModels.Patients.Extensions
             return new FilterLookup(pairs);
         }
     }
+
     public static class PatientDisplayExtensions
     {
         public static string ToDisplay(this Gender gender) =>
@@ -127,9 +139,16 @@ namespace EHMR.ViewModels.Patients.Extensions
 
         public static string ToDisplay(this PatientStatus status) =>
             PatientEnumLookups.Status.ToDisplay(status.ToString());
+
+        public static string ToDisplay(this DosesFrequency frequency) =>
+            PatientEnumLookups.DosesFrequency.ToDisplay(frequency.ToString());
     }
 
-   
+    /// <summary>
+    /// Lookups for DATA ENTRY (create/edit form pickers) — no "Сите"/All entry,
+    /// since every one of these is a required field on the entity, not a filter.
+    /// Values here must stay in exact sync with the enums in EHMR.Domain.Entities.
+    /// </summary>
     public static class PatientEnumLookups
     {
         public static FilterLookup Gender
@@ -138,9 +157,12 @@ namespace EHMR.ViewModels.Patients.Extensions
         } = new(new[]
         {
         ("Машки", "Male"),
-        ("Женски", "Female")
+        ("Женски", "Female"),
+        ("Друго", "Other")
     });
 
+        // Matches PatientStatus: Active, Inactive, Chronic, Deceased
+        // (was previously out of sync with the entity - had a nonexistent "Critical").
         public static FilterLookup Status
         {
             get;
@@ -148,9 +170,41 @@ namespace EHMR.ViewModels.Patients.Extensions
         {
         ("Активен", "Active"),
         ("Неактивен", "Inactive"),
-        ("Критичен", "Critical")
+        ("Хроничен", "Chronic"),
+        ("Починат", "Deceased")
+    });
+
+        // Matches DosesFrequency exactly - used both on the old single-patient
+        // frequency picker and now per-row on AttachedMedicineRow.
+        public static FilterLookup DosesFrequency
+        {
+            get;
+        } = new(new[]
+        {
+        ("Дневно", "Daily"),
+        ("Двапати дневно", "TwiceDaily"),
+        ("Трипати дневно", "ThreeTimesDaily"),
+        ("Секој втор ден", "EveryOtherDay"),
+        ("Секој трет ден", "EveryThreeDays"),
+        ("Неделно", "Weekly"),
+        ("Месечно", "Monthly"),
+        ("Друго", "Other")
+    });
+
+        // Data-entry version of blood type (no "Сите") - use this on the form,
+        // PatientFilterLookups.BloodType on the list page's filter dropdown.
+        public static FilterLookup BloodType
+        {
+            get;
+        } = new(new[]
+        {
+        ("A+", "A+"), ("A-", "A-"),
+        ("B+", "B+"), ("B-", "B-"),
+        ("AB+", "AB+"), ("AB-", "AB-"),
+        ("O+", "O+"), ("O-", "O-")
     });
     }
+
     public static class AgeGroupExtensions
     {
         public static bool IsInAgeGroup(this int age, string ageGroup) => ageGroup switch
@@ -166,20 +220,39 @@ namespace EHMR.ViewModels.Patients.Extensions
 
     public static class PatientExtensions
     {
+        /// <summary>
+        /// Shallow clone of all scalar fields, used by the detail form to snapshot
+        /// the "before edit" state for Cancel(). Child collections (Diagnoses,
+        /// PatientMedicines, Documents) are intentionally NOT copied here -
+        /// PatientDetailFormViewModel.LoadExistingChildrenAsync re-fetches those
+        /// straight from the DB after cloning, so cloning them here would just be
+        /// thrown away duplicate work (and risks stale/duplicate tracked entities
+        /// if EF change tracking ever gets involved on this clone).
+        /// </summary>
         public static Patient Clone(this Patient source) => new()
         {
             Id=source.Id,
             FirstName=source.FirstName,
             LastName=source.LastName,
             NationalId=source.NationalId,
+            DoctorId=source.DoctorId,
+            Doctor=source.Doctor,
             BirthDate=source.BirthDate,
             Gender=source.Gender,
             Phone=source.Phone,
             Email=source.Email,
             Address=source.Address,
             City=source.City,
-            Status=source.Status
+            PostalCode=source.PostalCode,
+            EmergencyContactName=source.EmergencyContactName,
+            EmergencyContactPhone=source.EmergencyContactPhone,
+            EmergencyRelationship=source.EmergencyRelationship,
+            Allergies=source.Allergies,
+            BloodType=source.BloodType,
+            Status=source.Status,
+            RegistrationDate=source.RegistrationDate,
+            IsDeleted=source.IsDeleted,
+            CreatedAt=source.CreatedAt
         };
-
-    
-    } }
+    }
+}

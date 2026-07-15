@@ -2,9 +2,21 @@
 
 namespace EHMR.Domain.Entities.Rbac;
 
+
+[Flags]
+public enum ModuleAction
+{
+    None = 0,
+    View = 1,
+    Create = 2,
+    Edit = 4,
+    Delete = 8,
+    Full = View|Create|Edit|Delete
+}
 public static class Modules
 {
     public const string Dashboard = "Dashboard";
+    public const string Doctors = "Doctors";
 
     public const string Patients = "Patients";
 

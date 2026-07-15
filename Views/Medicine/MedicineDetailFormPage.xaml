@@ -1,40 +1,481 @@
-<ContentPage x:Class="EHMR.Views.MedicineDetailFormPage"
-             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:EHMR.ViewModels"
-             x:DataType="viewModels:MedicineDetailFormViewModel" BackgroundColor="#F8FAFC">
-	<VerticalStackLayout Padding="30" Spacing="20" HorizontalOptions="Center" WidthRequest="600">
-		<Label Text="{Binding PageTitle}" FontSize="20" FontAttributes="Bold" TextColor="#0F172A" />
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="EHMR.Views.MedicineDetailFormPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:models="clr-namespace:EHMR.Domain.Entities"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+	x:DataType="viewModels:MedicineDetailFormViewModel">
 
-		<Border Padding="20" BackgroundColor="White" Stroke="#E2E8F0" StrokeShape="RoundRectangle 12">
-			<VerticalStackLayout Spacing="15">
-				<VerticalStackLayout Spacing="4">
-					<Label Text="Трговско Име" FontAttributes="Bold" FontSize="12" />
-					<Entry Text="{Binding Medicine.Name}" IsReadOnly="{Binding IsReadOnly}" />
-				</VerticalStackLayout>
+	<Grid ColumnDefinitions="285,*">
 
-				<VerticalStackLayout Spacing="4">
-					<Label Text="Генеричко име (Состави)" FontAttributes="Bold" FontSize="12" />
-					<Entry Text="{Binding Medicine.GenericName}" IsReadOnly="{Binding IsReadOnly}" />
-				</VerticalStackLayout>
-
-				<Grid ColumnDefinitions="*, *" ColumnSpacing="15">
-					<VerticalStackLayout Grid.Column="0" Spacing="4">
-						<Label Text="Форма (пр. Ампула, Таблета)" FontAttributes="Bold" FontSize="12" />
-						<Entry Text="{Binding Medicine.DosageForm}" IsReadOnly="{Binding IsReadOnly}" />
-					</VerticalStackLayout>
-					<VerticalStackLayout Grid.Column="1" Spacing="4">
-						<Label Text="Стандардна доза" FontAttributes="Bold" FontSize="12" />
-						<Entry Text="{Binding Medicine.DefaultDosage}" IsReadOnly="{Binding IsReadOnly}" />
-					</VerticalStackLayout>
-				</Grid>
-			</VerticalStackLayout>
+		<Border Grid.Column="0" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
 		</Border>
 
-		<HorizontalStackLayout HorizontalOptions="End" Spacing="10">
-			<Button Text="Откажи" Command="{Binding CancelCommand}" BackgroundColor="#F1F5F9" TextColor="#475569" />
-			<Button Text="✎ Измени" Command="{Binding ToggleEditCommand}" IsVisible="{Binding IsReadOnly}" BackgroundColor="#FFFFFF" BorderColor="#CBD5E1" BorderWidth="1" TextColor="#2563EB" />
-			<Button Text="✓ Зачувај" Command="{Binding SaveCommand}" IsVisible="{Binding IsEditMode}" BackgroundColor="#2563EB" TextColor="White" />
-		</HorizontalStackLayout>
-	</VerticalStackLayout>
+		<Grid
+			Grid.Column="1"
+			Padding="24"
+			BackgroundColor="{StaticResource Gray200}"
+			RowDefinitions="Auto,Auto,*"
+			RowSpacing="20">
+
+			<Border
+				Padding="28"
+				BackgroundColor="{StaticResource SparkBackground}"
+				Stroke="{StaticResource SparkBorder}"
+				StrokeShape="RoundRectangle 0">
+
+				<Grid ColumnDefinitions="Auto,*,440">
+
+					<VerticalStackLayout
+						Grid.Column="1"
+						Spacing="6"
+						VerticalOptions="Center">
+
+						<Label
+							FontAttributes="Bold"
+							FontSize="28"
+							Text="{Binding HeaderTitle}"
+							TextColor="{StaticResource SparkTextPrimary}" />
+
+						<Label
+							FontSize="14"
+							Text="{Binding HeaderSubtitle}"
+							TextColor="{StaticResource SparkTextSecondary}" />
+
+						<HorizontalStackLayout Margin="0,12,0,0" Spacing="10">
+
+							<Border
+								Padding="10,4"
+								BackgroundColor="#EDF7F9"
+								StrokeShape="RoundRectangle 0"
+								StrokeThickness="0">
+
+								<HorizontalStackLayout Spacing="6">
+
+									<Label
+										FontFamily="FASolid"
+										FontSize="12"
+										Text="&#xf46b;"
+										TextColor="{StaticResource SparkAccentTeal}" />
+
+									<Label
+										FontAttributes="Bold"
+										FontSize="12"
+										Text="Медикамент"
+										TextColor="{StaticResource SparkTextPrimary}" />
+
+								</HorizontalStackLayout>
+
+							</Border>
+
+						</HorizontalStackLayout>
+
+					</VerticalStackLayout>
+
+					<HorizontalStackLayout
+						Grid.Column="2"
+						Margin="0,0,0,0"
+						VerticalOptions="Center">
+
+						<controls:FFButton
+							ButtonKind="Primary"
+							Command="{Binding SaveCommand}"
+							HeightRequestEx="36"
+							IsVisible="{Binding IsEditMode}"
+							Text="💾 Зачувај Промени"
+							WidthRequest="200" />
+
+						<controls:FFButton
+							ButtonKind="Secondary"
+							Command="{Binding CancelCommand}"
+							HeightRequestEx="36"
+							IsVisible="{Binding IsEditMode}"
+							Text="Откажи"
+							TextColorEx="White"
+							WidthRequest="200" />
+
+						<controls:FFButton
+							ButtonKind="Primary"
+							Command="{Binding ToggleEditCommand}"
+							HeightRequestEx="36"
+							IsVisible="{Binding IsReadOnly}"
+							Text="✎ Промени"
+							TextColorEx="White"
+							WidthRequest="200" />
+
+					</HorizontalStackLayout>
+
+				</Grid>
+
+			</Border>
+
+			<Border
+				Grid.Row="1"
+				Padding="0"
+				BackgroundColor="{StaticResource SparkBackground}"
+				StrokeThickness="0">
+
+				<VerticalStackLayout Spacing="0">
+
+					<Grid ColumnDefinitions="*,*,*" ColumnSpacing="0">
+
+						<Grid
+							Grid.Column="0"
+							Padding="16,14,16,12"
+							BackgroundColor="{Binding IsTab1Active, Converter={StaticResource BoolToActiveBackgroundConverter}}">
+
+							<Grid.GestureRecognizers>
+								<TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="1" />
+							</Grid.GestureRecognizers>
+
+							<HorizontalStackLayout
+								HorizontalOptions="Center"
+								Spacing="8"
+								VerticalOptions="Center">
+								<Label
+									FontFamily="FASolid"
+									FontSize="14"
+									Text="&#xf484;"
+									TextColor="White"
+									VerticalOptions="Center" />
+								<Label
+									FontAttributes="Bold"
+									FontSize="13"
+									Text="Основни податоци"
+									TextColor="White" />
+							</HorizontalStackLayout>
+
+						</Grid>
+
+						<Grid
+							Grid.Column="1"
+							Padding="16,14,16,12"
+							BackgroundColor="{Binding IsTab2Active, Converter={StaticResource BoolToActiveBackgroundConverter}}">
+
+							<Grid.GestureRecognizers>
+								<TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="2" />
+							</Grid.GestureRecognizers>
+
+							<HorizontalStackLayout
+								HorizontalOptions="Center"
+								Spacing="8"
+								VerticalOptions="Center">
+								<Label
+									FontFamily="FASolid"
+									FontSize="14"
+									Text="&#xf0f1;"
+									TextColor="White"
+									VerticalOptions="Center" />
+								<Label
+									FontAttributes="Bold"
+									FontSize="13"
+									Text="Фармацевтски референци"
+									TextColor="White" />
+							</HorizontalStackLayout>
+
+						</Grid>
+
+						<Grid
+							Grid.Column="2"
+							Padding="16,14,16,12"
+							BackgroundColor="{Binding IsTab3Active, Converter={StaticResource BoolToActiveBackgroundConverter}}">
+
+							<Grid.GestureRecognizers>
+								<TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="3" />
+							</Grid.GestureRecognizers>
+
+							<HorizontalStackLayout
+								HorizontalOptions="Center"
+								Spacing="8"
+								VerticalOptions="Center">
+								<Label
+									FontFamily="FASolid"
+									FontSize="14"
+									Text="&#xf05a;"
+									TextColor="White"
+									VerticalOptions="Center" />
+								<Label
+									FontAttributes="Bold"
+									FontSize="13"
+									Text="Системски референци"
+									TextColor="White" />
+							</HorizontalStackLayout>
+
+						</Grid>
+
+					</Grid>
+
+					<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
+
+				</VerticalStackLayout>
+
+			</Border>
+
+			<Border
+				Grid.Row="2"
+				BackgroundColor="{StaticResource SparkBackground}"
+				StrokeShape="RoundRectangle 1"
+				StrokeThickness="0">
+
+				<ScrollView>
+					<VerticalStackLayout Padding="32" Spacing="24">
+
+						<VerticalStackLayout IsVisible="{Binding IsTab1Active}" Spacing="20">
+
+							<Label
+								CharacterSpacing="1"
+								FontAttributes="Bold"
+								FontSize="13"
+								Text="ИНФОРМАЦИИ ЗА ЛЕКОТ"
+								TextColor="{StaticResource SparkTextPrimary}" />
+
+							<BoxView
+								Margin="0,10"
+								HeightRequest="1"
+								Color="{StaticResource SparkBorder}" />
+
+							<Grid ColumnDefinitions="*,*" ColumnSpacing="22">
+
+								<Grid
+									ColumnDefinitions="140,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Име на лек *"
+										TextColor="{StaticResource SparkTextSecondary}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="12,0"
+										BackgroundColor="{StaticResource SparkBackground}"
+										HeightRequest="46"
+										Stroke="{StaticResource SparkBorder}"
+										StrokeShape="RoundRectangle 6"
+										StrokeThickness="1">
+										<Entry
+											BackgroundColor="Transparent"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="Пр. Paracetamol"
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
+											Text="{Binding Medicine.Name}"
+											TextColor="{StaticResource SparkTextPrimary}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+
+								<Grid
+									Grid.Column="1"
+									ColumnDefinitions="140,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Генеричко име"
+										TextColor="{StaticResource SparkTextSecondary}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="12,0"
+										BackgroundColor="{StaticResource SparkBackground}"
+										HeightRequest="46"
+										Stroke="{StaticResource SparkBorder}"
+										StrokeShape="RoundRectangle 6"
+										StrokeThickness="1">
+										<Entry
+											BackgroundColor="Transparent"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="Пр. Acetaminophen"
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
+											Text="{Binding Medicine.GenericName}"
+											TextColor="{StaticResource SparkTextPrimary}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+
+							</Grid>
+
+							<BoxView
+								Margin="0,10"
+								HeightRequest="1"
+								Color="{StaticResource SparkBorder}" />
+
+							<Grid ColumnDefinitions="*,*" ColumnSpacing="22">
+
+								<Grid
+									ColumnDefinitions="140,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Фармацевтска форма"
+										TextColor="{StaticResource SparkTextSecondary}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="12,0"
+										BackgroundColor="{StaticResource SparkBackground}"
+										HeightRequest="46"
+										Stroke="{StaticResource SparkBorder}"
+										StrokeShape="RoundRectangle 6"
+										StrokeThickness="1">
+										<Entry
+											BackgroundColor="Transparent"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="Таблети, Сируп..."
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
+											Text="{Binding Medicine.DosageForm}"
+											TextColor="{StaticResource SparkTextPrimary}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+
+								<Grid
+									Grid.Column="1"
+									ColumnDefinitions="140,*"
+									ColumnSpacing="16"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="Стандардна доза"
+										TextColor="{StaticResource SparkTextSecondary}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="12,0"
+										BackgroundColor="{StaticResource SparkBackground}"
+										HeightRequest="46"
+										Stroke="{StaticResource SparkBorder}"
+										StrokeShape="RoundRectangle 6"
+										StrokeThickness="1">
+										<Entry
+											BackgroundColor="Transparent"
+											FontSize="13"
+											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="Пр. 500 mg"
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
+											Text="{Binding Medicine.DefaultDosage}"
+											TextColor="{StaticResource SparkTextPrimary}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+
+							</Grid>
+
+						</VerticalStackLayout>
+
+						<VerticalStackLayout IsVisible="{Binding IsTab2Active}" Spacing="20">
+
+							<Label
+								CharacterSpacing="1"
+								FontAttributes="Bold"
+								FontSize="13"
+								Text="ДОПОЛНИТЕЛНИ ИНФОРМАЦИИ ЗА АПЛИКАЦИЈА"
+								TextColor="{StaticResource SparkTextPrimary}" />
+
+							<BoxView
+								Margin="0,10"
+								HeightRequest="1"
+								Color="{StaticResource SparkBorder}" />
+
+							<Border
+								Padding="18"
+								BackgroundColor="{StaticResource SparkAccentTealBg}"
+								StrokeShape="RoundRectangle 6"
+								StrokeThickness="0">
+
+								<HorizontalStackLayout Spacing="12">
+									<Label
+										FontFamily="FASolid"
+										FontSize="18"
+										Text="&#xf05a;"
+										TextColor="{StaticResource SparkTextPrimary}" />
+									<VerticalStackLayout Spacing="3">
+										<Label
+											FontAttributes="Bold"
+											FontSize="13"
+											Text="Информација"
+											TextColor="{StaticResource SparkTextPrimary}" />
+										<Label
+											FontSize="13"
+											Text="Основните информации за лекот се користат при креирање терапии, рецепти и медицински евиденции."
+											TextColor="{StaticResource SparkTextSecondary}" />
+									</VerticalStackLayout>
+								</HorizontalStackLayout>
+
+							</Border>
+
+						</VerticalStackLayout>
+
+						<VerticalStackLayout IsVisible="{Binding IsTab3Active}" Spacing="20">
+
+							<Label
+								CharacterSpacing="1"
+								FontAttributes="Bold"
+								FontSize="13"
+								Text="СИСТЕМСКИ ИНФОРМАЦИИ"
+								TextColor="{StaticResource SparkTextPrimary}" />
+
+							<BoxView
+								Margin="0,10"
+								HeightRequest="1"
+								Color="{StaticResource SparkAccentTealDark}" />
+
+							<Grid
+								ColumnDefinitions="160,*"
+								ColumnSpacing="12"
+								RowDefinitions="Auto,Auto"
+								RowSpacing="16">
+
+								<Label
+									Grid.Row="0"
+									Grid.Column="0"
+									FontAttributes="Bold"
+									FontSize="13"
+									Text="Идентификатор (ID)"
+									TextColor="{StaticResource SparkTextSecondary}" />
+
+								<Label
+									Grid.Row="0"
+									Grid.Column="1"
+									FontSize="13"
+									Text="{Binding Medicine.Id}"
+									TextColor="{StaticResource SparkTextPrimary}" />
+
+								<Label
+									Grid.Row="1"
+									Grid.Column="0"
+									FontAttributes="Bold"
+									FontSize="13"
+									Text="Тековен режим"
+									TextColor="{StaticResource SparkTextSecondary}" />
+
+								<Label
+									Grid.Row="1"
+									Grid.Column="1"
+									FontSize="13"
+									Text="{Binding PageTitle}"
+									TextColor="{StaticResource SparkTextPrimary}" />
+
+							</Grid>
+
+						</VerticalStackLayout>
+
+					</VerticalStackLayout>
+				</ScrollView>
+
+			</Border>
+
+		</Grid>
+	</Grid>
 </ContentPage>

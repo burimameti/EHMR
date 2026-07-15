@@ -23,13 +23,24 @@
 		<Grid
 			x:Name="PagerContainer"
 			Grid.Row="1"
-			Padding="0,14,0,4"
-			HorizontalOptions="Center"
-			IsVisible="False">
+			Padding="16,12"
+			Background="{StaticResource SparkTabActiveBg}"
+			ColumnDefinitions="*,Auto"
+			IsVisible="True">
+
+			<Label
+				x:Name="PagerInfoLabel"
+				Grid.Column="0"
+				HorizontalOptions="Center"
+				Style="{StaticResource SparkPagerLabelStyle}"
+				VerticalOptions="Center" />
+
 			<HorizontalStackLayout
 				x:Name="PagerRow"
-				HorizontalOptions="Center"
-				Spacing="4" />
+				Grid.Column="1"
+				Spacing="6"
+				VerticalOptions="Center" />
+
 		</Grid>
 	</Grid>
 </ContentView>

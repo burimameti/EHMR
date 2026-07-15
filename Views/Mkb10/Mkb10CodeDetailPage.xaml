@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="EHMR.Views.Mkb10.Mkb10CodeDetailPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Mkb10"
+	x:DataType="viewModels:Mkb10CodeDetailViewModel">
+
+	<Grid ColumnDefinitions="285,*">
+
+		<!--  LEFT MENU  -->
+		<Border Grid.Column="0" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
+		</Border>
+
+		<!--  MAIN  -->
+		<Grid
+			Grid.Column="1"
+			Padding="24"
+			BackgroundColor="{StaticResource Gray200}"
+			RowDefinitions="Auto,*"
+			RowSpacing="20">
+
+			<!--  =========================================================  -->
+			<!--  HEADER  -->
+			<!--  =========================================================  -->
+
+			<Border
+				Padding="28"
+				BackgroundColor="{StaticResource SparkBackground}"
+				Stroke="{StaticResource SparkBorder}"
+				StrokeShape="RoundRectangle 0">
+
+				<Grid ColumnDefinitions="*,Auto">
+
+					<VerticalStackLayout Spacing="6">
+
+						<Label
+							FontAttributes="Bold"
+							FontSize="28"
+							Text="{Binding HeaderTitle}"
+							TextColor="{StaticResource SparkTextPrimary}" />
+
+						<Label
+							FontSize="14"
+							Text="{Binding HeaderSubtitle}"
+							TextColor="{StaticResource SparkTextSecondary}" />
+
+					</VerticalStackLayout>
+
+					<HorizontalStackLayout Grid.Column="1" Spacing="10">
+
+						<controls:FFButton
+							ButtonKind="Primary"
+							Command="{Binding SaveCommand}"
+							IsVisible="{Binding IsEditMode}"
+							Text="💾 Save"
+							WidthRequest="160" />
+
+						<controls:FFButton
+							ButtonKind="Secondary"
+							Command="{Binding CancelCommand}"
+							IsVisible="{Binding IsEditMode}"
+							Text="Cancel"
+							WidthRequest="160" />
+
+						<controls:FFButton
+							ButtonKind="Primary"
+							Command="{Binding ToggleEditModeCommand}"
+							IsVisible="{Binding IsReadOnly}"
+							Text="✎ Edit"
+							WidthRequest="160" />
+
+					</HorizontalStackLayout>
+
+				</Grid>
+
+			</Border>
+
+			<!--  =========================================================  -->
+			<!--  FORM  -->
+			<!--  =========================================================  -->
+
+			<Border
+				Grid.Row="1"
+				BackgroundColor="{StaticResource SparkBackground}"
+				StrokeThickness="0">
+
+				<ScrollView>
+
+					<VerticalStackLayout Padding="30" Spacing="28">
+
+						<Label
+							CharacterSpacing="1"
+							FontAttributes="Bold"
+							FontSize="13"
+							Text="GENERAL INFORMATION"
+							TextColor="{StaticResource SparkTextPrimary}" />
+
+						<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
+
+						<!--  CODE / CHAPTER  -->
+
+						<Grid ColumnDefinitions="*,*" ColumnSpacing="24">
+
+							<VerticalStackLayout>
+
+								<Label Text="Code" />
+
+								<Border
+									Padding="12,0"
+									HeightRequest="46"
+									Stroke="{StaticResource SparkBorder}"
+									StrokeShape="RoundRectangle 6">
+
+									<Entry
+										BackgroundColor="Transparent"
+										IsReadOnly="{Binding IsReadOnly}"
+										Text="{Binding Mkb10Code.Code}" />
+
+								</Border>
+
+							</VerticalStackLayout>
+
+							<VerticalStackLayout Grid.Column="1">
+
+								<Label Text="Chapter" />
+
+								<Border
+									Padding="10,0"
+									HeightRequest="46"
+									Stroke="{StaticResource SparkBorder}"
+									StrokeShape="RoundRectangle 6">
+
+									<Picker
+										BackgroundColor="Transparent"
+										IsEnabled="{Binding IsEditMode}"
+										ItemsSource="{Binding ChapterOptions}"
+										SelectedItem="{Binding Mkb10Code.Chapter}" />
+
+								</Border>
+
+							</VerticalStackLayout>
+
+						</Grid>
+
+						<!--  DESCRIPTION  -->
+
+						<VerticalStackLayout>
+
+							<Label Text="Description" />
+
+							<Border
+								Padding="10"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 6">
+
+								<Editor
+									BackgroundColor="Transparent"
+									HeightRequest="120"
+									IsReadOnly="{Binding IsReadOnly}"
+									Text="{Binding Mkb10Code.Description}" />
+
+							</Border>
+
+						</VerticalStackLayout>
+
+						<!--  STATUS  -->
+
+						<Grid ColumnDefinitions="Auto,*">
+
+							<Switch IsEnabled="{Binding IsEditMode}" IsToggled="{Binding Mkb10Code.IsActive}" />
+
+							<Label
+								Grid.Column="1"
+								Margin="12,0,0,0"
+								Text="Active Code"
+								VerticalOptions="Center" />
+
+						</Grid>
+
+						<Label
+							Margin="0,20,0,0"
+							CharacterSpacing="1"
+							FontAttributes="Bold"
+							FontSize="13"
+							Text="SYSTEM INFORMATION"
+							TextColor="{StaticResource SparkTextPrimary}" />
+
+						<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
+
+						<Grid
+							ColumnDefinitions="180,*"
+							RowDefinitions="Auto,Auto,Auto"
+							RowSpacing="14">
+
+							<Label Text="ID" />
+							<Label Grid.Column="1" Text="{Binding Mkb10Code.Id}" />
+
+							<Label Grid.Row="1" Text="Created" />
+
+							<Label
+								Grid.Row="1"
+								Grid.Column="1"
+								Text="{Binding Mkb10Code.CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
+
+							<Label Grid.Row="2" Text="Updated" />
+
+							<Label
+								Grid.Row="2"
+								Grid.Column="1"
+								Text="{Binding Mkb10Code.UpdatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
+
+						</Grid>
+
+					</VerticalStackLayout>
+
+				</ScrollView>
+
+			</Border>
+
+		</Grid>
+
+	</Grid>
+
+</ContentPage>

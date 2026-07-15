@@ -26,10 +26,10 @@ namespace EHMR.Resources.Controls
             } };
             if(glyph.Contains("👁"))
             {
-            glyph="👁 Преглед";
+            glyph="👁";
             }else
             {
-                glyph=glyph+" Промени";
+                glyph=glyph+" Избери";
             }
             border.Content=new Label
             {

@@ -6,7 +6,7 @@
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Encounters"
 	x:Name="PageRoot"
-	x:DataType="viewModels:EncounterListViewModel">
+	x:DataType="viewModels:EncountersListViewModel">
 	<Grid ColumnDefinitions="285,*">
 		<!--  ================= LEFT MENU =================  -->
 		<Border Grid.Column="0" StrokeThickness="0">
@@ -32,6 +32,7 @@
 						BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
 						Command="{Binding NewEncounterCommand}"
 						HeightRequest="45"
+						IsVisible="{Binding CanCreateEncounter}"
 						Style="{StaticResource TabButtonActiveStyle}"
 						Text="Нов Преглед"
 						WidthRequest="150" />
@@ -50,6 +51,7 @@
 								Tabs="{Binding Tabs}" />
 						</Border>
 						<Border>
+
 							<controls:SparkDataGridView
 								x:Name="EncounterGrid"
 								Columns="{Binding GridColumns}"
@@ -57,9 +59,11 @@
 								EditRowCommand="{Binding EditEncounterCommand}"
 								NextPageCommand="{Binding NextPageCommand}"
 								PageChangedCommand="{Binding PageChangedCommand}"
+								PageInfoText="{Binding PageInfoText}"
 								PreviousPageCommand="{Binding PreviousPageCommand}"
 								RowTappedCommand="{Binding OpenEncounterCommand}"
 								Rows="{Binding GridRows}"
+								ShowPagination="True"
 								TotalPages="{Binding TotalPages}" />
 						</Border>
 					</VerticalStackLayout>

@@ -11,6 +11,7 @@ namespace EHMR.Domain.Entities
 
         public Patient Patient { get; set; } = null!;
 
+
         public Encounter? Encounter
         {
             get; set;
@@ -37,6 +38,23 @@ namespace EHMR.Domain.Entities
         {
             get;
             set;
+        }
+
+        public string Status { get; set; } = "Активни";
+        public DateTime IssuedDate
+        {
+            get;
+            internal set;
+        }
+        public DateTime ExpiryDate
+        {
+            get;
+            internal set;
+        }
+        public string Notes
+        {
+            get;
+            internal set;
         }
     }
 }

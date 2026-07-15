@@ -14,14 +14,29 @@ namespace EHMR.Domain.Entities
         public string LicenseNumber { get; set; } = string.Empty;
         public string Specialty { get; set; } = string.Empty;
         public string ContactPhone { get; set; } = string.Empty;
+        public string? Email { get; set; } = string.Empty;
 
         public bool IsActive
         {
             get; set;
         }
-
+        public Gender Gender
+        {
+            get; set;
+        }
+        public Status Status
+        {
+            get; set;
+        }= Status.Active;
         // optional convenience
-        public string FullName => User.FirstName+" "+User.LastName; public override string ToString() => FullName;
+        public string FullName => User?.FirstName+" "+User?.LastName; public override string ToString() => FullName;
 
+    }
+   
+    public enum Status
+    {
+        Active,
+        Inactive,
+        Suspended
     }
 }

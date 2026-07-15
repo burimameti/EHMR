@@ -30,7 +30,7 @@ namespace EHMR.Resources.Controls
         Avatar,
         /// <summary>Row-level action icons (e.g. view/edit). Value is ignored; icons are wired via
         /// SparkDataGridView.RowTappedCommand (view) and EditRowCommand (edit).</summary>
-        Actions
+        Actions, Button
     }
 
     /// <summary>Semantic color for a badge cell (Predicted risk %, trend, status...).</summary>
@@ -139,9 +139,10 @@ namespace EHMR.Resources.Controls
     public class SparkPickerItem : SparkBindableBase
     {
         private string _placeholder;
-        private object _selectedItem;
-        private ObservableCollection<object> _items = new ObservableCollection<object>();
-        private ICommand _selectionChangedCommand;
+        private ObservableCollection<string> _items = new();
+        private int _selectedIndex = -1;
+        private string _selectedItem;
+        private bool _syncing;
 
         public string Placeholder
         {
@@ -149,22 +150,38 @@ namespace EHMR.Resources.Controls
             set => Set(ref _placeholder, value);
         }
 
-        public ObservableCollection<object> Items
+        public ObservableCollection<string> Items
         {
             get => _items;
             set => Set(ref _items, value);
         }
 
-        public object SelectedItem
+        public int SelectedIndex
         {
-            get => _selectedItem;
-            set => Set(ref _selectedItem, value);
+            get => _selectedIndex;
+            set
+            {
+                if(!Set(ref _selectedIndex, value)) return;
+                if(_syncing) return;
+
+                _syncing=true;
+                SelectedItem=value>=0&&value<Items.Count ? Items[value] : null;
+                _syncing=false;
+            }
         }
 
-        public ICommand SelectionChangedCommand
+        public string SelectedItem
         {
-            get => _selectionChangedCommand;
-            set => Set(ref _selectionChangedCommand, value);
+            get => _selectedItem;
+            set
+            {
+                if(!Set(ref _selectedItem, value)) return;
+                if(_syncing) return;
+
+                _syncing=true;
+                SelectedIndex=value!=null ? Items.IndexOf(value) : -1;
+                _syncing=false;
+            }
         }
     }
 

@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="EHMR.Views.LoadingPage"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    BackgroundColor="#0F172A">
+	x:Class="EHMR.Views.LoadingPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	BackgroundColor="#0F172A">
 
 	<Grid>
 		<VerticalStackLayout
-            VerticalOptions="Center"
-            HorizontalOptions="Center"
-            Spacing="20">
+			HorizontalOptions="Center"
+			Spacing="20"
+			VerticalOptions="Center">
 
 			<ActivityIndicator
-                IsRunning="True"
-                Color="White"
-                WidthRequest="48"
-                HeightRequest="48" />
+				HeightRequest="48"
+				IsRunning="True"
+				WidthRequest="48"
+				Color="White" />
 
 			<Label
-                Text="Initializing EHMR..."
-                TextColor="White"
-                FontSize="18"
-                HorizontalTextAlignment="Center" />
+				FontSize="18"
+				HorizontalTextAlignment="Center"
+				Text="Initializing EHMR..."
+				TextColor="White" />
 
 			<Label
-                Text="Loading services, authentication and navigation"
-                TextColor="#94A3B8"
-                FontSize="12"
-                HorizontalTextAlignment="Center" />
+				FontSize="12"
+				HorizontalTextAlignment="Center"
+				Text="Loading services, authentication and navigation"
+				TextColor="#94A3B8" />
 		</VerticalStackLayout>
 	</Grid>
 </ContentPage>

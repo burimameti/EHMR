@@ -194,7 +194,14 @@ public class Encounter
     {
         get; set;
     }
-
+    public Guid? TherapyCycleId
+    {
+        get; set;
+    }
+    public virtual TherapyCycle? TherapyCycle
+    {
+        get; set;
+    }
     // =========================================================
     // Navigation Properties
     // =========================================================

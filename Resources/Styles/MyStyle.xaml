@@ -6,22 +6,10 @@
 		EHMR DESIGN TOKENS — Enterprise Dark Mode Blueprint
 		═══════════════════════════════════════════════════════════════
 	-->
-	<Color x:Key="EhmrBg">#39485B</Color>
-	<Color x:Key="EhmrSurface">#243447</Color>
-	<Color x:Key="EhmrToolbar">#31455B</Color>
-	<Color x:Key="EhmrCardSruface">#243447</Color>
-	<Color x:Key="EhmrBorder">#2A3342</Color>
-	<Color x:Key="EhmrHeader">#2C3e52</Color>
-	<Color x:Key="EhmrPrimary">#2563EB</Color>
-	<Color x:Key="EhmrTextPrimary">#F8FAFC</Color>
-	<Color x:Key="EhmrTextSecondary">#94A3B8</Color>
+
 
 	<!--  Gray200  -->
-	<Color x:Key="InputBorder">#F3F4F6</Color>
-	<!--  Gray200  -->
-	<Color x:Key="InputBorderFocus">#6B7280</Color>
-	<Color x:Key="InputBacgroundFocus">#6B7280</Color>
-	<!--  Gray500  -->
+
 	<Color x:Key="InputPlaceholder">#6B7280</Color>
 	<!--  Gray600  -->
 	<Color x:Key="InputText">#111827</Color>
@@ -60,9 +48,9 @@
 	<Color x:Key="Gray900">#0F172A</Color>
 
 	<!--  ── Dark Mode Text Scaling ──  -->
-	<Color x:Key="TextPrimary">#F8FAFC</Color>
-	<Color x:Key="TextSecondary">#94A3B8</Color>
-	<Color x:Key="TextMuted">#64748B</Color>
+
+
+
 	<Color x:Key="TextOnDark">#FFFFFF</Color>
 	<Color x:Key="TextLink">#60A5FA</Color>
 	<Color x:Key="TextPlaceholder">#475569</Color>
@@ -154,7 +142,7 @@
 	<Color x:Key="NavigationHover">#31455B</Color>
 
 	<Color x:Key="NavigationSelected">#2563EB22</Color>
-	<Color x:Key="DialogBackground">#37414B</Color>
+
 
 	<Color x:Key="DialogHeader">#31455B</Color>
 
@@ -288,292 +276,72 @@
 		LABEL STYLES
 		══════════════════════════════════════════════════════════════
 	-->
-	<Style x:Key="PageTitleLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource Font3XL}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-	</Style>
 
-	<Style x:Key="PageSubtitleLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
-	</Style>
 
-	<Style x:Key="SectionHeadingLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontMD}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-	</Style>
 
-	<Style x:Key="FieldLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontSM}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
-	</Style>
 
-	<Style x:Key="GridHeaderLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontSM}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource Gray400}" />
-		<Setter Property="VerticalOptions" Value="Center" />
-		<Setter Property="CharacterSpacing" Value="0.5" />
-	</Style>
 
-	<Style x:Key="CellPrimaryLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-	</Style>
+
+
 
 	<Style x:Key="CellMutedLabel" TargetType="Label">
 		<Setter Property="FontSize" Value="{StaticResource FontSM}" />
 		<Setter Property="TextColor" Value="{StaticResource TextMuted}" />
 	</Style>
 
-	<Style x:Key="CellLinkLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource TextLink}" />
-	</Style>
 
-	<Style x:Key="StatusPillLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontXS}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="VerticalOptions" Value="Center" />
-	</Style>
 
-	<Style x:Key="KpiValueLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource Font4XL}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-	</Style>
 
-	<Style x:Key="KpiDeltaLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontSM}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-	</Style>
 
-	<Style x:Key="KpiSubtitleLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
-	</Style>
 
-	<Style x:Key="EmptyTitleLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontXL}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
-		<Setter Property="HorizontalTextAlignment" Value="Center" />
-	</Style>
 
-	<Style x:Key="EmptyBodyLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="TextColor" Value="{StaticResource TextMuted}" />
-		<Setter Property="HorizontalTextAlignment" Value="Center" />
-	</Style>
 
-	<Style x:Key="SidebarIconLabel" TargetType="Label">
-		<Setter Property="FontFamily" Value="FASolid" />
-		<Setter Property="FontSize" Value="{StaticResource FontLG}" />
-		<Setter Property="TextColor" Value="{StaticResource SidebarIconDefault}" />
-		<Setter Property="HorizontalOptions" Value="Center" />
-		<Setter Property="VerticalOptions" Value="Center" />
-	</Style>
 
-	<Style x:Key="TimelineEntryTitle" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-	</Style>
 
-	<Style x:Key="TimelineEntryDate" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontSM}" />
-		<Setter Property="TextColor" Value="{StaticResource TextMuted}" />
-	</Style>
 
-	<Style x:Key="FormFieldLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource FontSM}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
-		<Setter Property="Margin" Value="0,0,0,4" />
-	</Style>
+
+
+
+
+
+
+
 
 	<!--
 		══════════════════════════════════════════════════════════════
 		BUTTON STYLES
 		══════════════════════════════════════════════════════════════
 	-->
-	<Style x:Key="EhmrIconButton" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="Transparent" />
-		<Setter Property="BorderColor" Value="{StaticResource ChartBlue}" />
-		<Setter Property="BorderWidth" Value="1" />
-		<Setter Property="CornerRadius" Value="8" />
-		<Setter Property="HeightRequest" Value="40" />
-		<Setter Property="WidthRequest" Value="40" />
-		<Setter Property="Padding" Value="0" />
-		<Setter Property="ImageSource">
-			<Setter.Value>
-				<FontImageSource
-					FontFamily="FASolid"
-					Glyph="&#xf2f1;"
-					Size="14"
-					Color="{StaticResource ChartBlue}" />
-			</Setter.Value>
-		</Setter>
-	</Style>
-	<Style x:Key="AppPrimaryButton" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="{StaticResource EhmrPrimary}" />
-		<Setter Property="TextColor" Value="{StaticResource White}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="CornerRadius" Value="8" />
-		<Setter Property="HeightRequest" Value="{StaticResource BtnHeightMD}" />
-		<Setter Property="Padding" Value="16,0" />
-		<Setter Property="BorderWidth" Value="0" />
-	</Style>
 
-	<Style x:Key="AppSecondaryButton" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="{StaticResource CardBackground}" />
-		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="CornerRadius" Value="8" />
-		<Setter Property="HeightRequest" Value="{StaticResource BtnHeightMD}" />
-		<Setter Property="Padding" Value="16,0" />
-		<Setter Property="BorderWidth" Value="1" />
-		<Setter Property="BorderColor" Value="{StaticResource BorderDefault}" />
-	</Style>
 
-	<Style x:Key="AppGhostButton" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="Transparent" />
-		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="CornerRadius" Value="8" />
-		<Setter Property="HeightRequest" Value="{StaticResource BtnHeightMD}" />
-		<Setter Property="Padding" Value="12,0" />
-		<Setter Property="BorderWidth" Value="0" />
-	</Style>
-
-	<Style x:Key="AppDangerButton" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="{StaticResource Danger}" />
-		<Setter Property="TextColor" Value="{StaticResource White}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="CornerRadius" Value="8" />
-		<Setter Property="HeightRequest" Value="{StaticResource BtnHeightMD}" />
-		<Setter Property="Padding" Value="16,0" />
-		<Setter Property="BorderWidth" Value="0" />
-	</Style>
-
-	<Style x:Key="AppRowDotsButton" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="Transparent" />
-		<Setter Property="TextColor" Value="{StaticResource TextMuted}" />
-		<Setter Property="FontFamily" Value="FASolid" />
-		<Setter Property="FontSize" Value="{StaticResource FontMD}" />
-		<Setter Property="HeightRequest" Value="32" />
-		<Setter Property="WidthRequest" Value="32" />
-		<Setter Property="CornerRadius" Value="6" />
-		<Setter Property="Padding" Value="0" />
-		<Setter Property="BorderWidth" Value="0" />
-	</Style>
 
 	<!--
 		══════════════════════════════════════════════════════════════
 		INPUT SELECTION STYLES
 		══════════════════════════════════════════════════════════════
 	-->
-	<Style x:Key="AppEntry" TargetType="Entry">
-		<Setter Property="BackgroundColor" Value="{StaticResource CardBackground}" />
-		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-		<Setter Property="PlaceholderColor" Value="{StaticResource TextPlaceholder}" />
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="HeightRequest" Value="{StaticResource InputHeight}" />
-	</Style>
 
-	<Style x:Key="AppPicker" TargetType="Picker">
-		<Setter Property="BackgroundColor" Value="{StaticResource CardBackground}" />
-		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-		<Setter Property="TitleColor" Value="{StaticResource TextPlaceholder}" />
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="HeightRequest" Value="{StaticResource InputHeight}" />
-	</Style>
+
+
 
 	<!--
 		══════════════════════════════════════════════════════════════
 		SURFACE CONTAINERS & BORDERS
 		══════════════════════════════════════════════════════════════
 	-->
-	<Style x:Key="AppCard" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource CardBackground}" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
-		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="Stroke" Value="{StaticResource BorderDefault}" />
-	</Style>
 
-	<Style x:Key="AppInputBorder" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource CardBackground}" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 8" />
-		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="Stroke" Value="{StaticResource BorderDefault}" />
-		<Setter Property="HeightRequest" Value="{StaticResource InputHeight}" />
-	</Style>
-
-	<Style x:Key="AppDataGridCard" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource CardBackground}" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
-		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="Stroke" Value="{StaticResource BorderDefault}" />
-	</Style>
-
-	<Style x:Key="AppGridHeaderRow" TargetType="Grid">
-		<Setter Property="BackgroundColor" Value="{StaticResource GridHeaderBg}" />
-		<Setter Property="Padding" Value="16,0" />
-		<Setter Property="HeightRequest" Value="{StaticResource GridHeaderHeight}" />
-	</Style>
 
 	<!--  ── System Line Rules ──  -->
-	<Style x:Key="RowDivider" TargetType="BoxView">
-		<Setter Property="HeightRequest" Value="1" />
-		<Setter Property="Color" Value="{StaticResource BorderDefault}" />
-		<Setter Property="HorizontalOptions" Value="Fill" />
-	</Style>
+
 
 	<!--
 		══════════════════════════════════════════════════════════════
 		GLOBAL EXPLICIT BASE DEFAULTS
 		══════════════════════════════════════════════════════════════
 	-->
-	<Style TargetType="Label">
-		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-	</Style>
 
-	<Style TargetType="Entry">
-		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-		<Setter Property="PlaceholderColor" Value="{StaticResource TextPlaceholder}" />
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="BackgroundColor" Value="{StaticResource CardBackground}" />
-	</Style>
 
-	<Style TargetType="Picker">
-		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-		<Setter Property="TitleColor" Value="{StaticResource TextPlaceholder}" />
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="BackgroundColor" Value="{StaticResource CardBackground}" />
-	</Style>
-
-	<Style TargetType="ContentPage">
-		<Setter Property="BackgroundColor" Value="{StaticResource ContentBackground}" />
-	</Style>
 
 	<!--  Keeps the custom components rendering clean across filters  -->
-	<Style x:Key="FilterPickerStyle" TargetType="Picker">
-		<Setter Property="BackgroundColor" Value="Transparent" />
-		<Setter Property="FontSize" Value="{StaticResource FontBase}" />
-		<Setter Property="HeightRequest" Value="{StaticResource InputHeight}" />
-		<Setter Property="Margin" Value="0" />
-		<Setter Property="VerticalTextAlignment" Value="Center" />
-		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-		<Setter Property="TitleColor" Value="{StaticResource TextPlaceholder}" />
-		<Setter Property="HorizontalOptions" Value="Fill" />
-	</Style>
+
 </ResourceDictionary>

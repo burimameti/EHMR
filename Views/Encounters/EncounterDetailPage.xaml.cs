@@ -1,37 +1,35 @@
-﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using EHMR.Domain.Interfaces;
-using EHMR.Services;
-using EHMR.ViewModels.Encounters;
-using EHMR.Views;
+﻿using EHMR.ViewModels.Encounters;
 namespace EHMR.Views.Encounters;
 [QueryProperty(nameof(EncounterId), "EncounterId")]
 public partial class EncounterDetailPage : ContentPage
 {
     private readonly EncounterDetailViewModel _viewModel;
 
-    // Create a property to hold the incoming string ID
-    private string _encounterId;
+    // Make _encounterId nullable to satisfy CS8618
+    private string? _encounterId;
     public string EncounterId
     {
-        get => _encounterId;
-        set => _encounterId=Uri.UnescapeDataString(value??string.Empty);
+        get => _encounterId ?? string.Empty;
+        set => _encounterId = Uri.UnescapeDataString(value ?? string.Empty);
     }
 
     public EncounterDetailPage(EncounterDetailViewModel viewModel, MenuView menu)
     {
         InitializeComponent();
-        _viewModel=viewModel;
-        BindingContext=_viewModel;
-        MenuHost.Content=menu;
+        _viewModel = viewModel;
+        BindingContext = _viewModel;
+        MenuHost.Content = menu;
     }
-    private CancellationTokenSource _searchCts;
+
+    // Make _searchCts nullable to satisfy CS8618
+    private CancellationTokenSource? _searchCts;
     private async void OnMkbSearchTextChanged(object sender, TextChangedEventArgs e)
     {
-        if(_viewModel==null)
+        if (_viewModel == null)
             return;
 
         _searchCts?.Cancel();
-        _searchCts=new CancellationTokenSource();
+        _searchCts = new CancellationTokenSource();
 
         var token = _searchCts.Token;
         var query = e.NewTextValue;
@@ -40,12 +38,12 @@ public partial class EncounterDetailPage : ContentPage
         {
             await Task.Delay(250, token); // debounce
 
-            if(!token.IsCancellationRequested)
+            if (!token.IsCancellationRequested)
             {
                 await _viewModel.SearchMkbCommand.ExecuteAsync(query);
             }
         }
-        catch(TaskCanceledException)
+        catch (TaskCanceledException)
         {
             // ignore
         }
@@ -53,7 +51,7 @@ public partial class EncounterDetailPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        if(BindingContext is EncounterDetailViewModel vm)
+        if (BindingContext is EncounterDetailViewModel vm)
         {
             await vm.LoadAsync();
         }

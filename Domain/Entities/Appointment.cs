@@ -55,6 +55,9 @@ public class Appointment : BaseEntity
     public string ClinicalNotes { get; set; } = "";
 
     public ICollection<AppointmentDiagnosis> AppointmentDiagnoses { get; set; } = [];
+
+    public override string ToString() =>
+    $"{ScheduledStart:dd.MM.yyyy HH:mm} - {ReasonForVisit}";
 }
 
 public class AppointmentDiagnosis
@@ -93,6 +96,7 @@ public class AppointmentDiagnosis
     {
         get; set;
     }
+
 }
 
 public enum AppointmentStatus

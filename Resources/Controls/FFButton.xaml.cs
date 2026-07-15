@@ -35,6 +35,10 @@ public partial class FFButton : ContentView
         BindableProperty.Create(nameof(HeightRequestEx), typeof(double), typeof(FFButton), 42d,
             propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumHeightRequest=(double)v);
 
+    public static readonly BindableProperty WidthRequestExProperty =
+        BindableProperty.Create(nameof(WidthRequestEx), typeof(double), typeof(FFButton), 180d,
+            propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumWidthRequest=(double)v);
+
     public static readonly BindableProperty ContentPaddingProperty =
         BindableProperty.Create(nameof(ContentPadding), typeof(Thickness), typeof(FFButton), new Thickness(20, 0),
             propertyChanged: (b, _, v) => ((FFButton)b).Container.Padding=(Thickness)v);
@@ -44,6 +48,16 @@ public partial class FFButton : ContentView
 
     public static readonly BindableProperty FontSizeExProperty =
         BindableProperty.Create(nameof(FontSizeEx), typeof(double), typeof(FFButton), 13d);
+
+    public static readonly BindableProperty FontFamilyProperty =
+        BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(FFButton), null);
+
+    public static readonly BindableProperty FontAttributesExProperty =
+        BindableProperty.Create(nameof(FontAttributesEx), typeof(FontAttributes), typeof(FFButton), FontAttributes.Bold);
+
+    public static readonly BindableProperty HorizontalOptionsExProperty =
+        BindableProperty.Create(nameof(HorizontalOptionsEx), typeof(LayoutOptions), typeof(FFButton), LayoutOptions.Center,
+            propertyChanged: (b, _, v) => ((FFButton)b).Container.HorizontalOptions=(LayoutOptions)v);
 
     // Computed color props — driven by ApplyKind()
     public static readonly BindableProperty BackgroundColorExProperty =
@@ -98,6 +112,12 @@ public partial class FFButton : ContentView
         set => SetValue(HeightRequestExProperty, value);
     }
 
+    public double WidthRequestEx
+    {
+        get => (double)GetValue(WidthRequestExProperty);
+        set => SetValue(WidthRequestExProperty, value);
+    }
+
     public Thickness ContentPadding
     {
         get => (Thickness)GetValue(ContentPaddingProperty);
@@ -114,6 +134,24 @@ public partial class FFButton : ContentView
     {
         get => (double)GetValue(FontSizeExProperty);
         set => SetValue(FontSizeExProperty, value);
+    }
+
+    public string FontFamily
+    {
+        get => (string)GetValue(FontFamilyProperty);
+        set => SetValue(FontFamilyProperty, value);
+    }
+
+    public FontAttributes FontAttributesEx
+    {
+        get => (FontAttributes)GetValue(FontAttributesExProperty);
+        set => SetValue(FontAttributesExProperty, value);
+    }
+
+    public LayoutOptions HorizontalOptionsEx
+    {
+        get => (LayoutOptions)GetValue(HorizontalOptionsExProperty);
+        set => SetValue(HorizontalOptionsExProperty, value);
     }
 
     public Color BackgroundColorEx
@@ -156,10 +194,10 @@ public partial class FFButton : ContentView
                 break;
 
             case FFButtonKind.Secondary:
-                BackgroundColorEx=Color.FromArgb("#90A1AD");
-                TextColorEx=Color.FromArgb("#334155");
-                BorderColor=Color.FromArgb("#E2E8F0");
-                BorderThickness=1;
+                BackgroundColorEx=Color.FromArgb("#8FA2AB");
+                TextColorEx=Colors.White;
+                BorderColor=Colors.Transparent;
+                BorderThickness=0;
                 break;
             case FFButtonKind.Green:
                 BackgroundColorEx=Color.FromArgb("#DAF6BA");
@@ -219,5 +257,6 @@ public enum FFButtonKind
     Primary,
     Secondary,
     Danger,
-    Ghost,Green
+    Ghost,
+    Green
 }

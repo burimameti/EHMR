@@ -7,7 +7,7 @@ namespace EHMR.Views.Encounters
     {
         private readonly MenuView menuView;
 
-        public EncounterListPage(EncounterListViewModel viewModel, MenuView menuView)
+        public EncounterListPage(EncountersListViewModel viewModel, MenuView menuView)
         {
             InitializeComponent();
 
@@ -22,7 +22,7 @@ namespace EHMR.Views.Encounters
         {
             base.OnAppearing();
 
-            if(BindingContext is EncounterListViewModel vm)
+            if(BindingContext is EncountersListViewModel vm)
             {
                 await vm.LoadAsync();
             }

@@ -4,22 +4,23 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Services;
+using EHMR.ViewModels;
 using System.Collections.ObjectModel;
 
 namespace EHMR.ViewModels.Appointments;
 
-public partial class AppointmentDetailViewModel : ObservableObject
+public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointment>
 {
-    private readonly IAppointmentDetailService _service; private readonly IAuthorizationService _authorization;
-    private readonly INavigationService _navigation;
+    private readonly IAppointmentDetailService _service;
     private readonly ISelectedItemService<Appointment> _selectedItemService;
-    private readonly IUserDialogService _userDialogService;
 
     private CancellationTokenSource _cts = new();
 
     private Appointment? _originalAppointment;
     private bool _isNewAppointmentMode;
     private bool _isModalReturnMode;
+
+    protected override string ModuleName => Modules.Appointments;
 
     public bool IsNewAppointment => _isNewAppointmentMode;
 
@@ -33,18 +34,18 @@ public partial class AppointmentDetailViewModel : ObservableObject
             ? "Закажување нов термин"
             : $"Лекар: {SelectedDoctorForAppointment?.FullName} • {Appointment.ScheduledStart:dd.MM.yyyy HH:mm}";
 
-    public AppointmentDetailViewModel( IAuthorizationService authorizationService,
+    public AppointmentDetailViewModel(
+        IAuthorizationService authorizationService,
         IAppointmentDetailService service,
         INavigationService navigation,
         ISelectedItemService<Appointment> selected,
-        IUserDialogService userDialogService)
+        IUserDialogService userDialogService, ISelectedItemService<Appointment> selectedItemService,
+        IMenuService menuService)
+        : base(navigation, userDialogService, menuService, authorizationService,selectedItemService)
     {
         _service=service;
-        _authorization=authorizationService;
-        _navigation=navigation;
         _selectedItemService=selected;
-        _userDialogService=userDialogService;
-        EvaluatePermissions();
+        EvaluatePermissions(); // now sets base's CanCreate/CanUpdate/CanDelete
     }
 
     // =========================
@@ -60,8 +61,8 @@ public partial class AppointmentDetailViewModel : ObservableObject
     [ObservableProperty] private ObservableCollection<Doctor> doctorsList = new();
 
     [ObservableProperty] private ObservableCollection<Appointment> appointmentHistory = new();
-    [ObservableProperty] private ObservableCollection<DiagnosisHistoryItem> patientDiagnosisHistory = new();
-
+    [ObservableProperty] private ObservableCollection<Diagnosis> patientDiagnosisHistory = new();
+    [ObservableProperty] private ObservableCollection<PatientMedicine> patientMedicinesHistory = new();
     [ObservableProperty] private ObservableCollection<Mkb10Code> availableDiagnoses = new();
 
     // =========================
@@ -69,12 +70,6 @@ public partial class AppointmentDetailViewModel : ObservableObject
     // =========================
 
     [ObservableProperty] private string pageTitle = "Детали за термин";
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsEditMode))]
-    private bool isReadOnly = true;
-
-    public bool IsEditMode => !IsReadOnly;
 
     [ObservableProperty] private bool showDiagnosisDropdown;
     [ObservableProperty] private string diagnosisSearchText = string.Empty;
@@ -94,26 +89,17 @@ public partial class AppointmentDetailViewModel : ObservableObject
     [ObservableProperty] private Doctor? selectedDoctorForAppointment;
     [ObservableProperty] private TherapyCycle? selectedTherapyCycle;
 
-    // =========================
-    // STATIC
-    // =========================
-
     public List<string> StatusOptions =>
         Enum.GetNames(typeof(AppointmentStatus)).ToList();
 
     // =========================
-    // LOAD
+    // LOAD  (unchanged logic, only IsReadOnly comes from base now)
     // =========================
 
     public async Task LoadAsync()
     {
         var selected = _selectedItemService.SelectedItem;
 
-        // Sentinel: caller wants a brand-new appointment pre-filled with a
-        // patient (e.g. "Add appointment" from that patient's own page).
-        // Recognized the same way PatientDetailFormViewModel recognizes its
-        // own sentinel: an empty Id that still carries data a real persisted
-        // appointment wouldn't have set on it.
         Guid? prefillPatientId = null;
         if(selected is { Id: var sid }&&sid==Guid.Empty&&selected.PatientId!=Guid.Empty)
         {
@@ -145,25 +131,21 @@ public partial class AppointmentDetailViewModel : ObservableObject
         PatientsList=new ObservableCollection<Patient>(dto.Patients);
         DoctorsList=new ObservableCollection<Doctor>(dto.Doctors);
 
-        AppointmentHistory=new ObservableCollection<Appointment>(ctx.AppointmentHistory);
-        PatientDiagnosisHistory=new ObservableCollection<DiagnosisHistoryItem>(ctx.DiagnosisHistory);
+        AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
+        PatientDiagnosisHistory=new ObservableCollection<Diagnosis>(ctx.Diagnoses);
+        PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
 
-        SelectedPatientForAppointment=
-            PatientsList.FirstOrDefault(x => x.Id==Appointment.PatientId);
-
-        SelectedDoctorForAppointment=
-            DoctorsList.FirstOrDefault(x => x.Id==Appointment.DoctorId);
-
-        SelectedTherapyCycle=
-            VisibleTherapies.FirstOrDefault(x => x.Id==Appointment.TherapyCycleId);
+        SelectedPatientForAppointment=PatientsList.FirstOrDefault(x => x.Id==Appointment.PatientId);
+        SelectedDoctorForAppointment=DoctorsList.FirstOrDefault(x => x.Id==Appointment.DoctorId);
+        SelectedTherapyCycle=VisibleTherapies.FirstOrDefault(x => x.Id==Appointment.TherapyCycleId);
 
         SelectedStartTime=Appointment.ScheduledStart.TimeOfDay;
         SelectedEndTime=Appointment.ScheduledEnd.TimeOfDay;
 
         PageTitle=$"Термин: {SelectedPatientForAppointment?.FullName}";
         IsReadOnly=!_selectedItemService.OpenInEditMode;
-        EvaluatePermissions(); 
-        OnPropertyChanged(nameof(IsNewAppointment));
+        EvaluatePermissions();
+
         OnPropertyChanged(nameof(IsNewAppointment));
         OnPropertyChanged(nameof(HeaderTitle));
         OnPropertyChanged(nameof(HeaderSubtitle));
@@ -189,14 +171,16 @@ public partial class AppointmentDetailViewModel : ObservableObject
         if(SelectedPatientForAppointment!=null)
         {
             var ctx = await _service.GetPatientContext(SelectedPatientForAppointment.Id);
-            AppointmentHistory=new ObservableCollection<Appointment>(ctx.AppointmentHistory);
-            PatientDiagnosisHistory=new ObservableCollection<DiagnosisHistoryItem>(ctx.DiagnosisHistory);
+            AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
+            PatientDiagnosisHistory=new ObservableCollection<Diagnosis>(ctx.Diagnoses);
+            PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
             VisibleTherapies=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
         }
         else
         {
             AppointmentHistory=new ObservableCollection<Appointment>();
-            PatientDiagnosisHistory=new ObservableCollection<DiagnosisHistoryItem>();
+            PatientDiagnosisHistory=new ObservableCollection<Diagnosis>();
+            PatientMedicinesHistory=new ObservableCollection<PatientMedicine>();
             VisibleTherapies=new ObservableCollection<TherapyCycle>();
         }
 
@@ -240,8 +224,8 @@ public partial class AppointmentDetailViewModel : ObservableObject
 
         var ctx = await _service.GetPatientContext(patient.Id);
 
-        AppointmentHistory=new ObservableCollection<Appointment>(ctx.AppointmentHistory);
-        PatientDiagnosisHistory=new ObservableCollection<DiagnosisHistoryItem>(ctx.DiagnosisHistory);
+        AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
+        PatientDiagnosisHistory=new ObservableCollection<Diagnosis>(ctx.Diagnoses);
         VisibleTherapies=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
 
         SelectedTherapyCycle=VisibleTherapies.FirstOrDefault();
@@ -250,11 +234,10 @@ public partial class AppointmentDetailViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private Task PatientChanged(Patient patient)
-        => OnPatientChangedAsync(patient);
+    private Task PatientChanged(Patient patient) => OnPatientChangedAsync(patient);
 
     // =========================
-    // DIAGNOSIS SEARCH
+    // DIAGNOSIS SEARCH  (unchanged)
     // =========================
 
     [RelayCommand]
@@ -277,19 +260,14 @@ public partial class AppointmentDetailViewModel : ObservableObject
             AvailableDiagnoses=new ObservableCollection<Mkb10Code>(result);
             ShowDiagnosisDropdown=AvailableDiagnoses.Count>0;
         }
-        catch(TaskCanceledException)
-        {
-            // ignore
-        }
+        catch(TaskCanceledException) { }
     }
 
     [RelayCommand]
     private void AddDiagnosis(Mkb10Code code)
     {
         if(code==null) return;
-
-        if(SelectedDiagnoses.Any(x => x.Mkb10CodeId==code.Id))
-            return;
+        if(SelectedDiagnoses.Any(x => x.Mkb10CodeId==code.Id)) return;
 
         SelectedDiagnoses.Add(new AppointmentDiagnosis
         {
@@ -307,99 +285,60 @@ public partial class AppointmentDetailViewModel : ObservableObject
     [RelayCommand]
     private void RemoveDiagnosis(AppointmentDiagnosis d)
     {
-        if(d!=null)
-            SelectedDiagnoses.Remove(d);
+        if(d!=null) SelectedDiagnoses.Remove(d);
     }
 
     // =========================
-    // EDIT MODE
+    // COMMANDS  (toggle edit now overrides base hook)
     // =========================
-    [ObservableProperty] private bool canCreateAppointments;
-    [ObservableProperty] private bool canUpdateAppointments;
-    [ObservableProperty] private bool canDeleteAppointments;
-
-    private void EvaluatePermissions()
-    {
-        var has =  _authorization.CanAccessModule(Modules.Appointments);
-        CanCreateAppointments=has;
-        CanUpdateAppointments=has;
-        CanDeleteAppointments=has;
-    }
 
     [RelayCommand]
     private async Task NewAppointmentForPatient(Patient patient)
     {
         if(patient is null) return;
-        if(!CanCreateAppointments)
+        if(!CanCreate)
         {
-            await _userDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за додавање термини.", "OK");
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за додавање термини.", "OK");
             return;
         }
 
         _selectedItemService.SelectedItem=new Appointment { Id=Guid.Empty, PatientId=patient.Id };
-        await _navigation.GoToAsync(AppRoutes.Appointments.Detail);
-    }
-    [RelayCommand]
-    private void ToggleEditMode() => IsReadOnly=false;
-
-    [RelayCommand]
-    private async Task Cancel()
-    {
-        if(_isModalReturnMode)
-        {
-            _selectedItemService.SelectedItem=null;
-            await _navigation.GoToAsync("..");
-            return;
-        }
-
-        if(_isNewAppointmentMode)
-        {
-            await _navigation.GoToAsync(AppRoutes.Appointments.List);
-            return;
-        }
-
-        if(_originalAppointment!=null)
-        {
-            Appointment=_originalAppointment.Clone();
-            SelectedPatientForAppointment=PatientsList.FirstOrDefault(x => x.Id==Appointment.PatientId);
-            SelectedDoctorForAppointment=DoctorsList.FirstOrDefault(x => x.Id==Appointment.DoctorId);
-            SelectedTherapyCycle=VisibleTherapies.FirstOrDefault(x => x.Id==Appointment.TherapyCycleId);
-            SelectedStartTime=Appointment.ScheduledStart.TimeOfDay;
-            SelectedEndTime=Appointment.ScheduledEnd.TimeOfDay;
-        }
-
-        IsReadOnly=true;
+        await NavigationService.GoToAsync(AppRoutes.Appointments.Detail);
     }
 
-    // =========================
-    // SAVE
-    // =========================
+    [RelayCommand]
+    private void ToggleEditMode() => ToggleEdit(); // base hook checks CanUpdate
 
+   
+
+    // =========================
+    // SAVE  (unchanged)
+    // =========================
     [RelayCommand]
     private async Task SaveAsync()
     {
         if(SelectedPatientForAppointment==null||SelectedDoctorForAppointment==null)
         {
-            await _userDialogService.ShowAlertAsync("Валидација", "Пациентот и лекарот се задолжителни.", "OK");
+            await UserDialogService.ShowAlertAsync("Валидација", "Пациентот и лекарот се задолжителни.", "OK");
             return;
         }
 
         if(SelectedEndTime<=SelectedStartTime)
         {
-            await _userDialogService.ShowAlertAsync("Валидација", "Крајното време мора да биде после почетното.", "OK");
+            await UserDialogService.ShowAlertAsync("Валидација", "Крајното време мора да биде после почетното.", "OK");
             return;
         }
 
-        Appointment.PatientId=SelectedPatientForAppointment.Id;
-        Appointment.DoctorId=SelectedDoctorForAppointment.Id;
-        Appointment.TherapyCycleId=SelectedTherapyCycle?.Id;
-
-        var day = Appointment.ScheduledStart==default ? DateTime.Today : Appointment.ScheduledStart.Date;
-        Appointment.ScheduledStart=day+SelectedStartTime;
-        Appointment.ScheduledEnd=day+SelectedEndTime;
-
-        try
+        await ExecuteSafeAsync(async () =>
         {
+            Appointment.PatientId=SelectedPatientForAppointment.Id;
+            Appointment.DoctorId=SelectedDoctorForAppointment.Id;
+            Appointment.TherapyCycleId=SelectedTherapyCycle?.Id;
+
+            var day = Appointment.ScheduledStart==default ? DateTime.Today : Appointment.ScheduledStart.Date;
+            Appointment.ScheduledStart=day+SelectedStartTime;
+            Appointment.ScheduledEnd=day+SelectedEndTime;
+
             if(_isNewAppointmentMode)
             {
                 Appointment.Id=Guid.NewGuid();
@@ -407,47 +346,66 @@ public partial class AppointmentDetailViewModel : ObservableObject
             }
 
             await _service.SaveAppointment(Appointment, SelectedDiagnoses.ToList(), SelectedTherapyCycle);
-
-            await _userDialogService.ShowAlertAsync("Успешно", "Терминот е успешно зачуван.", "OK");
+            await UserDialogService.ShowAlertAsync("Успешно", "Терминот е успешно зачуван.", "OK");
 
             if(_isModalReturnMode)
             {
                 _selectedItemService.SelectedItem=Appointment;
-                await _navigation.GoToAsync("..");
+                await NavigationService.GoToAsync("..");
             }
             else if(_isNewAppointmentMode)
             {
                 _selectedItemService.SelectedItem=null;
-                await _navigation.GoToAsync(AppRoutes.Appointments.List);
+                await NavigationService.GoToAsync(AppRoutes.Appointments.List);
             }
             else
             {
                 _originalAppointment=Appointment.Clone();
                 IsReadOnly=true;
             }
-        }
-        catch(Exception ex)
-        {
-            await _userDialogService.ShowAlertAsync("Грешка", ex.Message, "OK");
-        }
+        }, "Грешка при зачувување на терминот");
     }
 
-    // =========================
-    // HISTORY SELECT
-    // =========================
+    [RelayCommand]
+    private async Task Cancel()
+    {
+        await ExecuteSafeAsync(async () =>
+        {
+            if(_isModalReturnMode)
+            {
+                _selectedItemService.SelectedItem=null;
+                await NavigationService.GoToAsync("..");
+                return;
+            }
+
+            if(_isNewAppointmentMode)
+            {
+                await NavigationService.GoToAsync(AppRoutes.Appointments.List);
+                return;
+            }
+
+            if(_originalAppointment!=null)
+            {
+                Appointment=_originalAppointment.Clone();
+                SelectedPatientForAppointment=PatientsList.FirstOrDefault(x => x.Id==Appointment.PatientId);
+                SelectedDoctorForAppointment=DoctorsList.FirstOrDefault(x => x.Id==Appointment.DoctorId);
+                SelectedTherapyCycle=VisibleTherapies.FirstOrDefault(x => x.Id==Appointment.TherapyCycleId);
+                SelectedStartTime=Appointment.ScheduledStart.TimeOfDay;
+                SelectedEndTime=Appointment.ScheduledEnd.TimeOfDay;
+            }
+
+            IsReadOnly=true;
+            await Task.CompletedTask;
+        }, "Грешка при откажување");
+    }
 
     [RelayCommand]
     private async Task SelectAppointmentAsync(Appointment appointment)
     {
         if(appointment==null) return;
-
         _selectedItemService.SelectedItem=appointment;
         await LoadAsync();
     }
-
-    // =========================
-    // NEXT CYCLE
-    // =========================
 
     [RelayCommand]
     private async Task GenerateNextCycleAsync()
@@ -456,29 +414,23 @@ public partial class AppointmentDetailViewModel : ObservableObject
         await LoadAsync();
     }
 }
+
 public static class AppointmentExtensions
 {
     public static Appointment Clone(this Appointment source)
     {
         if(source is null) return new Appointment();
-
         return new Appointment
         {
             Id=source.Id,
             PatientId=source.PatientId,
             DoctorId=source.DoctorId,
             TherapyCycleId=source.TherapyCycleId,
-
             ScheduledStart=source.ScheduledStart,
             ScheduledEnd=source.ScheduledEnd,
-
             Status=source.Status,
             ReasonForVisit=source.ReasonForVisit,
-
             CreatedAt=source.CreatedAt,
-
-            // Навигациски proprties - плитко (иста референца), не длабоко клонирање,
-            // за да не creира duplicate tracked entities во DbContext-от.
             Patient=source.Patient,
             Doctor=source.Doctor,
             TherapyCycle=source.TherapyCycle

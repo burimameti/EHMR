@@ -17,9 +17,8 @@ namespace EHMR.ViewModels;
 public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
-    private readonly ISelectedItemService<TherapyProtocol> _selectedItemService;
 
-    // Филтер за категории во твојот класичен стил со авто-апдејт
+    // Филтер за категории
     private string _selectedCategory = "Сите";
 
     public string SelectedCategory
@@ -32,17 +31,17 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
         }
     }
 
-    // Листа за филтрирање по медицински гранки (можеш да ја дополниш од база или статички)
     public ObservableCollection<string> CategoryFilters
     {
         get;
     } =
         new(["Сите", "Кардиологија", "Онкологија", "Нефрологија", "Пулмологија"]);
 
-    /// <summary>Module key used by BaseViewModel&lt;T&gt;.EvaluatePermissions().</summary>
     protected override string ModuleName => "protocols";
+    protected override string DetailRoute => AppRoutes.Protocols.Detail;
+    protected override string PermissionDeniedMessage => "Немате авторизација за оваа акција со протоколи.";
 
-    // ================= GRID (entity-specific, same shape as PatientListViewModel) =================
+    // ================= GRID =================
     [ObservableProperty] private ObservableCollection<TherapyProtocol> filteredProtocols = new();
     [ObservableProperty] private ObservableCollection<SparkGridColumn> gridColumns = new();
     [ObservableProperty] private ObservableCollection<SparkGridRow> gridRows = new();
@@ -54,49 +53,39 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
         IMenuService menuService,
         ISelectedItemService<TherapyProtocol> selectedItemService,
         IAuthorizationService authService)
-        : base(navigationService, userDialogService, menuService, authService)
+        : base(navigationService, userDialogService, menuService, authService, selectedItemService)
     {
         _dbFactory=dbFactory;
-        _selectedItemService=selectedItemService;
 
-        EvaluatePermissions(); // base method — was never being called before, so CanCreate/Update/Delete stayed false
+        EvaluatePermissions();
     }
 
-    // LOAD DATA
+    // ============================================================
+    // LOAD
+    // ============================================================
     [RelayCommand]
     public async Task LoadAsync()
+        => await ExecuteSafeAsync(LoadCoreAsync, "Неуспешно вчитување на протоколи");
+
+    private async Task LoadCoreAsync()
     {
-        if(IsBusy) return;
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
-        try
-        {
-            IsBusy=true;
-            ClearError();
+        var protocols = await db.TherapyProtocols
+            .AsNoTracking()
+            .OrderByDescending(x => x.CreatedAt)
+            .ToListAsync();
 
-            await using var db = await _dbFactory.CreateDbContextAsync();
+        AllItems=protocols;
 
-            var protocols = await db.TherapyProtocols
-                .AsNoTracking()
-                .OrderByDescending(x => x.CreatedAt)
-                .ToListAsync();
+        InitializeSparkControls();
 
-            AllItems=protocols; // Полнење на заштитената база од твојот BaseViewModel
-
-            InitializeSparkControls();
-
-            ApplyPipeline();
-        }
-        catch(Exception ex)
-        {
-            OnError($"Неуспешно вчитување на протоколи: {ex.Message}");
-        }
-        finally
-        {
-            IsBusy=false;
-        }
+        ApplyPipeline();
     }
 
-    // ФИЛТРИРАЊЕ НА ПРОТОКОЛИТЕ (Имплементација на апстрактниот метод од BaseViewModel)
+    // ============================================================
+    // PIPELINE HOOKS
+    // ============================================================
     protected override IEnumerable<TherapyProtocol> ApplySearch(
         IEnumerable<TherapyProtocol> query,
         string search)
@@ -117,11 +106,6 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
         return query;
     }
 
-    /// <summary>
-    /// Mirrors PatientListViewModel.OnPageProjected: base pipeline calls this with
-    /// the paged/sorted/filtered slice, we store it locally, and the partial
-    /// OnFilteredProtocolsChanged hook below rebuilds the Spark grid rows.
-    /// </summary>
     protected override void OnPageProjected(ObservableCollection<TherapyProtocol> page)
     {
         FilteredProtocols=page;
@@ -129,8 +113,6 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
 
     partial void OnFilteredProtocolsChanged(ObservableCollection<TherapyProtocol> value) => RefreshSparkGridRows();
 
-    // ClearFilters command now comes from BaseViewModel<T> (ClearFiltersCommand):
-    // it calls ResetFilters() → ApplyPipeline() → SyncSparkPickersFromFilters().
     protected override void ResetFilters()
     {
         SearchText=string.Empty;
@@ -138,9 +120,7 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
     }
 
     // ============================================================
-    // PICKERS — category filter now goes through the same
-    // SparkPickerItem/MakePicker mechanism as Patients, instead of
-    // a bare property, so it renders inside SparkExplorerHeaderView.
+    // PICKERS
     // ============================================================
     private SparkPickerItem _categoryPicker;
 
@@ -158,7 +138,7 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
     }
 
     // ============================================================
-    // GRID — columns/rows for TherapyProtocol
+    // GRID
     // ============================================================
     private void BuildSparkGridColumns()
     {
@@ -184,15 +164,19 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
             row["Description"]=p.Description;
             row["DurationInDays"]=p.DurationInDays??0;
             row["CreatedByDoctor"]=p.CreatedByDoctor??"—";
+
+            AddDefaultActions(p, row, detailLabel: "Преглед", editLabel: "✎");
+
+            if(CanDelete)
+                row["Actions"]=((List<SparkButtonItem>)row["Actions"])
+                    .Append(new SparkButtonItem { Label="🗑", Command=DeleteCommand, CommandParameter=p, IsPrimary=false })
+                    .ToList();
+
             rows.Add(row);
         }
         GridRows=rows;
     }
 
-    /// <summary>
-    /// Purely cosmetic grouping so the category badge has some visual variety —
-    /// adjust freely, there's no clinical meaning behind the tone assignment.
-    /// </summary>
     private static SparkBadgeTone CategoryToTone(string? category) => category?.ToLowerInvariant() switch
     {
         "онкологија" => SparkBadgeTone.Danger,
@@ -208,37 +192,13 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
     private void InitializeSparkControls()
     {
         BuildSparkPickers();
-        BuildSparkButtons();   // inherited from BaseViewModel<T>
+        BuildSparkButtons();
         BuildSparkGridColumns();
     }
 
-    // ACTIONS
-
-    [RelayCommand]
-    private async Task AddAsync()
-    {
-        _selectedItemService.SelectedItem=null;
-        await NavigationService.GoToAsync(AppRoutes.Protocols.Detail);
-    }
-
-    [RelayCommand]
-    private async Task SelectAsync(TherapyProtocol protocol)
-    {
-        if(protocol==null) return;
-
-        _selectedItemService.SelectedItem=protocol; // Праќаме постоечки -> ПРЕГЛЕД/ИЗМЕНА
-        await NavigationService.GoToAsync(AppRoutes.Protocols.Detail);
-    }
-
-    [RelayCommand]
-    private async Task EditAsync(TherapyProtocol protocol)
-    {
-        if(protocol==null) return;
-
-        _selectedItemService.SelectedItem=protocol;
-        await NavigationService.GoToAsync(AppRoutes.Protocols.Detail);
-    }
-
+    // ============================================================
+    // DELETE (нема base еквивалент, останува локална команда)
+    // ============================================================
     [RelayCommand]
     private async Task DeleteAsync(TherapyProtocol protocol)
     {
@@ -250,13 +210,10 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
 
         if(!confirm) return;
 
-        try
+        await ExecuteSafeAsync(async () =>
         {
-            IsBusy=true;
-
             await using var db = await _dbFactory.CreateDbContextAsync();
 
-            // Превентивна проверка: Пред бришење, Entity Framework може да ја повлече дупликат од контекст
             db.TherapyProtocols.Remove(protocol);
             await db.SaveChangesAsync();
 
@@ -264,14 +221,6 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
             ApplyPipeline();
 
             await UserDialogService.ShowAlertAsync("Успешно бришење", "Протоколот е отстранет од каталогот.", "OK");
-        }
-        catch(Exception ex)
-        {
-            OnError($"Грешка при бришење: {ex.Message}");
-        }
-        finally
-        {
-            IsBusy=false;
-        }
+        }, "Грешка при бришење");
     }
 }

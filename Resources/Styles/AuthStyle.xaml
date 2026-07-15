@@ -2,14 +2,16 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
 	<!--  =====================================================  -->
-	<!--  🎨 LOGIN THEME COLORS (UNCHANGED)  -->
+	<!--  🎨 SHARED APP COLORS  -->
 	<!--  =====================================================  -->
 	<Color x:Key="Surface">#4A5863</Color>
 	<Color x:Key="SurfaceAlt">#1A2436</Color>
-	<Color x:Key="LoginCardAlt">#1A2436</Color>
+	<Color x:Key="SparkedDarkCard">#1A2436</Color>
 	<Color x:Key="BorderDefault">#334155</Color>
 	<Color x:Key="Teal400">#2DD4BF</Color>
 	<Color x:Key="Teal600">#0D9488</Color>
+	<Color x:Key="Teal50">#F0FDFA</Color>
+	<Color x:Key="Teal100">#CCFBF1</Color>
 
 	<Color x:Key="SidebarBg">#3B4754</Color>
 	<Color x:Key="SidebarActiveBg">#4DD9C7</Color>
@@ -19,212 +21,208 @@
 	<Color x:Key="SidebarLine">#5B6672</Color>
 	<Color x:Key="SidebarBorder">#1E293B</Color>
 
-	<Color x:Key="Teal50">#F0FDFA</Color>
-	<Color x:Key="Teal100">#CCFBF1</Color>
-
-
 	<Color x:Key="TextPrimary">#FFFFFF</Color>
 	<Color x:Key="TextSecondary">#94A3B8</Color>
 	<Color x:Key="TextMuted">#64748B</Color>
 
 	<Color x:Key="EhmrPrimary">#0284C7</Color>
 	<Color x:Key="PrimarySoft">#1E293B</Color>
-	<Color x:Key="LoginDark">#0F172A</Color>
-	<Color x:Key="LoginDark2">#1E293B</Color>
-	<Color x:Key="LoginDark3">#05084E</Color>
-
-	<Color x:Key="LoginPrimary">#2563EB</Color>
-	<Color x:Key="LoginBorder">#475569</Color>
-	<Color x:Key="LoginMuted">#94A3B8</Color>
-	<Color x:Key="LoginText">#FFFFFF</Color>
-	<Color x:Key="LoginAccent">#38BDF8</Color>
 
 	<Color x:Key="AppBg">#F1F5F9</Color>
-	<!--  page floor  -->
-	<Color x:Key="AppCard">#131F2E</Color>
-	<!--  lifted surface  -->
-	<Color x:Key="AppInput">#0D1829</Color>
-	<!--  recessed input  -->
-	<Color x:Key="AppBorder">#2A3A4F</Color>
-	<!--  border  -->
-	<Color x:Key="AppDivider">#1A2D42</Color>
-	<!--  row divider  -->
-
-	<Color x:Key="AppTextPrimary">#F1F5F9</Color>
-	<Color x:Key="AppTextSecondary">#CBD5E1</Color>
-	<Color x:Key="AppTextMuted">#4E6A85</Color>
-	<Color x:Key="AppPlaceholder">#3D5470</Color>
-
-	<Color x:Key="AppAccent">#38BDF8</Color>
-	<Color x:Key="AppPrimary">#0369A1</Color>
-	<!--  CTA blue  -->
-	<Color x:Key="AppGhostBtn">#1A2D42</Color>
 
 	<Style x:Key="ThemedPage" TargetType="ContentPage">
 		<Setter Property="BackgroundColor" Value="{StaticResource AppBg}" />
 	</Style>
 
-	<Style x:Key="ThemedCard" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource AppCard}" />
-		<Setter Property="Stroke" Value="{StaticResource AppBorder}" />
-		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="StrokeShape">
-			<Setter.Value>
-				<RoundRectangle CornerRadius="12" />
-			</Setter.Value>
-		</Setter>
-	</Style>
+	<!--  =====================================================  -->
+	<!--  =====================================================  -->
+	<!--  🌈 SPARK CORE THEME  -->
+	<!--  =====================================================  -->
 
-	<Style x:Key="ThemedInput" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource AppInput}" />
-		<Setter Property="Stroke" Value="{StaticResource AppBorder}" />
-		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="StrokeShape">
-			<Setter.Value>
-				<RoundRectangle CornerRadius="8" />
-			</Setter.Value>
-		</Setter>
-		<Setter Property="Padding" Value="12,0" />
-		<Setter Property="HeightRequest" Value="38" />
-	</Style>
+	<Color x:Key="SparkPageBackground">#F4F7FB</Color>
 
-	<Style x:Key="ThemedEntry" TargetType="Entry">
-		<Setter Property="BackgroundColor" Value="Transparent" />
-		<Setter Property="TextColor" Value="{StaticResource AppTextPrimary}" />
-		<Setter Property="PlaceholderColor" Value="{StaticResource AppPlaceholder}" />
-		<Setter Property="FontSize" Value="13" />
-		<Setter Property="HeightRequest" Value="36" />
-		<Setter Property="VerticalOptions" Value="Center" />
-	</Style>
-
-	<Style x:Key="ThemedPicker" TargetType="Picker">
-		<Setter Property="BackgroundColor" Value="Transparent" />
-		<Setter Property="TextColor" Value="{StaticResource AppTextSecondary}" />
-		<Setter Property="TitleColor" Value="{StaticResource AppPlaceholder}" />
-		<Setter Property="HorizontalOptions" Value="Fill" />
-		<Setter Property="VerticalOptions" Value="Center" />
-		<Setter Property="HeightRequest" Value="36" />
-	</Style>
-
-	<Style x:Key="ThemedLabelPrimary" TargetType="Label">
-		<Setter Property="TextColor" Value="{StaticResource AppTextPrimary}" />
-		<Setter Property="FontSize" Value="14" />
-	</Style>
-
-	<Style x:Key="ThemedLabelSecondary" TargetType="Label">
-		<Setter Property="TextColor" Value="{StaticResource AppTextSecondary}" />
-		<Setter Property="FontSize" Value="13" />
-	</Style>
-
-	<Style x:Key="ThemedLabelMuted" TargetType="Label">
-		<Setter Property="TextColor" Value="{StaticResource AppTextMuted}" />
-		<Setter Property="FontSize" Value="12" />
-	</Style>
-
-	<Style x:Key="ThemedGhostButton" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource AppGhostBtn}" />
-		<Setter Property="Stroke" Value="{StaticResource AppBorder}" />
-		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="StrokeShape">
-			<Setter.Value>
-				<RoundRectangle CornerRadius="8" />
-			</Setter.Value>
-		</Setter>
-	</Style>
-
-	<Style x:Key="ThemedPrimaryButton" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource AppPrimary}" />
-		<Setter Property="StrokeThickness" Value="0" />
-		<Setter Property="StrokeShape">
-			<Setter.Value>
-				<RoundRectangle CornerRadius="8" />
-			</Setter.Value>
-		</Setter>
-		<Setter Property="Padding" Value="16,0" />
-		<Setter Property="HeightRequest" Value="38" />
-	</Style>
+	<Color x:Key="SparkedDarkBg">#1F2937</Color>
+	<!--  Cards  -->
+	<Color x:Key="SparkContentBackground">#FFFFFF</Color>
+	<Color x:Key="SparkCardBorder">#DDE6F0</Color>
 
 
-	<!--  ================= CARD (LOGIN SAME STYLE) =================  -->
-	<Style x:Key="AppCardStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
-		<Setter Property="Stroke" Value="{StaticResource BorderDefault}" />
-		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="StrokeShape">
-			<Setter.Value>
-				<RoundRectangle CornerRadius="1" />
-			</Setter.Value>
-		</Setter>
-		<Setter Property="Padding" Value="18" />
-	</Style>
+	<!--  Text  -->
+	<Color x:Key="SparkTextPrimary">#172B4D</Color>
+	<Color x:Key="SparkTextSecondary">#637381</Color>
 
-	<!--  ================= HEADER BAR =================  -->
-	<Style x:Key="AppHeader" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
-		<Setter Property="Stroke" Value="{StaticResource BorderDefault}" />
-		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="Padding" Value="24,0" />
-		<Setter Property="HeightRequest" Value="76" />
-	</Style>
 
-	<!--  ================= INPUT BOX =================  -->
-	<Style x:Key="AppInputBox" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceAlt}" />
-		<Setter Property="Stroke" Value="{StaticResource BorderDefault}" />
-		<Setter Property="StrokeShape">
-			<Setter.Value>
-				<RoundRectangle CornerRadius="12" />
-			</Setter.Value>
-		</Setter>
-		<Setter Property="HeightRequest" Value="44" />
-		<Setter Property="Padding" Value="14,0" />
-	</Style>
+	<!--  Accent  -->
+	<Color x:Key="SparkAccentTeal">#009688</Color>
+	<Color x:Key="SparkAccentTealDark">#00695C</Color>
 
-	<!--  ================= PRIMARY BUTTON =================  -->
-	<Style x:Key="AppPrimaryButton" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="{StaticResource EhmrPrimary}" />
-		<Setter Property="TextColor" Value="White" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="CornerRadius" Value="10" />
-		<Setter Property="HeightRequest" Value="42" />
-	</Style>
 
 	<!--  =====================================================  -->
-	<!--  🌄 GRADIENT BACKGROUND (GRID BACKGROUND)  -->
+	<!--  Tabs  -->
 	<!--  =====================================================  -->
+
+	<Color x:Key="SparkTabActiveBg">#E7F7FA</Color>
+	<Color x:Key="SparkTabActiveBorder">#21B6C4</Color>
+	<Color x:Key="SparkTabActiveText">#16374A</Color>
+	<Color x:Key="SparkTabInactiveText">#7C8798</Color>
+	<Color x:Key="SparkTabHoverBg">#F1F5F8</Color>
+
+
+
+	<!--  =====================================================  -->
+	<!--  Section Headers  -->
+	<!--  =====================================================  -->
+
+	<Color x:Key="SparkSectionHeaderBg">#E8F5F4</Color>
+	<Color x:Key="SparkSectionHeaderText">#00695C</Color>
+
+
+
+	<!--  =====================================================  -->
+	<!--  Status  -->
+	<!--  =====================================================  -->
+
+
+	<!--  Success  -->
+	<Color x:Key="SparkStatusSuccessBg">#D1F5D3</Color>
+	<Color x:Key="SparkStatusSuccessText">#1E7E34</Color>
+
+
+	<!--  Warning  -->
+	<Color x:Key="SparkStatusWarningBg">#FDF1D6</Color>
+	<Color x:Key="SparkStatusWarningText">#B7791F</Color>
+
+
+	<!--  Danger  -->
+	<Color x:Key="SparkStatusDangerBg">#FCE3E7</Color>
+	<Color x:Key="SparkStatusDangerText">#C0304A</Color>
+
+
+	<!--  Neutral  -->
+	<Color x:Key="SparkStatusNeutralBg">#EAECF1</Color>
+	<Color x:Key="SparkStatusNeutralText">#5A6178</Color>
+
+
+
+	<!--  =====================================================  -->
+	<!--  Badges  -->
+	<!--  =====================================================  -->
+
+	<Color x:Key="SparkBadgeSuccessBg">#E7F6E9</Color>
+	<Color x:Key="SparkBadgeSuccessText">#3CB35B</Color>
+
+	<Color x:Key="SparkBadgeWarningBg">#FDF3E3</Color>
+	<Color x:Key="SparkBadgeWarningText">#E0A83C</Color>
+
+	<Color x:Key="SparkBadgeDangerBg">#FDE8E8</Color>
+	<Color x:Key="SparkBadgeDangerText">#E0554F</Color>
+
+	<Color x:Key="SparkBadgeNeutralBg">#EDF1F5</Color>
+	<Color x:Key="SparkBadgeNeutralSelected">#21B6C4</Color>
+
+
+
+	<!--  =====================================================  -->
+	<!--  Expandable Card  -->
+	<!--  =====================================================  -->
+
+	<Color x:Key="ExpandCardBackground">#FFFFFF</Color>
+	<Color x:Key="ExpandCardBody">#FAFBFC</Color>
+	<Color x:Key="ExpandCardBorder">#D8E1EA</Color>
+
+	<Color x:Key="ExpandCardHeader">#556372</Color>
+	<Color x:Key="ExpandCardHeaderHover">#647383</Color>
+
+	<Color x:Key="ExpandCardTitle">#FFFFFF</Color>
+	<Color x:Key="ExpandCardText">#475569</Color>
+
+	<Color x:Key="ExpandCardChevron">#FFFFFF</Color>
+
+	<Color x:Key="ExpandCardBadge">#21B6C4</Color>
+	<Color x:Key="ExpandCardBadgeText">#FFFFFF</Color>
+
+
+
+	<!--  =====================================================  -->
+	<!--  Card Variants  -->
+	<!--  =====================================================  -->
+
+
+	<!--  Patient  -->
+	<Color x:Key="SparkPatientHeader">#EFF6FF</Color>
+	<Color x:Key="SparkPatientIcon">#DBEAFE</Color>
+	<Color x:Key="SparkPatientBorder">#BFDBFE</Color>
+
+
+	<!--  Diagnosis  -->
+	<Color x:Key="SparkDiagnosisHeader">#EEF2FF</Color>
+	<Color x:Key="SparkDiagnosisIcon">#C7D2FE</Color>
+	<Color x:Key="SparkDiagnosisBorder">#A5B4FC</Color>
+
+
+	<!--  Encounter  -->
+	<Color x:Key="SparkEncounterHeader">#ECFEFF</Color>
+	<Color x:Key="SparkEncounterIcon">#A5F3FC</Color>
+	<Color x:Key="SparkEncounterBorder">#67E8F9</Color>
+
+
+	<!--  Appointment  -->
+	<Color x:Key="SparkAppointmentHeader">#FAF5FF</Color>
+	<Color x:Key="SparkAppointmentIcon">#E9D5FF</Color>
+	<Color x:Key="SparkAppointmentBorder">#D8B4FE</Color>
+
+
+	<!--  Therapy  -->
+	<Color x:Key="SparkTherapyHeader">#F0FDF4</Color>
+	<Color x:Key="SparkTherapyIcon">#BBF7D0</Color>
+	<Color x:Key="SparkTherapyBorder">#86EFAC</Color>
+
+
+	<!--  Prescription  -->
+	<Color x:Key="SparkPrescriptionHeader">#FFF1F2</Color>
+	<Color x:Key="SparkPrescriptionIcon">#FECDD3</Color>
+	<Color x:Key="SparkPrescriptionBorder">#FDA4AF</Color>
+
+
+	<!--  Medicine  -->
+	<Color x:Key="SparkMedicineHeader">#FFFBEB</Color>
+	<Color x:Key="SparkMedicineIcon">#FDE68A</Color>
+	<Color x:Key="SparkMedicineBorder">#FCD34D</Color>
+
+
+
+	<!--  =====================================================  -->
+	<!--  Login Theme  -->
+	<!--  =====================================================  -->
+
+	<Color x:Key="LoginDark">#0F172A</Color>
+	<Color x:Key="LoginDark2">#1E293B</Color>
+	<Color x:Key="LoginDark3">#05084E</Color>
+
+	<Color x:Key="LoginText">#FFFFFF</Color>
+	<Color x:Key="LoginMuted">#9CA3AF</Color>
+
+	<Color x:Key="LoginPrimary">#06B6D4</Color>
+	<Color x:Key="LoginAccent">#0891B2</Color>
+
+	<Color x:Key="LoginBorder">#374151</Color>
+	<Color x:Key="LoginCardAlt">#111827</Color>
+
 
 	<LinearGradientBrush x:Key="LoginPageGradient" StartPoint="0,0" EndPoint="0,1">
-
-		<GradientStop Offset="0" Color="{StaticResource LoginDark2}" />
-		<GradientStop Offset="0.6" Color="{StaticResource LoginDark}" />
-		<GradientStop Offset="1" Color="{StaticResource LoginDark3}" />
-
+		<GradientStop Offset="0" Color="{StaticResource SparkedDarkBg}" />
+		<GradientStop Offset="1" Color="{StaticResource SparkedDarkCard}" />
 	</LinearGradientBrush>
 
-	<LinearGradientBrush x:Key="GardientBackgrund" StartPoint="0,1" EndPoint="0,0">
-
-		<GradientStop Offset="0" Color="#516076" />
-		<GradientStop Offset="0.5" Color="#5F6876" />
-		<GradientStop Offset="1" Color="#516076" />
-
-	</LinearGradientBrush>
-
-	<Style x:Key="AppPageStyle" TargetType="ContentPage">
-		<Setter Property="Background" Value="{StaticResource GardientBackgrund}" />
-	</Style>
 	<Style x:Key="LoginPageStyle" TargetType="ContentPage">
 		<Setter Property="BackgroundColor" Value="{StaticResource LoginDark}" />
 	</Style>
 
-
-	<!--  =====================================================  -->
-	<!--  📦 RIGHT LOGIN CARD  -->
-	<!--  =====================================================  -->
-
+	<!--  Right login card (white surface)  -->
 	<Style x:Key="LoginCard" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource LoginDark2}" />
-		<Setter Property="Stroke" Value="{StaticResource LoginBorder}" />
-		<Setter Property="StrokeThickness" Value="1.5" />
+		<Setter Property="BackgroundColor" Value="{StaticResource White}" />
+		<Setter Property="Stroke" Value="#E2E8F0" />
+		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Padding" Value="40" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
@@ -233,15 +231,11 @@
 		</Setter>
 	</Style>
 
-
-	<!--  =====================================================  -->
-	<!--  🔷 INPUT CARD (BORDER FIELD WRAPPER)  -->
-	<!--  =====================================================  -->
-
+	<!--  Input field wrapper  -->
 	<Style x:Key="LoginInputBorder" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource LoginDark}" />
-		<Setter Property="Stroke" Value="{StaticResource LoginBorder}" />
-		<Setter Property="StrokeThickness" Value="1.5" />
+		<Setter Property="BackgroundColor" Value="#F8FAFC" />
+		<Setter Property="Stroke" Value="#CBD5E1" />
+		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Padding" Value="14,0" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
@@ -250,26 +244,18 @@
 		</Setter>
 	</Style>
 
-
-	<!--  =====================================================  -->
-	<!--  ✏️ ENTRY  -->
-	<!--  =====================================================  -->
-
+	<!--  Entry text  -->
 	<Style x:Key="LoginEntry" TargetType="Entry">
-		<Setter Property="TextColor" Value="{StaticResource LoginText}" />
-		<Setter Property="PlaceholderColor" Value="#475569" />
+		<Setter Property="TextColor" Value="#1E293B" />
+		<Setter Property="PlaceholderColor" Value="#94A3B8" />
 		<Setter Property="FontSize" Value="14" />
 		<Setter Property="BackgroundColor" Value="Transparent" />
 		<Setter Property="HeightRequest" Value="50" />
 	</Style>
 
-
-	<!--  =====================================================  -->
-	<!--  🔘 PRIMARY BUTTON  -->
-	<!--  =====================================================  -->
-
+	<!--  Primary button  -->
 	<Style x:Key="LoginPrimaryButton" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="#0284C7" />
+		<Setter Property="BackgroundColor" Value="{StaticResource LoginPrimary}" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
 				<RoundRectangle CornerRadius="12" />
@@ -278,68 +264,4 @@
 		<Setter Property="HeightRequest" Value="50" />
 	</Style>
 
-
-	<!--  =====================================================  -->
-	<!--  🧾 LABELS  -->
-	<!--  =====================================================  -->
-
-	<Style x:Key="LoginTitle" TargetType="Label">
-		<Setter Property="FontSize" Value="28" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource LoginText}" />
-	</Style>
-
-	<Style x:Key="LoginSubtitle" TargetType="Label">
-		<Setter Property="FontSize" Value="14" />
-		<Setter Property="TextColor" Value="{StaticResource LoginMuted}" />
-	</Style>
-
-	<Style x:Key="LoginFieldLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="13" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource LoginMuted}" />
-	</Style>
-
-
-	<!--  =====================================================  -->
-	<!--  ☑️ CHECKBOX TEXT  -->
-	<!--  =====================================================  -->
-
-	<Style x:Key="LoginHintText" TargetType="Label">
-		<Setter Property="FontSize" Value="12" />
-		<Setter Property="TextColor" Value="{StaticResource LoginMuted}" />
-	</Style>
-
-	<Style x:Key="DashboardHeaderCardStyle" TargetType="Border">
-
-		<Setter Property="StrokeThickness" Value="0" />
-		<Setter Property="Padding" Value="24,0" />
-		<Setter Property="StrokeShape">
-			<Setter.Value>
-				<RoundRectangle CornerRadius="16" />
-			</Setter.Value>
-		</Setter>
-	</Style>
-
-
-	<Style x:Key="RefreshButtonStyle" TargetType="Button">
-		<Setter Property="WidthRequest" Value="40" />
-		<Setter Property="HeightRequest" Value="40" />
-		<Setter Property="Padding" Value="0" />
-		<Setter Property="CornerRadius" Value="8" />
-		<Setter Property="BackgroundColor" Value="White" />
-		<Setter Property="BorderColor" Value="#E2E8F0" />
-		<Setter Property="BorderWidth" Value="1" />
-		<Setter Property="HorizontalOptions" Value="Center" />
-		<Setter Property="VerticalOptions" Value="Center" />
-	</Style>
-	<Style x:Key="AddButtonStyle" TargetType="Button">
-		<Setter Property="HeightRequest" Value="40" />
-		<Setter Property="Padding" Value="16,0" />
-		<Setter Property="CornerRadius" Value="18" />
-		<Setter Property="BackgroundColor" Value="{StaticResource Gray100}" />
-		<Setter Property="TextColor" Value="{StaticResource Gray600}" />
-		<Setter Property="FontSize" Value="13" />
-		<Setter Property="FontAttributes" Value="Bold" />
-	</Style>
 </ResourceDictionary>

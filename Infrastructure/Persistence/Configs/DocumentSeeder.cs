@@ -2,26 +2,40 @@
 using Microsoft.EntityFrameworkCore;
 using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
 
-namespace EHMR.Infrastructure.Persistence.Configs
+namespace EHMR.Infrastructure.Persistence.Configs;
+
+public sealed class DocumentSeeder : IEntitySeeder
 {
-    public class DocumentSeeder : IEntitySeeder
+    public int Order => 66;
+
+    public async Task SeedAsync(
+        DesktopTherapyDbContext context,
+        CancellationToken ct = default)
     {
-        public int Order => 66;
+        if(await context.PatientDocuments.AnyAsync(ct))
+            return;
 
-        public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
+        await context.PatientDocuments.AddAsync(new PatientDocument
         {
-            if(await context.Set<PatientDocument>().AnyAsync(ct))
-                return;
+            Id=Guid.NewGuid(),
 
-            context.Set<PatientDocument>().Add(
-                new PatientDocument
-                {
-                    PatientId=SeedIds.Patient1,
-                    EncounterId=SeedIds.Encounter1,
-                    Title="initial_report.pdf",
-                    FileUrl="/documents/initial_report.pdf",
-                    UploadedAt=DateTime.UtcNow
-                }); await context.SaveChangesAsync();
-        }
+            PatientId=SeedIds.Patient1,
+            EncounterId=SeedIds.Encounter1,
+
+            Title="Иницијален ревматолошки извештај",
+            Description="Првичен специјалистички преглед.",
+
+            FileName="initial_report.pdf",
+            StoredPath="/documents/initial_report.pdf",
+            ContentType="application/pdf",
+
+           // FileSizeInBytes=215_420,
+
+            UploadedAt=DateTime.UtcNow,
+            IsCritical=true,
+            IsDeleted=false
+        }, ct);
+
+        await context.SaveChangesAsync(ct);
     }
 }

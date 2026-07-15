@@ -27,7 +27,6 @@ public partial class AppointmentListViewModel
     }
 
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
-    private readonly ISelectedItemService<Appointment> _selectedItemService;
     private readonly IAppointmentSearchQueryHandler _autocomplete;
 
     private int _selectedIndex = -1;
@@ -47,7 +46,7 @@ public partial class AppointmentListViewModel
         get => _selectedIndex;
         set => SetProperty(ref _selectedIndex, value);
     }
-    public ObservableCollection<SparkTabItem> Tabs { get; } = new();
+
     [ObservableProperty] private Appointment? selectedAppointment;
     [ObservableProperty] private IReadOnlyList<SearchSuggestionDto> suggestions = [];
     [ObservableProperty] private SearchSuggestionDto? selectedSuggestion;
@@ -56,11 +55,6 @@ public partial class AppointmentListViewModel
     // Drives the "showing full history for X" banner above the grid.
     [ObservableProperty] private bool isViewingPersonHistory;
     [ObservableProperty] private string activeHistoryLabel = "";
-
-    // NOTE: local CurrentPage / TotalPages / PageSize removed — they were shadowing
-    // BaseViewModel<T>'s own paging properties, so RefreshPage() was never seeing
-    // the values this class thought it was setting. PageSize is now set on the
-    // base property in the constructor.
 
     public static IEnumerable<TextSpan> BuildHighlighted(string text, string query)
     {
@@ -185,16 +179,13 @@ public partial class AppointmentListViewModel
         {
             SetProperty(ref _filterByDate, value);
             BuildSparkButtons();
-            // Bug fix: turning the "today" toggle OFF used to trigger a full
-            // DB reload (_=LoadAsync()) instead of just re-filtering in memory.
             ApplyPipeline();
         }
     }
 
-    /// <summary>Module key used by BaseViewModel&lt;T&gt;.EvaluatePermissions().</summary>
     protected override string ModuleName => Modules.Appointments;
-
-    public bool CanManageAppointments => CanCreate;
+    protected override string DetailRoute => AppRoutes.Appointments.Detail;
+    protected override string PermissionDeniedMessage => "Немате авторизација за додавање на нови термини.";
 
     public ICommand SearchCommand
     {
@@ -209,21 +200,16 @@ public partial class AppointmentListViewModel
         ISelectedItemService<Appointment> selectedItemService,
         IAuthorizationService authService,
         IAppointmentSearchQueryHandler autocomplete)
-        : base(navigationService, userDialogService, menuService, authService)
+        : base(navigationService, userDialogService, menuService, authService, selectedItemService)
     {
         _dbFactory=dbFactory;
-        _selectedItemService=selectedItemService;
         _autocomplete=autocomplete;
         _selectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.Active);
 
-        PageSize=10; // sets BaseViewModel<T>.PageSize — actually drives TotalPages/RefreshPage now
+        PageSize=10;
 
         SearchCommand=CommitSearchCommand;
 
-        // SearchText is declared on the base view model, so a partial
-        // OnSearchTextChanged hook here would never fire (partial method
-        // hooks only resolve within the class that owns the [ObservableProperty]).
-        // Subscribing to PropertyChanged works no matter which class owns it.
         PropertyChanged+=OnViewModelPropertyChanged;
 
         EvaluatePermissions();
@@ -234,16 +220,10 @@ public partial class AppointmentListViewModel
     {
         if(e.PropertyName!=nameof(SearchText)) return;
 
-        // SearchText was changed programmatically (e.g. SelectSuggestionAsync /
-        // ResetFilters set it while drilling into or leaving a history view).
-        // In that case the change itself IS the side effect we want - re-running
-        // the autocomplete search here would just reopen the dropdown right
-        // after we closed it.
         if(_suppressSearchTextSideEffects) return;
 
         if(_activePersonId is not null)
         {
-            // user started typing a fresh query - leave history drill-down mode
             _activePersonId=null;
             _activePersonType=null;
             IsViewingPersonHistory=false;
@@ -270,8 +250,6 @@ public partial class AppointmentListViewModel
                 .ToListAsync();
             AllItems=items;
 
-            // Tabs/pickers were built in the ctor, before AllItems existed —
-            // counts need a refresh now that real data is in.
             RefreshSparkTabCounts();
 
             ApplyPendingQuery();
@@ -338,8 +316,6 @@ public partial class AppointmentListViewModel
         SelectedIndex=-1;
         ShowSuggestions=false;
 
-        // Show the complete history by default: drop the date filter and
-        // widen status to "all" - the person can narrow it again from here.
         FilterByDate=false;
         SelectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
 
@@ -370,19 +346,69 @@ public partial class AppointmentListViewModel
         await SelectSuggestionAsync(Suggestions[SelectedIndex]);
     }
 
-    [RelayCommand]
-    private async Task SelectAsync(Appointment appointment)
+    // ================= SELECT / NEW / EDIT (override base for extra business rules) =================
+    // Base already does the permission check + navigation; here we ONLY add
+    // the appointment-specific "CanEdit" business rule (status + date) on top.
+    protected override async Task Edit(Appointment item)
     {
-        _selectedItemService.SelectedItem=appointment;
-        await NavigationService.GoToAsync(AppRoutes.Appointments.Detail);
+        if(item is null) return;
+
+        if(!CanUpdate)
+        {
+            await UserDialogService.ShowAlertAsync(PermissionDeniedTitle, "Немате авторизација за уредување термини.", "OK");
+            return;
+        }
+
+        if(!CanEdit(item))
+        {
+            await UserDialogService.ShowAlertAsync("Не е можно", "Овој термин не може да се уредува (веќе поминат или не е закажан).", "OK");
+            return;
+        }
+
+        SelectedItemService.SelectedItem=item;
+        await NavigationService.GoToAsync(DetailRoute);
     }
 
     [RelayCommand]
-    private async Task Edit(Appointment? appointment)
+    private async Task CancelAppointmentAsync(Appointment? appointment)
     {
         if(appointment is null) return;
-        _selectedItemService.SelectedItem=appointment;
-        await NavigationService.GoToAsync(AppRoutes.Appointments.Detail);
+
+        if(!CanDelete)
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за откажување термини.", "OK");
+            return;
+        }
+
+        if(!CanCancel(appointment))
+        {
+            await UserDialogService.ShowAlertAsync("Не е можно", "Овој термин не може да се откаже (веќе поминат или не е закажан).", "OK");
+            return;
+        }
+
+        var confirmed = await UserDialogService.ShowConfirmationAsync(
+            "Откажување термин",
+            $"Дали сте сигурни дека сакате да го откажете терминот за {appointment.Patient?.FullName}?",
+            "Да", "Не");
+
+        if(!confirmed) return;
+
+        try
+        {
+            await using var db = await _dbFactory.CreateDbContextAsync();
+            var entity = await db.Appointments.FindAsync(appointment.Id);
+            if(entity!=null)
+            {
+                entity.Status=AppointmentStatus.Cancelled;
+                await db.SaveChangesAsync();
+            }
+
+            await LoadAsync();
+        }
+        catch(Exception ex)
+        {
+            OnError($"Грешка при откажување термин: {ex.Message}");
+        }
     }
 
     private static bool CanEdit(Appointment a) =>
@@ -394,25 +420,8 @@ public partial class AppointmentListViewModel
     private static bool IsPast(Appointment a) => a.ScheduledStart<DateTime.Now;
 
     [RelayCommand]
-    private async Task NewAppointment()
-    {
-        if(!CanManageAppointments)
-        {
-            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за додавање на нови термини.", "OK");
-            return;
-        }
-
-        _selectedItemService.SelectedItem=null; // Нов термин
-        await NavigationService.GoToAsync(AppRoutes.Appointments.Detail);
-    }
-
-    [RelayCommand]
     private void ToggleToday() => FilterByDate=!FilterByDate;
 
-    // ClearFilters command now lives in BaseViewModel<T> — it calls
-    // ResetFilters() → ApplyPipeline() → SyncSparkPickersFromFilters().
-    // This override supplies the appointment-specific reset behavior
-    // (drill-down state, suggestions, date/status defaults).
     protected override void ResetFilters()
     {
         _activePersonId=null;
@@ -434,8 +443,6 @@ public partial class AppointmentListViewModel
     }
 
     // ================= PIPELINE HOOKS =================
-    // Search moved here from ApplyFilters — keeps search/filter/sort cleanly
-    // separated, matching the rest of the pipeline-based view models.
     protected override IEnumerable<Appointment> ApplySearch(IEnumerable<Appointment> items, string search)
     {
         if(_activePersonId is not null||string.IsNullOrWhiteSpace(search))
@@ -452,7 +459,6 @@ public partial class AppointmentListViewModel
     {
         if(_activePersonId is not null)
         {
-            // Drilled into one person's complete record: id match, no date filter.
             var history = _activePersonType==SearchEntityType.Doctor
                 ? items.Where(x => x.Doctor!=null&&x.Doctor.Id.ToString()==_activePersonId)
                 : items.Where(x => x.Patient!=null&&x.Patient.Id.ToString()==_activePersonId);
@@ -485,14 +491,11 @@ public partial class AppointmentListViewModel
 
     protected override IEnumerable<Appointment> ApplySort(IEnumerable<Appointment> query) =>
         _activePersonId is not null
-            ? query.OrderByDescending(x => x.ScheduledStart) // history view: most-recent-first
-            : query.OrderBy(x => x.ScheduledStart);           // list already loaded in this order, kept explicit
+            ? query.OrderByDescending(x => x.ScheduledStart)
+            : query.OrderBy(x => x.ScheduledStart);
 
     // ============================================================
-    // TABS  (status breakdown w/ live counts, same idea as Patients —
-    // "Активни" merges Scheduled+CheckedIn to match ApplyFilters' own
-    // definition of "Active", so the tab count and what clicking it
-    // actually shows never disagree.)
+    // TABS
     // ============================================================
     private readonly Dictionary<AppointmentStatusFilter, SparkTabItem> _statusTabsByFilter = new();
 
@@ -518,19 +521,6 @@ public partial class AppointmentListViewModel
         RefreshSparkTabCounts();
     }
 
-    /// <summary>Marks one tab selected and clears the rest, then runs the tab's own action.</summary>
-    private void SelectTab(SparkTabItem tab, Action action)
-    {
-        foreach(var t in Tabs) t.IsSelected=false;
-        tab.IsSelected=true;
-        action();
-    }
-
-    /// <summary>
-    /// Counts come from AllItems (the full unfiltered set), not the current
-    /// drill-down/date-filtered result — a tab should show the overall
-    /// breakdown, not how many rows survived whatever's active right now.
-    /// </summary>
     private void RefreshSparkTabCounts()
     {
         foreach(var (filter, tab) in _statusTabsByFilter)
@@ -547,7 +537,6 @@ public partial class AppointmentListViewModel
         }
     }
 
-    /// <summary>Keeps tab highlighting correct regardless of whether SelectedStatus changed via a tab tap or the Picker.</summary>
     private void SyncSparkTabsFromFilters()
     {
         foreach(var (filter, tab) in _statusTabsByFilter)
@@ -555,8 +544,7 @@ public partial class AppointmentListViewModel
     }
 
     // ============================================================
-    // SPARK CONTROLS  (Pickers/Buttons live in BaseViewModel<T>;
-    // this class only supplies the entity-specific content.)
+    // SPARK CONTROLS
     // ============================================================
     [ObservableProperty] private ObservableCollection<SparkGridColumn> gridColumns = new();
     [ObservableProperty] private ObservableCollection<SparkGridRow> gridRows = new();
@@ -603,7 +591,7 @@ public partial class AppointmentListViewModel
         {
             Label="✕ Исчисти",
             IsPrimary=true,
-            Command=ClearFiltersCommand // now generated from BaseViewModel<T>.ClearFilters()
+            Command=ClearFiltersCommand
         });
     }
 
@@ -632,6 +620,28 @@ public partial class AppointmentListViewModel
             row["Date"]=a.ScheduledStart.ToString("dd.MM.yyyy");
             row["Time"]=a.ScheduledStart.ToString("HH:mm");
             row["Status"]=new SparkBadgeValue(StatusLabel(a.Status), StatusToTone(a.Status));
+
+            var actions = new List<SparkButtonItem>
+            {
+                new SparkButtonItem
+                {
+                    IsPrimary=true,
+                    IconGlyph="👁",
+                    Label="Детали",
+                    Command=SelectCommand,
+                    CommandParameter=a
+                }
+            };
+
+            // RBAC (може ли воопшто) + бизнис-правило (има ли смисла сега)
+            if(CanUpdate&&CanEdit(a))
+                actions.Add(new SparkButtonItem { IconGlyph="✎", Label="Промени", Command=EditCommand, CommandParameter=a });
+
+            if(CanDelete&&CanCancel(a))
+                actions.Add(new SparkButtonItem { Label="Откажи Термин", Command=CancelAppointmentCommand, CommandParameter=a });
+
+            row["Actions"]=actions;
+
             rows.Add(row);
         }
 

@@ -1,347 +1,1197 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Core.Extensions;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EHMR.Converters;
 using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
+using EHMR.Domain.Interfaces;
 using EHMR.Services;
+using EHMR.ViewModels.Appointments;
+using EHMR.ViewModels.Constants;
 using System.Collections.ObjectModel;
-
 namespace EHMR.ViewModels.Encounters;
 
 public abstract partial class EncounterBaseViewModel : ObservableObject, IDisposable
 {
     protected readonly IEncounterDetailService EncounterService;
-    protected CancellationTokenSource _cts = new();
 
-    protected EncounterBaseViewModel(IEncounterDetailService encounterService)
+    protected readonly INavigationService NavigationService;
+    protected readonly IUserDialogService UserDialogService;
+
+    protected CancellationTokenSource SearchCts = new();
+
+    private bool _isInitializing;
+
+    // NOVO: guard за flow-от кога контекстот (appointment -> patient/doctor/therapy-cycle)
+    // се применува програмски. Без ова, поставувањето на SelectedPatient/SelectedAppointment
+    // внатре во ApplyAppointmentContextAsync тригерира reset-cascade (OnSelectedPatientChanged
+    // -> OnSelectedAppointmentChanged -> ClearEncounterContext) кој веднаш го брише истиот
+    // AppointmentId/TherapyCycleId штотуку поставен неколку линии погоре.
+    private bool _isApplyingContext;
+
+    // Guards against overlapping "no results -> offer to create" dialogs.
+    // Without this, fast typing (or clicking "+ Нов ..." while a
+    // typing-triggered offer dialog is already open) stacks multiple
+    // popups on top of each other. Cancelling the top one then leaves
+    // the other in a half-closed state -> looks like "dispose didn't happen".
+    private bool _isOfferingCycleCreation;
+    private bool _isOfferingAppointmentCreation;
+
+    // =====================================================
+    // CONSTRUCTOR
+    // =====================================================
+    protected EncounterBaseViewModel(
+        IEncounterDetailService encounterService,
+        INavigationService navigationService,
+        IUserDialogService userDialogService)
     {
         EncounterService=encounterService;
+        NavigationService=navigationService;
+        UserDialogService=userDialogService;
     }
 
-    // ================= CORE =================
-    [ObservableProperty] protected Encounter encounter = new();
-    [ObservableProperty] public string pageTitle = string.Empty;
+    // =====================================================
+    // CORE MODEL
+    // =====================================================
 
-    // ================= UI STATE =================
-    [ObservableProperty] private bool isBusy;
-    [ObservableProperty] private bool isEditMode;
-    [ObservableProperty] private bool isReadOnly = true;
-    [ObservableProperty] private string errorMessage = string.Empty;
-    [ObservableProperty] private bool hasError;
-
-    // ================= WORKFLOW STATUS (existing pattern) =================
-    public ObservableCollection<EncounterStatusOption> StatusOptions { get; set; } = new();
-
-    // ================= TYPE / PRIORITY / SCHEDULE =================
-    public ObservableCollection<string> EncounterTypeOptions => EncounterFormLookups.EncounterType.ToObservableCollection();
-    public ObservableCollection<string> PriorityOptions => EncounterFormLookups.Priority.ToObservableCollection();
-
-    public string EncounterTypeDisplay
+    [ObservableProperty]
+    protected Encounter encounter = new();
+    [ObservableProperty]
+    private string pageTitle = string.Empty;
+    [ObservableProperty] private bool isPatientLockedFromContext;
+    // =====================================================
+    // UI STATE
+    // =====================================================
+    public enum AppointmentTabFilter
     {
-        get => EncounterFormLookups.EncounterType.ToDisplay(Encounter.EncounterType);
-        set
+        Upcoming, Pending, Past
+    }
+    public enum EncounterTabFilter
+    {
+        All, InProgress, Completed, Cancelled
+    }
+    public enum PrescriptionTabFilter
+    {
+        Active, All
+    }
+    [ObservableProperty]
+    private bool isBusy;
+
+    [ObservableProperty]
+    private bool isEditMode;
+
+    [ObservableProperty]
+    private bool isReadOnly = true;
+
+    [ObservableProperty]
+    private bool hasError;
+    [ObservableProperty]
+    private string errorMessage = string.Empty;
+
+    // =====================================================
+    // ENCOUNTER CONTEXT
+    // =====================================================
+
+    [ObservableProperty]
+    private Appointment? linkedAppointment;
+    [ObservableProperty]
+    private ObservableCollection<TherapyCycle> availableTherapyCycles = new();
+    [ObservableProperty]
+    private TherapyCycle? selectedTherapyCycle;
+    public bool HasAppointment =>
+        LinkedAppointment!=null;
+    public bool HasTherapyCycle =>
+        SelectedTherapyCycle!=null;
+    public bool IsWalkIn =>
+        !HasAppointment;
+    public bool HasEncounterContext =>
+        HasAppointment||HasTherapyCycle;
+    public string ContextDisplay
+    {
+        get
         {
-            var internalValue = EncounterFormLookups.EncounterType.ToInternal(value);
-            if(Encounter.EncounterType==internalValue)
-                return;
-            Encounter.EncounterType=internalValue;
-            OnPropertyChanged();
+            if(HasAppointment)
+                return "Appointment";
+
+            if(HasTherapyCycle)
+                return "Therapy Cycle";
+
+            return "Walk-in";
+        }
+    }
+    public string TherapyCycleDisplay =>
+        SelectedTherapyCycle?.Notes
+        ??"Без терапевтски циклус";
+    public string TherapyCycleStatus =>
+        SelectedTherapyCycle?.Status.ToString()
+        ??string.Empty;
+
+    // Mirrors TherapyCycleDisplay - drives the "selected appointment" label
+    // under the appointment search box in the UI.
+    public string AppointmentDisplay =>
+        LinkedAppointment==null
+            ? "Без термин"
+            : $"{LinkedAppointment.ScheduledStart:dd.MM.yyyy HH:mm} - {LinkedAppointment.ReasonForVisit}";
+
+    partial void OnLinkedAppointmentChanged(Appointment? value)
+    {
+        OnPropertyChanged(nameof(HasAppointment));
+        OnPropertyChanged(nameof(IsWalkIn));
+        OnPropertyChanged(nameof(HasEncounterContext));
+        OnPropertyChanged(nameof(ContextDisplay));
+        OnPropertyChanged(nameof(HasPatientContext));
+        OnPropertyChanged(nameof(AppointmentDisplay));
+    }
+    partial void OnSelectedTherapyCycleChanged(TherapyCycle? value)
+    {
+        Encounter.TherapyCycleId=value?.Id;
+
+        OnPropertyChanged(nameof(HasTherapyCycle));
+        OnPropertyChanged(nameof(HasEncounterContext));
+        OnPropertyChanged(nameof(ContextDisplay));
+        OnPropertyChanged(nameof(TherapyCycleDisplay)); OnPropertyChanged(nameof(HasPatientContext));
+        OnPropertyChanged(nameof(TherapyCycleStatus));
+    }
+    // =====================================================
+    // PATIENT CONTEXT
+    // =====================================================
+    [ObservableProperty]
+    private ObservableCollection<PatientMedicine> patientDiagnosisHistory = new();
+
+    [ObservableProperty]
+    private ObservableCollection<Encounter> patientEncounterHistory = new();
+
+    [ObservableProperty]
+    private ObservableCollection<Prescription> patientActivePrescriptions = new();
+
+    [ObservableProperty]
+    private bool isPatientContextLoading;
+
+    public bool HasPatientContext => SelectedPatient!=null;
+
+    //LoadPatientContext 
+    // ===================== RAW PATIENT CONTEXT (непроменето од service) =====================
+    [ObservableProperty] private ObservableCollection<Diagnosis> patientDiagnoses = new();
+    [ObservableProperty] private ObservableCollection<Encounter> patientEncounters = new();
+    [ObservableProperty] private ObservableCollection<Appointment> patientAppointments = new();
+    [ObservableProperty] private ObservableCollection<TherapyCycle> patientTherapyCyclesHistory = new();
+    [ObservableProperty] private ObservableCollection<Prescription> patientPrescriptions = new();
+    [ObservableProperty] private ObservableCollection<PatientMedicine> patientMedicines = new();
+    [ObservableProperty] private ObservableCollection<PatientDocument> patientDocuments = new();
+
+    [ObservableProperty] private bool isPatientLoading;
+
+
+
+    // ===================== TAB STATE =====================
+    [ObservableProperty] private AppointmentTabFilter appointmentTab = AppointmentTabFilter.Upcoming;
+    [ObservableProperty] private EncounterTabFilter encounterTab = EncounterTabFilter.All;
+    [ObservableProperty] private PrescriptionTabFilter prescriptionTab = PrescriptionTabFilter.Active;
+
+    partial void OnAppointmentTabChanged(AppointmentTabFilter value) => OnPropertyChanged(nameof(FilteredAppointments));
+    partial void OnEncounterTabChanged(EncounterTabFilter value) => OnPropertyChanged(nameof(FilteredEncounters));
+
+    partial void OnPrescriptionTabChanged(PrescriptionTabFilter value) => OnPropertyChanged(nameof(FilteredPrescriptions));
+
+    // ===================== FILTERED (COMPUTED) VIEWS =====================
+    public IEnumerable<Appointment> FilteredAppointments => AppointmentTab switch
+    {
+        AppointmentTabFilter.Upcoming => PatientAppointments
+            .Where(a => a.Status==AppointmentStatus.Scheduled&&a.ScheduledStart>DateTime.Now)
+            .OrderBy(a => a.ScheduledStart),
+
+        AppointmentTabFilter.Pending => PatientAppointments
+            .Where(a => a.Status==AppointmentStatus.CheckedIn||a.Status==AppointmentStatus.InProgress)
+            .OrderBy(a => a.ScheduledStart),
+
+        AppointmentTabFilter.Past => PatientAppointments
+            .Where(a => a.Status is AppointmentStatus.Completed or AppointmentStatus.Missed or AppointmentStatus.Cancelled)
+            .OrderByDescending(a => a.ScheduledStart),
+
+        _ => PatientAppointments
+    };
+
+    public IEnumerable<Encounter> FilteredEncounters => EncounterTab switch
+    {
+        EncounterTabFilter.InProgress => PatientEncounters.Where(e => e.Status==EncounterStatus.InProgress),
+        EncounterTabFilter.Completed => PatientEncounters.Where(e => e.Status==EncounterStatus.Completed),
+        EncounterTabFilter.Cancelled => PatientEncounters.Where(e => e.Status is EncounterStatus.Cancelled or EncounterStatus.NoShow),
+        _ => PatientEncounters
+    };
+
+    public IEnumerable<Prescription> FilteredPrescriptions => PrescriptionTab switch
+    {
+        PrescriptionTabFilter.Active => PatientPrescriptions.Where(p => p.Status=="Активни"),
+        _ => PatientPrescriptions
+    };
+
+    [RelayCommand] private void SetAppointmentTab(AppointmentTabFilter tab) => AppointmentTab=tab;
+    [RelayCommand] private void SetEncounterTab(EncounterTabFilter tab) => EncounterTab=tab;
+    [RelayCommand] private void SetPrescriptionTab(PrescriptionTabFilter tab) => PrescriptionTab=tab;
+
+    // ===================== LOADER =====================
+    protected async Task LoadPatientContextAsync(Guid patientId)
+    {
+        if(patientId==Guid.Empty)
+        {
+            PatientDiagnoses.Clear();
+            PatientEncounters.Clear();
+            PatientAppointments.Clear();
+            PatientTherapyCyclesHistory.Clear();
+            PatientPrescriptions.Clear();
+            PatientMedicines.Clear();
+            PatientDocuments.Clear();
+            return;
+        }
+
+        IsPatientLoading=true;
+        try
+        {
+            var ctx = await EncounterService.GetPatientContext(patientId);
+
+            PatientDiagnoses=new ObservableCollection<Diagnosis>(ctx.Diagnoses);
+            PatientEncounters=new ObservableCollection<Encounter>(ctx.EncounterHistory);
+            PatientAppointments=new ObservableCollection<Appointment>(ctx.Appointments);
+            PatientTherapyCyclesHistory=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
+            PatientPrescriptions=new ObservableCollection<Prescription>(ctx.Prescriptions);
+            PatientMedicines=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
+            PatientDocuments=new ObservableCollection<PatientDocument>(ctx.Documents);
+
+            OnPropertyChanged(nameof(FilteredAppointments));
+            OnPropertyChanged(nameof(FilteredEncounters));
+            OnPropertyChanged(nameof(FilteredPrescriptions));
+            OnPropertyChanged(nameof(HasPatientContext));
+            OnPropertyChanged(nameof(HasEncounterContext));
+        }
+        finally
+        {
+            IsPatientContextLoading=false;
+            IsPatientLoading=false;
         }
     }
 
-    public string PriorityDisplay
+    protected async Task LoadTherapyCyclesForPatientAsync(Guid patientId)
     {
-        get => EncounterFormLookups.Priority.ToDisplay(Encounter.Priority);
-        set
+        if(patientId==Guid.Empty)
         {
-            var internalValue = EncounterFormLookups.Priority.ToInternal(value);
-            if(Encounter.Priority==internalValue)
-                return;
-            Encounter.Priority=internalValue;
-            OnPropertyChanged();
+            AvailableTherapyCycles.Clear();
+            SelectedTherapyCycle=null;
+            return;
+        }
+        var context = await EncounterService.GetPatientContext(patientId);
+        AvailableTherapyCycles=
+            new ObservableCollection<TherapyCycle>(
+                context.TherapyCycles
+                    .Where(x =>
+                        x.Status==TherapyStatus.Active||
+                        x.Status==TherapyStatus.Planned)
+            );
+        SelectedTherapyCycle=
+            AvailableTherapyCycles
+                .FirstOrDefault(x =>
+                    x.Id==Encounter.TherapyCycleId);
+    }
+    protected async Task ApplyAppointmentContextAsync(Appointment appointment)
+    {
+        // Guard-от го блокира reset-cascade-от во OnSelectedPatientChanged /
+        // OnSelectedAppointmentChanged додека сите полиња на контекстот се
+        // применуваат. Ова е фикс за bug-от кадешто SelectedPatient/SelectedDoctor
+        // assignment-ите веднаш го бришеа LinkedAppointment/AppointmentId/TherapyCycleId
+        // штотуку поставени неколку линии погоре.
+        _isApplyingContext=true;
+        try
+        {
+            LinkedAppointment=appointment;
+            Encounter.AppointmentId=appointment.Id;
+            Encounter.PatientId=appointment.PatientId;
+            Encounter.DoctorId=appointment.DoctorId;
+            Encounter.TherapyCycleId=appointment.TherapyCycleId;
+            Encounter.ReasonForVisit=appointment.ReasonForVisit;
+
+            SelectedPatient=
+                Patients.FirstOrDefault(x =>
+                    x.Id==appointment.PatientId);
+            SelectedDoctor=
+                Doctors.FirstOrDefault(x =>
+                    x.Id==appointment.DoctorId);
+
+            // Експлицитно ги вчитуваме овие тука (наместо да се потпираме на
+            // fire-and-forget-от од OnSelectedPatientChanged, кој е блокиран
+            // додека guard-от е активен) - вака страничните карти (дијагнози,
+            // историја, циклуси, термини) веднаш имаат податоци за пациентот.
+            await LoadPatientContextAsync(appointment.PatientId);
+            await LoadTherapyCyclesForPatientAsync(appointment.PatientId);
+            await LoadAppointmentsForPatientAsync(appointment.PatientId);
+        }
+        finally
+        {
+            _isApplyingContext=false;
         }
     }
-
-    public DateTime ScheduledStartDate
+    partial void OnSelectedPatientChanged(Patient? value)
     {
-        get => Encounter.ScheduledStart??DateTime.Today;
-        set
-        {
-            var time = Encounter.ScheduledStart?.TimeOfDay??TimeSpan.Zero;
-            Encounter.ScheduledStart=value.Date+time;
-            OnPropertyChanged();
-        }
+        Encounter.PatientId=
+            value?.Id??Guid.Empty;
+        OnPropertyChanged(nameof(HasPatientContext));
+        OnPropertyChanged(nameof(HasEncounterContext));
+        if(_isInitializing||_isApplyingContext)
+            return;
+        Diagnoses.Clear();
+
+        SelectedTherapyCycle=null;
+
+        LinkedAppointment=null;
+
+        SelectedAppointment=null;
+
+        // Reset any in-flight search UI state when the patient changes,
+        // otherwise stale dropdown results from the previous patient
+        // can remain visible for a moment.
+        CycleSearchText=string.Empty;
+        CycleSearchResults.Clear();
+        ShowCycleDropdown=false;
+
+        AppointmentSearchText=string.Empty;
+        AppointmentSearchResults.Clear();
+        ShowAppointmentDropdown=false;
+
+        var patientId = value?.Id??Guid.Empty;
+
+        _=LoadTherapyCyclesForPatientAsync(patientId);
+        _=LoadAppointmentsForPatientAsync(patientId);
+        _=LoadPatientContextAsync(
+                 patientId);
     }
 
-    public TimeSpan ScheduledStartTime
-    {
-        get => Encounter.ScheduledStart?.TimeOfDay??new TimeSpan(9, 0, 0);
-        set
-        {
-            var date = Encounter.ScheduledStart?.Date??DateTime.Today;
-            Encounter.ScheduledStart=date+value;
-            OnPropertyChanged();
-        }
-    }
+    // =====================================================
+    // APPOINTMENT LINKING
+    // =====================================================
 
-    private void LoadStatusOptions()
+    [ObservableProperty]
+    private ObservableCollection<Appointment> availableAppointments = new();
+    [ObservableProperty]
+    private Appointment? selectedAppointment;
+    partial void OnSelectedAppointmentChanged(Appointment? value)
     {
-        StatusOptions.Clear();
-        var options = Enum.GetValues<EncounterStatus>()
-            .Select(x => new EncounterStatusOption
+        if(_isInitializing||_isApplyingContext)
+            return;
+        if(value==null)
+        {
+            ClearEncounterContext();
+            return;
+        }
+        _=ApplyAppointmentContextAsync(value);
+    }
+    protected async Task LoadAppointmentsForPatientAsync(Guid patientId)
+    {
+        if(patientId==Guid.Empty)
+        {
+            AvailableAppointments.Clear();
+            SelectedAppointment=null;
+            return;
+        }
+        var context = await EncounterService.GetAppointments(patientId);
+        AvailableAppointments=
+            new ObservableCollection<Appointment>(
+                context
+                    .Where(x =>
+                        x.Status==AppointmentStatus.Scheduled||
+                        x.Status==AppointmentStatus.CheckedIn)
+            );
+        SelectedAppointment=
+            AvailableAppointments
+                .FirstOrDefault(x =>
+                    x.Id==Encounter.AppointmentId);
+    }
+    [RelayCommand]
+    protected async Task AddNewAppointmentAsync()
+    {
+        if(SelectedPatient==null)
+        {
+            OnError("Изберете пациент пред да додадете термин");
+            return;
+        }
+
+        if(_isOfferingAppointmentCreation)
+            return;
+
+        await ExecuteSafeAsync(async () =>
+        {
+            _isOfferingAppointmentCreation=true;
+            try
             {
-                Value=x,
-                Label=EncounterStatusLocalization.ToMk(x)
-            });
+                var newAppointment =
+                    await UserDialogService
+                        .ShowCreateAppointmentPopupAsync(
+                            SelectedPatient.Id,
+                            SelectedDoctor?.Id);
+                if(newAppointment==null)
+                    return;
+                AvailableAppointments.Add(newAppointment);
 
-        foreach(var option in options)
+                SelectedAppointment=newAppointment;
+            }
+            finally
+            {
+                _isOfferingAppointmentCreation=false;
+            }
+        },
+        "Грешка при креирање термин");
+    }
+
+    // =====================================================
+    // APPOINTMENT SEARCH (mirrors THERAPY CYCLE SEARCH)
+    // =====================================================
+
+    protected CancellationTokenSource AppointmentSearchCts = new();
+
+    [ObservableProperty]
+    protected ObservableCollection<Appointment> appointmentSearchResults = new();
+
+    [ObservableProperty]
+    protected string appointmentSearchText = string.Empty;
+
+    [ObservableProperty]
+    protected bool showAppointmentDropdown;
+
+    partial void OnAppointmentSearchTextChanging(string value)
+    {
+        _=SearchAppointmentsAsync(value);
+    }
+
+    [RelayCommand]
+    protected async Task SearchAppointmentsAsync(string query)
+    {
+        if(string.IsNullOrWhiteSpace(query))
         {
-            StatusOptions.Add(option);
+            AppointmentSearchResults.Clear();
+            ShowAppointmentDropdown=false;
+            return;
+        }
+
+        AppointmentSearchCts.Cancel();
+        AppointmentSearchCts.Dispose();
+        AppointmentSearchCts=new CancellationTokenSource();
+
+        var token = AppointmentSearchCts.Token;
+        try
+        {
+            await Task.Delay(300, token); // debounce
+        }
+        catch(TaskCanceledException)
+        {
+            return;
+        }
+
+        var matches =
+            AvailableAppointments
+                .Where(x =>
+                    (x.ReasonForVisit??string.Empty)
+                        .Contains(query, StringComparison.OrdinalIgnoreCase)
+                    ||
+                    x.ScheduledStart
+                        .ToString("dd.MM.yyyy HH:mm")
+                        .Contains(query, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+        AppointmentSearchResults=
+            new ObservableCollection<Appointment>(matches);
+
+        ShowAppointmentDropdown=
+            matches.Count>0;
+
+        if(matches.Count==0&&!token.IsCancellationRequested)
+        {
+            await OfferToCreateAppointmentAsync(query);
         }
     }
+
+    protected async Task OfferToCreateAppointmentAsync(string searchedTerm)
+    {
+        if(SelectedPatient==null)
+            return;
+
+        // Same re-entrancy guard as therapy cycles - prevents typing-triggered
+        // offers and the manual "+ Нов термин" button from opening overlapping
+        // popups.
+        if(_isOfferingAppointmentCreation)
+            return;
+
+        _isOfferingAppointmentCreation=true;
+        try
+        {
+            var shouldCreate =
+                await UserDialogService.ShowConfirmationAsync(
+                    "Нема резултати",
+                    $"Не е пронајден термин за „{searchedTerm}“. Дали сакате да креирате нов?",
+                    "Креирај",
+                    "Откажи");
+            if(!shouldCreate)
+                return;
+
+            var newAppointment =
+                await UserDialogService
+                    .ShowCreateAppointmentPopupAsync(
+                        SelectedPatient.Id,
+                        SelectedDoctor?.Id);
+            if(newAppointment==null)
+                return;
+
+            AvailableAppointments.Add(newAppointment);
+
+            SelectedAppointment=newAppointment;
+            AppointmentSearchText=string.Empty;
+
+            AppointmentSearchResults.Clear();
+
+            ShowAppointmentDropdown=false;
+        }
+        finally
+        {
+            _isOfferingAppointmentCreation=false;
+        }
+    }
+
+    [RelayCommand]
+    protected void SelectAppointment(Appointment appointment)
+    {
+        if(appointment==null)
+            return;
+
+        SelectedAppointment=appointment; // triggers ApplyAppointmentContextAsync via OnSelectedAppointmentChanged
+
+        AppointmentSearchText=string.Empty;
+        AppointmentSearchResults.Clear();
+        ShowAppointmentDropdown=false;
+    }
+
+    // =====================================================
+    // THERAPY CYCLE SEARCH + CREATE (optional)
+    // =====================================================
+
+    protected CancellationTokenSource CycleSearchCts = new();
+    [ObservableProperty]
+    protected ObservableCollection<TherapyCycle> cycleSearchResults = new();
+    [ObservableProperty]
+    protected string cycleSearchText = string.Empty;
+    [ObservableProperty]
+    protected bool showCycleDropdown;
+    partial void OnCycleSearchTextChanging(string value)
+    {
+        _=SearchTherapyCyclesAsync(value);
+    }
+    [RelayCommand]
+    protected async Task SearchTherapyCyclesAsync(string query)
+    {
+        if(string.IsNullOrWhiteSpace(query))
+        {
+            CycleSearchResults.Clear();
+            ShowCycleDropdown=false;
+            return;
+        }
+        CycleSearchCts.Cancel();
+        CycleSearchCts.Dispose();
+        CycleSearchCts=new CancellationTokenSource();
+
+        var token = CycleSearchCts.Token;
+        try
+        {
+            await Task.Delay(350, token); // debounce, mirrors MKB search feel
+        }
+        catch(TaskCanceledException)
+        {
+            return;
+        }
+        var matches =
+            AvailableTherapyCycles
+                .Where(x =>
+                    (x.Notes??string.Empty)
+                        .Contains(query, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        CycleSearchResults=
+            new ObservableCollection<TherapyCycle>(matches);
+
+        ShowCycleDropdown=
+            matches.Count>0;
+
+        if(matches.Count==0&&!token.IsCancellationRequested)
+        {
+            await OfferToCreateTherapyCycleAsync(query);
+        }
+    }
+    protected async Task OfferToCreateTherapyCycleAsync(string searchedTerm)
+    {
+        if(SelectedPatient==null)
+            return;
+
+        // Re-entrancy guard: without this, typing quickly (each keystroke
+        // re-triggers the debounced search) or clicking "+ Нов циклус"
+        // while a typing-triggered offer dialog is still open can queue
+        // up more than one popup. Cancelling one then leaves the other
+        // popup's RequestClose pointing at a dialog that's already
+        // "consumed" - looks like the popup didn't dispose/close properly.
+        if(_isOfferingCycleCreation)
+            return;
+
+        _isOfferingCycleCreation=true;
+        try
+        {
+            var shouldCreate =
+                await UserDialogService.ShowConfirmationAsync(
+                    "Нема резултати",
+                    $"Не е пронајден терапевтски циклус за „{searchedTerm}“. Дали сакате да креирате нов?",
+                    "Креирај",
+                    "Откажи");
+            if(!shouldCreate)
+                return;
+
+            var newCycle =
+                await UserDialogService
+                    .ShowCreateTherapyCyclePopupAsync(
+                        SelectedPatient.Id,
+                        searchedTerm);
+            if(newCycle==null)
+                return;
+
+            AvailableTherapyCycles.Add(newCycle);
+
+            SelectedTherapyCycle=newCycle;
+            CycleSearchText=string.Empty;
+
+            CycleSearchResults.Clear();
+
+            ShowCycleDropdown=false;
+        }
+        finally
+        {
+            _isOfferingCycleCreation=false;
+        }
+    }
+    [RelayCommand]
+    protected async Task AddNewTherapyCycleAsync()
+    {
+        if(SelectedPatient==null)
+        {
+            OnError("Изберете пациент пред да додадете циклус");
+            return;
+        }
+
+        // Same guard here - prevents the manual "+ Нов циклус" button
+        // from opening a second create popup while a search-triggered
+        // offer dialog is already showing.
+        if(_isOfferingCycleCreation)
+            return;
+
+        await ExecuteSafeAsync(async () =>
+        {
+            _isOfferingCycleCreation=true;
+            try
+            {
+                var newCycle =
+                    await UserDialogService
+                        .ShowCreateTherapyCyclePopupAsync(
+                            SelectedPatient.Id,
+                            null);
+                if(newCycle==null)
+                    return;
+                AvailableTherapyCycles.Add(newCycle);
+
+                SelectedTherapyCycle=newCycle;
+            }
+            finally
+            {
+                _isOfferingCycleCreation=false;
+            }
+        },
+        "Грешка при креирање циклус");
+    }
+    [RelayCommand]
+    protected void SelectTherapyCycle(TherapyCycle cycle)
+    {
+        if(cycle==null)
+            return;
+        SelectedTherapyCycle=cycle;
+
+        CycleSearchText=string.Empty;
+
+        CycleSearchResults.Clear();
+
+        ShowCycleDropdown=false;
+    }
+
+    // =====================================================
+    // NAVIGATION
+    // =====================================================
+
+    [RelayCommand]
+    protected virtual async Task CancelAsync()
+    {
+        await NavigationService.GoToAsync(
+            AppRoutes.Encounters.List);
+    }
+    // =====================================================
+    // ERROR HANDLING
+    // =====================================================
 
     protected void OnError(string message)
     {
         ErrorMessage=message;
         HasError=true;
     }
-
     protected void ClearError()
     {
         ErrorMessage=string.Empty;
         HasError=false;
     }
+    // =====================================================
+    // SAFE EXECUTION
+    // =====================================================
 
-    // ================= SAFE EXECUTION =================
-    protected async Task ExecuteSafeAsync(Func<Task> action, string defaultErrorMessage)
+    protected async Task ExecuteSafeAsync(
+        Func<Task> action,
+        string errorMessage)
     {
-        if(IsBusy) return;
-
+        if(IsBusy)
+            return;
         try
         {
             IsBusy=true;
             ClearError();
+
             await action();
         }
         catch(Exception ex)
         {
-            OnError($"{defaultErrorMessage}: {ex.Message}");
+            OnError(
+                $"{errorMessage}: {ex.Message}");
         }
         finally
         {
             IsBusy=false;
         }
+    }    // =====================================================
+    // LOOKUPS
+    // =====================================================
+
+    [ObservableProperty]
+    protected ObservableCollection<Patient> patients = new();
+    [ObservableProperty]
+    protected ObservableCollection<Doctor> doctors = new();
+    protected List<string> PatientList { get; set; } = new();
+
+    protected List<string> DoctorList { get; set; } = new();
+    [ObservableProperty]
+    protected Patient? selectedPatient;
+    [ObservableProperty]
+    protected Doctor? selectedDoctor;
+    partial void OnSelectedDoctorChanged(Doctor? value)
+    {
+        if(Encounter==null)
+            return;
+        Encounter.DoctorId=
+            value?.Id??Guid.Empty;
     }
-
-    // ================= LOOKUPS =================
-    [ObservableProperty] protected ObservableCollection<Patient> patients = new();
-    protected List<string> PatientList = new();
-    protected List<string> DoctorList = new();
-    [ObservableProperty] protected ObservableCollection<Doctor> doctors = new();
-
-    [ObservableProperty] protected Patient? selectedPatient;
-    [ObservableProperty] protected Doctor? selectedDoctor;
-
-    // ================= MKB / DIAGNOSES =================
-    [ObservableProperty] protected ObservableCollection<Mkb10Code> mkbResults = new();
-    [ObservableProperty] protected ObservableCollection<Diagnosis> diagnoses = new();
-
-    [ObservableProperty] protected string mkbSearchText = string.Empty;
-    [ObservableProperty] protected bool showMkbDropdown;
-
-    // ================= PRESCRIPTIONS =================
-    [ObservableProperty] protected ObservableCollection<Prescription> prescriptions = new();
-    [ObservableProperty] private string encounterDiagnosisNotes = string.Empty;
-
     // =====================================================
-    // INIT
+    // ENCOUNTER LOOKUP DISPLAY
     // =====================================================
-    public virtual async Task InitializeAsync(Guid? encounterId = null)
+
+    public ObservableCollection<string> EncounterTypeOptions =>
+        EncounterFormLookups
+            .EncounterType
+            .ToObservableCollection();
+    public ObservableCollection<string> PriorityOptions =>
+        EncounterFormLookups
+            .Priority
+            .ToObservableCollection();
+    public ObservableCollection<string> StatusOptions =>
+        EncounterStatusSchema
+            .Values
+            .ToObservableCollection();
+    public string EncounterTypeDisplay
+    {
+        get =>
+            EncounterFormLookups
+                .EncounterType
+                .ToDisplay(
+                    Encounter.EncounterType);
+        set
+        {
+            var val =
+                EncounterFormLookups
+                    .EncounterType
+                    .ToInternal(value);
+            if(Encounter.EncounterType==val)
+                return;
+            Encounter.EncounterType=value;
+
+            OnPropertyChanged();
+        }
+    }
+    public string PriorityDisplay
+    {
+        get =>
+            EncounterFormLookups
+                .Priority
+                .ToDisplay(
+                    Encounter.Priority);
+        set
+        {
+            var val =
+                EncounterFormLookups
+                    .Priority
+                    .ToInternal(value);
+            if(Encounter.Priority==val)
+                return;
+
+            Encounter.Priority=value;
+
+            OnPropertyChanged();
+        }
+    }
+    public string StatusDisplay
+    {
+        get =>
+            EncounterStatusSchema
+                .ToDisplay(
+                    Encounter.Status.ToString());
+        set
+        {
+            var key =
+                EncounterStatusSchema
+                    .ToKeyFromDisplay(value);
+            if(Enum.TryParse<EncounterStatus>(
+                    key,
+                    out var status)
+                &&
+                Encounter.Status!=status)
+            {
+                Encounter.Status=status;
+                OnPropertyChanged();
+            }
+        }
+    }
+    // =====================================================
+    // SCHEDULE
+    // =====================================================
+    public DateTime ScheduledStartDate
+    {
+        get =>
+            Encounter.ScheduledStart
+            ?.Date
+            ??DateTime.Today;
+        set
+        {
+            var time =
+                Encounter.ScheduledStart
+                ?.TimeOfDay
+                ??TimeSpan.Zero;
+            Encounter.ScheduledStart=
+                value.Date+time;
+            OnPropertyChanged();
+        }
+    }
+    public TimeSpan ScheduledStartTime
+    {
+        get =>
+            Encounter.ScheduledStart
+            ?.TimeOfDay
+            ??new TimeSpan(9, 0, 0);
+        set
+        {
+            var date =
+                Encounter.ScheduledStart
+                ?.Date
+                ??DateTime.Today;
+            Encounter.ScheduledStart=
+                date+value;
+            OnPropertyChanged();
+        }
+    }
+    // =====================================================
+    // INITIALIZATION
+    // =====================================================
+
+    public virtual async Task InitializeAsync(
+        Guid? encounterId = null)
     {
         await ExecuteSafeAsync(async () =>
         {
-            await LoadLookupsAsync();
-            LoadStatusOptions();
-
-            if(encounterId==null)
+            _isInitializing=true;
+            try
             {
-                Encounter=new Encounter
+                await LoadLookupsAsync();
+                // NEW ENCOUNTER
+
+                if(encounterId==null||
+                    encounterId==Guid.Empty)
                 {
-                    Id=Guid.NewGuid(),
-                    EncounterDate=DateTime.Now
-                };
+                    Encounter=new Encounter
+                    {
+                        Id=Guid.NewGuid(),
+                        EncounterDate=DateTime.Now
+                    };
+                    Diagnoses.Clear();
+                    Prescriptions.Clear();
+                    IsEditMode=true;
+                    IsReadOnly=false;
 
-                IsEditMode=true;
-                IsReadOnly=false;
-                EncounterDiagnosisNotes=string.Empty;
-                Diagnoses.Clear();
-                Prescriptions.Clear();
-                return;
+                    return;
+                }
+                // EXISTING ENCOUNTER
+                var dto =
+                    await EncounterService
+                        .GetEncounter(
+                            encounterId.Value);
+                Encounter=dto.Encounter;
+                Diagnoses=
+                    new ObservableCollection<Diagnosis>(
+                        dto.Diagnoses);
+                Prescriptions=
+                    new ObservableCollection<Prescription>(
+                        dto.Prescriptions);
+                EncounterDiagnosisNotes=
+                    Encounter.ClinicalNotes
+                    ??string.Empty;
+                SelectedPatient=
+                    Patients.FirstOrDefault(x =>
+                        x.Id==Encounter.PatientId);
+                SelectedDoctor=
+                    Doctors.FirstOrDefault(x =>
+                        x.Id==Encounter.DoctorId);
+                if(Encounter.AppointmentId.HasValue)
+                {
+                    LinkedAppointment=
+                        await EncounterService
+                            .GetAppointment(
+                                Encounter.AppointmentId.Value);
+                }
+                await LoadTherapyCyclesForPatientAsync(
+                    Encounter.PatientId);
+                await LoadPatientContextAsync(
+                 Encounter.PatientId);
+
+                await LoadAppointmentsForPatientAsync(
+                    Encounter.PatientId);
+
+                IsEditMode=false;
+                IsReadOnly=true;
             }
-
-            var dto = await EncounterService.GetEncounter(encounterId.Value);
-            Encounter=dto.Encounter;
-            Diagnoses=new ObservableCollection<Diagnosis>(dto.Diagnoses);
-            Prescriptions=new ObservableCollection<Prescription>(dto.Prescriptions);
-
-            EncounterDiagnosisNotes=Encounter.ClinicalNotes ?? string.Empty;
-            SelectedPatient=Patients.FirstOrDefault(x => x.Id==Encounter.PatientId);
-            SelectedDoctor=Doctors.FirstOrDefault(x => x.Id==Encounter.DoctorId);
-
-            IsReadOnly=true;
-            IsEditMode=false;
-        }, "Грешка при вчитување на прегледот");
+            finally
+            {
+                _isInitializing=false;
+            }
+        },
+        "Грешка при вчитување на прегледот");
     }
+    // =====================================================
+    // LOAD LOOKUPS
+    // =====================================================
 
     protected async Task LoadLookupsAsync()
     {
-        Patients=new ObservableCollection<Patient>(await EncounterService.GetPatients());
-        PatientList=Patients.Select(p => p.FullName).ToList();
-        Doctors=new ObservableCollection<Doctor>(await EncounterService.GetDoctors());
-        DoctorList=Doctors.Select(d => d.FullName).ToList();
+        var patients =
+            await EncounterService
+                .GetPatients();
+        Patients=
+            new ObservableCollection<Patient>(
+                patients);
+        PatientList=
+            Patients
+                .Select(x => x.FullName)
+                .ToList();
+        var doctors =
+            await EncounterService
+                .GetDoctors();
+        Doctors=
+            new ObservableCollection<Doctor>(
+                doctors);
+        DoctorList=
+            Doctors
+                .Select(x => x.FullName)
+                .ToList();
     }
+    // =====================================================
+    // LOAD EXISTING VIEW MODE
+    // =====================================================
 
+    protected async Task LoadForViewAsync(
+        Guid? selectedId,
+        string error)
+    {
+        if(selectedId==null||
+            selectedId==Guid.Empty)
+        {
+            OnError(error);
+            return;
+        }
+        await InitializeAsync(
+            selectedId.Value);
+        IsEditMode=false;
+        IsReadOnly=true;
+    }    // =====================================================
+    // DIAGNOSIS / MKB10
     // =====================================================
-    // PROPERTY CHANGED INTERCEPTORS
-    // =====================================================
+
+    [ObservableProperty]
+    protected ObservableCollection<Mkb10Code> mkbResults = new();
+    [ObservableProperty]
+    protected ObservableCollection<Diagnosis> diagnoses = new();
+    [ObservableProperty]
+    protected string mkbSearchText = string.Empty;
+
+    [ObservableProperty]
+    protected bool showMkbDropdown;
+
+    [ObservableProperty]
+    protected ObservableCollection<Prescription> prescriptions = new();
+
+    [ObservableProperty]
+    private string encounterDiagnosisNotes = string.Empty;
     partial void OnMkbSearchTextChanging(string value)
     {
-        if(string.IsNullOrWhiteSpace(value)||value.Length<2)
+        if(string.IsNullOrWhiteSpace(value)||
+            value.Length<2)
         {
             MkbResults.Clear();
             ShowMkbDropdown=false;
             return;
         }
+        _=SearchMkbAsync(value);
+    }
 
-        _=ExecuteSafeAsync(async () =>
+    // =====================================================
+    // SEARCH MKB
+    // =====================================================
+
+    [RelayCommand]
+    protected async Task SearchMkbAsync(string query)
+    {
+        if(string.IsNullOrWhiteSpace(query)||
+            query.Length<2)
         {
-            _cts.Cancel();
-            _cts.Dispose();
-            _cts=new CancellationTokenSource();
+            MkbResults.Clear();
+            ShowMkbDropdown=false;
+            return;
+        }
+        SearchCts.Cancel();
+        SearchCts.Dispose();
 
+        SearchCts=new CancellationTokenSource();
+        await ExecuteSafeAsync(async () =>
+        {
             try
             {
-                var result = await EncounterService.SearchDiagnoses(value, _cts.Token);
-                MkbResults=new ObservableCollection<Mkb10Code>(result);
-                ShowMkbDropdown=MkbResults.Count>0;
+                var result =
+                    await EncounterService
+                        .SearchDiagnoses(
+                            query,
+                            SearchCts.Token);
+                MkbResults=
+                    new ObservableCollection<Mkb10Code>(
+                        result);
+                ShowMkbDropdown=
+                    MkbResults.Count>0;
             }
             catch(OperationCanceledException)
             {
-                // Silently drop thread cancellations when user is actively typing fast
+                // user continued typing
             }
-        }, "Грешка при пребарување дијагнози");
+
+        },
+        "Грешка при пребарување дијагнози");
     }
 
     // =====================================================
-    // COMMANDS
+    // ADD DIAGNOSIS
     // =====================================================
-    [RelayCommand]
-    public void ToggleEditMode()
-    {
-        IsEditMode=!IsEditMode;
-        IsReadOnly=!IsEditMode;
-    }
 
     [RelayCommand]
-    public void Cancel()
+    protected void AddMkb(Mkb10Code code)
     {
-        IsEditMode=false;
-        IsReadOnly=true;
+        if(code==null)
+            return;
+        if(Diagnoses.Any(x =>
+            x.Mkb10CodeId==code.Id))
+            return;
+        var diagnosis = new Diagnosis
+        {
+            Id=Guid.NewGuid(),
+
+            EncounterId=
+                Encounter.Id==Guid.Empty
+                ? null
+                : Encounter.Id,
+            PatientId=
+                Encounter.PatientId,
+            Mkb10CodeId=code.Id,
+
+            Mkb10Code=code,
+            DiagnosedAt=DateTime.Now,
+            IsPrimary=
+                Diagnoses.Count==0,
+            Status=
+                DiagnosisStatus.Active
+        };
+        Diagnoses.Add(diagnosis);
+        MkbSearchText=string.Empty;
+
+        MkbResults.Clear();
+
+        ShowMkbDropdown=false;
     }
 
-    partial void OnSelectedPatientChanged(Patient? value)
-    {
-        if(Encounter!=null)
-        {
-            Encounter.PatientId=value?.Id??Guid.Empty;
-            Diagnoses.Clear();
-        }
-    }
-
-    partial void OnSelectedDoctorChanged(Doctor? value)
-    {
-        if(Encounter!=null)
-        {
-            Encounter.DoctorId=value?.Id??Guid.Empty;
-        }
-    }
+    // =====================================================
+    // REMOVE DIAGNOSIS
+    // =====================================================
 
     [RelayCommand]
     protected void RemoveMkb(Diagnosis diagnosis)
     {
-        if(diagnosis==null) return;
-
+        if(diagnosis==null)
+            return;
         if(Diagnoses.Contains(diagnosis))
         {
             Diagnoses.Remove(diagnosis);
         }
     }
 
-    [RelayCommand]
-    protected void AddMkb(Mkb10Code code)
-    {
-        if(code==null) return;
-
-        if(Diagnoses.Any(x => x.Mkb10CodeId==code.Id))
-            return;
-
-        var diagnosis = new Diagnosis
-        {
-            Id=Guid.NewGuid(),
-            EncounterId=Encounter.Id==Guid.Empty ? null : Encounter.Id,
-            PatientId=Encounter.PatientId,
-            Mkb10CodeId=code.Id,
-            Mkb10Code=code,
-            DiagnosedAt=DateTime.Now,
-            IsPrimary=Diagnoses.Count==0,
-            Status=DiagnosisStatus.Active
-        };
-
-        Diagnoses.Add(diagnosis);
-
-        MkbSearchText=string.Empty;
-        MkbResults.Clear();
-        ShowMkbDropdown=false;
-    }
+    // =====================================================
+    // EDIT MODE
+    // =====================================================
 
     [RelayCommand]
-    protected async Task SearchMkbAsync(string query)
+    public void ToggleEditMode()
     {
-        if(string.IsNullOrWhiteSpace(query)||query.Length<2)
-        {
-            MkbResults.Clear();
-            ShowMkbDropdown=false;
-            return;
-        }
+        IsEditMode=!IsEditMode;
 
-        _cts.Cancel();
-        _cts.Dispose();
-        _cts=new CancellationTokenSource();
-
-        await ExecuteSafeAsync(async () =>
-        {
-            try
-            {
-                var result = await EncounterService.SearchDiagnoses(query, _cts.Token);
-
-                MkbResults.Clear();
-                foreach(var item in result)
-                {
-                    MkbResults.Add(item);
-                }
-
-                ShowMkbDropdown=MkbResults.Count>0;
-            }
-            catch(OperationCanceledException)
-            {
-                // Silently swallow cancellations when a user is typing rapidly
-            }
-        }, "Грешка при пребарување дијагнози");
+        IsReadOnly=!IsEditMode;
     }
+    // =====================================================
+    // CONTEXT RESET
+    // =====================================================
 
+    protected void ClearEncounterContext()
+    {
+        LinkedAppointment=null;
+
+        SelectedTherapyCycle=null;
+        Encounter.AppointmentId=null;
+
+        Encounter.TherapyCycleId=null;
+    }
+    // =====================================================
+    // DISPOSE
+    // =====================================================
     public void Dispose()
     {
-        _cts.Cancel();
-        _cts.Dispose();
+        SearchCts.Cancel();
+        SearchCts.Dispose();
+
+        CycleSearchCts.Cancel();
+        CycleSearchCts.Dispose();
+
+        AppointmentSearchCts.Cancel();
+        AppointmentSearchCts.Dispose();
+
         GC.SuppressFinalize(this);
     }
 }

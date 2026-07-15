@@ -10,52 +10,8 @@ using System.Threading.Tasks;
 
 namespace EHMR.Services
 {
-    public class AppointmentDetailDto
-    {
-        public Appointment Appointment { get; set; } = new();
 
-        public List<AppointmentDiagnosis> Diagnoses { get; set; } = [];
 
-        public List<TherapyCycle> TherapyCycles { get; set; } = [];
-
-        public List<Patient> Patients { get; set; } = [];
-
-        public List<Doctor> Doctors { get; set; } = [];
-
-        public Appointment? PreviousAppointment
-        {
-            get; set;
-        }
-
-        public Appointment? NextAppointment
-        {
-            get; set;
-        }
-
-        public int TotalAppointments
-        {
-            get; set;
-        }
-
-        public int TotalDiagnoses
-        {
-            get; set;
-        }
-
-        public int TotalCycles
-        {
-            get; set;
-        }
-    }
-
-    public class PatientContextDto
-    {
-        public List<DiagnosisHistoryItem> DiagnosisHistory { get; set; } = [];
-
-        public List<Appointment> AppointmentHistory { get; set; } = [];
-
-        public List<TherapyCycle> TherapyCycles { get; set; } = [];
-    }
 
     public interface IAppointmentDetailService
     {
@@ -195,7 +151,11 @@ namespace EHMR.Services
                 .Where(x => x.PatientId==patientId)
                 .OrderByDescending(x => x.ScheduledStart)
                 .ToListAsync();
-
+            var patientMedicines = await db.PatientMedicines
+               .AsNoTracking()
+               .Where(x => x.PatientId==patientId)
+               .OrderByDescending(x => x.IsActive)
+               .ToListAsync();
             var diagnoses = await db.Diagnoses
                 .AsNoTracking()
                 .Where(x => x.PatientId==patientId)
@@ -211,20 +171,20 @@ namespace EHMR.Services
 
             return new PatientContextDto
             {
-                AppointmentHistory=appointments,
+                Appointments=appointments,
 
-                DiagnosisHistory=diagnoses
-                    .Select(d => new DiagnosisHistoryItem
+                Diagnoses=diagnoses
+                    .Select(d => new Diagnosis
                     {
                         Id=d.Id,
-                        Code=d.Mkb10Code?.Code??"",
-                        Description=d.ClinicalDescription,
+                        Mkb10Code=d.Mkb10Code,
+                        ClinicalDescription=d.ClinicalDescription,
                         DiagnosedAt=d.DiagnosedAt,
                         Severity=d.Severity,
                         IsPrimary=d.IsPrimary
                     })
                     .ToList(),
-
+                PatientMedicines=patientMedicines,
                 TherapyCycles=cycles
             };
         }

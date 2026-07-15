@@ -119,7 +119,19 @@ namespace EHMR.Services
 
             await _context.SaveChangesAsync();
         }
+        public async Task DeleteAsync(Guid Id)
+        {
+            var user = await _context.Users
+                .Include(x => x.Role)
+                .FirstAsync(x => x.Id==Id);
 
+           
+
+            // sync modules
+            await _context.Users.ExecuteDeleteAsync();         
+
+            await _context.SaveChangesAsync();
+        }
         public Task<List<string>> GetAllModulesAsync()
         {
             return Task.FromResult(new List<string>

@@ -47,6 +47,7 @@
 
 	<ItemGroup>
 		    <PackageReference Include="ClosedXML" Version="0.105.0" />
+		    <PackageReference Include="ClosedXML.Report" Version="0.2.12" />
 		    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 
     <!-- MAUI UI TOOLKIT -->
@@ -68,6 +69,7 @@
 
     <!-- PDF REPORTS -->
     <PackageReference Include="PdfSharpCore" Version="1.3.67" />
+    <PackageReference Include="QuestPDF" Version="2026.7.0" />
 
     <!-- BARCODE / QR -->
     <PackageReference Include="ZXing.Net.Maui" Version="0.6.0" />
@@ -81,6 +83,12 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Controls\SparkDataGridView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\CalendarHeader.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\SparkExpandableCardView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Controls\SparkExplorerHeaderView.xaml">
@@ -173,16 +181,13 @@
 	  <MauiXaml Update="Resources\Controls\FFGridRowPresenter.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Resources\Styles\AuthStyle - Copy.xaml">
+	  <MauiXaml Update="Resources\Controls\Themes\SparkExpandableCardThemeView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Styles\DashboardStyle.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Controls\FFChart.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Resources\Controls\FFDataGridStyles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Controls\FFDatePickerPage.xaml">
@@ -281,9 +286,6 @@
 	  <MauiXaml Update="Resources\Styles\AuthStyle.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Resources\Styles\FleetStyles.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Resources\Controls\ShadowDateField.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -329,6 +331,12 @@
 	  <MauiXaml Update="Views\Dashboard\DashboardView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Doctors\DoctorsDetailPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Doctors\DoctorsListPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Encounters\EncounterCreatePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -365,16 +373,37 @@
 	  <MauiXaml Update="Views\MenuView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Mkb10\Mkb10CodeDetailPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Mkb10\Mkb10CodeListPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Patients\PatientDetailFormPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Patients\PatientListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Popups\CreateAppointmentPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Popups\CreateTherpayCyclePopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Prescription\PrescriptionListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Reports\DashboardReportPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\ReportPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Reports\ReportHistoryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Reports\ReportsListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\RootLayoutPage.xaml">
@@ -431,14 +460,26 @@
 	  <Compile Update="Resources\Controls\FFMetricTile.xaml.cs">
 	    <DependentUpon>FFMetricTile.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Resources\Controls\CalendarHeader.xaml.cs">
+	    <DependentUpon>CalendarHeader.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\AppointmentListPage.xaml.cs">
 	    <DependentUpon>AppointmentListPage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\Appointments\AppointmentDetailPage.xaml.cs">
 	    <DependentUpon>AppointmentDetailPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\Doctors\DoctorsListPage.xaml.cs">
+	    <DependentUpon>DoctorsListPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\Patients\PatientListPage.xaml.cs">
 	    <DependentUpon>PatientListPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Popups\CreateAppointmentPopup.xaml.cs">
+	    <DependentUpon>CreateAppointmentPopup.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Reports\ReportHistoryPage.xaml.cs">
+	    <DependentUpon>ReportHistoryPage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\RootLayoutPage.xaml.cs">
 	    <DependentUpon>RootLayoutPage.xaml</DependentUpon>

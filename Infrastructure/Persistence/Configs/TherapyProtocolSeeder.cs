@@ -5,7 +5,7 @@ namespace EHMR.Infrastructure.Persistence.Configs;
 
 public class TherapyProtocolSeeder : IEntitySeeder
 {
-    public int Order => 10;
+    public int Order => 110;
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {

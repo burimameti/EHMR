@@ -8,5 +8,5 @@ public enum FFThemeVariant
     OrangeDark,     // Subtle dark with orange used only for emphasis
     DeepPurpleDark, // JetBrains-style dark, purple accent
     MilkLight , Classic,      // Apple / Notion / Linear inspired — near-white
-    Sparked
+    Sparked, Hospital, SunsetDark   
 }

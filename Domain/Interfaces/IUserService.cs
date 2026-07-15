@@ -11,7 +11,7 @@ namespace EHMR.Domain.Interfaces
         Task CreateAsync(UserAdminDto user);
 
         Task UpdateAsync(UserAdminDto user);
-
+        Task DeleteAsync(Guid d);
         Task<List<string>> GetAllModulesAsync();
     }
 }

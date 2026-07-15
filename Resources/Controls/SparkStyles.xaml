@@ -2,66 +2,118 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
 	<!--  ============================================================  -->
-	<!--  RADIUS SCALE — single source of truth for all corner rounding  -->
+	<!--  SIDEBAR (Deep Slate / Slate-Blue Theme)  -->
 	<!--  ============================================================  -->
-	<x:Double x:Key="SparkRadiusXs">4</x:Double>
-	<!--  badges, tight chips  -->
-	<x:Double x:Key="SparkRadiusSm">6</x:Double>
-	<!--  inputs, buttons, pickers  -->
-	<x:Double x:Key="SparkRadiusMd">8</x:Double>
-	<!--  tab badges, larger chips  -->
-	<x:Double x:Key="SparkRadiusLg">12</x:Double>
-	<!--  section panels  -->
-	<x:Double x:Key="SparkRadiusXl">16</x:Double>
-	<!--  page-level cards  -->
-	<x:Double x:Key="SparkRadiusPill">20</x:Double>
-	<!--  fully rounded chips/tags  -->
+	<Color x:Key="SparkSidebarBg">#32404D</Color>
+	<Color x:Key="SparkSidebarBgHover">#3D4D5C</Color>
+	<Color x:Key="SparkSidebarActiveBg">#4CC3D9</Color>
+	<Color x:Key="SparkSidebarText">#A9B7C6</Color>
+	<Color x:Key="SparkSidebarTextActive">#FFFFFF</Color>
+	<Color x:Key="SparkSidebarBorder">#27323D</Color>
 
 	<!--  ============================================================  -->
-	<!--  COLORS  -->
+	<!--  MAIN SURFACES & CANVAS  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkSidebarBg">#1D2A44</Color>
+	<Color x:Key="SparkCanvasBackground">#EBF0F5</Color>
+	<!--  Canvas behind the cards  -->
+	<Color x:Key="SparkBackground">#FFFFFF</Color>
+	<!--  White card surface  -->
+	<Color x:Key="SparkBackgroundAlt">#F8FAFC</Color>
+	<!--  Alternating rows/nested sections  -->
+	<Color x:Key="SparkBorder">#E2E8F0</Color>
+	<!--  Hairline borders/dividers  -->
+
+	<!--  ============================================================  -->
+	<!--  TYPOGRAPHY  -->
+	<!--  ============================================================  -->
+	<Color x:Key="SparkTextPrimary">#2D3748</Color>
+	<Color x:Key="SparkTextSecondary">#718096</Color>
+	<Color x:Key="SparkTextMuted">#A0AEC0</Color>
+	<Color x:Key="SparkLink">#2F8FE0</Color>
+
+	<!--  ============================================================  -->
+	<!--  ACCENTS (Vibrant Dashboard Teal)  -->
+	<!--  ============================================================  -->
 	<Color x:Key="SparkAccentTeal">#21B6C4</Color>
 	<Color x:Key="SparkAccentTealDark">#1899A6</Color>
-	<Color x:Key="SparkButtonSecondaryBackground">#5B6B79</Color>
+	<Color x:Key="SparkAccentTealBg">#E7F7FA</Color>
+
+	<!--  ============================================================  -->
+	<!--  BUTTONS & INTERACTIVE ELEMENTS  -->
+	<!--  ============================================================  -->
+	<Color x:Key="SparkButtonPrimaryBg">#21B6C4</Color>
+	<Color x:Key="SparkButtonPrimaryBgPressed">#1899A6</Color>
+	<Color x:Key="SparkButtonPrimaryText">#FFFFFF</Color>
+
+	<Color x:Key="SparkButtonSecondaryBg">#5B6B79</Color>
+	<Color x:Key="SparkButtonSecondaryBgPressed">#4A5763</Color>
+	<Color x:Key="SparkButtonSecondaryBorder">#D8DEE6</Color>
+	<Color x:Key="SparkButtonSecondaryText">#FFFFFF</Color>
+
+	<!--  ============================================================  -->
+	<!--  TABS CONFIGURATION  -->
+	<!--  ============================================================  -->
 	<Color x:Key="SparkTabActiveBg">#E7F7FA</Color>
 	<Color x:Key="SparkTabActiveBorder">#21B6C4</Color>
 	<Color x:Key="SparkTabActiveText">#16374A</Color>
 	<Color x:Key="SparkTabInactiveText">#7C8798</Color>
 	<Color x:Key="SparkTabHoverBg">#F1F5F8</Color>
 
-	<Color x:Key="SparkBorder">#E3E6EC</Color>
-	<Color x:Key="SparkBackground">#FFFFFF</Color>
-	<Color x:Key="SparkBackgroundAlt">#F7F9FB</Color>
-
-	<Color x:Key="SparkTextPrimary">#2E3A4E</Color>
-	<Color x:Key="SparkTextSecondary">#8B95A6</Color>
-
-	<Color x:Key="SparkBadgeDangerBg">#FDE8E8</Color>
-	<Color x:Key="SparkBadgeDangerText">#E0554F</Color>
+	<!--  ============================================================  -->
+	<!--  SEMANTIC STATUS & BADGES (Pastel Grid Rows / Indicators)  -->
+	<!--  ============================================================  -->
+	<!--  Success / Low Risk (Green)  -->
+	<Color x:Key="SparkStatusSuccessBg">#D1F5D3</Color>
+	<Color x:Key="SparkStatusSuccessText">#1E7E34</Color>
 	<Color x:Key="SparkBadgeSuccessBg">#E7F6E9</Color>
 	<Color x:Key="SparkBadgeSuccessText">#3CB35B</Color>
+
+	<!--  Warning / Moderate Risk (Amber)  -->
+	<Color x:Key="SparkStatusWarningBg">#FDF1D6</Color>
+	<Color x:Key="SparkStatusWarningText">#B7791F</Color>
 	<Color x:Key="SparkBadgeWarningBg">#FDF3E3</Color>
 	<Color x:Key="SparkBadgeWarningText">#E0A83C</Color>
+
+	<!--  Danger / High Risk / Churned (Pink/Red)  -->
+	<Color x:Key="SparkStatusDangerBg">#FCE3E7</Color>
+	<Color x:Key="SparkStatusDangerText">#C0304A</Color>
+	<Color x:Key="SparkBadgeDangerBg">#FDE8E8</Color>
+	<Color x:Key="SparkBadgeDangerText">#E0554F</Color>
+
+	<!--  Neutral  -->
+	<Color x:Key="SparkButtonBg">#EAECF1</Color>
+	<Color x:Key="SparkStatusNeutralBg">#EAECF1</Color>
+	<Color x:Key="SparkStatusNeutralText">#5A6178</Color>
 	<Color x:Key="SparkBadgeNeutralBg">#EDF1F5</Color>
 	<Color x:Key="SparkBadgeNeutralBgSelected">#21B6C4</Color>
 	<Color x:Key="SparkBadgeNeutralText">#5B6B85</Color>
-	<Color x:Key="SparkBadgeNeutralTextSelected">#FFFFFF</Color>
+	<Color x:Key="SparkBadgeNeutralTextSelected">
+		#FFFFFF
+	</Color>
 
-	<Color x:Key="SparkButtonPrimaryText">#FFFFFF</Color>
-	<Color x:Key="SparkButtonSecondaryBorder">#D8DEE6</Color>
-	<Color x:Key="SparkLink">#2F8FE0</Color>
+	<!--  ============================================================  -->
+	<!--  RADIUS SCALE  -->
+	<!--  ============================================================  -->
+	<x:Double x:Key="SparkRadiusXs">4</x:Double>
+	<x:Double x:Key="SparkRadiusSm">6</x:Double>
+	<x:Double x:Key="SparkRadiusMd">8</x:Double>
+	<x:Double x:Key="SparkRadiusLg">12</x:Double>
+	<x:Double x:Key="SparkRadiusXl">16</x:Double>
+	<x:Double x:Key="SparkRadiusPill">20</x:Double>
 
-	<!--  Reusable icon path data (vector, so they tint with any color)  -->
-	<x:String x:Key="SparkIconSearchPathData">M9,2 A7,7 0 1,0 9,16 A7,7 0 1,0 9,2 Z M14.2,14.2 L19,19</x:String>
-	<x:String x:Key="SparkIconFilterPathData">M2,3 L18,3 L11.5,10.5 L11.5,16 L8.5,17.5 L8.5,10.5 Z</x:String>
-	<x:String x:Key="SparkIconChevronDownPathData">M3,6 L10,13 L17,6</x:String>
+	<!--  ============================================================  -->
+	<!--  TYPOGRAPHY METRICS & VECTOR PATH DATA  -->
+	<!--  ============================================================  -->
 	<x:Double x:Key="SparkFontSizeSmall">12</x:Double>
 	<x:Double x:Key="SparkFontSizeNormal">14</x:Double>
 	<x:Double x:Key="SparkFontSizeTitle">16</x:Double>
 
+	<x:String x:Key="SparkIconSearchPathData">M9,2 A7,7 0 1,0 9,16 A7,7 0 1,0 9,2 Z M14.2,14.2 L19,19</x:String>
+	<x:String x:Key="SparkIconFilterPathData">M2,3 L18,3 L11.5,10.5 L11.5,16 L8.5,17.5 L8.5,10.5 Z</x:String>
+	<x:String x:Key="SparkIconChevronDownPathData">M3,6 L10,13 L17,6</x:String>
+
 	<!--  ============================================================  -->
-	<!--  INPUTS  (radius = Sm/6, matches buttons/pickers)  -->
+	<!--  STYLES  -->
 	<!--  ============================================================  -->
 	<Style x:Key="SparkSearchBarStyle" TargetType="SearchBar">
 		<Setter Property="FontSize" Value="13" />
@@ -77,7 +129,7 @@
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
-				<RoundRectangle CornerRadius="0" />
+				<RoundRectangle CornerRadius="6" />
 			</Setter.Value>
 		</Setter>
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
@@ -104,9 +156,7 @@
 		<Setter Property="Padding" Value="8,0" />
 		<Setter Property="MinimumWidthRequest" Value="96" />
 	</Style>
-	<!--  ============================================================  -->
-	<!--  BUTTONS  (radius = Sm/6, matches inputs/pickers)  -->
-	<!--  ============================================================  -->
+
 	<Style x:Key="SparkActionButtonStyle" TargetType="Button">
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="FontAttributes" Value="Bold" />
@@ -164,9 +214,6 @@
 		<Setter Property="VerticalOptions" Value="Center" />
 	</Style>
 
-	<!--  ============================================================  -->
-	<!--  TABS  (badge radius = Md/8, matches other "chip" elements)  -->
-	<!--  ============================================================  -->
 	<Style x:Key="SparkTabTitleLabelStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="{StaticResource SparkFontSizeNormal}" />
 		<Setter Property="FontAttributes" Value="Bold" />
@@ -224,10 +271,6 @@
 		</Style.Triggers>
 	</Style>
 
-	<!--  ============================================================  -->
-	<!--  STATUS BADGES  (radius = Xs/4 — tightest, matches grid pill cells)  -->
-	<!--  Danger / Success / Warning / Neutral now all present and consistent  -->
-	<!--  ============================================================  -->
 	<Style x:Key="SparkBadgeDangerFrameStyle" TargetType="Border">
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeDangerBg}" />
 		<Setter Property="StrokeShape">
@@ -271,55 +314,67 @@
 		<Setter Property="Stroke" Value="Transparent" />
 		<Setter Property="Padding" Value="8,3" />
 	</Style>
+
 	<Style x:Key="SparkEntryStyle" TargetType="Entry">
-
 		<Setter Property="FontSize" Value="13" />
-
 		<Setter Property="HeightRequest" Value="32" />
-
 		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-
 		<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
-
 		<Setter Property="BackgroundColor" Value="Transparent" />
-
 		<Setter Property="ClearButtonVisibility" Value="WhileEditing" />
-
 	</Style>
+
 	<Style x:Key="SparkEditorStyle" TargetType="Editor">
-
 		<Setter Property="FontSize" Value="13" />
-
 		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-
 		<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
-
 		<Setter Property="BackgroundColor" Value="Transparent" />
-
 		<Setter Property="AutoSize" Value="TextChanges" />
-
 	</Style>
+
 	<Style x:Key="SparkDatePickerStyle" TargetType="DatePicker">
-
 		<Setter Property="FontSize" Value="13" />
-
 		<Setter Property="HeightRequest" Value="32" />
-
 		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-
 		<Setter Property="BackgroundColor" Value="Transparent" />
-
 	</Style>
+
 	<Style x:Key="SparkTimePickerStyle" TargetType="TimePicker">
-
 		<Setter Property="FontSize" Value="13" />
-
 		<Setter Property="HeightRequest" Value="32" />
-
 		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-
 		<Setter Property="BackgroundColor" Value="Transparent" />
-
+	</Style>
+	<Style x:Key="SparkCardStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 0" />
+		<Setter Property="Padding" Value="20" />
 	</Style>
 
+	<Style x:Key="SectionHeaderStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="15" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="Margin" Value="0,0,0,12" />
+	</Style>
+
+	<Style x:Key="DisplayBlockStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackgroundAlt}" />
+		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
+		<Setter Property="Padding" Value="12,10" />
+	</Style>
+
+	<Style x:Key="DisplayLabelCaptionStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="11" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+		<Setter Property="Margin" Value="0,0,0,2" />
+	</Style>
+
+	<Style x:Key="DisplayLabelValueStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="FontAttributes" Value="Bold" />
+	</Style>
 </ResourceDictionary>

@@ -35,5 +35,6 @@
         public string? Notes { get; set; } = "";
 
         public ICollection<Appointment>? Appointments { get; set; } = [];
+        public override string ToString() =>      $"{Notes} ({Status})";
     }
 }

@@ -7,6 +7,11 @@
 	xmlns:local="clr-namespace:EHMR">
 	<Application.Resources>
 		<ResourceDictionary>
+			<converters:NotificationLevelToColorConverter x:Key="NotificationLevelToColorConverter" />
+			<converters:DoctorStatusToBackgroundConverter x:Key="DoctorStatusToBackgroundConverter" />
+			<converters:DashboardStateToTone x:Key="DashboardStateToTone" />
+			<converters:DoctorStatusToTextColorConverter x:Key="DoctorStatusToTextColorConverter" />
+			<converters:DoctorStatusToLabelConverter x:Key="DoctorStatusToLabelConverter" />
 			<converters:SparkStringNotEmptyConverter x:Key="SparkStringNotEmptyConverter" />
 			<converters:SparkToneToTextColorConverter x:Key="SparkToneToTextColorConverter" />
 			<converters:SparkToneToBackgroundColorConverter x:Key="SparkToneToBackgroundColorConverter" />
@@ -14,6 +19,7 @@
 			<converters:SparkCollectionNotEmptyConverter x:Key="SparkCollectionNotEmptyConverter  " />
 			<converters:StringNotNullOrEmptyConverter x:Key="StringNotNullOrEmptyConverter" />
 			<converters:BrushToColorConverter x:Key="BrushToColorConverter" />
+			<converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
 			<converters:SuggestionSelectionStrokeConverter x:Key="SuggestionSelectionStrokeConverter" />
 			<converters:GenderDisplayConverter x:Key="GenderDisplayConverter " />
 			<converters:StatusDisplayConverter x:Key="StatusDisplayConverter " />
@@ -37,7 +43,9 @@
 			<converters:AppointmentsInitialsConverter x:Key="AppointmentsInitialsConverter" />
 			<converters:AppointmentStatusToColorConverter x:Key="AppointmentStatusToColorConverter" />
 			<converters:AppointmentInvertedBoolConverter x:Key="AppointmentInvertedBoolConverter" />
-
+			<converters:InvertedBoolConverter x:Key="InvertedBoolConverter " />
+			<converters:GreaterThanOneConverter x:Key="GreaterThanOneConverter  " />
+			<converters:MetricTileVariantToColorConverter x:Key="MetricTileVariantToColorConverter" />
 			<converters:PatientStatusToLabelConverter x:Key="PatientStatusToLabelConverter" />
 			<converters:PatientStatusToTextColorConverter x:Key="PatientStatusToTextColorConverter" />
 			<converters:PatientStatusDisplayConverter x:Key="PatientStatusDisplayConverter" />
@@ -46,6 +54,7 @@
 			<converters:PatientStatusToPillFgConverter x:Key="PatientStatusToPillFgConverter  " />
 			<converters:StatusToColorConverter x:Key="StatusToColorConverter" />
 			<converters:StatusToBgConverter x:Key="StatusToBgConverter" />
+			<converters:NullToBoolConverter x:Key="NullToBoolConverter" />
 			<converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 			<converters:InverseBoolConverter x:Key="InverseBoolConverter" />
 			<converters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
@@ -59,7 +68,7 @@
 
 				<ResourceDictionary Source="Resources/Styles/Colors.xaml" />
 				<ResourceDictionary Source="Resources/Styles/AuthStyle.xaml" />
-				<ResourceDictionary Source="Resources/Styles/MyStyle.xaml" />
+				<!--<ResourceDictionary Source="Resources/Styles/MyStyle.xaml" />-->
 				<ResourceDictionary Source="Resources/Controls/SparkStyles.xaml" />
 				<!--<ResourceDictionary Source="Resources/Styles/Styles.xaml" />-->
 				<ResourceDictionary Source="Resources/Styles/Typography.xaml" />
@@ -72,7 +81,7 @@
 
 
 				<ResourceDictionary Source="Resources/Controls/FFCardStyles.xaml" />
-				<ResourceDictionary Source="Resources/Controls/FFDataGridStyles.xaml" />
+
 
 
 				<ResourceDictionary Source="Resources/Controls/FFHeaderStyles.xaml" />

@@ -39,6 +39,7 @@
 						BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
 						Command="{Binding AddCommand}"
 						HeightRequest="45"
+						IsVisible="{Binding CanCreate}"
 						Style="{StaticResource TabButtonActiveStyle}"
 						Text="Нов Рецепт"
 						WidthRequest="150" />
@@ -70,6 +71,8 @@
 								PreviousPageCommand="{Binding PreviousPageCommand}"
 								RowTappedCommand="{Binding SelectCommand}"
 								Rows="{Binding GridRows}"
+								ShowPagination="True"
+								ShowRowNumbers="True"
 								TotalPages="{Binding TotalPages}" />
 						</Border>
 					</VerticalStackLayout>

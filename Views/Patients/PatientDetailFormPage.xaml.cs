@@ -1,6 +1,6 @@
 ﻿using EHMR.ViewModels;
 
-namespace EHMR.Views
+namespace EHMR.Views.Patients
 {
     public partial class PatientDetailFormPage : ContentPage
     {

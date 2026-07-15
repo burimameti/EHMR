@@ -14,13 +14,13 @@
 		BackgroundColor="{StaticResource Surface}"
 		StrokeThickness="0">
 
-		<Grid RowDefinitions="Auto,Auto,*,Auto" WidthRequest="270">
+		<Grid RowDefinitions="Auto,Auto,*,Auto" WidthRequest="290">
 
 			<!--  ================= HEADER / LOGO =================  -->
 			<Grid
 				Grid.Row="0"
 				Padding="22,24,20,18"
-				Background="{StaticResource DialogBackground}"
+				Background="#37414B"
 				ColumnDefinitions="26,*"
 				ColumnSpacing="10">
 
@@ -286,7 +286,7 @@
 							FontAttributes="Bold"
 							FontSize="12"
 							HorizontalOptions="Center"
-							Text="Д"
+							Text="{Binding UserInitial}"
 							TextColor="{StaticResource SidebarActiveText}"
 							VerticalOptions="Center" />
 					</Border>
@@ -309,12 +309,17 @@
 					<Label
 						Grid.Column="2"
 						FontFamily="FASolid"
-						FontSize="12"
-						Text="&#xf013;"
+						FontSize="14"
+						Text="&#xf2f5;"
 						TextColor="{StaticResource SidebarTextMuted}"
-						VerticalOptions="Center" />
+						VerticalOptions="Center">
+						<Label.GestureRecognizers>
+							<TapGestureRecognizer Command="{Binding LogoutCommand}" />
+						</Label.GestureRecognizers>
+					</Label>
 				</Grid>
 			</Border>
+
 		</Grid>
 	</Border>
 </ContentView>

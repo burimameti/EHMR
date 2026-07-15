@@ -1,14 +1,100 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-	x:Class="EHMR.Views.PatientDetailFormPage"
+	x:Class="EHMR.Views.Patients.PatientDetailFormPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	xmlns:models="clr-namespace:EHMR.Domain.Entities"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
-	x:DataType="viewModels:PatientDetailFormViewModel">
+	x:Name="PageRoot"
+	x:DataType="viewModels:PatientDetailFormViewModel"
+	BackgroundColor="{StaticResource SparkBorder}">
 
-	<!--  Главен контејнер со темна позадина  -->
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<x:Array x:Key="DosesFrequencyValues" Type="{x:Type models:DosesFrequency}">
+				<models:DosesFrequency>Daily</models:DosesFrequency>
+				<models:DosesFrequency>TwiceDaily</models:DosesFrequency>
+				<models:DosesFrequency>ThreeTimesDaily</models:DosesFrequency>
+				<models:DosesFrequency>EveryOtherDay</models:DosesFrequency>
+				<models:DosesFrequency>EveryThreeDays</models:DosesFrequency>
+				<models:DosesFrequency>Weekly</models:DosesFrequency>
+				<models:DosesFrequency>Monthly</models:DosesFrequency>
+				<models:DosesFrequency>Other</models:DosesFrequency>
+			</x:Array>
+
+			<!--  SECTION HEADER PILL — исто како EncounterCreatePage  -->
+			<Style x:Key="SectionPillBorderStyle" TargetType="Border">
+				<Setter Property="Padding" Value="14,10" />
+				<Setter Property="BackgroundColor" Value="{StaticResource SparkTabActiveBg}" />
+				<Setter Property="StrokeShape" Value="RoundRectangle 8" />
+				<Setter Property="StrokeThickness" Value="0" />
+			</Style>
+			<Style x:Key="SectionPillLabelStyle" TargetType="Label">
+				<Setter Property="CharacterSpacing" Value="0.5" />
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="12" />
+				<Setter Property="TextColor" Value="{StaticResource SparkAccentTealDark}" />
+			</Style>
+
+			<Style x:Key="ReadRowLabelStyle" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="12" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+				<Setter Property="VerticalOptions" Value="Center" />
+			</Style>
+			<Style x:Key="ReadRowValueStyle" TargetType="Label">
+				<Setter Property="FontSize" Value="13" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+				<Setter Property="VerticalOptions" Value="Center" />
+				<Setter Property="LineBreakMode" Value="TailTruncation" />
+			</Style>
+			<Style x:Key="EditFieldLabelStyle" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="13" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+			</Style>
+
+			<!--  EDIT FIELD BOX — заоблен 8px, teal-tint border + мека сенка (како во EncounterCreatePage)  -->
+			<Style x:Key="EditFieldBoxStyle" TargetType="Border">
+				<Setter Property="Padding" Value="12,0" />
+				<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+				<Setter Property="HeightRequest" Value="46" />
+				<Setter Property="Stroke" Value="{StaticResource SparkAccentTealBg}" />
+				<Setter Property="StrokeShape" Value="RoundRectangle 8" />
+				<Setter Property="StrokeThickness" Value="1" />
+				<Setter Property="Shadow">
+					<Setter.Value>
+						<Shadow
+							Brush="Black"
+							Opacity="0.06"
+							Radius="6"
+							Offset="0,2" />
+					</Setter.Value>
+				</Setter>
+			</Style>
+
+			<!--  TEXT AREA BOX — иста рамка како EditFieldBoxStyle, само повисока и со вертикален padding (Алергии итн.)  -->
+			<Style
+				x:Key="TextAreaFieldBoxStyle"
+				BasedOn="{StaticResource EditFieldBoxStyle}"
+				TargetType="Border">
+				<Setter Property="Padding" Value="12,10" />
+				<Setter Property="HeightRequest" Value="90" />
+			</Style>
+
+			<!--  COMPACT FIELD BOX — помала верзија за инлајн доза/фреквенција редови  -->
+			<Style
+				x:Key="CompactFieldBoxStyle"
+				BasedOn="{StaticResource EditFieldBoxStyle}"
+				TargetType="Border">
+				<Setter Property="Padding" Value="8,0" />
+				<Setter Property="HeightRequest" Value="36" />
+				<Setter Property="StrokeShape" Value="RoundRectangle 6" />
+			</Style>
+		</ResourceDictionary>
+	</ContentPage.Resources>
+
 	<Grid ColumnDefinitions="285,*">
 
 		<!--  ─── LEFT MENU SIDEBAR ───  -->
@@ -20,368 +106,189 @@
 		<Grid
 			Grid.Column="1"
 			Padding="24"
-			BackgroundColor="{StaticResource Gray200}"
-			RowDefinitions="Auto,Auto,*"
-			RowSpacing="20">
+			RowDefinitions="Auto,*"
+			RowSpacing="6">
 
 			<!--  =========================================================  -->
-			<!--  PAGE HEADER  -->
+			<!--  PAGE HEADER — иста структура/фонтови како EncounterCreatePage  -->
 			<!--  =========================================================  -->
-
 			<Border
-				Padding="28"
+				Padding="20,16"
 				BackgroundColor="{StaticResource SparkBackground}"
-				Stroke="{StaticResource SparkBorder}"
-				StrokeShape="RoundRectangle 0">
+				StrokeShape="RoundRectangle 12"
+				StrokeThickness="0">
 
-				<Grid ColumnDefinitions="Auto,*,440">
+				<Grid
+					ColumnDefinitions="Auto,*,Auto"
+					ColumnSpacing="16"
+					VerticalOptions="Center">
 
+					<!--
+						Avatar circle — иницијали од Patient, во истиот teal-pill
+						стил како иконата во EncounterCreatePage header.
+					-->
+					<Border
+						BackgroundColor="{StaticResource SparkTabActiveBg}"
+						HeightRequest="48"
+						StrokeShape="RoundRectangle 24"
+						StrokeThickness="0"
+						WidthRequest="48">
+						<Label
+							FontAttributes="Bold"
+							FontSize="16"
+							HorizontalOptions="Center"
+							Text="{Binding Patient, Converter={StaticResource PatientInitialsConverter}}"
+							TextColor="{StaticResource SparkAccentTeal}"
+							VerticalOptions="Center" />
+					</Border>
 
 					<VerticalStackLayout
 						Grid.Column="1"
-						Spacing="6"
+						Spacing="2"
 						VerticalOptions="Center">
-
 						<Label
 							FontAttributes="Bold"
-							FontSize="28"
+							FontFamily="Segoe UI"
+							FontSize="19"
 							Text="{Binding HeaderTitle}"
 							TextColor="{StaticResource SparkTextPrimary}" />
-
-						<Label
-							FontSize="14"
-							Text="{Binding HeaderSubtitle}"
-							TextColor="{StaticResource SparkTextSecondary}" />
-
-						<HorizontalStackLayout Margin="0,12,0,0" Spacing="10">
-
-							<controls:FFStatusChip
-								BackgroundColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToColorConverter}}"
-								Text="{Binding Patient.Status, Converter={StaticResource PatientStatusToLabelConverter}}"
-								TextColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToTextColorConverter}}" />
-
-							<Border
-								Padding="10,4"
-								BackgroundColor="#EDF7F9"
-								StrokeShape="RoundRectangle 0"
-								StrokeThickness="0">
-
-								<HorizontalStackLayout Spacing="6">
-
-									<Label
-										FontFamily="FASolid"
-										FontSize="12"
-										Text="&#xf0f8;"
-										TextColor="{StaticResource SparkAccentTeal}" />
-
-									<Label
-										FontAttributes="Bold"
-										FontSize="12"
-										Text="{Binding Patient.NationalId}"
-										TextColor="{StaticResource SparkTextPrimary}" />
-
-								</HorizontalStackLayout>
-
-							</Border>
-
-						</HorizontalStackLayout>
-
+						<controls:FFStatusChip
+							BackgroundColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToColorConverter}}"
+							HorizontalOptions="Start"
+							Text="{Binding Patient.Status, Converter={StaticResource PatientStatusToLabelConverter}}"
+							TextColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToTextColorConverter}}" />
 					</VerticalStackLayout>
 
-
-					<!--  =================================================  -->
-					<!--  ACTIONS  -->
-					<!--  =================================================  -->
-
-					<HorizontalStackLayout Grid.Column="2" Margin="0,0,0,0">
-
+					<HorizontalStackLayout
+						Grid.Column="2"
+						Spacing="10"
+						VerticalOptions="Center">
 						<controls:FFButton
 							ButtonKind="Primary"
 							Command="{Binding SaveCommand}"
-							HeightRequestEx="36"
+							ContentPadding="20,0"
+							HeightRequestEx="40"
 							IsVisible="{Binding IsEditMode}"
-							Text="💾 Зашувај Промени"
-							WidthRequest="200" />
-
+							Text="💾 Зачувај промени" />
 						<controls:FFButton
 							ButtonKind="Secondary"
 							Command="{Binding CancelCommand}"
-							HeightRequestEx="36"
+							ContentPadding="20,0"
+							HeightRequestEx="40"
 							IsVisible="{Binding IsEditMode}"
-							Text="Октажи"
-							TextColorEx="White"
-							WidthRequest="200" />
-
+							Text="Откажи" />
 						<controls:FFButton
 							ButtonKind="Primary"
 							Command="{Binding ToggleEditModeCommand}"
-							HeightRequestEx="36"
+							ContentPadding="20,0"
+							HeightRequestEx="40"
 							IsVisible="{Binding IsReadOnly}"
-							Text="✎ Промени"
-							TextColorEx="White"
-							WidthRequest="200" />
-
+							Text="✎ Промени" />
 					</HorizontalStackLayout>
 
 				</Grid>
-
 			</Border>
 
-			<!--  =========================================================  -->
-			<!--  NAVIGATION — underline tab style  -->
-			<!--  =========================================================  -->
-
-			<!--  =========================================================  -->
-			<!--  NAVIGATION — underline tab style  -->
-			<!--  =========================================================  -->
-
+			<!--  =====================================================  -->
+			<!--  FORM CONTENT WORKSPACE — 3 колони, pill section headers  -->
+			<!--  =====================================================  -->
 			<Border
 				Grid.Row="1"
-				Padding="0"
+				Padding="10"
 				BackgroundColor="{StaticResource SparkBackground}"
+				StrokeShape="RoundRectangle 12"
 				StrokeThickness="0">
 
-				<VerticalStackLayout Spacing="0">
-
-					<Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="0">
-
-						<!--  PERSONAL  -->
-						<Grid
-							Grid.Column="0"
-							Padding="16,14,16,12"
-							BackgroundColor="{Binding IsTab1Active, Converter={StaticResource BoolToActiveBackgroundConverter}}">
-
-							<Grid.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="1" />
-							</Grid.GestureRecognizers>
-
-							<HorizontalStackLayout
-								HorizontalOptions="Center"
-								Spacing="8"
-								VerticalOptions="Center">
-								<Label
-									FontFamily="FASolid"
-									FontSize="14"
-									Text="&#xf007;"
-									TextColor="White"
-									VerticalOptions="Center" />
-								<Label
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="Лични податоци"
-									TextColor="White" />
-							</HorizontalStackLayout>
-
-						</Grid>
-
-						<!--  MEDICAL  -->
-						<Grid
-							Grid.Column="1"
-							Padding="16,14,16,12"
-							BackgroundColor="{Binding IsTab2Active, Converter={StaticResource BoolToActiveBackgroundConverter}}">
-
-							<Grid.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="2" />
-							</Grid.GestureRecognizers>
-
-							<HorizontalStackLayout
-								HorizontalOptions="Center"
-								Spacing="8"
-								VerticalOptions="Center">
-								<Label
-									FontFamily="FASolid"
-									FontSize="14"
-									Text="&#xf0f1;"
-									TextColor="White"
-									VerticalOptions="Center" />
-								<Label
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="Медицински податоци"
-									TextColor="White" />
-							</HorizontalStackLayout>
-
-						</Grid>
-
-						<!--  CONTACT  -->
-						<Grid
-							Grid.Column="2"
-							Padding="16,14,16,12"
-							BackgroundColor="{Binding IsTab3Active, Converter={StaticResource BoolToActiveBackgroundConverter}}">
-
-							<Grid.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="3" />
-							</Grid.GestureRecognizers>
-
-							<HorizontalStackLayout
-								HorizontalOptions="Center"
-								Spacing="8"
-								VerticalOptions="Center">
-								<Label
-									FontFamily="FASolid"
-									FontSize="14"
-									Text="&#xf095;"
-									TextColor="White"
-									VerticalOptions="Center" />
-								<Label
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="Контакт информации"
-									TextColor="White" />
-							</HorizontalStackLayout>
-
-						</Grid>
-
-						<!--  SYSTEM  -->
-						<Grid
-							Grid.Column="3"
-							Padding="16,14,16,12"
-							BackgroundColor="{Binding IsTab4Active, Converter={StaticResource BoolToActiveBackgroundConverter}}">
-
-							<Grid.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="4" />
-							</Grid.GestureRecognizers>
-
-							<HorizontalStackLayout
-								HorizontalOptions="Center"
-								Spacing="8"
-								VerticalOptions="Center">
-								<Label
-									FontFamily="FASolid"
-									FontSize="14"
-									Text="&#xf05a;"
-									TextColor="White"
-									VerticalOptions="Center" />
-								<Label
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="Системски референци"
-									TextColor="White" />
-							</HorizontalStackLayout>
-
-						</Grid>
-
-					</Grid>
-
-					<!--  Bottom divider under whole tab bar  -->
-					<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
-
-				</VerticalStackLayout>
-
-			</Border>
-
-			<!--  =====================================================  -->
-			<!--  FORM CONTENT WORKSPACE  -->
-			<!--  =====================================================  -->
-			<Border
-				Grid.Row="2"
-				BackgroundColor="{StaticResource SparkBackground}"
-				StrokeShape="RoundRectangle 1"
-				StrokeThickness="0">
 				<ScrollView>
-					<VerticalStackLayout Padding="32" Spacing="24">
+					<Grid
+						Padding="28"
+						ColumnDefinitions="*,1,*,1,*"
+						ColumnSpacing="24">
 
-						<!--  ============================================  -->
-						<!--  TAB 1 — ЛИЧНИ ПОДАТОЦИ  -->
-						<!--  ============================================  -->
-						<VerticalStackLayout IsVisible="{Binding IsTab1Active}" Spacing="20">
+						<!--  divider 0|1  -->
+						<BoxView
+							Grid.Column="1"
+							VerticalOptions="Fill"
+							WidthRequest="1"
+							Color="{StaticResource SparkBorder}" />
+						<!--  divider 1|2  -->
+						<BoxView
+							Grid.Column="3"
+							VerticalOptions="Fill"
+							WidthRequest="1"
+							Color="{StaticResource SparkBorder}" />
 
-							<Label
-								CharacterSpacing="1"
-								FontAttributes="Bold"
-								FontSize="13"
-								Text="ОСНОВНИ ИНФОРМАЦИИ"
-								TextColor="{StaticResource SparkTextPrimary}" />
-							<BoxView
-								Margin="0,10"
-								HeightRequest="1"
-								Color="{StaticResource SparkBorder}" />
-							<Grid ColumnDefinitions="*,*,*" ColumnSpacing="22">
-								<Grid
-									ColumnDefinitions="70,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
-									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Име *"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Border
-										Grid.Column="1"
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
+						<!--  ================================================  -->
+						<!--  COLUMN 0 — ЛИЧНИ ПОДАТОЦИ  -->
+						<!--  ================================================  -->
+						<VerticalStackLayout Grid.Column="0" Spacing="14">
+
+							<Border Style="{StaticResource SectionPillBorderStyle}">
+								<Label Style="{StaticResource SectionPillLabelStyle}" Text="ЛИЧНИ ПОДАТОЦИ" />
+							</Border>
+
+							<!--  Име  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Име *" />
+									<Border Style="{StaticResource EditFieldBoxStyle}">
 										<Entry
 											BackgroundColor="Transparent"
 											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
 											Placeholder="Пр. Марко"
 											PlaceholderColor="{StaticResource SparkTextSecondary}"
 											Text="{Binding Patient.FirstName}"
 											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
 									</Border>
-								</Grid>
-
-								<Grid
-									Grid.Column="1"
-									ColumnDefinitions="70,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
+								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
 									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Презиме *"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Border
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Име:" />
+									<Label
 										Grid.Column="1"
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.FirstName}" />
+								</Grid>
+							</Grid>
+
+							<!--  Презиме  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Презиме *" />
+									<Border Style="{StaticResource EditFieldBoxStyle}">
 										<Entry
 											BackgroundColor="Transparent"
 											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
 											Placeholder="Пр. Петровски"
 											PlaceholderColor="{StaticResource SparkTextSecondary}"
 											Text="{Binding Patient.LastName}"
 											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
 									</Border>
-								</Grid>
-
-								<!--  ЕМБГ  -->
-								<Grid
-									Grid.Column="2"
-									ColumnDefinitions="70,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
+								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
 									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="ЕМБГ *"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Border
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Презиме:" />
+									<Label
 										Grid.Column="1"
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.LastName}" />
+								</Grid>
+							</Grid>
+
+							<!--  ЕМБГ  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="ЕМБГ *" />
+									<Border Style="{StaticResource EditFieldBoxStyle}">
 										<Entry
 											BackgroundColor="Transparent"
 											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
 											Keyboard="Numeric"
 											MaxLength="13"
 											Placeholder="Внесете 13 цифри"
@@ -390,100 +297,50 @@
 											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
 									</Border>
+								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
+									<Label
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="ЕМБГ:" />
+									<Label
+										Grid.Column="1"
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.NationalId}" />
 								</Grid>
 							</Grid>
 
-							<BoxView
-								Margin="0,10"
-								HeightRequest="1"
-								Color="{StaticResource SparkBorder}" />
-							<Grid ColumnDefinitions="*,*,*" ColumnSpacing="30">
-								<Grid
-									ColumnDefinitions="70,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
-									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Бр. на осигурување"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Border
-										Grid.Column="1"
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
-										<Entry
+							<!--  Датум на раѓање  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Датум на раѓање" />
+									<Border Style="{StaticResource EditFieldBoxStyle}">
+										<DatePicker
 											BackgroundColor="Transparent"
+											Date="{Binding Patient.BirthDate}"
 											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
-											Placeholder="МК-000000"
-											PlaceholderColor="{StaticResource SparkTextSecondary}"
-											Text="{Binding Patient.SSN}"
+											Format="dd.MM.yyyy"
 											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
 									</Border>
-								</Grid>
-								<Grid
-									Grid.Column="1"
-									ColumnDefinitions="70,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
+								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
 									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Датум на раѓање"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Border
-										Grid.Column="1"
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
-										<Grid>
-											<DatePicker
-												BackgroundColor="Transparent"
-												Date="{Binding Patient.BirthDate}"
-												Format="dd.MM.yyyy"
-												HorizontalOptions="Start"
-												IsVisible="{Binding IsEditMode}"
-												TextColor="{StaticResource SparkTextPrimary}"
-												VerticalOptions="Center"
-												WidthRequest="150" />
-											<Label
-												FontSize="13"
-												IsVisible="{Binding IsReadOnly}"
-												Text="{Binding Patient.BirthDate, StringFormat='{0:dd.MM.yyyy}'}"
-												TextColor="{StaticResource SparkTextPrimary}"
-												VerticalOptions="Center" />
-										</Grid>
-									</Border>
-								</Grid>
-								<Grid
-									Grid.Column="3"
-									ColumnDefinitions="70,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Роден:" />
 									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Пол *"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Border
 										Grid.Column="1"
-										Padding="14,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" />
+								</Grid>
+							</Grid>
+
+							<!--  Пол  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Пол *" />
+									<Border Padding="14,0" Style="{StaticResource EditFieldBoxStyle}">
 										<Grid ColumnDefinitions="*,Auto">
 											<Label
 												FontSize="13"
@@ -499,49 +356,473 @@
 											<Picker
 												Grid.ColumnSpan="2"
 												BackgroundColor="Transparent"
-												IsEnabled="{Binding IsEditMode}"
 												ItemsSource="{Binding GenderOptions}"
 												Opacity="0"
 												SelectedItem="{Binding SelectedGenderDisplay}" />
 										</Grid>
 									</Border>
+								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
+									<Label
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Пол:" />
+									<Label
+										Grid.Column="1"
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding SelectedGenderDisplay}" />
 								</Grid>
 							</Grid>
 
-							<Label
-								CharacterSpacing="1"
-								FontAttributes="Bold"
-								FontSize="13"
-								Text="КОНТАКТ ИНФОРМАЦИИ"
-								TextColor="{StaticResource SparkTextPrimary}" />
-							<BoxView
-								Margin="0,10"
-								HeightRequest="1"
-								Color="{StaticResource SparkBorder}" />
-							<Grid ColumnDefinitions="*,*" ColumnSpacing="16">
-								<Grid
-									Grid.Column="0"
-									ColumnDefinitions="70,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
-									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Телефон *"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Border
-										Grid.Column="1"
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
+						</VerticalStackLayout>
+
+						<!--  ================================================  -->
+						<!--  COLUMN 1 — МЕДИЦИНСКИ ПОДАТОЦИ  -->
+						<!--  ================================================  -->
+						<VerticalStackLayout Grid.Column="2" Spacing="14">
+
+							<Border Style="{StaticResource SectionPillBorderStyle}">
+								<Label Style="{StaticResource SectionPillLabelStyle}" Text="МЕДИЦИНСКИ ПОДАТОЦИ" />
+							</Border>
+
+							<!--  Матичен лекар (Ревматолог) — реален search + dropdown  -->
+							<VerticalStackLayout Spacing="8">
+								<Label Style="{StaticResource EditFieldLabelStyle}" Text="Матичен лекар (Ревматолог) *" />
+
+								<Grid IsVisible="{Binding IsEditMode}">
+									<Border Style="{StaticResource EditFieldBoxStyle}">
 										<Entry
 											BackgroundColor="Transparent"
 											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="Пребарај лекар по име или специјалност..."
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
+											Text="{Binding DoctorSearchText}"
+											TextColor="{StaticResource SparkTextPrimary}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+
+								<Border
+									Padding="4"
+									BackgroundColor="{StaticResource SparkBackground}"
+									IsVisible="{Binding ShowDoctorDropdown}"
+									MaximumHeightRequest="200"
+									Stroke="{StaticResource SparkAccentTealBg}"
+									StrokeShape="RoundRectangle 8"
+									StrokeThickness="1">
+									<CollectionView ItemsSource="{Binding DoctorSearchResults}">
+										<CollectionView.ItemTemplate>
+											<DataTemplate x:DataType="models:Doctor">
+												<Grid Padding="8,6">
+													<Grid.GestureRecognizers>
+														<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectDoctorCommand}" CommandParameter="{Binding .}" />
+													</Grid.GestureRecognizers>
+													<VerticalStackLayout Spacing="2">
+														<Label
+															FontAttributes="Bold"
+															FontSize="13"
+															Text="{Binding User.FirstName, StringFormat='Д-р {0} '}" />
+														<Label
+															FontSize="11"
+															Text="{Binding Specialty}"
+															TextColor="{StaticResource SparkTextSecondary}" />
+													</VerticalStackLayout>
+												</Grid>
+											</DataTemplate>
+										</CollectionView.ItemTemplate>
+									</CollectionView>
+								</Border>
+
+								<!--  FIX: read-only summary row is now correctly hidden while editing  -->
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
+									<Label
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Лекар:" />
+									<Label
+										Grid.Column="1"
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding SelectedDoctorDisplay, FallbackValue='Не е избран лекар'}" />
+								</Grid>
+							</VerticalStackLayout>
+
+							<!--  Крвна група  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Крвна група" />
+									<Border Padding="14,0" Style="{StaticResource EditFieldBoxStyle}">
+										<Grid ColumnDefinitions="*,Auto">
+											<Label
+												FontSize="13"
+												Text="{Binding Patient.BloodType, FallbackValue='Изберете...'}"
+												TextColor="{StaticResource SparkTextPrimary}"
+												VerticalOptions="Center" />
+											<Label
+												Grid.Column="1"
+												FontSize="11"
+												Text="▼"
+												TextColor="{StaticResource SparkTextSecondary}"
+												VerticalOptions="Center" />
+											<Picker
+												Grid.ColumnSpan="2"
+												BackgroundColor="Transparent"
+												ItemsSource="{Binding BloodTypeOptions}"
+												Opacity="0"
+												SelectedItem="{Binding Patient.BloodType}" />
+										</Grid>
+									</Border>
+								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
+									<Label
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Крв. група:" />
+									<Label
+										Grid.Column="1"
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.BloodType, FallbackValue='—'}" />
+								</Grid>
+							</Grid>
+
+							<!--  Алергии  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Алергии" />
+									<Border Style="{StaticResource TextAreaFieldBoxStyle}">
+										<Editor
+											AutoSize="Disabled"
+											BackgroundColor="Transparent"
+											FontSize="13"
+											Placeholder="Пеницилин, Храна, Прашина..."
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
+											Text="{Binding Patient.Allergies}"
+											TextColor="{StaticResource SparkTextPrimary}" />
+									</Border>
+								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
+									<Label
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Алергии:" />
+									<Label
+										Grid.Column="1"
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.Allergies, FallbackValue='Нема евидентирани.'}" />
+								</Grid>
+							</Grid>
+
+							<!--  ДИЈАГНОЗИ — MKB-10, search + dropdown  -->
+							<VerticalStackLayout Spacing="8">
+								<Label
+									CharacterSpacing="0.5"
+									FontAttributes="Bold"
+									FontSize="12"
+									Text="ДИЈАГНОЗИ (МКБ-10)"
+									TextColor="{StaticResource SparkTextSecondary}" />
+
+								<Grid IsVisible="{Binding IsEditMode}">
+									<Border Style="{StaticResource EditFieldBoxStyle}">
+										<Entry
+											BackgroundColor="Transparent"
+											FontSize="13"
+											Placeholder="Пребарај по код или опис..."
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
+											Text="{Binding MkbSearchText}"
+											TextColor="{StaticResource SparkTextPrimary}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+
+								<Border
+									Padding="4"
+									BackgroundColor="{StaticResource SparkBackground}"
+									IsVisible="{Binding ShowMkbDropdown}"
+									MaximumHeightRequest="200"
+									Stroke="{StaticResource SparkAccentTealBg}"
+									StrokeShape="RoundRectangle 8"
+									StrokeThickness="1">
+									<CollectionView ItemsSource="{Binding MkbResults}">
+										<CollectionView.ItemTemplate>
+											<DataTemplate x:DataType="models:Mkb10Code">
+												<Grid Padding="8,6">
+													<Grid.GestureRecognizers>
+														<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMkbCommand}" CommandParameter="{Binding .}" />
+													</Grid.GestureRecognizers>
+													<HorizontalStackLayout Spacing="8">
+														<Label
+															FontAttributes="Bold"
+															FontFamily="Consolas"
+															FontSize="12"
+															Text="{Binding Code}"
+															TextColor="{StaticResource SparkAccentTealDark}" />
+														<Label FontSize="12" Text="{Binding Description}" />
+													</HorizontalStackLayout>
+												</Grid>
+											</DataTemplate>
+										</CollectionView.ItemTemplate>
+									</CollectionView>
+								</Border>
+
+								<FlexLayout
+									BindableLayout.ItemsSource="{Binding Diagnoses}"
+									Direction="Row"
+									JustifyContent="Start"
+									Wrap="Wrap">
+									<BindableLayout.EmptyView>
+										<Label
+											FontSize="13"
+											Text="Нема евидентирани дијагнози."
+											TextColor="{StaticResource SparkTextSecondary}" />
+									</BindableLayout.EmptyView>
+									<BindableLayout.ItemTemplate>
+										<DataTemplate x:DataType="models:Diagnosis">
+											<Border
+												Margin="0,0,8,8"
+												Padding="10,6"
+												BackgroundColor="{StaticResource SparkTabActiveBg}"
+												Stroke="{StaticResource SparkAccentTeal}"
+												StrokeShape="RoundRectangle 12">
+												<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+													<Label
+														FontAttributes="Bold"
+														FontFamily="Consolas"
+														FontSize="12"
+														Text="{Binding Mkb10Code.Code, FallbackValue='—'}"
+														TextColor="{StaticResource SparkAccentTealDark}" />
+													<Label
+														FontSize="12"
+														Text="{Binding Mkb10Code.Description}"
+														TextColor="{StaticResource SparkTextPrimary}" />
+													<Button
+														Padding="0"
+														BackgroundColor="Transparent"
+														Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMkbCommand}"
+														CommandParameter="{Binding .}"
+														CornerRadius="9"
+														FontSize="10"
+														HeightRequest="18"
+														IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
+														Text="✕"
+														TextColor="{StaticResource SparkAccentTealDark}"
+														WidthRequest="18" />
+												</HorizontalStackLayout>
+											</Border>
+										</DataTemplate>
+									</BindableLayout.ItemTemplate>
+								</FlexLayout>
+							</VerticalStackLayout>
+
+							<!--  ЛЕКОВИ — search + dropdown + editable dosage/frequency  -->
+							<VerticalStackLayout Spacing="8">
+								<Label
+									CharacterSpacing="0.5"
+									FontAttributes="Bold"
+									FontSize="12"
+									Text="ЛЕКОВИ"
+									TextColor="{StaticResource SparkTextSecondary}" />
+
+								<Grid IsVisible="{Binding IsEditMode}">
+									<Border Style="{StaticResource EditFieldBoxStyle}">
+										<Entry
+											BackgroundColor="Transparent"
+											FontSize="13"
+											Placeholder="Пребарај лек по име, генерик или код..."
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
+											Text="{Binding MedicineSearchText}"
+											TextColor="{StaticResource SparkTextPrimary}"
+											VerticalOptions="Center" />
+									</Border>
+								</Grid>
+
+								<Border
+									Padding="4"
+									BackgroundColor="{StaticResource SparkBackground}"
+									IsVisible="{Binding ShowMedicineDropdown}"
+									MaximumHeightRequest="200"
+									Stroke="{StaticResource SparkAccentTealBg}"
+									StrokeShape="RoundRectangle 8"
+									StrokeThickness="1">
+									<CollectionView ItemsSource="{Binding MedicineResults}">
+										<CollectionView.ItemTemplate>
+											<DataTemplate x:DataType="models:Medicine">
+												<Grid Padding="8,6">
+													<Grid.GestureRecognizers>
+														<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMedicineCommand}" CommandParameter="{Binding .}" />
+													</Grid.GestureRecognizers>
+													<Label FontSize="13" Text="{Binding Name}" />
+												</Grid>
+											</DataTemplate>
+										</CollectionView.ItemTemplate>
+									</CollectionView>
+								</Border>
+
+								<CollectionView
+									EmptyView="Нема евидентирани лекови."
+									ItemsSource="{Binding AttachedMedicines}"
+									SelectionMode="None">
+									<CollectionView.ItemTemplate>
+										<DataTemplate x:DataType="viewModels:AttachedMedicineRow">
+											<Border
+												Margin="0,0,0,8"
+												Padding="12,10"
+												BackgroundColor="{StaticResource SparkBackground}"
+												Stroke="{StaticResource SparkAccentTealBg}"
+												StrokeShape="RoundRectangle 8"
+												StrokeThickness="1">
+												<Grid
+													ColumnDefinitions="*,Auto"
+													ColumnSpacing="6"
+													RowDefinitions="Auto,Auto"
+													RowSpacing="6">
+
+													<Label
+														FontAttributes="Bold"
+														FontSize="13"
+														Text="{Binding PatientMedicine.Medicine.Name, FallbackValue='—'}"
+														TextColor="{StaticResource SparkTextPrimary}" />
+
+													<Label
+														Grid.Column="1"
+														FontFamily="FASolid"
+														FontSize="13"
+														IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
+														Text="&#xf00d;"
+														TextColor="{StaticResource SparkTextSecondary}">
+														<Label.GestureRecognizers>
+															<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" />
+														</Label.GestureRecognizers>
+													</Label>
+
+													<!--  EDIT: dosage entry + frequency picker  -->
+													<Grid
+														Grid.Row="1"
+														Grid.ColumnSpan="2"
+														ColumnDefinitions="*,*"
+														ColumnSpacing="8"
+														IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}">
+														<Border Style="{StaticResource CompactFieldBoxStyle}">
+															<Entry
+																BackgroundColor="Transparent"
+																FontSize="12"
+																Placeholder="Доза (напр. 1 таблета)"
+																Text="{Binding PatientMedicine.Dosage}"
+																VerticalOptions="Center" />
+														</Border>
+														<Border Grid.Column="1" Style="{StaticResource CompactFieldBoxStyle}">
+															<Picker
+																BackgroundColor="Transparent"
+																FontSize="12"
+																ItemsSource="{StaticResource DosesFrequencyValues}"
+																SelectedItem="{Binding PatientMedicine.DosesFrequency}" />
+														</Border>
+													</Grid>
+
+													<!--  READ: dosage + frequency as plain text  -->
+													<Label
+														Grid.Row="1"
+														Grid.ColumnSpan="2"
+														FontSize="12"
+														IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsReadOnly}"
+														TextColor="{StaticResource SparkTextSecondary}">
+														<Label.FormattedText>
+															<FormattedString>
+																<Span Text="{Binding PatientMedicine.Dosage}" />
+																<Span Text=" · " />
+																<Span Text="{Binding PatientMedicine.DosesFrequency}" />
+															</FormattedString>
+														</Label.FormattedText>
+													</Label>
+
+												</Grid>
+											</Border>
+										</DataTemplate>
+									</CollectionView.ItemTemplate>
+								</CollectionView>
+							</VerticalStackLayout>
+
+							<!--  ДОКУМЕНТИ  -->
+							<VerticalStackLayout Spacing="8">
+								<Label
+									CharacterSpacing="0.5"
+									FontAttributes="Bold"
+									FontSize="12"
+									Text="ДОКУМЕНТИ"
+									TextColor="{StaticResource SparkTextSecondary}" />
+
+								<HorizontalStackLayout IsVisible="{Binding IsEditMode}" Spacing="10">
+									<controls:FFButton
+										ButtonKind="Secondary"
+										Command="{Binding UploadDocumentCommand}"
+										ContentPadding="16,0"
+										HeightRequestEx="36"
+										IsEnabled="{Binding IsUploadingDocument, Converter={StaticResource InvertedBoolConverter}}"
+										Text="📎 Прикачи документ" />
+									<ActivityIndicator
+										IsRunning="{Binding IsUploadingDocument}"
+										IsVisible="{Binding IsUploadingDocument}"
+										Color="{StaticResource SparkAccentTeal}" />
+								</HorizontalStackLayout>
+
+								<CollectionView
+									EmptyView="Нема прикачени документи."
+									ItemsSource="{Binding Documents}"
+									SelectionMode="None">
+									<CollectionView.ItemTemplate>
+										<DataTemplate x:DataType="models:PatientDocument">
+											<Grid
+												Padding="8,6"
+												ColumnDefinitions="Auto,*,Auto"
+												ColumnSpacing="8">
+												<Label
+													FontFamily="FASolid"
+													FontSize="13"
+													Text="&#xf15b;"
+													TextColor="{StaticResource SparkAccentTeal}"
+													VerticalOptions="Center" />
+												<Label
+													Grid.Column="1"
+													FontSize="12"
+													LineBreakMode="TailTruncation"
+													Text="{Binding FileName}"
+													TextColor="{StaticResource SparkTextPrimary}"
+													VerticalOptions="Center" />
+												<Label
+													Grid.Column="2"
+													FontFamily="FASolid"
+													FontSize="13"
+													IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
+													Text="&#xf1f8;"
+													TextColor="{StaticResource SparkTextSecondary}"
+													VerticalOptions="Center">
+													<Label.GestureRecognizers>
+														<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveDocumentCommand}" CommandParameter="{Binding .}" />
+													</Label.GestureRecognizers>
+												</Label>
+											</Grid>
+										</DataTemplate>
+									</CollectionView.ItemTemplate>
+								</CollectionView>
+							</VerticalStackLayout>
+
+						</VerticalStackLayout>
+
+						<!--  ================================================  -->
+						<!--  COLUMN 2 — КОНТАКТ ИНФОРМАЦИИ  -->
+						<!--  ================================================  -->
+						<VerticalStackLayout Grid.Column="4" Spacing="14">
+
+							<Border Style="{StaticResource SectionPillBorderStyle}">
+								<Label Style="{StaticResource SectionPillLabelStyle}" Text="КОНТАКТ ИНФОРМАЦИИ" />
+							</Border>
+
+							<!--  Телефон  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Телефон *" />
+									<Border Style="{StaticResource EditFieldBoxStyle}">
+										<Entry
+											BackgroundColor="Transparent"
+											FontSize="13"
 											Keyboard="Telephone"
 											Placeholder="+389 7X XXX XXX"
 											PlaceholderColor="{StaticResource SparkTextSecondary}"
@@ -549,30 +830,27 @@
 											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
 									</Border>
-								</Grid>
-								<Grid
-									Grid.Column="1"
-									ColumnDefinitions="70,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
+								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
 									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Е-пошта *"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Border
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Телефон:" />
+									<Label
 										Grid.Column="1"
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.Phone}" />
+								</Grid>
+							</Grid>
+
+							<!--  Е-пошта  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Е-пошта *" />
+									<Border Style="{StaticResource EditFieldBoxStyle}">
 										<Entry
 											BackgroundColor="Transparent"
 											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
 											Keyboard="Email"
 											Placeholder="example@domain.com"
 											PlaceholderColor="{StaticResource SparkTextSecondary}"
@@ -580,35 +858,24 @@
 											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
 									</Border>
+								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
+									<Label
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Е-пошта:" />
+									<Label
+										Grid.Column="1"
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.Email}" />
 								</Grid>
 							</Grid>
 
-							<BoxView
-								Margin="0,10"
-								HeightRequest="1"
-								Color="{StaticResource SparkBorder}" />
-							<Grid ColumnDefinitions="*,*,*" ColumnSpacing="55">
-
-								<!--  ГРАД  -->
-								<Grid
-									Grid.Column="0"
-									ColumnDefinitions="70,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
-									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Град"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Border
-										Grid.Column="1"
-										Padding="14,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
+							<!--  Град  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Град" />
+									<Border Padding="14,0" Style="{StaticResource EditFieldBoxStyle}">
 										<Grid ColumnDefinitions="*,Auto">
 											<Label
 												FontSize="13"
@@ -624,388 +891,90 @@
 											<Picker
 												Grid.ColumnSpan="2"
 												BackgroundColor="Transparent"
-												IsEnabled="{Binding IsEditMode}"
 												ItemsSource="{Binding CityOptions}"
 												Opacity="0"
 												SelectedItem="{Binding Patient.City}" />
 										</Grid>
 									</Border>
-								</Grid>
-								<Grid
-									Grid.Column="1"
-									ColumnDefinitions="70,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
+								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
 									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Адреса"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Border
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Град:" />
+									<Label
 										Grid.Column="1"
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.City}" />
+								</Grid>
+							</Grid>
+
+							<!--  Адреса  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Адреса" />
+									<Border Style="{StaticResource EditFieldBoxStyle}">
 										<Entry
 											BackgroundColor="Transparent"
 											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
 											Placeholder="Улица и број"
 											PlaceholderColor="{StaticResource SparkTextSecondary}"
 											Text="{Binding Patient.Address}"
 											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
 									</Border>
-								</Grid>
-								<!--  ПОШТЕНСКИ БРОЈ  -->
-								<Grid
-									Grid.Column="2"
-									ColumnDefinitions="75,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
+								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
 									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Поштенски број"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Border
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Адреса:" />
+									<Label
 										Grid.Column="1"
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.Address}" />
+								</Grid>
+							</Grid>
+
+							<!--  Поштенски број  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Поштенски број" />
+									<Border Style="{StaticResource EditFieldBoxStyle}">
 										<Entry
 											BackgroundColor="Transparent"
 											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
-											Placeholder="Пр. 1000, 4AAB300"
+											Placeholder="Пр. 1000"
 											PlaceholderColor="{StaticResource SparkTextSecondary}"
 											Text="{Binding Patient.PostalCode}"
 											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
 									</Border>
-								</Grid>
-							</Grid>
-
-							<BoxView
-								Margin="0,10"
-								HeightRequest="1"
-								Color="{StaticResource SparkBorder}" />
-
-							<Label
-								CharacterSpacing="1"
-								FontAttributes="Bold"
-								FontSize="13"
-								Text="СТАТУС ДОСИЕ И МАТИЧЕН ЛЕКАР"
-								TextColor="{StaticResource SparkTextPrimary}" />
-							<BoxView
-								Margin="0,10"
-								HeightRequest="1"
-								Color="{StaticResource SparkBorder}" />
-							<Grid ColumnDefinitions="*,*">
-								<Grid
-									ColumnDefinitions="200,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
+								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
 									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Статус на досие"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Border
-										Grid.Column="1"
-										Padding="6,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
-										<Picker
-											BackgroundColor="Transparent"
-											FontSize="13"
-											IsEnabled="{Binding IsEditMode}"
-											ItemsSource="{Binding StatusOptions}"
-											SelectedItem="{Binding SelectedStatusDisplay}"
-											TextColor="{StaticResource SparkTextPrimary}"
-											TitleColor="{StaticResource SparkTextSecondary}"
-											VerticalOptions="Center" />
-									</Border>
-								</Grid>
-								<Grid
-									Grid.Column="1"
-									ColumnDefinitions="200,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
-									<Label
-										Margin="120,0,0,0"
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Матичен лекар"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Border
-										Grid.Column="1"
-										Padding="6,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
-										<Entry
-											BackgroundColor="Transparent"
-											FontSize="13"
-											IsEnabled="{Binding IsEditMode}"
-											Text="Матичен лекар"
-											TextColor="{StaticResource SparkTextSecondary}"
-											VerticalOptions="Center" />
-									</Border>
-								</Grid>
-							</Grid>
-
-						</VerticalStackLayout>
-
-						<!--  ============================================  -->
-						<!--  TAB 2 — МЕДИЦИНСКИ ПОДАТОЦИ  -->
-						<!--  ============================================  -->
-						<VerticalStackLayout IsVisible="{Binding IsTab2Active}" Spacing="24">
-							<VerticalStackLayout Spacing="12">
-								<Label
-									CharacterSpacing="1"
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="ОСИГУРУВАЊЕ ИЛИ ПОЛИСА"
-									TextColor="{StaticResource SparkTextPrimary}" />
-								<BoxView
-									Margin="0,10"
-									HeightRequest="1"
-									Color="{StaticResource SparkBorder}" />
-								<Grid ColumnDefinitions="*,*">
-									<VerticalStackLayout
 										Grid.Column="0"
-										MinimumWidthRequest="300"
-										Spacing="8">
-										<Label
-											FontAttributes="Bold"
-											FontSize="13"
-											Text="Број на осигуреник / или полиса"
-											TextColor="{StaticResource SparkTextPrimary}" />
-										<Border
-											Padding="12,0"
-											BackgroundColor="{StaticResource SparkBackground}"
-											HeightRequest="46"
-											Stroke="{StaticResource SparkBorder}"
-											StrokeShape="RoundRectangle 6"
-											StrokeThickness="1">
-											<Entry
-												BackgroundColor="Transparent"
-												FontSize="13"
-												IsReadOnly="{Binding IsReadOnly}"
-												Placeholder="МК-0001-2024"
-												PlaceholderColor="{StaticResource SparkTextSecondary}"
-												Text="{Binding Patient.SSN}"
-												TextColor="{StaticResource SparkTextPrimary}"
-												VerticalOptions="Center" />
-										</Border>
-									</VerticalStackLayout>
-
-									<VerticalStackLayout
-										Grid.Column="1"
-										HorizontalOptions="Start"
-										Spacing="8">
-										<Label
-											CharacterSpacing="1"
-											FontAttributes="Bold"
-											FontSize="13"
-											Text="КРВНА ГРУПА"
-											TextColor="{StaticResource SparkTextPrimary}" />
-										<Border
-											Padding="14,0"
-											BackgroundColor="{StaticResource SparkBackground}"
-											HeightRequest="46"
-											Stroke="{StaticResource SparkBorder}"
-											StrokeShape="RoundRectangle 6"
-											StrokeThickness="1">
-											<Grid ColumnDefinitions="*,Auto" MinimumWidthRequest="300">
-												<Label
-													FontSize="13"
-													Text="{Binding Patient.BloodType, FallbackValue='Изберете крвна група...'}"
-													TextColor="{StaticResource SparkTextPrimary}"
-													VerticalOptions="Center" />
-												<Label
-													Grid.Column="1"
-													FontSize="11"
-													Text="▼"
-													TextColor="{StaticResource SparkTextSecondary}"
-													VerticalOptions="Center" />
-												<Picker
-													Grid.ColumnSpan="2"
-													BackgroundColor="Transparent"
-													IsEnabled="{Binding IsEditMode}"
-													ItemsSource="{Binding BloodTypeOptions}"
-													Opacity="0"
-													SelectedItem="{Binding Patient.BloodType}" />
-											</Grid>
-										</Border>
-									</VerticalStackLayout>
-								</Grid>
-							</VerticalStackLayout>
-							<BoxView
-								Margin="0,10"
-								HeightRequest="1"
-								Color="{StaticResource SparkBorder}" />
-
-							<!--  ДИЈАГНОЗИ  -->
-							<VerticalStackLayout Spacing="12">
-								<Label
-									CharacterSpacing="1"
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="АКТИВНИ И ИСТОРИЈА НА ДИЈАГНОЗИ"
-									TextColor="{StaticResource SparkTextPrimary}" />
-								<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
-								<CollectionView
-									EmptyView="Нема евидентирани клинички дијагнози."
-									ItemsSource="{Binding Patient.Diagnoses}"
-									SelectionMode="None">
-									<CollectionView.ItemTemplate>
-										<DataTemplate x:DataType="models:Diagnosis">
-											<Border
-												Margin="0,0,0,12"
-												Padding="16"
-												BackgroundColor="{StaticResource SparkBackgroundAlt}"
-												Stroke="{StaticResource SparkBorder}"
-												StrokeShape="RoundRectangle 12"
-												StrokeThickness="1">
-												<Grid
-													ColumnDefinitions="*,Auto"
-													ColumnSpacing="12"
-													RowDefinitions="Auto,Auto">
-
-													<VerticalStackLayout Spacing="6">
-														<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
-															<Border
-																Padding="8,4"
-																BackgroundColor="{StaticResource SparkSidebarBg}"
-																StrokeShape="RoundRectangle 4"
-																StrokeThickness="0">
-																<Label
-																	FontAttributes="Bold"
-																	FontFamily="Consolas"
-																	FontSize="12"
-																	Text="{Binding Mkb10Code.Code, FallbackValue='—'}"
-																	TextColor="{StaticResource SparkAccentTeal}" />
-															</Border>
-															<Label
-																FontAttributes="Bold"
-																FontSize="14"
-																Text="{Binding ClinicalDescription}"
-																TextColor="{StaticResource SparkTextPrimary}"
-																VerticalOptions="Center" />
-														</HorizontalStackLayout>
-														<Label
-															FontSize="11"
-															Text="{Binding DiagnosedAt, StringFormat='Евидентирано на: {0:dd.MM.yyyy}'}"
-															TextColor="{StaticResource SparkTextSecondary}" />
-													</VerticalStackLayout>
-
-													<controls:FFStatusChip
-														Grid.Column="1"
-														BackgroundColor="{Binding Status, Converter={StaticResource DiagnosisStatusToColorConverter}}"
-														Text="{Binding Status, Converter={StaticResource DiagnosisStatusToLabelConverter}}"
-														TextColor="{Binding Status, Converter={StaticResource DiagnosisStatusToTextColorConverter}}"
-														VerticalOptions="Center" />
-
-													<Border
-														Grid.Row="1"
-														Margin="0,12,0,0"
-														Padding="8,3"
-														BackgroundColor="{StaticResource SparkAccentTeal}"
-														HorizontalOptions="Start"
-														IsVisible="{Binding IsPrimary}"
-														StrokeShape="RoundRectangle 4"
-														StrokeThickness="0">
-														<Label
-															FontAttributes="Bold"
-															FontSize="11"
-															Text="Примарна Дијагноза"
-															TextColor="{StaticResource SparkButtonPrimaryText}" />
-													</Border>
-												</Grid>
-											</Border>
-										</DataTemplate>
-									</CollectionView.ItemTemplate>
-								</CollectionView>
-							</VerticalStackLayout>
-
-							<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
-
-							<!--  АЛЕРГИИ  -->
-							<VerticalStackLayout Spacing="8">
-								<Label
-									CharacterSpacing="1"
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="ПОЗНАТИ АЛЕРГИИ И РЕАКЦИИ"
-									TextColor="{StaticResource SparkTextPrimary}" />
-								<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
-								<Border
-									Padding="12,10"
-									BackgroundColor="{StaticResource SparkBackground}"
-									HeightRequest="120"
-									Stroke="{StaticResource SparkBorder}"
-									StrokeShape="RoundRectangle 12"
-									StrokeThickness="1">
-									<Editor
-										AutoSize="Disabled"
-										BackgroundColor="Transparent"
-										FontSize="13"
-										IsReadOnly="{Binding IsReadOnly}"
-										Placeholder="Внесете алергии (Пр. Пеницилин, Храна, Прашина...)"
-										PlaceholderColor="{StaticResource SparkTextSecondary}"
-										Text="{Binding Patient.Allergies}"
-										TextColor="{StaticResource SparkTextPrimary}" />
-								</Border>
-							</VerticalStackLayout>
-						</VerticalStackLayout>
-
-						<!--  ============================================  -->
-						<!--  TAB 3 — КОНТАКТ ИНФОРМАЦИИ (ИТНО)  -->
-						<!--  ============================================  -->
-						<VerticalStackLayout IsVisible="{Binding IsTab3Active}" Spacing="20">
-							<Label
-								CharacterSpacing="1"
-								FontAttributes="Bold"
-								FontSize="13"
-								Text="КОНТАКТ ЛИЦЕ ЗА ИТНИ СЛУЧАИ"
-								TextColor="{StaticResource SparkAccentTeal}" />
-
-							<Grid ColumnDefinitions="*,*" ColumnSpacing="16">
-								<!--  ИМЕ И ПРЕЗИМЕ НА КОНТАКТ  -->
-								<VerticalStackLayout Spacing="8">
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Пошт. бр.:" />
 									<Label
-										FontAttributes="Bold"
-										FontSize="12"
-										Text="Име и презиме"
-										TextColor="{StaticResource SparkTextSecondary}" />
-									<Border
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
+										Grid.Column="1"
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.PostalCode}" />
+								</Grid>
+							</Grid>
+
+							<Border Style="{StaticResource SectionPillBorderStyle}">
+								<Label Style="{StaticResource SectionPillLabelStyle}" Text="ИТЕН КОНТАКТ" />
+							</Border>
+
+							<!--  Име и презиме на контакт  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Име и презиме" />
+									<Border Style="{StaticResource EditFieldBoxStyle}">
 										<Entry
 											BackgroundColor="Transparent"
 											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
 											Placeholder="Пр. Ана Петровска"
 											PlaceholderColor="{StaticResource SparkTextSecondary}"
 											Text="{Binding Patient.EmergencyContactName}"
@@ -1013,25 +982,26 @@
 											VerticalOptions="Center" />
 									</Border>
 								</VerticalStackLayout>
-
-								<!--  ТЕЛЕФОН НА КОНТАКТ  -->
-								<VerticalStackLayout Grid.Column="1" Spacing="8">
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
 									<Label
-										FontAttributes="Bold"
-										FontSize="12"
-										Text="Телефонски број"
-										TextColor="{StaticResource SparkTextSecondary}" />
-									<Border
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Име:" />
+									<Label
+										Grid.Column="1"
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.EmergencyContactName}" />
+								</Grid>
+							</Grid>
+
+							<!--  Телефон на контакт  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Телефонски број" />
+									<Border Style="{StaticResource EditFieldBoxStyle}">
 										<Entry
 											BackgroundColor="Transparent"
 											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
 											Keyboard="Telephone"
 											Placeholder="+389 7X XXX XXX"
 											PlaceholderColor="{StaticResource SparkTextSecondary}"
@@ -1040,132 +1010,48 @@
 											VerticalOptions="Center" />
 									</Border>
 								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
+									<Label
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Телефон:" />
+									<Label
+										Grid.Column="1"
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.EmergencyContactPhone}" />
+								</Grid>
 							</Grid>
 
-							<!--  РОДНИНСКА ВРСКА  -->
-							<VerticalStackLayout Spacing="8">
-								<Label
-									FontAttributes="Bold"
-									FontSize="12"
-									Text="Роднинска врска / Релација"
-									TextColor="{StaticResource SparkTextSecondary}" />
-								<Border
-									Padding="14,0"
-									BackgroundColor="{StaticResource SparkBackground}"
-									HeightRequest="46"
-									Stroke="{StaticResource SparkBorder}"
-									StrokeShape="RoundRectangle 6"
-									StrokeThickness="1">
-									<Grid ColumnDefinitions="*,Auto">
-										<Label
+							<!--  Роднинска врска  -->
+							<Grid Padding="10">
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Роднинска врска / Релација" />
+									<Border Style="{StaticResource EditFieldBoxStyle}">
+										<Entry
+											BackgroundColor="Transparent"
 											FontSize="13"
-											Text="{Binding SelectedRelationDisplay, FallbackValue='Изберете релација...'}"
+											Placeholder="Пр. Сопруг/а, Родител..."
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
+											Text="{Binding Patient.EmergencyRelationship}"
 											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
-										<Label
-											Grid.Column="1"
-											FontSize="11"
-											Text="▼"
-											TextColor="{StaticResource SparkTextSecondary}"
-											VerticalOptions="Center" />
-										<Picker
-											Grid.ColumnSpan="2"
-											BackgroundColor="Transparent"
-											IsEnabled="{Binding IsEditMode}"
-											ItemsSource="{Binding RelationOptions}"
-											Opacity="0"
-											SelectedItem="{Binding SelectedRelationDisplay}" />
-									</Grid>
-								</Border>
-							</VerticalStackLayout>
-						</VerticalStackLayout>
-
-						<!--  ============================================  -->
-						<!--  TAB 4 — СИСТЕМСКИ ЗАПИС  -->
-						<!--  ============================================  -->
-						<VerticalStackLayout IsVisible="{Binding IsTab4Active}" Spacing="24">
-							<Label
-								CharacterSpacing="1"
-								FontAttributes="Bold"
-								FontSize="13"
-								Text="МЕТАДАТА И ИНФОРМАЦИИ ЗА ЗАПИСОТ"
-								TextColor="{StaticResource SparkAccentTeal}" />
-
-							<Border
-								Padding="20"
-								BackgroundColor="{StaticResource SparkBackgroundAlt}"
-								Stroke="{StaticResource SparkBorder}"
-								StrokeShape="RoundRectangle 12"
-								StrokeThickness="1">
-								<Grid
-									ColumnDefinitions="*,Auto"
-									RowDefinitions="Auto,Auto,Auto,Auto"
-									RowSpacing="16">
-
-									<!--  ID  -->
+									</Border>
+								</VerticalStackLayout>
+								<Grid ColumnDefinitions="90,*" IsVisible="{Binding IsReadOnly}">
 									<Label
-										FontSize="13"
-										Text="Системско ID во база"
-										TextColor="{StaticResource SparkTextSecondary}" />
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Релација:" />
 									<Label
 										Grid.Column="1"
-										FontAttributes="Bold"
-										FontFamily="Consolas"
-										FontSize="13"
-										HorizontalOptions="End"
-										Text="{Binding Patient.Id}"
-										TextColor="{StaticResource SparkTextPrimary}" />
-
-									<!--  ДАТУМ РЕГИСТРАЦИЈА  -->
-									<Label
-										Grid.Row="1"
-										FontSize="13"
-										Text="Датум на првична регистрација"
-										TextColor="{StaticResource SparkTextSecondary}" />
-									<Label
-										Grid.Row="1"
-										Grid.Column="1"
-										FontSize="13"
-										HorizontalOptions="End"
-										Text="{Binding Patient.RegistrationDate, StringFormat='{0:dd.MM.yyyy}'}"
-										TextColor="{StaticResource SparkTextPrimary}" />
-
-									<!--  КРЕИРАНО НА  -->
-									<Label
-										Grid.Row="2"
-										FontSize="13"
-										Text="Инстанцирано на сервер"
-										TextColor="{StaticResource SparkTextSecondary}" />
-									<Label
-										Grid.Row="2"
-										Grid.Column="1"
-										FontSize="13"
-										HorizontalOptions="End"
-										Text="{Binding Patient.CreatedAt, StringFormat='{0:dd.MM.yyyy}'}"
-										TextColor="{StaticResource SparkTextPrimary}" />
-
-									<!--  ПОСЛЕДНА ПОСЕТА  -->
-									<Label
-										Grid.Row="3"
-										FontSize="13"
-										Text="Последна активност / Преглед"
-										TextColor="{StaticResource SparkTextSecondary}" />
-									<Label
-										Grid.Row="3"
-										Grid.Column="1"
-										FontAttributes="Bold"
-										FontSize="13"
-										HorizontalOptions="End"
-										Text="{Binding Patient.LastVisitDate, StringFormat='{0:dd.MM.yyyy}', FallbackValue='Нема евидентирано посети'}"
-										TextColor="{StaticResource SparkAccentTeal}" />
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Patient.EmergencyRelationship}" />
 								</Grid>
-							</Border>
-
-							<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
+							</Grid>
 
 						</VerticalStackLayout>
 
-					</VerticalStackLayout>
+					</Grid>
 				</ScrollView>
 			</Border>
 

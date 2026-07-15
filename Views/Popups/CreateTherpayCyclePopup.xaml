@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+	x:Class="EHMR.Views.Popups.CreateTherapyCyclePopup"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+
+	<Border
+		Padding="16"
+		BackgroundColor="{StaticResource SparkBackground}"
+		StrokeShape="RoundRectangle 16"
+		StrokeThickness="0"
+		WidthRequest="420">
+
+		<VerticalStackLayout Spacing="18">
+
+			<Label
+				FontAttributes="Bold"
+				FontSize="18"
+				Text="Нов терапевтски циклус"
+				TextColor="{StaticResource SparkTextPrimary}" />
+
+			<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
+
+			<controls:FFPicker
+				ItemsSource="{Binding StatusOptions}"
+				Label="Статус"
+				Placeholder="Изберете статус"
+				SelectedItem="{Binding StatusDisplay}" />
+
+			<Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+				<Grid
+					Grid.Column="0"
+					RowDefinitions="Auto,Auto"
+					RowSpacing="8">
+					<Label
+						FontAttributes="Bold"
+						FontSize="13"
+						Text="Почеток"
+						TextColor="{StaticResource SparkTextSecondary}" />
+					<Border
+						Grid.Row="1"
+						Padding="10,0"
+						BackgroundColor="{StaticResource SparkBackground}"
+						HeightRequest="46"
+						Stroke="{StaticResource SparkBorder}"
+						StrokeShape="RoundRectangle 6"
+						StrokeThickness="1">
+						<DatePicker
+							BackgroundColor="Transparent"
+							Date="{Binding StartDate}"
+							FontSize="13"
+							TextColor="{StaticResource SparkTextPrimary}" />
+					</Border>
+				</Grid>
+
+				<Grid
+					Grid.Column="1"
+					RowDefinitions="Auto,Auto"
+					RowSpacing="8">
+					<Label
+						FontAttributes="Bold"
+						FontSize="13"
+						Text="Крај (опционално)"
+						TextColor="{StaticResource SparkTextSecondary}" />
+					<Border
+						Grid.Row="1"
+						Padding="10,0"
+						BackgroundColor="{StaticResource SparkBackground}"
+						HeightRequest="46"
+						Stroke="{StaticResource SparkBorder}"
+						StrokeShape="RoundRectangle 6"
+						StrokeThickness="1">
+						<DatePicker
+							BackgroundColor="Transparent"
+							Date="{Binding EndDate}"
+							FontSize="13"
+							TextColor="{StaticResource SparkTextPrimary}" />
+					</Border>
+				</Grid>
+			</Grid>
+
+			<Grid RowDefinitions="Auto,Auto" RowSpacing="8">
+				<Label
+					FontAttributes="Bold"
+					FontSize="13"
+					Text="Белешки"
+					TextColor="{StaticResource SparkTextSecondary}" />
+				<Border
+					Grid.Row="1"
+					Padding="12,6"
+					BackgroundColor="{StaticResource SparkBackground}"
+					Stroke="{StaticResource SparkBorder}"
+					StrokeShape="RoundRectangle 6"
+					StrokeThickness="1">
+					<Editor
+						AutoSize="TextChanges"
+						BackgroundColor="Transparent"
+						FontSize="13"
+						Placeholder="Опис на циклусот..."
+						Text="{Binding Notes}"
+						TextColor="{StaticResource SparkTextPrimary}" />
+				</Border>
+			</Grid>
+
+			<Label
+				FontSize="12"
+				IsVisible="{Binding HasError}"
+				Text="{Binding ErrorMessage}"
+				TextColor="{StaticResource SparkDangerText}" />
+
+			<HorizontalStackLayout HorizontalOptions="End" Spacing="10">
+				<controls:FFButton
+					ButtonKind="Secondary"
+					Command="{Binding CancelCommand}"
+					ContentPadding="20,0"
+					HeightRequestEx="42"
+					Text="Откажи" />
+				<controls:FFButton
+					ButtonKind="Primary"
+					Command="{Binding SaveCommand}"
+					ContentPadding="20,0"
+					HeightRequestEx="42"
+					Text="Зачувај" />
+			</HorizontalStackLayout>
+
+		</VerticalStackLayout>
+	</Border>
+</toolkit:Popup>

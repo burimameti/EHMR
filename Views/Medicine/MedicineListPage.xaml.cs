@@ -1,4 +1,5 @@
 ﻿using EHMR.ViewModels;
+using EHMR.ViewModels.Patients;
 
 namespace EHMR.Views
 {
@@ -17,13 +18,12 @@ namespace EHMR.Views
             MenuHost.Content = this.menuView;
         }
 
-        protected void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
+
             if(BindingContext is MedicineListViewModel vm)
-            {
-                _=vm.LoadAsync();
-            }
+                await vm.LoadAsync();
         }
     }
 }

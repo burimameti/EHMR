@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="EHMR.Views.Reports.ReportHistoryPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Reports"
+	x:Name="PageRoot"
+	x:DataType="viewModels:ReportHistoryViewModel">
+
+	<Grid ColumnDefinitions="285,*">
+
+		<!--  =========================================================  -->
+		<!--  LEFT MENU  -->
+		<!--  =========================================================  -->
+
+		<Border Grid.Column="0" StrokeThickness="0">
+
+			<ContentView x:Name="MenuHost" />
+
+		</Border>
+
+		<!--  =========================================================  -->
+		<!--  MAIN CONTENT  -->
+		<!--  =========================================================  -->
+
+		<Grid
+			Grid.Column="1"
+			Padding="24"
+			BackgroundColor="{StaticResource Gray200}"
+			RowDefinitions="Auto,Auto,*"
+			RowSpacing="16">
+
+			<!--  =====================================================  -->
+			<!--  PAGE HEADER  -->
+			<!--  =====================================================  -->
+
+			<Border
+				Grid.Row="0"
+				Padding="20"
+				StrokeShape="RoundRectangle 0"
+				Style="{StaticResource SurfaceCard}">
+
+				<Grid ColumnDefinitions="*,Auto">
+
+					<controls:FFPageHeader Title="Историја на извештаи" Subtitle="Преглед, пребарување и преземање на генерирани извештаи" />
+
+					<HorizontalStackLayout Grid.Column="1" Spacing="10">
+
+						<Button
+							Command="{Binding RefreshCommand}"
+							HeightRequest="45"
+							Style="{StaticResource TabButtonActiveStyle}"
+							Text="Освежи"
+							WidthRequest="130" />
+
+						<Button
+							BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
+							Command="{Binding NavigateToReportCommand}"
+							HeightRequest="45"
+							IsVisible="{Binding CanCreate}"
+							Style="{StaticResource TabButtonActiveStyle}"
+							Text="Нов Извештаи"
+							WidthRequest="160" />
+
+					</HorizontalStackLayout>
+
+				</Grid>
+
+			</Border>
+
+			<!--  =====================================================  -->
+			<!--  SEARCH / FILTER / GRID  -->
+			<!--  =====================================================  -->
+
+			<Border Grid.Row="1" Padding="0">
+
+				<Grid ColumnSpacing="8" RowSpacing="18">
+
+					<VerticalStackLayout>
+						<!--  =====================================================  -->
+						<!--  SEARCH / FILTER BAR  -->
+						<!--  =====================================================  -->
+
+						<Border Margin="0,8,0,8" Padding="0">
+
+							<controls:SparkExplorerHeaderView
+								Buttons="{Binding Buttons}"
+								Pickers="{Binding Pickers}"
+								SearchCommand="{Binding SearchCommand}"
+								SearchPlaceholder="Пребарување по име на извештај, корисник или датотека..."
+								SearchText="{Binding ReportSearchText}"
+								Tabs="{Binding Tabs}" />
+
+						</Border>
+
+						<!--  =====================================================  -->
+						<!--  REPORT GRID  -->
+						<!--  =====================================================  -->
+
+						<Border Padding="0" Style="{StaticResource SurfaceCard}">
+
+							<controls:SparkDataGridView
+								x:Name="ReportHistoryGrid"
+								Columns="{Binding GridColumns}"
+								CurrentPage="{Binding CurrentPage}"
+								EditRowCommand="{Binding OpenCommand}"
+								NextPageCommand="{Binding NextPageCommand}"
+								PageChangedCommand="{Binding PageChangedCommand}"
+								PreviousPageCommand="{Binding PreviousPageCommand}"
+								RowTappedCommand="{Binding SelectCommand}"
+								Rows="{Binding GridRows}"
+								TotalPages="{Binding TotalPages}" />
+
+
+						</Border>
+
+						<!--  Empty state  -->
+						<Border
+							Margin="0,16,0,0"
+							Padding="24"
+							IsVisible="{Binding IsEmpty}"
+							Style="{StaticResource SurfaceCard}">
+
+							<VerticalStackLayout HorizontalOptions="Center" Spacing="12">
+
+								<Label
+									FontSize="42"
+									HorizontalOptions="Center"
+									Text="📄" />
+
+								<Label
+									HorizontalOptions="Center"
+									Style="{StaticResource FormLabelStyle}"
+									Text="Нема генерирани извештаи." />
+
+								<Label
+									HorizontalOptions="Center"
+									HorizontalTextAlignment="Center"
+									Style="{StaticResource FormLabelStyle}"
+									Text="Генерирај извештај за да се појави во историјата." />
+
+								<!--<Button
+									Command="{Binding NavigateToGenerateReportCommand}"
+									Style="{StaticResource TabButtonActiveStyle}"
+									Text="Нов извештај"
+									WidthRequest="170" />-->
+
+							</VerticalStackLayout>
+
+						</Border>
+
+					</VerticalStackLayout>
+
+				</Grid>
+
+			</Border>
+
+		</Grid>
+
+	</Grid>
+
+</ContentPage>

@@ -14,8 +14,8 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
 {
     // ================= SERVICES =================
     private readonly IPatientService _patientService;
-    private readonly ISelectedItemService<Patient> _selectedPatient;
-    private readonly INavigationService navigationService;
+
+    [ObservableProperty] private SparkGridRow selectedPatientRow;
 
     // ================= FILTER STATE =================
     private readonly FilterLookup _cityLookup = PatientFilterLookups.BuildCityLookup();
@@ -26,15 +26,16 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     [ObservableProperty] private string selectedCity = "All";
     [ObservableProperty] private string selectedAgeGroup = "All";
 
-    [ObservableProperty] private string filteredPatientsCount = "";
-    [ObservableProperty] private ObservableCollection<Patient> filteredPatients = new();
+    [ObservableProperty] private string filteredPatientCount = "";
 
     // ================= QUERY STATE (deep-link support) =================
     private string? _pendingSearch;
     private string? _pendingStatus;
 
-    // ================= PERMISSIONS (base handles the actual evaluation) =================
-    protected override string ModuleName => "patients";
+    // ================= BASE OVERRIDES =================
+    protected override string ModuleName => Modules.Patients;
+    protected override string DetailRoute => AppRoutes.Patients.Detail;
+    protected override string PermissionDeniedMessage => "Немате авторизација за додавање нов пациент.";
 
     public ObservableCollection<string> StatusFilters { get; } = PatientFilterLookups.Status.ToObservableCollection();
     public ObservableCollection<string> GenderFilters { get; } = PatientFilterLookups.Gender.ToObservableCollection();
@@ -44,7 +45,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     {
         get;
     }
-    public ObservableCollection<SparkTabItem> Tabs { get; } = new();
+
     public string SelectedStatusDisplay
     {
         get => PatientFilterLookups.Status.ToDisplay(SelectedStatus);
@@ -110,13 +111,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         }
     }
 
-    /// <summary>Alias kept for XAML compatibility — forwards to the base class's SearchText.</summary>
-    public string PatientSearchText
-    {
-        get => SearchText;
-        set => SearchText=value;
-    }
-
     public ICommand SearchCommand
     {
         get;
@@ -130,24 +124,15 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         IUserDialogService dialog,
         IMenuService menu,
         IAuthorizationService authorization)
-        : base(navigationService, dialog, menu, authorization)
+        : base(navigationService, dialog, menu, authorization, selectedItemService)
     {
         _patientService=patientService;
-        _selectedPatient=selectedItemService;
-        this.navigationService=navigationService;
         CityFilterNames=_cityLookup.ToObservableCollection();
-        PageSize=10; // sets the BASE class's PageSize — actually drives TotalPages now
+        PageSize=10;
 
         SearchCommand=new Command<string>(query => SearchText=query);
 
-        // keep the PatientSearchText alias in sync when SearchText changes from elsewhere (e.g. SearchCommand)
-        PropertyChanged+=(_, e) =>
-        {
-            if(e.PropertyName==nameof(SearchText))
-                OnPropertyChanged(nameof(PatientSearchText));
-        };
-
-        EvaluatePermissions(); // base method, uses ModuleName
+        EvaluatePermissions();
     }
 
     // =========================================================
@@ -157,21 +142,20 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     public async Task LoadAsync()
     {
         var data = await _patientService.GetAllAsync();
-        AllItems=data.ToList(); // base class owns the master list
+        AllItems=data.ToList();
 
         InitializeSparkControls();
 
-        // apply any pending deep-link query state before the first pipeline run
         if(!string.IsNullOrWhiteSpace(_pendingSearch)) SearchText=_pendingSearch;
         if(!string.IsNullOrWhiteSpace(_pendingStatus)) SelectedStatus=_pendingStatus;
         _pendingSearch=null;
         _pendingStatus=null;
 
-        ApplyPipeline(); // single source of truth: search + filters + sort + paging + grid refresh
+        ApplyPipeline();
     }
 
     // =========================================================
-    // PIPELINE HOOKS  (search and filters are now clearly separated — no overlap)
+    // PIPELINE HOOKS
     // =========================================================
     protected override IEnumerable<Patient> ApplySearch(IEnumerable<Patient> query, string search)
     {
@@ -211,8 +195,8 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
 
     protected override void OnPageProjected(ObservableCollection<Patient> page)
     {
-        FilteredPatients=page;                          // fires OnFilteredPatientsChanged → RefreshSparkGridRows()
-        FilteredPatientsCount=$"{TotalItems} резултати"; // TotalItems comes from BaseViewModel<T>
+        filteredPatientCount=$"{TotalItems} резултати";
+        RefreshSparkGridRows(page);
     }
 
     protected override void ResetFilters()
@@ -241,39 +225,13 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     }
 
     // =========================================================
-    // NAVIGATION / COMMANDS (unchanged)
+    // NAVIGATION HELPERS (entity-specific, not covered by base Select/New/Edit)
     // =========================================================
-    [RelayCommand]
-    private async Task AddPatient()
-    {
-        _selectedPatient.SelectedItem=null;
-        await navigationService.GoToAsync(AppRoutes.Patients.Detail);
-    }
-
-    [RelayCommand]
-    private async Task Select(Patient? patient) => await OpenPatient(patient);
-
-    [RelayCommand]
-    private async Task OpenPatient(Patient? patient)
-    {
-        if(patient is null) return;
-        _selectedPatient.SelectedItem=patient;
-        await navigationService.GoToAsync(AppRoutes.Patients.Detail);
-    }
-
-    [RelayCommand]
-    private async Task Edit(Patient? patient)
-    {
-        if(patient is null) return;
-        _selectedPatient.SelectedItem=patient;
-        await navigationService.GoToAsync(AppRoutes.Patients.Detail);
-    }
-
     [RelayCommand]
     private async Task NavigateToPatients(string? statusFilter = null)
     {
         var query = new Dictionary<string, object>();
-        if(!string.IsNullOrWhiteSpace(PatientSearchText)) query["search"]=PatientSearchText;
+        if(!string.IsNullOrWhiteSpace(SearchText)) query["search"]=SearchText;
         if(!string.IsNullOrWhiteSpace(statusFilter)) query["statusFilter"]=statusFilter;
         await Shell.Current.GoToAsync(AppRoutes.Patients.List, query);
     }
@@ -294,10 +252,21 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         await Shell.Current.GoToAsync(AppRoutes.Therapy.List, query);
     }
 
+    [RelayCommand]
+    private async Task NewEncounterForSelected(Patient? patient)
+    {
+        if(patient is null)
+        {
+            await UserDialogService.ShowAlertAsync("Внимание", "Одберете пациент прво.");
+            return;
+        }
+
+        SelectedItemService.SelectedItem=patient;
+        await NavigationService.GoToAsync(AppRoutes.Encounters.Create);
+    }
+
     // ============================================================
-    // TABS  (status breakdown w/ live counts — same idea as
-    // DashboardViewModel.BuildSparkTabs, scoped to Patient.Status
-    // since that's the dimension this page already filters on)
+    // TABS
     // ============================================================
     private readonly Dictionary<string, SparkTabItem> _statusTabsByInternal = new();
 
@@ -306,9 +275,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         Tabs.Clear();
         _statusTabsByInternal.Clear();
 
-        // StatusFilters already holds display strings (incl. the "All" entry,
-        // e.g. "Сите"), same collection the Status picker uses — so tabs and
-        // picker always agree on the available set with no duplication.
         foreach(var display in StatusFilters)
         {
             var internalValue = PatientFilterLookups.Status.ToInternal(display);
@@ -328,19 +294,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         RefreshSparkTabCounts();
     }
 
-    /// <summary>Marks one tab selected and clears the rest, then runs the tab's own action.</summary>
-    private void SelectTab(SparkTabItem tab, Action action)
-    {
-        foreach(var t in Tabs) t.IsSelected=false;
-        tab.IsSelected=true;
-        action();
-    }
-
-    /// <summary>
-    /// Counts come from AllItems (the full unfiltered set from BaseViewModel&lt;T&gt;),
-    /// not FilteredPatients — a tab should show how many patients are in that
-    /// bucket overall, not how many survived the current search/filter combo.
-    /// </summary>
     private void RefreshSparkTabCounts()
     {
         foreach(var (internalValue, tab) in _statusTabsByInternal)
@@ -352,11 +305,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         }
     }
 
-    /// <summary>
-    /// Keeps tab highlighting correct even when the status changes via the
-    /// Picker instead of a tab tap — SelectedStatusDisplay's setter updates
-    /// the backing SelectedStatus field, which fires this generated hook.
-    /// </summary>
     partial void OnSelectedStatusChanged(string value)
     {
         foreach(var (internalValue, tab) in _statusTabsByInternal)
@@ -364,7 +312,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     }
 
     // ============================================================
-    // PICKERS (entity-specific content; helper + collection live in base)
+    // PICKERS
     // ============================================================
     private SparkPickerItem _statusPicker, _genderPicker, _bloodTypePicker, _cityPicker, _ageGroupPicker;
 
@@ -393,17 +341,12 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         _cityPicker.SelectedItem=SelectedCityDisplay;
         _ageGroupPicker.SelectedItem=SelectedAgeGroupDisplay;
 
-        // ClearFiltersCommand runs ResetFilters() → ApplyPipeline() → this method,
-        // and ResetFilters sets SelectedStatus="All" via the property setter —
-        // which already fires OnSelectedStatusChanged above — but calling it
-        // again here is harmless and keeps tab state correct if anyone calls
-        // SyncSparkPickersFromFilters() directly in the future.
         foreach(var (internalValue, tab) in _statusTabsByInternal)
             tab.IsSelected=internalValue==SelectedStatus;
     }
 
     // ============================================================
-    // GRID  (entity-specific columns/rows)
+    // GRID
     // ============================================================
     [ObservableProperty] private ObservableCollection<SparkGridColumn> gridColumns = new();
     [ObservableProperty] private ObservableCollection<SparkGridRow> gridRows = new();
@@ -419,34 +362,47 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             new() { Header = "КРВ", Key = "BloodType", Width = new GridLength(0.8, GridUnitType.Star) },
             new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.5, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1.2, GridUnitType.Star) },
+            new() { Header = "ЗАКАЖИ ПРЕГЛЕД", Key = "Pregled", CellType = SparkGridCellType.Button, Width = new GridLength(1.4, GridUnitType.Star) },
             new() { Header = "АКЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
 
-    partial void OnFilteredPatientsChanged(ObservableCollection<Patient> value) => RefreshSparkGridRows();
-
-    private void RefreshSparkGridRows()
+    private void RefreshSparkGridRows(IEnumerable<Patient> patients)
     {
         var rows = new ObservableCollection<SparkGridRow>();
-        foreach(var p in FilteredPatients)
+        foreach(var p in patients)
         {
             var row = new SparkGridRow { Tag=p };
             row["NationalId"]=p.NationalId;
             row["FullName"]=p.FullName;
-            row["Gender"]=p.Gender.ToString();
+            row["Gender"]=p.Gender.ToDisplay();
             row["Age"]=p.Age;
             row["BloodType"]=p.BloodType;
             row["Phone"]=p.Phone;
-            row["Status"]=new SparkBadgeValue(p.Status.ToString(), StatusToTone(p.Status.ToString()));
+            row["Status"]=new SparkBadgeValue(p.Status.ToDisplay(), StatusToTone(p.Status));
+
+            AddDefaultActions(p, row, detailLabel: "Детали", editLabel: "Промени");
+
+            row["Pregled"]=new SparkButtonItem
+            {
+                IconGlyph="\uD83D\uDCC5",
+                Label="Закажи преглед",
+                IsPrimary=true,
+                Command=NewEncounterForSelectedCommand,
+                CommandParameter=p
+            };
+
             rows.Add(row);
         }
         GridRows=rows;
     }
 
-    private static SparkBadgeTone StatusToTone(string status) => status?.ToLowerInvariant() switch
+    private static SparkBadgeTone StatusToTone(PatientStatus status) => status switch
     {
-        "active" => SparkBadgeTone.Success,
-        "inactive" or "discharged" or "missed" => SparkBadgeTone.Danger,
+        PatientStatus.Active => SparkBadgeTone.Success,
+        PatientStatus.Inactive => SparkBadgeTone.Danger,
+        PatientStatus.Chronic => SparkBadgeTone.Warning,
+        PatientStatus.Deceased => SparkBadgeTone.Danger,
         _ => SparkBadgeTone.Neutral
     };
 
@@ -457,7 +413,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     {
         BuildSparkTabs();
         BuildSparkPickers();
-        BuildSparkButtons();   // inherited from BaseViewModel<T>
+        BuildSparkButtons();
         BuildSparkGridColumns();
     }
 }
