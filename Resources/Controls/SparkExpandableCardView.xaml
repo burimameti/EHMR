@@ -5,119 +5,204 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	x:Name="Root">
+
 	<Border
-		x:Name="CardContainer"
+		x:Name="CardBorder"
+		Margin="0"
 		Padding="0"
 		BackgroundColor="{StaticResource SparkBackground}"
-		Stroke="{StaticResource SparkBorder}"
-		StrokeShape="RoundRectangle 12"
+		Stroke="{StaticResource Gray400}"
+		StrokeShape="RoundRectangle 8"
 		StrokeThickness="1">
-		<Border.Shadow>
-			<Shadow
-				Brush="Black"
-				Opacity="0.06"
-				Radius="6"
-				Offset="0,2" />
-		</Border.Shadow>
 
 		<Grid RowSpacing="0">
+
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
+				<RowDefinition Height="48" />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<!--  HEADER — мал, чист, секогаш читлив текст  -->
-			<Border
-				x:Name="HeaderContainer"
+			<!--  HEADER  -->
+
+			<Grid
+				x:Name="HeaderGrid"
 				Grid.Row="0"
-				Padding="12,16"
-				BackgroundColor="{StaticResource SparkBorder}"
-				StrokeShape="RoundRectangle 16"
-				StrokeThickness="0">
-				<Border.GestureRecognizers>
+				Padding="14,0"
+				BackgroundColor="{StaticResource SparkSurface}"
+				ColumnSpacing="12">
+
+				<Grid.GestureRecognizers>
 					<TapGestureRecognizer Tapped="ExpandTapped" />
-				</Border.GestureRecognizers>
+				</Grid.GestureRecognizers>
 
-				<Grid ColumnSpacing="10">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="32" />
-						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="28" />
-					</Grid.ColumnDefinitions>
+				<Grid.ColumnDefinitions>
 
-					<!--  ICON  -->
-					<Border
-						x:Name="IconContainer"
-						Grid.Column="0"
-						BackgroundColor="{StaticResource SparkAccentTealBg}"
-						HeightRequest="30"
-						StrokeShape="RoundRectangle 9"
-						StrokeThickness="0"
-						WidthRequest="30">
-						<Label
-							FontSize="14"
-							HorizontalOptions="Center"
-							Text="{Binding Icon, Source={x:Reference Root}}"
-							TextColor="{StaticResource SparkAccentTealDark}"
-							VerticalOptions="Center" />
-					</Border>
+					<ColumnDefinition Width="28" />
 
-					<!--  TITLE / SUBTITLE  -->
-					<VerticalStackLayout
-						Grid.Column="1"
-						Spacing="1"
-						VerticalOptions="Center">
-						<Label
-							FontAttributes="Bold"
-							FontSize="13"
-							LineBreakMode="TailTruncation"
-							Text="{Binding Title, Source={x:Reference Root}}"
-							TextColor="{StaticResource SparkTextPrimary}" />
-						<Label
-							FontSize="11"
-							LineBreakMode="TailTruncation"
-							Text="{Binding Subtitle, Source={x:Reference Root}}"
-							TextColor="{StaticResource SparkTextSecondary}" />
-					</VerticalStackLayout>
+					<ColumnDefinition Width="*" />
 
-					<!--  EXPAND BUTTON  -->
-					<Border
-						Grid.Column="2"
-						BackgroundColor="{StaticResource SparkAccentTealBg}"
-						HeightRequest="26"
-						StrokeShape="RoundRectangle 13"
-						StrokeThickness="0"
-						WidthRequest="26">
-						<Label
-							x:Name="ExpandIcon"
-							FontAttributes="Bold"
-							FontSize="12"
-							HorizontalOptions="Center"
-							HorizontalTextAlignment="Center"
-							Text="&#9662;"
-							TextColor="{StaticResource SparkAccentTealDark}"
-							VerticalOptions="Center"
-							VerticalTextAlignment="Center" />
-					</Border>
-				</Grid>
-			</Border>
+					<ColumnDefinition Width="Auto" />
+
+					<ColumnDefinition Width="26" />
+
+				</Grid.ColumnDefinitions>
+
+				<!--  icon  -->
+
+				<Label
+					Grid.Column="0"
+					FontSize="16"
+					HorizontalOptions="Center"
+					HorizontalTextAlignment="Center"
+					Text="{Binding Icon, Source={x:Reference Root}}"
+					TextColor="{StaticResource SparkAccentTealDark}"
+					VerticalOptions="Center"
+					VerticalTextAlignment="Center" />
+
+				<!--  title  -->
+
+				<VerticalStackLayout
+					Grid.Column="1"
+					Spacing="0"
+					VerticalOptions="Center">
+
+					<Label
+						FontAttributes="Bold"
+						FontSize="16"
+						LineBreakMode="TailTruncation"
+						Text="{Binding Title, Source={x:Reference Root}}"
+						TextColor="{StaticResource SparkTextPrimary}" />
+
+					<Label
+						FontSize="13"
+						IsVisible="{Binding HasSubtitle, Source={x:Reference Root}}"
+						LineBreakMode="TailTruncation"
+						Text="{Binding Subtitle, Source={x:Reference Root}}"
+						TextColor="{StaticResource SparkTextPrimary}" />
+
+				</VerticalStackLayout>
+
+				<!--  count  -->
+
+				<Border
+					x:Name="CountBorder"
+					Grid.Column="2"
+					Padding="6,2"
+					BackgroundColor="{StaticResource SparkSurfaceAlt}"
+					IsVisible="{Binding ShowCount, Source={x:Reference Root}}"
+					Stroke="{StaticResource SparkBorder}"
+					StrokeShape="RoundRectangle 6"
+					StrokeThickness="0"
+					VerticalOptions="Center">
+
+					<Label
+						FontAttributes="Bold"
+						FontSize="16"
+						HorizontalTextAlignment="Center"
+						Text="{Binding ItemCount, Source={x:Reference Root}}"
+						TextColor="{StaticResource SparkAccentTeal}" />
+
+				</Border>
+
+				<!--  expand  -->
+
+				<Label
+					x:Name="ExpandIcon"
+					Grid.Column="3"
+					FontAttributes="Bold"
+					FontSize="13"
+					HorizontalOptions="Center"
+					HorizontalTextAlignment="Center"
+					Text="▾"
+					TextColor="{StaticResource SparkTextPrimary}"
+					VerticalOptions="Center"
+					VerticalTextAlignment="Center" />
+
+			</Grid>
+
+			<!--  separator  -->
+
+			<BoxView
+				Grid.Row="0"
+				HeightRequest="1"
+				VerticalOptions="End"
+				Color="{StaticResource SparkBorder}" />
 
 			<!--  CONTENT  -->
+
 			<Grid
 				x:Name="ExpandableArea"
 				Grid.Row="1"
 				IsVisible="False"
 				Opacity="0">
-				<Border
-					Margin="10,0,10,10"
-					Padding="10"
-					BackgroundColor="{StaticResource SparkBackground}"
-					Stroke="{StaticResource SparkBorder}"
-					StrokeShape="RoundRectangle 8"
-					StrokeThickness="1">
+
+				<Grid.RowDefinitions>
+
+					<RowDefinition Height="Auto" />
+
+					<RowDefinition Height="*" />
+
+					<RowDefinition Height="Auto" />
+
+				</Grid.RowDefinitions>
+
+				<!--  search slot  -->
+
+				<ContentPresenter
+					x:Name="SearchHost"
+					Margin="12,12,12,0"
+					IsVisible="False" />
+
+				<!--  body  -->
+
+				<Grid Grid.Row="1" Margin="12">
+
+					<!--  custom content  -->
+
 					<ContentPresenter x:Name="ContentHost" />
-				</Border>
+
+					<!--  autogenerated collection  -->
+
+					<CollectionView
+						x:Name="ItemsHost"
+						IsVisible="False"
+						SelectionMode="Single"
+						VerticalScrollBarVisibility="Never" />
+
+					<!--  empty  -->
+
+					<Grid x:Name="EmptyHost" IsVisible="False">
+
+						<Label
+							FontSize="12"
+							HorizontalOptions="Center"
+							Text="{Binding EmptyViewText, Source={x:Reference Root}}"
+							TextColor="{StaticResource SparkTextPrimary}"
+							VerticalOptions="Center" />
+
+					</Grid>
+
+				</Grid>
+
+				<!--  footer  -->
+
+				<Grid
+					x:Name="FooterGrid"
+					Grid.Row="2"
+					Padding="12,8"
+					IsVisible="False">
+
+					<Label
+						x:Name="FooterLabel"
+						FontSize="11"
+						TextColor="{StaticResource SparkTextPrimary}" />
+
+				</Grid>
+
 			</Grid>
+
 		</Grid>
+
 	</Border>
+
 </ContentView>

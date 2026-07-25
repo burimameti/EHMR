@@ -5,6 +5,7 @@ namespace EHMR.Domain.Entities;
 
 public class Appointment : BaseEntity
 {
+    public string AppointmentNumber { get; set; } = "";
     public Guid PatientId
     {
         get; set;
@@ -54,50 +55,16 @@ public class Appointment : BaseEntity
 
     public string ClinicalNotes { get; set; } = "";
 
-    public ICollection<AppointmentDiagnosis> AppointmentDiagnoses { get; set; } = [];
+    public Encounter? Encounter
+    {
+        get; set;
+    }
 
     public override string ToString() =>
     $"{ScheduledStart:dd.MM.yyyy HH:mm} - {ReasonForVisit}";
 }
 
-public class AppointmentDiagnosis
-{
-    public Guid AppointmentId
-    {
-        get; set;
-    }
 
-    public Appointment? Appointment
-    {
-        get; set;
-    }
-
-    public Guid DiagnosisId
-    {
-        get; set;
-    }
-
-    public Diagnosis? Diagnosis
-    {
-        get; set;
-    }
-
-    public Guid Mkb10CodeId
-    {
-        get; set;
-    }
-
-    public Mkb10Code Mkb10Code
-    {
-        get; set;
-    }
-
-    public bool IsPrimary
-    {
-        get; set;
-    }
-
-}
 
 public enum AppointmentStatus
 {

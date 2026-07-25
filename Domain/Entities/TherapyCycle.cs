@@ -2,6 +2,7 @@
 {
     public class TherapyCycle : BaseEntity
     {
+        public string TherapyCyleNumber { get; set; } = string.Empty;
         public Guid? PatientId
         {
             get; set;
@@ -12,10 +13,10 @@
             get; set;
         }
 
-        public int? CycleNumber
-        {
-            get; set;
-        }
+        //public int? CycleNumber
+        //{
+        //    get; set;
+        //}
 
         public TherapyStatus? Status
         {

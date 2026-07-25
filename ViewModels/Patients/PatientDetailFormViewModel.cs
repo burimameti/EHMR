@@ -3,41 +3,43 @@ using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
-using EHMR.Infrastructure.Persistence;
+using EHMR.Helpers;
+using EHMR.Services.Dto;
+using EHMR.ViewModels.Patients;
 using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
-
+using System.Diagnostics;
+using System.Xml.Linq;
+using static EHMR.Services.PatientService;
 
 namespace EHMR.ViewModels;
 
 public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 {
-    private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
+    private readonly IPatientService _patientService;
     private readonly ISelectedItemService<Patient> _selectedItemService;
     private readonly INavigationService _navigationService;
     private readonly IUserDialogService _userDialogService;
 
-    private Patient? _originalPatient;
+    private PatientEditDto? _originalPatient;
     private bool _isNewPatientMode;
     private bool _isModalReturnMode;
+
+    private readonly List<Guid> _deletedDiagnosisIds = [];
+    private readonly List<Guid> _deletedMedicineIds = [];
+    private readonly List<Guid> _deletedDocumentIds = [];
+
+    private bool _childrenLoaded;
     public bool IsNewPatient => _isNewPatientMode;
 
-    // Guards against overlapping "no results -> offer to create" dialogs,
-    // same pattern as EncounterBaseViewModel.
     private bool _isOfferingDoctorCreation;
 
-    public string HeaderTitle =>
-        _isNewPatientMode
-            ? "Нов Пациент"
-            : $"Детали за пациент";
+    public string HeaderTitle => _isNewPatientMode ? "Нов Пациент" : "Детали за пациент";
+    public string HeaderSubtitle => _isNewPatientMode ? "Креирање ново пациентско досие" : "";
 
-    public string HeaderSubtitle =>
-        _isNewPatientMode
-            ? "Креирање ново пациентско досие"
-            : $"";
-
-    [ObservableProperty] private Patient patient = new();
+    [ObservableProperty]
+    private PatientEditDto patient = new();
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEditMode))]
@@ -48,76 +50,48 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [ObservableProperty] private string pageTitle = string.Empty;
 
     public bool IsEditMode => !IsReadOnly;
-    public Color InputBgColor =>
-        IsReadOnly
-        ? Color.FromArgb("#F8FAFC")
-        : Color.FromArgb("#FFFFFF");
 
-    public Color InputBorderColor =>
-        IsReadOnly
-        ? Color.FromArgb("#CBD5E1")
-        : Color.FromArgb("#2563EB");
+    public Color InputBgColor => IsReadOnly ? Color.FromArgb("#F8FAFC") : Color.FromArgb("#FFFFFF");
+    public Color InputBorderColor => IsReadOnly ? Color.FromArgb("#CBD5E1") : Color.FromArgb("#2563EB");
+
+    public ObservableCollection<string> BloodTypeOptions
+    {
+        get;
+    } =
+        new() { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
 
     public ObservableCollection<string> GenderOptions { get; } = PatientEnumLookups.Gender.ToObservableCollection();
     public ObservableCollection<string> StatusOptions { get; } = PatientEnumLookups.Status.ToObservableCollection();
-
-    public ObservableCollection<string> CityOptions
-    {
-        get;
-    } = new(PatientFilterLookups.BuildCityLookup().DisplayValues); // skip "Сите"
+    public ObservableCollection<string> CityOptions { get; } = new(PatientFilterLookups.BuildCityLookup().DisplayValues);
 
     public ObservableCollection<string> RelationOptions
     {
         get;
     } = new()
     {
-        "Сопруг / Сопруга",
-        "Родител",
-        "Дете",
-        "Брат / Сестра",
-        "Пријател",
-        "Друго"
+        "Сопруг / Сопруга", "Родител", "Дете", "Брат / Сестра", "Пријател", "Друго"
     };
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsTab2Active))]
-    [NotifyPropertyChangedFor(nameof(IsTab3Active))]
-    [NotifyPropertyChangedFor(nameof(IsTab4Active))]
-    private int activeTab = 1;
-
-    public bool IsTab1Active => ActiveTab==1;
-    public bool IsTab2Active => ActiveTab==2;
-    public bool IsTab3Active => ActiveTab==3;
-    public bool IsTab4Active => ActiveTab==4;
 
     [ObservableProperty] private string selectedGenderDisplay = string.Empty;
     [ObservableProperty] private string selectedStatusDisplay = string.Empty;
     [ObservableProperty] private string selectedRelationDisplay = string.Empty;
+    [ObservableProperty] private string selectedCityDisplay = string.Empty;
+    [ObservableProperty] private string selectedBloodTypeDisplay = string.Empty;
 
-    partial void OnActiveTabChanged(int value) =>
-        OnPropertyChanged(nameof(IsTab1Active));
-
-    partial void OnSelectedRelationDisplayChanged(string value) =>
-        Patient.EmergencyRelationship=value??string.Empty;
-
-    [RelayCommand]
-    private void SelectTab(string tab)
-    {
-        if(int.TryParse(tab, out var t))
-            ActiveTab=t;
-    }
+    partial void OnSelectedRelationDisplayChanged(string value) => Patient.EmergencyRelationship=value??string.Empty;
+    partial void OnSelectedCityDisplayChanged(string value) => Patient.City=value??string.Empty;
+    partial void OnSelectedBloodTypeDisplayChanged(string value) => Patient.BloodType=value??string.Empty;
 
     public PatientDetailFormViewModel(
-        IDbContextFactory<DesktopTherapyDbContext> dbFactory,
+        IPatientService patientService,
         ISelectedItemService<Patient> selectedItemService,
         INavigationService navigationService,
         IUserDialogService userDialogService)
     {
-        _dbFactory=dbFactory;
+        _patientService=patientService;
         _selectedItemService=selectedItemService;
         _navigationService=navigationService;
         _userDialogService=userDialogService;
-
         InitializeForm();
     }
 
@@ -134,6 +108,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         if(selectedPatient==null)
         {
             _isNewPatientMode=true;
+            _selectedItemService.OpenInEditMode=true;
+
             Patient=CreateBlankForRegistration();
             PageTitle="Нов Пациент";
             IsReadOnly=false;
@@ -146,45 +122,92 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
         }
 
-        _originalPatient=selectedPatient;
-        Patient=selectedPatient.Clone();
-
-        PageTitle=$"Досие: {Patient.FullName}";
         IsReadOnly=!_selectedItemService.OpenInEditMode;
 
-        SyncDisplayFromPatient();
-        _=LoadExistingChildrenAsync(Patient.Id);
+        // Everything (edit fields + children) now comes from one DTO fetch —
+        // no more manual entity cloning needed.
+        _=LoadPatientAsync(selectedPatient.Id);
 
         OnPropertyChanged(nameof(IsNewPatient));
         OnPropertyChanged(nameof(HeaderTitle));
         OnPropertyChanged(nameof(HeaderSubtitle));
     }
 
-    /// <summary>
-    /// Patient.Diagnoses / PatientMedicines / Documents come back on Clone() only if
-    /// your Clone() deep-copies them; to be safe we re-load them explicitly from the
-    /// DB with the same Include shape SaveAsync will need for diffing later.
-    /// </summary>
-    private async Task LoadExistingChildrenAsync(Guid patientId)
+    private async Task LoadPatientAsync(Guid patientId)
     {
         try
         {
-            await using var db = await _dbFactory.CreateDbContextAsync();
-            var full = await db.Patients.Include(x=>x.Doctor).ThenInclude(x=>x.User)
-                .Include(p => p.Diagnoses).ThenInclude(d => d.Mkb10Code).Include(x=>x.Encounters)
-                .Include(p => p.PatientMedicines).ThenInclude(pm => pm.Medicine)
-                .Include(p => p.Documents)
-                .FirstOrDefaultAsync(p => p.Id==patientId);
-
+            var full = await _patientService.GetByIdAsync(patientId, includeChildren: true);
             if(full==null) return;
 
-            Diagnoses=new ObservableCollection<Diagnosis>(full.Diagnoses);
+            Patient=MapToEditDto(full);
+            _originalPatient=CloneEditDto(Patient);
+
+            PageTitle=$"Досие: {Patient.FirstName} {Patient.LastName}";
+
+            SyncDisplayFromPatient();
+
+            // DTOs aren't EF-tracked, so no cloning/detaching gymnastics required —
+            // just wrap what the service gave us.
+            Diagnoses=new ObservableCollection<DiagnosisDto>(full.Diagnoses);
             AttachedMedicines=new ObservableCollection<AttachedMedicineRow>(
-                full.PatientMedicines.Select(pm => new AttachedMedicineRow(pm)));
-            Documents=new ObservableCollection<PatientDocument>(full.Documents);
+                full.Medicines.Select(m => new AttachedMedicineRow(m)));
+            Documents=new ObservableCollection<PatientDocumentDto>(full.Documents);
+
+            SelectedDoctorDisplay=full.DoctorDisplay;
+            DoctorSearchText=SelectedDoctorDisplay;
+
+            _childrenLoaded=true;
         }
-        catch { /* non-critical for read-only view; SaveAsync will still work off local state */ }
+        catch(Exception ex)
+        {
+            Debug.WriteLine(ex.ToString());
+            throw;
+        }
     }
+
+    private static PatientEditDto MapToEditDto(PatientDto source) => new()
+    {
+        Id=source.Id,
+        FirstName=source.FirstName,
+        LastName=source.LastName,
+        NationalId=PrivacyMaskHelper.MaskNationalId(source.NationalId),
+        BirthDate=source.BirthDate,
+        Gender=source.Gender,
+        DoctorId=source.DoctorId,
+        Phone=source.Phone,
+        Email=source.Email,
+        Address=source.Address,
+        City=source.City,
+        BloodType=source.BloodType,
+        Allergies=source.Allergies,
+        Status=source.Status
+        // NOTE: PatientDto has no PostalCode / EmergencyContact* fields.
+        // If GetByIdAsync doesn't surface those either, edits will silently
+        // drop them on save — see note at the end of my reply.
+    };
+
+    private static PatientEditDto CloneEditDto(PatientEditDto p) => new()
+    {
+        Id=p.Id,
+        FirstName=p.FirstName,
+        LastName=p.LastName,
+        NationalId=p.NationalId,
+        BirthDate=p.BirthDate,
+        Gender=p.Gender,
+        DoctorId=p.DoctorId,
+        Phone=p.Phone,
+        Email=p.Email,
+        Address=p.Address,
+        City=p.City,
+        PostalCode=p.PostalCode,
+        EmergencyContactName=p.EmergencyContactName,
+        EmergencyContactPhone=p.EmergencyContactPhone,
+        EmergencyRelationship=p.EmergencyRelationship,
+        BloodType=p.BloodType,
+        Allergies=p.Allergies,
+        Status=p.Status
+    };
 
     // ------------------------------------------------------------------ //
     // Commands
@@ -193,9 +216,20 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void ToggleEditMode() => IsReadOnly=!IsReadOnly;
 
+   private bool _isSaving;
+
+    public bool IsSaving
+    {
+        get => _isSaving;
+        set => SetProperty(ref _isSaving, value);
+    }
+
+
     [RelayCommand]
     private async Task SaveAsync()
     {
+        if(IsSaving) return;
+
         if(string.IsNullOrWhiteSpace(Patient.FirstName)||string.IsNullOrWhiteSpace(Patient.LastName))
         {
             await _userDialogService.ShowAlertAsync("Валидација", "Името и презимето се задолжителни.", "OK");
@@ -210,115 +244,91 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
         if(Patient.DoctorId==Guid.Empty)
         {
-            await _userDialogService.ShowAlertAsync("Валидација", "Реуматолог не е доделен на пациентот полето е задолжително.", "OK");
+            await _userDialogService.ShowAlertAsync("Валидација", "Реуматолог не е доделен.", "OK");
             return;
         }
 
+        var saveModel = new PatientSaveModel
+        {
+            Patient=Patient,
+            IsNewPatient=_isNewPatientMode,
+
+            Diagnoses=
+            [
+                .. Diagnoses.Select(x => new DiagnosisSaveModel
+            {
+                Id = x.Id,
+                EncounterId = x.EncounterId,
+                Mkb10CodeId = x.Mkb10CodeId,
+                DiagnosedAt = x.DiagnosedAt,
+                IsPrimary = x.IsPrimary,
+                Severity = x.Severity,
+                ClinicalDescription = x.ClinicalDescription,
+                Status = x.Status
+            })
+            ],
+
+            Medicines=
+            [
+                .. AttachedMedicines.Select(x => new PatientMedicineSaveModel
+            {
+                Id = x.PatientMedicine.Id,
+                MedicineId = x.PatientMedicine.MedicineId,
+                Dosage = x.PatientMedicine.Dosage,
+                DosesFrequency = x.PatientMedicine.DosesFrequency,
+                StartDate = x.PatientMedicine.StartDate,
+                EndDate = x.PatientMedicine.EndDate,
+                Notes = x.PatientMedicine.Notes,
+                IsActive = x.PatientMedicine.IsActive
+            })
+            ],
+
+            Documents=
+            [
+                .. Documents.Select(x => new PatientDocumentSaveModel
+            {
+                Id = x.Id,
+                FileName = x.FileName,
+                StoredPath = x.StoredPath,
+                ContentType = x.ContentType,
+                UploadedAt = x.UploadedAt
+            })
+            ],
+
+            DeletedDiagnosisIds=_deletedDiagnosisIds,
+            DeletedMedicineIds=_deletedMedicineIds,
+            DeletedDocumentIds=_deletedDocumentIds
+        };
+
         try
         {
-            await using var db = await _dbFactory.CreateDbContextAsync();
+            IsSaving=true;
+            await _patientService.SavePatientAsync(saveModel);
 
-            if(_isNewPatientMode)
-            {
-                Patient.Id=Guid.NewGuid();
-                Patient.RegistrationDate=DateTime.UtcNow;
-                Patient.CreatedAt=DateTime.UtcNow;
+            _isNewPatientMode=false; // patient now exists in DB; every future save is an update
+            OnPropertyChanged(nameof(IsNewPatient));
+            OnPropertyChanged(nameof(HeaderTitle));
+            OnPropertyChanged(nameof(HeaderSubtitle));
 
-                foreach(var diagnosis in Diagnoses)
-                {
-                    diagnosis.PatientId=Patient.Id;
-                    Patient.Diagnoses.Add(diagnosis);
-                }
-                foreach(var row in AttachedMedicines)
-                {
-                    row.PatientMedicine.PatientId=Patient.Id;
-                    Patient.PatientMedicines.Add(row.PatientMedicine);
-                }
-                foreach(var doc in Documents)
-                {
-                    doc.PatientId=Patient.Id;
-                    Patient.Documents.Add(doc);
-                }
+            _deletedDiagnosisIds.Clear();
+            _deletedMedicineIds.Clear();
+            _deletedDocumentIds.Clear();
+            _childrenLoaded=false;
 
-                await db.Patients.AddAsync(Patient);
-            }
-            else
-            {
-                var existing = await db.Patients
-                    .Include(p => p.Diagnoses)
-                    .Include(p => p.PatientMedicines)
-                    .Include(p => p.Documents)
-                    .FirstOrDefaultAsync(x => x.Id==Patient.Id);
-                if(existing==null) return;
+            await LoadPatientAsync(Patient.Id);
 
-                existing.FirstName=Patient.FirstName;
-                existing.LastName=Patient.LastName;
-                existing.NationalId=Patient.NationalId;
-                existing.DoctorId=Patient.DoctorId;
-                existing.BirthDate=Patient.BirthDate;
-                existing.Gender=Patient.Gender;
-                existing.Phone=Patient.Phone;
-                existing.Email=Patient.Email;
-                existing.Address=Patient.Address;
-                existing.City=Patient.City;
-                existing.PostalCode=Patient.PostalCode;
-                existing.Status=Patient.Status;
-                existing.BloodType=Patient.BloodType;
-                existing.Allergies=Patient.Allergies;
-                existing.EmergencyContactName=Patient.EmergencyContactName;
-                existing.EmergencyContactPhone=Patient.EmergencyContactPhone;
-                existing.EmergencyRelationship=Patient.EmergencyRelationship;
-
-                // --- Diagnoses: remove what's gone, add what's new ---
-                var keepDiagnosisIds = Diagnoses.Select(d => d.Id).ToHashSet();
-                foreach(var toRemove in existing.Diagnoses.Where(d => !keepDiagnosisIds.Contains(d.Id)).ToList())
-                    existing.Diagnoses.Remove(toRemove);
-                foreach(var d in Diagnoses.Where(d => existing.Diagnoses.All(x => x.Id!=d.Id)))
-                {
-                    d.PatientId=existing.Id;
-                    existing.Diagnoses.Add(d);
-                }
-
-                // --- Medicines: remove what's gone, add/update what's kept ---
-                var keepMedicineIds = AttachedMedicines.Select(r => r.PatientMedicine.Id).ToHashSet();
-                foreach(var toRemove in existing.PatientMedicines.Where(pm => !keepMedicineIds.Contains(pm.Id)).ToList())
-                    existing.PatientMedicines.Remove(toRemove);
-                foreach(var row in AttachedMedicines)
-                {
-                    var match = existing.PatientMedicines.FirstOrDefault(pm => pm.Id==row.PatientMedicine.Id);
-                    if(match==null)
-                    {
-                        row.PatientMedicine.PatientId=existing.Id;
-                        existing.PatientMedicines.Add(row.PatientMedicine);
-                    }
-                    else
-                    {
-                        match.Dosage=row.PatientMedicine.Dosage;
-                        match.DosesFrequency=row.PatientMedicine.DosesFrequency;
-                        match.EndDate=row.PatientMedicine.EndDate;
-                        match.IsActive=row.PatientMedicine.IsActive;
-                    }
-                }
-
-                // --- Documents: add-only here (deleting an uploaded document is a separate, explicit action) ---
-                var keepDocIds = Documents.Select(d => d.Id).ToHashSet();
-                foreach(var toRemove in existing.Documents.Where(d => !keepDocIds.Contains(d.Id)).ToList())
-                    existing.Documents.Remove(toRemove);
-                foreach(var doc in Documents.Where(d => existing.Documents.All(x => x.Id!=d.Id)))
-                {
-                    doc.PatientId=existing.Id;
-                    existing.Documents.Add(doc);
-                }
-
-                db.Patients.Update(existing);
-            }
-
-            await db.SaveChangesAsync();
             await _userDialogService.ShowAlertAsync("Успешно", "Пациентот е успешно зачуван.", "OK");
+
+            _selectedItemService.OpenInEditMode=false;
 
             if(_isModalReturnMode)
             {
-                _selectedItemService.SelectedItem=Patient;
+                _selectedItemService.SelectedItem=new Patient
+                {
+                    Id=Patient.Id,
+                    FirstName=Patient.FirstName,
+                    LastName=Patient.LastName
+                };
                 await _navigationService.GoToAsync("..");
             }
             else
@@ -326,12 +336,31 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                 _selectedItemService.SelectedItem=null;
                 await _navigationService.GoToAsync(AppRoutes.Patients.List);
             }
-            _selectedItemService.OpenInEditMode=false;
-            _selectedItemService.SelectedItem=null;
+        }
+        catch(DbUpdateConcurrencyException)
+        {
+            Debug.WriteLine("CONCURRENCY ERROR");
+
+            await _userDialogService.ShowAlertAsync(
+                "Конфликт",
+                "Податоците се променети или избришани. Освежете и обидете се повторно.",
+                "OK");
         }
         catch(Exception ex)
         {
-            await _userDialogService.ShowAlertAsync("Грешка", ex.Message, "OK");
+            // Catches anything else — e.g. a failure in LoadPatientAsync right after
+            // a successful save, so the user always gets feedback instead of a
+            // silent unhandled exception.
+            Debug.WriteLine(ex.ToString());
+
+            await _userDialogService.ShowAlertAsync(
+                "Грешка",
+                "Настана грешка при зачувувањето. Обидете се повторно.",
+                "OK");
+        }
+        finally
+        {
+            IsSaving=false;
         }
     }
 
@@ -340,7 +369,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         SelectedGenderDisplay=PatientEnumLookups.Gender.ToDisplay(Patient.Gender.ToString());
         SelectedStatusDisplay=PatientEnumLookups.Status.ToDisplay(Patient.Status.ToString());
         SelectedRelationDisplay=Patient.EmergencyRelationship;
-        DoctorSearchText=SelectedDoctorDisplay;
+        SelectedCityDisplay=Patient.City;
+        SelectedBloodTypeDisplay=Patient.BloodType;
     }
 
     [RelayCommand]
@@ -359,11 +389,22 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
         }
 
-        if(_originalPatient!=null) Patient=_originalPatient.Clone();
+        if(_originalPatient!=null)
+        {
+            Patient=CloneEditDto(_originalPatient);
+
+            _deletedDiagnosisIds.Clear();
+            _deletedMedicineIds.Clear();
+            _deletedDocumentIds.Clear();
+
+            _childrenLoaded=false;
+            _=LoadPatientAsync(Patient.Id); // pull real DB state back in
+        }
+
         IsReadOnly=true;
     }
 
-    public static Patient CreateBlankForRegistration() => new()
+    public static PatientEditDto CreateBlankForRegistration() => new()
     {
         FirstName=string.Empty,
         LastName=string.Empty,
@@ -381,252 +422,251 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         EmergencyRelationship=string.Empty,
         BloodType=string.Empty,
         Allergies=string.Empty,
-        RegistrationDate=DateTime.UtcNow,
         Status=PatientStatus.Active
     };
 
     // =====================================================
-    // DOCTOR SEARCH + ATTACH  (mirrors EncounterBaseViewModel's Appointment search)
+    // DOCTOR SEARCH + ATTACH
     // =====================================================
 
     private CancellationTokenSource _doctorSearchCts = new();
 
-    [ObservableProperty] private ObservableCollection<Doctor> doctorSearchResults = new();
+    [ObservableProperty] private ObservableCollection<DoctorDto> doctorSearchResults = new();
     [ObservableProperty] private string doctorSearchText = string.Empty;
     [ObservableProperty] private bool showDoctorDropdown;
     [ObservableProperty] private string selectedDoctorDisplay = string.Empty;
 
-    partial void OnDoctorSearchTextChanging(string value) => _=SearchDoctorsAsync(value);
+    partial void OnDoctorSearchTextChanged(string value) => DebounceDoctorSearch(value);
 
-    [RelayCommand]
-    private async Task SearchDoctorsAsync(string query)
+    private async void DebounceDoctorSearch(string query)
     {
-        if(string.IsNullOrWhiteSpace(query))
+        _doctorSearchCts?.Cancel();
+        _doctorSearchCts?.Dispose();
+        _doctorSearchCts=new CancellationTokenSource();
+        var token = _doctorSearchCts.Token;
+
+        if(string.IsNullOrWhiteSpace(query)||query.Length<2)
         {
             DoctorSearchResults.Clear();
             ShowDoctorDropdown=false;
             return;
         }
 
-        _doctorSearchCts.Cancel();
-        _doctorSearchCts.Dispose();
-        _doctorSearchCts=new CancellationTokenSource();
-        var token = _doctorSearchCts.Token;
-
-        try { await Task.Delay(300, token); }
-        catch(TaskCanceledException) { return; }
-
         try
         {
-            await using var db = await _dbFactory.CreateDbContextAsync();
-            var matches = await db.Doctors
-                .Include(d => d.User)
-                .Where(d => d.IsActive&&
-                    (d.User.FirstName.Contains(query, StringComparison.OrdinalIgnoreCase)||
-                     d.User.LastName.Contains(query, StringComparison.OrdinalIgnoreCase)||
-                     d.Specialty.Contains(query, StringComparison.OrdinalIgnoreCase)))
-                .ToListAsync(token);
-
+            await Task.Delay(400, token);
             if(token.IsCancellationRequested) return;
-
-            DoctorSearchResults=new ObservableCollection<Doctor>(matches);
-            ShowDoctorDropdown=matches.Count>0;
-
-            if(matches.Count==0)
-                await OfferNoDoctorFoundAsync(query);
+            await SearchDoctorsAsync(query);
         }
-        catch(OperationCanceledException) { /* user kept typing */ }
-    }
-
-    private async Task OfferNoDoctorFoundAsync(string searchedTerm)
-    {
-        // Doctors aren't created ad-hoc from the patient form (unlike appointments/cycles
-        // in the Encounter view) — a doctor account requires a User + license number, so
-        // this just informs rather than offering to create one inline.
-        if(_isOfferingDoctorCreation) return;
-        _isOfferingDoctorCreation=true;
-        try
-        {
-            await _userDialogService.ShowAlertAsync(
-                "Нема резултати",
-                $"Не е пронајден лекар за „{searchedTerm}“. Проверете во администрацијата на кориснициte.",
-                "OK");
-        }
-        finally { _isOfferingDoctorCreation=false; }
+        catch(OperationCanceledException) { }
     }
 
     [RelayCommand]
-    private void SelectDoctor(Doctor doctor)
+    private async Task SearchDoctorsAsync(string query)
+    {
+        DoctorSearchResults.Clear();
+        if(string.IsNullOrWhiteSpace(query))
+        {
+            ShowDoctorDropdown=false;
+            return;
+        }
+
+        try
+        {
+            var matches = await _patientService.SearchDoctorsAsync(query);
+            DoctorSearchResults=new ObservableCollection<DoctorDto>(matches);
+            ShowDoctorDropdown=DoctorSearchResults.Count>0;
+        }
+        catch(OperationCanceledException) { }
+    }
+
+    [RelayCommand]
+    private void SelectDoctor(DoctorDto doctor)
     {
         if(doctor==null) return;
 
         Patient.DoctorId=doctor.Id;
-        SelectedDoctorDisplay=$"Д-р {doctor.User?.FirstName} {doctor.User?.LastName}";
+        SelectedDoctorDisplay=doctor.DisplayName;
         DoctorSearchText=string.Empty;
         DoctorSearchResults.Clear();
         ShowDoctorDropdown=false;
     }
 
     // =====================================================
-    // MKB10 DIAGNOSIS SEARCH + ATTACH  (mirrors EncounterBaseViewModel exactly)
+    // MKB10 DIAGNOSIS SEARCH + ATTACH
     // =====================================================
 
     private CancellationTokenSource _mkbSearchCts = new();
 
-    [ObservableProperty] private ObservableCollection<Diagnosis> diagnoses = new();
-    [ObservableProperty] private ObservableCollection<Mkb10Code> mkbResults = new();
+    [ObservableProperty] private ObservableCollection<DiagnosisDto> diagnoses = new();
+    [ObservableProperty] private ObservableCollection<Mkb10CodeDto> mkbResults = new();
     [ObservableProperty] private string mkbSearchText = string.Empty;
     [ObservableProperty] private bool showMkbDropdown;
+    [ObservableProperty] private string selectedMkb10Display = string.Empty;
 
-    partial void OnMkbSearchTextChanging(string value)
+    partial void OnMkbSearchTextChanged(string value) => DebounceSearchMkb10(value);
+
+    private async void DebounceSearchMkb10(string query)
     {
-        if(string.IsNullOrWhiteSpace(value)||value.Length<2)
-        {
-            MkbResults.Clear();
-            ShowMkbDropdown=false;
-            return;
-        }
-        _=SearchMkbAsync(value);
-    }
-
-    [RelayCommand]
-    private async Task SearchMkbAsync(string query)
-    {
-        if(string.IsNullOrWhiteSpace(query)||query.Length<2)
-        {
-            MkbResults.Clear();
-            ShowMkbDropdown=false;
-            return;
-        }
-
-        _mkbSearchCts.Cancel();
-        _mkbSearchCts.Dispose();
+        _mkbSearchCts?.Cancel();
+        _mkbSearchCts?.Dispose();
         _mkbSearchCts=new CancellationTokenSource();
         var token = _mkbSearchCts.Token;
 
+        if(string.IsNullOrWhiteSpace(query))
+        {
+            MkbResults.Clear();
+            ShowMkbDropdown=false;
+            return;
+        }
+
         try
         {
-            await using var db = await _dbFactory.CreateDbContextAsync();
-            var matches = await db.Mkb10Codes
-                .Where(m => m.Code.Contains(query, StringComparison.OrdinalIgnoreCase)||
-                            m.Description.Contains(query, StringComparison.OrdinalIgnoreCase))
-                .Take(25)
-                .ToListAsync(token);
-
+            await Task.Delay(400, token);
             if(token.IsCancellationRequested) return;
-
-            MkbResults=new ObservableCollection<Mkb10Code>(matches);
-            ShowMkbDropdown=matches.Count>0;
+            await SearchMkbAsync(query, token);
         }
-        catch(OperationCanceledException) { /* user kept typing */ }
+        catch(OperationCanceledException) { }
     }
 
     [RelayCommand]
-    private void AddMkb(Mkb10Code code)
+    private async Task SearchMkbAsync(string query, CancellationToken token = default)
+    {
+        if(string.IsNullOrWhiteSpace(query))
+        {
+            MkbResults.Clear();
+            ShowMkbDropdown=false;
+            return;
+        }
+
+        try
+        {
+            var results = await _patientService.SearchMkb10CodesAsync(query);
+            if(token.IsCancellationRequested) return;
+
+            MkbResults=new ObservableCollection<Mkb10CodeDto>(results);
+            ShowMkbDropdown=results.Count>0;
+        }
+        catch(OperationCanceledException) { }
+    }
+
+    [RelayCommand]
+    private void AddMkb(Mkb10CodeDto code)
     {
         if(code==null) return;
         if(Diagnoses.Any(x => x.Mkb10CodeId==code.Id)) return;
 
-        var diagnosis = new Diagnosis
+        var diagnosis = new DiagnosisDto
         {
-            Id=Guid.NewGuid(),
+            Id=Guid.Empty, // Empty -> SaveAsync treats it as INSERT
             PatientId=Patient.Id,
             Mkb10CodeId=code.Id,
-            Mkb10Code=code,
-            DiagnosedAt=DateTime.Now,
+            Mkb10Code=code.Code,
+            Severity="Не е дефиниран",
+            DiagnosedAt=DateTime.UtcNow,
             IsPrimary=Diagnoses.Count==0,
             Status=DiagnosisStatus.Active
         };
 
         Diagnoses.Add(diagnosis);
+
         MkbSearchText=string.Empty;
         MkbResults.Clear();
         ShowMkbDropdown=false;
     }
 
     [RelayCommand]
-    private void RemoveMkb(Diagnosis diagnosis)
+    private void RemoveMkb(DiagnosisDto diagnosis)
     {
-        if(diagnosis!=null&&Diagnoses.Contains(diagnosis))
-            Diagnoses.Remove(diagnosis);
+        if(diagnosis==null) return;
+        if(diagnosis.Id!=Guid.Empty) _deletedDiagnosisIds.Add(diagnosis.Id);
+        Diagnoses.Remove(diagnosis);
     }
 
     // =====================================================
-    // MEDICINE SEARCH + ATTACH (replaces the old BloodType-only medical section)
+    // MEDICINE SEARCH + ATTACH
     // =====================================================
 
     private CancellationTokenSource _medicineSearchCts = new();
 
     [ObservableProperty] private ObservableCollection<AttachedMedicineRow> attachedMedicines = new();
-    [ObservableProperty] private ObservableCollection<Medicine> medicineResults = new();
+    [ObservableProperty] private ObservableCollection<MedicineDto> medicineResults = new();
     [ObservableProperty] private string medicineSearchText = string.Empty;
     [ObservableProperty] private bool showMedicineDropdown;
 
-    partial void OnMedicineSearchTextChanging(string value)
-    {
-        if(string.IsNullOrWhiteSpace(value)||value.Length<2)
-        {
-            MedicineResults.Clear();
-            ShowMedicineDropdown=false;
-            return;
-        }
-        _=SearchMedicinesAsync(value);
-    }
 
-    [RelayCommand]
-    private async Task SearchMedicinesAsync(string query)
-    {
-        if(string.IsNullOrWhiteSpace(query)||query.Length<2)
-        {
-            MedicineResults.Clear();
-            ShowMedicineDropdown=false;
-            return;
-        }
 
-        _medicineSearchCts.Cancel();
-        _medicineSearchCts.Dispose();
+    partial void OnMedicineSearchTextChanged(string value) => DebounceSearchMedicine(value);
+
+    private async void DebounceSearchMedicine(string query)
+    {
+        _medicineSearchCts?.Cancel();
+        _medicineSearchCts?.Dispose();
         _medicineSearchCts=new CancellationTokenSource();
         var token = _medicineSearchCts.Token;
 
+        if(string.IsNullOrWhiteSpace(query))
+        {
+            MedicineResults.Clear();
+            ShowMedicineDropdown=false;
+            return;
+        }
+
         try
         {
-            await using var db = await _dbFactory.CreateDbContextAsync();
-            var matches = await db.Medicines
-                .Where(m => m.IsActive&&
-                    (m.Name.Contains(query, StringComparison.OrdinalIgnoreCase)||
-                     m.GenericName.Contains(query, StringComparison.OrdinalIgnoreCase)||
-                     m.Code.Contains(query, StringComparison.OrdinalIgnoreCase)))
-                .Take(25)
-                .ToListAsync(token);
-
+            await Task.Delay(400, token);
             if(token.IsCancellationRequested) return;
-
-            MedicineResults=new ObservableCollection<Medicine>(matches);
-            ShowMedicineDropdown=matches.Count>0;
+            await SearchMedicinesAsync(query, token);
         }
-        catch(OperationCanceledException) { /* user kept typing */ }
+        catch(OperationCanceledException) { }
     }
 
     [RelayCommand]
-    private void AddMedicine(Medicine medicine)
+    private async Task SearchMedicinesAsync(string query, CancellationToken token = default)
+    {
+        if(string.IsNullOrWhiteSpace(query))
+        {
+            MedicineResults.Clear();
+            ShowMedicineDropdown=false;
+            return;
+        }
+
+        try
+        {
+            var results = await _patientService.SearchMedicinesAsync(query);
+            if(token.IsCancellationRequested) return;
+
+            MedicineResults=new ObservableCollection<MedicineDto>(results);
+            ShowMedicineDropdown=results.Count>0;
+        }
+        catch(OperationCanceledException) { }
+        catch(Exception ex)
+        {
+            await _userDialogService.ShowAlertAsync("Грешка", $"Пребарувањето на лекови не успеа: {ex.Message}", "OK");
+        }
+    }
+    [RelayCommand]
+    private void AddMedicine(MedicineDto medicine)
     {
         if(medicine==null) return;
+
         if(AttachedMedicines.Any(r => r.PatientMedicine.MedicineId==medicine.Id&&r.PatientMedicine.IsActive))
             return;
 
-        var patientMedicine = new PatientMedicine
+        var patientMedicine = new PatientMedicineDto
         {
-            Id=Guid.NewGuid(),
+            Id=Guid.Empty,
             PatientId=Patient.Id,
             MedicineId=medicine.Id,
-            Medicine=medicine,
+            MedicineName=medicine.Name,
             Dosage=medicine.DefaultDosage,
-            DosesFrequency=DosesFrequency.Daily,
+            DosesFrequency=DosesFrequency.Other,
             StartDate=DateTime.UtcNow,
             IsActive=true
         };
 
         AttachedMedicines.Add(new AttachedMedicineRow(patientMedicine));
+
         MedicineSearchText=string.Empty;
         MedicineResults.Clear();
         ShowMedicineDropdown=false;
@@ -635,15 +675,16 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void RemoveMedicine(AttachedMedicineRow row)
     {
-        if(row!=null&&AttachedMedicines.Contains(row))
-            AttachedMedicines.Remove(row);
+        if(row==null) return;
+        if(row.PatientMedicine.Id!=Guid.Empty) _deletedMedicineIds.Add(row.PatientMedicine.Id);
+        AttachedMedicines.Remove(row);
     }
 
     // =====================================================
     // DOCUMENT UPLOAD
     // =====================================================
 
-    [ObservableProperty] private ObservableCollection<PatientDocument> documents = new();
+    [ObservableProperty] private ObservableCollection<PatientDocumentDto> documents = new();
     [ObservableProperty] private bool isUploadingDocument;
 
     [RelayCommand]
@@ -655,14 +696,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         {
             IsUploadingDocument=true;
 
-            var file = await FilePicker.Default.PickAsync(new PickOptions
-            {
-                PickerTitle="Изберете документ"
-            });
+            var file = await FilePicker.Default.PickAsync(new PickOptions { PickerTitle="Изберете документ" });
             if(file==null) return;
 
-            // Copy into app-local storage so the source file (e.g. a USB stick or
-            // Downloads folder the user later clears) doesn't take the record with it.
             var patientFolder = Path.Combine(FileSystem.AppDataDirectory, "patient-documents", Patient.Id.ToString());
             Directory.CreateDirectory(patientFolder);
 
@@ -675,17 +711,15 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                 await source.CopyToAsync(dest);
             }
 
-            var document = new PatientDocument
+            Documents.Add(new PatientDocumentDto
             {
-                Id=Guid.NewGuid(),
+                Id=Guid.Empty,
                 PatientId=Patient.Id,
                 FileName=file.FileName,
                 StoredPath=storedPath,
                 ContentType=file.ContentType,
                 UploadedAt=DateTime.UtcNow
-            };
-
-            Documents.Add(document);
+            });
         }
         catch(Exception ex)
         {
@@ -698,10 +732,11 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    private void RemoveDocument(PatientDocument document)
+    private void RemoveDocument(PatientDocumentDto document)
     {
-        if(document!=null&&Documents.Contains(document))
-            Documents.Remove(document);
+        if(document==null) return;
+        if(document.Id!=Guid.Empty) _deletedDocumentIds.Add(document.Id);
+        Documents.Remove(document);
     }
 
     public void Dispose()

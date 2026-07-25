@@ -79,6 +79,15 @@ public partial class DashboardView : ContentPage
             vm.SelectedStatusChangedCommand.Execute(selected);
     }
 
+    private void OnCalendarIconTapped(object sender, TappedEventArgs e)
+    {
+        CalendarDatePicker.IsVisible=true;
+        CalendarDatePicker.Focus();
+    }
+    private void CalendarDatePicker_DateSelected(object sender, DateChangedEventArgs e)
+    {
+        CalendarDatePicker.IsVisible=false;
+    }
     private void OnSelectedGenderChanged(object sender, EventArgs e)
     {
         var picker = (Picker)sender;

@@ -13,16 +13,17 @@ namespace EHMR.Services
 {
     public class UserService : IUserService
     {
-        private readonly DesktopTherapyDbContext _context;
+        private readonly IDbContextFactory<DesktopTherapyDbContext> _factory;
 
-        public UserService(DesktopTherapyDbContext context)
+        public UserService(IDbContextFactory<DesktopTherapyDbContext> factory)
         {
-            _context=context;
+            _factory=factory;
         }
 
         public async Task<List<UserAdminDto>> GetUsersAsync()
         {
-            return await _context.Users
+            await using var db = await _factory.CreateDbContextAsync();
+            return await db.Users
                 .Include(x => x.Modules)
                 .Select(x => new UserAdminDto
                 {
@@ -43,7 +44,8 @@ namespace EHMR.Services
 
         public async Task<UserAdminDto?> GetByIdAsync(Guid id)
         {
-            return await _context.Users
+            await using var db = await _factory.CreateDbContextAsync();
+            return await db.Users
                 .Include(x => x.Modules)
                 .Where(x => x.Id==id)
                 .Select(x => new UserAdminDto
@@ -65,6 +67,8 @@ namespace EHMR.Services
 
         public async Task CreateAsync(UserAdminDto dto)
         {
+            await using var db = await _factory.CreateDbContextAsync();
+      
             var user = new User
             {
                 Id=Guid.NewGuid(),
@@ -76,11 +80,11 @@ namespace EHMR.Services
                 IsActive=dto.IsActive
             };
 
-            _context.Users.Add(user);
+            db.Users.Add(user);
 
             foreach(var module in dto.Modules)
             {
-                _context.UserModules.Add(new Module
+                db.UserModules.Add(new Module
                 {
                     UserId=user.Id,
                     ModuleKey=module,
@@ -88,12 +92,14 @@ namespace EHMR.Services
                 });
             }
 
-            await _context.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(UserAdminDto dto)
         {
-            var user = await _context.Users
+            await using var db = await _factory.CreateDbContextAsync();
+         
+            var user = await db.Users
                 .Include(x => x.Modules)
                 .FirstAsync(x => x.Id==dto.Id);
 
@@ -105,11 +111,11 @@ namespace EHMR.Services
             user.IsActive=dto.IsActive;
 
             // sync modules
-            _context.UserModules.RemoveRange(user.Modules);
+            db.UserModules.RemoveRange(user.Modules);
 
             foreach(var module in dto.Modules)
             {
-                _context.UserModules.Add(new Module
+                db.UserModules.Add(new Module
                 {
                     UserId=user.Id,
                     ModuleKey=module,
@@ -117,20 +123,22 @@ namespace EHMR.Services
                 });
             }
 
-            await _context.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
         public async Task DeleteAsync(Guid Id)
         {
-            var user = await _context.Users
+            await using var db = await _factory.CreateDbContextAsync();
+    
+            var user = await db.Users
                 .Include(x => x.Role)
                 .FirstAsync(x => x.Id==Id);
 
            
 
             // sync modules
-            await _context.Users.ExecuteDeleteAsync();         
+            await db.Users.ExecuteDeleteAsync();         
 
-            await _context.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
         public Task<List<string>> GetAllModulesAsync()
         {

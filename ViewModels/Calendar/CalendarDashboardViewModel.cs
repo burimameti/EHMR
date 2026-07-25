@@ -17,7 +17,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
     private DateTime _currentDate;
 
     protected override string ModuleName => "Calendar";
-
+    protected override Func<Encounter, Guid?>? DoctorOwnerSelector => e => e.DoctorId;
     [ObservableProperty] private string _currentMonthYearText = string.Empty;
     [ObservableProperty] private bool _isViewingCurrentMonth = true;
 

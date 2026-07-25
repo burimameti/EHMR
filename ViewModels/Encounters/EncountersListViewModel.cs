@@ -26,7 +26,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
 
     protected override string ModuleName => "encounters";
     protected override string PermissionDeniedMessage => "Немате авторизација за креирање прегледи.";
-
+    protected override Func<Encounter, Guid?>? DoctorOwnerSelector => e => e.DoctorId;
     // Base DetailRoute is not used directly here since Select/New/Edit each
     // navigate to a different route (Detail/Create/Edit) — see overrides below.
     protected override string DetailRoute => AppRoutes.Encounters.Detail;
@@ -269,9 +269,17 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
 
     private void SelectTab(SparkTabItem tab, Action action)
     {
-        foreach(var t in Tabs) t.IsSelected=false;
+        foreach(var t in Tabs)
+            t.IsSelected=false;
+
         tab.IsSelected=true;
+
         action();
+
+        OnPropertyChanged(nameof(SelectedStatusDisplay));
+
+        ApplyPipeline();
+
         SyncSparkPickersFromFilters();
     }
 
@@ -347,6 +355,9 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
                 .ToListAsync();
 
             AllItems=loadedItems;
+
+            CalculateTabCounts();
+
             InitializeSparkControls();
 
             ApplyPendingQuery();
@@ -369,6 +380,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         MainThread.BeginInvokeOnMainThread(() =>
         {
             RefreshSparkGridRows();
+            RefreshSparkTabCounts();
         });
     }
 
@@ -488,7 +500,32 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         SelectedItemService.SelectedItem=item;
         await NavigationService.GoToAsync(AppRoutes.Encounters.Edit);
     }
+    private void CalculateTabCounts()
+    {
+        if(AllItems==null)
+            return;
 
+        TotalEncounters=AllItems.Count;
+
+        WaitingCount=
+            AllItems.Count(x =>
+                x.Status==EncounterStatus.Scheduled);
+
+        InProgressCount=
+            AllItems.Count(x =>
+                x.Status==EncounterStatus.InProgress);
+
+        CompletedCount=
+            AllItems.Count(x =>
+                x.Status==EncounterStatus.Completed);
+
+        CancelledCount=
+            AllItems.Count(x =>
+                x.Status==EncounterStatus.Cancelled||
+                x.Status==EncounterStatus.NoShow);
+
+        RefreshSparkTabCounts();
+    }
     protected override void ResetFilters()
     {
         SearchText=string.Empty;

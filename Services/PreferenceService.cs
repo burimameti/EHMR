@@ -20,18 +20,18 @@ namespace EHMR.Services
 
     public class SecurePreferencesService : IPreferencesService
     {
-        public void Save(string key, string value)
+        public async Task SaveAsync(string key, string value)
         {
-            SecureStorage.SetAsync(key, value).Wait();
+            await SecureStorage.SetAsync(key, value);
+            Preferences.Set($"secure_exists_{key}", true); // ContainsKey relies on this
         }
 
-        public string Load(string key, string defaultValue = "")
+        public async Task<string> LoadAsync(string key, string defaultValue = "")
         {
             try
             {
-                var task = SecureStorage.GetAsync(key);
-                task.Wait();
-                return task.Result??defaultValue;
+                var value = await SecureStorage.GetAsync(key);
+                return value??defaultValue;
             }
             catch
             {
@@ -41,8 +41,8 @@ namespace EHMR.Services
 
         public bool ContainsKey(string key)
         {
-            // SecureStorage does not support ContainsKey
-            // So, use a fallback check with regular Preferences
+            // SecureStorage has no native ContainsKey, so we track existence
+            // with a companion flag in regular Preferences.
             return Preferences.ContainsKey($"secure_exists_{key}");
         }
 

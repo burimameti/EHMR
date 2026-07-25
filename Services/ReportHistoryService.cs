@@ -2,24 +2,35 @@
 using EHMR.Domain.Entities.Reports;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
+using EHMR.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace EHMR.Infrastructure.Services;
 
 public sealed class ReportHistoryService : IReportHistoryService
 {
-    private readonly DesktopTherapyDbContext _context;
 
-    public ReportHistoryService(DesktopTherapyDbContext context)
+    private readonly IDbContextFactory<DesktopTherapyDbContext> _factory;
+
+    public ReportHistoryService(IDbContextFactory<DesktopTherapyDbContext> factory)
     {
-        _context=context;
+        _factory=factory;
     }
 
     public async Task<ReportHistory> AddAsync(ReportHistory history)
     {
+        await using var _context = await _factory.CreateDbContextAsync();
         history.Id=Guid.NewGuid();
         history.GeneratedOn=DateTime.Now;
+        history.Id=history.Id==Guid.Empty
+                    ? Guid.NewGuid()
+                    : history.Id;
 
+        if(string.IsNullOrWhiteSpace(history.ReportNumber))
+        {
+            history.ReportNumber=
+                await SequenceHelper.GenerateNumberAsync(_context, SequenceNames.Report, "REP");
+        }
         _context.ReportHistories.Add(history);
 
         await _context.SaveChangesAsync();
@@ -29,6 +40,7 @@ public sealed class ReportHistoryService : IReportHistoryService
 
     public async Task UpdateAsync(ReportHistory history)
     {
+        await using var _context = await _factory.CreateDbContextAsync();
         _context.ReportHistories.Update(history);
 
         await _context.SaveChangesAsync();
@@ -36,6 +48,7 @@ public sealed class ReportHistoryService : IReportHistoryService
 
     public async Task DeleteAsync(Guid id)
     {
+        await using var _context = await _factory.CreateDbContextAsync();
         var entity = await _context.ReportHistories.FirstOrDefaultAsync(x => x.Id==id);
 
         if(entity==null)
@@ -53,6 +66,7 @@ public sealed class ReportHistoryService : IReportHistoryService
 
     public async Task<ReportHistory?> GetAsync(Guid id)
     {
+        await using var _context = await _factory.CreateDbContextAsync();
         return await _context.ReportHistories
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id==id);
@@ -60,6 +74,7 @@ public sealed class ReportHistoryService : IReportHistoryService
 
     public async Task<List<ReportHistory>> GetAllAsync()
     {
+        await using var _context = await _factory.CreateDbContextAsync();
         return await _context.ReportHistories
             .AsNoTracking()
             .OrderByDescending(x => x.GeneratedOn)
@@ -68,6 +83,7 @@ public sealed class ReportHistoryService : IReportHistoryService
 
     public async Task<List<ReportHistory>> GetRecentAsync(int count = 50)
     {
+        await using var _context = await _factory.CreateDbContextAsync();
         return await _context.ReportHistories
             .AsNoTracking()
             .OrderByDescending(x => x.GeneratedOn)
@@ -77,6 +93,7 @@ public sealed class ReportHistoryService : IReportHistoryService
 
     public async Task<List<ReportHistory>> GetByUserAsync(string userName)
     {
+        await using var _context = await _factory.CreateDbContextAsync();
         return await _context.ReportHistories
             .AsNoTracking()
             .Where(x => x.GeneratedBy==userName)
@@ -86,6 +103,7 @@ public sealed class ReportHistoryService : IReportHistoryService
 
     public async Task<List<ReportHistory>> GetByReportAsync(string reportKey)
     {
+        await using var _context = await _factory.CreateDbContextAsync();
         return await _context.ReportHistories
             .AsNoTracking()
             .Where(x => x.ReportKey==reportKey)
@@ -95,6 +113,7 @@ public sealed class ReportHistoryService : IReportHistoryService
 
     public async Task<List<ReportHistory>> GetBetweenAsync(DateTime from, DateTime to)
     {
+        await using var _context = await _factory.CreateDbContextAsync();
         return await _context.ReportHistories
             .AsNoTracking()
             .Where(x => x.GeneratedOn>=from&&
@@ -105,6 +124,7 @@ public sealed class ReportHistoryService : IReportHistoryService
 
     public async Task<int> GetGeneratedTodayAsync()
     {
+        await using var _context = await _factory.CreateDbContextAsync();
         var today = DateTime.Today;
         var tomorrow = today.AddDays(1);
 
@@ -115,11 +135,13 @@ public sealed class ReportHistoryService : IReportHistoryService
 
     public async Task<long> GetStorageUsedAsync()
     {
+        await using var _context = await _factory.CreateDbContextAsync();
         return await _context.ReportHistories.SumAsync(x => x.FileSize);
     }
 
     public async Task ClearAsync()
     {
+        await using var _context = await _factory.CreateDbContextAsync();
         var reports = await _context.ReportHistories.ToListAsync();
 
         foreach(var report in reports)

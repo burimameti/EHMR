@@ -186,7 +186,13 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [ObservableProperty] private AppointmentTabFilter appointmentTab = AppointmentTabFilter.Upcoming;
     [ObservableProperty] private EncounterTabFilter encounterTab = EncounterTabFilter.All;
     [ObservableProperty] private PrescriptionTabFilter prescriptionTab = PrescriptionTabFilter.Active;
+    partial void OnEncounterChanging(Encounter? value)
+    {
+        OnPropertyChanged(nameof(EncounterStatusDisplay));
+    }
 
+    public string EncounterStatusDisplay =>
+        EncounterStatusSchema.ToDisplay(Encounter?.Status.ToString()??string.Empty);
     partial void OnAppointmentTabChanged(AppointmentTabFilter value) => OnPropertyChanged(nameof(FilteredAppointments));
     partial void OnEncounterTabChanged(EncounterTabFilter value) => OnPropertyChanged(nameof(FilteredEncounters));
 
@@ -220,7 +226,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     public IEnumerable<Prescription> FilteredPrescriptions => PrescriptionTab switch
     {
-        PrescriptionTabFilter.Active => PatientPrescriptions.Where(p => p.Status=="Активни"),
+        // Ако во базата се чува како "Active", тука правиме соодветна проверка
+        PrescriptionTabFilter.Active => PatientPrescriptions.Where(p => p.Status=="Active"||p.Status=="Активни"),
         _ => PatientPrescriptions
     };
 
@@ -625,10 +632,10 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
         // Re-entrancy guard: without this, typing quickly (each keystroke
         // re-triggers the debounced search) or clicking "+ Нов циклус"
-        // while a typing-triggered offer dialog is still open can queue
-        // up more than one popup. Cancelling one then leaves the other
-        // popup's RequestClose pointing at a dialog that's already
-        // "consumed" - looks like the popup didn't dispose/close properly.
+        // пока типувана понуда за дијалог се' уште е отворена може да се создадат
+        // повеќе од еден popup. Откажувањето на еден потоа остава дека другото
+        // popup's RequestClose укажува на дијалог што веќе е "употребено" - изгледа како
+        // popup-от не се затвора/раскинува правилно.
         if(_isOfferingCycleCreation)
             return;
 
@@ -675,9 +682,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             return;
         }
 
-        // Same guard here - prevents the manual "+ Нов циклус" button
-        // from opening a second create popup while a search-triggered
-        // offer dialog is already showing.
+        // Исто така, заштита тука - спречува рачниот копче "+ Нов циклус"
+        // да отвори второ креирано popup додека дијалогот предложен од пребарувањето
+        // веќе се прикажува.
         if(_isOfferingCycleCreation)
             return;
 
@@ -909,9 +916,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     // =====================================================
     // INITIALIZATION
     // =====================================================
-
-    public virtual async Task InitializeAsync(
-        Guid? encounterId = null)
+    //  public List<string> EncounterTypeOptions = new List<string>();
+    public virtual async Task InitializeAsync(Guid? encounterId = null)
     {
         await ExecuteSafeAsync(async () =>
         {
@@ -919,58 +925,67 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             try
             {
                 await LoadLookupsAsync();
-                // NEW ENCOUNTER
 
-                if(encounterId==null||
-                    encounterId==Guid.Empty)
+                // ── NEW ENCOUNTER — early exit, no DB call needed ────────────
+                if(encounterId==null||encounterId==Guid.Empty)
                 {
                     Encounter=new Encounter
                     {
                         Id=Guid.NewGuid(),
-                        EncounterDate=DateTime.Now
+                        EncounterDate=DateTime.Now,
+                        CreatedAt=DateTime.UtcNow,
                     };
                     Diagnoses.Clear();
                     Prescriptions.Clear();
+                    EncounterMedicines.Clear();
                     IsEditMode=true;
                     IsReadOnly=false;
-
-                    return;
+                    return;  // ← was missing: code fell through and called .Value on null
                 }
-                // EXISTING ENCOUNTER
-                var dto =
-                    await EncounterService
-                        .GetEncounter(
-                            encounterId.Value);
+
+                // ── EXISTING ENCOUNTER ────────────────────────────────────────
+                var dto = await EncounterService.GetEncounter(encounterId.Value);
                 Encounter=dto.Encounter;
-                Diagnoses=
-                    new ObservableCollection<Diagnosis>(
-                        dto.Diagnoses);
-                Prescriptions=
-                    new ObservableCollection<Prescription>(
-                        dto.Prescriptions);
-                EncounterDiagnosisNotes=
-                    Encounter.ClinicalNotes
-                    ??string.Empty;
-                SelectedPatient=
-                    Patients.FirstOrDefault(x =>
-                        x.Id==Encounter.PatientId);
-                SelectedDoctor=
-                    Doctors.FirstOrDefault(x =>
-                        x.Id==Encounter.DoctorId);
-                if(Encounter.AppointmentId.HasValue)
-                {
-                    LinkedAppointment=
-                        await EncounterService
-                            .GetAppointment(
-                                Encounter.AppointmentId.Value);
-                }
-                await LoadTherapyCyclesForPatientAsync(
-                    Encounter.PatientId);
-                await LoadPatientContextAsync(
-                 Encounter.PatientId);
 
-                await LoadAppointmentsForPatientAsync(
-                    Encounter.PatientId);
+                // Display value conversions
+                if(!string.IsNullOrEmpty(Encounter.EncounterType))
+                {
+                    var display = EncounterFormLookups.EncounterType.DisplayValues
+                        .FirstOrDefault(dv => EncounterFormLookups.EncounterType
+                            .ToInternal(dv)
+                            .Equals(Encounter.EncounterType, StringComparison.OrdinalIgnoreCase));
+                    if(!string.IsNullOrEmpty(display))
+                        EncounterTypeDisplay=display;
+                }
+
+                if(!string.IsNullOrEmpty(Encounter.Priority))
+                {
+                    var display = EncounterFormLookups.Priority.DisplayValues
+                        .FirstOrDefault(dv => EncounterFormLookups.Priority
+                            .ToInternal(dv)
+                            .Equals(Encounter.Priority, StringComparison.OrdinalIgnoreCase));
+                    if(!string.IsNullOrEmpty(display))
+                        PriorityDisplay=display;
+                }
+
+                Diagnoses=new ObservableCollection<Diagnosis>(dto.Diagnoses);
+                Prescriptions=new ObservableCollection<Prescription>(dto.Prescriptions);
+                EncounterDiagnosisNotes=Encounter.ClinicalNotes??string.Empty;
+
+                SelectedPatient=Patients.FirstOrDefault(x => x.Id==Encounter.PatientId);
+                SelectedDoctor=Doctors.FirstOrDefault(x => x.Id==Encounter.DoctorId);
+
+                if(Encounter.AppointmentId.HasValue)
+                    LinkedAppointment=await EncounterService
+                        .GetAppointment(Encounter.AppointmentId.Value);
+
+                await LoadTherapyCyclesForPatientAsync(Encounter.PatientId);
+                await LoadPatientContextAsync(Encounter.PatientId);
+                await LoadAppointmentsForPatientAsync(Encounter.PatientId);
+
+                // Seed so RemoveMedicine knows what existed at load time
+                foreach(var pm in PatientMedicines)
+                    _originalPatientMedicineIds.Add(pm.Id);
 
                 IsEditMode=false;
                 IsReadOnly=true;
@@ -979,8 +994,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             {
                 _isInitializing=false;
             }
-        },
-        "Грешка при вчитување на прегледот");
+        }, "Грешка при вчитување на прегледот");
     }
     // =====================================================
     // LOAD LOOKUPS
@@ -1153,7 +1167,126 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             Diagnoses.Remove(diagnosis);
         }
     }
+    // =====================================================
+     // MEDICINE SEARCH + ATTACH (encounter-scoped, mirrors MKB10 diagnosis flow)
+     // =====================================================
+    protected CancellationTokenSource MedicineSearchCts = new();
 
+    [ObservableProperty]
+    protected ObservableCollection<Medicine> medicineResults = new();
+
+    // Medicines being attached to THIS encounter (separate from PatientMedicines,
+    // which is the read-only full history loaded via LoadPatientContextAsync)
+    [ObservableProperty]
+    protected ObservableCollection<PatientMedicine> encounterMedicines = new();
+
+    [ObservableProperty]
+    protected string medicineSearchText = string.Empty;
+
+    [ObservableProperty]
+    protected bool showMedicineDropdown;
+
+    partial void OnMedicineSearchTextChanging(string value)
+    {
+        if(string.IsNullOrWhiteSpace(value)||value.Length<2)
+        {
+            MedicineResults.Clear();
+            ShowMedicineDropdown=false;
+            return;
+        }
+        _=SearchMedicinesAsync(value);
+    }
+
+    [RelayCommand]
+    protected async Task SearchMedicinesAsync(string query)
+    {
+        if(string.IsNullOrWhiteSpace(query)||query.Length<2)
+        {
+            MedicineResults.Clear();
+            ShowMedicineDropdown=false;
+            return;
+        }
+
+        MedicineSearchCts.Cancel();
+        MedicineSearchCts.Dispose();
+        MedicineSearchCts=new CancellationTokenSource();
+
+        await ExecuteSafeAsync(async () =>
+        {
+            try
+            {
+                var result = await EncounterService.SearchMedicines(query, MedicineSearchCts.Token);
+                MedicineResults=new ObservableCollection<Medicine>(result);
+                ShowMedicineDropdown=MedicineResults.Count>0;
+            }
+            catch(OperationCanceledException)
+            {
+                // user continued typing
+            }
+        },
+        "Грешка при пребарување лекови");
+    }
+
+    // =====================================================
+    // ADD MEDICINE — Dosage doubles as "quantity" (e.g. "1" tablet/dose)
+    // =====================================================
+
+    [RelayCommand]
+    protected void AddMedicine(Medicine medicine)
+    {
+        if(medicine==null) return;
+
+        if(EncounterMedicines.Any(x => x.MedicineId==medicine.Id&&x.IsActive))
+            return;
+
+        var patientMedicine = new PatientMedicine
+        {
+            Id=Guid.NewGuid(),
+            PatientId=Encounter.PatientId,            
+            MedicineId=medicine.Id,
+            Medicine=medicine,
+            Dosage="1", // Дозата се користи како количина (quantity) — пр. "1" таблета
+            DosesFrequency=DosesFrequency.Other,
+            StartDate=DateTime.Now,
+            IsActive=true
+        };
+
+        EncounterMedicines.Add(patientMedicine);
+
+        MedicineSearchText=string.Empty;
+        MedicineResults.Clear();
+        ShowMedicineDropdown=false;
+    }
+    private readonly List<Guid> _deletedMedicineIds = [];
+    protected IReadOnlyList<Guid> DeletedMedicineIds => _deletedMedicineIds;
+
+    // =====================================================
+    // REMOVE MEDICINE
+    // =====================================================
+
+    [RelayCommand]
+    protected void RemoveMedicine(PatientMedicine medicine)
+    {
+        if(medicine==null) return;
+
+        // Only mark for DB deletion if it's a real, already-persisted row.
+        // A row added and removed within the same session (Id was just
+        // Guid.NewGuid()'d in AddMedicine and never saved) doesn't need
+        // a delete — it simply never gets sent to SaveEncounter.
+        if(medicine.Id!=Guid.Empty&&PatientMedicinesHadIdBeforeThisSession(medicine.Id))
+            _deletedMedicineIds.Add(medicine.Id);
+
+        EncounterMedicines.Remove(medicine);
+        PatientMedicines.Remove(medicine);
+    }
+
+    // Tracks ids that existed in PatientMedicines at load time (before any
+    // AddMedicine calls this session), so RemoveMedicine can tell "existing
+    // history row being deleted" apart from "session-added row being undone".
+    private readonly HashSet<Guid> _originalPatientMedicineIds = [];
+
+    private bool PatientMedicinesHadIdBeforeThisSession(Guid id) =>
+        _originalPatientMedicineIds.Contains(id);
     // =====================================================
     // EDIT MODE
     // =====================================================
@@ -1191,6 +1324,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
         AppointmentSearchCts.Cancel();
         AppointmentSearchCts.Dispose();
+
+        MedicineSearchCts.Cancel();
+        MedicineSearchCts.Dispose();
 
         GC.SuppressFinalize(this);
     }

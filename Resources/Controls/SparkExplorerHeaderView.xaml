@@ -9,17 +9,17 @@
 	<VerticalStackLayout>
 
 		<!--  ============ ROW 1: TABS + TRAILING ============  -->
-		<Grid BackgroundColor="{StaticResource SparkBadgeNeutralBg}">
+		<Border BackgroundColor="{StaticResource SparkBackgroundAlt}" StrokeShape="RoundRectangle 0">
 
 			<Grid
 				x:Name="ExplorerGrid"
-				Padding="0"
+				Padding="12,12,6,1"
 				ColumnSpacing="0">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
 					<!--  0: tabs  -->
 					<ColumnDefinition Width="1" />
-					<!--  1: divider  -->
+					<!--  1: divider (only element after the tabs, as requested)  -->
 					<ColumnDefinition Width="*" />
 					<!--  2: spacer  -->
 					<ColumnDefinition Width="Auto" />
@@ -31,36 +31,47 @@
 					Grid.Column="0"
 					HorizontalScrollBarVisibility="Never"
 					Orientation="Both">
-					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Tabs, Source={x:Reference Root}}" Spacing="0">
+					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Tabs, Source={x:Reference Root}}" Spacing="10">
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkTabItem">
-								<Grid
-									Padding="20,0"
-									HeightRequest="56"
-									RowDefinitions="*,4"
-									WidthRequest="-1">
-									<Grid.GestureRecognizers>
+								<!--
+									Border наместо гол Grid: заоблени агли + тенка граница
+									кога табот НЕ е селектиран, за да личи на кликабилно
+									копче ("тапкаво"). Кога Е селектиран - полна teal
+									позадина со teal граница. Растојанието меѓу табовите
+									доаѓа од Spacing="10" на HorizontalStackLayout погоре -
+									нема повеќе BoxView divider по секој таб.
+								-->
+								<Border
+									Padding="16,10"
+									HeightRequest="44"
+									StrokeThickness="1">
+									<Border.StrokeShape>
+										<RoundRectangle CornerRadius="6" />
+									</Border.StrokeShape>
+									<Border.GestureRecognizers>
 										<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
-									</Grid.GestureRecognizers>
+									</Border.GestureRecognizers>
 
-									<!--  TAB BACKGROUND STATE  -->
-									<Grid.Triggers>
+									<!--  TAB STATE: background + border  -->
+									<Border.Triggers>
 										<DataTrigger
 											Binding="{Binding IsSelected}"
-											TargetType="Grid"
+											TargetType="Border"
 											Value="True">
-											<Setter Property="BackgroundColor" Value="{StaticResource SparkBackgroundAlt}" />
+											<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeNeutralBgSelected}" />
+											<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
 										</DataTrigger>
 										<DataTrigger
 											Binding="{Binding IsSelected}"
-											TargetType="Grid"
+											TargetType="Border"
 											Value="False">
-											<Setter Property="BackgroundColor" Value="{StaticResource SparkButtonSecondaryBg}" />
+											<Setter Property="BackgroundColor" Value="{StaticResource PrimarySoft}" />
+											<Setter Property="Stroke" Value="{StaticResource White}" />
 										</DataTrigger>
-									</Grid.Triggers>
+									</Border.Triggers>
 
 									<Label
-										Grid.Row="0"
 										FontSize="14"
 										HorizontalOptions="Center"
 										VerticalOptions="Center">
@@ -72,18 +83,17 @@
 											</FormattedString>
 										</Label.FormattedText>
 										<!--
-											FIX: unselected branch previously bound TextColor to
-											SparkBackground — the same color as the strip itself —
-											so unselected tab labels rendered invisible. Swapped
-											to the existing SparkTextSecondary token, no new
-											resource added.
+											FIX (carried over): unselected label color must NOT
+											match the tab background, or the text disappears.
+											Selected = teal/bold, unselected = dark gray on the
+											white unselected background above.
 										-->
 										<Label.Triggers>
 											<DataTrigger
 												Binding="{Binding IsSelected}"
 												TargetType="Label"
 												Value="True">
-												<Setter Property="TextColor" Value="{StaticResource SparkAccentTeal}" />
+												<Setter Property="TextColor" Value="{StaticResource White}" />
 												<Setter Property="FontAttributes" Value="Bold" />
 											</DataTrigger>
 											<DataTrigger
@@ -95,34 +105,24 @@
 											</DataTrigger>
 										</Label.Triggers>
 									</Label>
-
-									<BoxView Grid.Row="1" HorizontalOptions="Fill">
-										<BoxView.Triggers>
-											<DataTrigger
-												Binding="{Binding IsSelected}"
-												TargetType="BoxView"
-												Value="True">
-												<Setter Property="Color" Value="{StaticResource SparkAccentTeal}" />
-											</DataTrigger>
-										</BoxView.Triggers>
-									</BoxView>
-								</Grid>
+								</Border>
 							</DataTemplate>
 						</BindableLayout.ItemTemplate>
 					</HorizontalStackLayout>
 				</ScrollView>
 
-				<!--  ============ 1: DIVIDER ============  -->
+				<!--  ============ 1: DIVIDER (се појавува само еднаш, на крајот од табовите) ============  -->
 				<BoxView
 					Grid.Column="1"
-					BackgroundColor="{StaticResource SparkBorder}"
+					Margin="10,10"
+					BackgroundColor="{StaticResource SparkAccentTeal}"
 					WidthRequest="1" />
 
 				<!--  ============ 2: SPACER ============  -->
 				<!--  intentionally empty — pushes trailing action to the right edge  -->
 
 				<!--  ============ 3: TRAILING ACTION ============  -->
-				<Border
+				<!--<Border
 					Grid.Column="3"
 					BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
 					HeightRequest="34"
@@ -145,7 +145,7 @@
 						StrokeThickness="1.4"
 						VerticalOptions="Center"
 						WidthRequest="14" />
-				</Border>
+				</Border>-->
 			</Grid>
 
 			<!--
@@ -155,18 +155,17 @@
 				direct MAUI equivalent, colored with the same SparkBorder
 				token already used for the column-1 divider above.
 			-->
-			<BoxView
-				BackgroundColor="{StaticResource SparkBorder}"
+			<!--<BoxView
+				BackgroundColor="{StaticResource SparkSidebarBgHover}"
 				HeightRequest="1"
-				VerticalOptions="End" />
-		</Grid>
+				VerticalOptions="End" />-->
+		</Border>
 
 		<!--  ============ ROW 2: SEARCH + BUTTONS + PICKERS ============  -->
-		<Grid BackgroundColor="{StaticResource SparkBackground}">
+		<Grid BackgroundColor="{StaticResource SparkBackgroundAlt}" IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
 
 			<Grid
 				x:Name="SecondaryToolbarGrid"
-				Padding="20,12"
 				ColumnSpacing="8"
 				MinimumHeightRequest="48">
 				<Grid.ColumnDefinitions>
@@ -184,12 +183,12 @@
 					Margin="8,42,8,8"
 					Padding="16,0"
 					BackgroundColor="White"
-					HeightRequest="38"
+					HeightRequest="44"
 					HorizontalOptions="Fill"
-					Stroke="{StaticResource SparkBorder}"
+					Stroke="{StaticResource Gray400}"
 					StrokeThickness="1">
 					<Border.StrokeShape>
-						<RoundRectangle CornerRadius="6" />
+						<RoundRectangle CornerRadius="12" />
 					</Border.StrokeShape>
 					<Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
 						<HorizontalStackLayout
@@ -198,15 +197,15 @@
 							VerticalOptions="Center">
 							<Path
 								Data="M9,2 A7,7 0 1 0 9,16 A7,7 0 1 0 9,2 Z M14,14 L20,20"
-								HeightRequest="24"
-								Stroke="{StaticResource SparkTextSecondary}"
+								HeightRequest="26"
+								Stroke="{StaticResource SparkTextPrimary}"
 								StrokeThickness="1.9"
 								WidthRequest="24" />
 							<Path
 								Data="M0,0 L8,0 L4,6 Z"
 								Fill="{StaticResource SparkTextSecondary}"
-								HeightRequest="22"
-								WidthRequest="22" />
+								HeightRequest="26"
+								WidthRequest="26" />
 						</HorizontalStackLayout>
 						<!--
 							FIX: the original fixed MinimumWidthRequest="500" sat
@@ -221,21 +220,19 @@
 							Grid.Column="2"
 							BackgroundColor="Transparent"
 							FontSize="14"
-							HeightRequest="38"
+							HeightRequest="44"
 							HorizontalOptions="Fill"
 							Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
+							PlaceholderColor="{StaticResource SparkSidebarBg}"
 							Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}"
 							TextColor="{StaticResource SparkTextPrimary}"
 							VerticalOptions="Center" />
 						<Border
 							Grid.Column="1"
 							Padding="0"
-							Stroke="{StaticResource SparkBorder}"
-							StrokeThickness="1"
-							VerticalOptions="Center"
-							WidthRequest="18">
+							Style="{StaticResource PageHeaderCardStyle1}">
 							<Border.StrokeShape>
-								<RoundRectangle CornerRadius="9" />
+								<RoundRectangle CornerRadius="16" />
 							</Border.StrokeShape>
 							<Label
 								FontSize="11"
@@ -247,7 +244,7 @@
 					</Grid>
 				</Border>
 
-				<!--  ============ 1: PICKERS ============  -->
+
 				<!--  ============ 1: PICKERS ============  -->
 				<HorizontalStackLayout
 					Grid.Column="1"
@@ -266,12 +263,12 @@
 									TextColor="{StaticResource SparkAccentTeal}" />
 								<Border
 									Padding="12,1"
-									BackgroundColor="White"
-									HeightRequest="40"
-									Stroke="{StaticResource SparkBorder}"
+									BackgroundColor="{StaticResource SparkBackground}"
+									HeightRequest="44"
+									Stroke="{StaticResource Gray400}"
 									StrokeThickness="1">
 									<Border.StrokeShape>
-										<RoundRectangle CornerRadius="8" />
+										<RoundRectangle CornerRadius="12" />
 									</Border.StrokeShape>
 									<Picker
 										Grid.Row="1"
@@ -285,11 +282,6 @@
 										VerticalOptions="Center" />
 								</Border>
 							</VerticalStackLayout>
-
-
-
-
-
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
 				</HorizontalStackLayout>
@@ -305,10 +297,10 @@
 						<DataTemplate x:DataType="sc:SparkButtonItem">
 							<Border
 								Padding="22,0"
-								HeightRequest="36"
+								HeightRequest="44"
 								StrokeThickness="0">
 								<Border.StrokeShape>
-									<RoundRectangle CornerRadius="12" />
+									<RoundRectangle CornerRadius="16" />
 								</Border.StrokeShape>
 								<Border.GestureRecognizers>
 									<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
@@ -398,7 +390,7 @@
 
 			<!--  bottom rule — same BoxView stand-in as row 1, same SparkBorder token  -->
 			<BoxView
-				BackgroundColor="{StaticResource SparkBorder}"
+				BackgroundColor="{StaticResource SparkSidebarBgHover}"
 				HeightRequest="1"
 				VerticalOptions="End" />
 		</Grid>
@@ -407,7 +399,6 @@
 		<Grid
 			x:Name="DataGridHeaderGrid"
 			Padding="16,10"
-			BackgroundColor="{StaticResource SparkBackground}"
 			ColumnSpacing="8"
 			IsVisible="{Binding HeaderColumns, Source={x:Reference Root}, Converter={StaticResource SparkCollectionNotEmptyConverter}}" />
 

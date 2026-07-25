@@ -15,6 +15,10 @@ public class User : BaseEntity
     {
         get; set;
     }
+    public Doctor? Doctor
+    {
+        get; set;
+    }
 
     public bool IsActive { get; set; } = true;
 

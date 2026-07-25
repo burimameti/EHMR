@@ -1,18 +1,15 @@
-﻿<DataTemplate
- xmlns="http://schemas.microsoft.com/dotnet/2021/maui">
+﻿<DataTemplate xmlns="http://schemas.microsoft.com/dotnet/2021/maui">
 
-<VerticalStackLayout>
+	<VerticalStackLayout>
 
-<Label
-Text="{Binding Label}"
-Style="{StaticResource SparkFieldLabelStyle}"/>
+		<Label Style="{StaticResource SparkFieldLabelStyle}" Text="{Binding Label}" />
 
-<Entry
-Keyboard="Telephone"
-Text="{Binding Value}"
-Placeholder="{Binding Placeholder}"
-Style="{StaticResource SparkEntryStyle}"/>
+		<Entry
+			Keyboard="Telephone"
+			Placeholder="{Binding Placeholder}"
+			Style="{StaticResource SparkEntryStyle}"
+			Text="{Binding Value}" />
 
-</VerticalStackLayout>
+	</VerticalStackLayout>
 
 </DataTemplate>

@@ -84,7 +84,7 @@ public class EncounterSeeder : IEntitySeeder
             // =====================================================
 
             VisitSource="Appointment",
-            BillingStatus="ReadyForBilling",
+          
             IsLocked=true,
             IsActive=true,
 

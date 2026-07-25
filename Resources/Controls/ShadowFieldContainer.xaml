@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="EHMR.Resources.Controls.ShadowFieldContainer"
-             x:Name="Root">
+<ContentView
+	x:Class="EHMR.Resources.Controls.ShadowFieldContainer"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	x:Name="Root">
 
 	<Border Style="{StaticResource ShadowFieldCardStyle}">
 
 		<VerticalStackLayout Style="{StaticResource ShadowFieldContainerStackStyle}">
 
-			<!-- LABEL -->
-			<Label Text="{Binding LabelText, Source={x:Reference Root}}"
-                   Style="{StaticResource ShadowFieldLabelStyle}" />
+			<!--  LABEL  -->
+			<Label Style="{StaticResource ShadowFieldLabelStyle}" Text="{Binding LabelText, Source={x:Reference Root}}" />
 
-			<!-- INPUT SLOT -->
+			<!--  INPUT SLOT  -->
 			<ContentPresenter Content="{Binding FieldContent, Source={x:Reference Root}}" />
 		</VerticalStackLayout>
 	</Border>

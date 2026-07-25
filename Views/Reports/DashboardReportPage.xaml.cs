@@ -16,21 +16,11 @@ namespace EHMR.Views.Reports
         BindingContext=_vm;
         MenuHost.Content=_menu;
     }
-        protected override void OnAppearing()
+        protected override void OnDisappearing()
         {
-            base.OnAppearing();
-
-            // WinUI invalidation workaround — исто како на CalendarDashboardPage.
-            //MainThread.BeginInvokeOnMainThread(async () =>
-            //{
-            //    await Task.Delay(50);
-
-            //    HubContentGrid.IsVisible=false;
-            //    HubContentGrid.IsVisible=!((ReportViewModel)BindingContext).IsShowingDetails;
-
-            //    DetailContentGrid.IsVisible=false;
-            //    DetailContentGrid.IsVisible=((ReportViewModel)BindingContext).IsShowingDetails;
-            //});
+            base.OnDisappearing();
+            if(BindingContext is IDisposable disposable)
+                disposable.Dispose();
         }
     }
 }

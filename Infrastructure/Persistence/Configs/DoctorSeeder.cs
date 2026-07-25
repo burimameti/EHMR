@@ -18,20 +18,12 @@ public sealed class DoctorSeeder : IEntitySeeder
         if(await context.Doctors.AnyAsync(ct))
             return;
 
-
-
         var users = await context.Users
             .OrderBy(x => x.FirstName)
             .Take(15)
             .ToListAsync(ct);
-
-
-
         if(users.Count<10)
             return;
-
-
-
         await context.Doctors.AddRangeAsync(
             new Doctor
             {
@@ -41,7 +33,6 @@ public sealed class DoctorSeeder : IEntitySeeder
                 LicenseNumber="MK-LIC-0001",
                 Specialty="Cardiology",
                 ContactPhone="+38970111111",
-
                 IsActive=true
             },
 

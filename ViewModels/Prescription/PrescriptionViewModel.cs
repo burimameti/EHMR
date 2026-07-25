@@ -18,7 +18,7 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>, IQ
     [ObservableProperty] private string selectedStatus = "All";
     [ObservableProperty] private string filteredPrescriptionsCount = "";
     [ObservableProperty] private ObservableCollection<Prescription> filteredPrescriptions = new();
-
+    protected override Func<Prescription, Guid?>? DoctorOwnerSelector => e => e.Patient.DoctorId;
     // ================= QUERY STATE (deep-link support) =================
     private string? _pendingSearch;
     private string? _pendingStatus;
@@ -215,7 +215,7 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>, IQ
     private void BuildSparkGridColumns()
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
-        {
+        { new() { Header = "БРОЈ", Key = "PrescriptionNumber", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "ПАЦИЕНТ", Key = "PatientName", Width = new GridLength(2.0, GridUnitType.Star) },
             new() { Header = "МЕДИКАМЕНТ", Key = "Medication", Width = new GridLength(2.0, GridUnitType.Star) },
             new() { Header = "ДОЗИРАЊЕ", Key = "Dosage", Width = new GridLength(1.2, GridUnitType.Star) },
@@ -232,6 +232,7 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>, IQ
         foreach(var p in FilteredPrescriptions)
         {
             var row = new SparkGridRow { Tag=p };
+            row["PrescriptionNumber"]=p.PrescriptionNumber;
             row["PatientName"]=p.Patient?.FullName??"Непознат Пациент";
             row["Medication"]=p.Medication??"/";
             row["Dosage"]=p.Dosage??"/";

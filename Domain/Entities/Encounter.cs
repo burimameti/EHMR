@@ -146,10 +146,7 @@ public class Encounter
     /// <summary>
     /// Pending, ReadyForBilling, Billed, Paid
     /// </summary>
-    public string? BillingStatus
-    {
-        get; set;
-    }
+
 
     public bool IsLocked
     {

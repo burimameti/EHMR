@@ -67,7 +67,7 @@ public partial class TherapyDetailsViewModel : ObservableObject
         var cycle = new TherapyCycle
         {
             Id=Guid.NewGuid(),
-            CycleNumber=CycleNumber,
+
             PatientId=Patient.Id,
             Status=TherapyStatus.Planned
         };

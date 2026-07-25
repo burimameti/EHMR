@@ -1,27 +1,35 @@
-﻿using System;
+﻿using EHMR.Backups.Encryption;
+using EHMR.Backups.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using EHMR.Domain.Entities;
+
 
 namespace EHMR.Infrastructure.Persistence;
 
-public class DesktopTherapyDbContext : TherapyTrackerDbContext
+public sealed class DesktopTherapyDbContext : TherapyTrackerDbContext
 {
-    private const string DefaultConnection =
-        "Server=.\\SQLEXPRESS;Database=TherapyTrackerDesktopPoc;User Id=t24test;Password=t24test;MultipleActiveResultSets=true;TrustServerCertificate=True;";
-
-    public DesktopTherapyDbContext(DbContextOptions options)
-        : base(options)
+    
+    public DesktopTherapyDbContext(
+        DbContextOptions<DesktopTherapyDbContext> options,
+        IDbExceptionParserProvider? exceptionParser,
+        IEncryptionService encryptionService)
+        : base(options, exceptionParser, encryptionService)
     {
     }
-
-    public static DesktopTherapyDbContext CreateManual(string? connectionString = null)
+    private const string DefaultConnection =
+       "Server=.\\SQLEXPRESS;Database=TherapyTrackerDesktopPoc;User Id=t24test;Password=t24test;MultipleActiveResultSets=true;TrustServerCertificate=True;";
+    public static DesktopTherapyDbContext CreateManual(
+    IEncryptionService encryptionService,
+    IDbExceptionParserProvider? parser = null,
+    string? connectionString = null)
     {
-        var options =
-            new DbContextOptionsBuilder<DesktopTherapyDbContext>()
-                .UseSqlServer(connectionString??DefaultConnection)
-                .Options;
+        var options = new DbContextOptionsBuilder<DesktopTherapyDbContext>()
+            .UseSqlServer(connectionString??DefaultConnection)
+            .Options;
 
-        return new DesktopTherapyDbContext(options);
+        return new DesktopTherapyDbContext(
+            options,
+            parser,
+            encryptionService);
     }
 
     public static class SeedIds

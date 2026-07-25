@@ -247,6 +247,7 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
+                  new() { Header = "БРОЈ", Key = "DoctorNumber", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "ЛЕКАР", Key = "FullName", Width = new GridLength(2.2, GridUnitType.Star) },
             new() { Header = "Е-ПОШТА", Key = "Email", Width = new GridLength(2, GridUnitType.Star) },
             new() { Header = "СПЕЦИЈАЛНОСТ", Key = "Specialty", Width = new GridLength(1.5, GridUnitType.Star) },
@@ -265,6 +266,7 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
         foreach(var d in FilteredDoctors)
         {
             var row = new SparkGridRow { Tag=d };
+            row["DoctorNumber"]=d.DoctorNumber;
             row["FullName"]=d.FullName;
             row["Email"]=d.Email??"email@klinika.com"; // TODO: додади Email во база
             row["Specialty"]=d.Specialty;

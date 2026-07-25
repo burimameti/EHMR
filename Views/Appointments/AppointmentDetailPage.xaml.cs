@@ -1,4 +1,5 @@
-﻿using EHMR.ViewModels.Appointments;
+﻿using EHMR.Domain.Entities;
+using EHMR.ViewModels.Appointments;
 using EHMR.Views;
 
 namespace EHMR.Views.Appointments;
@@ -16,7 +17,7 @@ public partial class AppointmentDetailPage : ContentPage
         _menu=menu;
 
         BindingContext=_viewModel;
-        //MenuHost.Content=menu;
+        MenuHost.Content=menu;
     }
     private async void OnDiagnosisSearchTextChanged(object sender, TextChangedEventArgs e)
     {
@@ -26,7 +27,7 @@ public partial class AppointmentDetailPage : ContentPage
 
     private async void OnPatientPickerChanged(object sender, EventArgs e)
     {
-        if(sender is Picker { SelectedItem: EHMR.Domain.Entities.Patient patient })
+        if(sender is Picker { SelectedItem: Patient patient })
         {
             if(_viewModel.PatientChangedCommand.CanExecute(patient))
                 await _viewModel.PatientChangedCommand.ExecuteAsync(patient);

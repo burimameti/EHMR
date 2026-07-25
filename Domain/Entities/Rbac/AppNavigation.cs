@@ -62,7 +62,7 @@ public static class AppNavigation
             //Items =
             //[
                
-                    GroupTitle = "Пациенти",
+                    GroupTitle = "Медицински Картони",
                     Route = AppRoutes.Patients.List,
                     Module = Modules.Patients,
                     Icon = new IconDefinition { Glyph = "\uf2bd", Font = IconFontType.FontAwesomeSolid } // User Card
@@ -153,7 +153,7 @@ public static class AppNavigation
             //[
             //    new()
             //    {
-                    GroupTitle = "Листа на лекови",
+                    GroupTitle = "Лекови",
                     Route = AppRoutes.Medicines.List,
                     Module = Modules.Inventory,
                     Icon = new IconDefinition { Glyph = "\uf484", Font = IconFontType.FontAwesomeSolid } // Medicine Bottle
@@ -191,48 +191,87 @@ public static class AppNavigation
         // CALENDAR
         // ==========================
       
-           new()
-        {
-            GroupTitle = "ИМПОРТ МКБ-10",
-            Module = Modules.MKBCodes,
-            Icon = new IconDefinition { Glyph = "\uf02d", Font = IconFontType.FontAwesomeSolid }, // Book
-            Items =
-            [
-                new()
-                {
-                    Title = "МКБ Кодови",
-                    Route = AppRoutes.Mkb10Codes.List,
-                    Module = Modules.MKBCodes,
-                    Icon = new IconDefinition { Glyph = "\uf02b", Font = IconFontType.FontAwesomeSolid } // Tag
-                }
-            ]
-        },
+        //   new()
+        //{
+        //    GroupTitle = "ИМПОРТ МКБ-10",
+        //    Module = Modules.MKBCodes,
+        //    Icon = new IconDefinition { Glyph = "\uf02d", Font = IconFontType.FontAwesomeSolid }, // Book
+        //    Items =
+        //    [
+        //        new()
+        //        {
+        //            Title = "МКБ Кодови",
+        //            Route = AppRoutes.Mkb10Codes.List,
+        //            Module = Modules.MKBCodes,
+        //            Icon = new IconDefinition { Glyph = "\uf02b", Font = IconFontType.FontAwesomeSolid } // Tag
+        //        }
+        //    ]
+
+        //},   new()
+        //{
+        //    GroupTitle = "БЕКАП",
+        //    Module = Modules.BackupDashboard,
+        //    Icon = new IconDefinition { Glyph = "\uf02d", Font = IconFontType.FontAwesomeSolid }, // Book
+        //    Items =
+        //    [
+        //        new()
+        //        {
+        //            Title = "Главна страна",
+        //            Route = AppRoutes.Backup.Dashboard,
+        //            Module = Modules.BackupDashboard,
+        //            Icon = new IconDefinition { Glyph = "\uf02b", Font = IconFontType.FontAwesomeSolid } // Tag
+        //        },
+        //        new()
+        //        {
+        //            Title = "Бекап",
+        //            Route = AppRoutes.Backup.Backups,
+        //            Module = Modules.BackupDashboard,
+        //            Icon = new IconDefinition { Glyph = "\uf02b", Font = IconFontType.FontAwesomeSolid } // Tag
+        //        },
+        //        new()
+        //        {
+        //            Title = "Враќање",
+        //            Route = AppRoutes.Backup.Restore,
+        //            Module = Modules.BackupDashboard,
+        //            Icon = new IconDefinition { Glyph = "\uf02b", Font = IconFontType.FontAwesomeSolid } // Tag
+        //        },
+        //        new()
+        //        {
+        //            Title = "Историја",
+        //            Route = AppRoutes.Backup.History,
+        //            Module = Modules.BackupDashboard,
+        //            Icon = new IconDefinition { Glyph = "\uf02b", Font = IconFontType.FontAwesomeSolid } // Tag
+        //        }
+        //    ]
+
+        //},
         // ==========================
         // ADMINISTRATION
         // ==========================
         new()
         {
             GroupTitle = "Администрација",
+              Route = AppRoutes.Admin.AdminPanel,
             Module = Modules.Administration,
             Icon = new IconDefinition { Glyph = "\uf13e", Font = IconFontType.FontAwesomeSolid }, // Shield User Lock
-            Items =
-            [
-                new()
-                {
-                    Title = "Корисници",
-                    Route = AppRoutes.Users.List,
-                    Module = Modules.Administration,
-                    Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
-                },
-                 new()
-                {
-                    Title = "Доктори",
-                    Route = AppRoutes.Doctors.List,
-                    Module = Modules.Doctors,
-                    Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
-                }
+            //Items =
+            //[
+            //    new()
+            //    {
+            //        Title = "Админ",
+            //        Route = AppRoutes.Admin.AdminPanel,
+            //        Module = Modules.Administration,
+            //        Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
+            //    },
+            //     new()
+            //    {
+            //        Title = "Доктори",
+            //        Route = AppRoutes.Doctors.List,
+            //        Module = Modules.Doctors,
+            //        Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
+            //    }
 
-            ]
+            //]
         }
     ];
 }

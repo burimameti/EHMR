@@ -97,7 +97,7 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
         var term = search.Trim();
         return items.Where(x =>
             (x.Patient?.FullName?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
-            (x.CycleNumber?.ToString().Contains(term)??false)||
+            (x.TherapyCyleNumber?.ToString().Contains(term)??false)||
             (x.Notes?.Contains(term, StringComparison.OrdinalIgnoreCase)??false));
     }
 
@@ -206,7 +206,7 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
         {
             var row = new SparkGridRow { Tag=c };
             row["Patient"]=c.Patient?.FullName??"";
-            row["CycleNumber"]=c.CycleNumber?.ToString()??"";
+            row["CycleNumber"]=c.TherapyCyleNumber?.ToString()??"";
             row["StartDate"]=c.StartDate?.ToString("dd.MM.yyyy")??"";
             row["EndDate"]=c.EndDate?.ToString("dd.MM.yyyy")??"";
             row["Status"]=new SparkBadgeValue(StatusLabel(c.Status), StatusToTone(c.Status));

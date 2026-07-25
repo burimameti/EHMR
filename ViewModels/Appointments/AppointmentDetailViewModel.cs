@@ -4,7 +4,7 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Services;
-using EHMR.ViewModels;
+
 using System.Collections.ObjectModel;
 
 namespace EHMR.ViewModels.Appointments;
@@ -32,7 +32,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     public string HeaderSubtitle =>
         _isNewAppointmentMode
             ? "Закажување нов термин"
-            : $"Лекар: {SelectedDoctorForAppointment?.FullName} • {Appointment.ScheduledStart:dd.MM.yyyy HH:mm}";
+            : $"Реуматолог: {SelectedDoctorForAppointment?.FullName} • {Appointment.ScheduledStart:dd.MM.yyyy HH:mm}";
 
     public AppointmentDetailViewModel(
         IAuthorizationService authorizationService,
@@ -54,7 +54,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
     [ObservableProperty] private Appointment appointment = new();
 
-    [ObservableProperty] private ObservableCollection<AppointmentDiagnosis> selectedDiagnoses = new();
+    [ObservableProperty] private ObservableCollection<Diagnosis> selectedDiagnoses = new();
     [ObservableProperty] private ObservableCollection<TherapyCycle> visibleTherapies = new();
 
     [ObservableProperty] private ObservableCollection<Patient> patientsList = new();
@@ -125,7 +125,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         _originalAppointment=dto.Appointment.Clone();
         Appointment=dto.Appointment;
 
-        SelectedDiagnoses=new ObservableCollection<AppointmentDiagnosis>(dto.Diagnoses);
+        SelectedDiagnoses=new ObservableCollection<Diagnosis>(dto.Diagnoses);
         VisibleTherapies=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
 
         PatientsList=new ObservableCollection<Patient>(dto.Patients);
@@ -186,7 +186,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
         SelectedDoctorForAppointment=null;
         SelectedTherapyCycle=null;
-        SelectedDiagnoses=new ObservableCollection<AppointmentDiagnosis>();
+        SelectedDiagnoses=new ObservableCollection<Diagnosis>();
 
         SelectedStartTime=Appointment.ScheduledStart.TimeOfDay;
         SelectedEndTime=Appointment.ScheduledEnd.TimeOfDay;
@@ -269,10 +269,10 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         if(code==null) return;
         if(SelectedDiagnoses.Any(x => x.Mkb10CodeId==code.Id)) return;
 
-        SelectedDiagnoses.Add(new AppointmentDiagnosis
+        SelectedDiagnoses.Add(new Diagnosis
         {
             Mkb10CodeId=code.Id,
-            DiagnosisId=code.Id,
+            Id=code.Id,
             Mkb10Code=code,
             IsPrimary=false
         });
@@ -283,7 +283,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     }
 
     [RelayCommand]
-    private void RemoveDiagnosis(AppointmentDiagnosis d)
+    private void RemoveDiagnosis(Diagnosis d)
     {
         if(d!=null) SelectedDiagnoses.Remove(d);
     }
@@ -339,11 +339,11 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             Appointment.ScheduledStart=day+SelectedStartTime;
             Appointment.ScheduledEnd=day+SelectedEndTime;
 
-            if(_isNewAppointmentMode)
-            {
-                Appointment.Id=Guid.NewGuid();
-                Appointment.CreatedAt=DateTime.UtcNow;
-            }
+            //if(_isNewAppointmentMode)
+            //{
+            //    Appointment.Id=Guid.NewGuid();
+            //    Appointment.CreatedAt=DateTime.UtcNow;
+            //}
 
             await _service.SaveAppointment(Appointment, SelectedDiagnoses.ToList(), SelectedTherapyCycle);
             await UserDialogService.ShowAlertAsync("Успешно", "Терминот е успешно зачуван.", "OK");

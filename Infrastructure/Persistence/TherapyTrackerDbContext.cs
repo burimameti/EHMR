@@ -1,13 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using EHMR.Backups.Encryption;
+using EHMR.Backups.Interfaces;
+using EHMR.Backups.Models;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
+using System.Linq.Expressions;
+
 
 namespace EHMR.Infrastructure.Persistence;
 
@@ -25,13 +26,18 @@ public interface ISoftDelete
 /// </summary>
 public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
 {
-    private readonly IDbExceptionParserProvider? _exceptionParser;
+    private readonly IDbExceptionParserProvider _exceptionParser;
     private IDbContextTransaction? _currentTransaction;
+    private readonly IEncryptionService _encryptionService;
 
-    protected TherapyTrackerDbContext(DbContextOptions options, IDbExceptionParserProvider? exceptionParser = null)
-        : base(options)
+    protected TherapyTrackerDbContext(
+     DbContextOptions options,
+     IDbExceptionParserProvider exceptionParser,
+     IEncryptionService encryptionService)
+     : base(options)
     {
         _exceptionParser=exceptionParser;
+        _encryptionService=encryptionService;
     }
 
     public bool HasActiveTransaction => _currentTransaction!=null;
@@ -62,8 +68,14 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<ReportHistory> ReportHistories => Set<ReportHistory>();
     public DbSet<Mkb10Code> Mkb10Codes => Set<Mkb10Code>();
-    public DbSet<AppointmentDiagnosis> AppointmentDiagnoses => Set<AppointmentDiagnosis>();
 
+    public DbSet<Sequence> Sequences => Set<Sequence>();
+
+
+
+    public DbSet<BackupHistory> BackupHistories => Set<BackupHistory>();
+
+    public DbSet<BackupDestination> BackupDestinations => Set<BackupDestination>();
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         try
@@ -142,93 +154,228 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     }
 
     // --- 4. EXPLICIT PATIENT SCHEMA FLUENT MAPPING ---
-    private static void ConfigurePatient(ModelBuilder modelBuilder)
+    private void ConfigurePatient(ModelBuilder modelBuilder)
     {
+        var nationalIdConverter =
+            new ValueConverter<string, string>(
+                v => _encryptionService.Encrypt(v),
+                v => _encryptionService.Decrypt(v));
+
+
+        // ============================================
+        // SEQUENCE CONFIGURATION
+        // ============================================
+        modelBuilder.Entity<Sequence>()
+            .HasKey(x => new { x.Name, x.SequenceDate });
+        modelBuilder.Entity<Sequence>()
+    .Property(x => x.Name)
+    .HasMaxLength(50);
+        // If DateOnly isn't natively supported by your provider/EF version, add:
+        modelBuilder.Entity<Sequence>()
+            .Property(x => x.SequenceDate)
+            .HasConversion(
+                d => d.ToDateTime(TimeOnly.MinValue),
+                d => DateOnly.FromDateTime(d));
+
+        modelBuilder.Entity<Doctor>()
+       .HasOne(d => d.User)
+       .WithOne(u => u.Doctor)
+       .HasForeignKey<Doctor>(d => d.UserId)
+       .OnDelete(DeleteBehavior.Restrict);
+
+        // ============================================
+        // PATIENT CONFIGURATION
+        // ============================================
+
         modelBuilder.Entity<Patient>(entity =>
         {
             entity.HasKey(x => x.Id);
 
-            // Personal
-            entity.Property(x => x.FirstName).IsRequired().HasMaxLength(100);
-            entity.Property(x => x.LastName).IsRequired().HasMaxLength(100);
-            entity.Property(x => x.NationalId).IsRequired().HasMaxLength(20);
-            entity.Property(x => x.BirthDate).IsRequired();
-            entity.Property(x => x.Gender).HasConversion<string>().HasMaxLength(20);
 
-            // Contact
-            entity.Property(x => x.Phone).HasMaxLength(30);
-            entity.Property(x => x.Email).HasMaxLength(256);
-            entity.Property(x => x.Address).HasMaxLength(250);
-            entity.Property(x => x.City).HasMaxLength(100);
-            entity.Property(x => x.PostalCode).HasMaxLength(20);
+            // Encrypted National ID
+            entity.Property(x => x.NationalId)
+                  .HasConversion(nationalIdConverter)
+                  .IsRequired()
+                  .HasMaxLength(500);
 
+
+
+            // ============================================
+            // Personal Information
+            // ============================================
+
+            entity.Property(x => x.FirstName)
+                  .IsRequired()
+                  .HasMaxLength(100);
+
+
+            entity.Property(x => x.LastName)
+                  .IsRequired()
+                  .HasMaxLength(100);
+
+
+            entity.Property(x => x.BirthDate)
+                  .IsRequired();
+
+
+            entity.Property(x => x.Gender)
+                  .HasConversion<string>()
+                  .HasMaxLength(20);
+
+
+
+            // ============================================
+            // Contact Information
+            // ============================================
+
+            entity.Property(x => x.Phone)
+                  .HasMaxLength(30);
+
+
+            entity.Property(x => x.Email)
+                  .HasMaxLength(256);
+
+
+            entity.Property(x => x.Address)
+                  .HasMaxLength(250);
+
+
+            entity.Property(x => x.City)
+                  .HasMaxLength(100);
+
+
+            entity.Property(x => x.PostalCode)
+                  .HasMaxLength(20);
+
+
+
+            // ============================================
             // Emergency Contact
-            entity.Property(x => x.EmergencyContactName).HasMaxLength(150);
-            entity.Property(x => x.EmergencyContactPhone).HasMaxLength(30);
-            entity.Property(x => x.EmergencyRelationship).HasMaxLength(80);
+            // ============================================
 
-            // Medical
-            entity.Property(x => x.BloodType).HasMaxLength(10);
-            entity.Property(x => x.Allergies).HasMaxLength(1000);
-            entity.Property(x => x.Status).HasConversion<string>().HasMaxLength(30);
-            entity.Property(x => x.RegistrationDate).IsRequired();
-            entity.Property(x => x.IsDeleted).HasDefaultValue(false);
+            entity.Property(x => x.EmergencyContactName)
+                  .HasMaxLength(150);
 
+
+            entity.Property(x => x.EmergencyContactPhone)
+                  .HasMaxLength(30);
+
+
+            entity.Property(x => x.EmergencyRelationship)
+                  .HasMaxLength(80);
+
+
+
+            // ============================================
+            // Medical Information
+            // ============================================
+
+            entity.Property(x => x.BloodType)
+                  .HasMaxLength(10);
+
+
+            entity.Property(x => x.Allergies)
+                  .HasMaxLength(1000);
+
+
+            entity.Property(x => x.Status)
+                  .HasConversion<string>()
+                  .HasMaxLength(30);
+
+
+            entity.Property(x => x.RegistrationDate)
+                  .IsRequired();
+
+
+            entity.Property(x => x.IsDeleted)
+                  .HasDefaultValue(false);
+
+
+
+            // ============================================
             // Indexes
-            entity.HasIndex(x => x.NationalId).IsUnique();
+            // ============================================
+
+            // IMPORTANT:
+            // Encrypted values cannot be searched normally.
+            // Consider adding NationalIdHash later.
             entity.HasIndex(x => x.LastName);
+
             entity.HasIndex(x => x.DoctorId);
+
             entity.HasIndex(x => x.Status);
 
-            // Relationships (Maintained as Restrict/Cascade where appropriate)
+
+
+            // ============================================
+            // Relationships
+            // ============================================
+
             entity.HasOne(x => x.Doctor)
                 .WithMany()
                 .HasForeignKey(x => x.DoctorId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
 
             entity.HasMany(x => x.Diagnoses)
                 .WithOne(x => x.Patient)
                 .HasForeignKey(x => x.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
+
             entity.HasMany(x => x.PatientMedicines)
                 .WithOne(x => x.Patient)
                 .HasForeignKey(x => x.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+
 
             entity.HasMany(x => x.Documents)
                 .WithOne(x => x.Patient)
                 .HasForeignKey(x => x.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
+
             entity.HasMany(x => x.Prescriptions)
                 .WithOne(x => x.Patient)
                 .HasForeignKey(x => x.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+
 
             entity.HasMany(x => x.Encounters)
                 .WithOne(x => x.Patient)
                 .HasForeignKey(x => x.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
+
             entity.HasMany(x => x.TherapyCycles)
                 .WithOne(x => x.Patient)
                 .HasForeignKey(x => x.PatientId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            entity.HasMany(x => x.Appointments)
-                .WithOne(x => x.Patient)
-                .HasForeignKey(x => x.PatientId)
-                .OnDelete(DeleteBehavior.Cascade);
 
+
+
+
+
+            // ============================================
             // Computed Properties
+            // ============================================
+
             entity.Ignore(x => x.Age);
+
             entity.Ignore(x => x.FullName);
+
             entity.Ignore(x => x.LastVisitDate);
+
             entity.Ignore(x => x.NextAppointmentDate);
         });
     }
-
     private static void ConfigurePatientMedicine(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<PatientMedicine>(entity =>
@@ -305,36 +452,17 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             .WithMany(x => x.Appointments)
             .HasForeignKey(x => x.TherapyCycleId)
             .OnDelete(DeleteBehavior.NoAction);
-
+        modelBuilder.Entity<Alert>()
+    .HasOne(a => a.Patient)
+    .WithMany() // add a `public ICollection<Alert> Alerts` on Patient if you want the reverse nav; not required
+    .HasForeignKey(a => a.PatientId)
+    .OnDelete(DeleteBehavior.Restrict);
         // Diagnosis -> Encounter
         modelBuilder.Entity<Diagnosis>()
             .HasOne(x => x.Encounter)
             .WithMany(x => x.Diagnoses)
             .HasForeignKey(x => x.EncounterId)
             .OnDelete(DeleteBehavior.NoAction);
-
-        // AppointmentDiagnosis (many-to-many bridge)
-        modelBuilder.Entity<AppointmentDiagnosis>().HasKey(x => new { x.AppointmentId, x.Mkb10CodeId });
-
-        modelBuilder.Entity<AppointmentDiagnosis>()
-            .HasOne(x => x.Appointment)
-            .WithMany(x => x.AppointmentDiagnoses)
-            .HasForeignKey(x => x.AppointmentId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        modelBuilder.Entity<AppointmentDiagnosis>()
-            .HasOne(x => x.Mkb10Code)
-            .WithMany()
-            .HasForeignKey(x => x.Mkb10CodeId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<AppointmentDiagnosis>()
-            .HasOne<Diagnosis>()
-            .WithMany()
-            .HasForeignKey(x => x.DiagnosisId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        // Encounter -> Doctor (FIXED: DoctorId maps to DoctorId)
         modelBuilder.Entity<Encounter>()
             .HasOne(x => x.Doctor)
             .WithMany()
@@ -390,11 +518,6 @@ public interface IUnitOfWork
     }
     IDbContextTransaction? GetCurrentTransaction();
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
-}
-
-public interface IDbExceptionParserProvider
-{
-    void ParseAndRaise(DbUpdateException exception);
 }
 
 public interface IMappingConfiguration

@@ -4,9 +4,11 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Entities.Reports;
 using EHMR.Domain.Interfaces;
+using EHMR.Helpers;
 using EHMR.Resources.Controls;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace EHMR.ViewModels;
 
@@ -18,10 +20,11 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     private readonly IReportExportService _reportExportService;
     private IReportProvider? _activeProvider;
     private ReportDefinition? _activeReport;
-
+    private int _generationId;
+    private CancellationTokenSource? _generateCts;
     [ObservableProperty]
     private string activeReportTitle = string.Empty;
-
+    private readonly List<ReportDefinition> _allReports = new();
     [ObservableProperty]
     private string activeReportIcon = string.Empty;
     #endregion
@@ -244,11 +247,10 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     private void LoadReports()
     {
-        AvailableReports.Clear();
+        _allReports.Clear();
 
-        foreach(var provider in _registry.Providers)
-        {
-            AvailableReports.Add(new ReportDefinition
+        _allReports.AddRange(
+            _registry.Providers.Select(provider => new ReportDefinition
             {
                 Key=provider.Key,
                 Title=provider.Title,
@@ -257,8 +259,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                 Category=provider.Category,
                 Type=provider.Type,
                 ProviderType=provider.GetType()
-            });
-        }
+            }));
 
         BuildFilterOptions();
         RefreshAvailableReports();
@@ -269,7 +270,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         CategoryOptions.Clear();
         CategoryOptions.Add("Сите");
 
-        foreach(var category in _registry.Providers
+        foreach(var category in _allReports
             .Select(x => x.Category.ToString())
             .Distinct()
             .OrderBy(x => x))
@@ -280,7 +281,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         TypeOptions.Clear();
         TypeOptions.Add("Сите");
 
-        foreach(var type in _registry.Providers
+        foreach(var type in _allReports
             .Select(x => x.Type.ToString())
             .Distinct()
             .OrderBy(x => x))
@@ -291,63 +292,55 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     private void RefreshAvailableReports()
     {
-        var query = _registry.Providers.AsEnumerable();
+        var reports = _allReports.AsEnumerable();
 
         if(!string.IsNullOrWhiteSpace(HubSearchText))
         {
             var search = HubSearchText.Trim();
 
-            query=query.Where(x =>
+            reports=reports.Where(x =>
                 x.Title.Contains(search, StringComparison.OrdinalIgnoreCase)||
                 x.Description.Contains(search, StringComparison.OrdinalIgnoreCase));
         }
 
         if(SelectedCategory!="Сите")
-        {
-            query=query.Where(x =>
-                x.Category.ToString().Equals(SelectedCategory, StringComparison.OrdinalIgnoreCase));
-        }
+            reports=reports.Where(x => x.Category.ToString()==SelectedCategory);
 
         if(SelectedType!="Сите")
-        {
-            query=query.Where(x =>
-                x.Type.ToString().Equals(SelectedType, StringComparison.OrdinalIgnoreCase));
-        }
+            reports=reports.Where(x => x.Type.ToString()==SelectedType);
+
+        var filtered = reports.ToList();
 
         AvailableReports.Clear();
 
-        foreach(var provider in query)
-        {
-            AvailableReports.Add(new ReportDefinition
-            {
-                Key=provider.Key,
-                Title=provider.Title,
-                Description=provider.Description,
-                Icon=provider.Icon,
-                Category=provider.Category,
-                Type=provider.Type,
-                ProviderType=provider.GetType()
-            });
-        }
+        foreach(var report in filtered)
+            AvailableReports.Add(report);
 
-        _filteredTemplates=AvailableReports.ToList();
-
+        _filteredTemplates=filtered;
         TemplateCurrentPage=1;
-        TemplateTotalPages=Math.Max(1, (int)Math.Ceiling(_filteredTemplates.Count/(double)TemplatePageSize));
+        TemplateTotalPages=Math.Max(1,
+            (int)Math.Ceiling(filtered.Count/(double)TemplatePageSize));
 
         RefreshTemplateGridRows();
         CalculateHubMetrics();
     }
-
     // =====================================================
     // EVENTS
     // =====================================================
 
+    private static readonly HashSet<string> _hubFilterProperties =
+   [
+       nameof(HubSearchText),
+    nameof(SelectedCategory),
+    nameof(SelectedType)
+   ];
+
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if(e.PropertyName==nameof(HubSearchText)||
-            e.PropertyName==nameof(SelectedCategory)||
-            e.PropertyName==nameof(SelectedType))
+        if(e.PropertyName is null)
+            return;
+
+        if(_hubFilterProperties.Contains(e.PropertyName))
         {
             RefreshAvailableReports();
             return;
@@ -358,35 +351,55 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             ApplyPipeline();
         }
     }
-
     [RelayCommand]
-    private async Task SelectReport(ReportDefinition report)
+    private async Task SelectReport(ReportDefinition? report)
     {
-        if(report==null)
+        if(report is null)
             return;
+
+        ClearReportState();
 
         _activeReport=report;
         _activeProvider=_registry.Resolve(report.Key);
-        if(_activeProvider==null) return;
+
+        if(_activeProvider is null)
+            return;
 
         ActiveReportTitle=report.Title;
         ActiveReportIcon=report.Icon;
 
-        _activeProvider.FiltersChanged+=OnProviderFiltersChanged;
-
-        InitializeSparkControls();
+        SearchText=string.Empty;
 
         SelectedPeriodTypeLabel="Месечно";
         RecalculatePeriodRange();
+
+        InitializeSparkControls();
+
+        _activeProvider.FiltersChanged+=OnProviderFiltersChanged;
 
         IsShowingDetails=true;
 
         await GenerateReportAsync();
     }
 
+    private CancellationTokenSource? _filterDebounce;
+
     private async void OnProviderFiltersChanged()
     {
-        await GenerateReportAsync();
+        _filterDebounce?.Cancel();
+        _filterDebounce?.Dispose();
+
+        _filterDebounce=new CancellationTokenSource();
+
+        try
+        {
+            await Task.Delay(150, _filterDebounce.Token);
+
+            await GenerateReportAsync();
+        }
+        catch(OperationCanceledException)
+        {
+        }
     }
 
     [RelayCommand]
@@ -571,15 +584,16 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     // =====================================================
     // SPARK INITIALIZATION (Detail)
     // =====================================================
-
     private void InitializeSparkControls()
     {
+        if(_activeProvider==null)
+            return;
+
         BuildSparkTabs();
         BuildSparkPickers();
         BuildSparkButtons();
         BuildSparkGridColumns();
     }
-
     private void BuildSparkTabs()
     {
         Tabs.Clear();
@@ -631,7 +645,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         GridColumns.Add(new SparkGridColumn
         {
-            Header="Предупредување",
+            Header="Степен на Ризичност",
             Key="Alert",
             CellType=SparkGridCellType.Badge,
             Width=new GridLength(width)
@@ -641,13 +655,21 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     private void RefreshSparkGridRows()
     {
         var rows = new ObservableCollection<SparkGridRow>();
-
         foreach(var reportRow in ProcessedRows)
         {
             var row = new SparkGridRow { Tag=reportRow };
-
             for(int i = 0; i<reportRow.Cells.Count&&i<GridColumns.Count; i++)
-                row[GridColumns[i].Key]=reportRow.Cells[i];
+            {
+                var key = GridColumns[i].Key;
+                var value = reportRow.Cells[i];
+
+                row[key]=key switch
+                {
+                    "NationalId" => PrivacyMaskHelper.MaskNationalId(value?.ToString()),
+                   // "Phone" => PrivacyMaskHelper.MaskPhone(value?.ToString()),
+                    _ => value
+                };
+            }
 
             row["Alert"]=reportRow.IsAlertSeverity
                 ? new SparkBadgeValue("КРИТИЧНО", SparkBadgeTone.Danger)
@@ -655,7 +677,6 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
             rows.Add(row);
         }
-
         GridRows=rows;
     }
 
@@ -715,62 +736,169 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     [RelayCommand]
     public async Task ExecuteReportGenerationAsync()
     {
+        Debug.WriteLine("ExecuteReportGenerationAsync");
         await GenerateReportAsync();
     }
+
+
 
     private async Task GenerateReportAsync()
     {
         if(_activeProvider==null)
             return;
 
-        await ExecuteSafeAsync(async () =>
+        _generateCts?.Cancel();
+        _generateCts?.Dispose();
+
+        _generateCts=new CancellationTokenSource();
+
+        var token = _generateCts.Token;
+        var generation = ++_generationId;
+
+        try
         {
-            AllItems=await _activeProvider.GenerateAsync(StartDate.Date, EndDate.Date.AddDays(1));
+            await ExecuteSafeAsync(async () =>
+            {
+                var rows = await _activeProvider.GenerateAsync(
+                    StartDate.Date,
+                    EndDate.Date.AddDays(1));
 
-            ApplyPipeline();
+                if(token.IsCancellationRequested)
+                    return;
 
-            CalculateMetrics();
-        }, "Грешка при генерирање извештај");
+                if(generation!=_generationId)
+                    return;
+
+                AllItems=rows;
+
+                ApplyPipeline();
+
+                CalculateMetrics();
+
+            }, "Грешка при генерирање извештај");
+        }
+        catch(OperationCanceledException)
+        {
+        }
     }
+
+
 
     // =====================================================
     // EXPORT
     // =====================================================
+    // Во ViewModel-от додај динамичко генерирање на наслов:
 
+    public string GetDynamicReportTitle()
+    {
+        var titleBuilder = new List<string>();
+
+        // 1. Период префикс
+        string periodPrefix = SelectedPeriodTypeLabel switch
+        {
+            "Месечно" => "Месечен извештај",
+            "Квартално" => "Квартален извештај",
+            "Полугодишно" => "Полугодишен извештај",
+            "Годишно" => "Годишен извештај",
+            _ => "Периодичен извештај"
+        };
+
+        titleBuilder.Add(periodPrefix);
+
+        // 2. Основен наслов за категоријата
+        string baseEntity = _activeReport?.Type==ReportType.Patients ? "за Пациенти" : ActiveReportTitle;
+        titleBuilder.Add(baseEntity);
+
+        // 3. Активни филтри според Placeholder
+        var activeFilters = new List<string>();
+
+        foreach(var picker in Pickers)
+        {
+            if(picker.SelectedItem!=null&&
+                !string.IsNullOrWhiteSpace(picker.SelectedItem.ToString())&&
+                !picker.SelectedItem.ToString()!.Equals("Сите", StringComparison.OrdinalIgnoreCase))
+            {
+                var selectedVal = picker.SelectedItem.ToString();
+
+                // Наместо picker.Label, директно го земаме picker.Placeholder
+                string filterType = picker.Placeholder??string.Empty;
+
+                if(filterType.Contains("Пол", StringComparison.OrdinalIgnoreCase))
+                {
+                    activeFilters.Add($"по пол ({selectedVal})");
+                }
+                else if(filterType.Contains("Доктор", StringComparison.OrdinalIgnoreCase)||
+                         filterType.Contains("Лекар", StringComparison.OrdinalIgnoreCase))
+                {
+                    activeFilters.Add($"за доктор {selectedVal}");
+                }
+                else if(filterType.Contains("Дијагноза", StringComparison.OrdinalIgnoreCase))
+                {
+                    activeFilters.Add($"по дијагноза ({selectedVal})");
+                }
+                else if(filterType.Contains("Град", StringComparison.OrdinalIgnoreCase))
+                {
+                    activeFilters.Add($"од град {selectedVal}");
+                }
+                else if(filterType.Contains("Лек", StringComparison.OrdinalIgnoreCase))
+                {
+                    activeFilters.Add($"со лек {selectedVal}");
+                }
+                else if(!string.IsNullOrWhiteSpace(filterType))
+                {
+                    activeFilters.Add($"по {filterType.ToLower()}: {selectedVal}");
+                }
+            }
+        }
+
+        if(activeFilters.Count>0)
+        {
+            titleBuilder.Add(string.Join(" ", activeFilters));
+        }
+
+        return string.Join(" ", titleBuilder);
+    }
     [RelayCommand]
     private async Task ExportToPdfAsync()
     {
         if(_activeProvider==null)
             return;
 
+        var dynamicTitle = GetDynamicReportTitle();
+        var currentUser = !string.IsNullOrWhiteSpace(UserName) ? UserName : "Марко Марковски";
+
         await ExecuteSafeAsync(async () =>
         {
             try
             {
                 var path = await _reportExportService.ExportToPdfAsync(
-                    ActiveReportTitle,
-                    GridColumns.ToList(),
-                    BuildExportRows());
+                    reportTitle: dynamicTitle,
+                    insitutionName: "КЛИНИКА ЗА РЕУМАТОЛОГИЈА - СКОПЈЕ",
+                    generatedBy: currentUser,
+                    startDate: StartDate,
+                    endDate: EndDate,
+                    columns: GridColumns.ToList(),
+                    rows: GridRows.ToList()
+                );
 
-                await UserDialogService.ShowAlertAsync(
-                    "PDF Export",
-                    $"Извештајот е зачуван: {path}",
-                    "OK");
+                await UserDialogService.ShowAlertAsync("Успешно", $"Извештајот е зачуван на: {path}", "ОК");
 
                 await _reportHistoryService.AddAsync(new ReportHistory
                 {
                     ReportKey=_activeProvider.Key,
-                    ReportTitle=ActiveReportTitle,
+                    ReportTitle=dynamicTitle,
                     Format="PDF",
                     FileName=Path.GetFileName(path),
                     FilePath=path,
                     FileSize=new FileInfo(path).Length,
-                    GeneratedBy=UserName,
+                    GeneratedBy=currentUser,
                     Success=true,
                     MachineName=Environment.MachineName,
                     StartDate=StartDate,
                     EndDate=EndDate
                 });
+
+                AddHistoryEntry("PDF", succeeded: true);
             }
             catch
             {
@@ -852,33 +980,45 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     {
         IsShowingDetails=false;
 
-        if(_activeProvider!=null)
+        if(_activeProvider is not null)
+        {
             _activeProvider.FiltersChanged-=OnProviderFiltersChanged;
+        }
 
         _activeProvider=null;
         _activeReport=null;
 
-        SearchText=string.Empty;
-
-        ProcessedRows.Clear();
-
-        GridColumns.Clear();
-        GridRows.Clear();
+        ActiveReportTitle=string.Empty;
+        ActiveReportIcon=string.Empty;
 
         Tabs.Clear();
         Pickers.Clear();
         Buttons.Clear();
 
-        AllItems.Clear();
-    }
+        GridColumns.Clear();
+        GridRows.Clear();
 
+        ProcessedRows.Clear();
+
+        ResetPipeline();
+    }
     // Базата има non-virtual Dispose(), па ова не е вистински override.
     // 'new' е тука само за да не крие тивко (CS0108); disposal преку
+
     // BaseViewModel<T> или IDisposable референца НЕМА да го повика ова.
     // Препорака: смени во базата 'public void Dispose()' -> 'public virtual void Dispose()'.
-    public new void Dispose()
+    public override void Dispose()
     {
         PropertyChanged-=OnViewModelPropertyChanged;
+
+        if(_activeProvider!=null)
+            _activeProvider.FiltersChanged-=OnProviderFiltersChanged;
+
+        _generateCts?.Cancel();
+        _generateCts?.Dispose();
+
+        _filterDebounce?.Cancel();
+        _filterDebounce?.Dispose();
 
         base.Dispose();
     }

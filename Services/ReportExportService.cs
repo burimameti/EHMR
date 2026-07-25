@@ -54,69 +54,137 @@ namespace EHMR.Services;
             return await Task.FromResult(path);
         }
 
-        public Task<string> ExportToPdfAsync(string reportTitle, IReadOnlyList<SparkGridColumn> columns, IReadOnlyList<SparkGridRow> rows)
+    public Task<string> ExportToPdfAsync(
+    string reportTitle,
+    string institutionName,
+    string generatedBy,
+    DateTime startDate,
+    DateTime endDate,
+    IReadOnlyList<SparkGridColumn> columns,
+    IReadOnlyList<SparkGridRow> rows)
+    {
+        var exportColumns = columns.Where(c => c.CellType!=SparkGridCellType.Actions).ToList();
+        var path = BuildOutputPath(reportTitle, "pdf");
+
+        QuestPDF.Settings.License=LicenseType.Community;
+
+        Document.Create(container =>
         {
-            var exportColumns = columns.Where(c => c.CellType!=SparkGridCellType.Actions).ToList();
-            var path = BuildOutputPath(reportTitle, "pdf");
-
-            QuestPDF.Settings.License=LicenseType.Community;
-
-            Document.Create(container =>
+            container.Page(page =>
             {
-                container.Page(page =>
+                page.Margin(20);
+                page.Size(PageSizes.A4.Landscape());
+                page.DefaultTextStyle(x => x.FontSize(8).FontFamily("Arial"));
+
+                // ==========================================
+                // HEADER - Медицински образец со Назив на установа
+                // ==========================================
+                page.Header().Column(col =>
                 {
-                    page.Margin(24);
-                    page.Size(PageSizes.A4.Landscape());
-                    page.DefaultTextStyle(x => x.FontSize(9));
-
-                    page.Header().Text(reportTitle).SemiBold().FontSize(16);
-
-                    page.Content().Table(table =>
+                    col.Item().Border(1).BorderColor("#000000").Table(table =>
                     {
-                        // Ширините на колоните од гридот (пр. GridLength(180)) се
-                        // конвертираат во релативни пропорции за PDF табелата.
-                        table.ColumnsDefinition(cols =>
+                        table.ColumnsDefinition(cd =>
                         {
-                            foreach(var col in exportColumns)
-                                cols.RelativeColumn((float)GetColumnWidth(col));
+                            cd.RelativeColumn(4); // Институција и Динамички Наслов
+                            cd.RelativeColumn(2); // Логиран Корисник и Време
+                            cd.RelativeColumn(2); // Период
                         });
 
-                        table.Header(header =>
+                        // Клетка 1: УСТАНОВА + ДИНАМИЧКИ НАСЛОВ (Месечен/Периодичен...)
+                        table.Cell().BorderRight(1).Padding(5).Column(c =>
                         {
-                            foreach(var col in exportColumns)
-                            {
-                                header.Cell().Background("#5B6B79").Padding(4)
-                                    .Text(col.Header).FontColor("#FFFFFF").SemiBold();
-                            }
+                            c.Item().Text(institutionName.ToUpper())
+                                   .Bold()
+                                   .FontSize(10)
+                                   .FontColor("#000000");
+
+                            c.Item().PaddingTop(2).Text(reportTitle)
+                                   .Bold()
+                                   .FontSize(11)
+                                   .FontColor("#1F2937");
                         });
 
-                        foreach(var row in rows)
+                        // Клетка 2: ВИСТИНСКИ ЛОГИРАН КОРИСНИК
+                        table.Cell().BorderRight(1).Padding(5).Column(c =>
                         {
-                            foreach(var col in exportColumns)
-                            {
-                                row.TryGetValue(col.Key, out var value);
-                                table.Cell().BorderBottom(1).BorderColor("#F0F2F5").Padding(4)
-                                    .Text(CellToText(value));
-                            }
+                            c.Item().Text($"ИЗРАБОТИЛ: {generatedBy}").Bold().FontSize(8);
+                            c.Item().Text($"ДАТУМ НА ИЗДАВАЊЕ: {DateTime.Now:dd.MM.yyyy HH:mm}").FontSize(7);
+                        });
+
+                        // Клетка 3: ПЕРИОД
+                        table.Cell().Padding(5).Column(c =>
+                        {
+                            c.Item().Text("ОПСЕГ НА ПЕРИОД:").Bold().FontSize(8);
+                            c.Item().Text($"{startDate:dd.MM.yyyy} - {endDate:dd.MM.yyyy}").FontSize(8);
+                        });
+                    });
+
+                    // Забелешка за заштита на лични/медицински податоци
+                    col.Item().BorderLeft(1).BorderRight(1).BorderBottom(1).Padding(3)
+                       .Background("#F3F4F6")
+                       .Text("НАПОМЕНА: Документот содржи заштитени здравствени податоци од Клиника за Реумаaтологија.")
+                       .Italic().FontSize(7);
+
+                    col.Item().Height(8);
+                });
+
+                // ==========================================
+                // CONTENT - Содржина на Табелата
+                // ==========================================
+                page.Content().Table(table =>
+                {
+                    table.ColumnsDefinition(cols =>
+                    {
+                        foreach(var col in exportColumns)
+                            cols.RelativeColumn((float)GetColumnWidth(col));
+                    });
+
+                    table.Header(header =>
+                    {
+                        foreach(var col in exportColumns)
+                        {
+                            header.Cell().Border(1).BorderColor("#000000").Background("#E5E7EB").Padding(4)
+                                .Text(col.Header).Bold();
                         }
                     });
 
-                    page.Footer().AlignCenter().Text(x =>
+                    foreach(var row in rows)
                     {
-                        x.Span("Страна ");
-                        x.CurrentPageNumber();
-                        x.Span(" од ");
-                        x.TotalPages();
+                        foreach(var col in exportColumns)
+                        {
+                            row.TryGetValue(col.Key, out var value);
+                            table.Cell().Border(1).BorderColor("#D1D5DB").Padding(3)
+                                .Text(CellToText(value));
+                        }
+                    }
+                });
+
+                // ==========================================
+                // FOOTER - Потпис и Страница
+                // ==========================================
+                page.Footer().Column(col =>
+                {
+                    col.Item().PaddingTop(6).Row(row =>
+                    {
+                        row.RelativeItem().Text(x =>
+                        {
+                            x.Span("Страница ");
+                            x.CurrentPageNumber();
+                            x.Span(" од ");
+                            x.TotalPages();
+                        });
+
+                        row.RelativeItem().AlignRight().Text($"Потпис на одговорно лице ({generatedBy}): _____________________");
                     });
                 });
-            }).GeneratePdf(path);
+            });
+        }).GeneratePdf(path);
 
-            return Task.FromResult(path);
-        }
+        return Task.FromResult(path);
+    }
+    // ================= HELPERS =================
 
-        // ================= HELPERS =================
-
-        private static double GetColumnWidth(SparkGridColumn column)
+    private static double GetColumnWidth(SparkGridColumn column)
         {
             // Fixed/Absolute ширина (пр. new GridLength(180)) се користи директно.
             // Auto/Star колони немаат конкретна вредност па добиваат разумен default.

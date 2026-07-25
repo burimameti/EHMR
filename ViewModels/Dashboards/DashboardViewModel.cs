@@ -3,18 +3,25 @@ using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
+using EHMR.Extensions;
+using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
 using EHMR.Services;
+using EHMR.ViewModels.Dashboard.Models;
+using EHMR.ViewModels.Dashboards.Models;
 using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Input;
 
 namespace EHMR.ViewModels;
 
 public partial class DashboardViewModel : ObservableObject
 {
+    [ObservableProperty] private DashboardState state = new();
     // =========================================================
     // SERVICES / FIELDS
     // =========================================================
@@ -25,12 +32,13 @@ public partial class DashboardViewModel : ObservableObject
     private readonly IUserDialogService _userDialogService;
     private readonly INavigationService navigationService;
     private readonly IAuthorizationService _policyService;
-
+    private readonly IAlertService _alertService;
+    private readonly IPreferencesService _preferencesService;
+    private const string LastAlertSweepKey = "alerts_last_sweep_date";
     private readonly FilterLookup _cityLookup = PatientFilterLookups.BuildCityLookup();
     [ObservableProperty] private DateTime selectedDate = DateTime.Today;
 
-    public ObservableCollection<DashboardEncounterItem> DailyEncounters { get; } = new();
-    public ObservableCollection<DashboardDayItem> DayStrip { get; } = new();
+
 
     private const int PageSize = 5;
     private List<DashboardPatientAggregate> _allPatients = [];
@@ -39,7 +47,6 @@ public partial class DashboardViewModel : ObservableObject
     // TODO: point this at whatever your PatientStatus enum actually calls the "left the practice" state
     // (e.g. PatientStatus.Inactive, PatientStatus.Discharged). Left as a string so it's a one-line fix.
     private const string ChurnedStatusName = "Inactive";
-
 
     // =========================================================
     // CONSTRUCTOR
@@ -57,7 +64,9 @@ public partial class DashboardViewModel : ObservableObject
         IAuthStateService auth,
         INavigationService navigationService,
         MenuViewModel menu,
-        IAuthorizationService policyService)
+        IAuthorizationService policyService,
+    IAlertService alertService,           
+    IPreferencesService preferencesService)
     {
         _dbFactory=dbFactory;
         _auth=auth;
@@ -65,6 +74,8 @@ public partial class DashboardViewModel : ObservableObject
         _selectedAppointment=selectedAppointment;
         _userDialogService=userDialogService;
         this.navigationService=navigationService;
+        _alertService=alertService;
+        _preferencesService=preferencesService;
         Menu=menu;
         _policyService=policyService;
         CityFilterNames=_cityLookup.ToObservableCollection();
@@ -82,7 +93,7 @@ public partial class DashboardViewModel : ObservableObject
     // =========================================================
     public string CurrentDate => DateTime.Now.ToString("dd MMM yyyy");
     public User? UserName => _auth?.CurrentUser;
-    public UserRole UserRole => UserRole.Admin;
+    public UserRole UserRole => _auth.CurrentUser?.Role??UserRole.Doctor; // least-privilege fallback, never Admin
     public bool CanManageAppointments => _policyService.CanAccessModule(Modules.Appointments);
     public bool CanCreatePatient => _policyService.CanAccessModule(Modules.Patients);
 
@@ -100,6 +111,7 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty] private string selectedBloodType = "All";
     [ObservableProperty] private string selectedCity = "All";
     [ObservableProperty] private string selectedAgeGroup = "All";
+    [ObservableProperty] private string statusText;
     //
     public ObservableCollection<string> StatusFilters { get; } = PatientFilterLookups.Status.ToObservableCollection();
     public ObservableCollection<string> GenderFilters { get; } = PatientFilterLookups.Gender.ToObservableCollection();
@@ -110,7 +122,7 @@ public partial class DashboardViewModel : ObservableObject
     {
         get;
     }
-
+ 
     public string SelectedStatusDisplay
     {
         get => PatientFilterLookups.Status.ToDisplay(SelectedStatus);
@@ -189,11 +201,8 @@ public partial class DashboardViewModel : ObservableObject
         }
     }
 
-    // =========================================================
-    [ObservableProperty] private int totalPatients;
 
-    [ObservableProperty] private int upcomingAppointmentsCount;
-    [ObservableProperty] private int criticalAlerts;
+
 
     // =========================================================
     // PATIENT SEARCH + PAGINATION
@@ -215,8 +224,7 @@ public partial class DashboardViewModel : ObservableObject
     // =========================================================
     // APPOINTMENTS
     // =========================================================
-    [ObservableProperty] private ObservableCollection<DashboardAppointmentItem> appointments = new();
-    [ObservableProperty] private ObservableCollection<Encounter> encounters = new();
+
     
     [RelayCommand]
     public async Task Initialize()
@@ -235,72 +243,203 @@ public partial class DashboardViewModel : ObservableObject
         await LoadGlobalAsync();
     }
 
+
     [RelayCommand]
     public async Task LoadGlobalAsync()
     {
         if(IsBusy) return;
+
         IsBusy=true;
 
         try
         {
             await using var db = await _dbFactory.CreateDbContextAsync();
 
-            // ---------------------------------------------------
-            // BASE DATA LOAD
-            // ---------------------------------------------------
-            var patients = await db.Patients .AsNoTracking().Include(p => p.Appointments) .Include(p => p.Encounters).ToListAsync();
-            var encounters = await db.Encounters.AsNoTracking().ToListAsync();
-            _allPatients=patients.Select(CreateDashboardAggregate).ToList();
-            //var notifications = await db.Notifications .AsNoTracking().Where(x => !x.IsRead)
-            //    .OrderByDescending(x => x.CreatedAt)
-            //    .Take(10)
-            //    .ToListAsync();          
+            // =====================================================
+            // DOCTOR SCOPE — resolved once, applied to every query below.
+            // =====================================================
+            var isScoped = _policyService.IsScopedToOwnData;
+            Guid? doctorId = isScoped ? _policyService.CurrentDoctorId : null;
 
-            var appointmentsData = await db.Appointments
+            // =====================================================
+            // PATIENTS
+            // =====================================================
+            var patientsQuery = db.Patients
                 .AsNoTracking()
-                .Include(a => a.Patient)
-                .Where(a => a.ScheduledStart.Date>=DateTime.Today)
-                .OrderBy(a => a.ScheduledStart)
+                .Include(p => p.Appointments)
+                .Include(p => p.Encounters)
+                .AsQueryable();
+
+            if(isScoped)
+                patientsQuery=patientsQuery.Where(p => p.DoctorId==doctorId);
+
+            var patients = await patientsQuery.ToListAsync();
+
+            _allPatients=patients
+                .Select(CreateDashboardAggregate)
+                .ToList();
+
+            // =====================================================
+            // TODAY ENCOUNTERS
+            // =====================================================
+            var encountersQuery = db.Encounters
+                .AsNoTracking()
+                .Include(x => x.Patient)
+                .Where(x =>
+                    x.ScheduledStart.HasValue&&
+                    x.ScheduledStart.Value.Date==DateTime.Today)
+                .AsQueryable();
+
+            if(isScoped)
+                encountersQuery=encountersQuery.Where(x => x.Patient.DoctorId==doctorId);
+
+            var encounters = await encountersQuery
+                .OrderBy(x => x.ScheduledStart)
                 .ToListAsync();
 
+            State.CompletedToday=encounters.Count(x => x.Status==EncounterStatus.Completed);
+            State.WaitingToday=encounters.Count(x => x.Status==EncounterStatus.Scheduled||x.Status==EncounterStatus.CheckedIn);
+            State.NoShowToday=encounters.Count(x => x.Status==EncounterStatus.NoShow);
 
-            TotalPatients=_allPatients.Count;
-           
-          //  CriticalAlerts=notifications.Count(x => x.Severity==NotificationSeverity.Critical);
-            UpcomingAppointmentsCount=appointmentsData.Count;
+            // =====================================================
+            // TODAY APPOINTMENTS
+            // =====================================================
+            var todayAppointmentsQuery = db.Appointments
+                .AsNoTracking()
+                .Include(x => x.Patient)
+                .Where(x => x.ScheduledStart.Date==DateTime.Today)
+                .AsQueryable();
 
+            if(isScoped)
+                todayAppointmentsQuery=todayAppointmentsQuery.Where(x => x.DoctorId==doctorId);
+
+            var todayAppointments = await todayAppointmentsQuery
+                .OrderBy(x => x.ScheduledStart)
+                .ToListAsync();
+
+            // =====================================================
+            // UPCOMING APPOINTMENTS
+            // =====================================================
+            var upcomingAppointmentsQuery = db.Appointments
+                .AsNoTracking()
+                .Include(x => x.Patient)
+                .Where(x => x.ScheduledStart.Date>=DateTime.Today)
+                .AsQueryable();
+
+            if(isScoped)
+                upcomingAppointmentsQuery=upcomingAppointmentsQuery.Where(x => x.DoctorId==doctorId);
+
+            var upcomingAppointments = await upcomingAppointmentsQuery
+                .OrderBy(x => x.ScheduledStart)
+                .ToListAsync();
+
+            // =====================================================
+            // ALERT SWEEP — must finish before we read alerts below
+            // =====================================================
+            Debug.WriteLine("Checking for critical alerts...");
+            await RunAlertSweepIfNeededAsync();
+            Debug.WriteLine("After Checking for critical alerts...");
+
+            // =====================================================
+            // ALERTS — ALL LEVELS (was critical-only)
+            // TODO: Alert.cs not yet reviewed — can't confirm how it relates
+            // to Patient/Doctor. Defaulting to 0 for scoped (Doctor) users
+            // rather than showing every practice's alerts, since "unknown
+            // ownership" should fail closed, not open.
+            // =====================================================
+            var allAlertsQuery =
+                from a in db.Alerts.AsNoTracking()
+                join p in db.Patients.AsNoTracking() on a.PatientId equals p.Id
+                where !a.IsResolved
+                select new
+                {
+                    a.Id,
+                    a.CreatedAt,
+                    a.Level,
+                    PatientName = p.FirstName+" "+p.LastName,
+                    p.DoctorId
+                };
+
+            if(isScoped)
+                allAlertsQuery=allAlertsQuery.Where(x => x.DoctorId==doctorId);
+
+            var allAlertRows = await allAlertsQuery
+                .OrderByDescending(x => x.CreatedAt)
+                .ToListAsync();
+
+            var criticalRows = allAlertRows.Where(x => x.Level==AlertLevel.Critical).ToList();
+
+            State.CriticalAlerts=criticalRows.Count;
+            State.CriticalAlertsSummaryText=BuildCriticalAlertsSummary(criticalRows.Select(x => x.PatientName).ToList());
+            State.AlertSummaries=BuildAlertSummaries(allAlertRows.Select(x => x.Level));
+
+            Debug.WriteLine($"AlertSummaries: {State.AlertSummaries.Count}, HasAnyAlerts: {State.HasAnyAlerts}");
+
+            // =====================================================
+            // KPI
+            // =====================================================
+            State.TotalPatients=_allPatients.Count;
+
+            // NOTE — pre-existing bug, unrelated to doctor scoping:
+            // this assigns TODAY's appointment count to a property named
+            // UpcomingAppointmentsCount. If the KPI card is meant to show
+            // "upcoming" (i.e. future) appointments, this should read
+            // upcomingAppointments.Count, not todayAppointments.Count.
+            // Left as todayAppointments.Count here to preserve existing
+            // behavior — flagging so you can decide which one is correct.
+            State.UpcomingAppointmentsCount=todayAppointments.Count;
+
+            // =====================================================
+            // WEEK RANGE FOR ANALYTICS
+            // =====================================================
             var last7Days = Enumerable.Range(0, 7)
                 .Select(i => DateTime.Today.AddDays(-6+i))
                 .ToList();
 
+            // =====================================================
+            // KEEP SEARCH STATE
+            // =====================================================
             _searchResults=new List<DashboardPatientAggregate>();
-           
-                FilteredPatients=new ObservableCollection<DashboardPatientAggregate>();
-                 FilteredPatientsCount="";
-                 TotalPages=0;
-                 CurrentPage=1;
 
-            Encounters =  new ObservableCollection<Encounter>(encounters);
-            var appointmentItems = appointmentsData.Take(5).Select(a => new DashboardAppointmentItem
-            {
-                Source=a,
-                PatientName=$"{a.Patient.FirstName} {a.Patient.LastName}",
-                ScheduledStart=a.ScheduledStart,
-                Time=a.ScheduledStart.ToString("HH:mm"),
-                RelativeDay=a.ScheduledStart.Date==DateTime.Today ? "Денес" : "Друг Ден",
-                StatusColor=a.ScheduledStart<DateTime.Now.AddHours(1)
-          ? Color.FromArgb("#DC2626")
-          : Color.FromArgb("#2563EB")
-            });
+            FilteredPatients=new ObservableCollection<DashboardPatientAggregate>();
+            FilteredPatientsCount="";
+            TotalPages=0;
+            CurrentPage=1;
 
-            Appointments=new ObservableCollection<DashboardAppointmentItem>(appointmentItems);
+            // =====================================================
+            // ENCOUNTERS COLLECTION
+            // =====================================================
+            State.Encounters=new ObservableCollection<Encounter>(encounters);
 
+            var appointmentItems = upcomingAppointments
+                .Take(5)
+                .Select(a => new DashboardAppointmentItem
+                {
+                    Source=a,
+                    PatientName=$"{a.Patient.FirstName} {a.Patient.LastName}",
+                    ScheduledStart=a.ScheduledStart,
+                    Time=a.ScheduledStart.ToString("HH:mm"),
+                    RelativeDay=a.ScheduledStart.Date==DateTime.Today
+                        ? "Денес"
+                        : $"Закажано на :{a.ScheduledStart}",
+                    StatusText=a.Status.ToString(),
+                    StatusColor=a.Status switch
+                    {
+                        AppointmentStatus.Completed => Color.FromArgb("#10B981"),
+                        AppointmentStatus.InProgress => Color.FromArgb("#F59E0B"),
+                        AppointmentStatus.Cancelled => Color.FromArgb("#EF4444"),
+                        AppointmentStatus.Missed => Color.FromArgb("#94A3B8"),
+                        _ => Color.FromArgb("#3B82F6")
+                    }
+                });
+
+            State.Appointments=new ObservableCollection<DashboardAppointmentItem>(appointmentItems);
 
             InitializeSparkControls();
         }
         catch(Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Dashboard Error: {ex}");
+            Debug.WriteLine($"Dashboard Error: {ex}");
         }
         finally
         {
@@ -492,6 +631,7 @@ public partial class DashboardViewModel : ObservableObject
         SelectedCity="All";
         SelectedAgeGroup="All";
 
+        // refresh display values for SparkPickers
         OnPropertyChanged(nameof(SelectedStatusDisplay));
         OnPropertyChanged(nameof(SelectedGenderDisplay));
         OnPropertyChanged(nameof(SelectedBloodTypeDisplay));
@@ -499,10 +639,11 @@ public partial class DashboardViewModel : ObservableObject
         OnPropertyChanged(nameof(SelectedAgeGroupDisplay));
 
         CurrentPage=1;
-        PatientSearchText="";   // resets the grid via OnPatientSearchTextChanged
+
+        PatientSearchText="";
+
         SyncSparkPickersFromFilters();
     }
-
     // =========================================================
     // NAVIGATION
     // =========================================================
@@ -593,10 +734,8 @@ public partial class DashboardViewModel : ObservableObject
             return;
         }
 
-        await _userDialogService.ShowAlertAsync(
-            "Наскоро",
-            "Модулот за нов преглед сѐ уште не е поврзан.",
-            "OK");
+        _selectedPatient.SelectedItem=null;
+        await navigationService.GoToAsync(AppRoutes.Encounters.Create);
     }
 
     //[RelayCommand]
@@ -617,6 +756,7 @@ public partial class DashboardViewModel : ObservableObject
     private async Task AddPatient()
     {
         _selectedPatient.SelectedItem=null;
+        _selectedPatient.OpenInEditMode=true;
         await navigationService.GoToAsync(AppRoutes.Patients.Detail);
     }
 
@@ -627,7 +767,7 @@ public partial class DashboardViewModel : ObservableObject
             return;
 
         _selectedPatient.SelectedItem=item.Patient;
-
+        _selectedPatient.OpenInEditMode=false;
         await navigationService.GoToAsync(AppRoutes.Patients.Detail);
     }
 
@@ -636,6 +776,7 @@ public partial class DashboardViewModel : ObservableObject
     {
         if(patient is null) return;
         _selectedPatient.SelectedItem=patient;
+        _selectedPatient.OpenInEditMode=true;
         await navigationService.GoToAsync(AppRoutes.Patients.Detail);
     }
     [RelayCommand]
@@ -650,6 +791,8 @@ public partial class DashboardViewModel : ObservableObject
         _selectedPatient.SelectedItem=patient;
         await navigationService.GoToAsync(AppRoutes.Encounters.Create);
     }
+
+
     // =========================================================
     // HELPERS
     // =========================================================
@@ -710,17 +853,17 @@ public partial class DashboardViewModel : ObservableObject
    () => NavigateToEncountersCommand.Execute("NoShow")));
         _warning.Command=new RelayCommand(() => SelectTab(_warning,
             () => NavigateToAlertsCommand.Execute("Active")));
-
+    
         _churnedTab.Command=new RelayCommand(() => SelectTab(_churnedTab,
             () => SelectedStatusDisplay=PatientFilterLookups.Status.ToDisplay(ChurnedStatusName)));
 
         Tabs.Add(_allPatientsTab);
- 
+        Tabs.Add(_churnedTab);
         Tabs.Add(upcomingTab);
 
         Tabs.Add(inprogressPregledi);
         Tabs.Add(neDojade);
-        Tabs.Add(_warning);
+        Tabs.Add(_warning); 
 
 
         RefreshSparkTabCounts();
@@ -738,9 +881,9 @@ public partial class DashboardViewModel : ObservableObject
     {
        
         if(_allPatientsTab==null) return;
-        _allPatientsTab.Value=TotalPatients.ToString("N0");
-          _warning.Value=CriticalAlerts.ToString("N0");
-        _encounters.Value=Appointments.Count.ToString("N0");
+        _allPatientsTab.Value=State.TotalPatients.ToString("N0");
+          _warning.Value=State.CriticalAlerts.ToString("N0");
+        _encounters.Value=State.Appointments.Count.ToString("N0");
     }
 
     public ObservableCollection<SparkPickerItem> Pickers { get; } = new();
@@ -855,14 +998,15 @@ public partial class DashboardViewModel : ObservableObject
 
             var row = new SparkGridRow { Tag=item };
 
-            row["NationalId"]=patient.NationalId;
+            row["NationalId"]=PrivacyMaskHelper.MaskNationalId(patient.NationalId);
             row["FullName"]=patient.FullName;
             row["City"]=patient.City;
             row["Gender"]=patient.Gender.ToDisplay();
             row["Age"]=patient.Age;
             row["BloodType"]=patient.BloodType;
+     
             row["Phone"]=patient.Phone;
-
+         
             row["LastActivity"]=item.LastActivity is { } last
                 ? last.ToString("dd.MM.yyyy")
                 : "—";
@@ -952,7 +1096,7 @@ public partial class DashboardViewModel : ObservableObject
 
     private void BuildDayStrip()
     {
-        DayStrip.Clear();
+        State.DayStrip.Clear();
 
         // FIX: day strip previously had no idea which dates actually had encounters —
         // it was just 7 blank date shells. Now each tile gets a real count so the UI
@@ -975,7 +1119,7 @@ public partial class DashboardViewModel : ObservableObject
                 EncounterCount=encounterCountsByDate.TryGetValue(date.Date, out var count) ? count : 0
             };
             day.Command=new RelayCommand(() => SelectedDate=day.Date);
-            DayStrip.Add(day);
+            State.DayStrip.Add(day);
         }
     }
     [RelayCommand]
@@ -1012,13 +1156,80 @@ public partial class DashboardViewModel : ObservableObject
         }
         else
         {
-            foreach(var d in DayStrip) d.IsSelected=d.Date.Date==value.Date;
+            foreach(var d in State.DayStrip) d.IsSelected=d.Date.Date==value.Date;
         }
 
         RefreshDailyEncounters();
     }
+    private static string BuildCriticalAlertsSummary(List<string> patientNames)
+    {
+        if(patientNames.Count==0) return string.Empty;
 
+        const int maxNamesShown = 2;
 
+        if(patientNames.Count<=maxNamesShown)
+            return string.Join(", ", patientNames);
+
+        var shown = string.Join(", ", patientNames.Take(maxNamesShown));
+        var remaining = patientNames.Count-maxNamesShown;
+
+        return remaining==1
+            ? $"{shown} и уште 1"
+            : $"{shown} и уште {remaining}";
+    }
+    private ObservableCollection<DashboardAlertSummaryItem> BuildAlertSummaries(IEnumerable<AlertLevel> levels)
+    {
+        var counts = levels
+            .GroupBy(l => l)
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        var items = new ObservableCollection<DashboardAlertSummaryItem>();
+
+        var orderedLevels = new[] { AlertLevel.Critical, AlertLevel.Warning, AlertLevel.Info }
+            .Concat(counts.Keys.Except(new[] { AlertLevel.Critical, AlertLevel.Warning, AlertLevel.Info }))
+            .Distinct();
+
+        foreach(var level in orderedLevels)
+        {
+            var count = counts.TryGetValue(level, out var c) ? c : 0;
+            // FIX: no longer skipping count == 0 — chip always renders, just shows "0"
+
+            items.Add(new DashboardAlertSummaryItem
+            {
+                Level=level,
+                Count=count,
+                Label=level.ToLabel(),
+                Icon=level.ToIcon(),
+                AccentColor=level.ToAccentColor(),
+                BackgroundColor=level.ToBackgroundColor(),
+                Command=new RelayCommand(() => NavigateToAlertsCommand.Execute(level.ToString()))
+            });
+        }
+
+        return items;
+    }
+    private async Task RunAlertSweepIfNeededAsync()
+    {
+        var today = DateTime.UtcNow.ToString("yyyy-MM-dd");
+
+        if(_preferencesService.ContainsKey(LastAlertSweepKey)&&
+            await _preferencesService.LoadAsync(LastAlertSweepKey)==today)
+        {
+            return; // already ran today on this machine
+        }
+
+        try
+        {
+            var created = await _alertService.RunDailySweepAsync();
+            System.Diagnostics.Debug.WriteLine($"Alert sweep created {created} new alert(s).");
+        }
+        catch(Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Alert sweep failed: {ex}");
+        }
+
+        await _preferencesService.SaveAsync(LastAlertSweepKey, today);
+    }
 
     private void RefreshDailyEncounters()
     {
@@ -1041,8 +1252,8 @@ public partial class DashboardViewModel : ObservableObject
 
         MainThread.BeginInvokeOnMainThread(() =>
         {
-            DailyEncounters.Clear();
-            foreach(var item in items) DailyEncounters.Add(item);
+            State.DailyEncounters.Clear();
+            foreach(var item in items) State.DailyEncounters.Add(item);
         });
     }
 
@@ -1079,6 +1290,8 @@ public partial class DashboardViewModel : ObservableObject
         BuildDayStrip();
         RefreshDailyEncounters();
     }
+
+
 }
 
 

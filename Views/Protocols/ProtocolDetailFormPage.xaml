@@ -5,7 +5,9 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
-	x:DataType="viewModels:ProtocolDetailFormViewModel">
+	x:Name="PageRoot"
+	x:DataType="viewModels:ProtocolDetailFormViewModel"
+	BackgroundColor="{StaticResource SparkBorder}">
 
 	<Grid ColumnDefinitions="285,*">
 
@@ -17,126 +19,122 @@
 		<!--  ─── MAIN CONTENT AREA ───  -->
 		<Grid
 			Grid.Column="1"
-			Padding="24"
-			BackgroundColor="{StaticResource Gray200}"
 			RowDefinitions="Auto,*"
-			RowSpacing="20">
+			RowSpacing="12">
 
 			<!--  =========================================================  -->
 			<!--  PAGE HEADER  -->
 			<!--  =========================================================  -->
-			<Border
-				Padding="28"
-				BackgroundColor="{StaticResource SparkBackground}"
-				Stroke="{StaticResource SparkBorder}"
-				StrokeShape="RoundRectangle 0">
+			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+				<Grid
+					ColumnDefinitions="Auto,*,Auto"
+					ColumnSpacing="16"
+					VerticalOptions="Center">
 
-				<Grid ColumnDefinitions="*,Auto">
+					<!--  Avatar circle  -->
+					<Border
+						BackgroundColor="{StaticResource SparkTabActiveBg}"
+						HeightRequest="48"
+						StrokeShape="RoundRectangle 24"
+						StrokeThickness="0"
+						WidthRequest="48">
+						<Label
+							FontFamily="FASolid"
+							FontSize="18"
+							HorizontalOptions="Center"
+							Text="&#xf3ed;"
+							TextColor="{StaticResource SparkAccentTeal}"
+							VerticalOptions="Center" />
+					</Border>
 
-					<VerticalStackLayout Spacing="6" VerticalOptions="Center">
+					<!--  Title + subtitle  -->
+					<VerticalStackLayout
+						Grid.Column="1"
+						Spacing="2"
+						VerticalOptions="Center">
+						<Label Style="{StaticResource PageTitleStyle}" Text="{Binding PageTitle}" />
 						<Label
-							FontAttributes="Bold"
-							FontSize="28"
-							Text="{Binding PageTitle}"
-							TextColor="{StaticResource SparkTextPrimary}" />
-						<Label
-							FontSize="14"
+							FontFamily="Segoe UI"
+							FontSize="12"
 							Text="Дефинирање на стандардизирани чекори, времетраење и клинички таргети за третманот"
 							TextColor="{StaticResource SparkTextSecondary}" />
 					</VerticalStackLayout>
 
-					<!--  ACTIONS  -->
+					<!--  Action buttons  -->
 					<HorizontalStackLayout
-						Grid.Column="1"
-						Spacing="12"
+						Grid.Column="2"
+						Spacing="10"
 						VerticalOptions="Center">
 						<controls:FFButton
 							ButtonKind="Secondary"
 							Command="{Binding CancelCommand}"
-							HeightRequestEx="38"
+							ContentPadding="20,0"
+							HeightRequestEx="40"
 							Text="Откажи"
 							WidthRequest="140" />
 
 						<controls:FFButton
 							ButtonKind="Primary"
 							Command="{Binding SaveCommand}"
-							HeightRequestEx="38"
-							Text="Зачувај"
+							ContentPadding="20,0"
+							HeightRequestEx="40"
+							Text="💾 Зачувај"
 							TextColorEx="White"
 							WidthRequest="140" />
 					</HorizontalStackLayout>
 				</Grid>
 			</Border>
 
-			<!--  =========================================================  -->
+			<!--  =====================================================  -->
 			<!--  FORM CONTENT WORKSPACE  -->
-			<!--  =========================================================  -->
-			<Border
-				Grid.Row="1"
-				BackgroundColor="{StaticResource SparkBackground}"
-				StrokeShape="RoundRectangle 1"
-				StrokeThickness="0">
-				<ScrollView>
+			<!--  =====================================================  -->
+			<Border Grid.Row="1" Style="{StaticResource PageHeaderCardStyle}">
+				<ScrollView VerticalScrollBarVisibility="Never">
 					<Grid
-						Padding="32"
+						Padding="16"
 						ColumnDefinitions="*,380"
 						ColumnSpacing="24">
 
-						<!--  ЛЕВА СТРАНА: Внесување податоци  -->
+						<!--  ================================================  -->
+						<!--  ЛЕВА СТРАНА — ОСНОВНИ ПОДАТОЦИ  -->
+						<!--  ================================================  -->
 						<VerticalStackLayout Grid.Column="0" Spacing="24">
 
-							<VerticalStackLayout Spacing="12">
-								<Label
-									CharacterSpacing="1"
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="ОСНОВНИ ПОДАТОЦИ ЗА ПРОТОКОЛОТ"
-									TextColor="{StaticResource SparkTextPrimary}" />
-								<BoxView
-									Margin="0,10"
-									HeightRequest="1"
-									Color="{StaticResource SparkBorder}" />
+							<VerticalStackLayout Spacing="16">
+								<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+									<Label
+										Style="{StaticResource SectionPillLabelStyle}"
+										Text="ОСНОВНИ ПОДАТОЦИ ЗА ПРОТОКОЛОТ"
+										TextColor="{StaticResource SparkAccentTealDark}" />
+								</Border>
 
 								<!--  Наслов  -->
-								<VerticalStackLayout Spacing="8">
-									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Наслов на медицинскиот протокол *"
-										TextColor="{StaticResource SparkTextSecondary}" />
-									<Border
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
-										<Entry
-											BackgroundColor="Transparent"
-											FontSize="13"
-											Placeholder="Пр. Протокол за третман на секундарна хипертензија"
-											PlaceholderColor="{StaticResource SparkTextSecondary}"
-											Text="{Binding CurrentProtocol.Name, Mode=TwoWay}"
-											TextColor="{StaticResource SparkTextPrimary}"
-											VerticalOptions="Center" />
-									</Border>
-								</VerticalStackLayout>
+								<Grid Padding="{StaticResource FormRowPadding}">
+									<VerticalStackLayout Spacing="8">
+										<Label Style="{StaticResource EditFieldLabelStyle}" Text="Наслов на медицинскиот протокол *" />
+										<Border Style="{StaticResource EditFieldBoxStyle}">
+											<Entry
+												BackgroundColor="Transparent"
+												FontSize="13"
+												Placeholder="Пр. Протокол за третман на секундарна хипертензија"
+												PlaceholderColor="{StaticResource SparkTextSecondary}"
+												Text="{Binding CurrentProtocol.Name, Mode=TwoWay}"
+												TextColor="{StaticResource SparkTextPrimary}"
+												VerticalOptions="Center" />
+										</Border>
+									</VerticalStackLayout>
+								</Grid>
 
-								<Grid ColumnDefinitions="*,*" ColumnSpacing="20">
-									<!--  Категорија  -->
+								<!--  Категорија / Времетраење  -->
+								<Grid
+									Padding="{StaticResource FormRowPadding}"
+									ColumnDefinitions="*,1,*"
+									ColumnSpacing="24">
+									<BoxView Grid.Column="1" Style="{StaticResource ColumnDividerStyle}" />
+
 									<VerticalStackLayout Grid.Column="0" Spacing="8">
-										<Label
-											FontAttributes="Bold"
-											FontSize="13"
-											Text="Медицинска категорија *"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Border
-											Padding="12,0"
-											BackgroundColor="{StaticResource SparkBackground}"
-											HeightRequest="46"
-											Stroke="{StaticResource SparkBorder}"
-											StrokeShape="RoundRectangle 6"
-											StrokeThickness="1">
+										<Label Style="{StaticResource EditFieldLabelStyle}" Text="Медицинска категорија *" />
+										<Border Style="{StaticResource EditFieldBoxStyle}">
 											<Entry
 												BackgroundColor="Transparent"
 												FontSize="13"
@@ -148,20 +146,9 @@
 										</Border>
 									</VerticalStackLayout>
 
-									<!--  Времетраење  -->
-									<VerticalStackLayout Grid.Column="1" Spacing="8">
-										<Label
-											FontAttributes="Bold"
-											FontSize="13"
-											Text="Стандардно времетраење (денови)"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Border
-											Padding="12,0"
-											BackgroundColor="{StaticResource SparkBackground}"
-											HeightRequest="46"
-											Stroke="{StaticResource SparkBorder}"
-											StrokeShape="RoundRectangle 6"
-											StrokeThickness="1">
+									<VerticalStackLayout Grid.Column="2" Spacing="8">
+										<Label Style="{StaticResource EditFieldLabelStyle}" Text="Стандардно времетраење (денови)" />
+										<Border Style="{StaticResource EditFieldBoxStyle}">
 											<Entry
 												BackgroundColor="Transparent"
 												FontSize="13"
@@ -176,38 +163,29 @@
 								</Grid>
 
 								<!--  Опис  -->
-								<VerticalStackLayout Spacing="8">
-									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Детален клинички опис и индикации"
-										TextColor="{StaticResource SparkTextSecondary}" />
-									<Border
-										Padding="12,8"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="100"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
-										<Editor
-											AutoSize="Disabled"
-											BackgroundColor="Transparent"
-											FontSize="13"
-											Placeholder="Внесете ги главните индикации, симптоматологија..."
-											PlaceholderColor="{StaticResource SparkTextSecondary}"
-											Text="{Binding CurrentProtocol.Description, Mode=TwoWay}"
-											TextColor="{StaticResource SparkTextPrimary}" />
-									</Border>
-								</VerticalStackLayout>
+								<Grid Padding="{StaticResource FormRowPadding}">
+									<VerticalStackLayout Spacing="8">
+										<Label Style="{StaticResource EditFieldLabelStyle}" Text="Детален клинички опис и индикации" />
+										<Border Style="{StaticResource TextAreaFieldBoxStyle}">
+											<Editor
+												AutoSize="Disabled"
+												BackgroundColor="Transparent"
+												FontSize="13"
+												HeightRequest="100"
+												Placeholder="Внесете ги главните индикации, симптоматологија..."
+												PlaceholderColor="{StaticResource SparkTextSecondary}"
+												Text="{Binding CurrentProtocol.Description, Mode=TwoWay}"
+												TextColor="{StaticResource SparkTextPrimary}" />
+										</Border>
+									</VerticalStackLayout>
+								</Grid>
 							</VerticalStackLayout>
-
-							<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
 
 							<!--  Иднa Секција  -->
 							<Border
 								Padding="20"
 								BackgroundColor="{StaticResource SparkBackgroundAlt}"
-								Stroke="{StaticResource SparkBorder}"
+								Stroke="{StaticResource SparkAccentTealBg}"
 								StrokeShape="RoundRectangle 12"
 								StrokeThickness="1">
 								<VerticalStackLayout HorizontalOptions="Center" Spacing="8">
@@ -226,50 +204,39 @@
 							</Border>
 						</VerticalStackLayout>
 
-						<!--  ДЕСНА СТРАНА: Системски информации  -->
-						<VerticalStackLayout Grid.Column="1" Spacing="12">
+						<!--  ================================================  -->
+						<!--  ДЕСНА СТРАНА — СИСТЕМСКИ ЗАПИС  -->
+						<!--  ================================================  -->
+						<VerticalStackLayout Grid.Column="1" Spacing="14">
 
-							<Label
-								CharacterSpacing="1"
-								FontAttributes="Bold"
-								FontSize="13"
-								Text="СИСТЕМСКИ ЗАПИС"
-								TextColor="{StaticResource SparkAccentTeal}" />
-							<BoxView
-								Margin="0,10"
-								HeightRequest="1"
-								Color="{StaticResource SparkBorder}" />
+							<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+								<Label
+									Style="{StaticResource SectionPillLabelStyle}"
+									Text="СИСТЕМСКИ ЗАПИС"
+									TextColor="{StaticResource SparkAccentTealDark}" />
+							</Border>
 
 							<Border
-								Padding="20"
+								Padding="16"
 								BackgroundColor="{StaticResource SparkBackgroundAlt}"
-								Stroke="{StaticResource SparkBorder}"
+								Stroke="{StaticResource SparkAccentTealBg}"
 								StrokeShape="RoundRectangle 12"
 								StrokeThickness="1">
-								<VerticalStackLayout Spacing="14">
+								<VerticalStackLayout Spacing="12">
 									<Grid ColumnDefinitions="*,Auto">
-										<Label
-											FontSize="13"
-											Text="Креирано од доктор:"
-											TextColor="{StaticResource SparkTextSecondary}" />
+										<Label Style="{StaticResource ReadRowLabelStyle}" Text="Креирано од доктор:" />
 										<Label
 											Grid.Column="1"
-											FontAttributes="Bold"
-											FontSize="13"
-											Text="{Binding CurrentProtocol.CreatedByDoctor}"
-											TextColor="{StaticResource SparkTextPrimary}" />
+											Style="{StaticResource ReadRowValueStyle}"
+											Text="{Binding CurrentProtocol.CreatedByDoctor}" />
 									</Grid>
 
 									<Grid ColumnDefinitions="*,Auto">
-										<Label
-											FontSize="13"
-											Text="Датум на запис:"
-											TextColor="{StaticResource SparkTextSecondary}" />
+										<Label Style="{StaticResource ReadRowLabelStyle}" Text="Датум на запис:" />
 										<Label
 											Grid.Column="1"
-											FontSize="13"
-											Text="{Binding CurrentProtocol.CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
-											TextColor="{StaticResource SparkTextPrimary}" />
+											Style="{StaticResource ReadRowValueStyle}"
+											Text="{Binding CurrentProtocol.CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
 									</Grid>
 								</VerticalStackLayout>
 							</Border>
@@ -278,18 +245,29 @@
 							<Border
 								Padding="16"
 								BackgroundColor="{StaticResource SparkBackgroundAlt}"
-								Stroke="{StaticResource SparkBorder}"
+								Stroke="{StaticResource SparkAccentTealBg}"
 								StrokeShape="RoundRectangle 12"
 								StrokeThickness="1">
 								<Grid ColumnDefinitions="Auto,*">
-									<Label
-										Margin="0,0,12,0"
-										FontFamily="FASolid"
-										FontSize="16"
-										Text="&#xf3ed;"
-										TextColor="{StaticResource SparkAccentTeal}"
-										VerticalOptions="Center" />
-									<VerticalStackLayout Grid.Column="1" Spacing="2">
+									<Border
+										BackgroundColor="{StaticResource SparkTabActiveBg}"
+										HeightRequest="36"
+										StrokeShape="RoundRectangle 18"
+										StrokeThickness="0"
+										WidthRequest="36">
+										<Label
+											FontFamily="FASolid"
+											FontSize="14"
+											HorizontalOptions="Center"
+											Text="&#xf3ed;"
+											TextColor="{StaticResource SparkAccentTealDark}"
+											VerticalOptions="Center" />
+									</Border>
+									<VerticalStackLayout
+										Grid.Column="1"
+										Margin="12,0,0,0"
+										Spacing="2"
+										VerticalOptions="Center">
 										<Label
 											FontAttributes="Bold"
 											FontSize="12"

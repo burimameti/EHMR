@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
+using EHMR.Helpers;
 using EHMR.Resources.Controls;
 using EHMR.ViewModels.Patients.Extensions;
 using System.Collections.ObjectModel;
@@ -19,7 +20,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
 
     // ================= FILTER STATE =================
     private readonly FilterLookup _cityLookup = PatientFilterLookups.BuildCityLookup();
-
+    protected override Func<Patient, Guid?>? DoctorOwnerSelector => p => p.DoctorId;
     [ObservableProperty] private string selectedStatus = "All";
     [ObservableProperty] private string selectedGender = "All";
     [ObservableProperty] private string selectedBloodType = "All";
@@ -27,7 +28,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     [ObservableProperty] private string selectedAgeGroup = "All";
 
     [ObservableProperty] private string filteredPatientCount = "";
-
+    private bool _sparkInitialized;
     // ================= QUERY STATE (deep-link support) =================
     private string? _pendingSearch;
     private string? _pendingStatus;
@@ -141,10 +142,14 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     [RelayCommand]
     public async Task LoadAsync()
     {
-        var data = await _patientService.GetAllAsync();
+        var data = await _patientService.GetAllBaseAsync();
         AllItems=data.ToList();
 
-        InitializeSparkControls();
+        if(!_sparkInitialized)
+        {
+            InitializeSparkControls();
+            _sparkInitialized=true;
+        }
 
         if(!string.IsNullOrWhiteSpace(_pendingSearch)) SearchText=_pendingSearch;
         if(!string.IsNullOrWhiteSpace(_pendingStatus)) SelectedStatus=_pendingStatus;
@@ -264,7 +269,12 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         SelectedItemService.SelectedItem=patient;
         await NavigationService.GoToAsync(AppRoutes.Encounters.Create);
     }
-
+     [RelayCommand]
+    private async Task AddAsync()
+    {      
+        SelectedItemService.SelectedItem=null;
+        await NavigationService.GoToAsync(AppRoutes.Patients.Detail);
+    }
     // ============================================================
     // TABS
     // ============================================================
@@ -314,7 +324,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     // ============================================================
     // PICKERS
     // ============================================================
-    private SparkPickerItem _statusPicker, _genderPicker, _bloodTypePicker, _cityPicker, _ageGroupPicker;
+    private SparkPickerItem _statusPicker, _genderPicker, _bloodTypePicker, _cityPicker;
 
     private void BuildSparkPickers()
     {
@@ -323,13 +333,13 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         _genderPicker=MakePicker("Пол", GenderFilters, SelectedGenderDisplay, s => SelectedGenderDisplay=s);
         _bloodTypePicker=MakePicker("Крвна група", BloodTypeFilters, SelectedBloodTypeDisplay, s => SelectedBloodTypeDisplay=s);
         _cityPicker=MakePicker("Град", CityFilterNames, SelectedCityDisplay, s => SelectedCityDisplay=s);
-        _ageGroupPicker=MakePicker("Возрасна група", AgeGroups, SelectedAgeGroupDisplay, s => SelectedAgeGroupDisplay=s);
+        //_ageGroupPicker=MakePicker("Возрасна група", AgeGroups, SelectedAgeGroupDisplay, s => SelectedAgeGroupDisplay=s);
 
         Pickers.Add(_statusPicker);
         Pickers.Add(_genderPicker);
         Pickers.Add(_bloodTypePicker);
         Pickers.Add(_cityPicker);
-        Pickers.Add(_ageGroupPicker);
+        //Pickers.Add(_ageGroupPicker);
     }
 
     protected override void SyncSparkPickersFromFilters()
@@ -339,7 +349,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         _genderPicker.SelectedItem=SelectedGenderDisplay;
         _bloodTypePicker.SelectedItem=SelectedBloodTypeDisplay;
         _cityPicker.SelectedItem=SelectedCityDisplay;
-        _ageGroupPicker.SelectedItem=SelectedAgeGroupDisplay;
+        //_ageGroupPicker.SelectedItem=SelectedAgeGroupDisplay;
 
         foreach(var (internalValue, tab) in _statusTabsByInternal)
             tab.IsSelected=internalValue==SelectedStatus;
@@ -355,6 +365,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
+                 new() { Header = "БРОЈ-Пациент", Key = "PatientNumber", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "ЕМБГ", Key = "NationalId", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "ПАЦИЕНТ", Key = "FullName", Width = new GridLength(2.8, GridUnitType.Star) },
             new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.8, GridUnitType.Star) },
@@ -373,7 +384,8 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         foreach(var p in patients)
         {
             var row = new SparkGridRow { Tag=p };
-            row["NationalId"]=p.NationalId;
+            row["PatientNumber"]=p.PatientNumber;
+            row["NationalId"]=PrivacyMaskHelper.MaskNationalId(p.NationalId);
             row["FullName"]=p.FullName;
             row["Gender"]=p.Gender.ToDisplay();
             row["Age"]=p.Age;

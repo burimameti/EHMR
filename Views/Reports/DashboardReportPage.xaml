@@ -3,423 +3,541 @@
 	x:Class="EHMR.Views.Reports.DashboardReportPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:converters="clr-namespace:EHMR.Converters"
 	xmlns:models="clr-namespace:EHMR.Domain.Entities.Reports"
 	xmlns:sc="clr-namespace:EHMR.Resources.Controls"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+	x:Name="PageRoot"
 	x:DataType="viewModels:ReportViewModel"
-	Style="{StaticResource ThemedPage}">
+	BackgroundColor="{StaticResource SparkBorder}">
 
-	<Grid ColumnDefinitions="295,*">
+	<ContentPage.Resources>
+		<ResourceDictionary>
 
-		<!--  СТРАНИЧНО МЕНИ (Лево - усогласена ширина 295)  -->
+			<converters:ReportCategoryConverter x:Key="ReportCategoryConverter" />
+
+			<!--  Same shared card styles used on the Dashboard, so both pages read as one system  -->
+			<Style x:Key="DashboardCardTitle" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="20" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+			</Style>
+
+			<Style x:Key="DashboardCardCountBadge" TargetType="Border">
+				<Setter Property="Padding" Value="10,4" />
+				<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeNeutralBg}" />
+				<Setter Property="StrokeShape" Value="RoundRectangle 0" />
+				<Setter Property="StrokeThickness" Value="0" />
+			</Style>
+
+			<Style x:Key="DashboardCardCountLabel" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="13" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+			</Style>
+
+			<Style x:Key="DashboardEmptyStateLabel" TargetType="Label">
+				<Setter Property="FontSize" Value="13" />
+				<Setter Property="HorizontalTextAlignment" Value="Center" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextMuted}" />
+			</Style>
+
+		</ResourceDictionary>
+	</ContentPage.Resources>
+
+	<!--  Same 290,* split as the Dashboard menu/content column  -->
+	<Grid ColumnDefinitions="290,*">
+
+		<!--  LEFT MENU  -->
 		<Border Grid.Column="0" StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
-		<!--  ГЛАВЕН КОНТЕНТ (Десно)  -->
-		<Grid Grid.Column="1" RowDefinitions="100,*">
+		<!--  RIGHT MAIN CONTAINER  -->
+		<Grid Grid.Column="1" RowDefinitions="Auto,*">
 
-			<!--  ТОП БАР ХЕДЕР  -->
-
-			<Border Grid.Row="0" Style="{StaticResource SparkPickerFrameStyle}">
-
-				<Grid ColumnDefinitions="*,Auto">
-
+			<!--  =========================================================  -->
+			<!--  HEADER — same PageHeaderCardStyle + FFPageHeader + FFButton as Dashboard  -->
+			<!--  =========================================================  -->
+			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 					<sc:FFPageHeader
-						Title="Главен прозор за обработка на извештаи"
-						Padding="10"
+						Title="Извештаи"
+						Grid.Column="0"
 						Subtitle="Преглед, пребарување и преземање на генерирани извештаи" />
-
-
 					<HorizontalStackLayout
 						Grid.Column="1"
-						Padding="100"
+						Spacing="10"
 						VerticalOptions="Center">
-						<Border
-							Padding="12,8"
-							BackgroundColor="{StaticResource SurfaceAlt}"
-							StrokeShape="RoundRectangle 10"
-							StrokeThickness="0">
-							<HorizontalStackLayout Spacing="{StaticResource SpaceSm}">
-								<Label
-									FontFamily="FASolid"
-									FontSize="12"
-									Text="&#xf007;"
-									TextColor="{StaticResource TextSecondary}"
-									VerticalOptions="Center" />
-								<Label
-									FontAttributes="Bold"
-									FontSize="12"
-									Text="{Binding UserName}"
-									TextColor="{StaticResource TextSecondary}"
-									VerticalOptions="Center" />
-							</HorizontalStackLayout>
-						</Border>
+						<sc:FFButton
+							ButtonKind="Secondary"
+							Command="{Binding BackToHubCommand}"
+							ContentPadding="0,0"
+							Text="← Назад" />
 					</HorizontalStackLayout>
 				</Grid>
 			</Border>
 
-			<!--  ГЛАВЕН РАБОТЕН ПРОСТОР  -->
-			<Grid Grid.Row="1" Padding="{StaticResource SpaceLg}">
+			<!--  =========================================================  -->
+			<!--  MAIN SCROLL AREA  -->
+			<!--  =========================================================  -->
+			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+				<VerticalStackLayout Spacing="8">
 
-				<!--  ХАБ: Преглед на достапни дефиниции на извештаи  -->
-				<Grid
-					x:Name="HubGrid"
-					IsVisible="True"
-					RowDefinitions="Auto,16,*">
-					<Grid.Triggers>
-						<DataTrigger
-							Binding="{Binding IsShowingDetails}"
-							TargetType="Grid"
-							Value="True">
-							<Setter Property="IsVisible" Value="False" />
-						</DataTrigger>
-					</Grid.Triggers>
+					<!--  =========================================================  -->
+					<!--  HUB VIEW — report definition cards  -->
+					<!--  =========================================================  -->
+					<Border x:Name="HubGrid" Style="{StaticResource PageHeaderCardStyle}">
+						<Border.Triggers>
+							<DataTrigger
+								Binding="{Binding IsShowingDetails}"
+								TargetType="Border"
+								Value="True">
+								<Setter Property="IsVisible" Value="False" />
+							</DataTrigger>
+						</Border.Triggers>
 
-					<!--  Пребарувач во Хабот  -->
+						<CollectionView ItemsSource="{Binding AvailableReports}">
+							<CollectionView.EmptyView>
+								<VerticalStackLayout
+									Padding="20"
+									HorizontalOptions="Center"
+									Spacing="6"
+									VerticalOptions="Center">
+									<Label Style="{StaticResource DashboardEmptyStateLabel}" Text="Нема достапни извештаи" />
+								</VerticalStackLayout>
+							</CollectionView.EmptyView>
 
+							<CollectionView.ItemsLayout>
+								<GridItemsLayout
+									HorizontalItemSpacing="12"
+									Orientation="Vertical"
+									Span="2"
+									VerticalItemSpacing="12" />
+							</CollectionView.ItemsLayout>
+							<CollectionView.ItemTemplate>
+								<DataTemplate x:DataType="models:ReportDefinition">
+									<Border
+										Padding="20"
+										BackgroundColor="{StaticResource SparkPageBackground}"
+										Stroke="{StaticResource SparkBorderSubtle}"
+										StrokeThickness="1">
+										<Border.StrokeShape>
+											<RoundRectangle CornerRadius="14" />
+										</Border.StrokeShape>
+										<!--  Same shadow recipe as Dashboard's appointment/encounter cards  -->
+										<Border.Shadow>
+											<Shadow
+												Brush="{StaticResource SparkTextPrimary}"
+												Opacity="0.08"
+												Radius="10"
+												Offset="0,3" />
+										</Border.Shadow>
+										<Border.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ReportViewModel}}, Path=SelectReportCommand}" CommandParameter="{Binding .}" />
+										</Border.GestureRecognizers>
 
-					<!--  Колекција во вид на картички со Span=2  -->
-					<CollectionView Grid.Row="2" ItemsSource="{Binding AvailableReports}">
-						<CollectionView.ItemsLayout>
-							<GridItemsLayout
-								HorizontalItemSpacing="20"
-								Orientation="Vertical"
-								Span="2"
-								VerticalItemSpacing="20" />
-						</CollectionView.ItemsLayout>
-						<CollectionView.ItemTemplate>
-							<DataTemplate x:DataType="models:ReportDefinition">
-								<Border
-									Padding="16"
-									BackgroundColor="White"
-									Stroke="#E2E8F0"
-									StrokeShape="RoundRectangle 16"
-									StrokeThickness="1">
-									<Border.GestureRecognizers>
-										<TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ReportViewModel}}, Path=SelectReportCommand}" CommandParameter="{Binding .}" />
-									</Border.GestureRecognizers>
-									<Grid RowDefinitions="Auto,Auto,1,Auto" RowSpacing="22">
-										<Grid Grid.Row="0" ColumnDefinitions="Auto,*">
+										<Grid RowDefinitions="Auto,Auto,1,Auto" RowSpacing="14">
+
+											<!--  Icon + title  -->
+											<Grid Grid.Row="0" ColumnDefinitions="Auto,*">
+												<Border
+													Grid.Column="0"
+													Margin="0,0,14,0"
+													Padding="10"
+													BackgroundColor="{StaticResource SparkTabActiveBg}"
+													HeightRequest="48"
+													StrokeThickness="0"
+													VerticalOptions="Center"
+													WidthRequest="48">
+													<Border.StrokeShape>
+														<RoundRectangle CornerRadius="12" />
+													</Border.StrokeShape>
+													<Label
+														FontSize="22"
+														HorizontalOptions="Center"
+														Text="{Binding Icon}"
+														VerticalOptions="Center" />
+												</Border>
+												<VerticalStackLayout
+													Grid.Column="1"
+													Spacing="3"
+													VerticalOptions="Center">
+													<Label
+														FontSize="15"
+														LineBreakMode="WordWrap"
+														Style="{StaticResource DashboardCardTitle}"
+														Text="{Binding Title}" />
+													<Label
+														CharacterSpacing="0.5"
+														FontAttributes="Bold"
+														FontSize="10"
+														Text="КЛИКНИ ЗА ОТВОРАЊЕ"
+														TextColor="{StaticResource SparkAccentTeal}" />
+												</VerticalStackLayout>
+											</Grid>
+
+											<!--  Description  -->
 											<Label
-												Grid.Column="0"
-												Margin="0,0,16,0"
-												FontSize="32"
-												Text="{Binding Icon}"
-												VerticalOptions="Center" />
-											<VerticalStackLayout
-												Grid.Column="1"
-												Spacing="2"
-												VerticalOptions="Center">
+												Grid.Row="1"
+												FontSize="13"
+												LineBreakMode="TailTruncation"
+												MaxLines="2"
+												Text="{Binding Description}"
+												TextColor="{StaticResource SparkTextSecondary}" />
+
+											<!--  Divider  -->
+											<BoxView Grid.Row="2" BackgroundColor="{StaticResource SparkBorder}" />
+
+											<!--  Footer — count badge matches Dashboard's card count badge  -->
+											<Grid Grid.Row="3" ColumnDefinitions="*,Auto">
+												<Border
+													Grid.Column="0"
+													Padding="10,4"
+													HorizontalOptions="Start"
+													Style="{StaticResource DashboardCardCountBadge}">
+													<Label Style="{StaticResource DashboardCardCountLabel}" Text="{Binding Category, Converter={StaticResource ReportCategoryConverter}, StringFormat='Категорија: {0}'}" />
+												</Border>
 												<Label
+													Grid.Column="1"
 													FontAttributes="Bold"
-													FontSize="15"
-													LineBreakMode="WordWrap"
-													Text="{Binding Title}"
-													TextColor="#0F172A" />
-												<Label
-													CharacterSpacing="0.5"
-													FontAttributes="Bold"
-													FontSize="11"
-													Text="КЛИКНИ ЗА ОТВОРАЊЕ"
-													TextColor="{StaticResource EhmrPrimary}" />
-											</VerticalStackLayout>
+													FontSize="12"
+													Text="Отвори ➔"
+													TextColor="{StaticResource SparkAccentTeal}"
+													VerticalOptions="Center" />
+											</Grid>
 										</Grid>
+									</Border>
+								</DataTemplate>
+							</CollectionView.ItemTemplate>
+						</CollectionView>
+					</Border>
+
+					<!--  =========================================================  -->
+					<!--  DETAIL VIEW — table + analytics sidebar  -->
+					<!--  =========================================================  -->
+					<Grid
+						x:Name="DetailsGrid"
+						ColumnDefinitions="*,260"
+						ColumnSpacing="8"
+						IsVisible="False">
+						<Grid.Triggers>
+							<DataTrigger
+								Binding="{Binding IsShowingDetails}"
+								TargetType="Grid"
+								Value="True">
+								<Setter Property="IsVisible" Value="True" />
+							</DataTrigger>
+						</Grid.Triggers>
+
+						<!--  LEFT COLUMN  -->
+						<VerticalStackLayout Grid.Column="0" Spacing="8">
+
+							<!--  Report controls bar  -->
+							<Border Style="{StaticResource PageHeaderCardStyle}">
+								<Grid
+									ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto"
+									ColumnSpacing="10"
+									VerticalOptions="Center">
+
+									<!--  Active report title + date — title uses same style as Dashboard card titles  -->
+									<VerticalStackLayout
+										Grid.Column="0"
+										Spacing="2"
+										VerticalOptions="Center">
 										<Label
-											Grid.Row="1"
-											FontSize="13"
-											HeightRequest="45"
-											LineBreakMode="TailTruncation"
-											MaxLines="2"
-											Text="{Binding Description}"
-											TextColor="#64748B" />
-										<BoxView Grid.Row="2" BackgroundColor="#F1F5F9" />
-										<Grid Grid.Row="3" ColumnDefinitions="*,Auto">
-											<Label
-												Grid.Column="0"
-												FontAttributes="Bold"
-												FontSize="11"
-												Text="{Binding Category, StringFormat='Категорија: {0}'}"
-												TextColor="#94A3B8"
-												VerticalOptions="Center" />
-											<Label
-												Grid.Column="1"
-												FontAttributes="Bold"
-												FontSize="12"
-												Text="Отвори извештај ➔"
+											FontSize="15"
+											Style="{StaticResource DashboardCardTitle}"
+											Text="{Binding ActiveReportTitle}" />
+										<Label
+											FontSize="12"
+											Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}"
+											TextColor="{StaticResource SparkTextMuted}" />
+									</VerticalStackLayout>
+
+									<HorizontalStackLayout
+										Grid.Column="1"
+										Spacing="8"
+										VerticalOptions="Center">
+										<Label
+											Style="{StaticResource SparkTabTitleLabelStyle}"
+											Text="Периодичен"
+											VerticalOptions="Center" />
+										<Border Style="{StaticResource EditFieldBoxStyle}">
+											<Picker
+												FontSize="13"
+												ItemsSource="{Binding PeriodTypeOptions}"
+												SelectedItem="{Binding SelectedPeriodTypeLabel}"
+												TextColor="{StaticResource SparkAccentTeal}"
+												VerticalOptions="Center"
+												WidthRequest="130" />
+										</Border>
+									</HorizontalStackLayout>
+
+									<HorizontalStackLayout
+										Grid.Column="2"
+										Spacing="8"
+										VerticalOptions="Center">
+										<Label
+											Style="{StaticResource SparkTabTitleLabelStyle}"
+											Text="ОД"
+											VerticalOptions="Center" />
+										<Border Style="{StaticResource EditFieldBoxStyle}">
+											<DatePicker
+												BackgroundColor="Transparent"
+												Date="{Binding StartDate}"
+												FontSize="13"
+												Format="dd.MM.yyyy"
 												TextColor="{StaticResource SparkAccentTeal}"
 												VerticalOptions="Center" />
-										</Grid>
-									</Grid>
-								</Border>
-							</DataTemplate>
-						</CollectionView.ItemTemplate>
-					</CollectionView>
-				</Grid>
+										</Border>
+									</HorizontalStackLayout>
 
-				<!--  ДЕТАЛИ: Табеларен приказ со странична аналитика  -->
-				<Grid
-					x:Name="DetailsGrid"
-					ColumnDefinitions="*,340"
-					ColumnSpacing="24"
-					IsVisible="False"
-					RowDefinitions="Auto,16,Auto,12,*">
-					<Grid.Triggers>
-						<DataTrigger
-							Binding="{Binding IsShowingDetails}"
-							TargetType="Grid"
-							Value="True">
-							<Setter Property="IsVisible" Value="True" />
-						</DataTrigger>
-					</Grid.Triggers>
+									<HorizontalStackLayout
+										Grid.Column="3"
+										Spacing="8"
+										VerticalOptions="Center">
+										<Label
+											Style="{StaticResource SparkTabTitleLabelStyle}"
+											Text="ДО"
+											VerticalOptions="Center" />
+										<Border Style="{StaticResource EditFieldBoxStyle}">
+											<DatePicker
+												BackgroundColor="Transparent"
+												Date="{Binding EndDate}"
+												FontSize="13"
+												Format="dd.MM.yyyy"
+												TextColor="{StaticResource SparkAccentTeal}"
+												VerticalOptions="Center" />
+										</Border>
+									</HorizontalStackLayout>
 
-					<!--  ГОРНА ЛЕНТА: НАЗАД + НАСЛОВ НА ИЗВЕШТАЈ + ПЕРИОД + ГЕНЕРИРАЈ  -->
-					<Border
-						Grid.Row="0"
-						Grid.Column="0"
-						Grid.ColumnSpan="2"
-						Margin="0,-100,8,0"
-						StrokeShape="RoundRectangle 0"
-						Style="{StaticResource SurfaceCard}">
+									<sc:FFButton
+										Grid.Column="4"
+										ButtonKind="Secondary"
+										Command="{Binding ApplyPeriodAndRegenerateCommand}"
+										ContentPadding="16,0"
+										HeightRequestEx="45"
+										IsVisible="{Binding CanCreate}"
+										Text="Примени период" />
 
-						<Grid
-							ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto,Auto"
-							ColumnSpacing="12"
-							VerticalOptions="Center">
+									<sc:FFButton
+										Grid.Column="5"
+										ButtonKind="Primary"
+										Command="{Binding ExecuteReportGenerationCommand}"
+										ContentPadding="16,0"
+										HeightRequestEx="45"
+										IsVisible="{Binding CanCreate}"
+										Text="🔄 Генерирај" />
+								</Grid>
+							</Border>
 
-							<VerticalStackLayout
-								Grid.Column="0"
-								Spacing="2"
-								VerticalOptions="Center">
-								<Label
-									FontAttributes="Bold"
-									FontSize="16"
-									Text="{Binding ActiveReportTitle}"
-									TextColor="{StaticResource SparkAccentTeal}" />
-								<Label
-									FontSize="12"
-									Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}"
-									TextColor="{StaticResource SparkAccentTeal}" />
-							</VerticalStackLayout>
+							<!--  Explorer header: tabs + search + pickers  -->
+							<Border Style="{StaticResource PageHeaderCardStyle}">
+								<sc:SparkExplorerHeaderView
+									Buttons="{Binding Buttons}"
+									Pickers="{Binding Pickers}"
+									SearchPlaceholder="Филтрирај редови..."
+									SearchText="{Binding SearchText, Mode=TwoWay}"
+									Tabs="{Binding Tabs}" />
+							</Border>
 
-							<HorizontalStackLayout Grid.Column="1" Spacing="22">
-								<Label Style="{StaticResource SparkTabTitleLabelStyle}" Text="Периоичен" />
-								<Border Style="{StaticResource InputBorderStyle}">
-									<Picker
-										FontSize="13"
-										ItemsSource="{Binding PeriodTypeOptions}"
-										SelectedItem="{Binding SelectedPeriodTypeLabel}"
-										TextColor="{StaticResource SparkAccentTeal}"
+							<!--  Data grid  -->
+							<Border Padding="0" Style="{StaticResource PageHeaderCardStyle}">
+								<Grid RowDefinitions="Auto,*">
+									<ActivityIndicator
+										Grid.Row="0"
+										HeightRequest="50"
+										HorizontalOptions="Center"
+										IsRunning="{Binding IsBusy}"
+										IsVisible="{Binding IsBusy}"
 										VerticalOptions="Center"
-										WidthRequest="140" />
-								</Border>
-							</HorizontalStackLayout>
-
-							<HorizontalStackLayout Grid.Column="2" Spacing="5">
-								<Label Style="{StaticResource SparkTabTitleLabelStyle}" Text="ОД ДАТУМ" />
-								<Border Style="{StaticResource InputBorderStyle}">
-									<DatePicker
-										BackgroundColor="Transparent"
-										Date="{Binding StartDate}"
-										FontSize="13"
-										Format="dd.MM.yyyy"
-										TextColor="{StaticResource SparkAccentTeal}"
-										VerticalOptions="Center" />
-								</Border>
-							</HorizontalStackLayout>
-
-							<HorizontalStackLayout Grid.Column="3" Spacing="5">
-								<Label Style="{StaticResource SparkTabTitleLabelStyle}" Text="ДО ДАТУМ" />
-								<Border Style="{StaticResource InputBorderStyle}">
-									<DatePicker
-										BackgroundColor="Transparent"
-										Date="{Binding EndDate}"
-										FontSize="13"
-										Format="dd.MM.yyyy"
-										TextColor="{StaticResource SparkAccentTeal}"
-										VerticalOptions="Center" />
-								</Border>
-							</HorizontalStackLayout>
-
-							<Button
-								Grid.Column="4" IsVisible="{Binding CanCreate}"
-								Command="{Binding ApplyPeriodAndRegenerateCommand}"
-								MinimumWidthRequest="160"
-								Style="{StaticResource FFIconButtonStyle}"
-								Text="Примени период" />
-
-							<Button
-								Grid.Column="5" IsVisible="{Binding CanCreate}"
-								Command="{Binding ExecuteReportGenerationCommand}"
-								MinimumWidthRequest="160"
-								Style="{StaticResource FFIconButtonStyle}"
-								Text="🔄 Генерирај" />
-
-							<Button
-								Grid.Column="6"
-								Command="{Binding BackToHubCommand}"
-								MinimumWidthRequest="160"
-								Style="{StaticResource FFIconButtonStyle}"
-								Text="← Назад" />
-						</Grid>
-					</Border>
-					<Button
-						Grid.Row="1"
-						Grid.Column="1"
-						Command="{Binding BackToHubCommand}"
-						Style="{StaticResource ToolbarButton}"
-						Text="← Назад" />
-					<!--  TABS + SEARCH + PICKERI + BUTTONS СПЕЦИФИЧНИ ЗА ТИПОТ НА ИЗВЕШТАЈ  -->
-					<sc:SparkExplorerHeaderView
-						Grid.Row="2"
-						Grid.Column="0"
-						Grid.ColumnSpan="2"
-						Buttons="{Binding Buttons}"
-						Pickers="{Binding Pickers}"
-						SearchPlaceholder="Филтрирај редови..."
-						SearchText="{Binding SearchText, Mode=TwoWay}"
-						Tabs="{Binding Tabs}" />
-
-					<!--  ТАБЕЛА СО ДИНАМИЧНИ ПОДАТОЦИ (ЛЕВО)  -->
-					<Border
-						Grid.Row="4"
-						Grid.Column="0"
-						Padding="0"
-						Style="{StaticResource ElevatedCard}">
-						<Grid RowDefinitions="*,Auto">
-							<ActivityIndicator
-								Grid.Row="0"
-								HeightRequest="50"
-								HorizontalOptions="Center"
-								IsRunning="{Binding IsBusy}"
-								IsVisible="{Binding IsBusy}"
-								VerticalOptions="Center"
-								WidthRequest="50"
-								ZIndex="5"
-								Color="{StaticResource EhmrPrimary}" />
-
-							<sc:SparkDataGridView
-								Grid.Row="0"
-								AllowHorizontalScroll="True"
-								Columns="{Binding GridColumns}"
-								CurrentPage="{Binding CurrentPage}"
-								NextPageCommand="{Binding NextPageCommand}"
-								PageChangedCommand="{Binding PageChangedCommand}"
-								PreviousPageCommand="{Binding PreviousPageCommand}"
-								Rows="{Binding GridRows}"
-								TotalPages="{Binding TotalPages}" />
-						</Grid>
-					</Border>
-
-					<!--  АНАЛИТИКА И ЕКСПОРТ (ДЕСНО) — истото како досега  -->
-					<ScrollView
-						Grid.Row="4"
-						Grid.Column="1"
-						Padding="4,0,0,0">
-						<VerticalStackLayout Spacing="20">
-							<Label
-								CharacterSpacing="0.5"
-								FontAttributes="Bold"
-								FontSize="11"
-								Text="АНАЛИТИКА ЗА ИЗВЕШТАЈОТ"
-								TextColor="#6F7B8C" />
-
-							<Border
-								Padding="20"
-								BackgroundColor="White"
-								Stroke="#E2E8F0"
-								StrokeShape="RoundRectangle 12"
-								StrokeThickness="1">
-								<VerticalStackLayout Spacing="6">
-									<Label
-										FontAttributes="Bold"
-										FontSize="12"
-										Text="{Binding Metric1Title}"
-										TextColor="#64748B" />
-									<Label
-										FontAttributes="Bold"
-										FontSize="26"
-										Text="{Binding Metric1Value}"
-										TextColor="#0F172A" />
-								</VerticalStackLayout>
+										WidthRequest="50"
+										Color="{StaticResource SparkAccentTeal}" />
+									<sc:SparkDataGridView
+										Grid.Row="1"
+										Columns="{Binding GridColumns}"
+										CurrentPage="{Binding CurrentPage}"
+										NextPageCommand="{Binding NextPageCommand}"
+										PageChangedCommand="{Binding PageChangedCommand}"
+										PreviousPageCommand="{Binding PreviousPageCommand}"
+										Rows="{Binding GridRows}"
+										TotalPages="{Binding TotalPages}" />
+								</Grid>
 							</Border>
 
-							<Border
-								Padding="20"
-								BackgroundColor="White"
-								Stroke="#E2E8F0"
-								StrokeShape="RoundRectangle 12"
-								StrokeThickness="1">
-								<VerticalStackLayout Spacing="6">
-									<Label
-										FontAttributes="Bold"
-										FontSize="12"
-										Text="{Binding Metric2Title}"
-										TextColor="#64748B" />
-									<Label
-										FontAttributes="Bold"
-										FontSize="26"
-										Text="{Binding Metric2Value}"
-										TextColor="#DC2626" />
-								</VerticalStackLayout>
-							</Border>
-
-							<Border
-								Padding="20"
-								BackgroundColor="White"
-								Stroke="#E2E8F0"
-								StrokeShape="RoundRectangle 12"
-								StrokeThickness="1">
-								<VerticalStackLayout Spacing="6">
-									<Label
-										FontAttributes="Bold"
-										FontSize="12"
-										Text="{Binding Metric3Title}"
-										TextColor="#64748B" />
-									<Label
-										FontAttributes="Bold"
-										FontSize="26"
-										Text="{Binding Metric3Value}"
-										TextColor="#16A34A" />
-								</VerticalStackLayout>
-							</Border>
-
-							<BoxView
-								Margin="0,8"
-								BackgroundColor="#E2E8F0"
-								HeightRequest="1" />
-
-							<Label
-								CharacterSpacing="0.5"
-								FontAttributes="Bold"
-								FontSize="11"
-								Text="ОПЦИИ ЗА ИЗВОЗ"
-								TextColor="#475569" />
-
-							<Button
-								BackgroundColor="#EF4444"
-								Command="{Binding ExportToPdfCommand}"
-								CornerRadius="10"
-								FontAttributes="Bold"
-								FontSize="13"
-								HeightRequest="44"
-								Text="📄 Извези како PDF Документ"
-								TextColor="White" />
-							<Button
-								Margin="0,4,0,0"
-								BackgroundColor="#16A34A"
-								Command="{Binding ExportToExcelCommand}"
-								CornerRadius="10"
-								FontAttributes="Bold"
-								FontSize="13"
-								HeightRequest="44"
-								Text="📊 Извези во Excel (XLSX)"
-								TextColor="White" />
 						</VerticalStackLayout>
-					</ScrollView>
 
-				</Grid>
+						<!--  RIGHT SIDEBAR — analytics + export  -->
+						<ScrollView Grid.Column="1" VerticalScrollBarVisibility="Never">
+							<VerticalStackLayout Spacing="8">
+
+								<!--  Analytics card  -->
+								<Border Style="{StaticResource PageHeaderCardStyle}">
+									<VerticalStackLayout Spacing="6">
+
+										<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+											<Label
+												Style="{StaticResource SectionPillLabelStyle}"
+												Text="АНАЛИТИКА"
+												TextColor="{StaticResource SparkAccentTealDark}" />
+										</Border>
+
+										<!--  Metric 1  -->
+										<Border
+											Padding="16"
+											BackgroundColor="{StaticResource SparkPageBackground}"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											StrokeThickness="1">
+											<Border.StrokeShape>
+												<RoundRectangle CornerRadius="12" />
+											</Border.StrokeShape>
+											<Grid ColumnDefinitions="4,*">
+												<BoxView
+													Grid.Column="0"
+													BackgroundColor="{StaticResource SparkAccentTeal}"
+													HorizontalOptions="Start"
+													WidthRequest="4" />
+												<VerticalStackLayout
+													Grid.Column="1"
+													Padding="12,0,0,0"
+													Spacing="4">
+													<Label
+														FontAttributes="Bold"
+														FontSize="11"
+														Text="{Binding Metric1Title}"
+														TextColor="{StaticResource SparkTextMuted}" />
+													<Label
+														FontAttributes="Bold"
+														FontSize="26"
+														Text="{Binding Metric1Value}"
+														TextColor="{StaticResource SparkTextPrimary}" />
+												</VerticalStackLayout>
+											</Grid>
+										</Border>
+
+										<!--  Metric 2  -->
+										<Border
+											Padding="16"
+											BackgroundColor="{StaticResource SparkPageBackground}"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											StrokeThickness="1">
+											<Border.StrokeShape>
+												<RoundRectangle CornerRadius="12" />
+											</Border.StrokeShape>
+											<Grid ColumnDefinitions="4,*">
+												<BoxView
+													Grid.Column="0"
+													BackgroundColor="{StaticResource SparkAccentTeal}"
+													HorizontalOptions="Start"
+													WidthRequest="4" />
+												<VerticalStackLayout
+													Grid.Column="1"
+													Padding="12,0,0,0"
+													Spacing="4">
+													<Label
+														FontAttributes="Bold"
+														FontSize="11"
+														Text="{Binding Metric2Title}"
+														TextColor="{StaticResource SparkTextMuted}" />
+													<Label
+														FontAttributes="Bold"
+														FontSize="26"
+														Text="{Binding Metric2Value}"
+														TextColor="{StaticResource SparkAccentTeal}" />
+												</VerticalStackLayout>
+											</Grid>
+										</Border>
+
+										<!--  Metric 3  -->
+										<Border
+											Padding="16"
+											BackgroundColor="{StaticResource SparkPageBackground}"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											StrokeThickness="1">
+											<Border.StrokeShape>
+												<RoundRectangle CornerRadius="12" />
+											</Border.StrokeShape>
+											<Grid ColumnDefinitions="4,*">
+												<BoxView
+													Grid.Column="0"
+													BackgroundColor="{StaticResource SparkAccentTeal}"
+													HorizontalOptions="Start"
+													WidthRequest="4" />
+												<VerticalStackLayout
+													Grid.Column="1"
+													Padding="12,0,0,0"
+													Spacing="4">
+													<Label
+														FontAttributes="Bold"
+														FontSize="11"
+														Text="{Binding Metric3Title}"
+														TextColor="{StaticResource SparkTextMuted}" />
+													<Label
+														FontAttributes="Bold"
+														FontSize="26"
+														Text="{Binding Metric3Value}"
+														TextColor="{StaticResource SparkTextPrimary}" />
+												</VerticalStackLayout>
+											</Grid>
+										</Border>
+
+									</VerticalStackLayout>
+								</Border>
+
+								<!--  Export card  -->
+								<Border Style="{StaticResource PageHeaderCardStyle}">
+									<VerticalStackLayout Spacing="10">
+
+										<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+											<Label
+												Style="{StaticResource SectionPillLabelStyle}"
+												Text="ОПЦИИ ЗА ИЗВОЗ"
+												TextColor="{StaticResource SparkAccentTealDark}" />
+										</Border>
+
+										<sc:FFButton
+											ButtonKind="Danger"
+											Command="{Binding ExportToPdfCommand}"
+											ContentPadding="16,0"
+											HeightRequestEx="45"
+											Text="📄 Извези во PDF" />
+
+										<sc:FFButton
+											ButtonKind="Primary"
+											Command="{Binding ExportToExcelCommand}"
+											ContentPadding="16,0"
+											HeightRequestEx="45"
+											Text="📊 Извези во Excel" />
+
+									</VerticalStackLayout>
+								</Border>
+
+							</VerticalStackLayout>
+						</ScrollView>
+
+					</Grid>
+
+				</VerticalStackLayout>
+			</ScrollView>
+
+			<!--  LOADING OVERLAY — identical to Dashboard's overlay  -->
+			<Grid
+				Grid.Row="1"
+				BackgroundColor="{StaticResource SparkOverlay}"
+				IsVisible="{Binding IsBusy}">
+				<VerticalStackLayout
+					HorizontalOptions="Center"
+					Spacing="12"
+					VerticalOptions="Center">
+					<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
+					<Label
+						FontSize="13"
+						Text="Вчитување..."
+						TextColor="{StaticResource SparkTextPrimary}" />
+				</VerticalStackLayout>
 			</Grid>
+
 		</Grid>
 	</Grid>
 </ContentPage>

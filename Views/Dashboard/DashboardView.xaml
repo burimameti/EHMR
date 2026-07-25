@@ -5,53 +5,31 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	xmlns:converters="clr-namespace:EHMR.Converters"
-	xmlns:dash="clr-namespace:EHMR.ViewModels"
+	xmlns:dash="clr-namespace:EHMR.ViewModels.Dashboard.Models"
 	xmlns:domain="clr-namespace:EHMR.Domain.Entities"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="Page"
 	x:DataType="viewModels:DashboardViewModel"
-	BackgroundColor="#191E29">
+	BackgroundColor="{StaticResource SparkBorder}">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
 
 			<converters:MetricTileVariantToColorConverter x:Key="MetricTileVariantToColorConverter" />
 
-			<!--  Single KPI tile — accent bar color driven by MetricTileVariant via converter  -->
-			<Style x:Key="DashboardKpiTile" TargetType="Border">
-				<Setter Property="Padding" Value="18,14" />
-				<Setter Property="BackgroundColor" Value="{StaticResource Gray50}" />
-				<Setter Property="Stroke" Value="{StaticResource Gray100}" />
-				<Setter Property="StrokeShape" Value="RoundRectangle 12" />
-			</Style>
-
-			<Style x:Key="DashboardKpiLabel" TargetType="Label">
-				<Setter Property="FontSize" Value="12" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
-			</Style>
-
-			<Style x:Key="DashboardKpiValue" TargetType="Label">
-				<Setter Property="FontAttributes" Value="Bold" />
-				<Setter Property="FontSize" Value="26" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-			</Style>
-
-			<!--  Shared style for the two bottom summary cards (appointments / auditing)  -->
-			<Style x:Key="DashboardSummaryCard" TargetType="Border">
+			<Style
+				x:Key="DashboardSummaryCard"
+				BasedOn="{StaticResource PageHeaderCardStyle1}"
+				TargetType="Border">
 				<Setter Property="Padding" Value="20" />
-				<Setter Property="BackgroundColor" Value="{StaticResource White}" />
-				<Setter Property="Stroke" Value="{StaticResource Gray100}" />
-				<Setter Property="StrokeShape" Value="RoundRectangle 12" />
 			</Style>
 
-			<!--  Card title, e.g. "Денешни прегледи" / "Информации за аудитинг"  -->
 			<Style x:Key="DashboardCardTitle" TargetType="Label">
 				<Setter Property="FontAttributes" Value="Bold" />
 				<Setter Property="FontSize" Value="20" />
 				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 			</Style>
 
-			<!--  Count pill next to the card title  -->
 			<Style x:Key="DashboardCardCountBadge" TargetType="Border">
 				<Setter Property="Padding" Value="10,4" />
 				<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeNeutralBg}" />
@@ -65,21 +43,16 @@
 				<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
 			</Style>
 
-			<!--  Row card inside each CollectionView (appointment row / notification row)  -->
-			<Style x:Key="DashboardListRow" TargetType="Border">
-				<Setter Property="Margin" Value="0,8" />
-				<Setter Property="Padding" Value="10" />
-				<Setter Property="BackgroundColor" Value="{StaticResource SparkSurface}" />
-				<Setter Property="HeightRequest" Value="60" />
-				<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
-				<Setter Property="StrokeShape" Value="RoundRectangle 8" />
-				<Setter Property="StrokeThickness" Value="1" />
-			</Style>
-
 			<Style x:Key="DashboardEmptyStateLabel" TargetType="Label">
 				<Setter Property="FontSize" Value="13" />
 				<Setter Property="HorizontalTextAlignment" Value="Center" />
 				<Setter Property="TextColor" Value="{StaticResource SparkTextMuted}" />
+			</Style>
+
+			<Style x:Key="AlertChipBorder" TargetType="Border">
+				<Setter Property="Padding" Value="14,10" />
+				<Setter Property="StrokeThickness" Value="1" />
+				<Setter Property="StrokeShape" Value="RoundRectangle 12" />
 			</Style>
 
 		</ResourceDictionary>
@@ -88,124 +61,125 @@
 	<Grid ColumnDefinitions="290,*">
 
 		<!--  LEFT MENU  -->
-		<Border
-			Grid.Column="0"
-			BackgroundColor="{StaticResource Gray200}"
-			StrokeThickness="0">
+		<Border Grid.Column="0" StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
-		<Border
+		<!--  RIGHT MAIN CONTAINER  -->
+		<Grid
 			Grid.Column="1"
-			BackgroundColor="{StaticResource Gray200}"
-			StrokeThickness="0">
-			<Grid>
+			RowDefinitions="Auto,*"
+			RowSpacing="8">
 
-				<Grid RowDefinitions="110,Auto,Auto,2*,1.1*" RowSpacing="0">
+			<!--  ===================================================  -->
+			<!--  HEADER  -->
+			<!--  ===================================================  -->
+			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+				<Grid ColumnDefinitions="*,Auto,Auto" VerticalOptions="Center">
 
-					<!--  ===================================================  -->
-					<!--  HEADER — untouched  -->
-					<!--  ===================================================  -->
-					<Border Grid.Row="0" Style="{StaticResource SparkCardStyle}">
-						<Grid ColumnDefinitions="*,*" VerticalOptions="Center">
-							<controls:FFPageHeader Title="Почетна страна" Subtitle="Преглед на пациентите, терапии, прегледи и други активносто." />
-							<HorizontalStackLayout
-								Grid.Column="1"
-								HorizontalOptions="End"
-								Spacing="10"
-								VerticalOptions="Center">
-								<Button
-									BackgroundColor="{StaticResource SparkAccentTeal}"
-									Command="{Binding NewEncounterCommand}"
+					<!--  COL 0: TITLE — untouched  -->
+					<controls:FFPageHeader
+						Title="Почетна страна"
+						Grid.Column="0"
+						Subtitle="Преглед на пациентите, терапии, прегледи и други активности." />
+
+					<!--
+						COL 1: ALERTS
+						FIX: CollectionView inside an "Auto" Grid column is a known MAUI
+						measurement bug — it either collapses to zero width or refuses
+						to size itself to its content, so the three chips could end up
+						squeezed, wrapped, or clipped instead of sitting in one row.
+						Since this is a small, fixed set of alert chips (not a scrolling
+						list), swapping to HorizontalStackLayout + BindableLayout avoids
+						the CollectionView measurement issue entirely: a StackLayout
+						sizes correctly inside an Auto column every time, so all three
+						cards are guaranteed to lay out side-by-side, horizontally,
+						without affecting the "*" title column or the Auto button
+						column next to it.
+					-->
+					<HorizontalStackLayout
+						Grid.Column="1"
+						Margin="1,0"
+						BindableLayout.ItemsSource="{Binding State.AlertSummaries}"
+						Spacing="10"
+						VerticalOptions="Center">
+						<BindableLayout.ItemTemplate>
+							<DataTemplate x:DataType="dash:DashboardAlertSummaryItem">
+								<Border
+									Padding="14,0"
+									BackgroundColor="{Binding BackgroundColor}"
 									HeightRequest="45"
-									Style="{StaticResource TabButtonActiveStyle}"
-									Text="+ Преглед"
-									WidthRequest="160" />
-								<Button
-									BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
-									Command="{Binding NewAppointmentCommand}"
-									HeightRequest="45"
-									Style="{StaticResource TabButtonActiveStyle}"
-									Text="+ Термин"
-									WidthRequest="160" />
-							</HorizontalStackLayout>
-						</Grid>
-					</Border>
+									Stroke="{Binding AccentColor}"
+									Style="{StaticResource AlertChipBorder}"
+									VerticalOptions="Center">
+									<Border.GestureRecognizers>
+										<TapGestureRecognizer Command="{Binding Command}" />
+									</Border.GestureRecognizers>
+									<Grid
+										ColumnDefinitions="Auto,Auto"
+										ColumnSpacing="6"
+										VerticalOptions="Center">
+										<Label
+											FontFamily="FASolid"
+											FontSize="18"
+											Text="{Binding Icon}"
+											TextColor="{Binding AccentColor}"
+											VerticalOptions="Center" />
+										<VerticalStackLayout
+											Grid.Column="1"
+											Spacing="0"
+											VerticalOptions="Center">
+											<Label
+												FontAttributes="Bold"
+												FontSize="14"
+												Text="{Binding Count}"
+												TextColor="{Binding AccentColor}" />
+											<Label
+												FontSize="8"
+												Text="{Binding Label}"
+												TextColor="{Binding AccentColor}" />
+										</VerticalStackLayout>
+									</Grid>
+								</Border>
+							</DataTemplate>
+						</BindableLayout.ItemTemplate>
+					</HorizontalStackLayout>
+					<!--  COL 2: BUTTONS — untouched  -->
+					<HorizontalStackLayout
+						Grid.Column="2"
+						Spacing="10"
+						VerticalOptions="Center">
+						<controls:FFButton
+							ButtonKind="Primary"
+							Command="{Binding NewEncounterCommand}"
+							ContentPadding="20,0"
+							HeightRequestEx="45"
+							Text="Нов Преглед" />
+						<controls:FFButton
+							ButtonKind="Secondary"
+							Command="{Binding NewAppointmentCommand}"
+							ContentPadding="20,0"
+							HeightRequestEx="45"
+							Text="Нов Термин" />
+					</HorizontalStackLayout>
+				</Grid>
+			</Border>
+
+			<!--  MAIN SCROLL AREA  -->
+			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+				<VerticalStackLayout Spacing="8">
 
 					<!--  ===================================================  -->
-					<!--  KPI TILE ROW — was a bare comment before, never rendered  -->
+					<!--  ALERT SUMMARY STRIP  -->
 					<!--  ===================================================  -->
-					<!--<Grid
-						Grid.Row="1"
-						ColumnDefinitions="*,*,*,*,*"
-						ColumnSpacing="12">
 
-						<Border Grid.Column="0" Style="{StaticResource DashboardKpiTile}">
-							<Border.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding OpenKpiCommand}" CommandParameter="patients" />
-							</Border.GestureRecognizers>
-							<VerticalStackLayout Spacing="4">
-								<Label Style="{StaticResource DashboardKpiLabel}" Text="Пациенти" />
-								<Label Style="{StaticResource DashboardKpiValue}" Text="{Binding TotalPatients}" />
-							</VerticalStackLayout>
-						</Border>
+					<!--  ===================================================  -->
+					<!--  PATIENT EXPLORER  -->
+					<!--  ===================================================  -->
+					<Border Grid.Row="1" Style="{StaticResource PageHeaderCardStyle}">
+						<Grid ColumnSpacing="5" RowSpacing="20">
+							<VerticalStackLayout>
 
-						<Border Grid.Column="1" Style="{StaticResource DashboardKpiTile}">
-							<Border.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding OpenKpiCommand}" CommandParameter="therapies" />
-							</Border.GestureRecognizers>
-							<VerticalStackLayout Spacing="4">
-								<Label Style="{StaticResource DashboardKpiLabel}" Text="Активни терапии" />
-								<Label Style="{StaticResource DashboardKpiValue}" Text="{Binding ActiveTherapies}" />
-							</VerticalStackLayout>
-						</Border>
-
-						<Border Grid.Column="2" Style="{StaticResource DashboardKpiTile}">
-							<Border.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding OpenKpiCommand}" CommandParameter="appointments" />
-							</Border.GestureRecognizers>
-							<VerticalStackLayout Spacing="4">
-								<Label Style="{StaticResource DashboardKpiLabel}" Text="Закажани прегледи" />
-								<Label Style="{StaticResource DashboardKpiValue}" Text="{Binding UpcomingAppointmentsCount}" />
-							</VerticalStackLayout>
-						</Border>
-
-						<Border
-							Grid.Column="3"
-							Background="{StaticResource Gray200}"
-							Style="{StaticResource DashboardKpiTile}">
-							<Border.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding OpenKpiCommand}" CommandParameter="therapies" />
-							</Border.GestureRecognizers>
-							<VerticalStackLayout Spacing="4">
-								<Label Style="{StaticResource DashboardKpiLabel}" Text="Задоцнети циклуси" />
-								<Label
-									Style="{StaticResource DashboardKpiValue}"
-									Text="{Binding OverdueCycles}"
-									TextColor="{Binding OverdueCyclesVariant, Converter={StaticResource MetricTileVariantToColorConverter}}" />
-							</VerticalStackLayout>
-						</Border>
-
-						<Border Grid.Column="4" Style="{StaticResource DashboardKpiTile}">
-							<Border.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding OpenKpiCommand}" CommandParameter="alerts" />
-							</Border.GestureRecognizers>
-							<VerticalStackLayout Spacing="4">
-								<Label Style="{StaticResource DashboardKpiLabel}" Text="Критични известувања" />
-								<Label
-									Style="{StaticResource DashboardKpiValue}"
-									Text="{Binding CriticalAlerts}"
-									TextColor="{Binding CriticalAlertsVariant, Converter={StaticResource MetricTileVariantToColorConverter}}" />
-							</VerticalStackLayout>
-						</Border>
-
-					</Grid>-->
-
-
-
-					<Border Grid.Row="3" Padding="0">
-						<VerticalStackLayout>
-							<Border Margin="0,8,0,8" Padding="0">
 								<controls:SparkExplorerHeaderView
 									Buttons="{Binding Buttons}"
 									Pickers="{Binding Pickers}"
@@ -213,539 +187,522 @@
 									SearchPlaceholder="Пребарување на пациенти..."
 									SearchText="{Binding PatientSearchText}"
 									Tabs="{Binding Tabs}" />
-							</Border>
-							<Border>
-								<controls:SparkDataGridView
-									x:Name="PatientGrid"
-									Columns="{Binding GridColumns}"
-									CurrentPage="{Binding CurrentPage}"
-									EditRowCommand="{Binding EditCommand}"
-									NextPageCommand="{Binding NextPageCommand}"
-									PageChangedCommand="{Binding PageChangedCommand}"
-									PreviousPageCommand="{Binding PreviousPageCommand}"
-									RowTappedCommand="{Binding SelectCommand}"
-									Rows="{Binding GridRows}"
-									TotalPages="{Binding TotalPages}" />
-							</Border>
-						</VerticalStackLayout>
-					</Border>
 
-					<!--  ===================================================  -->
-					<!--  BOTTOM ROW — appointments card + auditing card, now consistent  -->
-					<!--  ===================================================  -->
-					<Border Grid.Row="4" Padding="0">
-						<Grid
-							ColumnDefinitions="*,*"
-							ColumnSpacing="62"
-							RowSpacing="22">
-							<Border
-								Grid.Row="0"
-								Grid.Column="1"
-								Style="{StaticResource DashboardSummaryCard}">
-								<Grid RowDefinitions="Auto,Auto,*" RowSpacing="12">
-
-									<!--  Card header  -->
-									<Grid ColumnDefinitions="*,Auto">
-										<Label Style="{StaticResource DashboardCardTitle}" Text="Прегледи по датум" />
-										<Border Grid.Column="1" Style="{StaticResource DashboardCardCountBadge}">
-											<Label Style="{StaticResource DashboardCardCountLabel}" Text="{Binding DailyEncounters.Count}" />
-										</Border>
-									</Grid>
-
-									<!--  Day strip nav — prev/next week paging + calendar jump-to-date, day strip scrolls in the middle  -->
-									<Grid
-										Grid.Row="1"
-										ColumnDefinitions="Auto,*,Auto,Auto"
-										ColumnSpacing="6">
-
-										<!--  Previous week  -->
-										<Border
-											Grid.Column="0"
-											Padding="0"
-											BackgroundColor="{StaticResource SparkSurface}"
-											HeightRequest="32"
-											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeThickness="1"
-											VerticalOptions="Center"
-											WidthRequest="32">
-											<Border.StrokeShape>
-												<RoundRectangle CornerRadius="8" />
-											</Border.StrokeShape>
-											<Border.GestureRecognizers>
-												<TapGestureRecognizer Command="{Binding PreviousWeekCommand}" />
-											</Border.GestureRecognizers>
-											<Label
-												FontAttributes="Bold"
-												FontSize="14"
-												HorizontalOptions="Center"
-												Text="‹"
-												TextColor="{StaticResource SparkTextSecondary}"
-												VerticalOptions="Center" />
-										</Border>
-
-										<!--  Day strip — tap a day to load its encounters below  -->
-										<ScrollView
-											Grid.Column="1"
-											HorizontalScrollBarVisibility="Never"
-											Orientation="Horizontal">
-											<HorizontalStackLayout BindableLayout.ItemsSource="{Binding DayStrip}" Spacing="8">
-												<BindableLayout.ItemTemplate>
-													<DataTemplate x:DataType="dash:DashboardDayItem">
-														<Border
-															Padding="0"
-															HeightRequest="56"
-															StrokeThickness="1"
-															WidthRequest="46">
-															<Border.StrokeShape>
-																<RoundRectangle CornerRadius="10" />
-															</Border.StrokeShape>
-															<Border.GestureRecognizers>
-																<TapGestureRecognizer Command="{Binding Command}" />
-															</Border.GestureRecognizers>
-															<Border.Triggers>
-																<DataTrigger
-																	Binding="{Binding IsSelected}"
-																	TargetType="Border"
-																	Value="True">
-																	<Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTeal}" />
-																	<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
-																</DataTrigger>
-																<DataTrigger
-																	Binding="{Binding IsSelected}"
-																	TargetType="Border"
-																	Value="False">
-																	<Setter Property="BackgroundColor" Value="{StaticResource SparkSurface}" />
-																	<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
-																</DataTrigger>
-															</Border.Triggers>
-															<VerticalStackLayout
-																HorizontalOptions="Center"
-																Spacing="2"
-																VerticalOptions="Center">
-																<Label
-																	FontSize="10"
-																	HorizontalTextAlignment="Center"
-																	Text="{Binding DayLabel}">
-																	<Label.Triggers>
-																		<DataTrigger
-																			Binding="{Binding IsSelected}"
-																			TargetType="Label"
-																			Value="True">
-																			<Setter Property="TextColor" Value="White" />
-																		</DataTrigger>
-																		<DataTrigger
-																			Binding="{Binding IsSelected}"
-																			TargetType="Label"
-																			Value="False">
-																			<Setter Property="TextColor" Value="{StaticResource SparkTextMuted}" />
-																		</DataTrigger>
-																	</Label.Triggers>
-																</Label>
-																<Label
-																	FontAttributes="Bold"
-																	FontSize="15"
-																	HorizontalTextAlignment="Center"
-																	Text="{Binding DayNumber}">
-																	<Label.Triggers>
-																		<DataTrigger
-																			Binding="{Binding IsSelected}"
-																			TargetType="Label"
-																			Value="True">
-																			<Setter Property="TextColor" Value="White" />
-																		</DataTrigger>
-																		<DataTrigger
-																			Binding="{Binding IsSelected}"
-																			TargetType="Label"
-																			Value="False">
-																			<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-																		</DataTrigger>
-																	</Label.Triggers>
-																</Label>
-																<VerticalStackLayout
-																	HorizontalOptions="Center"
-																	Spacing="2"
-																	VerticalOptions="Center">
-																	<Label
-																		FontSize="10"
-																		HorizontalTextAlignment="Center"
-																		Text="{Binding DayLabel}">
-																		<Label.Triggers>
-																			<DataTrigger
-																				Binding="{Binding IsSelected}"
-																				TargetType="Label"
-																				Value="True">
-																				<Setter Property="TextColor" Value="White" />
-																			</DataTrigger>
-																			<DataTrigger
-																				Binding="{Binding IsSelected}"
-																				TargetType="Label"
-																				Value="False">
-																				<Setter Property="TextColor" Value="{StaticResource SparkTextMuted}" />
-																			</DataTrigger>
-																		</Label.Triggers>
-																	</Label>
-																	<Label
-																		FontAttributes="Bold"
-																		FontSize="15"
-																		HorizontalTextAlignment="Center"
-																		Text="{Binding DayNumber}">
-																		<Label.Triggers>
-																			<DataTrigger
-																				Binding="{Binding IsSelected}"
-																				TargetType="Label"
-																				Value="True">
-																				<Setter Property="TextColor" Value="White" />
-																			</DataTrigger>
-																			<DataTrigger
-																				Binding="{Binding IsSelected}"
-																				TargetType="Label"
-																				Value="False">
-																				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-																			</DataTrigger>
-																		</Label.Triggers>
-																	</Label>
-
-																	<!--  Dot indicator — only visible when the date actually has encounters  -->
-																	<BoxView
-																		CornerRadius="2"
-																		HeightRequest="4"
-																		HorizontalOptions="Center"
-																		IsVisible="{Binding HasEncounters}"
-																		WidthRequest="4">
-																		<BoxView.Triggers>
-																			<DataTrigger
-																				Binding="{Binding IsSelected}"
-																				TargetType="BoxView"
-																				Value="True">
-																				<Setter Property="Color" Value="White" />
-																			</DataTrigger>
-																			<DataTrigger
-																				Binding="{Binding IsSelected}"
-																				TargetType="BoxView"
-																				Value="False">
-																				<Setter Property="Color" Value="{StaticResource SparkAccentTeal}" />
-																			</DataTrigger>
-																		</BoxView.Triggers>
-																	</BoxView>
-																</VerticalStackLayout>
-															</VerticalStackLayout>
-														</Border>
-													</DataTemplate>
-												</BindableLayout.ItemTemplate>
-											</HorizontalStackLayout>
-										</ScrollView>
-
-										<!--  Next week  -->
-										<Border
-											Grid.Column="2"
-											Padding="0"
-											BackgroundColor="{StaticResource SparkSurface}"
-											HeightRequest="32"
-											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeThickness="1"
-											VerticalOptions="Center"
-											WidthRequest="32">
-											<Border.StrokeShape>
-												<RoundRectangle CornerRadius="8" />
-											</Border.StrokeShape>
-											<Border.GestureRecognizers>
-												<TapGestureRecognizer Command="{Binding NextWeekCommand}" />
-											</Border.GestureRecognizers>
-											<Label
-												FontAttributes="Bold"
-												FontSize="14"
-												HorizontalOptions="Center"
-												Text="›"
-												TextColor="{StaticResource SparkTextSecondary}"
-												VerticalOptions="Center" />
-										</Border>
-
-										<!--
-											Calendar jump — transparent native DatePicker layered over a calendar glyph;
-											tapping opens the OS date picker and re-centers the strip on whatever date is picked
-										-->
-										<Grid
-											Grid.Column="3"
-											HeightRequest="32"
-											VerticalOptions="Center"
-											WidthRequest="32">
-											<Border
-												BackgroundColor="{StaticResource SparkSurface}"
-												Stroke="{StaticResource SparkBorderSubtle}"
-												StrokeThickness="1">
-												<Border.StrokeShape>
-													<RoundRectangle CornerRadius="8" />
-												</Border.StrokeShape>
-												<Label
-													FontFamily="FASolid"
-													FontSize="13"
-													HorizontalOptions="Center"
-													Text="&#xf133;"
-													TextColor="{StaticResource SparkTextSecondary}"
-													VerticalOptions="Center" />
-											</Border>
-											<DatePicker
-												BackgroundColor="Transparent"
-												Date="{Binding SelectedDate}"
-												HeightRequest="32"
-												Opacity="0.02"
-												WidthRequest="32" />
-										</Grid>
-									</Grid>
-
-									<!--  Encounters for the selected date  -->
-									<CollectionView
-										Grid.Row="2"
-										ItemsSource="{Binding DailyEncounters}"
-										SelectionMode="None">
-
-										<CollectionView.EmptyView>
-											<VerticalStackLayout
-												Padding="20"
-												HorizontalOptions="Center"
-												Spacing="6"
-												VerticalOptions="Center">
-												<Label Style="{StaticResource DashboardEmptyStateLabel}" Text="Нема прегледи за избраниот датум" />
-											</VerticalStackLayout>
-										</CollectionView.EmptyView>
-
-										<CollectionView.ItemTemplate>
-											<DataTemplate x:DataType="dash:DashboardEncounterItem">
-												<Border
-													Margin="0,0,0,10"
-													Padding="0"
-													BackgroundColor="{StaticResource SparkSurface}"
-													Stroke="{StaticResource SparkBorderSubtle}"
-													StrokeThickness="1">
-
-													<Border.Shadow>
-														<Shadow
-															Brush="{StaticResource SparkTextPrimary}"
-															Opacity="0.08"
-															Radius="10"
-															Offset="0,3" />
-													</Border.Shadow>
-
-													<Border.StrokeShape>
-														<RoundRectangle CornerRadius="14" />
-													</Border.StrokeShape>
-
-													<Grid Padding="0,12,14,12" ColumnDefinitions="4,Auto,*,Auto">
-
-														<!--  Accent bar — driven by StatusColor, not hardcoded  -->
-														<BoxView
-															Grid.Column="0"
-															BackgroundColor="{Binding StatusColor}"
-															HorizontalOptions="Start"
-															WidthRequest="4" />
-
-														<Label
-															Grid.Column="1"
-															Margin="14,0,14,0"
-															FontAttributes="Bold"
-															FontSize="15"
-															Text="{Binding Time}"
-															TextColor="{StaticResource SparkTextPrimary}"
-															VerticalOptions="Center" />
-
-														<Label
-															Grid.Column="2"
-															FontSize="14"
-															Text="{Binding PatientName}"
-															TextColor="{StaticResource SparkTextPrimary}"
-															VerticalOptions="Center" />
-
-														<Border
-															Grid.Column="3"
-															Padding="12,6"
-															BackgroundColor="{Binding StatusColor}"
-															Opacity="0.9"
-															StrokeThickness="0"
-															VerticalOptions="Center">
-															<Border.StrokeShape>
-																<RoundRectangle CornerRadius="20" />
-															</Border.StrokeShape>
-															<Label
-																FontAttributes="Bold"
-																FontSize="11"
-																HorizontalTextAlignment="Center"
-																Text="{Binding StatusText}"
-																TextColor="White" />
-														</Border>
-
-													</Grid>
-												</Border>
-											</DataTemplate>
-										</CollectionView.ItemTemplate>
-									</CollectionView>
-								</Grid>
-							</Border>
-							<!--  Денешни прегледи  -->
-							<Border
-								Grid.Row="0"
-								Grid.Column="0"
-								Style="{StaticResource DashboardSummaryCard}">
-
-								<Grid RowDefinitions="Auto,*" RowSpacing="1">
-
-									<!--  Card header  -->
-									<Grid ColumnDefinitions="*,Auto">
-										<Label Style="{StaticResource DashboardCardTitle}" Text="Денешни прегледи" />
-										<Border Grid.Column="1" Style="{StaticResource DashboardCardCountBadge}">
-											<Label Style="{StaticResource DashboardCardCountLabel}" Text="{Binding UpcomingAppointmentsCount}" />
-										</Border>
-									</Grid>
-
-									<CollectionView
-										Grid.Row="1"
-										ItemsSource="{Binding Appointments}"
-										SelectionMode="None">
-
-										<CollectionView.EmptyView>
-											<VerticalStackLayout
-												Padding="20"
-												HorizontalOptions="Center"
-												Spacing="6"
-												VerticalOptions="Center">
-												<Label Style="{StaticResource DashboardEmptyStateLabel}" Text="Нема закажани прегледи за денес" />
-											</VerticalStackLayout>
-										</CollectionView.EmptyView>
-
-										<CollectionView.ItemTemplate>
-											<DataTemplate x:DataType="dash:DashboardAppointmentItem">
-												<Border
-													Margin="0,0,0,10"
-													Padding="0"
-													BackgroundColor="White"
-													Stroke="#EEF1F5"
-													StrokeThickness="1">
-
-													<Border.Shadow>
-														<Shadow
-															Brush="#0F172A"
-															Opacity="0.08"
-															Radius="10"
-															Offset="0,3" />
-													</Border.Shadow>
-
-													<Border.StrokeShape>
-														<RoundRectangle CornerRadius="14" />
-													</Border.StrokeShape>
-
-													<Grid Padding="0,12,14,12" ColumnDefinitions="4,Auto,*,Auto">
-
-														<!--  Colored accent bar (status color)  -->
-														<BoxView
-															Grid.Column="0"
-															BackgroundColor="{Binding StatusColor}"
-															HorizontalOptions="Start"
-															WidthRequest="4" />
-
-														<!--  Avatar with initials, soft tinted bg  -->
-														<Border
-															Grid.Column="1"
-															Margin="14,0,14,0"
-															BackgroundColor="{Binding StatusColor}"
-															HeightRequest="48"
-															Opacity="0.15"
-															StrokeThickness="0"
-															VerticalOptions="Center"
-															WidthRequest="48">
-															<Border.StrokeShape>
-																<RoundRectangle CornerRadius="24" />
-															</Border.StrokeShape>
-														</Border>
-
-														<Label
-															Grid.Column="1"
-															Margin="14,0,14,0"
-															FontAttributes="Bold"
-															FontSize="16"
-															HorizontalOptions="Center"
-															HorizontalTextAlignment="Center"
-															Text="{Binding PatientName, Converter={StaticResource AppointmentsInitialsConverter}}"
-															TextColor="{Binding StatusColor}"
-															VerticalOptions="Center"
-															WidthRequest="48" />
-
-														<!--  Name + time  -->
-														<VerticalStackLayout
-															Grid.Column="2"
-															Spacing="4"
-															VerticalOptions="Center">
-															<Label
-																FontAttributes="Bold"
-																FontSize="15"
-																Text="{Binding PatientName}"
-																TextColor="#0F172A" />
-															<HorizontalStackLayout Spacing="6">
-																<Label
-																	FontFamily="FASolid"
-																	FontSize="11"
-																	Text="&#xf017;"
-																	TextColor="#94A3B8" />
-																<Label
-																	FontSize="12.5"
-																	Text="{Binding Time}"
-																	TextColor="#64748B" />
-																<Label
-																	FontSize="12.5"
-																	Text="•"
-																	TextColor="#CBD5E1" />
-																<Label
-																	FontSize="12.5"
-																	Text="{Binding RelativeDay}"
-																	TextColor="#94A3B8" />
-															</HorizontalStackLayout>
-														</VerticalStackLayout>
-
-														<!--  Status pill: soft tinted bg, solid colored text  -->
-														<Border
-															Grid.Column="3"
-															Padding="12,6"
-															BackgroundColor="{Binding StatusColor}"
-															Opacity="0.9"
-															StrokeThickness="0"
-															VerticalOptions="Center">
-															<Border.StrokeShape>
-																<RoundRectangle CornerRadius="20" />
-															</Border.StrokeShape>
-															<Label
-																FontAttributes="Bold"
-																FontSize="11"
-																HorizontalTextAlignment="Center"
-																Text="{Binding RelativeDay}"
-																TextColor="White" />
-														</Border>
-
-													</Grid>
-												</Border>
-											</DataTemplate>
-										</CollectionView.ItemTemplate>
-									</CollectionView>
-								</Grid>
-							</Border>
-
-
+								<Border Padding="0">
+									<controls:SparkDataGridView
+										Columns="{Binding GridColumns}"
+										CurrentPage="{Binding CurrentPage}"
+										EditRowCommand="{Binding EditCommand}"
+										NextPageCommand="{Binding NextPageCommand}"
+										PageChangedCommand="{Binding PageChangedCommand}"
+										PreviousPageCommand="{Binding PreviousPageCommand}"
+										RowTappedCommand="{Binding SelectCommand}"
+										Rows="{Binding GridRows}"
+										TotalPages="{Binding TotalPages}" />
+								</Border>
+							</VerticalStackLayout>
 						</Grid>
 					</Border>
 
-				</Grid>
+					<!--  ===================================================  -->
+					<!--  BOTTOM ROW — ТЕРМИНИ + ПРЕГЛЕДИ ПО ДАТУМ  -->
+					<!--  ===================================================  -->
+					<Grid
+						Padding="0,0,0,12"
+						ColumnDefinitions="*,*"
+						ColumnSpacing="12">
 
-				<!--  LOADING OVERLAY  -->
-				<Grid BackgroundColor="#80191E29" IsVisible="{Binding IsBusy}">
-					<VerticalStackLayout
-						HorizontalOptions="Center"
-						Spacing="12"
-						VerticalOptions="Center">
-						<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource Primary}" />
-						<Label
-							FontSize="13"
-							Text="Вчитување..."
-							TextColor="White" />
-					</VerticalStackLayout>
-				</Grid>
-			</Grid>
-		</Border>
+						<!--  ── Термини ──────────────────────────────────────  -->
+						<Border Style="{StaticResource PageHeaderCardStyle}">
+							<Grid RowDefinitions="Auto,*" RowSpacing="12">
+
+								<Grid ColumnDefinitions="*,Auto">
+									<Label Style="{StaticResource DashboardCardTitle}" Text="Термини" />
+									<Border
+										Grid.Column="1"
+										Padding="10,5"
+										MinimumHeightRequest="28"
+										MinimumWidthRequest="28"
+										Style="{StaticResource DashboardCardCountBadge}">
+										<Label
+											FontAttributes="Bold"
+											FontSize="14"
+											Style="{StaticResource DashboardCardCountLabel}"
+											Text="{Binding State.DailyEncounters.Count}" />
+									</Border>
+								</Grid>
+
+								<CollectionView
+									Grid.Row="1"
+									ItemsSource="{Binding State.Appointments}"
+									SelectionMode="None">
+
+									<CollectionView.EmptyView>
+										<VerticalStackLayout
+											Padding="20"
+											HorizontalOptions="Center"
+											Spacing="6"
+											VerticalOptions="Center">
+											<Label Style="{StaticResource DashboardEmptyStateLabel}" Text="Нема закажани термини" />
+										</VerticalStackLayout>
+									</CollectionView.EmptyView>
+
+									<CollectionView.ItemTemplate>
+										<DataTemplate x:DataType="dash:DashboardAppointmentItem">
+											<Border
+												Margin="0,0,0,10"
+												Padding="0"
+												BackgroundColor="{StaticResource SparkPageBackground}"
+												Stroke="{StaticResource SparkBorderSubtle}"
+												StrokeThickness="1">
+
+												<Border.Shadow>
+													<Shadow
+														Brush="{StaticResource SparkTextPrimary}"
+														Opacity="0.08"
+														Radius="10"
+														Offset="0,3" />
+												</Border.Shadow>
+												<Border.StrokeShape>
+													<RoundRectangle CornerRadius="14" />
+												</Border.StrokeShape>
+
+												<Grid Padding="0,12,14,12" ColumnDefinitions="4,Auto,*,Auto">
+
+													<BoxView
+														Grid.Column="0"
+														BackgroundColor="{Binding StatusColor}"
+														HorizontalOptions="Start"
+														WidthRequest="4" />
+
+													<!--  Avatar background tint  -->
+													<Border
+														Grid.Column="1"
+														Margin="14,0,14,0"
+														BackgroundColor="{Binding StatusColor}"
+														HeightRequest="48"
+														Opacity="0.15"
+														StrokeThickness="0"
+														VerticalOptions="Center"
+														WidthRequest="48">
+														<Border.StrokeShape>
+															<RoundRectangle CornerRadius="24" />
+														</Border.StrokeShape>
+													</Border>
+
+													<!--  Initials label  -->
+													<Label
+														Grid.Column="1"
+														Margin="14,0,14,0"
+														FontAttributes="Bold"
+														FontSize="16"
+														HorizontalOptions="Center"
+														HorizontalTextAlignment="Center"
+														Text="{Binding PatientName, Converter={StaticResource AppointmentsInitialsConverter}}"
+														TextColor="{Binding StatusColor}"
+														VerticalOptions="Center"
+														WidthRequest="48" />
+
+													<VerticalStackLayout
+														Grid.Column="2"
+														Spacing="4"
+														VerticalOptions="Center">
+														<Label
+															FontAttributes="Bold"
+															FontSize="15"
+															Text="{Binding PatientName}"
+															TextColor="{StaticResource SparkTextPrimary}" />
+														<HorizontalStackLayout Spacing="6">
+															<Label
+																FontFamily="FASolid"
+																FontSize="11"
+																Text="&#xf017;"
+																TextColor="{StaticResource SparkTextMuted}" />
+															<Label
+																FontSize="12.5"
+																Text="{Binding Time}"
+																TextColor="{StaticResource SparkTextSecondary}" />
+															<Label
+																FontSize="12.5"
+																Text="•"
+																TextColor="{StaticResource SparkBorderSubtle}" />
+															<Label
+																FontSize="12.5"
+																Text="{Binding RelativeDay}"
+																TextColor="{StaticResource SparkTextMuted}" />
+														</HorizontalStackLayout>
+													</VerticalStackLayout>
+
+													<Border
+														Grid.Column="3"
+														Padding="12,6"
+														BackgroundColor="{Binding StatusColor}"
+														Opacity="0.9"
+														StrokeThickness="0"
+														VerticalOptions="Center">
+														<Border.StrokeShape>
+															<RoundRectangle CornerRadius="20" />
+														</Border.StrokeShape>
+														<Label
+															FontAttributes="Bold"
+															FontSize="11"
+															HorizontalTextAlignment="Center"
+															Text="{Binding RelativeDay}"
+															TextColor="White" />
+													</Border>
+
+												</Grid>
+											</Border>
+										</DataTemplate>
+									</CollectionView.ItemTemplate>
+								</CollectionView>
+							</Grid>
+						</Border>
+
+						<!--  ── Прегледи по датум ────────────────────────────  -->
+						<Border Grid.Column="1" Style="{StaticResource PageHeaderCardStyle}">
+							<Grid RowDefinitions="Auto,Auto,*" RowSpacing="12">
+
+								<Grid ColumnDefinitions="*,Auto">
+									<Label Style="{StaticResource DashboardCardTitle}" Text="Прегледи по датум" />
+									<Border
+										Grid.Column="1"
+										Padding="10,5"
+										MinimumHeightRequest="30"
+										MinimumWidthRequest="30"
+										Style="{StaticResource DashboardCardCountBadge}">
+										<Label
+											FontAttributes="Bold"
+											FontSize="14"
+											Style="{StaticResource DashboardCardCountLabel}"
+											Text="{Binding State.DailyEncounters.Count}" />
+									</Border>
+								</Grid>
+
+								<!--  Day navigator  -->
+								<!--  Day navigator  -->
+								<Grid
+									Grid.Row="1"
+									ColumnDefinitions="Auto,*,Auto,Auto"
+									ColumnSpacing="6"
+									VerticalOptions="Center">
+
+									<!--  Previous week  -->
+									<Border
+										Grid.Column="0"
+										Padding="0"
+										BackgroundColor="{StaticResource SparkSurface}"
+										HeightRequest="60"
+										SemanticProperties.Description="Претходна недела"
+										Stroke="{StaticResource SparkBorderSubtle}"
+										StrokeThickness="1"
+										ToolTipProperties.Text="Претходна недела"
+										VerticalOptions="Center"
+										WidthRequest="60">
+										<Border.StrokeShape>
+											<RoundRectangle CornerRadius="12" />
+										</Border.StrokeShape>
+										<Border.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding PreviousWeekCommand}" />
+										</Border.GestureRecognizers>
+										<Label
+											FontAttributes="Bold"
+											FontSize="40"
+											HorizontalOptions="Center"
+											HorizontalTextAlignment="Center"
+											Text="‹"
+											TextColor="{StaticResource SparkAccentTeal}"
+											VerticalOptions="Center"
+											VerticalTextAlignment="Center" />
+									</Border>
+
+									<!--  Day strip  -->
+									<ScrollView
+										Grid.Column="1"
+										HorizontalScrollBarVisibility="Never"
+										Orientation="Horizontal"
+										VerticalOptions="Center">
+										<HorizontalStackLayout
+											BindableLayout.ItemsSource="{Binding State.DayStrip}"
+											Spacing="8"
+											VerticalOptions="Center">
+											<BindableLayout.ItemTemplate>
+												<DataTemplate x:DataType="dash:DashboardDayItem">
+													<Border
+														Padding="0"
+														HeightRequest="52"
+														StrokeThickness="1"
+														VerticalOptions="Center"
+														WidthRequest="44">
+														<Border.StrokeShape>
+															<RoundRectangle CornerRadius="12" />
+														</Border.StrokeShape>
+														<Border.GestureRecognizers>
+															<TapGestureRecognizer Command="{Binding Command}" />
+														</Border.GestureRecognizers>
+														<Border.Triggers>
+															<DataTrigger
+																Binding="{Binding IsSelected}"
+																TargetType="Border"
+																Value="True">
+																<Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTeal}" />
+																<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
+															</DataTrigger>
+															<DataTrigger
+																Binding="{Binding IsSelected}"
+																TargetType="Border"
+																Value="False">
+																<Setter Property="BackgroundColor" Value="{StaticResource SparkSurface}" />
+																<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
+															</DataTrigger>
+														</Border.Triggers>
+
+														<VerticalStackLayout
+															HorizontalOptions="Center"
+															Spacing="1"
+															VerticalOptions="Center">
+															<Label
+																FontSize="10"
+																HorizontalTextAlignment="Center"
+																Text="{Binding DayLabel}">
+																<Label.Triggers>
+																	<DataTrigger
+																		Binding="{Binding IsSelected}"
+																		TargetType="Label"
+																		Value="True">
+																		<Setter Property="TextColor" Value="White" />
+																	</DataTrigger>
+																	<DataTrigger
+																		Binding="{Binding IsSelected}"
+																		TargetType="Label"
+																		Value="False">
+																		<Setter Property="TextColor" Value="{StaticResource SparkTextMuted}" />
+																	</DataTrigger>
+																</Label.Triggers>
+															</Label>
+															<Label
+																FontAttributes="Bold"
+																FontSize="15"
+																HorizontalTextAlignment="Center"
+																Text="{Binding DayNumber}">
+																<Label.Triggers>
+																	<DataTrigger
+																		Binding="{Binding IsSelected}"
+																		TargetType="Label"
+																		Value="True">
+																		<Setter Property="TextColor" Value="White" />
+																	</DataTrigger>
+																	<DataTrigger
+																		Binding="{Binding IsSelected}"
+																		TargetType="Label"
+																		Value="False">
+																		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+																	</DataTrigger>
+																</Label.Triggers>
+															</Label>
+															<BoxView
+																CornerRadius="2"
+																HeightRequest="4"
+																HorizontalOptions="Center"
+																IsVisible="{Binding HasEncounters}"
+																WidthRequest="4">
+																<BoxView.Triggers>
+																	<DataTrigger
+																		Binding="{Binding IsSelected}"
+																		TargetType="BoxView"
+																		Value="True">
+																		<Setter Property="Color" Value="White" />
+																	</DataTrigger>
+																	<DataTrigger
+																		Binding="{Binding IsSelected}"
+																		TargetType="BoxView"
+																		Value="False">
+																		<Setter Property="Color" Value="{StaticResource SparkAccentTeal}" />
+																	</DataTrigger>
+																</BoxView.Triggers>
+															</BoxView>
+														</VerticalStackLayout>
+													</Border>
+												</DataTemplate>
+											</BindableLayout.ItemTemplate>
+										</HorizontalStackLayout>
+									</ScrollView>
+
+									<!--  Next week  -->
+									<Border
+										Grid.Column="2"
+										Padding="0"
+										BackgroundColor="{StaticResource SparkSurface}"
+										HeightRequest="60"
+										SemanticProperties.Description="Следна недела"
+										Stroke="{StaticResource SparkBorderSubtle}"
+										StrokeThickness="1"
+										ToolTipProperties.Text="Следна недела"
+										VerticalOptions="Center"
+										WidthRequest="60">
+										<Border.StrokeShape>
+											<RoundRectangle CornerRadius="12" />
+										</Border.StrokeShape>
+										<Border.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding NextWeekCommand}" />
+										</Border.GestureRecognizers>
+										<Label
+											FontAttributes="Bold"
+											FontSize="42"
+											HorizontalOptions="Center"
+											HorizontalTextAlignment="Center"
+											Text="›"
+											TextColor="{StaticResource SparkAccentTeal}"
+											VerticalOptions="Center"
+											VerticalTextAlignment="Center" />
+									</Border>
+
+									<!--  Calendar jump  -->
+									<Grid
+										Grid.Column="3"
+										HeightRequest="60"
+										VerticalOptions="Center"
+										WidthRequest="60">
+										<Border
+											BackgroundColor="{StaticResource SparkSurface}"
+											SemanticProperties.Description="Отвори календар"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											StrokeThickness="1"
+											ToolTipProperties.Text="Отвори календар">
+											<Border.StrokeShape>
+												<RoundRectangle CornerRadius="6" />
+											</Border.StrokeShape>
+											<Border.GestureRecognizers>
+												<TapGestureRecognizer Tapped="OnCalendarIconTapped" />
+											</Border.GestureRecognizers>
+											<Label
+												FontFamily="FASolid"
+												FontSize="40"
+												HorizontalOptions="Center"
+												HorizontalTextAlignment="Center"
+												Text="&#xf133;"
+												TextColor="{StaticResource Gray600}"
+												VerticalOptions="Center"
+												VerticalTextAlignment="Center" />
+										</Border>
+										<DatePicker
+											x:Name="CalendarDatePicker"
+											BackgroundColor="Transparent"
+											Date="{Binding SelectedDate}"
+											HeightRequest="44"
+											IsVisible="False"
+											WidthRequest="44" />
+									</Grid>
+								</Grid>
+
+								<!--  Encounters for selected date  -->
+								<CollectionView
+									Grid.Row="2"
+									ItemsSource="{Binding State.DailyEncounters}"
+									SelectionMode="None">
+
+									<CollectionView.EmptyView>
+										<VerticalStackLayout
+											Padding="20"
+											HorizontalOptions="Center"
+											Spacing="6"
+											VerticalOptions="Center">
+											<Label Style="{StaticResource DashboardEmptyStateLabel}" Text="Нема прегледи за избраниот датум" />
+										</VerticalStackLayout>
+									</CollectionView.EmptyView>
+
+									<CollectionView.ItemTemplate>
+										<DataTemplate x:DataType="dash:DashboardEncounterItem">
+											<Border
+												Margin="0,0,0,10"
+												Padding="0"
+												BackgroundColor="{StaticResource SparkAccentTealBg}"
+												Stroke="{StaticResource SparkBorderSubtle}"
+												StrokeThickness="1">
+
+												<Border.Shadow>
+													<Shadow
+														Brush="{StaticResource SparkTextPrimary}"
+														Opacity="0.08"
+														Radius="10"
+														Offset="0,3" />
+												</Border.Shadow>
+												<Border.StrokeShape>
+													<RoundRectangle CornerRadius="14" />
+												</Border.StrokeShape>
+
+												<Grid Padding="0,12,14,12" ColumnDefinitions="4,Auto,*,Auto">
+													<BoxView
+														Grid.Column="0"
+														BackgroundColor="{Binding StatusColor}"
+														HorizontalOptions="Start"
+														WidthRequest="4" />
+
+													<Label
+														Grid.Column="1"
+														Margin="14,0,14,0"
+														FontAttributes="Bold"
+														FontSize="15"
+														Text="{Binding Time}"
+														TextColor="{StaticResource SparkTextPrimary}"
+														VerticalOptions="Center" />
+
+													<Label
+														Grid.Column="2"
+														FontSize="14"
+														Text="{Binding PatientName}"
+														TextColor="{StaticResource SparkTextPrimary}"
+														VerticalOptions="Center" />
+
+													<Border
+														Grid.Column="3"
+														Padding="12,6"
+														BackgroundColor="{Binding StatusColor}"
+														Opacity="0.9"
+														StrokeThickness="0"
+														VerticalOptions="Center">
+														<Border.StrokeShape>
+															<RoundRectangle CornerRadius="20" />
+														</Border.StrokeShape>
+														<Label
+															FontAttributes="Bold"
+															FontSize="11"
+															HorizontalTextAlignment="Center"
+															Text="{Binding StatusText}"
+															TextColor="White" />
+													</Border>
+												</Grid>
+											</Border>
+										</DataTemplate>
+									</CollectionView.ItemTemplate>
+								</CollectionView>
+
+							</Grid>
+						</Border>
+
+					</Grid>
+
+				</VerticalStackLayout>
+			</ScrollView>
+
+		</Grid>
+
+		<!--  LOADING OVERLAY  -->
+		<Grid
+			Grid.Column="1"
+			BackgroundColor="{StaticResource SparkOverlay}"
+			IsVisible="{Binding IsBusy}">
+			<VerticalStackLayout
+				HorizontalOptions="Center"
+				Spacing="12"
+				VerticalOptions="Center">
+				<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
+				<Label
+					FontSize="13"
+					Text="Вчитување..."
+					TextColor="{StaticResource SparkTextPrimary}" />
+			</VerticalStackLayout>
+		</Grid>
+
 	</Grid>
 </ContentPage>

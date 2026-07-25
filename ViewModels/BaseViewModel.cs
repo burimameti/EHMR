@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Resources.Controls;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace EHMR.ViewModels;
 
@@ -55,6 +55,8 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     public bool HasNextPage => CurrentPage<TotalPages;
     public bool HasPreviousPage => CurrentPage>1;
 
+    private CancellationTokenSource? _suggestionCts;
+    private readonly Dictionary<string, object> _suggestionCache = new();
     // ================= PERMISSIONS =================
     [ObservableProperty] private bool canCreate;
     [ObservableProperty] private bool canUpdate;
@@ -80,7 +82,18 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     {
         get;
     }
+    protected virtual Func<T, Guid?>? DoctorOwnerSelector => null;
 
+    protected IEnumerable<T> ApplyDoctorScope(IEnumerable<T> query)
+    {
+        if(DoctorOwnerSelector is null) return query;
+        if(!AuthService.IsScopedToOwnData) return query; // Admin/SuperAdmin see everything
+
+        var doctorId = AuthService.CurrentDoctorId;
+        if(doctorId is null) return Enumerable.Empty<T>(); // Doctor role but no linked Doctor record → show nothing, not everything
+
+        return query.Where(item => DoctorOwnerSelector(item)==doctorId);
+    }
     protected void EvaluatePermissions()
     {
         CanCreate=AuthService.CanPerform(ModuleName, ModuleAction.Create);
@@ -93,7 +106,9 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     protected virtual async Task Select(T item)
     {
         SelectedItemService.SelectedItem=item;
+        SelectedItemService.OpenInEditMode=false;  // ← додадено, expлицитно read-only за detail-view
         await NavigationService.GoToAsync(DetailRoute);
+        Debug.WriteLine($"Route called Select - on baseService{DateTime.Now}", DetailRoute);
     }
 
     [RelayCommand]
@@ -117,7 +132,9 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
             return;
         }
         SelectedItemService.SelectedItem=item;
+        SelectedItemService.OpenInEditMode=true;  
         await NavigationService.GoToAsync(DetailRoute);
+        Debug.WriteLine($"Route called - edit - on baseService{DateTime.Now}", DetailRoute);
     }
 
     // ================= CORE PIPELINE =================
@@ -125,16 +142,14 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     {
         IEnumerable<T> query = AllItems;
 
+        query=ApplyDoctorScope(query);
         query=ApplySearch(query, SearchText);
         query=ApplyFilters(query);
         query=ApplySort(query);
 
         FilteredItems=query.ToList();
-
         CurrentPage=1;
-
         RefreshPage();
-
         OnPipelineApplied();
     }
 
@@ -288,7 +303,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
             action();
     }
 
-    public void Dispose()
+    public virtual void Dispose()
     {
     }
 
@@ -298,6 +313,15 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     protected virtual void BuildSparkButtons()
     {
         Buttons.Clear();
+        AddClearFiltersButton();
+    }
+    /// <summary>
+    /// Додава стандардно "✕ Исчисти" копче. Derived VM-ови можат да го повикаат
+    /// овој helper во својот override на BuildSparkButtons() наместо да го
+    /// рачно препишуваат SparkButtonItem-от секој пат.
+    /// </summary>
+    protected void AddClearFiltersButton()
+    {
         Buttons.Add(new SparkButtonItem
         {
             Label="✕ Исчисти",
@@ -305,7 +329,6 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
             Command=ClearFiltersCommand
         });
     }
-
     // ================= SPARK PICKERS =================
     public ObservableCollection<SparkPickerItem> Pickers { get; } = new();
 
@@ -323,7 +346,43 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         };
         return picker;
     }
+    protected async Task<IReadOnlyList<TSuggestion>?> DebouncedSuggestionSearchAsync<TSuggestion>(
+    string query,
+    Func<string, CancellationToken, Task<IReadOnlyList<TSuggestion>>> search,
+    int delayMs = 250,
+    int maxCacheEntries = 50)
+    {
+        _suggestionCts?.Cancel();
+        _suggestionCts=new CancellationTokenSource();
+        var token = _suggestionCts.Token;
 
+        try
+        {
+            await Task.Delay(delayMs, token);
+
+            query=query?.Trim()??string.Empty;
+
+            if(string.IsNullOrWhiteSpace(query))
+                return Array.Empty<TSuggestion>();
+
+            if(_suggestionCache.TryGetValue(query, out var cached)&&cached is IReadOnlyList<TSuggestion> typed)
+                return typed;
+
+            var result = await search(query, token);
+            if(token.IsCancellationRequested) return null;
+
+            if(_suggestionCache.Count>maxCacheEntries)
+                _suggestionCache.Remove(_suggestionCache.Keys.First());
+
+            _suggestionCache[query]=result;
+            return result;
+        }
+        catch(OperationCanceledException)
+        {
+            // понова тестирка го замени овој повик — нема што да се прави
+            return null;
+        }
+    }
     protected virtual void SyncSparkPickersFromFilters()
     {
     }
@@ -344,11 +403,20 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         ResetFilters();
         ApplyPipeline();
         SyncSparkPickersFromFilters();
+        FilteredItems.Clear();
     }
 
     protected abstract void ResetFilters();
 
-    protected virtual void AddDefaultActions(T item, SparkGridRow row, string detailLabel = "Детали", string editLabel = "✎")
+
+  
+
+    protected virtual void AddDefaultActions(
+     T item,
+     SparkGridRow row,
+     string detailLabel = "Детали",
+     string editLabel = "✎",
+     Func<T, bool>? canEditPredicate = null)
     {
         var actions = new List<SparkButtonItem>
     {
@@ -362,7 +430,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         }
     };
 
-        if(CanUpdate)
+        if(CanUpdate&&(canEditPredicate?.Invoke(item)??true))
             actions.Add(new SparkButtonItem { Label=editLabel, Command=EditCommand, CommandParameter=item });
 
         row["Actions"]=actions;
@@ -420,5 +488,18 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     {
         foreach(var (key, tab) in TabsByKey)
             tab.IsSelected=key==selectedKey;
-    }   
+    }
+
+    protected void ResetPipeline()
+    {
+        SearchText=string.Empty;
+
+        AllItems.Clear();
+        FilteredItems.Clear();
+        Items.Clear();
+
+        CurrentPage=1;
+
+        RefreshPaginationNotifications();
+    }
 }

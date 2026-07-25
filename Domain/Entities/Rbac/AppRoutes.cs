@@ -11,6 +11,20 @@
             public const string List = "patientslist";
             public const string Detail = "patientsdetail";
         }
+        public static class Admin
+        {
+            public const string AdminPanel = "AdminPage";
+
+        }
+
+        public static class Backup
+        {
+            public const string Dashboard = "BackupDashboardPage";
+            public const string History = "BackupHistoryPage";
+            public const string BackupDetails = "BackupDetailsPage";
+            public const string Backups = "BackupPage";
+            public const string Restore = "RestorePage";
+        }
 
         public static class Doctors
         {
@@ -80,6 +94,7 @@
         public static class Mkb10Codes
         {
             public const string List = "mkbcodes";
+
         }
 
         public static class Reports

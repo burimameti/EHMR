@@ -266,7 +266,7 @@ public class AutocompleteSearchService : IAutocompleteSearchService
                     Id=x.Id.ToString(),
                     Type=SearchEntityType.TherapyCycle,
                     DisplayText=
-                        $"Cycle #{x.CycleNumber} • {x.Patient.FirstName} {x.Patient.LastName}",
+                        $"Cycle #{x.TherapyCyleNumber} • {x.Patient.FirstName} {x.Patient.LastName}",
                     Score=
                         ScoreMatch(x.Patient.FirstName, query)
                         +ScoreMatch(x.Patient.LastName, query)

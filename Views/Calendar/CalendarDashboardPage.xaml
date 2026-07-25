@@ -7,51 +7,95 @@
 	xmlns:conv="clr-namespace:EHMR.Extensions"
 	xmlns:vm="clr-namespace:EHMR.ViewModels"
 	x:Name="CurrentPage"
-	x:DataType="vm:CalendarDashboardViewModel">
+	x:DataType="vm:CalendarDashboardViewModel"
+	BackgroundColor="{StaticResource SparkCanvasBackground}">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
 			<conv:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter" />
 			<conv:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+
+			<!--  White elevated card — used for header, calendar grid, right panel  -->
+			<Style x:Key="ElevatedCardStyle" TargetType="Border">
+				<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+				<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+				<Setter Property="StrokeThickness" Value="1" />
+				<Setter Property="StrokeShape">
+					<Setter.Value>
+						<RoundRectangle CornerRadius="{StaticResource SparkRadiusLg}" />
+					</Setter.Value>
+				</Setter>
+				<Setter Property="Shadow">
+					<Setter.Value>
+						<Shadow
+							Brush="#1E2733"
+							Opacity="0.06"
+							Radius="10"
+							Offset="0,2" />
+					</Setter.Value>
+				</Setter>
+			</Style>
+
+			<Style
+				x:Key="MiniStatCardStyle"
+				BasedOn="{StaticResource ElevatedCardStyle}"
+				TargetType="Border">
+				<Setter Property="StrokeShape">
+					<Setter.Value>
+						<RoundRectangle CornerRadius="{StaticResource SparkRadiusMd}" />
+					</Setter.Value>
+				</Setter>
+				<Setter Property="Padding" Value="14,12" />
+			</Style>
+
+			<Style x:Key="StatIconChipStyle" TargetType="Border">
+				<Setter Property="StrokeThickness" Value="0" />
+				<Setter Property="WidthRequest" Value="36" />
+				<Setter Property="HeightRequest" Value="36" />
+				<Setter Property="StrokeShape">
+					<Setter.Value>
+						<RoundRectangle CornerRadius="10" />
+					</Setter.Value>
+				</Setter>
+			</Style>
 		</ResourceDictionary>
 	</ContentPage.Resources>
 
 	<Grid ColumnDefinitions="285,*">
 
+		<!--  SIDEBAR  -->
 		<Border Grid.Column="0" StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
+		<!--  MAIN CONTENT  -->
 		<Grid
 			Grid.Column="1"
-			Padding="24"
-			BackgroundColor="{StaticResource Gray200}"
-			ColumnDefinitions="*,400"
-			ColumnSpacing="20">
+			Padding="20"
+			ColumnDefinitions="*,380"
+			ColumnSpacing="16">
 
-			<!--  ═══════════════════ LEFT: CALENDAR ═══════════════════  -->
+			<!--  ═══════════ LEFT: CALENDAR ═══════════  -->
 			<Grid
 				Grid.Column="0"
 				RowDefinitions="Auto,Auto,*"
-				RowSpacing="16">
+				RowSpacing="12">
 
+				<!--  ROW 0: PAGE HEADER  -->
+				<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+					<Grid
+						Padding="20,16"
+						ColumnDefinitions="*,Auto"
+						VerticalOptions="Center">
 
-				<Border
-					Grid.Row="0"
-					Padding="28"
-					BackgroundColor="{StaticResource SparkBackground}"
-					Stroke="{StaticResource SparkBorder}"
-					StrokeShape="RoundRectangle 0">
-
-					<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-						<VerticalStackLayout Spacing="6" VerticalOptions="Center">
+						<VerticalStackLayout Spacing="4" VerticalOptions="Center">
 							<Label
 								FontAttributes="Bold"
-								FontSize="28"
+								FontSize="24"
 								Text="Медицински календар"
 								TextColor="{StaticResource SparkTextPrimary}" />
 							<Label
-								FontSize="14"
+								FontSize="13"
 								Text="Распоред на прегледи"
 								TextColor="{StaticResource SparkTextSecondary}" />
 						</VerticalStackLayout>
@@ -60,26 +104,27 @@
 							Grid.Column="1"
 							Spacing="8"
 							VerticalOptions="Center">
+
 							<controls:FFButton
 								ButtonKind="Secondary"
 								Command="{Binding PreviousMonthCommand}"
 								FontFamily="FASolid"
-								HeightRequestEx="40"
+								HeightRequestEx="38"
 								Text="&#xf053;"
-								WidthRequestEx="40" />
+								WidthRequestEx="38" />
 
 							<Border
-								Padding="16,0"
+								Padding="14,0"
 								BackgroundColor="{StaticResource SparkBackgroundAlt}"
-								HeightRequest="40"
+								HeightRequest="38"
 								Stroke="{StaticResource SparkBorder}"
 								StrokeShape="RoundRectangle 8"
 								StrokeThickness="1"
 								VerticalOptions="Center"
-								WidthRequest="180">
+								WidthRequest="160">
 								<Label
 									FontAttributes="Bold"
-									FontSize="14"
+									FontSize="13"
 									HorizontalOptions="Center"
 									Text="{Binding CurrentMonthYearText}"
 									TextColor="{StaticResource SparkTextPrimary}"
@@ -90,52 +135,42 @@
 								ButtonKind="Secondary"
 								Command="{Binding NextMonthCommand}"
 								FontFamily="FASolid"
-								HeightRequestEx="40"
+								HeightRequestEx="38"
 								Text="&#xf054;"
-								WidthRequestEx="40" />
+								WidthRequestEx="38" />
 
 							<controls:FFButton
-								Margin="8,0,0,0"
+								Margin="4,0,0,0"
 								ButtonKind="Primary"
 								Command="{Binding GoToTodayCommand}"
-								HeightRequestEx="40"
+								HeightRequestEx="38"
 								Text="{Binding TodaysEncountersCount, StringFormat='Денес ({0})'}"
 								TextColorEx="White"
 								WidthRequestEx="120" />
 
-
 							<controls:FFButton
-								Margin="8,0,0,0"
-								ButtonKind="Primary"
+								ButtonKind="Secondary"
 								Command="{Binding CloseDayViewCommand}"
-								HeightRequestEx="40"
+								HeightRequestEx="38"
 								IsVisible="{Binding IsDayViewActive}"
-								Text="Затвори Ден"
-								TextColorEx="White"
-								WidthRequestEx="140" />
+								Text="Затвори ден"
+								WidthRequestEx="130" />
 						</HorizontalStackLayout>
 					</Grid>
 				</Border>
 
-
-				<Border
+				<!--  ROW 1: WEEK TABS — dark navy bar, no outer wrapper  -->
+				<controls:SparkExplorerHeaderView
 					Grid.Row="1"
-					Padding="0"
-					BackgroundColor="{StaticResource SparkBackground}"
-					StrokeThickness="0">
-					<controls:CalendarHeader Tabs="{Binding WeekTabs}" />
-				</Border>
-
-
-				<Border
-					Grid.Row="2"
-					BackgroundColor="{StaticResource SparkBackground}"
-					Stroke="{StaticResource SparkBorder}"
-					StrokeShape="RoundRectangle 12"
-					StrokeThickness="1">
+					Grid.Column="0"
+					Grid.ColumnSpan="2"
+					SearchVisible="False"
+					Tabs="{Binding WeekTabs}" />
+				<!--  ROW 2: CALENDAR GRID  -->
+				<Border Grid.Row="2" Style="{StaticResource PageHeaderCardStyle}">
 					<ScrollView>
 						<FlexLayout
-							Padding="8"
+							Padding="10"
 							AlignContent="Start"
 							AlignItems="Start"
 							BindableLayout.ItemsSource="{Binding CalendarDays}"
@@ -154,7 +189,7 @@
 										MinimumHeightRequest="104"
 										Opacity="{Binding IsCurrentMonth, Converter={StaticResource BoolToOpacityConverter}}"
 										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 4"
+										StrokeShape="RoundRectangle 8"
 										StrokeThickness="1">
 
 										<Border.GestureRecognizers>
@@ -169,7 +204,6 @@
 												<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
 												<Setter Property="StrokeThickness" Value="2" />
 											</DataTrigger>
-
 											<DataTrigger
 												Binding="{Binding IsToday}"
 												TargetType="Border"
@@ -181,21 +215,21 @@
 
 										<Grid
 											Padding="8,6"
-											RowDefinitions="Auto,*,Auto"
+											RowDefinitions="Auto,Auto,Auto"
 											RowSpacing="4">
 
-											<!--  ДЕН + БРОЈ ПРЕГЛЕДИ  -->
 											<Grid
 												Grid.Row="0"
 												ColumnDefinitions="Auto,*"
 												IsVisible="{Binding IsEmptySlot, Converter={StaticResource InvertedBoolConverter}}">
 
+												<!--  Day number circle (teal on today)  -->
 												<Border
 													Padding="0"
 													BackgroundColor="Transparent"
 													HeightRequest="24"
 													HorizontalOptions="Start"
-													StrokeShape="RoundRectangle 6"
+													StrokeShape="RoundRectangle 12"
 													StrokeThickness="0"
 													WidthRequest="24">
 													<Border.Triggers>
@@ -208,7 +242,7 @@
 													</Border.Triggers>
 													<Label
 														FontAttributes="Bold"
-														FontSize="13"
+														FontSize="12"
 														HorizontalOptions="Center"
 														Text="{Binding DayNumber}"
 														VerticalOptions="Center">
@@ -229,9 +263,10 @@
 													</Label>
 												</Border>
 
+												<!--  Event count badge  -->
 												<Border
 													Grid.Column="1"
-													Padding="7,2"
+													Padding="6,2"
 													BackgroundColor="{StaticResource SparkBadgeNeutralBg}"
 													HorizontalOptions="End"
 													IsVisible="{Binding EventCount, Converter={StaticResource GreaterThanZeroConverter}}"
@@ -241,11 +276,11 @@
 														FontAttributes="Bold"
 														FontSize="9"
 														Text="{Binding EventCount}"
-														TextColor="{StaticResource SparkTextSecondary}" />
+														TextColor="{StaticResource SparkBadgeNeutralText}" />
 												</Border>
 											</Grid>
 
-											<!--  НАСТАНИ  -->
+											<!--  Events list  -->
 											<VerticalStackLayout
 												Grid.Row="1"
 												BindableLayout.ItemsSource="{Binding VisibleEvents}"
@@ -256,15 +291,15 @@
 														<Border
 															Padding="6,4"
 															BackgroundColor="{Binding BackgroundColor}"
-															StrokeShape="RoundRectangle 4"
+															StrokeShape="RoundRectangle 6"
 															StrokeThickness="0">
-															<Grid ColumnDefinitions="Auto,*" ColumnSpacing="5">
+															<Grid ColumnDefinitions="3,*" ColumnSpacing="5">
 																<BoxView
+																	Grid.Column="0"
 																	BackgroundColor="{Binding TextColor}"
 																	CornerRadius="2"
 																	HorizontalOptions="Start"
-																	VerticalOptions="Fill"
-																	WidthRequest="3" />
+																	VerticalOptions="Fill" />
 																<VerticalStackLayout Grid.Column="1" Spacing="1">
 																	<Label
 																		FontAttributes="Bold"
@@ -283,7 +318,7 @@
 												</BindableLayout.ItemTemplate>
 											</VerticalStackLayout>
 
-											<!--  +N ПОВЕЌЕ  -->
+											<!--  +N more  -->
 											<Border
 												Grid.Row="2"
 												Padding="6,2"
@@ -307,37 +342,30 @@
 				</Border>
 			</Grid>
 
-			<!--  ═══════════════════ RIGHT: INSIGHTS / DAY PANEL ═══════════════════  -->
-			<Border
-				Grid.Column="1"
-				Padding="0"
-				BackgroundColor="{StaticResource SparkBackground}"
-				Stroke="{StaticResource SparkBorder}"
-				StrokeShape="RoundRectangle 0"
-				StrokeThickness="1">
-				<Grid RowDefinitions="72,*">
+			<!--  ═══════════ RIGHT: INSIGHTS / DAY PANEL ═══════════  -->
+			<Border Grid.Column="1" Style="{StaticResource ElevatedCardStyle}">
+				<Grid RowDefinitions="64,*">
 
+					<!--  Panel header  -->
 					<Grid
 						Grid.Row="0"
-						Padding="24,0"
-						BackgroundColor="{StaticResource SparkBackgroundAlt}"
+						Padding="20,0"
 						ColumnDefinitions="*,Auto">
 						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
 							<Label
 								FontFamily="FASolid"
-								FontSize="14"
+								FontSize="13"
 								Text="&#xf200;"
 								TextColor="{StaticResource SparkAccentTeal}"
 								VerticalOptions="Center" />
 							<Label
-								CharacterSpacing="1"
+								CharacterSpacing="0.8"
 								FontAttributes="Bold"
-								FontSize="13"
+								FontSize="12"
 								Text="УВИД И АНАЛИТИКА"
 								TextColor="{StaticResource SparkTextPrimary}"
 								VerticalOptions="Center" />
 						</HorizontalStackLayout>
-
 						<controls:FFButton
 							Grid.Column="1"
 							ButtonKind="Secondary"
@@ -346,145 +374,160 @@
 							IsVisible="{Binding IsDayViewActive}"
 							Text="Затвори"
 							VerticalOptions="Center"
-							WidthRequestEx="100" />
+							WidthRequestEx="90" />
 					</Grid>
+
+					<!--  1px divider under panel header  -->
+					<BoxView
+						Grid.Row="0"
+						BackgroundColor="{StaticResource SparkBorder}"
+						HeightRequest="1"
+						VerticalOptions="End" />
 
 					<Grid Grid.Row="1">
 
 						<!--  STATS VIEW  -->
 						<ScrollView IsVisible="{Binding IsStatsViewActive}" VerticalScrollBarVisibility="Never">
-							<VerticalStackLayout Padding="16" Spacing="24">
+							<VerticalStackLayout Padding="16,20" Spacing="12">
 
-								<Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-									<Border
-										Grid.Column="0"
-										Padding="16"
-										BackgroundColor="{StaticResource SparkBackgroundAlt}"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 14"
-										StrokeThickness="1">
-										<VerticalStackLayout HorizontalOptions="Center" Spacing="6">
-											<Label
-												CharacterSpacing="1"
-												FontAttributes="Bold"
-												FontSize="11"
-												HorizontalTextAlignment="Center"
-												Text="ПРЕГЛЕДИ ОВОЈ МЕСЕЦ"
-												TextColor="{StaticResource SparkTextSecondary}" />
-											<Label
-												FontAttributes="Bold"
-												FontSize="26"
-												HorizontalTextAlignment="Center"
-												Text="{Binding MonthlyEncountersCount}"
-												TextColor="{StaticResource SparkTextPrimary}" />
-										</VerticalStackLayout>
+								<!--  Stat cards row  -->
+								<Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+									<Border Grid.Column="0" Style="{StaticResource MiniStatCardStyle}">
+										<HorizontalStackLayout Spacing="12" VerticalOptions="Center">
+											<Border BackgroundColor="{StaticResource SparkBadgeNeutralBg}" Style="{StaticResource StatIconChipStyle}">
+												<Label
+													FontFamily="FASolid"
+													FontSize="14"
+													HorizontalOptions="Center"
+													Text="&#xf133;"
+													TextColor="{StaticResource SparkBadgeNeutralText}"
+													VerticalOptions="Center" />
+											</Border>
+											<VerticalStackLayout Spacing="3">
+												<Label
+													CharacterSpacing="0.5"
+													FontAttributes="Bold"
+													FontSize="8"
+													Text="ОВОЈ МЕСЕЦ"
+													TextColor="{StaticResource SparkTextSecondary}" />
+												<Label
+													FontAttributes="Bold"
+													FontSize="20"
+													Text="{Binding MonthlyEncountersCount}"
+													TextColor="{StaticResource SparkTextPrimary}" />
+											</VerticalStackLayout>
+										</HorizontalStackLayout>
 									</Border>
-									<Border
-										Grid.Column="1"
-										Padding="16"
-										BackgroundColor="{StaticResource SparkBackgroundAlt}"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 14"
-										StrokeThickness="1">
-										<VerticalStackLayout HorizontalOptions="Center" Spacing="6">
-											<Label
-												CharacterSpacing="1"
-												FontAttributes="Bold"
-												FontSize="11"
-												HorizontalTextAlignment="Center"
-												Text="ПРЕГЛЕДИ ДЕНЕС"
-												TextColor="{StaticResource SparkTextSecondary}" />
-											<Label
-												FontAttributes="Bold"
-												FontSize="26"
-												HorizontalTextAlignment="Center"
-												Text="{Binding TodaysEncountersCount}"
-												TextColor="{StaticResource SparkTextPrimary}" />
-										</VerticalStackLayout>
+									<Border Grid.Column="1" Style="{StaticResource MiniStatCardStyle}">
+										<HorizontalStackLayout Spacing="12" VerticalOptions="Center">
+											<Border BackgroundColor="{StaticResource SparkAccentTealBg}" Style="{StaticResource StatIconChipStyle}">
+												<Label
+													FontFamily="FASolid"
+													FontSize="14"
+													HorizontalOptions="Center"
+													Text="&#xf0f8;"
+													TextColor="{StaticResource SparkAccentTeal}"
+													VerticalOptions="Center" />
+											</Border>
+											<VerticalStackLayout Spacing="3">
+												<Label
+													CharacterSpacing="0.5"
+													FontAttributes="Bold"
+													FontSize="8"
+													Text="ДЕНЕС"
+													TextColor="{StaticResource SparkTextSecondary}" />
+												<Label
+													FontAttributes="Bold"
+													FontSize="20"
+													Text="{Binding TodaysEncountersCount}"
+													TextColor="{StaticResource SparkTextPrimary}" />
+											</VerticalStackLayout>
+										</HorizontalStackLayout>
 									</Border>
 								</Grid>
 
-								<Border
-									Padding="20,16"
-									BackgroundColor="{StaticResource SparkBackgroundAlt}"
-									Stroke="{StaticResource SparkBorder}"
-									StrokeShape="RoundRectangle 14"
-									StrokeThickness="1">
+								<Border Style="{StaticResource MiniStatCardStyle}">
 									<Grid ColumnDefinitions="Auto,*">
-										<Label
-											Margin="0,0,16,0"
-											FontFamily="FASolid"
-											FontSize="22"
-											Text="&#xf073;"
-											TextColor="{StaticResource SparkAccentTeal}"
-											VerticalOptions="Center" />
-										<VerticalStackLayout
-											Grid.Column="1"
-											Spacing="2"
+										<Border
+											Margin="0,0,14,0"
+											BackgroundColor="{StaticResource SparkBadgeWarningBg}"
+											Style="{StaticResource StatIconChipStyle}"
 											VerticalOptions="Center">
 											<Label
-												CharacterSpacing="0.3"
+												FontFamily="FASolid"
+												FontSize="14"
+												HorizontalOptions="Center"
+												Text="&#xf073;"
+												TextColor="{StaticResource SparkBadgeWarningText}"
+												VerticalOptions="Center" />
+										</Border>
+										<VerticalStackLayout
+											Grid.Column="1"
+											Spacing="3"
+											VerticalOptions="Center">
+											<Label
+												CharacterSpacing="0.5"
 												FontAttributes="Bold"
-												FontSize="11"
+												FontSize="8"
 												Text="ПРЕТСТОЈНИ ПРЕГЛЕДИ"
 												TextColor="{StaticResource SparkTextSecondary}" />
 											<Label
 												FontAttributes="Bold"
-												FontSize="24"
+												FontSize="20"
 												Text="{Binding UpcomingEncountersCount}"
 												TextColor="{StaticResource SparkTextPrimary}" />
 										</VerticalStackLayout>
 									</Grid>
 								</Border>
 
-								<VerticalStackLayout Margin="0,10,0,0" Spacing="10">
+								<!--  Quick nav  -->
+								<VerticalStackLayout Margin="0,8,0,0" Spacing="10">
 									<Label
-										CharacterSpacing="1"
+										CharacterSpacing="0.5"
 										FontAttributes="Bold"
-										FontSize="12"
+										FontSize="11"
 										Text="Брза навигација"
 										TextColor="{StaticResource SparkTextPrimary}" />
 									<controls:FFButton
 										ButtonKind="Primary"
 										Command="{Binding CreateNewEncounterForSelectedDayCommand}"
-										HeightRequestEx="46"
+										FontFamily="FASolid"
+										HeightRequestEx="44"
 										HorizontalOptionsEx="Fill"
-										Text="&#xf271;   Нов преглед"
-										TextColorEx="White"
-										WidthRequestEx="320" />
+										Text="&#xf271; Нов преглед" />
 								</VerticalStackLayout>
 							</VerticalStackLayout>
 						</ScrollView>
 
 						<!--  DAY VIEW  -->
 						<ScrollView IsVisible="{Binding IsDayViewActive}" VerticalScrollBarVisibility="Always">
-							<VerticalStackLayout Padding="20" Spacing="20">
+							<VerticalStackLayout Padding="16,20" Spacing="16">
 
 								<Border
-									Padding="14,10"
-									BackgroundColor="{StaticResource SparkBackgroundAlt}"
+									Padding="12,10"
+									BackgroundColor="{StaticResource SparkAccentTealBg}"
 									HorizontalOptions="Fill"
-									Stroke="{StaticResource SparkBorder}"
-									StrokeShape="RoundRectangle 8"
+									Stroke="{StaticResource SparkAccentTeal}"
+									StrokeShape="RoundRectangle 10"
 									StrokeThickness="1">
 									<HorizontalStackLayout HorizontalOptions="Center" Spacing="8">
 										<Label
 											FontFamily="FASolid"
-											FontSize="13"
-											Text="&#xf017;"
-											TextColor="{StaticResource SparkAccentTeal}"
-											VerticalOptions="Center" />
-										<Label
-											FontAttributes="Bold"
 											FontSize="12"
-											Text="ДНЕВЕН РАСПОРЕД ЗА ДЕН:"
-											TextColor="{StaticResource SparkAccentTeal}"
+											Text="&#xf017;"
+											TextColor="{StaticResource SparkAccentTealDark}"
 											VerticalOptions="Center" />
 										<Label
 											FontAttributes="Bold"
-											FontSize="14"
+											FontSize="11"
+											Text="ДНЕВЕН РАСПОРЕД ЗА ДЕН:"
+											TextColor="{StaticResource SparkAccentTealDark}"
+											VerticalOptions="Center" />
+										<Label
+											FontAttributes="Bold"
+											FontSize="13"
 											Text="{Binding SelectedCalendarDay.DayNumber}"
-											TextColor="{StaticResource SparkAccentTeal}"
+											TextColor="{StaticResource SparkAccentTealDark}"
 											VerticalOptions="Center" />
 									</HorizontalStackLayout>
 								</Border>
@@ -493,20 +536,18 @@
 									<BindableLayout.ItemTemplate>
 										<DataTemplate x:DataType="vm:HourlyTimelineSlotDto">
 											<VerticalStackLayout>
-												<Grid Padding="0,14" ColumnDefinitions="64,*">
+												<Grid Padding="0,12" ColumnDefinitions="60,*">
 													<Grid.GestureRecognizers>
 														<TapGestureRecognizer Command="{Binding BindingContext.CreateNewEncounterForSpecificHourCommand, Source={x:Reference CurrentPage}}" CommandParameter="{Binding .}" />
 													</Grid.GestureRecognizers>
-
 													<Label
 														Grid.Column="0"
 														Margin="0,4,0,0"
 														FontAttributes="Bold"
-														FontSize="13"
+														FontSize="12"
 														Text="{Binding HourText}"
 														TextColor="{StaticResource SparkTextSecondary}"
 														VerticalOptions="Start" />
-
 													<VerticalStackLayout
 														Grid.Column="1"
 														BindableLayout.ItemsSource="{Binding SlotEvents}"
@@ -514,34 +555,42 @@
 														<BindableLayout.ItemTemplate>
 															<DataTemplate x:DataType="vm:CalendarEventDto">
 																<Border
-																	Padding="14,12"
-																	BackgroundColor="#DCFCE7"
-																	Stroke="#BBF7D0"
+																	Padding="12,10"
+																	BackgroundColor="{StaticResource SparkBackgroundAlt}"
+																	Stroke="{StaticResource SparkBorder}"
 																	StrokeShape="RoundRectangle 10"
 																	StrokeThickness="1">
 																	<Border.GestureRecognizers>
 																		<TapGestureRecognizer Tapped="OnTimelineItemBorderTapped" />
 																	</Border.GestureRecognizers>
-																	<VerticalStackLayout Spacing="2">
-																		<Label
-																			FontAttributes="Bold"
-																			FontSize="13"
-																			Text="{Binding Title}"
-																			TextColor="#15803D" />
-																		<HorizontalStackLayout Spacing="6">
+																	<Grid ColumnDefinitions="3,*" ColumnSpacing="10">
+																		<BoxView
+																			Grid.Column="0"
+																			BackgroundColor="{Binding TextColor}"
+																			CornerRadius="2"
+																			HorizontalOptions="Start"
+																			VerticalOptions="Fill" />
+																		<VerticalStackLayout Grid.Column="1" Spacing="2">
 																			<Label
-																				FontFamily="FASolid"
-																				FontSize="10"
-																				Text="&#xf05a;"
-																				TextColor="{StaticResource SparkTextSecondary}"
-																				VerticalOptions="Center" />
-																			<Label
-																				FontSize="11"
-																				Text="{Binding Status, StringFormat='Статус: {0}'}"
-																				TextColor="{StaticResource SparkTextSecondary}"
-																				VerticalOptions="Center" />
-																		</HorizontalStackLayout>
-																	</VerticalStackLayout>
+																				FontAttributes="Bold"
+																				FontSize="13"
+																				Text="{Binding Title}"
+																				TextColor="{StaticResource SparkTextPrimary}" />
+																			<HorizontalStackLayout Spacing="5">
+																				<Label
+																					FontFamily="FASolid"
+																					FontSize="10"
+																					Text="&#xf05a;"
+																					TextColor="{StaticResource SparkTextSecondary}"
+																					VerticalOptions="Center" />
+																				<Label
+																					FontSize="11"
+																					Text="{Binding Status, StringFormat='Статус: {0}'}"
+																					TextColor="{StaticResource SparkTextSecondary}"
+																					VerticalOptions="Center" />
+																			</HorizontalStackLayout>
+																		</VerticalStackLayout>
+																	</Grid>
 																</Border>
 															</DataTemplate>
 														</BindableLayout.ItemTemplate>

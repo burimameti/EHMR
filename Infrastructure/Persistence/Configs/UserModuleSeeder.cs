@@ -26,6 +26,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
             new Module { UserId = SeedIds.AdminUser, ModuleKey = Modules.Administration, IsEnabled = true },
             new Module { UserId = SeedIds.AdminUser, ModuleKey = Modules.Patients, IsEnabled = true },
             new Module { UserId = SeedIds.AdminUser, ModuleKey = Modules.Therapy, IsEnabled = true },
+                        new Module { UserId = SeedIds.AdminUser, ModuleKey = Modules.BackupDashboard, IsEnabled = true },
             new Module { UserId = SeedIds.AdminUser, ModuleKey = Modules.Reports, IsEnabled = true }
         });
 

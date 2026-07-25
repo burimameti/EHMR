@@ -39,7 +39,15 @@ public class DoctorService : IDoctorService
     public async Task AddAsync(Doctor doctor)
     {
         await using var db = await _factory.CreateDbContextAsync();
+        doctor.Id=doctor.Id==Guid.Empty
+                   ? Guid.NewGuid()
+                   : doctor.Id;
 
+        if(string.IsNullOrWhiteSpace(doctor.DoctorNumber))
+        {
+            doctor.DoctorNumber=
+                await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Doctor, "DOK");
+        }
         db.Doctors.Add(doctor);
 
         await db.SaveChangesAsync();

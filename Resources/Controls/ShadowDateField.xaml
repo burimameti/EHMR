@@ -1,8 +1,9 @@
-<controls:ShadowFieldContainer xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-                               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                               xmlns:controls="clr-namespace:EHMR.Resources.Controls"
-                               x:Class="EHMR.Resources.Controls.ShadowDateField"
-                               x:Name="Root">
+<controls:ShadowFieldContainer
+	x:Class="EHMR.Resources.Controls.ShadowDateField"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	x:Name="Root">
 
 	<controls:ShadowFieldContainer.FieldContent>
 

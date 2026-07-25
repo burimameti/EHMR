@@ -4,13 +4,14 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Services;
+using EHMR.ViewModels.Encounters;
 
 namespace EHMR.ViewModels.Encounters;
-
 public partial class EncounterCreateViewModel : EncounterBaseViewModel
 {
-    private readonly ISelectedItemService<Appointment> _appointmentContext; // од "Започни преглед" (Appointment)
-    private readonly ISelectedItemService<Patient> _patientContext;         // од "Нов преглед" (Patient grid row)
+    private readonly ISelectedItemService<Appointment> _appointmentContext;
+    private readonly ISelectedItemService<Patient> _patientContext;
+
     [ObservableProperty]
     private string? expandedSection;
 
@@ -29,58 +30,57 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
 
     public async Task LoadAsync()
     {
-        // Вчитува Patients/Doctors, креира нов Encounter, IsEditMode=true/IsReadOnly=false
         await InitializeAsync(null);
         Encounter.Status=EncounterStatus.Scheduled;
 
-        // 1) Дојде преку "Започни преглед" од Appointment? — наследи целосен контекст
+        // Flow 1: "Започни преглед" from Appointment row
         var incomingAppointment = _appointmentContext.SelectedItem;
         if(incomingAppointment!=null&&incomingAppointment.Id!=Guid.Empty)
         {
             await ApplyAppointmentContextAsync(incomingAppointment);
-            IsPatientLockedFromContext=false;
             _appointmentContext.SelectedItem=null;
+
+            IsPatientLockedFromContext=true;  // ← was false: patient+doctor come from the appointment, lock them
             IsEditMode=true;
             IsReadOnly=false;
             return;
         }
 
-        // 2) Дојде преку клик на ред од Patient grid ("Нов преглед за пациентот") — предпополни пациент
+        // Flow 2: "Нов преглед" from Patient grid row — walk-in, patient pre-filled
         var incomingPatient = _patientContext.SelectedItem;
         if(incomingPatient!=null&&incomingPatient.Id!=Guid.Empty)
         {
-            var matchedPatient = Patients.FirstOrDefault(p => p.Id==incomingPatient.Id)??incomingPatient;
-            IsPatientLockedFromContext=false;
-            // Ова тригерира OnSelectedPatientChanged (reset + fire-and-forget load-и).
+            var matchedPatient = Patients.FirstOrDefault(p => p.Id==incomingPatient.Id)
+                                 ??incomingPatient;
+
+            IsPatientLockedFromContext=true;  // ← was false: patient came from context, lock it
             SelectedPatient=matchedPatient;
 
-            // Примарен лекар од пациентот, ако постои — не бара корисникот рачно да го избира.
             if(matchedPatient.DoctorId!=Guid.Empty)
                 SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==matchedPatient.DoctorId);
 
-            // Awaitни ги истите load-и за да се пополнат картите (дијагнози, терапии,
-            // appointments, циклуси) ПРЕД формата да се прикаже — нема друг конкурентен
-            // UI повик во моментов, значи безбедно е.
             await LoadTherapyCyclesForPatientAsync(matchedPatient.Id);
             await LoadAppointmentsForPatientAsync(matchedPatient.Id);
             await LoadPatientContextAsync(matchedPatient.Id);
 
-            _patientContext.SelectedItem=null; // consume
+            _patientContext.SelectedItem=null;
         }
 
+        // Flow 3: Pure walk-in — everything selected manually
+        IsPatientLockedFromContext=false;
         IsEditMode=true;
         IsReadOnly=false;
     }
+
     [RelayCommand]
     private void ToggleSection(string section)
     {
         if(string.IsNullOrWhiteSpace(section))
             return;
 
-        ExpandedSection=ExpandedSection==section
-            ? null
-            : section;
+        ExpandedSection=ExpandedSection==section ? null : section;
     }
+
     [RelayCommand]
     public async Task SaveAsync()
     {
@@ -100,12 +100,20 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             Encounter.DoctorId=SelectedDoctor.Id;
             Encounter.TherapyCycleId=SelectedTherapyCycle?.Id;
 
+            // DO NOT populate Encounter.Diagnoses nav collection —
+            // SaveEncounter clears it anyway and writes via db.Diagnoses directly.
+            // Populating it here causes EF to attempt double-insert on tracked entities.
             Encounter.Diagnoses.Clear();
-            foreach(var diagnosis in Diagnoses)
-                Encounter.Diagnoses.Add(diagnosis);
 
-            await EncounterService.SaveEncounter(Encounter, Diagnoses.ToList(), Prescriptions.ToList());
+            await EncounterService.SaveEncounter(
+                Encounter,
+                Diagnoses.ToList(),
+                Prescriptions.ToList(),
+                EncounterMedicines.ToList(),
+                DeletedMedicineIds.ToList());
+
             await NavigationService.GoToAsync(AppRoutes.Encounters.List);
+
         }, "Грешка при перзистирање на податоците за прегледот");
     }
 }

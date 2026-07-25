@@ -1,9 +1,8 @@
-﻿<DataTemplate
- xmlns="http://schemas.microsoft.com/dotnet/2021/maui">
+﻿<DataTemplate xmlns="http://schemas.microsoft.com/dotnet/2021/maui">
 
-<Slider
-Minimum="0"
-Maximum="5"
-Value="{Binding Value}"/>
+	<Slider
+		Maximum="5"
+		Minimum="0"
+		Value="{Binding Value}" />
 
 </DataTemplate>

@@ -13,9 +13,9 @@ namespace EHMR.Services
 
     public class Mkb10CodeService : IMkb10CodeService
     {
-        private readonly IDbContextFactory<TherapyTrackerDbContext> _factory;
+        private readonly IDbContextFactory<DesktopTherapyDbContext> _factory;
 
-        public Mkb10CodeService(IDbContextFactory<TherapyTrackerDbContext> factory)
+        public Mkb10CodeService(IDbContextFactory<DesktopTherapyDbContext> factory)
         {
             _factory=factory;
         }

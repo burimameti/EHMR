@@ -1,0 +1,270 @@
+﻿<!--  File: EHMR.Backups/Views/BackupHistoryPage.xaml  -->
+<ContentPage
+	x:Class="EHMR.Backups.Views.BackupHistoryPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:viewModels="clr-namespace:EHMR.Backups.ViewModels"
+	x:Name="Page"
+	x:DataType="viewModels:BackupHistoryViewModel"
+	BackgroundColor="{StaticResource SparkBorder}">
+
+	<ContentPage.Resources>
+		<ResourceDictionary>
+
+			<!--  Same shared card styles used on Dashboard / DashboardReportPage, so all three read as one system  -->
+			<Style x:Key="DashboardCardTitle" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="20" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+			</Style>
+
+			<Style x:Key="DashboardCardCountBadge" TargetType="Border">
+				<Setter Property="Padding" Value="10,4" />
+				<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeNeutralBg}" />
+				<Setter Property="StrokeShape" Value="RoundRectangle 14" />
+				<Setter Property="StrokeThickness" Value="0" />
+			</Style>
+
+			<Style x:Key="DashboardCardCountLabel" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="13" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+			</Style>
+
+			<Style x:Key="DashboardEmptyStateLabel" TargetType="Label">
+				<Setter Property="FontSize" Value="13" />
+				<Setter Property="HorizontalTextAlignment" Value="Center" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextMuted}" />
+			</Style>
+
+			<!--  Metric tile — same recipe as the Metric1/2/3 cards on DashboardReportPage's analytics sidebar  -->
+			<Style x:Key="MetricTileBorder" TargetType="Border">
+				<Setter Property="Padding" Value="16" />
+				<Setter Property="BackgroundColor" Value="{StaticResource SparkPageBackground}" />
+				<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
+				<Setter Property="StrokeThickness" Value="1" />
+				<Setter Property="StrokeShape">
+					<Setter.Value>
+						<RoundRectangle CornerRadius="12" />
+					</Setter.Value>
+				</Setter>
+			</Style>
+
+			<Style x:Key="MetricTileLabel" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="11" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextMuted}" />
+			</Style>
+
+			<Style x:Key="MetricTileValue" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="26" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+			</Style>
+
+		</ResourceDictionary>
+	</ContentPage.Resources>
+
+	<!--  Same 290,* menu/content split as Dashboard and DashboardReportPage  -->
+	<Grid ColumnDefinitions="290,*">
+
+		<!--  LEFT MENU  -->
+		<Border Grid.Column="0" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
+		</Border>
+
+		<!--  RIGHT MAIN CONTAINER  -->
+		<Grid Grid.Column="1" RowDefinitions="Auto,*">
+
+			<!--  =========================================================  -->
+			<!--  HEADER — same PageHeaderCardStyle + FFPageHeader as Dashboard  -->
+			<!--  =========================================================  -->
+			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+					<controls:FFPageHeader
+						Title="Историја на бекапи"
+						Grid.Column="0"
+						Subtitle="Преглед на сите извршени бекап процеси." />
+
+					<HorizontalStackLayout
+						Grid.Column="1"
+						Spacing="10"
+						VerticalOptions="Center">
+						<controls:FFButton
+							ButtonKind="Primary"
+							Command="{Binding RunBackupCommand}"
+							ContentPadding="20,0"
+							HeightRequestEx="45"
+							Text="Нов Бекап" />
+					</HorizontalStackLayout>
+				</Grid>
+			</Border>
+
+			<!--  =========================================================  -->
+			<!--  MAIN SCROLL AREA — this whole area is unconstrained height,  -->
+			<!--  so nothing inside it may rely on "*" (star) row sizing —  -->
+			<!--  everything below must be Auto-sized top to bottom.  -->
+			<!--  =========================================================  -->
+			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+				<VerticalStackLayout Spacing="8">
+
+					<!--  =========================================================  -->
+					<!--  METRIC STRIP — Вкупно / Успешни / Неуспешни / Големина  -->
+					<!--  =========================================================  -->
+					<Border Style="{StaticResource PageHeaderCardStyle}">
+						<Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
+
+							<Border Grid.Column="0" Style="{StaticResource MetricTileBorder}">
+								<Grid ColumnDefinitions="4,*">
+									<BoxView
+										Grid.Column="0"
+										BackgroundColor="{StaticResource SparkAccentTeal}"
+										HorizontalOptions="Start"
+										WidthRequest="4" />
+									<VerticalStackLayout
+										Grid.Column="1"
+										Padding="12,0,0,0"
+										Spacing="4">
+										<Label Style="{StaticResource MetricTileLabel}" Text="ВКУПНО БЕКАПИ" />
+										<Label Style="{StaticResource MetricTileValue}" Text="{Binding TotalBackups}" />
+									</VerticalStackLayout>
+								</Grid>
+							</Border>
+
+							<Border Grid.Column="1" Style="{StaticResource MetricTileBorder}">
+								<Grid ColumnDefinitions="4,*">
+									<BoxView
+										Grid.Column="0"
+										BackgroundColor="{StaticResource SparkAccentTeal}"
+										HorizontalOptions="Start"
+										WidthRequest="4" />
+									<VerticalStackLayout
+										Grid.Column="1"
+										Padding="12,0,0,0"
+										Spacing="4">
+										<Label Style="{StaticResource MetricTileLabel}" Text="УСПЕШНИ" />
+										<Label
+											Style="{StaticResource MetricTileValue}"
+											Text="{Binding SuccessfulBackups}"
+											TextColor="{StaticResource SparkAccentTeal}" />
+									</VerticalStackLayout>
+								</Grid>
+							</Border>
+
+							<Border Grid.Column="2" Style="{StaticResource MetricTileBorder}">
+								<Grid ColumnDefinitions="4,*">
+									<BoxView
+										Grid.Column="0"
+										BackgroundColor="Red"
+										HorizontalOptions="Start"
+										WidthRequest="4" />
+									<VerticalStackLayout
+										Grid.Column="1"
+										Padding="12,0,0,0"
+										Spacing="4">
+										<Label Style="{StaticResource MetricTileLabel}" Text="НЕУСПЕШНИ" />
+										<Label
+											Style="{StaticResource MetricTileValue}"
+											Text="{Binding FailedBackups}"
+											TextColor="Red" />
+									</VerticalStackLayout>
+								</Grid>
+							</Border>
+
+							<Border Grid.Column="3" Style="{StaticResource MetricTileBorder}">
+								<Grid ColumnDefinitions="4,*">
+									<BoxView
+										Grid.Column="0"
+										BackgroundColor="{StaticResource SparkAccentTeal}"
+										HorizontalOptions="Start"
+										WidthRequest="4" />
+									<VerticalStackLayout
+										Grid.Column="1"
+										Padding="12,0,0,0"
+										Spacing="4">
+										<Label Style="{StaticResource MetricTileLabel}" Text="ВКУПНА ГОЛЕМИНА" />
+										<Label Style="{StaticResource MetricTileValue}" Text="{Binding TotalBackupSize}" />
+									</VerticalStackLayout>
+								</Grid>
+							</Border>
+
+						</Grid>
+					</Border>
+
+					<!--  =========================================================  -->
+					<!--  EXPLORER — tabs (status) + pickers (status/destination) + search  -->
+					<!--  =========================================================  -->
+					<Border Style="{StaticResource PageHeaderCardStyle}">
+						<VerticalStackLayout Spacing="12">
+
+							<controls:SparkExplorerHeaderView
+								Buttons="{Binding Buttons}"
+								Pickers="{Binding Pickers}"
+								SearchCommand="{Binding SearchCommand}"
+								SearchPlaceholder="Пребарување на бекапи..."
+								SearchText="{Binding SearchText, Mode=TwoWay}"
+								Tabs="{Binding Tabs}" />
+
+							<!--
+								Data grid.
+								FIX: this used to be Grid RowDefinitions="Auto,*" — the "*" row
+								demands star-sizing, which only resolves against a parent with a
+								KNOWN fixed height. This whole card sits inside a ScrollView +
+								VerticalStackLayout (both auto-sized to content), so there is no
+								fixed height to share — the "*" row collapsed to 0, and
+								SparkDataGridView rendered fully (with real data, real headers)
+								but at 0px tall, i.e. invisible. Auto,Auto lets each row size to
+								its own actual content instead.
+							-->
+							<Border Padding="0" Style="{StaticResource PageHeaderCardStyle}">
+								<Grid RowDefinitions="Auto,Auto">
+									<ActivityIndicator
+										Grid.Row="0"
+										HeightRequest="50"
+										HorizontalOptions="Center"
+										IsRunning="{Binding IsBusy}"
+										IsVisible="{Binding IsBusy}"
+										VerticalOptions="Center"
+										WidthRequest="50"
+										Color="{StaticResource SparkAccentTeal}" />
+									<controls:SparkDataGridView
+										Grid.Row="1"
+										Columns="{Binding GridColumns}"
+										CurrentPage="{Binding CurrentPage}"
+										EditRowCommand="{Binding EditCommand}"
+										NextPageCommand="{Binding NextPageCommand}"
+										PageChangedCommand="{Binding PageChangedCommand}"
+										PreviousPageCommand="{Binding PreviousPageCommand}"
+										RowTappedCommand="{Binding SelectCommand}"
+										Rows="{Binding GridRows}"
+										TotalPages="{Binding TotalPages}" />
+								</Grid>
+							</Border>
+
+						</VerticalStackLayout>
+					</Border>
+
+				</VerticalStackLayout>
+			</ScrollView>
+
+			<!--  LOADING OVERLAY — identical to Dashboard's overlay  -->
+			<Grid
+				Grid.Row="1"
+				BackgroundColor="{StaticResource SparkOverlay}"
+				IsVisible="{Binding IsBusy}">
+				<VerticalStackLayout
+					HorizontalOptions="Center"
+					Spacing="12"
+					VerticalOptions="Center">
+					<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
+					<Label
+						FontSize="13"
+						Text="Вчитување..."
+						TextColor="{StaticResource SparkTextPrimary}" />
+				</VerticalStackLayout>
+			</Grid>
+
+		</Grid>
+	</Grid>
+</ContentPage>

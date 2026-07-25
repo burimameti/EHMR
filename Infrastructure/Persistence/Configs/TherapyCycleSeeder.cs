@@ -31,7 +31,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 {
                     Id = SeedIds.Cycle1,
                     PatientId = patients[0].Id,
-                    CycleNumber = 1,
+                    TherapyCyleNumber = "1",
                     Status = TherapyStatus.Planned,
                     StartDate = now.AddDays(2),
                     Notes = "Планиран почеток на физиотерапија за лумбална болка"
@@ -41,7 +41,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 {
                     Id = SeedIds.Cycle2,
                     PatientId = patients[1].Id,
-                    CycleNumber = 1,
+                    TherapyCyleNumber = "1",
                     Status = TherapyStatus.Active,
                     StartDate = now.AddDays(-10),
                     Notes = "Активна терапија за колено - напредок стабилен"
@@ -51,7 +51,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 {
                     Id = SeedIds.Cycle3,
                     PatientId = patients[2].Id,
-                    CycleNumber = 1,
+                    TherapyCyleNumber = "1",
                     Status = TherapyStatus.Completed,
                     StartDate = now.AddDays(-30),
                     EndDate = now.AddDays(-5),
@@ -62,7 +62,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 {
                     Id = SeedIds.Cycle4,
                     PatientId = patients[3].Id,
-                    CycleNumber = 1,
+                    TherapyCyleNumber = "1",
                     Status = TherapyStatus.Missed,
                     StartDate = now.AddDays(-7),
                     Notes = "Пациентот не се појави на повеќе сесии"
@@ -72,7 +72,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 {
                     Id = SeedIds.Cycle5,
                     PatientId = patients[4].Id,
-                    CycleNumber = 1,
+                    TherapyCyleNumber = "1",
                     Status = TherapyStatus.Suspended,
                     StartDate = now.AddDays(-3),
                     Notes = "Терапијата откажана по барање на пациент"
@@ -84,7 +84,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 {
                     Id = SeedIds.Cycle6,
                     PatientId = patients[5].Id,
-                    CycleNumber = 2,
+                    TherapyCyleNumber = "2",
                     Status = TherapyStatus.Active,
                     StartDate = now.AddDays(-15),
                     Notes = "Втора рунда терапија за хронична болка"
@@ -94,7 +94,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 {
                     Id = SeedIds.Cycle7,
                     PatientId = patients[6].Id,
-                    CycleNumber = 1,
+                    TherapyCyleNumber = "1",
                     Status = TherapyStatus.Planned,
                     StartDate = now.AddDays(5),
                     Notes = "Планирана рехабилитација после повреда"
@@ -104,7 +104,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 {
                     Id = SeedIds.Cycle8,
                     PatientId = patients[7].Id,
-                    CycleNumber = 1,
+                    TherapyCyleNumber = "1",
                     Status = TherapyStatus.Completed,
                     StartDate = now.AddDays(-40),
                     EndDate = now.AddDays(-20),
@@ -115,7 +115,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 {
                     Id = SeedIds.Cycle9,
                     PatientId = patients[8].Id,
-                    CycleNumber = 1,
+                    TherapyCyleNumber = "1",
                     Status = TherapyStatus.Active,
                     StartDate = now.AddDays(-12),
                     Notes = "Психосоматска терапија во тек"
@@ -125,7 +125,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 {
                     Id = SeedIds.Cycle10,
                     PatientId = patients[9].Id,
-                    CycleNumber = 1,
+                    TherapyCyleNumber = "1",
                     Status = TherapyStatus.Missed,
                     StartDate = now.AddDays(-8),
                     Notes = "Пациентот пропушти повеќе термини"
@@ -137,7 +137,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 {
                     Id = SeedIds.Cycle11,
                     PatientId = patients[0].Id,
-                    CycleNumber = 2,
+                    TherapyCyleNumber = "2",
                     Status = TherapyStatus.Planned,
                     StartDate = now.AddDays(10),
                     Notes = "Втор циклус - продолжена терапија"

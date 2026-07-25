@@ -1,4 +1,5 @@
 ﻿using EHMR.Domain.Entities;
+using EHMR.Helpers;
 using EHMR.UI.Lookup;
 using System;
 using System.Collections.Generic;
@@ -69,10 +70,10 @@ namespace EHMR.ViewModels.Patients.Extensions
         } = new(new[]
         {
         ("Сите", "All"),
-        ("Активен", "Active"),
-        ("Неактивен", "Inactive"),
-        ("Хроничен", "Chronic"),
-        ("Починат", "Deceased")
+        ("Активни", "Active"),
+        ("Неактивни", "Inactive"),
+        ("Хронични", "Chronic")
+    
     });
 
         public static FilterLookup Gender
@@ -82,8 +83,7 @@ namespace EHMR.ViewModels.Patients.Extensions
         {
         ("Сите", "All"),
         ("Машки", "Male"),
-        ("Женски", "Female"),
-        ("Друго", "Other")
+        ("Женски", "Female")
     });
 
         public static FilterLookup BloodType
@@ -157,8 +157,7 @@ namespace EHMR.ViewModels.Patients.Extensions
         } = new(new[]
         {
         ("Машки", "Male"),
-        ("Женски", "Female"),
-        ("Друго", "Other")
+        ("Женски", "Female")
     });
 
         // Matches PatientStatus: Active, Inactive, Chronic, Deceased
@@ -168,10 +167,10 @@ namespace EHMR.ViewModels.Patients.Extensions
             get;
         } = new(new[]
         {
-        ("Активен", "Active"),
-        ("Неактивен", "Inactive"),
-        ("Хроничен", "Chronic"),
-        ("Починат", "Deceased")
+        ("Активни", "Active"),
+        ("Неактивни", "Inactive"),
+        ("Хронични", "Chronic"),
+        ("Друго", "Deceased")
     });
 
         // Matches DosesFrequency exactly - used both on the old single-patient
@@ -182,8 +181,8 @@ namespace EHMR.ViewModels.Patients.Extensions
         } = new(new[]
         {
         ("Дневно", "Daily"),
-        ("Двапати дневно", "TwiceDaily"),
-        ("Трипати дневно", "ThreeTimesDaily"),
+        ("Двапати", "TwiceDaily"),
+        ("Трипати", "ThreeTimesDaily"),
         ("Секој втор ден", "EveryOtherDay"),
         ("Секој трет ден", "EveryThreeDays"),
         ("Неделно", "Weekly"),
@@ -221,38 +220,50 @@ namespace EHMR.ViewModels.Patients.Extensions
     public static class PatientExtensions
     {
         /// <summary>
-        /// Shallow clone of all scalar fields, used by the detail form to snapshot
-        /// the "before edit" state for Cancel(). Child collections (Diagnoses,
-        /// PatientMedicines, Documents) are intentionally NOT copied here -
-        /// PatientDetailFormViewModel.LoadExistingChildrenAsync re-fetches those
-        /// straight from the DB after cloning, so cloning them here would just be
-        /// thrown away duplicate work (and risks stale/duplicate tracked entities
-        /// if EF change tracking ever gets involved on this clone).
+        /// Creates a snapshot used by Patient edit forms.
+        /// Only scalar properties are copied.
+        /// Navigation properties and child collections are intentionally excluded.
         /// </summary>
-        public static Patient Clone(this Patient source) => new()
+        public static Patient CreateSnapshot(this Patient source)
         {
-            Id=source.Id,
-            FirstName=source.FirstName,
-            LastName=source.LastName,
-            NationalId=source.NationalId,
-            DoctorId=source.DoctorId,
-            Doctor=source.Doctor,
-            BirthDate=source.BirthDate,
-            Gender=source.Gender,
-            Phone=source.Phone,
-            Email=source.Email,
-            Address=source.Address,
-            City=source.City,
-            PostalCode=source.PostalCode,
-            EmergencyContactName=source.EmergencyContactName,
-            EmergencyContactPhone=source.EmergencyContactPhone,
-            EmergencyRelationship=source.EmergencyRelationship,
-            Allergies=source.Allergies,
-            BloodType=source.BloodType,
-            Status=source.Status,
-            RegistrationDate=source.RegistrationDate,
-            IsDeleted=source.IsDeleted,
-            CreatedAt=source.CreatedAt
-        };
+            ArgumentNullException.ThrowIfNull(source);
+
+            return new Patient
+            {
+                Id=source.Id,
+
+                FirstName=source.FirstName,
+                LastName=source.LastName,
+
+                NationalId=PrivacyMaskHelper.MaskNationalId(source.NationalId),
+
+                DoctorId=source.DoctorId,
+
+                BirthDate=source.BirthDate,
+                Gender=source.Gender,
+
+                Phone=source.Phone,
+                Email=source.Email,
+
+                Address=source.Address,
+                City=source.City,
+                PostalCode=source.PostalCode,
+
+                EmergencyContactName=source.EmergencyContactName,
+                EmergencyContactPhone=source.EmergencyContactPhone,
+                EmergencyRelationship=source.EmergencyRelationship,
+
+                Allergies=source.Allergies,
+                BloodType=source.BloodType,
+
+                Status=source.Status,
+
+                RegistrationDate=source.RegistrationDate,
+
+                IsDeleted=source.IsDeleted,
+
+                CreatedAt=source.CreatedAt
+            };
+        }
     }
 }

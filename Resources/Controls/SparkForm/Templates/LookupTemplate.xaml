@@ -1,22 +1,20 @@
-﻿<DataTemplate
- xmlns="http://schemas.microsoft.com/dotnet/2021/maui">
+﻿<DataTemplate xmlns="http://schemas.microsoft.com/dotnet/2021/maui">
 
-<Grid
-ColumnDefinitions="*,42">
+	<Grid ColumnDefinitions="*,42">
 
-<Entry
-Grid.Column="0"
-Text="{Binding Value}"
-IsReadOnly="True"
-Placeholder="{Binding Placeholder}"
-Style="{StaticResource SparkEntryStyle}"/>
+		<Entry
+			Grid.Column="0"
+			IsReadOnly="True"
+			Placeholder="{Binding Placeholder}"
+			Style="{StaticResource SparkEntryStyle}"
+			Text="{Binding Value}" />
 
-<Button
-Grid.Column="1"
-Text="рџ”Ќ"
-Command="{Binding Command}"
-Style="{StaticResource SparkLookupButtonStyle}"/>
+		<Button
+			Grid.Column="1"
+			Command="{Binding Command}"
+			Style="{StaticResource SparkLookupButtonStyle}"
+			Text="рџ”Ќ" />
 
-</Grid>
+	</Grid>
 
 </DataTemplate>

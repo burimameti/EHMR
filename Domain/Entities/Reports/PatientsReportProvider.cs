@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Interfaces;
+using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace EHMR.Domain.Entities.Reports
 {
@@ -12,12 +14,18 @@ namespace EHMR.Domain.Entities.Reports
 
         private string _selectedAllergyFilter = "Сите";
         private string _selectedCityFilter = "Сите";
-
+        private string _selectedDoctorFilter = "Сите";
+        private string _selectedDiagnosisFilter = "Сите";
+        private string _selectedMedicineFilter = "Сите";
+        private string _selectedGenderFilter = "Сите";
         private SparkTabItem? _allTab, _allergyTab;
         private SparkPickerItem? _cityPicker;
-
+        private SparkPickerItem? _doctorPicker;
+        private SparkPickerItem? _diagnosisPicker;
+        private SparkPickerItem? _medicinePicker;
+        private SparkPickerItem? _genderPicker;
         public event Action? FiltersChanged;
-
+        private bool _refreshingPickers;
         public PatientsReportProvider(IDbContextFactory<DesktopTherapyDbContext> dbFactory)
         {
             _dbFactory=dbFactory;
@@ -33,10 +41,12 @@ namespace EHMR.Domain.Entities.Reports
         public IEnumerable<SparkGridColumn> Columns =>
         [
             new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(180) },
+                  new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(90) },
             new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(150) },
             new() { Header = "МАТИЧЕН БРОЈ", Key = "NationalId", Width = new GridLength(150) },
             new() { Header = "АДРЕСА", Key = "Address", Width = new GridLength(180) },
             new() { Header = "ГРАД", Key = "City", Width = new GridLength(90) },
+
             new() { Header = "КРЕИРАН НА", Key = "Created", Width = new GridLength(110) },
             new() { Header = "ДИЈАГНОЗА / АЛЕРГИИ", Key = "Medical", Width = GridLength.Star }
         ];
@@ -71,44 +81,109 @@ namespace EHMR.Domain.Entities.Reports
         // =====================================================
         public IEnumerable<SparkPickerItem> BuildPickers()
         {
-            _cityPicker=new SparkPickerItem { Placeholder="Град" };
-            _cityPicker.Items.Add("Сите");
-            _cityPicker.SelectedItem=_selectedCityFilter;
+            _cityPicker=CreatePicker(
+                "Град",
+                _selectedCityFilter,
+                value => _selectedCityFilter=value);
 
-            _cityPicker.PropertyChanged+=(_, e) =>
+            _doctorPicker=CreatePicker(
+                "Доктор",
+                _selectedDoctorFilter,
+                value => _selectedDoctorFilter=value);
+
+            _diagnosisPicker=CreatePicker(
+                "Дијагноза",
+                _selectedDiagnosisFilter,
+                value => _selectedDiagnosisFilter=value);
+
+            _medicinePicker=CreatePicker(
+                "Лек",
+                _selectedMedicineFilter,
+                value => _selectedMedicineFilter=value);
+
+            _genderPicker=CreatePicker(
+     "Пол",
+     _selectedGenderFilter,
+     value => _selectedGenderFilter=value);
+
+            return
+            [
+                _cityPicker,
+        _doctorPicker,
+        _diagnosisPicker,
+        _medicinePicker,
+        _genderPicker
+            ];
+        }
+        private SparkPickerItem CreatePicker(
+    string placeholder,
+    string selectedValue,
+    Action<string> setter)
+        {
+            var picker = new SparkPickerItem
             {
-                if(e.PropertyName==nameof(SparkPickerItem.SelectedItem)&&_cityPicker.SelectedItem is string s)
-                {
-                    _selectedCityFilter=s;
-                    FiltersChanged?.Invoke();
-                }
+                Placeholder=placeholder
             };
 
-            return [_cityPicker];
-        }
+            picker.Items.Add("Сите");
+            picker.SelectedItem=selectedValue;
 
-        private void RefreshCityPickerItems(List<Patient> patients)
+            picker.PropertyChanged+=(_, e) =>
+            {
+                if(_refreshingPickers)
+                    return;
+
+                if(e.PropertyName!=nameof(SparkPickerItem.SelectedItem))
+                    return;
+
+                if(picker.SelectedItem is not string value)
+                    return;
+
+                Debug.WriteLine($"Picker '{placeholder}' changed -> {value}");
+
+                setter(value);
+
+                Debug.WriteLine("FiltersChanged invoked");
+
+                FiltersChanged?.Invoke();
+            };
+
+            return picker;
+        }
+      private void RefreshPicker(
+    SparkPickerItem? picker,
+    IEnumerable<string?> values)
+{
+    if (picker == null)
+        return;
+
+    _refreshingPickers = true;
+
+    try
+    {
+        var selected = picker.SelectedItem as string ?? "Сите";
+
+        picker.Items.Clear();
+        picker.Items.Add("Сите");
+
+        foreach (var value in values
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct()
+            .OrderBy(x => x))
         {
-            if(_cityPicker==null) return;
-
-            var cities = patients
-                .Select(x => x.City)
-                .Where(c => !string.IsNullOrWhiteSpace(c))
-                .Distinct()
-                .OrderBy(c => c)
-                .ToList();
-
-            var currentSelection = _cityPicker.SelectedItem as string??"Сите";
-
-            _cityPicker.Items.Clear();
-            _cityPicker.Items.Add("Сите");
-            foreach(var city in cities)
-                _cityPicker.Items.Add(city!);
-
-            // ако избраниот град веќе не постои во новиот range, врати на "Сите" без да пукнеш FiltersChanged повторно
-            _cityPicker.SelectedItem=_cityPicker.Items.Contains(currentSelection) ? currentSelection : "Сите";
-            _selectedCityFilter=(string)_cityPicker.SelectedItem;
+            picker.Items.Add(value!);
         }
+
+        picker.SelectedItem =
+            picker.Items.Contains(selected)
+                ? selected
+                : "Сите";
+    }
+    finally
+    {
+        _refreshingPickers = false;
+    }
+}
 
         // =====================================================
         // BUTTON
@@ -134,43 +209,114 @@ namespace EHMR.Domain.Entities.Reports
             await using var db = await _dbFactory.CreateDbContextAsync();
 
             var patients = await db.Patients
-                .Include(p => p.Diagnoses)
-                    .ThenInclude(d => d.Mkb10Code)
+                .Include(x => x.Doctor)
+                    .ThenInclude(x => x!.User)
+                .Include(x => x.PatientMedicines)
+                    .ThenInclude(x => x.Medicine)
+                .Include(x => x.Diagnoses)
+                    .ThenInclude(x => x.Mkb10Code)
                 .AsNoTracking()
-                .Where(x => x.CreatedAt>=from&&x.CreatedAt<=to)
+                .Where(x => x.RegistrationDate>=from&&
+                            x.RegistrationDate<=to)
                 .ToListAsync();
 
-            RefreshCityPickerItems(patients);
+            RefreshPickers(patients);
 
-            var filtered = patients.AsEnumerable();
+            return ApplyFilters(patients)
+                .Select(CreateRow)
+                .ToList();
+        }
+        private void RefreshPickers(List<Patient> patients)
+        {
+            RefreshPicker(_cityPicker,
+                patients.Select(x => x.City));
+
+            RefreshPicker(_doctorPicker,
+                patients
+                    .Where(x => x.Doctor!=null)
+                    .Select(x => x.Doctor!.FullName));
+
+            RefreshPicker(_diagnosisPicker,
+                patients
+                    .SelectMany(x => x.Diagnoses)
+                    .Where(x => x.Mkb10Code!=null)
+                    .Select(x => x.Mkb10Code!.Code));
+
+            RefreshPicker(_medicinePicker,
+                patients
+                    .SelectMany(x => x.PatientMedicines)
+                    .Where(x => x.Medicine!=null)
+                    .Select(x => x.Medicine!.Name));
+
+            RefreshPicker(_genderPicker,
+                Enum.GetValues<Gender>()
+                    .Select(x => x.ToString()));
+        }
+        private IEnumerable<Patient> ApplyFilters(IEnumerable<Patient> patients)
+        {
+            var query = patients;
 
             if(_selectedAllergyFilter=="Со алергии")
-                filtered=filtered.Where(x => !string.IsNullOrWhiteSpace(x.Allergies));
+            {
+                query=query.Where(x =>
+                    !string.IsNullOrWhiteSpace(x.Allergies));
+            }
 
             if(_selectedCityFilter!="Сите")
-                filtered=filtered.Where(x => x.City==_selectedCityFilter);
-
-            return filtered.Select(x =>
             {
-                var hasAllergy = !string.IsNullOrWhiteSpace(x.Allergies);
+                query=query.Where(x =>
+                    x.City==_selectedCityFilter);
+            }
 
-                return new DynamicReportRow
-                {
-                    Cells=
-                    [
-                        x.FullName ?? "-",
-                        x.Phone ?? "-",
-           
-                        x.Address ?? "-",
-                        x.City ?? "-",
-                        x.CreatedAt.ToString("dd.MM.yyyy"),
-                        BuildMedicalInfo(x)
-                    ],
-                    IsAlertSeverity=hasAllergy
-                };
-            }).ToList();
+            if(_selectedDoctorFilter!="Сите")
+            {
+                query=query.Where(x =>
+                    x.Doctor?.FullName==_selectedDoctorFilter);
+            }
+
+            if(_selectedDiagnosisFilter!="Сите")
+            {
+                query=query.Where(x =>
+                    x.Diagnoses.Any(d =>
+                        d.Mkb10Code?.Code==_selectedDiagnosisFilter));
+            }
+
+            if(_selectedMedicineFilter!="Сите")
+            {
+                query=query.Where(x =>
+                    x.PatientMedicines.Any(pm =>
+                        pm.Medicine?.Name==_selectedMedicineFilter));
+            }
+
+            if(_selectedGenderFilter!="Сите"&&
+                Enum.TryParse<Gender>(_selectedGenderFilter, out var gender))
+            {
+                query=query.Where(x =>
+                    x.Gender==gender);
+            }
+
+            return query;
         }
+        private static DynamicReportRow CreateRow(Patient patient)
+        {
+            var hasAllergy = !string.IsNullOrWhiteSpace(patient.Allergies);
 
+            return new DynamicReportRow
+            {
+                Cells=
+                [
+                    patient.FullName ?? "-",
+                    patient.Gender.ToString(),
+                    patient.Phone ?? "-",
+                    PrivacyMaskHelper.MaskNationalId(patient.NationalId) ?? "-",
+                    patient.Address ?? "-",
+                    patient.City ?? "-",
+                    patient.CreatedAt.ToString("dd.MM.yyyy"),
+                    BuildMedicalInfo(patient)
+                ],
+                IsAlertSeverity=hasAllergy
+            };
+        }
         private static string BuildMedicalInfo(Patient patient)
         {
             var diagnosis = patient.Diagnoses==null

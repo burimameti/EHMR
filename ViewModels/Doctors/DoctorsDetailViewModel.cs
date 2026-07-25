@@ -30,37 +30,65 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
     [ObservableProperty]
     private Doctor doctors = new();
 
-    /// <summary>
-    /// ENTITY state — true when this page represents an EXISTING doctor
-    /// that was loaded from the selection service. Not bound in XAML;
-    /// only used here to decide Save's Update-vs-Add branch, Delete
-    /// availability, and what Cancel should do.
-    /// </summary>
     private bool _isExistingDoctor;
-
-    /// <summary>
-    /// Snapshot taken the moment we enter edit mode on an EXISTING doctor,
-    /// so Cancel can revert in-place instead of just navigating back.
-    /// </summary>
     private Doctor? _snapshot;
 
-    [ObservableProperty]
-    private bool isEditMode;
+    [ObservableProperty] private bool isEditMode;
+    [ObservableProperty] private bool isReadOnly;
+    [ObservableProperty] private string pageTitle = "Нов лекар";
 
-    [ObservableProperty]
-    private bool isReadOnly;
+    [ObservableProperty] private bool canShowDelete;
+    [ObservableProperty] private bool canShowSave;
+    [ObservableProperty] private bool canShowEditToggle;
 
-    [ObservableProperty]
-    private string pageTitle = "Нов лекар";
+    // =====================================================
+    // СВОЈСТВА ЗА ДВОЈНО МАПИРАЊЕ (МАКЕДОНСКИ <-> ENUM)
+    // =====================================================
+    [ObservableProperty] private string selectedGenderDisplay = string.Empty;
+    [ObservableProperty] private string selectedStatusDisplay = string.Empty;
 
-    [ObservableProperty]
-    private bool canShowDelete;
+    partial void OnSelectedGenderDisplayChanged(string value)
+    {
+        if(string.IsNullOrEmpty(value)) return;
 
-    [ObservableProperty]
-    private bool canShowSave;
+        // Претворање од македонски текст во англиски Enum за базата
+        Doctors.Gender=value switch
+        {
+            "Машки" => Gender.Male,
+            "Женски" => Gender.Female,
+            _ => Gender.Other
+        };
+    }
 
-    [ObservableProperty]
-    private bool canShowEditToggle;
+    partial void OnSelectedStatusDisplayChanged(string value)
+    {
+        if(string.IsNullOrEmpty(value)) return;
+
+        // Претворање од македонски текст во англиски Enum за базата
+        Doctors.Status=value switch
+        {
+            "Активен" => Status.Active,
+            "Неактивен" => Status.Inactive,
+            _ => Status.Suspended
+        };
+    }
+
+    private void SyncDisplayFromDoctor()
+    {
+        SelectedGenderDisplay=Doctors.Gender switch
+        {
+            Gender.Male => "Машки",
+            Gender.Female => "Женски",
+            _ => "Друго"
+        };
+
+        SelectedStatusDisplay=Doctors.Status switch
+        {
+            Status.Active => "Активен",
+            Status.Inactive => "Неактивен",
+            _ => "Суспендиран"
+        };
+    }
 
     private void RefreshButtonVisibility()
     {
@@ -87,13 +115,16 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
         }
         else
         {
-            Doctors=new Doctor { User=new User() };
+            Doctors=new Doctor { User=new User(), Gender=Gender.Male, Status=Status.Active };
             _isExistingDoctor=false;
 
             IsEditMode=true;
             IsReadOnly=false;
             PageTitle="Нов лекар";
         }
+
+        // Наполни ги македонските стрингови во интерфејсот
+        SyncDisplayFromDoctor();
 
         _snapshot=null;
         RefreshButtonVisibility();
@@ -156,6 +187,9 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
             }
             _snapshot=null;
 
+            // Врати го преводот во првобитна состојба
+            SyncDisplayFromDoctor();
+
             IsEditMode=false;
             IsReadOnly=true;
             PageTitle="Детали за лекар";
@@ -166,9 +200,7 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
         }
     }
 
-    protected override IEnumerable<Doctor> ApplyFilters(IEnumerable<Doctor> query)
-        => query;
-
+    protected override IEnumerable<Doctor> ApplyFilters(IEnumerable<Doctor> query) => query;
     protected override void ResetFilters()
     {
     }

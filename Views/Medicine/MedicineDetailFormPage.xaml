@@ -21,11 +21,7 @@
 			RowDefinitions="Auto,Auto,*"
 			RowSpacing="20">
 
-			<Border
-				Padding="28"
-				BackgroundColor="{StaticResource SparkBackground}"
-				Stroke="{StaticResource SparkBorder}"
-				StrokeShape="RoundRectangle 0">
+			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
 
 				<Grid ColumnDefinitions="Auto,*,440">
 

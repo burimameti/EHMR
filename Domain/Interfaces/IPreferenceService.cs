@@ -2,9 +2,9 @@
 {
     public interface IPreferencesService
     {
-        void Save(string key, string value);
+        Task SaveAsync(string key, string value);
 
-        string Load(string key, string defaultValue = "");
+        Task<string> LoadAsync(string key, string defaultValue = "");
 
         bool ContainsKey(string key);
 

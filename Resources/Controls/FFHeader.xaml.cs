@@ -1,6 +1,5 @@
 using System.Windows.Input;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Graphics;
+
 
 namespace EHMR.Resources.Controls;
 
@@ -12,7 +11,104 @@ public partial class FFPageHeader : ContentView
     }
 
     #region Header Content
+    public static readonly BindableProperty PrimaryButtonTextProperty =
+    BindableProperty.Create(
+        nameof(PrimaryButtonText),
+        typeof(string),
+        typeof(FFPageHeader));
 
+    public string PrimaryButtonText
+    {
+        get => (string)GetValue(PrimaryButtonTextProperty);
+        set => SetValue(PrimaryButtonTextProperty, value);
+    }
+
+    public static readonly BindableProperty PrimaryButtonCommandProperty =
+        BindableProperty.Create(
+            nameof(PrimaryButtonCommand),
+            typeof(ICommand),
+            typeof(FFPageHeader));
+
+    public ICommand PrimaryButtonCommand
+    {
+        get => (ICommand)GetValue(PrimaryButtonCommandProperty);
+        set => SetValue(PrimaryButtonCommandProperty, value);
+    }
+
+    public static readonly BindableProperty ShowPrimaryButtonProperty =
+        BindableProperty.Create(
+            nameof(ShowPrimaryButton),
+            typeof(bool),
+            typeof(FFPageHeader),
+            false);
+
+    public bool ShowPrimaryButton
+    {
+        get => (bool)GetValue(ShowPrimaryButtonProperty);
+        set => SetValue(ShowPrimaryButtonProperty, value);
+    }
+
+    public static readonly BindableProperty SecondaryButtonTextProperty =
+        BindableProperty.Create(
+            nameof(SecondaryButtonText),
+            typeof(string),
+            typeof(FFPageHeader));
+
+    public string SecondaryButtonText
+    {
+        get => (string)GetValue(SecondaryButtonTextProperty);
+        set => SetValue(SecondaryButtonTextProperty, value);
+    }
+
+    public static readonly BindableProperty SecondaryButtonCommandProperty =
+        BindableProperty.Create(
+            nameof(SecondaryButtonCommand),
+            typeof(ICommand),
+            typeof(FFPageHeader));
+
+    public ICommand SecondaryButtonCommand
+    {
+        get => (ICommand)GetValue(SecondaryButtonCommandProperty);
+        set => SetValue(SecondaryButtonCommandProperty, value);
+    }
+
+    public static readonly BindableProperty ShowSecondaryButtonProperty =
+        BindableProperty.Create(
+            nameof(ShowSecondaryButton),
+            typeof(bool),
+            typeof(FFPageHeader),
+            false);
+
+    public bool ShowSecondaryButton
+    {
+        get => (bool)GetValue(ShowSecondaryButtonProperty);
+        set => SetValue(ShowSecondaryButtonProperty, value);
+    }
+
+    public static readonly BindableProperty RefreshCommandProperty =
+        BindableProperty.Create(
+            nameof(RefreshCommand),
+            typeof(ICommand),
+            typeof(FFPageHeader));
+
+    public ICommand RefreshCommand
+    {
+        get => (ICommand)GetValue(RefreshCommandProperty);
+        set => SetValue(RefreshCommandProperty, value);
+    }
+
+    public static readonly BindableProperty ShowRefreshButtonProperty =
+        BindableProperty.Create(
+            nameof(ShowRefreshButton),
+            typeof(bool),
+            typeof(FFPageHeader),
+            false);
+
+    public bool ShowRefreshButton
+    {
+        get => (bool)GetValue(ShowRefreshButtonProperty);
+        set => SetValue(ShowRefreshButtonProperty, value);
+    }
     public static readonly BindableProperty HeaderContentProperty =
         BindableProperty.Create(
             nameof(HeaderContent),
@@ -72,114 +168,24 @@ public partial class FFPageHeader : ContentView
 
     #region Primary Button
 
-    public static readonly BindableProperty PrimaryButtonTextProperty =
-        BindableProperty.Create(
-            nameof(PrimaryButtonText),
-            typeof(string),
-            typeof(FFPageHeader),
-            string.Empty);
+    
 
-    public string PrimaryButtonText
-    {
-        get => (string)GetValue(PrimaryButtonTextProperty);
-        set => SetValue(PrimaryButtonTextProperty, value);
-    }
+  
 
-    public static readonly BindableProperty PrimaryButtonCommandProperty =
-        BindableProperty.Create(
-            nameof(PrimaryButtonCommand),
-            typeof(ICommand),
-            typeof(FFPageHeader));
-
-    public ICommand? PrimaryButtonCommand
-    {
-        get => (ICommand?)GetValue(PrimaryButtonCommandProperty);
-        set => SetValue(PrimaryButtonCommandProperty, value);
-    }
-
-    public static readonly BindableProperty ShowPrimaryButtonProperty =
-        BindableProperty.Create(
-            nameof(ShowPrimaryButton),
-            typeof(bool),
-            typeof(FFPageHeader),
-            true);
-
-    public bool ShowPrimaryButton
-    {
-        get => (bool)GetValue(ShowPrimaryButtonProperty);
-        set => SetValue(ShowPrimaryButtonProperty, value);
-    }
+   
 
     #endregion
 
     #region Secondary Button
 
-    public static readonly BindableProperty SecondaryButtonTextProperty =
-        BindableProperty.Create(
-            nameof(SecondaryButtonText),
-            typeof(string),
-            typeof(FFPageHeader),
-            string.Empty);
+   
 
-    public string SecondaryButtonText
-    {
-        get => (string)GetValue(SecondaryButtonTextProperty);
-        set => SetValue(SecondaryButtonTextProperty, value);
-    }
-
-    public static readonly BindableProperty SecondaryButtonCommandProperty =
-        BindableProperty.Create(
-            nameof(SecondaryButtonCommand),
-            typeof(ICommand),
-            typeof(FFPageHeader));
-
-    public ICommand? SecondaryButtonCommand
-    {
-        get => (ICommand?)GetValue(SecondaryButtonCommandProperty);
-        set => SetValue(SecondaryButtonCommandProperty, value);
-    }
-
-    public static readonly BindableProperty ShowSecondaryButtonProperty =
-        BindableProperty.Create(
-            nameof(ShowSecondaryButton),
-            typeof(bool),
-            typeof(FFPageHeader),
-            true);
-
-    public bool ShowSecondaryButton
-    {
-        get => (bool)GetValue(ShowSecondaryButtonProperty);
-        set => SetValue(ShowSecondaryButtonProperty, value);
-    }
+    
 
     #endregion
 
     #region Refresh Button
 
-    public static readonly BindableProperty RefreshCommandProperty =
-        BindableProperty.Create(
-            nameof(RefreshCommand),
-            typeof(ICommand),
-            typeof(FFPageHeader));
-
-    public ICommand? RefreshCommand
-    {
-        get => (ICommand?)GetValue(RefreshCommandProperty);
-        set => SetValue(RefreshCommandProperty, value);
-    }
-
-    public static readonly BindableProperty ShowRefreshButtonProperty =
-        BindableProperty.Create(
-            nameof(ShowRefreshButton),
-            typeof(bool),
-            typeof(FFPageHeader),
-            false);
-
-    public bool ShowRefreshButton
-    {
-        get => (bool)GetValue(ShowRefreshButtonProperty);
-        set => SetValue(ShowRefreshButtonProperty, value);
-    }
 
     #endregion
 

@@ -1,0 +1,108 @@
+﻿Here's the full setup for using Azure Blob Storage as a backup destination alongside (or instead of) the network path.
+
+1. Config — appsettings.json
+
+Add an Azure section and a second destination entry with "Key": "cloud":
+
+json
+{
+  "ConnectionStrings": {
+    "Default": "Server=.\\SQLEXPRESS;Database=TherapyTrackerDesktopPoc;User Id=****;Password=****;MultipleActiveResultSets=true;TrustServerCertificate=True;"
+  },
+  "Encryption": {
+    "Key": "u7Jk3mZ9...=="
+  },
+  "Azure": {
+    "StorageConnectionString": ""
+  },
+  "Backup": {
+    "ScheduleCron": "0 2 * * *",
+    "RetentionDays": 30,
+    "Compress": true,
+    "Encrypt": true,
+    "VerifyAfterBackup": true,
+    "Destinations": [
+      {
+        "Id": "b1f3c2a0-1111-4a2b-9c3d-000000000001",
+        "Key": "network",
+        "Name": "Main NAS",
+        "Path": "\\\\nas01\\ehmr-backups"
+      },
+      {
+        "Id": "c2a4d3b1-2222-4b3c-8d4e-000000000002",
+        "Key": "cloud",
+        "Name": "Azure Blob Backup",
+        "Path": "ehmr-backups"
+      }
+    ]
+  }
+}
+
+Notes on the fields:
+
+Destinations[].Path for the cloud entry is the container name (matches how CloudStorageProvider uses options.Path from earlier — I named it that way so both providers reuse the same BackupDestinationOptions shape without adding new fields).
+Azure:StorageConnectionString is left empty here on purpose — never put a real Azure connection string in appsettings.json in source control. See step 3.
+2. NuGet package
+bash
+dotnet add package Azure.Storage.Blobs
+3. Where the real connection string comes from — don't hardcode it
+
+Options, in order of preference:
+
+A) User Secrets (local dev)
+
+bash
+dotnet user-secrets set "Azure:StorageConnectionString" "DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...;EndpointSuffix=core.windows.net"
+
+B) Environment variable (deployed desktop/server app)
+
+EHMR__Azure__StorageConnectionString=DefaultEndpointsProtocol=https;...
+
+(the double underscore __ is how IConfiguration maps env vars to nested JSON keys)
+
+C) Azure Key Vault (if this ever runs server-side, not just as a MAUI desktop app) — overkill for a POC, mention if you want it later.
+
+For a clinic desktop app like this, B (environment variable) is usually the pragmatic choice — set it once during install/deployment, keep it out of the repo and out of the JSON file entirely.
+
+4. DI registration
+csharp
+// In MauiProgram.cs (or wherever services are configured)
+
+builder.Services.Configure<BackupOptions>(builder.Configuration.GetSection("Backup"));
+
+// Local/network destination
+builder.Services.AddSingleton<IBackupStorageProvider>(sp =>
+{
+    var opts = sp.GetRequiredService<IOptions<BackupOptions>>().Value;
+    var dest = opts.Destinations.First(d => d.Key == "network");
+    return new NetworkStorageProvider(dest);
+});
+
+// Cloud destination — only register if a connection string is actually configured
+var azureConnectionString = builder.Configuration["Azure:StorageConnectionString"];
+if (!string.IsNullOrWhiteSpace(azureConnectionString))
+{
+    builder.Services.AddSingleton<IBackupStorageProvider>(sp =>
+    {
+        var opts = sp.GetRequiredService<IOptions<BackupOptions>>().Value;
+        var dest = opts.Destinations.First(d => d.Key == "cloud");
+        return new CloudStorageProvider(dest, azureConnectionString);
+    });
+}
+
+builder.Services.AddSingleton<IStorageProviderResolver, StorageProviderResolver>();
+
+The if guard matters: if the clinic never sets up Azure, IEnumerable<IBackupStorageProvider> just won't contain a cloud provider, and StorageProviderResolver.Resolve("cloud") will throw a clear InvalidOperationException instead of the app crashing at startup trying to construct a BlobContainerClient with an empty connection string.
+
+5. Picking cloud as the active destination for a backup
+
+In BackupViewModel, the Destinations list is already built from every registered IBackupStorageProvider (both network and cloud, if both are registered) — so the Picker in BackupPage.xaml will just show both "Main NAS" and "Azure Blob Backup" as options, no extra work needed there. Whichever the user selects sets Settings.DestinationId, which StorageProviderResolver.Resolve(Guid) then matches to the right provider at backup time.
+
+6. Which Azure storage tier/type to actually use
+
+For encrypted .zip.enc backup files (a few hundred MB to low GBs typically for a clinic DB), a plain Blob Storage account with:
+
+Standard tier, LRS (locally redundant) or GRS if you want geo-redundancy
+Cool access tier (cheaper, fine for backups you rarely read) — set at container/blob level, not something the code needs to handle unless you want lifecycle rules for auto-archiving old backups after N days (Azure has built-in lifecycle management policies for that — cheaper than doing it in your RetentionDays cleanup code, worth using instead of app-side deletion for cloud, and you could keep app-side RetentionDays cleanup just for the local/network destination).
+
+Want me to also add an Azure lifecycle management policy JSON (auto-delete blobs older than RetentionDays server-side, no app code needed), or wire the BackupSchedulerService's cleanup step to call CloudStorageProvider.DeleteAsync for expired cloud backups too?

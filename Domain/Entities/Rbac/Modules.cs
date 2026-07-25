@@ -17,7 +17,8 @@ public static class Modules
 {
     public const string Dashboard = "Dashboard";
     public const string Doctors = "Doctors";
-
+    public const string BackupDashboard = "BackupDashboard";
+    public const string Backups = "Backups";
     public const string Patients = "Patients";
 
     public const string Appointments = "Appointments";

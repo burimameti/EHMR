@@ -8,7 +8,10 @@ public interface IAuthStateService
     {
         get;
     }
-
+    Guid? CurrentDoctorId
+    {
+        get;
+    }
     bool IsAuthenticated
     {
         get;
@@ -16,7 +19,7 @@ public interface IAuthStateService
 
     event EventHandler? AuthStateChanged;
 
-    void SetUser(User user);
+    void SetUser(User user, Guid? doctorId=null);
 
     void Clear();
 

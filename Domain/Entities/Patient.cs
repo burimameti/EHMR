@@ -9,7 +9,7 @@ namespace EHMR.Domain.Entities;
 public class Patient : BaseEntity
 {
     #region Personal Information
-
+    public string PatientNumber { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;
 
     public string LastName { get; set; } = string.Empty;
@@ -95,37 +95,21 @@ public class Patient : BaseEntity
     /// <summary>
     /// Patient diagnoses (ICD-10 / MKB-10).
     /// </summary>
-    public virtual ICollection<Diagnosis> Diagnoses { get; set; } = [];
+    public ICollection<Diagnosis> Diagnoses { get; set; } = new List<Diagnosis>();
 
     /// <summary>
     /// Current and historical medications prescribed to the patient.
     /// </summary>
-    public virtual ICollection<PatientMedicine> PatientMedicines { get; set; } = [];
+    public ICollection<PatientMedicine> PatientMedicines { get; set; } = new List<PatientMedicine>();
 
-    /// <summary>
-    /// Medical documents.
-    /// </summary>
-    public virtual ICollection<PatientDocument> Documents { get; set; } = [];
-
+    public ICollection<PatientDocument> Documents { get; set; } = new List<PatientDocument>();
     /// <summary>
     /// Patient appointments.
     /// </summary>
-    public virtual ICollection<Appointment> Appointments { get; set; } = [];
-
-    /// <summary>
-    /// Therapy cycles.
-    /// </summary>
-    public virtual ICollection<TherapyCycle> TherapyCycles { get; set; } = [];
-
-    /// <summary>
-    /// Prescriptions issued for this patient.
-    /// </summary>
-    public virtual ICollection<Prescription> Prescriptions { get; set; } = [];
-
-    /// <summary>
-    /// Clinical encounters.
-    /// </summary>
-    public virtual ICollection<Encounter> Encounters { get; set; } = [];
+    public ICollection<Appointment> Appointments { get; set; } = [];
+    public ICollection<TherapyCycle> TherapyCycles { get; set; } = [];
+    public ICollection<Prescription> Prescriptions { get; set; } = [];
+    public ICollection<Encounter> Encounters { get; set; } = [];
 
     #endregion
 
@@ -142,20 +126,22 @@ public class Patient : BaseEntity
     /// Last completed appointment.
     /// </summary>
     public DateTime? LastVisitDate =>
-        Appointments
-            .Where(a => a.Status==AppointmentStatus.Completed)
-            .OrderByDescending(a => a.ScheduledStart)
-            .Select(a => (DateTime?)a.ScheduledStart)
-            .FirstOrDefault();
+        Appointments?.Count>0
+            ? Appointments
+                .Where(a => a.Status==AppointmentStatus.Completed)
+                .OrderByDescending(a => a.ScheduledStart)
+                .Select(a => (DateTime?)a.ScheduledStart)
+                .FirstOrDefault()
+            : null;
 
     /// <summary>
     /// Next scheduled appointment.
     /// </summary>
+
     public DateTime? NextAppointmentDate =>
         Appointments
-            .Where(a =>
-                a.Status==AppointmentStatus.Scheduled&&
-                a.ScheduledStart>DateTime.UtcNow)
+            .Where(a => a.Status==AppointmentStatus.Scheduled
+                     &&a.ScheduledStart>DateTime.UtcNow)
             .OrderBy(a => a.ScheduledStart)
             .Select(a => (DateTime?)a.ScheduledStart)
             .FirstOrDefault();

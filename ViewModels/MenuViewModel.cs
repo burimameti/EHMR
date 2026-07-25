@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Constants;
-using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using System.Collections.ObjectModel;
@@ -13,6 +12,15 @@ public partial class MenuViewModel : ObservableObject, IDisposable
     private readonly IAuthStateService _auth;
     private readonly IMenuService _menuService;
     private readonly INavigationService _navigation;
+
+    // Ensures only one Shell navigation is ever in flight at a time.
+    // Overlapping GoToAsync calls are the actual cause of the menu
+    // "hanging" when tapped fast / repeatedly.
+    private readonly SemaphoreSlim _navigationLock = new(1, 1);
+
+    // Guards RefreshMenuAsync against out-of-order completion when
+    // AuthStateChanged fires more than once in quick succession.
+    private int _refreshToken;
 
     public ObservableCollection<NavigationGroup> Items { get; } = [];
 
@@ -31,8 +39,15 @@ public partial class MenuViewModel : ObservableObject, IDisposable
 
     private async void OnAuthChanged(object? sender, EventArgs e)
     {
-        ApplyUserInfo();
-        await RefreshMenuAsync();
+        try
+        {
+            ApplyUserInfo();
+            await RefreshMenuAsync();
+        }
+        catch(Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"OnAuthChanged failed: {ex}");
+        }
     }
 
     // ============== USER CARD INFO ==============
@@ -58,45 +73,118 @@ public partial class MenuViewModel : ObservableObject, IDisposable
         }
 
         UserName=user.FirstName??user.Username??"Корисник";
-        UserRole=user.Role.ToString() ?? "Нема привилегии";
+        UserRole=user.Role.ToString()??"Нема привилегии";
         UserInitial=!string.IsNullOrWhiteSpace(UserName)
             ? UserName.Trim()[0].ToString().ToUpper()
             : "?";
     }
 
-    [RelayCommand]
+    // ============== NAVIGATION ==============
+
+    // While true, the nav commands are disabled (see CanNavigate below),
+    // so a second tap can't queue a second GoToAsync while one is pending.
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(NavigateCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ToggleGroupCommand))]
+    private bool isNavigating;
+
+    private bool CanNavigate() => !IsNavigating;
+
+    [RelayCommand(CanExecute = nameof(CanNavigate))]
     private async Task NavigateAsync(NavigationItem? item)
     {
         if(item==null||string.IsNullOrWhiteSpace(item.Route))
             return;
         if(ActiveRoute==item.Route)
             return;
-        ActiveRoute=item.Route;
-        await _navigation.GoToAsync(item.Route);
+
+        if(!await _navigationLock.WaitAsync(0))
+            return;
+
+        var previousRoute = ActiveRoute;
+        IsNavigating=true;
+
+        try
+        {
+            ActiveRoute=item.Route;
+            await _navigation.GoToAsync(item.Route);
+        }
+        catch(Exception ex)
+        {
+            // Roll back so the highlighted item matches what's actually
+            // on screen if navigation failed.
+            ActiveRoute=previousRoute;
+            System.Diagnostics.Debug.WriteLine(
+                $"Navigation to '{item.Route}' failed: {ex}");
+        }
+        finally
+        {
+            IsNavigating=false;
+            _navigationLock.Release();
+        }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanNavigate))]
     private async Task ToggleGroupAsync(NavigationGroup group)
     {
         if(group==null)
             return;
+
         if(group.Items.Count==0)
         {
-            ActiveRoute=group.Route;
-            if(!string.IsNullOrWhiteSpace(group.Route))
-                await _navigation.GoToAsync(group.Route);
+            if(ActiveRoute==group.Route)
+                return;
+
+            if(!await _navigationLock.WaitAsync(0))
+                return;
+
+            var previousRoute = ActiveRoute;
+            IsNavigating=true;
+
+            try
+            {
+                if(!string.IsNullOrWhiteSpace(group.Route))
+                {
+                    ActiveRoute=group.Route;
+                    await _navigation.GoToAsync(group.Route);
+                }
+            }
+            catch(Exception ex)
+            {
+                ActiveRoute=previousRoute;
+                System.Diagnostics.Debug.WriteLine(
+                    $"Navigation to '{group.Route}' failed: {ex}");
+            }
+            finally
+            {
+                IsNavigating=false;
+                _navigationLock.Release();
+            }
             return;
         }
+
         group.IsExpanded=!group.IsExpanded;
     }
 
     public async Task RefreshMenuAsync()
     {
+        var token = ++_refreshToken;
+
         try
         {
             var groups = await _menuService.UpdateMenuAsync();
+
+            // A newer refresh started and finished (or started) while we
+            // were awaiting — drop this stale result instead of letting
+            // it clobber newer data.
+            if(token!=_refreshToken)
+                return;
+
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
+                if(token!=_refreshToken)
+                    return;
+
                 Items.Clear();
                 foreach(var group in groups)
                     Items.Add(group);
@@ -166,5 +254,6 @@ public partial class MenuViewModel : ObservableObject, IDisposable
     public void Dispose()
     {
         _auth.AuthStateChanged-=OnAuthChanged;
+        _navigationLock.Dispose();
     }
 }

@@ -4,6 +4,7 @@ namespace EHMR.Domain.Entities
 {
     public class Prescription : BaseEntity
     {
+        public string PrescriptionNumber { get; set; } = string.Empty;
         public Guid PatientId
         {
             get; set;

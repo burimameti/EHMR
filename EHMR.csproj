@@ -46,6 +46,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="EHMR.Backups\**" />
+	  <EmbeddedResource Remove="EHMR.Backups\**" />
+	  <MauiCss Remove="EHMR.Backups\**" />
+	  <MauiXaml Remove="EHMR.Backups\**" />
+	  <None Remove="EHMR.Backups\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		    <PackageReference Include="Azure.Storage.Blobs" Version="12.29.1" />
 		    <PackageReference Include="ClosedXML" Version="0.105.0" />
 		    <PackageReference Include="ClosedXML.Report" Version="0.2.12" />
 		    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
@@ -63,6 +72,9 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.18" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.18" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.18" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.8" />
 		    <PackageReference Include="Microcharts.Maui" Version="1.0.1" />
@@ -76,6 +88,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Backups\Views\BackupDetailPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Components\PageHeader.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -301,10 +316,10 @@
 	  <MauiXaml Update="Resources\Styles\Layouts.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Resources\Styles\MyStyle.xaml">
+	  <MauiXaml Update="Resources\Styles\Panda.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Resources\Styles\Panda.xaml">
+	  <MauiXaml Update="Resources\Styles\SparkForms.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Styles\Styles.xaml">
@@ -317,6 +332,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Styles\Typography.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Admin\AdminPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Appointments\AppointmentDetailPage.xaml">
@@ -430,6 +448,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Backups\Views\BackupDetailPage.xaml.cs">
+	    <DependentUpon>BackupDetailPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Backups\Views\RestorePage.xaml.cs">
+	    <DependentUpon>RestorePage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Components\PageHeader.xaml.cs">
 	    <DependentUpon>PageHeader.xaml</DependentUpon>
 	  </Compile>
@@ -509,9 +533,22 @@
 
 	<ItemGroup>
 	  <Folder Include="Domain\NewFolder\" />
+	  <Folder Include="Infrastructure\Security\" />
 	  <Folder Include="Resources\Controls\Actions\" />
 	  <Folder Include="Resources\Controls\SparkForm\Services\" />
 	  <Folder Include="Views\Ter\" />
+	</ItemGroup>
+
+	<ItemGroup>
+  <MauiAsset Include="appsettings.json">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </MauiAsset>	  <PRIResource Remove="EHMR.Backups\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="appsettings.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

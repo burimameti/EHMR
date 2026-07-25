@@ -5,8 +5,8 @@ namespace EHMR.Services
     public class AppointmentDetailDto
     {
         public Appointment Appointment { get; set; } = new();
-
-        public List<AppointmentDiagnosis> Diagnoses { get; set; } = [];
+        public Encounter LinkedEncounter { get; set; } = new();
+        public List<Diagnosis> Diagnoses { get; set; } = [];
 
         public List<TherapyCycle> TherapyCycles { get; set; } = [];
 

@@ -27,6 +27,6 @@ namespace EHMR.Domain.Entities
         [NotMapped]
         public string DisplayText => $"{Code} — {Description}";
 
-        public List<AppointmentDiagnosis> AppointmentDiagnoses { get; set; } = new();
+
     }
 }

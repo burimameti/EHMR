@@ -1,0 +1,165 @@
+<!--  File: EHMR.Backups/Views/RestorePage.xaml  -->
+<ContentPage
+	x:Class="EHMR.Backups.Views.RestorePage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:viewModels="clr-namespace:EHMR.Backups.ViewModels"
+	x:DataType="viewModels:RestoreViewModel">
+
+	<ContentPage.Resources>
+		<ResourceDictionary>
+
+			<Style x:Key="RestoreSectionTitle" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="18" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+				<Setter Property="Margin" Value="0,0,0,14" />
+			</Style>
+
+			<Style x:Key="RestoreFieldLabel" TargetType="Label">
+				<Setter Property="FontSize" Value="12" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+				<Setter Property="Margin" Value="0,0,0,4" />
+			</Style>
+
+			<Style x:Key="RestoreUnderlineEntry" TargetType="Entry">
+				<Setter Property="BackgroundColor" Value="Transparent" />
+				<Setter Property="FontSize" Value="14" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+			</Style>
+
+			<Style x:Key="RestoreFieldUnderline" TargetType="BoxView">
+				<Setter Property="HeightRequest" Value="1" />
+				<Setter Property="Color" Value="{StaticResource SparkBorderSubtle}" />
+			</Style>
+
+			<Style x:Key="RestoreCheckLabel" TargetType="Label">
+				<Setter Property="FontSize" Value="14" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+				<Setter Property="VerticalOptions" Value="Center" />
+			</Style>
+
+		</ResourceDictionary>
+	</ContentPage.Resources>
+
+	<Border BackgroundColor="{StaticResource Gray200}" StrokeThickness="0">
+		<Grid RowDefinitions="110,*" RowSpacing="0">
+
+			<!--  HEADER  -->
+			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+				<Grid ColumnDefinitions="*,*" VerticalOptions="Center">
+					<controls:FFPageHeader Title="Враќање на база" Subtitle="Враќање на базата на податоци од бекап." />
+					<HorizontalStackLayout
+						Grid.Column="1"
+						HorizontalOptions="End"
+						Spacing="10"
+						VerticalOptions="Center">
+						<Button
+							BackgroundColor="{StaticResource SparkDanger}"
+							Command="{Binding RestoreCommand}"
+							HeightRequest="45"
+							IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+							Style="{StaticResource TabButtonActiveStyle}"
+							Text="Врати База"
+							WidthRequest="180" />
+					</HorizontalStackLayout>
+				</Grid>
+			</Border>
+
+			<!--  FORM  -->
+			<Border Grid.Row="1" Padding="16,20,16,20">
+				<Border
+					Padding="30"
+					BackgroundColor="{StaticResource White}"
+					Stroke="{StaticResource Gray100}"
+					StrokeShape="RoundRectangle 12">
+
+					<VerticalStackLayout Spacing="26">
+
+						<!--  Warning banner — restore is destructive  -->
+						<Border
+							Padding="14,10"
+							BackgroundColor="{StaticResource SparkDangerBg}"
+							Stroke="{StaticResource SparkDanger}"
+							StrokeShape="RoundRectangle 8"
+							StrokeThickness="1">
+							<Label
+								FontSize="12.5"
+								Text="Враќањето ќе ги презапише тековните податоци во базата. Оваа операција не може да се врати назад."
+								TextColor="{StaticResource SparkDanger}" />
+						</Border>
+
+						<!--  Settings section  -->
+						<VerticalStackLayout>
+							<Label Style="{StaticResource RestoreSectionTitle}" Text="Поставки" />
+
+							<Grid ColumnDefinitions="*,40,*" RowDefinitions="Auto">
+
+								<!--  Backup file — label above underline field  -->
+								<VerticalStackLayout Grid.Row="0" Grid.Column="0">
+									<Label Style="{StaticResource RestoreFieldLabel}" Text="Бекап фајл" />
+									<Entry Style="{StaticResource RestoreUnderlineEntry}" Text="{Binding Settings.BackupFile}" />
+									<BoxView Style="{StaticResource RestoreFieldUnderline}" />
+								</VerticalStackLayout>
+
+								<!--  gutter col 1 intentionally empty  -->
+
+								<VerticalStackLayout Grid.Row="0" Grid.Column="2" />
+
+							</Grid>
+
+							<!--  Toggle  -->
+							<Grid
+								Margin="0,20,0,0"
+								ColumnDefinitions="*,40,*"
+								RowDefinitions="Auto">
+
+								<HorizontalStackLayout Grid.Column="0" Spacing="10">
+									<CheckBox IsChecked="{Binding Settings.IsEncrypted}" />
+									<Label Style="{StaticResource RestoreCheckLabel}" Text="Криптиран" />
+								</HorizontalStackLayout>
+
+							</Grid>
+						</VerticalStackLayout>
+
+						<BoxView HeightRequest="1" Color="{StaticResource Gray100}" />
+
+						<!--  Progress section  -->
+						<VerticalStackLayout IsVisible="{Binding IsBusy}" Spacing="10">
+							<Label Style="{StaticResource RestoreSectionTitle}" Text="Прогрес" />
+							<ProgressBar
+								HeightRequest="8"
+								Progress="{Binding Progress.Percentage}"
+								ProgressColor="{StaticResource SparkAccentTeal}" />
+							<Label
+								FontSize="13"
+								Text="{Binding StatusMessage}"
+								TextColor="{StaticResource SparkTextPrimary}" />
+						</VerticalStackLayout>
+
+					</VerticalStackLayout>
+
+				</Border>
+			</Border>
+
+			<!--  LOADING OVERLAY  -->
+			<Grid
+				Grid.RowSpan="2"
+				BackgroundColor="#80191E29"
+				IsVisible="{Binding IsBusy}">
+				<VerticalStackLayout
+					HorizontalOptions="Center"
+					Spacing="12"
+					VerticalOptions="Center">
+					<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource Primary}" />
+					<Label
+						FontSize="13"
+						Text="Враќање во тек..."
+						TextColor="White" />
+				</VerticalStackLayout>
+			</Grid>
+
+		</Grid>
+	</Border>
+</ContentPage>

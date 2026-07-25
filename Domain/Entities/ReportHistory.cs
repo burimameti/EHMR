@@ -8,6 +8,7 @@ namespace EHMR.Domain.Entities
 {
     public class ReportHistory : BaseEntity
     {
+        public string ReportNumber { get; set; } = "";
         public Guid Id
         {
             get; set;

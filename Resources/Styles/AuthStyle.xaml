@@ -7,7 +7,7 @@
 	<Color x:Key="Surface">#4A5863</Color>
 	<Color x:Key="SurfaceAlt">#1A2436</Color>
 	<Color x:Key="SparkedDarkCard">#1A2436</Color>
-	<Color x:Key="BorderDefault">#334155</Color>
+
 	<Color x:Key="Teal400">#2DD4BF</Color>
 	<Color x:Key="Teal600">#0D9488</Color>
 	<Color x:Key="Teal50">#F0FDFA</Color>

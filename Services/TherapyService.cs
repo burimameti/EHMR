@@ -38,6 +38,11 @@ public class TherapyService : ITherapyService
     public async Task AddCycleAsync(TherapyCycle cycle)
     {
         await using var db = await _dbFactory.CreateDbContextAsync();
+        if(string.IsNullOrWhiteSpace(cycle.TherapyCyleNumber))
+        {
+            cycle.TherapyCyleNumber=
+                await SequenceHelper.GenerateNumberAsync(db, SequenceNames.TherapyCycle, "TER");
+        }
         db.TherapyCycles.Add(cycle);
         await db.SaveChangesAsync();
     }

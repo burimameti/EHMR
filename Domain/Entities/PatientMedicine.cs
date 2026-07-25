@@ -26,6 +26,7 @@ public class PatientMedicine : BaseEntity
         get; set;
     }
 
+
     /// <summary>How often THIS patient takes THIS medicine — independent of any other medicine they're on.</summary>
     public DosesFrequency DosesFrequency { get; set; } = DosesFrequency.Daily;
 

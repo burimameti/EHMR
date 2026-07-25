@@ -4,92 +4,98 @@
 	<!--  ============================================================  -->
 	<!--  SIDEBAR (Deep Slate / Slate-Blue Theme)  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkSidebarBg">#32404D</Color>
-	<Color x:Key="SparkSidebarBgHover">#3D4D5C</Color>
-	<Color x:Key="SparkSidebarActiveBg">#4CC3D9</Color>
-	<Color x:Key="SparkSidebarText">#A9B7C6</Color>
+	<Color x:Key="SparkSidebarBg">#293441</Color>
+	<!--  was #32404D — slightly deeper, reads as "premium dark" not "washed navy"  -->
+	<Color x:Key="SparkSidebarBgHover">#333F4D</Color>
+	<Color x:Key="SparkSidebarActiveBg">#22B8C6</Color>
+	<!--  aligned to the refined accent teal below, was a mismatched #4CC3D9  -->
+	<Color x:Key="SparkSidebarText">#96A5B5</Color>
 	<Color x:Key="SparkSidebarTextActive">#FFFFFF</Color>
-	<Color x:Key="SparkSidebarBorder">#27323D</Color>
+	<Color x:Key="SparkSidebarBorder">#1F2933</Color>
 
 	<!--  ============================================================  -->
 	<!--  MAIN SURFACES & CANVAS  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkCanvasBackground">#EBF0F5</Color>
+	<Color x:Key="SparkCanvasBackground">#EEF2F6</Color>
 	<!--  Canvas behind the cards  -->
 	<Color x:Key="SparkBackground">#FFFFFF</Color>
 	<!--  White card surface  -->
-	<Color x:Key="SparkBackgroundAlt">#F8FAFC</Color>
+	<Color x:Key="SparkBackgroundAlt">#F7F9FC</Color>
 	<!--  Alternating rows/nested sections  -->
-	<Color x:Key="SparkBorder">#E2E8F0</Color>
+	<Color x:Key="SparkBorder">#E1E6ED</Color>
 	<!--  Hairline borders/dividers  -->
 
 	<!--  ============================================================  -->
 	<!--  TYPOGRAPHY  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkTextPrimary">#2D3748</Color>
-	<Color x:Key="SparkTextSecondary">#718096</Color>
-	<Color x:Key="SparkTextMuted">#A0AEC0</Color>
-	<Color x:Key="SparkLink">#2F8FE0</Color>
+	<Color x:Key="SparkTextPrimary">#1E2733</Color>
+	<!--  was #2D3748 — darker for crisper headings/labels  -->
+	<Color x:Key="SparkTextSecondary">#64748B</Color>
+	<!--  Tailwind slate-500, replaces the slightly muddy #718096  -->
+	<Color x:Key="SparkTextMuted">#94A3B8</Color>
+	<!--  slate-400  -->
+	<Color x:Key="SparkLink">#2563EB</Color>
+	<!--  cleaner, more standard SaaS link blue than #2F8FE0  -->
 
 	<!--  ============================================================  -->
 	<!--  ACCENTS (Vibrant Dashboard Teal)  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkAccentTeal">#21B6C4</Color>
-	<Color x:Key="SparkAccentTealDark">#1899A6</Color>
-	<Color x:Key="SparkAccentTealBg">#E7F7FA</Color>
+	<Color x:Key="SparkAccentTeal">#0EA5B8</Color>
+	<!--  was #21B6C4 — a touch deeper/more saturated, better text contrast on white  -->
+	<Color x:Key="SparkAccentTealDark">#0B8494</Color>
+	<Color x:Key="SparkAccentTealBg">#E3F6F9</Color>
 
 	<!--  ============================================================  -->
 	<!--  BUTTONS & INTERACTIVE ELEMENTS  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkButtonPrimaryBg">#21B6C4</Color>
-	<Color x:Key="SparkButtonPrimaryBgPressed">#1899A6</Color>
+	<Color x:Key="SparkButtonPrimaryBg">#0EA5B8</Color>
+	<Color x:Key="SparkButtonPrimaryBgPressed">#0B8494</Color>
 	<Color x:Key="SparkButtonPrimaryText">#FFFFFF</Color>
 
-	<Color x:Key="SparkButtonSecondaryBg">#5B6B79</Color>
-	<Color x:Key="SparkButtonSecondaryBgPressed">#4A5763</Color>
-	<Color x:Key="SparkButtonSecondaryBorder">#D8DEE6</Color>
+	<Color x:Key="SparkButtonSecondaryBg">#475569</Color>
+	<!--  slate-600, was #5B6B79 — cooler, matches sidebar family  -->
+	<Color x:Key="SparkButtonSecondaryBgPressed">#334155</Color>
+	<Color x:Key="SparkButtonSecondaryBorder">#D6DCE5</Color>
 	<Color x:Key="SparkButtonSecondaryText">#FFFFFF</Color>
 
 	<!--  ============================================================  -->
 	<!--  TABS CONFIGURATION  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkTabActiveBg">#E7F7FA</Color>
-	<Color x:Key="SparkTabActiveBorder">#21B6C4</Color>
-	<Color x:Key="SparkTabActiveText">#16374A</Color>
+	<Color x:Key="SparkTabActiveBg">#E3F6F9</Color>
+	<Color x:Key="SparkTabActiveBorder">#0EA5B8</Color>
+	<Color x:Key="SparkTabActiveText">#0F3B45</Color>
 	<Color x:Key="SparkTabInactiveText">#7C8798</Color>
 	<Color x:Key="SparkTabHoverBg">#F1F5F8</Color>
 
 	<!--  ============================================================  -->
-	<!--  SEMANTIC STATUS & BADGES (Pastel Grid Rows / Indicators)  -->
+	<!--  SEMANTIC STATUS & BADGES (muted, enterprise-grade — not candy pastel)  -->
 	<!--  ============================================================  -->
 	<!--  Success / Low Risk (Green)  -->
-	<Color x:Key="SparkStatusSuccessBg">#D1F5D3</Color>
-	<Color x:Key="SparkStatusSuccessText">#1E7E34</Color>
-	<Color x:Key="SparkBadgeSuccessBg">#E7F6E9</Color>
-	<Color x:Key="SparkBadgeSuccessText">#3CB35B</Color>
+	<Color x:Key="SparkStatusSuccessBg">#DCF3E3</Color>
+	<Color x:Key="SparkStatusSuccessText">#1B7A3D</Color>
+	<Color x:Key="SparkBadgeSuccessBg">#E6F5E9</Color>
+	<Color x:Key="SparkBadgeSuccessText">#2E9C55</Color>
 
 	<!--  Warning / Moderate Risk (Amber)  -->
-	<Color x:Key="SparkStatusWarningBg">#FDF1D6</Color>
-	<Color x:Key="SparkStatusWarningText">#B7791F</Color>
-	<Color x:Key="SparkBadgeWarningBg">#FDF3E3</Color>
-	<Color x:Key="SparkBadgeWarningText">#E0A83C</Color>
+	<Color x:Key="SparkStatusWarningBg">#FBEED2</Color>
+	<Color x:Key="SparkStatusWarningText">#96650F</Color>
+	<Color x:Key="SparkBadgeWarningBg">#FCF0DC</Color>
+	<Color x:Key="SparkBadgeWarningText">#C4901F</Color>
 
-	<!--  Danger / High Risk / Churned (Pink/Red)  -->
-	<Color x:Key="SparkStatusDangerBg">#FCE3E7</Color>
-	<Color x:Key="SparkStatusDangerText">#C0304A</Color>
-	<Color x:Key="SparkBadgeDangerBg">#FDE8E8</Color>
-	<Color x:Key="SparkBadgeDangerText">#E0554F</Color>
+	<!--  Danger / High Risk / Churned (muted rose, less "hot pink" than before)  -->
+	<Color x:Key="SparkStatusDangerBg">#FADDE1</Color>
+	<Color x:Key="SparkStatusDangerText">#A82940</Color>
+	<Color x:Key="SparkBadgeDangerBg">#FBE4E4</Color>
+	<Color x:Key="SparkBadgeDangerText">#C24545</Color>
 
 	<!--  Neutral  -->
-	<Color x:Key="SparkButtonBg">#EAECF1</Color>
-	<Color x:Key="SparkStatusNeutralBg">#EAECF1</Color>
-	<Color x:Key="SparkStatusNeutralText">#5A6178</Color>
-	<Color x:Key="SparkBadgeNeutralBg">#EDF1F5</Color>
-	<Color x:Key="SparkBadgeNeutralBgSelected">#21B6C4</Color>
-	<Color x:Key="SparkBadgeNeutralText">#5B6B85</Color>
-	<Color x:Key="SparkBadgeNeutralTextSelected">
-		#FFFFFF
-	</Color>
+	<Color x:Key="SparkButtonBg">#E8EBF0</Color>
+	<Color x:Key="SparkStatusNeutralBg">#E8EBF0</Color>
+	<Color x:Key="SparkStatusNeutralText">#52586B</Color>
+	<Color x:Key="SparkBadgeNeutralBg">#EBEFF3</Color>
+	<Color x:Key="SparkBadgeNeutralBgSelected">#0EA5B8</Color>
+	<Color x:Key="SparkBadgeNeutralText">#556072</Color>
+	<Color x:Key="SparkBadgeNeutralTextSelected">#FFFFFF</Color>
 
 	<!--  ============================================================  -->
 	<!--  RADIUS SCALE  -->

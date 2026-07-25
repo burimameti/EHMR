@@ -10,6 +10,13 @@ namespace EHMR.Domain.Interfaces
     public interface IReportExportService
     {
         Task<string> ExportToExcelAsync(string reportTitle, IReadOnlyList<SparkGridColumn> columns, IReadOnlyList<SparkGridRow> rows);
-        Task<string> ExportToPdfAsync(string reportTitle, IReadOnlyList<SparkGridColumn> columns, IReadOnlyList<SparkGridRow> rows);
+        Task<string> ExportToPdfAsync(
+        string reportTitle,
+        string insitutionName,
+        string generatedBy,
+        DateTime startDate,
+        DateTime endDate,
+        IReadOnlyList<SparkGridColumn> columns,
+        IReadOnlyList<SparkGridRow> rows);
     }
 }

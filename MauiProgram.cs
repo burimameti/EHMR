@@ -3,7 +3,12 @@ using SkiaSharp.Views.Maui.Controls.Hosting;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using SolidColorBrush = Microsoft.UI.Xaml.Media.SolidColorBrush;
+using EHMR.Backups.Services;
+using Microsoft.Extensions.Configuration;
+using EHMR.Backups.Encryption;
 using EHMR.Domain.SparkForm;
+using EHMR.Backups.Models;
+
 
 
 #if WINDOWS
@@ -17,9 +22,7 @@ namespace EHMR
     {
         public static IServiceProvider ServiceProvider { get; private set; } = default!;
         public static IMauiContext CurrentMauiContext { get; private set; } = default!;
-
-        public static MauiApp CreateMauiApp()
-        {
+        public static MauiApp CreateMauiApp()        {
             var builder = MauiApp.CreateBuilder();
 
             // =====================================================
@@ -67,10 +70,32 @@ namespace EHMR
                 new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
             }
             });
+            var configuration = new ConfigurationBuilder()
+      .SetBasePath(AppContext.BaseDirectory)
+      .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+      .Build();
+
+            builder.Configuration.AddConfiguration(configuration);
 
             builder.Services.AddSingleton<AppShell>();
             builder.Services.AddSingleton<App>();
             builder.Services.RegisterEHMR();
+            //  services.Configure<EncryptionOptions>(Configuration.GetSection("Encryption"));
+            builder.Services.Configure<BackupOptions>(builder.Configuration.GetSection("Backup"));
+
+            var keyCheck = configuration.GetSection("Encryption")["Key"];
+            if(string.IsNullOrWhiteSpace(keyCheck))
+                throw new InvalidOperationException(
+                    $"Encryption:Key not found. Config base path: {AppContext.BaseDirectory}. "+
+                    $"Does appsettings.json exist there? {File.Exists(Path.Combine(AppContext.BaseDirectory, "appsettings.json"))}");
+            builder.Services.Configure<EncryptionOptions>(
+     builder.Configuration.GetSection(EncryptionOptions.SectionName));
+
+            builder.Services.AddOptions<EncryptionOptions>()
+                .Validate(o => !string.IsNullOrWhiteSpace(o.Key), "Encryption:Key is missing or empty — check appsettings.json is copied to output and the section name matches.")
+                .ValidateOnStart();
+
+            builder.Services.AddSingleton<IEncryptionService, EncryptionService>();
             SparkTemplateInitializer.Register();
             // =====================================================
             // BUILD APP

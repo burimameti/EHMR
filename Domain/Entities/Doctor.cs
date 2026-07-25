@@ -4,6 +4,7 @@ namespace EHMR.Domain.Entities
 {
     public class Doctor : BaseEntity
     {
+        public string DoctorNumber { get; set; } = string.Empty;
         public Guid UserId
         {
             get; set;
@@ -29,7 +30,15 @@ namespace EHMR.Domain.Entities
             get; set;
         }= Status.Active;
         // optional convenience
-        public string FullName => User?.FirstName+" "+User?.LastName; public override string ToString() => FullName;
+        public string FullName
+        {
+            get
+            {
+                if(User==null) return string.Empty;
+                var name = $"{User.FirstName} {User.LastName}".Trim();
+                return string.IsNullOrWhiteSpace(name) ? "Не е доделен" : name;
+            }
+        }
 
     }
    

@@ -9,6 +9,19 @@ public interface IAuthorizationService
     {
         get;
     }
+  
+    bool IsScopedToOwnData
+    {
+        get;
+    }
+    /// <summary>
+    /// The Doctor.Id linked to the current user, or null if the current user
+    /// is not a Doctor (or has no linked Doctor record).
+    /// </summary>
+    Guid? CurrentDoctorId
+    {
+        get;
+    }
     bool CanPerform(string module, ModuleAction action);
     bool HasRole(UserRole role);
     bool HasModule(string module);

@@ -3,7 +3,8 @@
 namespace EHMR.Domain.Entities
 {
     public class Diagnosis : BaseEntity
-    {
+    { 
+        public string DiagnosisNumber { get; set; } = string.Empty;
         public Guid PatientId
         {
             get; set;

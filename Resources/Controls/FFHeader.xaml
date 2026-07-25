@@ -14,25 +14,26 @@
 
 		<VerticalStackLayout
 			Grid.Column="0"
-			Spacing="3"
+			Spacing="4"
 			VerticalOptions="Center">
 
 			<Label
-				CharacterSpacing="2"
-				FontAttributes="Bold"
-				FontSize="11"
 				IsVisible="{Binding Caption, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
+				Style="{StaticResource FormLabelStyle}"
 				Text="{Binding Caption, Source={x:Reference Root}}"
 				TextColor="{StaticResource Gray500}" />
 
 			<Label
-				FontSize="{Binding TitleFontSize, Source={x:Reference Root}}"
+				FontAttributes="Bold"
+				FontSize="28"
 				Text="{Binding Title, Source={x:Reference Root}}"
 				TextColor="{Binding TitleColor, Source={x:Reference Root}}" />
 
 			<Label
-				FontSize="{Binding SubtitleFontSize, Source={x:Reference Root}}"
+				FontSize="16"
 				IsVisible="{Binding Subtitle, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
+				LineBreakMode="TailTruncation"
+				MaxLines="2"
 				Text="{Binding Subtitle, Source={x:Reference Root}}"
 				TextColor="{Binding SubtitleColor, Source={x:Reference Root}}" />
 
@@ -40,31 +41,37 @@
 
 		<!--  Right  -->
 
-		<!--<HorizontalStackLayout
+		<HorizontalStackLayout
 			Grid.Column="1"
-			Spacing="10"
+			HorizontalOptions="End"
+			Spacing="12"
 			VerticalOptions="Center">
 
 			<Button
+				BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
 				Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
+				HeightRequest="45"
 				IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
-				Style="{StaticResource SparkPagerButtonStyle}"
-				Text="{Binding PrimaryButtonText, Source={x:Reference Root}}" />
+				Style="{StaticResource TabButtonActiveStyle}"
+				Text="{Binding PrimaryButtonText, Source={x:Reference Root}}"
+				WidthRequest="150" />
 
 			<Button
 				Command="{Binding SecondaryButtonCommand, Source={x:Reference Root}}"
+				HeightRequest="45"
 				IsVisible="{Binding ShowSecondaryButton, Source={x:Reference Root}}"
-				Style="{StaticResource SparkActionButtonStyle}"
-				Text="{Binding SecondaryButtonText, Source={x:Reference Root}}" />
+				Style="{StaticResource TabButtonStyle}"
+				Text="{Binding SecondaryButtonText, Source={x:Reference Root}}"
+				WidthRequest="150" />
 
 			<Button
 				Command="{Binding RefreshCommand, Source={x:Reference Root}}"
-				FontFamily="FASolid"
+				HeightRequest="44"
 				IsVisible="{Binding ShowRefreshButton, Source={x:Reference Root}}"
-				Style="{StaticResource FFIconButtonStyle}"
-				Text="&#xf021;" />
+				Style="{StaticResource EhmrIconButton}"
+				WidthRequest="44" />
 
-		</HorizontalStackLayout>-->
+		</HorizontalStackLayout>
 
 	</Grid>
 

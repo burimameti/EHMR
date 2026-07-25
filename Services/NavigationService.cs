@@ -1,4 +1,5 @@
 ﻿using EHMR.Domain.Interfaces;
+using System.Diagnostics;
 
 namespace EHMR.Services
 {
@@ -64,6 +65,7 @@ namespace EHMR.Services
             }
 
             _navEvents.NotifyRouteChanged(route);
+            Debug.WriteLine($"Route called - on navService{DateTime.Now}", route);
         }
 
         public async Task GoBackAsync()

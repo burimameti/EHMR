@@ -66,7 +66,7 @@
 							Text="Број на циклус"
 							TextColor="#64748B" />
 
-						<Entry Keyboard="Numeric" Text="{Binding CycleNumber}" />
+						<Entry Keyboard="Numeric" Text="{Binding TherapyCycleNumber}" />
 					</VerticalStackLayout>
 
 					<!--  Selected cycle  -->

@@ -8,121 +8,129 @@
 	x:Name="PageRoot"
 	x:DataType="viewModels:Mkb10CodeListViewModel">
 
-	<Grid ColumnDefinitions="285,*">
+	<Grid ColumnDefinitions="290,*">
 
 		<!--  LEFT MENU  -->
-		<Border Grid.Column="0" StrokeThickness="0">
+		<Border
+			Grid.Column="0"
+			BackgroundColor="{StaticResource Gray200}"
+			StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
 		<!--  MAIN  -->
-		<Grid
+		<Border
 			Grid.Column="1"
-			Padding="24"
 			BackgroundColor="{StaticResource Gray200}"
-			RowDefinitions="Auto,Auto,*"
-			RowSpacing="16">
+			StrokeThickness="0">
+			<Grid>
 
-			<!--  HEADER  -->
-			<Border
-				Grid.Row="0"
-				Padding="20"
-				StrokeShape="RoundRectangle 0"
-				Style="{StaticResource SurfaceCard}">
+				<Grid RowDefinitions="110,Auto,*" RowSpacing="0">
 
-				<Grid ColumnDefinitions="*,Auto">
+					<!--  HEADER  -->
+					<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+						<Grid ColumnDefinitions="*,*" VerticalOptions="Center">
+							<controls:FFPageHeader Title="МКБ-10 Каталог" Subtitle="Меѓународна класификација на болести и дијагностички шифри" />
+							<HorizontalStackLayout
+								Grid.Column="1"
+								HorizontalOptions="End"
+								Spacing="10"
+								VerticalOptions="Center">
+								<Button
+									BackgroundColor="{StaticResource SparkAccentTeal}"
+									Command="{Binding AddCodeCommand}"
+									HeightRequest="45"
+									Style="{StaticResource TabButtonActiveStyle}"
+									Text="+ Нов Код"
+									WidthRequest="160" />
+							</HorizontalStackLayout>
+						</Grid>
+					</Border>
 
-					<controls:FFPageHeader Title="МКБ-10 Каталог" Subtitle="Меѓународна класификација на болести и дијагностички шифри" />
+					<!--  SEARCH / GRID  -->
+					<Border Grid.Row="1" Padding="0">
+						<Border Padding="0">
+							<VerticalStackLayout>
 
-					<Button
-						Grid.Column="1"
-						BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
-						Command="{Binding AddCodeCommand}"
-						HeightRequest="45"
-						Style="{StaticResource TabButtonActiveStyle}"
-						Text="+ Нов Код"
-						WidthRequest="160" />
+								<Border Margin="10,8,0,20" Padding="0">
+									<controls:SparkExplorerHeaderView
+										Buttons="{Binding Buttons}"
+										Pickers="{Binding Pickers}"
+										SearchCommand="{Binding SearchCommand}"
+										SearchPlaceholder="Пребарување по шифра, опис или поглавје..."
+										SearchText="{Binding Mkb10SearchText}"
+										Tabs="{Binding Tabs}" />
+								</Border>
 
-				</Grid>
+								<Border>
+									<controls:SparkDataGridView
+										x:Name="Grid"
+										Columns="{Binding GridColumns}"
+										CurrentPage="{Binding CurrentPage}"
+										EditRowCommand="{Binding EditCommand}"
+										NextPageCommand="{Binding NextPageCommand}"
+										PageChangedCommand="{Binding PageChangedCommand}"
+										PreviousPageCommand="{Binding PreviousPageCommand}"
+										RowTappedCommand="{Binding SelectCommand}"
+										Rows="{Binding GridRows}"
+										TotalPages="{Binding TotalPages}" />
+								</Border>
 
-			</Border>
+							</VerticalStackLayout>
+						</Border>
+					</Border>
 
-			<!--  SEARCH / FILTER  -->
-			<Border Grid.Row="1" Padding="0">
-
-				<VerticalStackLayout Spacing="8">
-
-					<controls:SparkExplorerHeaderView
-						Margin="0,8"
-						Buttons="{Binding Buttons}"
-						Pickers="{Binding Pickers}"
-						SearchCommand="{Binding SearchCommand}"
-						SearchPlaceholder="Пребарување по шифра, опис или поглавје..."
-						SearchText="{Binding Mkb10SearchText}"
-						Tabs="{Binding Tabs}" />
-
-					<controls:SparkDataGridView
-						x:Name="Grid"
-						Columns="{Binding GridColumns}"
-						CurrentPage="{Binding CurrentPage}"
-						EditRowCommand="{Binding EditCommand}"
-						NextPageCommand="{Binding NextPageCommand}"
-						PageChangedCommand="{Binding PageChangedCommand}"
-						PreviousPageCommand="{Binding PreviousPageCommand}"
-						RowTappedCommand="{Binding SelectCommand}"
-						Rows="{Binding GridRows}"
-						TotalPages="{Binding TotalPages}" />
-
-				</VerticalStackLayout>
-
-			</Border>
-
-			<!--  FOOTER  -->
-			<Border
-				Grid.Row="2"
-				Margin="0,8,0,0"
-				Padding="12"
-				BackgroundColor="{StaticResource SparkBackground}"
-				Stroke="{StaticResource SparkBorder}"
-				StrokeShape="RoundRectangle 8">
-
-				<Grid ColumnDefinitions="Auto,*,Auto">
-
-					<HorizontalStackLayout Spacing="12">
-
-						<Label
-							FontAttributes="Bold"
-							FontSize="13"
-							Text="Вкупно:"
-							TextColor="{StaticResource SparkTextSecondary}" />
-
-						<Label
-							FontSize="13"
-							Text="{Binding FilteredCodesCount}"
-							TextColor="{StaticResource SparkTextPrimary}" />
-
-					</HorizontalStackLayout>
-
-					<HorizontalStackLayout Grid.Column="2" Spacing="20">
-
-						<Label
-							FontSize="12"
-							Text="{Binding CurrentPage, StringFormat='Страна {0}'}"
-							TextColor="{StaticResource SparkTextSecondary}" />
-
-						<Label
-							FontSize="12"
-							Text="{Binding TotalPages, StringFormat='од {0}'}"
-							TextColor="{StaticResource SparkTextSecondary}" />
-
-					</HorizontalStackLayout>
+					<!--  FOOTER  -->
+					<Border
+						Grid.Row="2"
+						Margin="16,8,16,16"
+						Padding="12"
+						BackgroundColor="{StaticResource SparkBackground}"
+						Stroke="{StaticResource SparkBorder}"
+						StrokeShape="RoundRectangle 8"
+						VerticalOptions="Start">
+						<Grid ColumnDefinitions="Auto,*,Auto">
+							<HorizontalStackLayout Spacing="12">
+								<Label
+									FontAttributes="Bold"
+									FontSize="13"
+									Text="Вкупно:"
+									TextColor="{StaticResource SparkTextSecondary}" />
+								<Label
+									FontSize="13"
+									Text="{Binding FilteredCodesCount}"
+									TextColor="{StaticResource SparkTextPrimary}" />
+							</HorizontalStackLayout>
+							<HorizontalStackLayout Grid.Column="2" Spacing="20">
+								<Label
+									FontSize="12"
+									Text="{Binding CurrentPage, StringFormat='Страна {0}'}"
+									TextColor="{StaticResource SparkTextSecondary}" />
+								<Label
+									FontSize="12"
+									Text="{Binding TotalPages, StringFormat='од {0}'}"
+									TextColor="{StaticResource SparkTextSecondary}" />
+							</HorizontalStackLayout>
+						</Grid>
+					</Border>
 
 				</Grid>
 
-			</Border>
+				<!--  LOADING OVERLAY  -->
+				<Grid BackgroundColor="#80191E29" IsVisible="{Binding IsBusy}">
+					<VerticalStackLayout
+						HorizontalOptions="Center"
+						Spacing="12"
+						VerticalOptions="Center">
+						<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource Primary}" />
+						<Label
+							FontSize="13"
+							Text="Вчитување..."
+							TextColor="White" />
+					</VerticalStackLayout>
+				</Grid>
 
-		</Grid>
-
+			</Grid>
+		</Border>
 	</Grid>
-
 </ContentPage>

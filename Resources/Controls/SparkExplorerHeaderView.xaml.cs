@@ -30,7 +30,18 @@ namespace EHMR.Resources.Controls
         }
 
         #region Tabs
+        public static readonly BindableProperty SearchVisibleProperty =
+    BindableProperty.Create(
+        nameof(SearchVisible),
+        typeof(bool),
+        typeof(SparkExplorerHeaderView),
+        true); // default = visible
 
+        public bool SearchVisible
+        {
+            get => (bool)GetValue(SearchVisibleProperty);
+            set => SetValue(SearchVisibleProperty, value);
+        }
         public static readonly BindableProperty TabsProperty =
             BindableProperty.Create(
                 nameof(Tabs),
@@ -149,7 +160,7 @@ namespace EHMR.Resources.Controls
             set => SetValue(TrailingButtonProperty, value);
         }
 
-        private CancellationTokenSource _searchDebounceCts;
+        private CancellationTokenSource? _searchDebounceCts;
 
         public static readonly BindableProperty SearchTextProperty =
             BindableProperty.Create(

@@ -7,7 +7,7 @@
 	xmlns:local="clr-namespace:EHMR">
 	<Application.Resources>
 		<ResourceDictionary>
-			<converters:NotificationLevelToColorConverter x:Key="NotificationLevelToColorConverter" />
+			<!--<converters:NotificationLevelToColorConverter x:Key="NotificationLevelToColorConverter" />-->
 			<converters:DoctorStatusToBackgroundConverter x:Key="DoctorStatusToBackgroundConverter" />
 			<converters:DashboardStateToTone x:Key="DashboardStateToTone" />
 			<converters:DoctorStatusToTextColorConverter x:Key="DoctorStatusToTextColorConverter" />
@@ -68,14 +68,14 @@
 
 				<ResourceDictionary Source="Resources/Styles/Colors.xaml" />
 				<ResourceDictionary Source="Resources/Styles/AuthStyle.xaml" />
-				<!--<ResourceDictionary Source="Resources/Styles/MyStyle.xaml" />-->
+
 				<ResourceDictionary Source="Resources/Controls/SparkStyles.xaml" />
 				<!--<ResourceDictionary Source="Resources/Styles/Styles.xaml" />-->
 				<ResourceDictionary Source="Resources/Styles/Typography.xaml" />
 				<ResourceDictionary Source="Resources/Styles/Controls.xaml" />
 				<ResourceDictionary Source="Resources/Styles/Layouts.xaml" />
 
-
+				<ResourceDictionary Source="Resources/Styles/SparkForms.xaml" />
 				<!--<ResourceDictionary Source="Resources/Styles/Colors2.xaml" />-->
 				<!--<ResourceDictionary Source="Resources/Styles/Styles2.xaml" />-->
 

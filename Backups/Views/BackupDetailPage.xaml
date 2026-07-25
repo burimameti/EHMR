@@ -1,0 +1,309 @@
+<ContentPage
+	x:Class="EHMR.Backups.Views.BackupDetailPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:charts="clr-namespace:EHMR.Resources.Controls.Charts"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:viewModels="clr-namespace:EHMR.Backups.ViewModels"
+	x:Name="Page"
+	x:DataType="viewModels:BackupDetailsViewModel"
+	BackgroundColor="{StaticResource SparkBorder}">
+
+	<ContentPage.Resources>
+		<ResourceDictionary>
+
+			<Style x:Key="SectionPill" TargetType="Border">
+				<Setter Property="Padding" Value="10,4" />
+				<Setter Property="BackgroundColor" Value="{StaticResource SparkTabActiveBg}" />
+				<Setter Property="StrokeThickness" Value="0" />
+				<Setter Property="StrokeShape">
+
+					<Setter.Value>
+
+						<RoundRectangle CornerRadius="8" />
+					</Setter.Value>
+				</Setter>
+			</Style>
+
+			<Style x:Key="SectionPillLabel" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="11" />
+				<Setter Property="CharacterSpacing" Value="0.5" />
+				<Setter Property="TextColor" Value="{StaticResource SparkAccentTealDark}" />
+			</Style>
+
+			<Style x:Key="InfoLabel" TargetType="Label">
+				<Setter Property="FontSize" Value="11" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextMuted}" />
+			</Style>
+
+			<Style x:Key="InfoValue" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="14" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+			</Style>
+
+			<Style x:Key="MetricTileBorder" TargetType="Border">
+				<Setter Property="Padding" Value="16" />
+				<Setter Property="BackgroundColor" Value="{StaticResource SparkPageBackground}" />
+				<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
+				<Setter Property="StrokeThickness" Value="1" />
+				<Setter Property="StrokeShape">
+
+					<Setter.Value>
+
+						<RoundRectangle CornerRadius="12" />
+					</Setter.Value>
+				</Setter>
+			</Style>
+
+		</ResourceDictionary>
+	</ContentPage.Resources>
+
+	<Grid ColumnDefinitions="290,*">
+
+
+		<!--  LEFT MENU  -->
+		<Border Grid.Column="0" StrokeThickness="0">
+
+			<ContentView x:Name="MenuHost" />
+
+		</Border>
+
+
+		<!--  RIGHT MAIN CONTAINER  -->
+		<Grid Grid.Column="1" RowDefinitions="Auto,*">
+
+
+			<!--  HEADER  -->
+
+			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+
+				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+
+					<controls:FFPageHeader
+						Title="Детали за бекап"
+						Grid.Column="0"
+						Subtitle="{Binding Backup.DatabaseName}" />
+
+					<controls:FFButton
+						Grid.Column="1"
+						ButtonKind="Secondary"
+						Command="{Binding GoBackCommand}"
+						ContentPadding="16,0"
+						HeightRequestEx="45"
+						Text="← Назад" />
+
+				</Grid>
+
+			</Border>
+
+
+			<!--  MAIN SCROLL AREA  -->
+			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+
+				<VerticalStackLayout Padding="0,8,0,20" Spacing="8">
+
+
+					<!--  ===========================================  -->
+
+					<!--  INFO STRIP  -->
+					<!--  ===========================================  -->
+					<Border Style="{StaticResource PageHeaderCardStyle}">
+
+						<Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
+
+
+							<VerticalStackLayout Grid.Column="0" Spacing="4">
+
+								<Label Style="{StaticResource InfoLabel}" Text="ДАТУМ" />
+
+								<Label Style="{StaticResource InfoValue}" Text="{Binding Backup.StartedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
+
+							</VerticalStackLayout>
+
+
+							<VerticalStackLayout Grid.Column="1" Spacing="4">
+
+								<Label Style="{StaticResource InfoLabel}" Text="ТРАЕЊЕ" />
+
+								<Label Style="{StaticResource InfoValue}" Text="{Binding Backup.Duration, StringFormat='{0:mm\\:ss}'}" />
+
+							</VerticalStackLayout>
+
+
+							<VerticalStackLayout Grid.Column="2" Spacing="4">
+
+								<Label Style="{StaticResource InfoLabel}" Text="ДЕСТИНАЦИЈА" />
+
+								<Label Style="{StaticResource InfoValue}" Text="{Binding Backup.DestinationName}" />
+
+							</VerticalStackLayout>
+
+
+							<VerticalStackLayout Grid.Column="3" Spacing="4">
+
+								<Label Style="{StaticResource InfoLabel}" Text="СТАТУС" />
+
+								<Label
+									Style="{StaticResource InfoValue}"
+									Text="{Binding Backup.Status}"
+									TextColor="{StaticResource SparkAccentTeal}" />
+
+							</VerticalStackLayout>
+
+
+						</Grid>
+
+					</Border>
+
+
+					<!--  ===========================================  -->
+
+					<!--  CHARTS ROW  -->
+					<!--  ===========================================  -->
+					<Grid ColumnDefinitions="*,300" ColumnSpacing="8">
+
+
+						<!--  Size trend  -->
+						<Border Grid.Column="0" Style="{StaticResource PageHeaderCardStyle}">
+
+							<VerticalStackLayout Spacing="12">
+
+								<Border HorizontalOptions="Start" Style="{StaticResource SectionPill}">
+
+									<Label Style="{StaticResource SectionPillLabel}" Text="ГОЛЕМИНА НИЗ ВРЕМЕ (MB)" />
+
+								</Border>
+
+								<charts:SparkBarChartView
+									Data="{Binding SizeTrend}"
+									EmptyText="Нема доволно бекапи за графикон"
+									HeightRequest="180" />
+
+							</VerticalStackLayout>
+
+						</Border>
+
+
+						<!--  Success rate donut  -->
+						<Border Grid.Column="1" Style="{StaticResource PageHeaderCardStyle}">
+
+							<VerticalStackLayout Spacing="12">
+
+								<Border HorizontalOptions="Start" Style="{StaticResource SectionPill}">
+
+									<Label Style="{StaticResource SectionPillLabel}" Text="СТАПКА НА УСПЕШНОСТ" />
+
+								</Border>
+
+
+								<charts:SparkDonutChartView
+									CenterText="{Binding StatusBreakdownCenterText}"
+									HeightRequest="140"
+									HorizontalOptions="Center"
+									Segments="{Binding StatusBreakdown}"
+									WidthRequest="140" />
+
+
+								<Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+
+									<Border Grid.Column="0" Style="{StaticResource MetricTileBorder}">
+
+										<VerticalStackLayout Spacing="2">
+
+											<Label Style="{StaticResource InfoLabel}" Text="УСПЕШНИ" />
+
+											<Label
+												FontAttributes="Bold"
+												FontSize="18"
+												Text="{Binding SuccessfulBackups}"
+												TextColor="{StaticResource SparkAccentTeal}" />
+
+										</VerticalStackLayout>
+
+									</Border>
+
+									<Border Grid.Column="1" Style="{StaticResource MetricTileBorder}">
+
+										<VerticalStackLayout Spacing="2">
+
+											<Label Style="{StaticResource InfoLabel}" Text="НЕУСПЕШНИ" />
+
+											<Label
+												FontAttributes="Bold"
+												FontSize="18"
+												Text="{Binding FailedBackups}"
+												TextColor="Red" />
+
+										</VerticalStackLayout>
+
+									</Border>
+
+								</Grid>
+
+
+							</VerticalStackLayout>
+
+						</Border>
+
+
+					</Grid>
+
+
+					<!--  ===========================================  -->
+
+					<!--  FILE INFO  -->
+					<!--  ===========================================  -->
+					<Border Style="{StaticResource PageHeaderCardStyle}">
+
+						<VerticalStackLayout Spacing="8">
+
+							<Border HorizontalOptions="Start" Style="{StaticResource SectionPill}">
+
+								<Label Style="{StaticResource SectionPillLabel}" Text="ФАЈЛ" />
+
+							</Border>
+
+							<Label
+								FontSize="13"
+								Text="{Binding Backup.FilePath}"
+								TextColor="{StaticResource SparkTextSecondary}" />
+
+						</VerticalStackLayout>
+
+					</Border>
+
+
+				</VerticalStackLayout>
+
+			</ScrollView>
+
+
+			<!--  LOADING OVERLAY  -->
+			<Grid
+				Grid.Row="1"
+				BackgroundColor="{StaticResource SparkOverlay}"
+				IsVisible="{Binding IsBusy}">
+
+				<VerticalStackLayout
+					HorizontalOptions="Center"
+					Spacing="12"
+					VerticalOptions="Center">
+
+					<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
+
+					<Label
+						FontSize="13"
+						Text="Вчитување..."
+						TextColor="{StaticResource SparkTextPrimary}" />
+
+				</VerticalStackLayout>
+
+			</Grid>
+
+
+		</Grid>
+
+	</Grid>
+</ContentPage>

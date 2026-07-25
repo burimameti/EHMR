@@ -1,7 +1,8 @@
 ﻿using EHMR.Domain.Entities;
 namespace EHMR.Domain.Entities;
 public class PatientDocument : BaseEntity
-{
+{ 
+    public string DocumentNumber { get; set; } = string.Empty;
     public Guid PatientId
     {
         get; set;

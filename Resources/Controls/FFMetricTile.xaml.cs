@@ -1,28 +1,84 @@
 ﻿using System.Windows.Input;
-namespace EHMR.Resources.Controls; 
+
+namespace EHMR.Resources.Controls;
+
+public enum MetricTileDisplayMode
+{
+    Navigation,
+    Metric
+}
+
 public enum MetricTileVariant
-    {
-        Neutral,
-        Info,
-        Success,
-        Warning,
-        Danger
+{
+    Neutral,
+    Primary,
+    Info,
+    Success,
+    Warning,
+    Danger
 }
 
 
 public partial class FFMetricTile : ContentView
 {
+
+    private sealed record MetricTilePalette(
+        Color Accent,
+        Color Background,
+        Color Border,
+        Color IconBackground,
+        Color Title,
+        Color Value,
+        Color Subtitle);
+
+
     public FFMetricTile()
     {
         InitializeComponent();
+        Loaded+=(_, _) => UpdateVisualState();
     }
-    public static readonly BindableProperty IconProperty =
-    BindableProperty.Create(nameof(Icon), typeof(string), typeof(FFMetricTile), "");
-    public string Icon
+
+
+
+    #region Bindable Properties
+
+
+    public static readonly BindableProperty DisplayModeProperty =
+        BindableProperty.Create(
+            nameof(DisplayMode),
+            typeof(MetricTileDisplayMode),
+            typeof(FFMetricTile),
+            MetricTileDisplayMode.Metric,
+            propertyChanged: OnVisualStateChanged);
+
+
+    public MetricTileDisplayMode DisplayMode
     {
-        get => (string)GetValue(IconProperty);
-        set => SetValue(IconProperty, value);
+        get => (MetricTileDisplayMode)GetValue(DisplayModeProperty);
+        set => SetValue(DisplayModeProperty, value);
     }
+
+
+
+    public static readonly BindableProperty VariantProperty =
+        BindableProperty.Create(
+            nameof(Variant),
+            typeof(MetricTileVariant),
+            typeof(FFMetricTile),
+            MetricTileVariant.Primary,
+            propertyChanged: OnVisualStateChanged);
+
+
+
+    public MetricTileVariant Variant
+    {
+        get => (MetricTileVariant)GetValue(VariantProperty);
+        set => SetValue(VariantProperty, value);
+    }
+
+
+
+
     public static readonly BindableProperty IsSelectedProperty =
         BindableProperty.Create(
             nameof(IsSelected),
@@ -31,69 +87,224 @@ public partial class FFMetricTile : ContentView
             false,
             propertyChanged: OnVisualStateChanged);
 
+
+
     public bool IsSelected
     {
         get => (bool)GetValue(IsSelectedProperty);
         set => SetValue(IsSelectedProperty, value);
     }
 
-    public static readonly BindableProperty VariantProperty =
-        BindableProperty.Create(
-            nameof(Variant),
-            typeof(MetricTileVariant),
-            typeof(FFMetricTile),
-            MetricTileVariant.Neutral,
-            propertyChanged: OnVisualStateChanged);
 
-    public MetricTileVariant Variant
-    {
-        get => (MetricTileVariant)GetValue(VariantProperty);
-        set => SetValue(VariantProperty, value);
-    }
 
     public static readonly BindableProperty TitleProperty =
-        BindableProperty.Create(nameof(Title), typeof(string), typeof(FFMetricTile), "");
+        BindableProperty.Create(
+            nameof(Title),
+            typeof(string),
+            typeof(FFMetricTile),
+            string.Empty);
+
+
     public string Title
     {
         get => (string)GetValue(TitleProperty);
         set => SetValue(TitleProperty, value);
     }
 
+
+
+    public static readonly BindableProperty SubtitleProperty =
+        BindableProperty.Create(
+            nameof(Subtitle),
+            typeof(string),
+            typeof(FFMetricTile),
+            string.Empty);
+
+
+    public string Subtitle
+    {
+        get => (string)GetValue(SubtitleProperty);
+        set => SetValue(SubtitleProperty, value);
+    }
+
+
+
+
     public static readonly BindableProperty ValueProperty =
-        BindableProperty.Create(nameof(Value), typeof(string), typeof(FFMetricTile), "0");
+        BindableProperty.Create(
+            nameof(Value),
+            typeof(string),
+            typeof(FFMetricTile),
+            "0");
+
+
     public string Value
     {
         get => (string)GetValue(ValueProperty);
         set => SetValue(ValueProperty, value);
     }
 
+
+
+
+    public static readonly BindableProperty IconProperty =
+        BindableProperty.Create(
+            nameof(Icon),
+            typeof(string),
+            typeof(FFMetricTile),
+            string.Empty);
+
+
+    public string Icon
+    {
+        get => (string)GetValue(IconProperty);
+        set => SetValue(IconProperty, value);
+    }
+
+
+
+
     public static readonly BindableProperty CommandProperty =
-        BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(FFMetricTile));
+        BindableProperty.Create(
+            nameof(Command),
+            typeof(ICommand),
+            typeof(FFMetricTile));
+
+
     public ICommand? Command
     {
         get => (ICommand?)GetValue(CommandProperty);
         set => SetValue(CommandProperty, value);
     }
 
+
+
+
     public static readonly BindableProperty CommandParameterProperty =
-        BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(FFMetricTile));
+        BindableProperty.Create(
+            nameof(CommandParameter),
+            typeof(object),
+            typeof(FFMetricTile));
+
+
     public object? CommandParameter
     {
         get => GetValue(CommandParameterProperty);
         set => SetValue(CommandParameterProperty, value);
     }
 
+
+
+
+    #region Visual Colors
+
+
+    public static readonly BindableProperty TileBackgroundProperty =
+        BindableProperty.Create(
+            nameof(TileBackground),
+            typeof(Color),
+            typeof(FFMetricTile),
+            Colors.White);
+
+
+    public Color TileBackground
+    {
+        get => (Color)GetValue(TileBackgroundProperty);
+        set => SetValue(TileBackgroundProperty, value);
+    }
+
+
+
+
+    public static readonly BindableProperty TileBorderProperty =
+        BindableProperty.Create(
+            nameof(TileBorder),
+            typeof(Color),
+            typeof(FFMetricTile),
+            Colors.Transparent);
+
+
+    public Color TileBorder
+    {
+        get => (Color)GetValue(TileBorderProperty);
+        set => SetValue(TileBorderProperty, value);
+    }
+
+
+
+
+
+    public static readonly BindableProperty IconBackgroundProperty =
+        BindableProperty.Create(
+            nameof(IconBackground),
+            typeof(Color),
+            typeof(FFMetricTile),
+            Colors.Transparent);
+
+
+
+    public Color IconBackground
+    {
+        get => (Color)GetValue(IconBackgroundProperty);
+        set => SetValue(IconBackgroundProperty, value);
+    }
+
+
+
+
+
     public static readonly BindableProperty TitleColorProperty =
         BindableProperty.Create(
             nameof(TitleColor),
             typeof(Color),
             typeof(FFMetricTile),
-            Color.FromArgb("#8D98A5"));
+            Colors.Black);
+
+
     public Color TitleColor
     {
         get => (Color)GetValue(TitleColorProperty);
         set => SetValue(TitleColorProperty, value);
     }
+
+
+
+
+    public static readonly BindableProperty ValueColorProperty =
+        BindableProperty.Create(
+            nameof(ValueColor),
+            typeof(Color),
+            typeof(FFMetricTile),
+            Colors.Black);
+
+
+
+    public Color ValueColor
+    {
+        get => (Color)GetValue(ValueColorProperty);
+        set => SetValue(ValueColorProperty, value);
+    }
+
+
+
+
+    public static readonly BindableProperty SubtitleColorProperty =
+        BindableProperty.Create(
+            nameof(SubtitleColor),
+            typeof(Color),
+            typeof(FFMetricTile),
+            Colors.Gray);
+
+
+
+    public Color SubtitleColor
+    {
+        get => (Color)GetValue(SubtitleColorProperty);
+        set => SetValue(SubtitleColorProperty, value);
+    }
+
+
+
 
     public static readonly BindableProperty AccentColorProperty =
         BindableProperty.Create(
@@ -101,43 +312,256 @@ public partial class FFMetricTile : ContentView
             typeof(Color),
             typeof(FFMetricTile),
             Colors.Transparent);
+
+
+
     public Color AccentColor
     {
         get => (Color)GetValue(AccentColorProperty);
         set => SetValue(AccentColorProperty, value);
     }
 
-    // Neutral color inactive tiles fall back to — unchanged from the original default.
-    private static readonly Color InactiveColor = Color.FromArgb("#8D98A5");
 
-    private static Color ResolveAccentColor(MetricTileVariant variant) => variant switch
+    #endregion
+
+
+
+
+    public static readonly BindableProperty ShowIconProperty =
+        BindableProperty.Create(
+            nameof(ShowIcon),
+            typeof(bool),
+            typeof(FFMetricTile),
+            true);
+
+
+    public bool ShowIcon
     {
-        MetricTileVariant.Info => Color.FromArgb("#4CB7E8"),
-        MetricTileVariant.Success => Color.FromArgb("#22C55E"),
-        MetricTileVariant.Warning => Color.FromArgb("#F59E0B"),
-        MetricTileVariant.Danger => Color.FromArgb("#EF4444"),
-        _ => Color.FromArgb("#4CB7E8") // Neutral keeps the original selected-blue for tab-strip usage
-    };
+        get => (bool)GetValue(ShowIconProperty);
+        set => SetValue(ShowIconProperty, value);
+    }
 
-    /// <summary>
-    /// Single source of truth for TitleColor/AccentColor, now driven by both
-    /// IsSelected (tab-strip usage — only the active tab lights up) and Variant
-    /// (KPI usage — health/status color regardless of selection).
-    /// </summary>
-    private static void OnVisualStateChanged(BindableObject bindable, object oldValue, object newValue)
+
+
+
+    public static readonly BindableProperty ShowSubtitleProperty =
+        BindableProperty.Create(
+            nameof(ShowSubtitle),
+            typeof(bool),
+            typeof(FFMetricTile),
+            true);
+
+
+    public bool ShowSubtitle
     {
-        var tile = (FFMetricTile)bindable;
+        get => (bool)GetValue(ShowSubtitleProperty);
+        set => SetValue(ShowSubtitleProperty, value);
+    }
 
-        if(tile.IsSelected)
+
+
+
+    public static readonly BindableProperty ShowAccentBarProperty =
+        BindableProperty.Create(
+            nameof(ShowAccentBar),
+            typeof(bool),
+            typeof(FFMetricTile),
+            true);
+
+
+
+    public bool ShowAccentBar
+    {
+        get => (bool)GetValue(ShowAccentBarProperty);
+        set => SetValue(ShowAccentBarProperty, value);
+    }
+
+
+
+    #endregion
+
+
+
+
+    #region Visual State
+
+
+    private static void OnVisualStateChanged(
+        BindableObject bindable,
+        object oldValue,
+        object newValue)
+    {
+        ((FFMetricTile)bindable)
+            .UpdateVisualState();
+    }
+
+
+
+    private void UpdateVisualState()
+    {
+        var palette = ResolvePalette(Variant);
+
+
+        if(DisplayMode==MetricTileDisplayMode.Navigation)
         {
-            var color = ResolveAccentColor(tile.Variant);
-            tile.TitleColor=color;
-            tile.AccentColor=color;
+            ApplyNavigationPalette(palette);
         }
         else
         {
-            tile.TitleColor=InactiveColor;
-            tile.AccentColor=Colors.Transparent;
+            ApplyMetricPalette(palette);
         }
     }
+
+
+
+
+
+    private void ApplyNavigationPalette(MetricTilePalette p)
+    {
+        AccentColor=
+            IsSelected
+            ? p.Accent
+            : Colors.Transparent;
+
+
+        TitleColor=
+            IsSelected
+            ? p.Accent
+            : Colors.Gray;
+
+
+        TileBackground=
+            Colors.Transparent;
+
+
+        TileBorder=
+            Colors.Transparent;
+    }
+
+
+
+
+
+    private void ApplyMetricPalette(MetricTilePalette p)
+    {
+        AccentColor=p.Accent;
+
+        TileBackground=p.Background;
+
+        TileBorder=p.Border;
+
+        IconBackground=p.IconBackground;
+
+        TitleColor=p.Title;
+
+        ValueColor=p.Value;
+
+        SubtitleColor=p.Subtitle;
+    }
+
+
+
+    #endregion
+
+
+
+
+    #region Palette
+
+
+    private static MetricTilePalette ResolvePalette(
+        MetricTileVariant variant)
+    {
+
+        return variant switch
+        {
+
+            MetricTileVariant.Primary =>
+                new(
+                    Color.FromArgb("#2563EB"),
+                    Color.FromArgb("#EFF6FF"),
+                    Color.FromArgb("#BFDBFE"),
+                    Color.FromArgb("#DBEAFE"),
+                    Color.FromArgb("#475569"),
+                    Color.FromArgb("#0F172A"),
+                    Color.FromArgb("#64748B")
+                ),
+
+
+
+            MetricTileVariant.Info =>
+                new(
+                    Color.FromArgb("#0284C7"),
+                    Color.FromArgb("#F0F9FF"),
+                    Color.FromArgb("#BAE6FD"),
+                    Color.FromArgb("#E0F2FE"),
+                    Color.FromArgb("#475569"),
+                    Color.FromArgb("#082F49"),
+                    Color.FromArgb("#64748B")
+                ),
+
+
+
+
+            MetricTileVariant.Success =>
+                new(
+                    Color.FromArgb("#16A34A"),
+                    Color.FromArgb("#F0FDF4"),
+                    Color.FromArgb("#BBF7D0"),
+                    Color.FromArgb("#DCFCE7"),
+                    Color.FromArgb("#475569"),
+                    Color.FromArgb("#14532D"),
+                    Color.FromArgb("#64748B")
+                ),
+
+
+
+
+
+            MetricTileVariant.Warning =>
+                new(
+                    Color.FromArgb("#F59E0B"),
+                    Color.FromArgb("#FFFBEB"),
+                    Color.FromArgb("#FDE68A"),
+                    Color.FromArgb("#FEF3C7"),
+                    Color.FromArgb("#475569"),
+                    Color.FromArgb("#78350F"),
+                    Color.FromArgb("#64748B")
+                ),
+
+
+
+
+
+            MetricTileVariant.Danger =>
+                new(
+                    Color.FromArgb("#DC2626"),
+                    Color.FromArgb("#FEF2F2"),
+                    Color.FromArgb("#FECACA"),
+                    Color.FromArgb("#FEE2E2"),
+                    Color.FromArgb("#475569"),
+                    Color.FromArgb("#7F1D1D"),
+                    Color.FromArgb("#64748B")
+                ),
+
+
+
+
+
+            _ =>
+                new(
+                    Color.FromArgb("#64748B"),
+                    Color.FromArgb("#F8FAFC"),
+                    Color.FromArgb("#E2E8F0"),
+                    Color.FromArgb("#F1F5F9"),
+                    Color.FromArgb("#475569"),
+                    Color.FromArgb("#0F172A"),
+                    Color.FromArgb("#64748B")
+                )
+        };
+    }
+
+
+    #endregion
+
 }

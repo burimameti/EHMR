@@ -35,7 +35,7 @@
 
 			<!--  HEADER  -->
 
-			<Border Padding="20" Style="{StaticResource SurfaceCard}">
+			<Border Padding="20" Style="{StaticResource PageHeaderCardStyle}">
 
 				<Grid ColumnDefinitions="*,Auto">
 
@@ -43,13 +43,13 @@
 					<controls:FFPageHeader Title="Извештаи" Subtitle="Анализа, следење и системски извештаи" />
 
 
-					<Button
+					<!--<Button
 						Grid.Column="1"
 						Command="{Binding GenerateReportCommand}"
 						HeightRequest="42"
 						Style="{StaticResource TabButtonActiveStyle}"
-						Text="Генерирај"
-						WidthRequest="140" />
+						Text="Генерирај Pdf"
+						WidthRequest="140" />-->
 
 
 				</Grid>

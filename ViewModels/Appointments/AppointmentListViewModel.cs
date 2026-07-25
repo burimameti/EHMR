@@ -30,8 +30,6 @@ public partial class AppointmentListViewModel
     private readonly IAppointmentSearchQueryHandler _autocomplete;
 
     private int _selectedIndex = -1;
-    private readonly Dictionary<string, IReadOnlyList<SearchSuggestionDto>> _cache = new();
-    private CancellationTokenSource? _searchCts;
 
     // Drill-down state. Set when the user picks a suggestion from the dropdown,
     // cleared when they type a fresh query or hit "Clear filters". We match by
@@ -55,6 +53,7 @@ public partial class AppointmentListViewModel
     // Drives the "showing full history for X" banner above the grid.
     [ObservableProperty] private bool isViewingPersonHistory;
     [ObservableProperty] private string activeHistoryLabel = "";
+    protected override Func<Appointment, Guid?>? DoctorOwnerSelector => e => e.DoctorId;
 
     public static IEnumerable<TextSpan> BuildHighlighted(string text, string query)
     {
@@ -92,52 +91,20 @@ public partial class AppointmentListViewModel
 
     private async Task DebouncedSearchAsync(string text)
     {
-        _searchCts?.Cancel();
-        _searchCts=new CancellationTokenSource();
-        var token = _searchCts.Token;
-
-        try
+        var result = await DebouncedSuggestionSearchAsync(text, async (q, token) =>
         {
-            await Task.Delay(250, token);
-            text=text.Trim();
-
-            if(string.IsNullOrWhiteSpace(text))
-            {
-                Suggestions= [];
-                SelectedIndex=-1;
-                SelectedSuggestion=null;
-                ShowSuggestions=false;
-                return;
-            }
-
-            if(_cache.TryGetValue(text, out var cached))
-            {
-                Suggestions=cached;
-                SelectedIndex=-1;
-                SelectedSuggestion=null;
-                ShowSuggestions=cached.Count>0;
-                return;
-            }
-
-            var request = new AppointmentSearchQuery(text,
+            var request = new AppointmentSearchQuery(q,
                 new[] { SearchEntityType.Patient, SearchEntityType.Doctor },
                 8);
+            return await _autocomplete.Handle(request, token);
+        });
 
-            var result = await _autocomplete.Handle(request, token);
-            if(token.IsCancellationRequested) return;
+        if(result is null) return; // cancelled од понова тестирка
 
-            if(_cache.Count>50) _cache.Remove(_cache.Keys.First());
-            _cache[text]=result;
-
-            Suggestions=result;
-            SelectedIndex=-1;
-            SelectedSuggestion=null;
-            ShowSuggestions=result.Count>0;
-        }
-        catch(OperationCanceledException)
-        {
-            // a newer keystroke superseded this search - nothing to do
-        }
+        Suggestions=result;
+        SelectedIndex=-1;
+        SelectedSuggestion=null;
+        ShowSuggestions=result.Count>0;
     }
 
     private AppointmentStatusOption _selectedStatus;
@@ -150,6 +117,7 @@ public partial class AppointmentListViewModel
             if(!SetProperty(ref _selectedStatus, value)) return;
             SyncSparkPickersFromFilters();
             SyncSparkTabsFromFilters();
+            RefreshSparkTabCounts();
             ApplyPipeline();
         }
     }
@@ -161,7 +129,9 @@ public partial class AppointmentListViewModel
         get => _filterDate;
         set
         {
-            if(SetProperty(ref _filterDate, value)) ApplyPipeline();
+            if(!SetProperty(ref _filterDate, value)) return;
+            RefreshSparkTabCounts();
+            ApplyPipeline();
         }
     }
 
@@ -177,8 +147,8 @@ public partial class AppointmentListViewModel
         get => _filterByDate;
         set
         {
-            SetProperty(ref _filterByDate, value);
-            BuildSparkButtons();
+            if(!SetProperty(ref _filterByDate, value)) return;
+            RefreshSparkTabCounts();
             ApplyPipeline();
         }
     }
@@ -230,6 +200,7 @@ public partial class AppointmentListViewModel
             ActiveHistoryLabel="";
         }
 
+        RefreshSparkTabCounts();
         _=DebouncedSearchAsync(SearchText);
     }
 
@@ -250,9 +221,8 @@ public partial class AppointmentListViewModel
                 .ToListAsync();
             AllItems=items;
 
-            RefreshSparkTabCounts();
-
             ApplyPendingQuery();
+            RefreshSparkTabCounts();
             ApplyPipeline();
         }
         catch(Exception ex)
@@ -293,6 +263,7 @@ public partial class AppointmentListViewModel
         }
 
         ShowSuggestions=false;
+        RefreshSparkTabCounts();
         ApplyPipeline();
     }
 
@@ -319,6 +290,7 @@ public partial class AppointmentListViewModel
         FilterByDate=false;
         SelectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
 
+        RefreshSparkTabCounts();
         ApplyPipeline();
         return Task.CompletedTask;
     }
@@ -403,6 +375,7 @@ public partial class AppointmentListViewModel
                 await db.SaveChangesAsync();
             }
 
+            // Full reload also drives RefreshSparkTabCounts() + ApplyPipeline() again.
             await LoadAsync();
         }
         catch(Exception ex)
@@ -440,6 +413,8 @@ public partial class AppointmentListViewModel
         FilterDate=DateTime.Today;
         FilterByDate=true;
         SelectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
+
+        RefreshSparkTabCounts();
     }
 
     // ================= PIPELINE HOOKS =================
@@ -463,31 +438,28 @@ public partial class AppointmentListViewModel
                 ? items.Where(x => x.Doctor!=null&&x.Doctor.Id.ToString()==_activePersonId)
                 : items.Where(x => x.Patient!=null&&x.Patient.Id.ToString()==_activePersonId);
 
-            if(SelectedStatus.Filter==AppointmentStatusFilter.Active)
-                history=history.Where(x => x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.CheckedIn);
-            else if(SelectedStatus.Filter!=AppointmentStatusFilter.All)
-            {
-                var status = Enum.Parse<AppointmentStatus>(SelectedStatus.Filter.ToString());
-                history=history.Where(x => x.Status==status);
-            }
-            return history;
+            return ApplyStatusFilter(history);
         }
 
-        var query = items;
-
-        if(SelectedStatus.Filter==AppointmentStatusFilter.Active)
-            query=query.Where(x => x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.CheckedIn);
-        else if(SelectedStatus.Filter!=AppointmentStatusFilter.All)
-        {
-            var status = Enum.Parse<AppointmentStatus>(SelectedStatus.Filter.ToString());
-            query=query.Where(x => x.Status==status);
-        }
+        var query = ApplyStatusFilter(items);
 
         if(FilterByDate)
             query=query.Where(x => x.ScheduledStart.Date==FilterDate.Date);
 
         return query;
     }
+
+    // Status filtering was duplicated in ApplyFilters (once for the person-history
+    // branch, once for the normal branch) and again in RefreshSparkTabCounts.
+    // Pulled out once so all three stay in sync by construction.
+    private IEnumerable<Appointment> ApplyStatusFilter(IEnumerable<Appointment> items) =>
+        SelectedStatus.Filter switch
+        {
+            AppointmentStatusFilter.All => items,
+            AppointmentStatusFilter.Active => items.Where(x =>
+                x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.CheckedIn),
+            _ => items.Where(x => x.Status==Enum.Parse<AppointmentStatus>(SelectedStatus.Filter.ToString()))
+        };
 
     protected override IEnumerable<Appointment> ApplySort(IEnumerable<Appointment> query) =>
         _activePersonId is not null
@@ -521,16 +493,41 @@ public partial class AppointmentListViewModel
         RefreshSparkTabCounts();
     }
 
+    // Mirrors ApplySearch + the date/person parts of ApplyFilters, but WITHOUT
+    // the status filter, so per-status counts can be computed against the same
+    // context (search term / date filter / drilled-down person) the grid uses.
+    private IEnumerable<Appointment> GetItemsForTabCounts()
+    {
+        IEnumerable<Appointment> items = ApplySearch(AllItems, SearchText);
+
+        if(_activePersonId is not null)
+        {
+            items=_activePersonType==SearchEntityType.Doctor
+                ? items.Where(x => x.Doctor!=null&&x.Doctor.Id.ToString()==_activePersonId)
+                : items.Where(x => x.Patient!=null&&x.Patient.Id.ToString()==_activePersonId);
+        }
+        else if(FilterByDate)
+        {
+            items=items.Where(x => x.ScheduledStart.Date==FilterDate.Date);
+        }
+
+        return items;
+    }
+
     private void RefreshSparkTabCounts()
     {
+        if(_statusTabsByFilter.Count==0) return;
+
+        var baseItems = GetItemsForTabCounts().ToList();
+
         foreach(var (filter, tab) in _statusTabsByFilter)
         {
             var count = filter switch
             {
-                AppointmentStatusFilter.All => AllItems.Count,
-                AppointmentStatusFilter.Active => AllItems.Count(x =>
+                AppointmentStatusFilter.All => baseItems.Count,
+                AppointmentStatusFilter.Active => baseItems.Count(x =>
                     x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.CheckedIn),
-                _ => AllItems.Count(x => x.Status==Enum.Parse<AppointmentStatus>(filter.ToString()))
+                _ => baseItems.Count(x => x.Status==Enum.Parse<AppointmentStatus>(filter.ToString()))
             };
 
             tab.Value=count.ToString("N0");
@@ -578,27 +575,20 @@ public partial class AppointmentListViewModel
         _statusPicker.SelectedItem=SelectedStatus.Label;
     }
 
+    // "Денес" is now a plain bound Button directly in AppointmentListPage.xaml
+    // (Command="{Binding ToggleTodayCommand}", styled off FilterByDate via
+    // DataTrigger) instead of a SparkButtonItem, so it no longer needs to be
+    // built or synced here at all.
     protected override void BuildSparkButtons()
     {
         Buttons.Clear();
-        Buttons.Add(new SparkButtonItem
-        {
-            Label="Денес",
-            IsPrimary=FilterByDate,
-            Command=ToggleTodayCommand
-        });
-        Buttons.Add(new SparkButtonItem
-        {
-            Label="✕ Исчисти",
-            IsPrimary=true,
-            Command=ClearFiltersCommand
-        });
+        AddClearFiltersButton();
     }
 
     private void BuildSparkGridColumns()
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
-        {
+        {      new() { Header = "БРОЈ", Key = "AppointmentNumber", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
             new() { Header = "ДОКТОР", Key = "Doctor", Width = new GridLength(2, GridUnitType.Star) },
             new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1, GridUnitType.Star) },
@@ -615,32 +605,25 @@ public partial class AppointmentListViewModel
         foreach(var a in page)
         {
             var row = new SparkGridRow { Tag=a };
+            row["AppointmentNumber"]=a.AppointmentNumber;
             row["Patient"]=a.Patient?.FullName??"";
             row["Doctor"]=a.Doctor?.FullName??"";
             row["Date"]=a.ScheduledStart.ToString("dd.MM.yyyy");
             row["Time"]=a.ScheduledStart.ToString("HH:mm");
             row["Status"]=new SparkBadgeValue(StatusLabel(a.Status), StatusToTone(a.Status));
 
-            var actions = new List<SparkButtonItem>
-            {
-                new SparkButtonItem
-                {
-                    IsPrimary=true,
-                    IconGlyph="👁",
-                    Label="Детали",
-                    Command=SelectCommand,
-                    CommandParameter=a
-                }
-            };
-
-            // RBAC (може ли воопшто) + бизнис-правило (има ли смисла сега)
-            if(CanUpdate&&CanEdit(a))
-                actions.Add(new SparkButtonItem { IconGlyph="✎", Label="Промени", Command=EditCommand, CommandParameter=a });
+            // Select + (условен) Edit — сега преку base helper, RBAC + бизнис-правило заедно
+            AddDefaultActions(a, row, detailLabel: "Детали", editLabel: "Промени", canEditPredicate: CanEdit);
 
             if(CanDelete&&CanCancel(a))
-                actions.Add(new SparkButtonItem { Label="Откажи Термин", Command=CancelAppointmentCommand, CommandParameter=a });
-
-            row["Actions"]=actions;
+            {
+                ((List<SparkButtonItem>)row["Actions"]).Add(new SparkButtonItem
+                {
+                    Label="Откажи Термин",
+                    Command=CancelAppointmentCommand,
+                    CommandParameter=a
+                });
+            }
 
             rows.Add(row);
         }

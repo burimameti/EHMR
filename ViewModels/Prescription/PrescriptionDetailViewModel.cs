@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Interfaces;
-
+using EHMR.Services.Dto;
 using System.Collections.ObjectModel;
 
 namespace EHMR.ViewModels.Prescriptions;
@@ -17,12 +17,12 @@ public partial class PrescriptionDetailFormViewModel : ObservableObject
     [ObservableProperty] private string pageTitle = "Нов Рецепт";
     [ObservableProperty] private bool isReadOnly;
     [ObservableProperty] private Guid id;
-    [ObservableProperty] private Patient? selectedPatient;
+    [ObservableProperty] private PatientDto? selectedPatient;
     [ObservableProperty] private string medication = string.Empty;
     [ObservableProperty] private string dosage = string.Empty;
     [ObservableProperty] private string instructions = string.Empty;
     [ObservableProperty] private string status = "Активни";
-    [ObservableProperty] private ObservableCollection<Patient> patientsList = [];
+    [ObservableProperty] private ObservableCollection<PatientDto> patientsList = [];
 
     public bool IsEditMode => !IsReadOnly;
 
@@ -45,7 +45,7 @@ public partial class PrescriptionDetailFormViewModel : ObservableObject
     {
         // 1. Вчитај ги сите пациенти за Picker-от
         var patients = await _patientService.GetAllAsync();
-        PatientsList=new ObservableCollection<Patient>(patients);
+        PatientsList=new ObservableCollection<PatientDto>(patients);
 
         // 2. Провери дали уредуваме постоечки рецепт преку SelectedItemService
         var currentPrescription = _selectedPrescriptionService.SelectedItem;

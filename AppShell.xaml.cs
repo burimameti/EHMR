@@ -1,7 +1,9 @@
-﻿using EHMR.Domain.Entities;
+﻿using EHMR.Backups.Views;
+using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Views;
+using EHMR.Views.Admin;
 using EHMR.Views.Appointments;
 using EHMR.Views.Doctors;
 using EHMR.Views.Encounters;
@@ -154,6 +156,13 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(AppRoutes.Encounters.List, typeof(EncounterListPage));
         Routing.RegisterRoute(AppRoutes.Encounters.Detail, typeof(EncounterDetailPage));
 
+        //Бекап
+        Routing.RegisterRoute(AppRoutes.Backup.Dashboard, typeof(BackupDashboardPage));
+        Routing.RegisterRoute(AppRoutes.Backup.Backups, typeof(BackupPage));
+        Routing.RegisterRoute(AppRoutes.Backup.Restore, typeof(RestorePage));
+        Routing.RegisterRoute(AppRoutes.Backup.History, typeof(BackupHistoryPage));
+        Routing.RegisterRoute(AppRoutes.Backup.BackupDetails, typeof(BackupDetailPage));
+        Routing.RegisterRoute(AppRoutes.Admin.AdminPanel, typeof(AdminPage));
         // MKB
         Routing.RegisterRoute(AppRoutes.Mkb10Codes.List, typeof(MbkImportExportPage));
     }

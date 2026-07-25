@@ -1,18 +1,16 @@
-﻿<DataTemplate
- xmlns="http://schemas.microsoft.com/dotnet/2021/maui">
+﻿<DataTemplate xmlns="http://schemas.microsoft.com/dotnet/2021/maui">
 
-<Border
-HeightRequest="220">
+	<Border HeightRequest="220">
 
-<Grid>
+		<Grid>
 
-<Label
-HorizontalOptions="Center"
-VerticalOptions="Center"
-Text="Signature Area"/>
+			<Label
+				HorizontalOptions="Center"
+				Text="Signature Area"
+				VerticalOptions="Center" />
 
-</Grid>
+		</Grid>
 
-</Border>
+	</Border>
 
 </DataTemplate>

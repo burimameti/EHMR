@@ -6,68 +6,102 @@
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Patients"
 	x:Name="PageRoot"
-	x:DataType="viewModels:PatientListViewModel">
-	<Grid ColumnDefinitions="285,*">
-		<!--  ================= LEFT MENU =================  -->
+	x:DataType="viewModels:PatientListViewModel"
+	BackgroundColor="{StaticResource SparkBorder}">
+
+	<Grid ColumnDefinitions="290,*">
+
+		<!--  LEFT MENU  -->
 		<Border Grid.Column="0" StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
-		<!--  ================= MAIN =================  -->
+
+		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
-			Padding="24"
-			BackgroundColor="{StaticResource SparkBorder}"
 			RowDefinitions="Auto,*"
-			RowSpacing="0">
+			RowSpacing="8">
+
 			<!--  HEADER  -->
-			<Border
-				Grid.Row="0"
-				Padding="20"
-				StrokeShape="RoundRectangle 0"
-				Style="{StaticResource SparkCardStyle}">
-				<Grid ColumnDefinitions="*,Auto">
-					<controls:FFPageHeader Title="Регистар на пациенти" Subtitle="Преглед, пребарување и управување со пациенти" />
-					<Button
+			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+					<controls:FFPageHeader
+						Title="Медицински Досијеа"
+						Grid.Column="0"
+						Subtitle="Преглед, пребарување и управување со медициснки картони" />
+
+					<controls:FFButton
 						Grid.Column="1"
-						BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
+						ButtonKind="Primary"
 						Command="{Binding AddCommand}"
-						HeightRequest="45"
+						ContentPadding="20,0"
+						HeightRequestEx="45"
 						IsVisible="{Binding CanCreate}"
-						Style="{StaticResource TabButtonActiveStyle}"
-						Text="Нов Пациент"
-						WidthRequest="150" />
+						Text="Нов Картон" />
 				</Grid>
 			</Border>
-			<!--  SEARCH / FILTER + GRID  -->
-			<Border Grid.Row="1" Padding="0">
-				<Grid RowDefinitions="Auto,*">
-					<Border Grid.Row="0" Padding="0">
-						<controls:SparkExplorerHeaderView
-							Buttons="{Binding Buttons}"
-							Pickers="{Binding Pickers}"
-							SearchCommand="{Binding SearchCommand}"
-							SearchPlaceholder="Пребарување на пациенти..."
-							SearchText="{Binding PatientSearchText}"
-							Tabs="{Binding Tabs}" />
+
+			<!--  MAIN CONTENT / GRID  -->
+			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+				<VerticalStackLayout Spacing="8">
+
+					<Border Style="{StaticResource PageHeaderCardStyle}">
+						<Grid ColumnSpacing="5" RowSpacing="20">
+							<VerticalStackLayout Spacing="10">
+
+								<!--  SEARCH & FILTERS  -->
+								<controls:SparkExplorerHeaderView
+									Buttons="{Binding Buttons}"
+									Pickers="{Binding Pickers}"
+									SearchCommand="{Binding SearchCommand}"
+									SearchPlaceholder="Пребарување на пациенти..."
+									SearchText="{Binding PatientSearchText}"
+									Tabs="{Binding Tabs}" />
+
+								<!--  DATA GRID  -->
+								<Border Padding="0">
+									<controls:SparkDataGridView
+										x:Name="PatientGrid"
+										AutoSelectFirstRow="False"
+										Columns="{Binding GridColumns}"
+										CurrentPage="{Binding CurrentPage}"
+										EditRowCommand="{Binding EditCommand}"
+										NextPageCommand="{Binding NextPageCommand}"
+										PageChangedCommand="{Binding PageChangedCommand}"
+										PageInfoText="{Binding PageInfoText}"
+										PreviousPageCommand="{Binding PreviousPageCommand}"
+										RowTappedCommand="{Binding SelectCommand}"
+										Rows="{Binding GridRows}"
+										ShowPagination="True"
+										ShowRowNumbers="True"
+										TotalPages="{Binding TotalPages}" />
+								</Border>
+
+							</VerticalStackLayout>
+						</Grid>
 					</Border>
-					<Border Grid.Row="1">
-						<controls:SparkDataGridView
-							x:Name="PatientGrid"
-							AutoSelectFirstRow="False"
-							Columns="{Binding GridColumns}"
-							EditRowCommand="{Binding EditCommand}"
-							NextPageCommand="{Binding NextPageCommand}"
-							PageChangedCommand="{Binding PageChangedCommand}"
-							PageInfoText="{Binding PageInfoText}"
-							PreviousPageCommand="{Binding PreviousPageCommand}"
-							RowTappedCommand="{Binding SelectCommand}"
-							Rows="{Binding GridRows}"
-							ShowPagination="True"
-							ShowRowNumbers="True"
-							TotalPages="{Binding TotalPages}" />
-					</Border>
-				</Grid>
-			</Border>
+
+				</VerticalStackLayout>
+			</ScrollView>
+
 		</Grid>
+
+		<!--  LOADING OVERLAY  -->
+		<Grid
+			Grid.Column="1"
+			BackgroundColor="{StaticResource SparkOverlay}"
+			IsVisible="{Binding IsBusy}">
+			<VerticalStackLayout
+				HorizontalOptions="Center"
+				Spacing="12"
+				VerticalOptions="Center">
+				<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
+				<Label
+					FontSize="13"
+					Text="Вчитување..."
+					TextColor="{StaticResource SparkTextPrimary}" />
+			</VerticalStackLayout>
+		</Grid>
+
 	</Grid>
 </ContentPage>

@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EHMR.Domain.Entities.Rbac;
+using EHMR.Domain.Entities;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,7 @@ public partial class LoginViewModel : ObservableObject
     private readonly IPreferencesService _preferencesService;
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
 
-    [ObservableProperty] private string username = "admin";
+    [ObservableProperty] private string username;
     [ObservableProperty] private string password = "HASH_ADMIN";
     [ObservableProperty] private bool rememberMe;
     [ObservableProperty] private bool isBusy;
@@ -85,13 +85,19 @@ public partial class LoginViewModel : ObservableObject
                 await SetErrorAsync("Неточна лозинка.");
                 return;
             }
-
+            Guid? doctorId = null;
+            if(user.Role==UserRole.Doctor)
+            {
+                doctorId=await db.Doctors
+                    .Where(d => d.UserId==user.Id)
+                    .Select(d => (Guid?)d.Id)
+                    .FirstOrDefaultAsync();
+            }
             // =========================
             // AUTH STATE (ONLY IMPORTANT PART)
             // =========================
-            _authStateService.SetUser(user);
-
-            PersistCredentials();
+            _authStateService.SetUser(user, doctorId);
+            await PersistCredentials();
 
             await _navigationService.GoToAsync("//dashboard");
         }
@@ -120,12 +126,12 @@ public partial class LoginViewModel : ObservableObject
         if(!_preferencesService.ContainsKey("saved_username"))
             return;
 
-        Username=_preferencesService.Load("saved_username");
-        Password=_preferencesService.Load("saved_password");
+        Username= _preferencesService.LoadAsync("saved_username").GetAwaiter().GetResult();
+        Password= _preferencesService.LoadAsync("saved_password").GetAwaiter().GetResult();
         RememberMe=true;
     }
 
-    private void PersistCredentials()
+    private async Task  PersistCredentials()
     {
         if(!RememberMe)
         {
@@ -134,7 +140,7 @@ public partial class LoginViewModel : ObservableObject
             return;
         }
 
-        _preferencesService.Save("saved_username", Username);
-        _preferencesService.Save("saved_password", Password);
+       await _preferencesService.SaveAsync("saved_username", Username);
+        await _preferencesService.SaveAsync("saved_password", Password);
     }
 }

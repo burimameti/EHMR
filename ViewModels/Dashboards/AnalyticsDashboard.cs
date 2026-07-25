@@ -1,4 +1,6 @@
-﻿namespace EHMR.ViewModels
+﻿using EHMR.ViewModels.Dashboards.Models;
+
+namespace EHMR.ViewModels
 {
     public class AnalyticsDashboard
     {

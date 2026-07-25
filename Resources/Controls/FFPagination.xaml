@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView
-    x:Class="EHMR.Resources.Controls.FFPagination"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Name="Root">
+	x:Class="EHMR.Resources.Controls.FFPagination"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	x:Name="Root">
 
 	<Grid
-    Padding="16,12"
-    ColumnDefinitions="*,Auto"
-    ColumnSpacing="20">
+		Padding="16,12"
+		ColumnDefinitions="*,Auto"
+		ColumnSpacing="20">
 
-		<!-- LEFT -->
+		<!--  LEFT  -->
 		<Label
-        Grid.Column="0"
-        Text="{Binding SummaryText, Source={x:Reference Root}}"
-        Style="{StaticResource FFPaginationLabelStyle}" />
+			Grid.Column="0"
+			Style="{StaticResource FFPaginationLabelStyle}"
+			Text="{Binding SummaryText, Source={x:Reference Root}}" />
 
-		<!-- RIGHT -->
+		<!--  RIGHT  -->
 		<HorizontalStackLayout
-        Grid.Column="1"
-        Spacing="6"
-        HorizontalOptions="End">
+			Grid.Column="1"
+			HorizontalOptions="End"
+			Spacing="6">
 
 			<Button
-            Text="‹"
-            Style="{StaticResource FFPaginationButtonStyle}"
-            Command="{Binding PrevCommand, Source={x:Reference Root}}"
-            IsEnabled="{Binding CanPrev, Source={x:Reference Root}}" />
+				Command="{Binding PrevCommand, Source={x:Reference Root}}"
+				IsEnabled="{Binding CanPrev, Source={x:Reference Root}}"
+				Style="{StaticResource FFPaginationButtonStyle}"
+				Text="‹" />
 
 			<Border
-            Background="#2563EB"
-            StrokeThickness="0"
-            Padding="12,6">
+				Padding="12,6"
+				Background="#2563EB"
+				StrokeThickness="0">
 
 				<Border.StrokeShape>
-					<RoundRectangle CornerRadius="8"/>
+					<RoundRectangle CornerRadius="8" />
 				</Border.StrokeShape>
 
 				<Label
-                Text="{Binding PageInfo, Source={x:Reference Root}}"
-                TextColor="White"
-                FontSize="12"
-                FontAttributes="Bold"/>
+					FontAttributes="Bold"
+					FontSize="12"
+					Text="{Binding PageInfo, Source={x:Reference Root}}"
+					TextColor="White" />
 			</Border>
 
 			<Button
-            Text="›"
-            Style="{StaticResource FFPaginationButtonStyle}"
-            Command="{Binding NextCommand, Source={x:Reference Root}}"
-            IsEnabled="{Binding CanNext, Source={x:Reference Root}}" />
+				Command="{Binding NextCommand, Source={x:Reference Root}}"
+				IsEnabled="{Binding CanNext, Source={x:Reference Root}}"
+				Style="{StaticResource FFPaginationButtonStyle}"
+				Text="›" />
 
 		</HorizontalStackLayout>
 

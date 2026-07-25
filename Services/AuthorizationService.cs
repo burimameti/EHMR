@@ -13,6 +13,12 @@ public class AuthorizationService : IAuthorizationService
     {
         _auth=auth;
     }
+   
+
+    public bool IsScopedToOwnData =>
+        IsAuthenticated
+        &&!HasRole(UserRole.Admin)
+        &&!HasRole(UserRole.SuperAdmin);
     public bool CanPerform(string module, ModuleAction action)
     {
         if(!IsAuthenticated||_auth.CurrentUser==null)
@@ -30,6 +36,8 @@ public class AuthorizationService : IAuthorizationService
     }
     public bool IsAuthenticated
         => _auth.IsAuthenticated;
+
+    public Guid? CurrentDoctorId => _auth.CurrentDoctorId;
 
     // ===================================
     // ROLE

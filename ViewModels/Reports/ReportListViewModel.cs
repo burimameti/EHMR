@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
+using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +42,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     } =
     [
         new() { Type = ReportType.MissedTherapies,      Label = "Пропуштени терапии" },
-        new() { Type = ReportType.Auditing,              Label = "Одит" },
+        new() { Type = ReportType.Auditing,              Label = "Аудит" },
         new() { Type = ReportType.AppointmentStatuses,   Label = "Статус на термини" },
         new() { Type = ReportType.Patients,               Label = "Пациенти" }
     ];
@@ -73,6 +74,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             ApplyPipeline();
         }
     }
+    private readonly INavigationService _navigationService;
 
     public ReportListViewModel(
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
@@ -86,6 +88,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         _dbFactory=dbFactory;
         _selectedReportType=ReportTypes.First(x => x.Type==ReportType.MissedTherapies);
         _statusFilter=new ReportStatusOption { Label="ИТНО / СИТЕ" };
+        _navigationService=navigationService;
 
         PageSize=10;
 
@@ -112,7 +115,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         switch(type)
         {
             case ReportType.MissedTherapies:
-                Col1Header="ПАЦИЕНТ"; Col2Header="ПРОТОКОЛ"; Col3Header="ЦИКЛУС"; Col4Header="ИСТЕЧЕН РОК"; Col5Header="ОБРАЗЛОЖЕНИЕ";
+                Col1Header="ПАЦИЕНТ(Име/Презиме)"; Col2Header="ПРОТОКОЛ"; Col3Header="ЦИКЛУС"; Col4Header="ИСТЕЧЕН РОК"; Col5Header="ОБРАЗЛОЖЕНИЕ";
                 Metric1Title="Пропуштени Протоколи"; Metric2Title="Неразјаснети"; Metric3Title="Легитимирана Доследност";
                 break;
 
@@ -203,7 +206,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         {
             PrimaryHeader=c.Patient.LastName,
             SecondaryHeader=c.Patient.FirstName,
-            HighlightValue=$"Ц-#{c.CycleNumber}",
+            HighlightValue=$"Ц-#{c.TherapyCyleNumber}",
             DateValue=c.StartDate?.ToString("dd.MM.yyyy"),
             InformationalText=string.IsNullOrEmpty(c.Notes) ? "Нема внесено причина од лекар!" : c.Notes,
             IsAlertSeverity=string.IsNullOrEmpty(c.Notes)
@@ -264,7 +267,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         return data.Select(p => new GenericReportRow
         {
             PrimaryHeader=p.FullName,
-            SecondaryHeader=p.NationalId,
+            SecondaryHeader=PrivacyMaskHelper.MaskNationalId(p.NationalId),
             HighlightValue=p.Phone??"",
             DateValue=p.CreatedAt.ToString("dd.MM.yyyy"),
             InformationalText=$"Dg: {p.Diagnoses.Select(x => x.Mkb10Code.Code)}. Алергии: {(string.IsNullOrEmpty(p.Allergies) ? "нема" : p.Allergies)}",

@@ -1,6 +1,7 @@
 ﻿using EHMR.Domain.Entities;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
+using EHMR.Services;
 using Microsoft.EntityFrameworkCore; // Доколку користите EF Core директно, во спротивно заменете со вашиот IRepository пат
 
 namespace EHMR.Infrastructure.Services;
@@ -59,6 +60,12 @@ public class PrescriptionService : IPrescriptionService
         await using var db = await _factory.CreateDbContextAsync();
         if(prescription.Id==Guid.Empty)
         {
+
+            if(string.IsNullOrWhiteSpace(prescription.PrescriptionNumber))
+            {
+                prescription.PrescriptionNumber=
+                    await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Prescription, "PRE");
+            }
             prescription.Id=Guid.NewGuid();
         }
 

@@ -1,42 +1,27 @@
 <Grid
-xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-x:Class="EHMR.Components.PageHeader">
+	x:Class="EHMR.Components.PageHeader"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-	<Border
-
-Style="{StaticResource DashboardCard}"
-
-Padding="16">
+	<Border Padding="16" Style="{StaticResource DashboardCard}">
 
 		<Grid ColumnDefinitions="*,Auto">
 
 			<VerticalStackLayout>
 
-				<Label
-Text="{Binding Title}"
-Style="{StaticResource MedicalSectionTitle}" />
+				<Label Style="{StaticResource MedicalSectionTitle}" Text="{Binding Title}" />
 
-				<Label
-Text="{Binding Subtitle}"
-Style="{StaticResource MutedText}" />
+				<Label Style="{StaticResource MutedText}" Text="{Binding Subtitle}" />
 			</VerticalStackLayout>
 
 			<Border
+				Grid.Column="1"
+				Padding="12,6"
+				BackgroundColor="{StaticResource SurfaceAlt}"
+				StrokeShape="RoundRectangle 10"
+				StrokeThickness="0">
 
-Grid.Column="1"
-
-BackgroundColor="{StaticResource SurfaceAlt}"
-
-Padding="12,6"
-
-StrokeThickness="0"
-
-StrokeShape="RoundRectangle 10">
-
-				<Label
-Text="{Binding UserName}"
-FontAttributes="Bold" />
+				<Label FontAttributes="Bold" Text="{Binding UserName}" />
 			</Border>
 		</Grid>
 	</Border>

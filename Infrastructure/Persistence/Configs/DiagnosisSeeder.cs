@@ -113,45 +113,8 @@ public class DiagnosisSeeder : IEntitySeeder
 
         await context.Set<Diagnosis>().AddRangeAsync(diagnoses, ct);
 
-        // =========================
-        // APPOINTMENT DIAGNOSIS BRIDGE
-        // =========================
-        var appointmentDiagnoses = new List<AppointmentDiagnosis>
-        {
-            new()
-            {
-                AppointmentId = appointments[0].Id,
-                Mkb10CodeId = cholera.Id,
-                DiagnosisId = d1.Id
-            },
-            new()
-            {
-                AppointmentId = appointments[1].Id,
-                Mkb10CodeId = shigella.Id,
-                DiagnosisId = d2.Id
-            },
-            new()
-            {
-                AppointmentId = appointments[2].Id,
-                Mkb10CodeId = tb.Id,
-                DiagnosisId = d3.Id
-            },
-            new()
-            {
-                AppointmentId = appointments[3].Id,
-                Mkb10CodeId = salmonella.Id,
-                DiagnosisId = d4.Id
-            },
-            new()
-            {
-                AppointmentId = appointments[4].Id,
-                Mkb10CodeId = giardia.Id,
-                DiagnosisId = d5.Id
-            }
-        };
+  
 
-        await context.Set<AppointmentDiagnosis>()
-            .AddRangeAsync(appointmentDiagnoses, ct);
 
         await context.SaveChangesAsync(ct);
     }

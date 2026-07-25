@@ -1,4 +1,13 @@
 ﻿using EHMR.Abstraction;
+using EHMR.Backups.Encryption;
+using EHMR.Backups.Engine;
+using EHMR.Backups.Interfaces;
+using EHMR.Backups.Models;
+using EHMR.Backups.Providers;
+using EHMR.Backups.Scheduler;
+using EHMR.Backups.Services;
+using EHMR.Backups.ViewModels;
+using EHMR.Backups.Views;
 using EHMR.Domain.Entities.Reports;
 using EHMR.Domain.Interfaces;
 using EHMR.Domain.Search;
@@ -9,6 +18,7 @@ using EHMR.Infrastructure.Persistence.Seeders;
 using EHMR.Infrastructure.Services;
 using EHMR.Services;
 using EHMR.ViewModels;
+using EHMR.ViewModels.Admin;
 using EHMR.ViewModels.Appointments;
 
 using EHMR.ViewModels.Encounters;
@@ -19,6 +29,7 @@ using EHMR.ViewModels.Reports;
 using EHMR.ViewModels.Support;
 using EHMR.ViewModels.Therapies;
 using EHMR.Views;
+using EHMR.Views.Admin;
 using EHMR.Views.Appointments;
 using EHMR.Views.Encounters;
 using EHMR.Views.Mkb10;
@@ -28,8 +39,8 @@ using EHMR.Views.Protocols;
 using EHMR.Views.Reports;
 using EHMR.Views.Therapies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Reflection;
-
 namespace EHMR
 {
     public static class EHMRServiceCollectionExtensions
@@ -62,14 +73,17 @@ namespace EHMR
 
             // =========================
             // EF CORE CONTEXT (Scoped)
-            // =========================
-            services.AddDbContext<DesktopTherapyDbContext>(options =>
-            {
-                options.UseSqlServer(connectionString);
-            });
+            //// =========================
+            //services.AddDbContext<DesktopTherapyDbContext>(options =>
+            //{
+            //    options.UseSqlServer(connectionString);
+            //});
 
             // =========================
             // FACTORY (for background/threaded usage)
+
+            services.AddSingleton<IDbExceptionParserProvider,
+                              DbExceptionParserProvider>();
             // =========================
             services.AddDbContextFactory<DesktopTherapyDbContext>(options =>
             {
@@ -107,7 +121,28 @@ namespace EHMR
 
             services.AddSingleton<IReportProvider, AuditReportProvider>();
 
+            //   
+            services.AddSingleton<IEncryptionService, EncryptionService>();
+            services.AddSingleton<IBackupSecurityProvider, BackupSecurityProvider>();
 
+            services.AddSingleton<IDatabaseBackupProvider, SqlServerBackupProvider>();
+            services.AddSingleton<IDatabaseProviderResolver, DatabaseProviderResolver>();
+            services.AddSingleton<IBackupStorageProvider>(sp =>
+            {
+                var opts = sp.GetRequiredService<IOptions<BackupOptions>>().Value;
+                var dest = opts.Destinations.FirstOrDefault(d => d.Key=="local");
+                if(dest is null)
+                    throw new InvalidOperationException(
+                        $"No backup destination with Key='local' found. Found: {string.Join(", ", opts.Destinations.Select(d => d.Key))}");
+
+                return new LocalStorageProvider(dest);
+            });
+            // register CloudStorageProvider similarly if/when you use it
+
+            services.AddSingleton<IStorageProviderResolver, StorageProviderResolver>();
+
+            services.AddSingleton<IBackupEngine, BackupEngine>();
+            services.AddSingleton<IRestoreEngine, RestoreEngine>();
             services.AddSingleton<ReportRegistry>();
             services.AddSingleton<Mkb10ImportService>();
             services.AddScoped<SeederRunner>();
@@ -123,27 +158,28 @@ namespace EHMR
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<IPatientService, PatientService>();
             // services.AddSingleton<IAuthService, AuthService>();
-            //services.AddSingleton<IAuthStateService, AuthStateService>();
-            services.AddSingleton<IAuthorizationService, AuthorizationService>();
 
+            services.AddSingleton<IAuthorizationService, AuthorizationService>();
+            //services.AddSingleton<IBackupScheduler, BackupScheduler>();
+            services.AddSingleton<ICompressionService, CompressionService>();
             // services.AddSingleton<IAnalyticsService, AnalyticsService>();
             // services.AddSingleton<IPolicyEngine, PolicyEngine>();
             // services.AddSingleton<ILicenseService, LicenseService>();
             // services.AddSingleton<IPermissionService, PermissionService>();
-            services.AddScoped<IAppointmentSearchQueryHandler, AppointmentSearchQueryHandler>();
+            services.AddSingleton<IAppointmentSearchQueryHandler, AppointmentSearchQueryHandler>();
             services.AddSingleton<IPreferencesService, SecurePreferencesService>();
             services.AddSingleton<INavigationCoordinator, NavigationCoordinator>();
             //  services.AddSingleton<IAppointmentService, AppointmentService>();
             // services.AddSingleton<IDocumentService, DocumentService>();
             // services.AddSingleton<IPrescriptionService, PrescriptionService>();
             services.AddSingleton<INavigationCoordinator, NavigationCoordinator>();
-            services.AddScoped<IReportHistoryService, ReportHistoryService>();
+            services.AddSingleton<IReportHistoryService, ReportHistoryService>();
             services.AddSingleton<IUserDialogService, UserDialogService>();
-            services.AddScoped<IAppointmentDetailService, AppointmentDetailService>();
-            services.AddScoped<ITherapyService, TherapyService>();
+            services.AddSingleton<IAppointmentDetailService, AppointmentDetailService>();
+            services.AddSingleton<ITherapyService, TherapyService>();
             //services.AddSingleton<ICalendarEngine, CalendarEngine>();
             //services.AddSingleton<ITimelineEngine, TimelineEngine>();
-
+            services.AddScoped<IAlertService, AlertService>();
             services.AddSingleton(typeof(ISelectedItemService<>), typeof(SelectedItemService<>));
             // services.AddSingleton<INotificationService, NotificationService>();
             // services.AddSingleton<IPatientService, PatientService>();
@@ -162,6 +198,8 @@ namespace EHMR
             services.AddSingleton<IMkb10CodeService, Mkb10CodeService>();
             services.AddSingleton<ISparkFormBuilder, SparkFormBuilder>();
             services.AddSingleton<IReportExportService, ReportExportService>();
+            services.AddScoped<IBackupHistoryRepository, BackupHistoryRepository>();
+            services.AddScoped<IBackupVerifier, BackupVerifier>();
             // services.AddSingleton<ThemeService>();
             services.AddSingleton<IFileDialogService, MauiFileDialogService>();
 
@@ -265,7 +303,7 @@ namespace EHMR
             services.AddTransient<LoginView>();
             //services.AddTransient<RegisterPage>();
 
-         
+
 
             services.AddTransient<DashboardViewModel>();
             services.AddTransient<DashboardView>();
@@ -275,7 +313,6 @@ namespace EHMR
             //services.AddTransient<DashboardViewModel>();
             //services.AddTransient<LogoutViewModel>();
 
-         
 
 
             services.AddTransient<AppointmentListPage>();
@@ -319,7 +356,7 @@ namespace EHMR
             services.AddTransient<TherapyDetailsViewModel>();
             services.AddTransient<TherapyDetailsPage>();
 
-  
+
             //services.AddTransient<TherapyPlanningViewModel>();
             //services.AddTransient<TherapyPlanningPage>();
 
@@ -335,12 +372,28 @@ namespace EHMR
             services.AddTransient<ProtocolRegistryPage>();
             services.AddTransient<ProtocolRegistryViewModel>();
 
-            services.AddSingleton<ReportPage>();
-            services.AddSingleton<DashboardReportPage>();
-            services.AddTransient<ReportViewModel>();
+            // FIX: was AddSingleton — these pages/viewmodels host report history data
+            // that must reflect the latest DB state on every visit. A singleton page
+            // is constructed once and never rebuilt, so its ReportViewModel only ever
+            // loads history data on the very first navigation to this page.
+            services.AddTransient<ReportPage>();
+            services.AddTransient<DashboardReportPage>();
+
             services.AddTransient<ReportListViewModel>();
 
+            services.AddTransient<BackupDashboardPage>();
+            services.AddTransient<BackupPage>();
+            services.AddTransient<RestorePage>();
+            services.AddTransient<BackupHistoryPage>();
 
+
+
+            services.AddTransient<BackupDashboardViewModel>();
+            services.AddTransient<BackupViewModel>();
+            services.AddTransient<RestoreViewModel>();
+            services.AddTransient<BackupHistoryViewModel>();
+            services.AddTransient<BackupDetailPage>();
+            services.AddTransient<BackupDetailsViewModel>();
             ///
 
 
@@ -349,6 +402,10 @@ namespace EHMR
             services.AddTransient<UserEditViewModel>();
             services.AddTransient<UserEditPage>();
 
+
+            //Admin
+            services.AddTransient<AdminDashboardViewModel>();
+            services.AddTransient<AdminPage>();
             ////Calndar
             //// Register ViewModels
             //services.AddSingleton<CalendarViewModel>();

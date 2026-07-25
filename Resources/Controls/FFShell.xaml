@@ -1,62 +1,59 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<ContentView x:Class="EHMR.Resources.Controls.FFShell"
-             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Name="Root">
+<ContentView
+	x:Class="EHMR.Resources.Controls.FFShell"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	x:Name="Root">
 
-	<Grid ColumnDefinitions="240,*"
-          RowDefinitions="60,*">
+	<Grid ColumnDefinitions="240,*" RowDefinitions="60,*">
 
-		<!-- ================= SIDEBAR ================= -->
-		<Border Style="{StaticResource FFShellSidebarStyle}"
-                Grid.RowSpan="2">
+		<!--  ================= SIDEBAR =================  -->
+		<Border Grid.RowSpan="2" Style="{StaticResource FFShellSidebarStyle}">
 
 			<VerticalStackLayout Spacing="6">
 
-				<!-- BRAND -->
-				<Label Text="{Binding AppTitle, Source={x:Reference Root}}"
-                       Style="{StaticResource FFShellBrandStyle}" />
+				<!--  BRAND  -->
+				<Label Style="{StaticResource FFShellBrandStyle}" Text="{Binding AppTitle, Source={x:Reference Root}}" />
 
-				<!-- MENU -->
+				<!--  MENU  -->
 				<CollectionView ItemsSource="{Binding MenuItems, Source={x:Reference Root}}">
 					<CollectionView.ItemTemplate>
 						<DataTemplate>
-							<Button Text="{Binding Title}"
-                                    Command="{Binding NavigateCommand}"
-                                    CommandParameter="{Binding Route}"
-                                    Style="{StaticResource FFShellMenuButtonStyle}" />
+							<Button
+								Command="{Binding NavigateCommand}"
+								CommandParameter="{Binding Route}"
+								Style="{StaticResource FFShellMenuButtonStyle}"
+								Text="{Binding Title}" />
 						</DataTemplate>
 					</CollectionView.ItemTemplate>
 				</CollectionView>
 			</VerticalStackLayout>
 		</Border>
 
-		<!-- ================= TOP BAR ================= -->
-		<Border Grid.Column="1"
-                Style="{StaticResource FFShellTopBarStyle}">
+		<!--  ================= TOP BAR =================  -->
+		<Border Grid.Column="1" Style="{StaticResource FFShellTopBarStyle}">
 
 			<Grid ColumnDefinitions="*,Auto">
 
-				<SearchBar Placeholder="Search..."
-                           BackgroundColor="Transparent" />
+				<SearchBar BackgroundColor="Transparent" Placeholder="Search..." />
 
-				<HorizontalStackLayout Grid.Column="1"
-                                       Spacing="10">
+				<HorizontalStackLayout Grid.Column="1" Spacing="10">
 
-					<Label Text="{Binding UserName, Source={x:Reference Root}}"
-                           VerticalOptions="Center" />
+					<Label Text="{Binding UserName, Source={x:Reference Root}}" VerticalOptions="Center" />
 
-					<Image Source="user.png"
-                           HeightRequest="32"
-                           WidthRequest="32" />
+					<Image
+						HeightRequest="32"
+						Source="user.png"
+						WidthRequest="32" />
 				</HorizontalStackLayout>
 			</Grid>
 		</Border>
 
-		<!-- ================= CONTENT ================= -->
-		<ContentView Grid.Row="1"
-                     Grid.Column="1"
-                     Content="{Binding ContentView, Source={x:Reference Root}}" />
+		<!--  ================= CONTENT =================  -->
+		<ContentView
+			Grid.Row="1"
+			Grid.Column="1"
+			Content="{Binding ContentView, Source={x:Reference Root}}" />
 	</Grid>
 </ContentView>
