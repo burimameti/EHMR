@@ -20,7 +20,7 @@ using EHMR.Services;
 using EHMR.ViewModels;
 using EHMR.ViewModels.Admin;
 using EHMR.ViewModels.Appointments;
-
+using EHMR.ViewModels.Calendar;
 using EHMR.ViewModels.Encounters;
 using EHMR.ViewModels.Mkb10;
 using EHMR.ViewModels.Patients;
@@ -31,6 +31,7 @@ using EHMR.ViewModels.Therapies;
 using EHMR.Views;
 using EHMR.Views.Admin;
 using EHMR.Views.Appointments;
+using EHMR.Views.Calendar;
 using EHMR.Views.Encounters;
 using EHMR.Views.Mkb10;
 using EHMR.Views.Patients;
@@ -324,7 +325,7 @@ namespace EHMR
 
             services.AddTransient<CalendarDashboardPage>();
             services.AddTransient<CalendarDashboardViewModel>();
-
+            services.AddTransient<MainPage>();
             services.AddTransient<EncounterCreateViewModel>();
             services.AddTransient<EncounterDetailViewModel>();
             services.AddTransient<EncountersListViewModel>();

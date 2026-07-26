@@ -5,6 +5,7 @@ using EHMR.Domain.Interfaces;
 using EHMR.Views;
 using EHMR.Views.Admin;
 using EHMR.Views.Appointments;
+using EHMR.Views.Calendar;
 using EHMR.Views.Doctors;
 using EHMR.Views.Encounters;
 using EHMR.Views.Patients;
@@ -165,6 +166,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(AppRoutes.Admin.AdminPanel, typeof(AdminPage));
         // MKB
         Routing.RegisterRoute(AppRoutes.Mkb10Codes.List, typeof(MbkImportExportPage));
+        Routing.RegisterRoute(AppRoutes.CalendarPage, typeof(MainPage));
     }
 
     protected override void OnDisappearing()

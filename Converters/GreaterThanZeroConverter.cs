@@ -2,7 +2,7 @@
 using System.Globalization;
 using Microsoft.Maui.Controls;
 
-namespace EHMR.Extensions;
+namespace EHMR.Converters;
 
 /// <summary>
 /// Returns true when an integer value is greater than zero.

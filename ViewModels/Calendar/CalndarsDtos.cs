@@ -1,4 +1,6 @@
-﻿public enum CalendarSection
+﻿namespace EHMR.ViewModels.Calendar;
+
+public enum CalendarSection
 {
     Calendar,
     Day,

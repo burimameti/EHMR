@@ -4,37 +4,99 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
-	xmlns:conv="clr-namespace:EHMR.Extensions"
-	xmlns:vm="clr-namespace:EHMR.ViewModels"
+	xmlns:conv="clr-namespace:EHMR.Converters"
+	xmlns:vm="clr-namespace:EHMR.ViewModels.Calendar"
 	x:Name="CurrentPage"
 	x:DataType="vm:CalendarDashboardViewModel"
-	BackgroundColor="{StaticResource SparkCanvasBackground}">
+	BackgroundColor="{StaticResource ClrPageBg}">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
 			<conv:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter" />
 			<conv:InvertedBoolConverter x:Key="InvertedBoolConverter" />
 
-			<!--  White elevated card — used for header, calendar grid, right panel  -->
+			<!--  ═══════════════ PALETTE (matches reference design) ═══════════════  -->
+			<Color x:Key="ClrPageBg">#F6F7FB</Color>
+			<Color x:Key="ClrCard">#FFFFFF</Color>
+			<Color x:Key="ClrCardAlt">#FAFBFD</Color>
+			<Color x:Key="ClrBorder">#ECEEF2</Color>
+
+			<Color x:Key="ClrTextPrimary">#1B1E27</Color>
+			<Color x:Key="ClrTextSecondary">#8B909B</Color>
+
+			<!--  Teal/cyan accent — used for "Add"/primary actions, today ring  -->
+			<Color x:Key="ClrAccentTeal">#2FA8A0</Color>
+			<Color x:Key="ClrAccentTealBg">#E3F5F3</Color>
+			<Color x:Key="ClrAccentTealDark">#1F7B75</Color>
+
+			<!--  Solid black pill — used for "Today"/"Book now"-style buttons  -->
+			<Color x:Key="ClrDark">#14161C</Color>
+			<Color x:Key="ClrDarkHover">#2A2D36</Color>
+
+			<!--  Status badges  -->
+			<Color x:Key="ClrSuccessBg">#E7F7EC</Color>
+			<Color x:Key="ClrSuccessText">#1E8E4F</Color>
+			<Color x:Key="ClrWarningBg">#FDF3DC</Color>
+			<Color x:Key="ClrWarningText">#9C7A1D</Color>
+			<Color x:Key="ClrNeutralBadgeBg">#F1F2F5</Color>
+			<Color x:Key="ClrNeutralBadgeText">#5B5F6A</Color>
+
+			<!--
+				Suggested pastel palette for CalendarEventDto.BackgroundColor / TextColor
+				(set this on the ViewModel side, e.g. cycling per event type):
+				Pink   bg #F6D3E4  text #B23A6D
+				Purple bg #E3DBF5  text #6C4FB0
+				Yellow bg #FBF0CB  text #9C7A1D
+				Mint   bg #D7F3E3  text #1F8A5C
+				Blue   bg #DCEEFB  text #1D6FA6
+			-->
+
+			<!--  White elevated card — header, calendar grid, right panel  -->
 			<Style x:Key="ElevatedCardStyle" TargetType="Border">
-				<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
-				<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+				<Setter Property="BackgroundColor" Value="{StaticResource ClrCard}" />
+				<Setter Property="Stroke" Value="{StaticResource ClrBorder}" />
 				<Setter Property="StrokeThickness" Value="1" />
 				<Setter Property="StrokeShape">
 					<Setter.Value>
-						<RoundRectangle CornerRadius="{StaticResource SparkRadiusLg}" />
+						<RoundRectangle CornerRadius="16" />
 					</Setter.Value>
 				</Setter>
 				<Setter Property="Shadow">
 					<Setter.Value>
 						<Shadow
 							Brush="#1E2733"
-							Opacity="0.06"
-							Radius="10"
+							Opacity="0.07"
+							Radius="18"
+							Offset="0,6" />
+					</Setter.Value>
+				</Setter>
+			</Style>
+
+			<!--  Calendar day cell — slightly deeper shadow so cells feel lifted, not flat  -->
+			<Style x:Key="CalendarDayCellStyle" TargetType="Border">
+				<Setter Property="BackgroundColor" Value="{StaticResource ClrCardAlt}" />
+				<Setter Property="Stroke" Value="{StaticResource ClrBorder}" />
+				<Setter Property="StrokeThickness" Value="1" />
+				<Setter Property="StrokeShape">
+					<Setter.Value>
+						<RoundRectangle CornerRadius="10" />
+					</Setter.Value>
+				</Setter>
+				<Setter Property="Shadow">
+					<Setter.Value>
+						<Shadow
+							Brush="#1E2733"
+							Opacity="0.03"
+							Radius="6"
 							Offset="0,2" />
 					</Setter.Value>
 				</Setter>
 			</Style>
+
+			<Style
+				x:Key="PageHeaderCardStyle"
+				BasedOn="{StaticResource ElevatedCardStyle}"
+				TargetType="Border" />
 
 			<Style
 				x:Key="MiniStatCardStyle"
@@ -42,7 +104,7 @@
 				TargetType="Border">
 				<Setter Property="StrokeShape">
 					<Setter.Value>
-						<RoundRectangle CornerRadius="{StaticResource SparkRadiusMd}" />
+						<RoundRectangle CornerRadius="12" />
 					</Setter.Value>
 				</Setter>
 				<Setter Property="Padding" Value="14,12" />
@@ -55,6 +117,17 @@
 				<Setter Property="StrokeShape">
 					<Setter.Value>
 						<RoundRectangle CornerRadius="10" />
+					</Setter.Value>
+				</Setter>
+			</Style>
+
+			<!--  Small pill badge, e.g. "+12%" style counters or status chips  -->
+			<Style x:Key="PillBadgeStyle" TargetType="Border">
+				<Setter Property="Padding" Value="8,3" />
+				<Setter Property="StrokeThickness" Value="0" />
+				<Setter Property="StrokeShape">
+					<Setter.Value>
+						<RoundRectangle CornerRadius="20" />
 					</Setter.Value>
 				</Setter>
 			</Style>
@@ -79,32 +152,70 @@
 			<Grid
 				Grid.Column="0"
 				RowDefinitions="Auto,Auto,*"
-				RowSpacing="12">
+				RowSpacing="14">
 
 				<!--  ROW 0: PAGE HEADER  -->
 				<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
 					<Grid
 						Padding="20,16"
-						ColumnDefinitions="*,Auto"
+						ColumnDefinitions="Auto,*,Auto"
 						VerticalOptions="Center">
 
-						<VerticalStackLayout Spacing="4" VerticalOptions="Center">
+						<VerticalStackLayout
+							Grid.Column="0"
+							Spacing="4"
+							VerticalOptions="Center">
 							<Label
 								FontAttributes="Bold"
 								FontSize="24"
 								Text="Медицински календар"
-								TextColor="{StaticResource SparkTextPrimary}" />
+								TextColor="{StaticResource ClrTextPrimary}" />
 							<Label
 								FontSize="13"
 								Text="Распоред на прегледи"
-								TextColor="{StaticResource SparkTextSecondary}" />
+								TextColor="{StaticResource ClrTextSecondary}" />
 						</VerticalStackLayout>
 
-						<HorizontalStackLayout
+						<!--  Search bar — matches the reference toolbar search field  -->
+						<Border
 							Grid.Column="1"
+							Margin="24,0"
+							Padding="12,0"
+							BackgroundColor="{StaticResource ClrCardAlt}"
+							HeightRequest="40"
+							HorizontalOptions="Fill"
+							MaximumWidthRequest="320"
+							Stroke="{StaticResource ClrBorder}"
+							StrokeShape="RoundRectangle 10"
+							StrokeThickness="1"
+							VerticalOptions="Center">
+							<Grid ColumnDefinitions="Auto,*">
+								<Label
+									Grid.Column="0"
+									Margin="0,0,8,0"
+									FontFamily="FASolid"
+									FontSize="13"
+									Text="&#xf002;"
+									TextColor="{StaticResource ClrTextSecondary}"
+									VerticalOptions="Center" />
+								<Entry
+									Grid.Column="1"
+									BackgroundColor="Transparent"
+									FontSize="13"
+									Placeholder="Пребарај пациент, термин..."
+									PlaceholderColor="{StaticResource ClrTextSecondary}"
+									Text="{Binding SearchText}"
+									TextColor="{StaticResource ClrTextPrimary}"
+									VerticalOptions="Center" />
+							</Grid>
+						</Border>
+
+						<HorizontalStackLayout
+							Grid.Column="2"
 							Spacing="8"
 							VerticalOptions="Center">
 
+							<!--  Prev / Next — light gray circular buttons  -->
 							<controls:FFButton
 								ButtonKind="Secondary"
 								Command="{Binding PreviousMonthCommand}"
@@ -115,10 +226,10 @@
 
 							<Border
 								Padding="14,0"
-								BackgroundColor="{StaticResource SparkBackgroundAlt}"
+								BackgroundColor="{StaticResource ClrCardAlt}"
 								HeightRequest="38"
-								Stroke="{StaticResource SparkBorder}"
-								StrokeShape="RoundRectangle 8"
+								Stroke="{StaticResource ClrBorder}"
+								StrokeShape="RoundRectangle 10"
 								StrokeThickness="1"
 								VerticalOptions="Center"
 								WidthRequest="160">
@@ -127,7 +238,7 @@
 									FontSize="13"
 									HorizontalOptions="Center"
 									Text="{Binding CurrentMonthYearText}"
-									TextColor="{StaticResource SparkTextPrimary}"
+									TextColor="{StaticResource ClrTextPrimary}"
 									VerticalOptions="Center" />
 							</Border>
 
@@ -139,8 +250,10 @@
 								Text="&#xf054;"
 								WidthRequestEx="38" />
 
+							<!--  Solid black pill, matching the reference "Today"-style button  -->
 							<controls:FFButton
 								Margin="4,0,0,0"
+								BackgroundColorEx="{StaticResource ClrDark}"
 								ButtonKind="Primary"
 								Command="{Binding GoToTodayCommand}"
 								HeightRequestEx="38"
@@ -159,186 +272,255 @@
 					</Grid>
 				</Border>
 
-				<!--  ROW 1: WEEK TABS — dark navy bar, no outer wrapper  -->
-				<controls:SparkExplorerHeaderView
+				<!--  ROW 1: WEEK TABS — light pill bar, active tab dark  -->
+				<Border
 					Grid.Row="1"
 					Grid.Column="0"
 					Grid.ColumnSpan="2"
-					SearchVisible="False"
-					Tabs="{Binding WeekTabs}" />
+					Padding="6"
+					BackgroundColor="{StaticResource ClrCard}"
+					Stroke="{StaticResource ClrBorder}"
+					StrokeShape="RoundRectangle 14"
+					StrokeThickness="1">
+					<controls:SparkExplorerHeaderView SearchVisible="False" Tabs="{Binding WeekTabs}" />
+				</Border>
+
 				<!--  ROW 2: CALENDAR GRID  -->
 				<Border Grid.Row="2" Style="{StaticResource PageHeaderCardStyle}">
-					<ScrollView>
-						<FlexLayout
-							Padding="10"
-							AlignContent="Start"
-							AlignItems="Start"
-							BindableLayout.ItemsSource="{Binding CalendarDays}"
-							Direction="Row"
-							HeightRequest="800"
-							JustifyContent="Start"
-							Wrap="Wrap">
+					<Grid Padding="10,10,10,0" RowDefinitions="Auto,*">
 
-							<BindableLayout.ItemTemplate>
-								<DataTemplate x:DataType="vm:CalendarDayDto">
-									<Border
-										Margin="3"
-										Padding="0"
-										BackgroundColor="{StaticResource SparkBackgroundAlt}"
-										FlexLayout.Basis="14.2857%"
-										MinimumHeightRequest="104"
-										Opacity="{Binding IsCurrentMonth, Converter={StaticResource BoolToOpacityConverter}}"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 8"
-										StrokeThickness="1">
+						<!--  Weekday header row — Пон..Нед, matches column widths of the grid below  -->
+						<Grid
+							Grid.Row="0"
+							Margin="3,0,3,8"
+							ColumnDefinitions="*,*,*,*,*,*,*">
+							<Label
+								Grid.Column="0"
+								CharacterSpacing="0.6"
+								FontAttributes="Bold"
+								FontSize="10"
+								HorizontalOptions="Center"
+								Text="ПОН"
+								TextColor="{StaticResource ClrTextSecondary}" />
+							<Label
+								Grid.Column="1"
+								CharacterSpacing="0.6"
+								FontAttributes="Bold"
+								FontSize="10"
+								HorizontalOptions="Center"
+								Text="ВТО"
+								TextColor="{StaticResource ClrTextSecondary}" />
+							<Label
+								Grid.Column="2"
+								CharacterSpacing="0.6"
+								FontAttributes="Bold"
+								FontSize="10"
+								HorizontalOptions="Center"
+								Text="СРЕ"
+								TextColor="{StaticResource ClrTextSecondary}" />
+							<Label
+								Grid.Column="3"
+								CharacterSpacing="0.6"
+								FontAttributes="Bold"
+								FontSize="10"
+								HorizontalOptions="Center"
+								Text="ЧЕТ"
+								TextColor="{StaticResource ClrTextSecondary}" />
+							<Label
+								Grid.Column="4"
+								CharacterSpacing="0.6"
+								FontAttributes="Bold"
+								FontSize="10"
+								HorizontalOptions="Center"
+								Text="ПЕТ"
+								TextColor="{StaticResource ClrTextSecondary}" />
+							<Label
+								Grid.Column="5"
+								CharacterSpacing="0.6"
+								FontAttributes="Bold"
+								FontSize="10"
+								HorizontalOptions="Center"
+								Text="САБ"
+								TextColor="{StaticResource ClrAccentTeal}" />
+							<Label
+								Grid.Column="6"
+								CharacterSpacing="0.6"
+								FontAttributes="Bold"
+								FontSize="10"
+								HorizontalOptions="Center"
+								Text="НЕД"
+								TextColor="{StaticResource ClrAccentTeal}" />
+						</Grid>
 
-										<Border.GestureRecognizers>
-											<TapGestureRecognizer Command="{Binding BindingContext.SelectCalendarDayCommand, Source={x:Reference CurrentPage}}" CommandParameter="{Binding .}" />
-										</Border.GestureRecognizers>
+						<ScrollView Grid.Row="1">
+							<FlexLayout
+								Padding="0,0,0,10"
+								AlignContent="Start"
+								AlignItems="Start"
+								BindableLayout.ItemsSource="{Binding CalendarDays}"
+								Direction="Row"
+								HeightRequest="790"
+								JustifyContent="Start"
+								Wrap="Wrap">
 
-										<Border.Triggers>
-											<DataTrigger
-												Binding="{Binding IsWeekHighlighted}"
-												TargetType="Border"
-												Value="True">
-												<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
-												<Setter Property="StrokeThickness" Value="2" />
-											</DataTrigger>
-											<DataTrigger
-												Binding="{Binding IsToday}"
-												TargetType="Border"
-												Value="True">
-												<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
-												<Setter Property="StrokeThickness" Value="2" />
-											</DataTrigger>
-										</Border.Triggers>
+								<BindableLayout.ItemTemplate>
+									<DataTemplate x:DataType="vm:CalendarDayDto">
+										<Border
+											Margin="3"
+											Padding="0"
+											FlexLayout.Basis="14.2857%"
+											MinimumHeightRequest="104"
+											Opacity="{Binding IsCurrentMonth, Converter={StaticResource BoolToOpacityConverter}}"
+											Style="{StaticResource CalendarDayCellStyle}">
 
-										<Grid
-											Padding="8,6"
-											RowDefinitions="Auto,Auto,Auto"
-											RowSpacing="4">
+											<Border.GestureRecognizers>
+												<TapGestureRecognizer Command="{Binding BindingContext.SelectCalendarDayCommand, Source={x:Reference CurrentPage}}" CommandParameter="{Binding .}" />
+											</Border.GestureRecognizers>
+
+											<Border.Triggers>
+												<DataTrigger
+													Binding="{Binding IsWeekHighlighted}"
+													TargetType="Border"
+													Value="True">
+													<Setter Property="Stroke" Value="{StaticResource ClrAccentTeal}" />
+													<Setter Property="StrokeThickness" Value="2" />
+												</DataTrigger>
+												<DataTrigger
+													Binding="{Binding IsToday}"
+													TargetType="Border"
+													Value="True">
+													<Setter Property="BackgroundColor" Value="{StaticResource ClrAccentTealBg}" />
+													<Setter Property="Stroke" Value="{StaticResource ClrAccentTeal}" />
+													<Setter Property="StrokeThickness" Value="2" />
+												</DataTrigger>
+											</Border.Triggers>
 
 											<Grid
-												Grid.Row="0"
-												ColumnDefinitions="Auto,*"
-												IsVisible="{Binding IsEmptySlot, Converter={StaticResource InvertedBoolConverter}}">
+												Padding="8,6"
+												RowDefinitions="Auto,Auto,Auto"
+												RowSpacing="4">
 
-												<!--  Day number circle (teal on today)  -->
-												<Border
-													Padding="0"
-													BackgroundColor="Transparent"
-													HeightRequest="24"
-													HorizontalOptions="Start"
-													StrokeShape="RoundRectangle 12"
-													StrokeThickness="0"
-													WidthRequest="24">
-													<Border.Triggers>
-														<DataTrigger
-															Binding="{Binding IsToday}"
-															TargetType="Border"
-															Value="True">
-															<Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTeal}" />
-														</DataTrigger>
-													</Border.Triggers>
-													<Label
-														FontAttributes="Bold"
-														FontSize="12"
-														HorizontalOptions="Center"
-														Text="{Binding DayNumber}"
-														VerticalOptions="Center">
-														<Label.Triggers>
+												<Grid
+													Grid.Row="0"
+													ColumnDefinitions="Auto,*"
+													IsVisible="{Binding IsEmptySlot, Converter={StaticResource InvertedBoolConverter}}">
+
+													<!--  Day number circle (teal on today)  -->
+													<Border
+														Padding="0"
+														BackgroundColor="Transparent"
+														HeightRequest="26"
+														HorizontalOptions="Start"
+														StrokeShape="RoundRectangle 13"
+														StrokeThickness="0"
+														WidthRequest="26">
+														<Border.Triggers>
 															<DataTrigger
 																Binding="{Binding IsToday}"
-																TargetType="Label"
+																TargetType="Border"
 																Value="True">
-																<Setter Property="TextColor" Value="{StaticResource SparkBackground}" />
+																<Setter Property="BackgroundColor" Value="{StaticResource ClrAccentTeal}" />
 															</DataTrigger>
-															<DataTrigger
-																Binding="{Binding IsToday}"
-																TargetType="Label"
-																Value="False">
-																<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-															</DataTrigger>
-														</Label.Triggers>
-													</Label>
-												</Border>
+														</Border.Triggers>
+														<Label
+															FontAttributes="Bold"
+															FontSize="12"
+															HorizontalOptions="Center"
+															Text="{Binding DayNumber}"
+															VerticalOptions="Center">
+															<Label.Triggers>
+																<DataTrigger
+																	Binding="{Binding IsToday}"
+																	TargetType="Label"
+																	Value="True">
+																	<Setter Property="TextColor" Value="White" />
+																</DataTrigger>
+																<DataTrigger
+																	Binding="{Binding IsToday}"
+																	TargetType="Label"
+																	Value="False">
+																	<Setter Property="TextColor" Value="{StaticResource ClrTextPrimary}" />
+																</DataTrigger>
+															</Label.Triggers>
+														</Label>
+													</Border>
 
-												<!--  Event count badge  -->
+													<!--  Event count badge  -->
+													<Border
+														Grid.Column="1"
+														BackgroundColor="{StaticResource ClrNeutralBadgeBg}"
+														HorizontalOptions="End"
+														IsVisible="{Binding EventCount, Converter={StaticResource GreaterThanZeroConverter}}"
+														Style="{StaticResource PillBadgeStyle}"
+														VerticalOptions="Center">
+														<Label
+															FontAttributes="Bold"
+															FontSize="9"
+															Text="{Binding EventCount}"
+															TextColor="{StaticResource ClrNeutralBadgeText}" />
+													</Border>
+												</Grid>
+
+												<!--  Events list  -->
+												<VerticalStackLayout
+													Grid.Row="1"
+													BindableLayout.ItemsSource="{Binding VisibleEvents}"
+													Spacing="3"
+													VerticalOptions="Start">
+													<BindableLayout.ItemTemplate>
+														<DataTemplate x:DataType="vm:CalendarEventDto">
+															<Border
+																Padding="7,5"
+																BackgroundColor="{Binding BackgroundColor}"
+																StrokeShape="RoundRectangle 7"
+																StrokeThickness="0">
+																<Grid ColumnDefinitions="3,*" ColumnSpacing="5">
+																	<BoxView
+																		Grid.Column="0"
+																		BackgroundColor="{Binding TextColor}"
+																		CornerRadius="2"
+																		HorizontalOptions="Start"
+																		VerticalOptions="Fill" />
+																	<VerticalStackLayout Grid.Column="1" Spacing="1">
+																		<Label
+																			FontAttributes="Bold"
+																			FontSize="9"
+																			Text="{Binding ScheduledTime, StringFormat='{0:HH:mm}'}"
+																			TextColor="{Binding TextColor}" />
+																		<Label
+																			FontSize="9"
+																			LineBreakMode="TailTruncation"
+																			Text="{Binding Title}"
+																			TextColor="{Binding TextColor}" />
+																	</VerticalStackLayout>
+																</Grid>
+															</Border>
+														</DataTemplate>
+													</BindableLayout.ItemTemplate>
+												</VerticalStackLayout>
+
+												<!--  +N more  -->
 												<Border
-													Grid.Column="1"
-													Padding="6,2"
-													BackgroundColor="{StaticResource SparkBadgeNeutralBg}"
-													HorizontalOptions="End"
-													IsVisible="{Binding EventCount, Converter={StaticResource GreaterThanZeroConverter}}"
-													StrokeShape="RoundRectangle 6"
-													VerticalOptions="Center">
+													Grid.Row="2"
+													Padding="7,3"
+													BackgroundColor="{StaticResource ClrNeutralBadgeBg}"
+													HorizontalOptions="Start"
+													IsVisible="{Binding HasHiddenEvents}"
+													StrokeShape="RoundRectangle 20"
+													StrokeThickness="0">
 													<Label
 														FontAttributes="Bold"
 														FontSize="9"
-														Text="{Binding EventCount}"
-														TextColor="{StaticResource SparkBadgeNeutralText}" />
+														Text="{Binding HiddenEventsCount, StringFormat='+{0} повеќе'}"
+														TextColor="{StaticResource ClrAccentTealDark}" />
 												</Border>
 											</Grid>
-
-											<!--  Events list  -->
-											<VerticalStackLayout
-												Grid.Row="1"
-												BindableLayout.ItemsSource="{Binding VisibleEvents}"
-												Spacing="3"
-												VerticalOptions="Start">
-												<BindableLayout.ItemTemplate>
-													<DataTemplate x:DataType="vm:CalendarEventDto">
-														<Border
-															Padding="6,4"
-															BackgroundColor="{Binding BackgroundColor}"
-															StrokeShape="RoundRectangle 6"
-															StrokeThickness="0">
-															<Grid ColumnDefinitions="3,*" ColumnSpacing="5">
-																<BoxView
-																	Grid.Column="0"
-																	BackgroundColor="{Binding TextColor}"
-																	CornerRadius="2"
-																	HorizontalOptions="Start"
-																	VerticalOptions="Fill" />
-																<VerticalStackLayout Grid.Column="1" Spacing="1">
-																	<Label
-																		FontAttributes="Bold"
-																		FontSize="9"
-																		Text="{Binding ScheduledTime, StringFormat='{0:HH:mm}'}"
-																		TextColor="{Binding TextColor}" />
-																	<Label
-																		FontSize="9"
-																		LineBreakMode="TailTruncation"
-																		Text="{Binding Title}"
-																		TextColor="{Binding TextColor}" />
-																</VerticalStackLayout>
-															</Grid>
-														</Border>
-													</DataTemplate>
-												</BindableLayout.ItemTemplate>
-											</VerticalStackLayout>
-
-											<!--  +N more  -->
-											<Border
-												Grid.Row="2"
-												Padding="6,2"
-												BackgroundColor="Transparent"
-												HorizontalOptions="Start"
-												IsVisible="{Binding HasHiddenEvents}"
-												StrokeShape="RoundRectangle 6"
-												StrokeThickness="0">
-												<Label
-													FontAttributes="Bold"
-													FontSize="9"
-													Text="{Binding HiddenEventsCount, StringFormat='+{0} повеќе'}"
-													TextColor="{StaticResource SparkAccentTeal}" />
-											</Border>
-										</Grid>
-									</Border>
-								</DataTemplate>
-							</BindableLayout.ItemTemplate>
-						</FlexLayout>
-					</ScrollView>
+										</Border>
+									</DataTemplate>
+								</BindableLayout.ItemTemplate>
+							</FlexLayout>
+						</ScrollView>
+					</Grid>
 				</Border>
 			</Grid>
 
@@ -346,7 +528,7 @@
 			<Border Grid.Column="1" Style="{StaticResource ElevatedCardStyle}">
 				<Grid RowDefinitions="64,*">
 
-					<!--  Panel header  -->
+					<!--  Panel header — bold title + teal "Add"-style action, like reference  -->
 					<Grid
 						Grid.Row="0"
 						Padding="20,0"
@@ -356,23 +538,25 @@
 								FontFamily="FASolid"
 								FontSize="13"
 								Text="&#xf200;"
-								TextColor="{StaticResource SparkAccentTeal}"
+								TextColor="{StaticResource ClrAccentTeal}"
 								VerticalOptions="Center" />
 							<Label
 								CharacterSpacing="0.8"
 								FontAttributes="Bold"
 								FontSize="12"
 								Text="УВИД И АНАЛИТИКА"
-								TextColor="{StaticResource SparkTextPrimary}"
+								TextColor="{StaticResource ClrTextPrimary}"
 								VerticalOptions="Center" />
 						</HorizontalStackLayout>
 						<controls:FFButton
 							Grid.Column="1"
-							ButtonKind="Secondary"
+							BackgroundColorEx="{StaticResource ClrAccentTeal}"
+							ButtonKind="Primary"
 							Command="{Binding CloseDayViewCommand}"
 							HeightRequestEx="32"
 							IsVisible="{Binding IsDayViewActive}"
 							Text="Затвори"
+							TextColorEx="White"
 							VerticalOptions="Center"
 							WidthRequestEx="90" />
 					</Grid>
@@ -380,7 +564,7 @@
 					<!--  1px divider under panel header  -->
 					<BoxView
 						Grid.Row="0"
-						BackgroundColor="{StaticResource SparkBorder}"
+						BackgroundColor="{StaticResource ClrBorder}"
 						HeightRequest="1"
 						VerticalOptions="End" />
 
@@ -388,19 +572,19 @@
 
 						<!--  STATS VIEW  -->
 						<ScrollView IsVisible="{Binding IsStatsViewActive}" VerticalScrollBarVisibility="Never">
-							<VerticalStackLayout Padding="16,20" Spacing="12">
+							<VerticalStackLayout Padding="18,22" Spacing="14">
 
 								<!--  Stat cards row  -->
 								<Grid ColumnDefinitions="*,*" ColumnSpacing="10">
 									<Border Grid.Column="0" Style="{StaticResource MiniStatCardStyle}">
 										<HorizontalStackLayout Spacing="12" VerticalOptions="Center">
-											<Border BackgroundColor="{StaticResource SparkBadgeNeutralBg}" Style="{StaticResource StatIconChipStyle}">
+											<Border BackgroundColor="{StaticResource ClrAccentTealBg}" Style="{StaticResource StatIconChipStyle}">
 												<Label
 													FontFamily="FASolid"
 													FontSize="14"
 													HorizontalOptions="Center"
 													Text="&#xf133;"
-													TextColor="{StaticResource SparkBadgeNeutralText}"
+													TextColor="{StaticResource ClrAccentTealDark}"
 													VerticalOptions="Center" />
 											</Border>
 											<VerticalStackLayout Spacing="3">
@@ -409,24 +593,24 @@
 													FontAttributes="Bold"
 													FontSize="8"
 													Text="ОВОЈ МЕСЕЦ"
-													TextColor="{StaticResource SparkTextSecondary}" />
+													TextColor="{StaticResource ClrTextSecondary}" />
 												<Label
 													FontAttributes="Bold"
 													FontSize="20"
 													Text="{Binding MonthlyEncountersCount}"
-													TextColor="{StaticResource SparkTextPrimary}" />
+													TextColor="{StaticResource ClrTextPrimary}" />
 											</VerticalStackLayout>
 										</HorizontalStackLayout>
 									</Border>
 									<Border Grid.Column="1" Style="{StaticResource MiniStatCardStyle}">
 										<HorizontalStackLayout Spacing="12" VerticalOptions="Center">
-											<Border BackgroundColor="{StaticResource SparkAccentTealBg}" Style="{StaticResource StatIconChipStyle}">
+											<Border BackgroundColor="{StaticResource ClrSuccessBg}" Style="{StaticResource StatIconChipStyle}">
 												<Label
 													FontFamily="FASolid"
 													FontSize="14"
 													HorizontalOptions="Center"
 													Text="&#xf0f8;"
-													TextColor="{StaticResource SparkAccentTeal}"
+													TextColor="{StaticResource ClrSuccessText}"
 													VerticalOptions="Center" />
 											</Border>
 											<VerticalStackLayout Spacing="3">
@@ -435,12 +619,12 @@
 													FontAttributes="Bold"
 													FontSize="8"
 													Text="ДЕНЕС"
-													TextColor="{StaticResource SparkTextSecondary}" />
+													TextColor="{StaticResource ClrTextSecondary}" />
 												<Label
 													FontAttributes="Bold"
 													FontSize="20"
 													Text="{Binding TodaysEncountersCount}"
-													TextColor="{StaticResource SparkTextPrimary}" />
+													TextColor="{StaticResource ClrTextPrimary}" />
 											</VerticalStackLayout>
 										</HorizontalStackLayout>
 									</Border>
@@ -450,7 +634,7 @@
 									<Grid ColumnDefinitions="Auto,*">
 										<Border
 											Margin="0,0,14,0"
-											BackgroundColor="{StaticResource SparkBadgeWarningBg}"
+											BackgroundColor="{StaticResource ClrWarningBg}"
 											Style="{StaticResource StatIconChipStyle}"
 											VerticalOptions="Center">
 											<Label
@@ -458,7 +642,7 @@
 												FontSize="14"
 												HorizontalOptions="Center"
 												Text="&#xf073;"
-												TextColor="{StaticResource SparkBadgeWarningText}"
+												TextColor="{StaticResource ClrWarningText}"
 												VerticalOptions="Center" />
 										</Border>
 										<VerticalStackLayout
@@ -470,31 +654,166 @@
 												FontAttributes="Bold"
 												FontSize="8"
 												Text="ПРЕТСТОЈНИ ПРЕГЛЕДИ"
-												TextColor="{StaticResource SparkTextSecondary}" />
+												TextColor="{StaticResource ClrTextSecondary}" />
 											<Label
 												FontAttributes="Bold"
 												FontSize="20"
 												Text="{Binding UpcomingEncountersCount}"
-												TextColor="{StaticResource SparkTextPrimary}" />
+												TextColor="{StaticResource ClrTextPrimary}" />
 										</VerticalStackLayout>
 									</Grid>
 								</Border>
 
-								<!--  Quick nav  -->
+								<!--  Денешни термини — Waitlist-style list, one row per today's appointment  -->
 								<VerticalStackLayout Margin="0,8,0,0" Spacing="10">
-									<Label
-										CharacterSpacing="0.5"
-										FontAttributes="Bold"
-										FontSize="11"
-										Text="Брза навигација"
-										TextColor="{StaticResource SparkTextPrimary}" />
+									<Grid ColumnDefinitions="*,Auto">
+										<Label
+											CharacterSpacing="0.5"
+											FontAttributes="Bold"
+											FontSize="11"
+											Text="Денешни термини"
+											TextColor="{StaticResource ClrTextPrimary}" />
+										<Border
+											Grid.Column="1"
+											BackgroundColor="{StaticResource ClrAccentTealBg}"
+											Style="{StaticResource PillBadgeStyle}">
+											<Label
+												FontAttributes="Bold"
+												FontSize="10"
+												Text="{Binding TodaysEncountersCount}"
+												TextColor="{StaticResource ClrAccentTealDark}" />
+										</Border>
+									</Grid>
+
+									<!--  Compact search — filters the list below by patient/title  -->
+									<Border
+										Padding="10,0"
+										BackgroundColor="{StaticResource ClrCardAlt}"
+										HeightRequest="36"
+										Stroke="{StaticResource ClrBorder}"
+										StrokeShape="RoundRectangle 8"
+										StrokeThickness="1">
+										<Grid ColumnDefinitions="Auto,*">
+											<Label
+												Grid.Column="0"
+												Margin="0,0,6,0"
+												FontFamily="FASolid"
+												FontSize="11"
+												Text="&#xf002;"
+												TextColor="{StaticResource ClrTextSecondary}"
+												VerticalOptions="Center" />
+											<Entry
+												Grid.Column="1"
+												BackgroundColor="Transparent"
+												FontSize="12"
+												Placeholder="Пребарај термин..."
+												PlaceholderColor="{StaticResource ClrTextSecondary}"
+												Text="{Binding EncounterSearchText}"
+												TextColor="{StaticResource ClrTextPrimary}"
+												VerticalOptions="Center" />
+										</Grid>
+									</Border>
+
+									<VerticalStackLayout BindableLayout.ItemsSource="{Binding TodaysEncounters}" Spacing="8">
+										<BindableLayout.EmptyView>
+											<Label
+												Margin="0,4,0,0"
+												FontSize="12"
+												HorizontalOptions="Center"
+												Text="Нема закажани термини за денес"
+												TextColor="{StaticResource ClrTextSecondary}" />
+										</BindableLayout.EmptyView>
+										<BindableLayout.ItemTemplate>
+											<DataTemplate x:DataType="vm:CalendarEventDto">
+												<Border
+													Padding="12,10"
+													BackgroundColor="{StaticResource ClrCardAlt}"
+													Stroke="{StaticResource ClrBorder}"
+													StrokeShape="RoundRectangle 12"
+													StrokeThickness="1">
+													<Border.GestureRecognizers>
+														<TapGestureRecognizer Tapped="OnTimelineItemBorderTapped" />
+													</Border.GestureRecognizers>
+													<Grid
+														ColumnDefinitions="3,*"
+														ColumnSpacing="10"
+														RowDefinitions="Auto,Auto,Auto"
+														RowSpacing="6">
+														<BoxView
+															Grid.Row="0"
+															Grid.RowSpan="3"
+															Grid.Column="0"
+															BackgroundColor="{Binding TextColor}"
+															CornerRadius="2"
+															HorizontalOptions="Start"
+															VerticalOptions="Fill" />
+
+														<Label
+															Grid.Row="0"
+															Grid.Column="1"
+															FontAttributes="Bold"
+															FontSize="13"
+															Text="{Binding Title}"
+															TextColor="{StaticResource ClrTextPrimary}" />
+
+														<HorizontalStackLayout
+															Grid.Row="1"
+															Grid.Column="1"
+															Spacing="6">
+															<Label
+																FontFamily="FASolid"
+																FontSize="10"
+																Text="&#xf017;"
+																TextColor="{StaticResource ClrTextSecondary}"
+																VerticalOptions="Center" />
+															<Label
+																FontSize="11"
+																Text="{Binding ScheduledTime, StringFormat='{0:HH:mm}'}"
+																TextColor="{StaticResource ClrTextSecondary}"
+																VerticalOptions="Center" />
+															<Border
+																Margin="4,0,0,0"
+																BackgroundColor="{StaticResource ClrNeutralBadgeBg}"
+																Style="{StaticResource PillBadgeStyle}">
+																<Label
+																	FontAttributes="Bold"
+																	FontSize="9"
+																	Text="{Binding Status}"
+																	TextColor="{StaticResource ClrNeutralBadgeText}" />
+															</Border>
+														</HorizontalStackLayout>
+
+														<Border
+															Grid.Row="2"
+															Grid.Column="1"
+															Padding="12,7"
+															BackgroundColor="{StaticResource ClrDark}"
+															HorizontalOptions="Fill"
+															StrokeShape="RoundRectangle 8"
+															StrokeThickness="0">
+															<Label
+																FontAttributes="Bold"
+																FontSize="10"
+																HorizontalOptions="Center"
+																Text="Отвори"
+																TextColor="White" />
+														</Border>
+													</Grid>
+												</Border>
+											</DataTemplate>
+										</BindableLayout.ItemTemplate>
+									</VerticalStackLayout>
+
 									<controls:FFButton
+										Margin="0,6,0,0"
+										BackgroundColorEx="{StaticResource ClrAccentTeal}"
 										ButtonKind="Primary"
 										Command="{Binding CreateNewEncounterForSelectedDayCommand}"
 										FontFamily="FASolid"
 										HeightRequestEx="44"
 										HorizontalOptionsEx="Fill"
-										Text="&#xf271; Нов преглед" />
+										Text="&#xf271; Нов преглед"
+										TextColorEx="White" />
 								</VerticalStackLayout>
 							</VerticalStackLayout>
 						</ScrollView>
@@ -505,9 +824,9 @@
 
 								<Border
 									Padding="12,10"
-									BackgroundColor="{StaticResource SparkAccentTealBg}"
+									BackgroundColor="{StaticResource ClrAccentTealBg}"
 									HorizontalOptions="Fill"
-									Stroke="{StaticResource SparkAccentTeal}"
+									Stroke="{StaticResource ClrAccentTeal}"
 									StrokeShape="RoundRectangle 10"
 									StrokeThickness="1">
 									<HorizontalStackLayout HorizontalOptions="Center" Spacing="8">
@@ -515,19 +834,19 @@
 											FontFamily="FASolid"
 											FontSize="12"
 											Text="&#xf017;"
-											TextColor="{StaticResource SparkAccentTealDark}"
+											TextColor="{StaticResource ClrAccentTealDark}"
 											VerticalOptions="Center" />
 										<Label
 											FontAttributes="Bold"
 											FontSize="11"
 											Text="ДНЕВЕН РАСПОРЕД ЗА ДЕН:"
-											TextColor="{StaticResource SparkAccentTealDark}"
+											TextColor="{StaticResource ClrAccentTealDark}"
 											VerticalOptions="Center" />
 										<Label
 											FontAttributes="Bold"
 											FontSize="13"
 											Text="{Binding SelectedCalendarDay.DayNumber}"
-											TextColor="{StaticResource SparkAccentTealDark}"
+											TextColor="{StaticResource ClrAccentTealDark}"
 											VerticalOptions="Center" />
 									</HorizontalStackLayout>
 								</Border>
@@ -546,7 +865,7 @@
 														FontAttributes="Bold"
 														FontSize="12"
 														Text="{Binding HourText}"
-														TextColor="{StaticResource SparkTextSecondary}"
+														TextColor="{StaticResource ClrTextSecondary}"
 														VerticalOptions="Start" />
 													<VerticalStackLayout
 														Grid.Column="1"
@@ -556,14 +875,14 @@
 															<DataTemplate x:DataType="vm:CalendarEventDto">
 																<Border
 																	Padding="12,10"
-																	BackgroundColor="{StaticResource SparkBackgroundAlt}"
-																	Stroke="{StaticResource SparkBorder}"
-																	StrokeShape="RoundRectangle 10"
+																	BackgroundColor="{StaticResource ClrCardAlt}"
+																	Stroke="{StaticResource ClrBorder}"
+																	StrokeShape="RoundRectangle 12"
 																	StrokeThickness="1">
 																	<Border.GestureRecognizers>
 																		<TapGestureRecognizer Tapped="OnTimelineItemBorderTapped" />
 																	</Border.GestureRecognizers>
-																	<Grid ColumnDefinitions="3,*" ColumnSpacing="10">
+																	<Grid ColumnDefinitions="3,*,Auto" ColumnSpacing="10">
 																		<BoxView
 																			Grid.Column="0"
 																			BackgroundColor="{Binding TextColor}"
@@ -575,21 +894,36 @@
 																				FontAttributes="Bold"
 																				FontSize="13"
 																				Text="{Binding Title}"
-																				TextColor="{StaticResource SparkTextPrimary}" />
+																				TextColor="{StaticResource ClrTextPrimary}" />
 																			<HorizontalStackLayout Spacing="5">
 																				<Label
 																					FontFamily="FASolid"
 																					FontSize="10"
 																					Text="&#xf05a;"
-																					TextColor="{StaticResource SparkTextSecondary}"
+																					TextColor="{StaticResource ClrTextSecondary}"
 																					VerticalOptions="Center" />
 																				<Label
 																					FontSize="11"
 																					Text="{Binding Status, StringFormat='Статус: {0}'}"
-																					TextColor="{StaticResource SparkTextSecondary}"
+																					TextColor="{StaticResource ClrTextSecondary}"
 																					VerticalOptions="Center" />
 																			</HorizontalStackLayout>
 																		</VerticalStackLayout>
+
+																		<!--  "Book now"-style solid black pill, matching reference  -->
+																		<Border
+																			Grid.Column="2"
+																			Padding="12,6"
+																			BackgroundColor="{StaticResource ClrDark}"
+																			StrokeShape="RoundRectangle 8"
+																			StrokeThickness="0"
+																			VerticalOptions="Center">
+																			<Label
+																				FontAttributes="Bold"
+																				FontSize="10"
+																				Text="Отвори"
+																				TextColor="White" />
+																		</Border>
 																	</Grid>
 																</Border>
 															</DataTemplate>
@@ -599,7 +933,7 @@
 												<BoxView
 													HeightRequest="1"
 													HorizontalOptions="Fill"
-													Color="{StaticResource SparkBorder}" />
+													Color="{StaticResource ClrBorder}" />
 											</VerticalStackLayout>
 										</DataTemplate>
 									</BindableLayout.ItemTemplate>

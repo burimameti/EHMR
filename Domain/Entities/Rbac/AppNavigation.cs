@@ -28,8 +28,8 @@ public static class AppNavigation
         //    [
         //        new()
         //        {
-                    GroupTitle = "Календар",
-                    Route = AppRoutes.Calendar,
+                    GroupTitle = "Календар  на Прегледи",
+                    Route = AppRoutes.CalendarPage,
                     Module = Modules.Calendar,
                     Icon = new IconDefinition { Glyph = "\uf133", Font = IconFontType.FontAwesomeSolid } // Alternative Calendar
             //    }

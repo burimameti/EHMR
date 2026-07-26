@@ -67,6 +67,7 @@
 			<ResourceDictionary.MergedDictionaries>
 
 				<ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+				<ResourceDictionary Source="Resources/Styles/CalendarStyle.xaml" />
 				<ResourceDictionary Source="Resources/Styles/AuthStyle.xaml" />
 
 				<ResourceDictionary Source="Resources/Controls/SparkStyles.xaml" />

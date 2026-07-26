@@ -1,0 +1,465 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+	<!--  =========================  -->
+	<!--  COLORS (existing, unchanged)  -->
+	<!--  =========================  -->
+
+	<Color x:Key="PageBackground">#F5F7FB</Color>
+	<Color x:Key="SurfaceColor">#FFFFFF</Color>
+	<Color x:Key="SurfaceSecondary">#FAFBFC</Color>
+	<Color x:Key="BorderColor">#E7ECF3</Color>
+	<Color x:Key="DividerColor">#EEF2F6</Color>
+	<Color x:Key="PrimaryColor">#56C8D8</Color>
+	<Color x:Key="PrimaryDark">#23B2C7</Color>
+	<Color x:Key="PrimaryLight">#EAFBFD</Color>
+	<Color x:Key="TitleColor">#111827</Color>
+	<Color x:Key="SubtitleColor">#667085</Color>
+	<Color x:Key="MutedColor">#98A2B3</Color>
+	<Color x:Key="SuccessColor">#22C55E</Color>
+	<Color x:Key="WarningColor">#F59E0B</Color>
+	<Color x:Key="DangerColor">#EF4444</Color>
+	<Color x:Key="InfoColor">#3B82F6</Color>
+
+	<!--  Appointment Colors  -->
+	<Color x:Key="AppointmentPink">#FCE7F3</Color>
+	<Color x:Key="AppointmentPinkText">#9D174D</Color>
+	<Color x:Key="AppointmentGreen">#DCFCE7</Color>
+	<Color x:Key="AppointmentGreenText">#166534</Color>
+	<Color x:Key="AppointmentBlue">#DBEAFE</Color>
+	<Color x:Key="AppointmentBlueText">#1E40AF</Color>
+	<Color x:Key="AppointmentOrange">#FEF3C7</Color>
+	<Color x:Key="AppointmentOrangeText">#B45309</Color>
+	<Color x:Key="AppointmentGray">#F3F4F6</Color>
+	<Color x:Key="AppointmentGrayText">#4B5563</Color>
+
+	<!--  =========================  -->
+	<!--  NEW: TREND / BADGE COLORS  -->
+	<!--  =========================  -->
+
+	<Color x:Key="TrendUpBg">#DCFCE7</Color>
+	<Color x:Key="TrendUpText">#15803D</Color>
+	<Color x:Key="TrendDownBg">#FEE2E2</Color>
+	<Color x:Key="TrendDownText">#B91C1C</Color>
+
+	<!--  NEW: avatar palette used for waitlist / contact initials  -->
+	<Color x:Key="AvatarPink">#F472B6</Color>
+	<Color x:Key="AvatarOrange">#FB923C</Color>
+	<Color x:Key="AvatarBlue">#60A5FA</Color>
+	<Color x:Key="AvatarTeal">#56C8D8</Color>
+
+	<!--  NEW: today marker used on date badges  -->
+	<Color x:Key="TodayBadgeBg">#111827</Color>
+	<Color x:Key="TodayBadgeText">#FFFFFF</Color>
+
+	<!--  =========================  -->
+	<!--  SHADOW  -->
+	<!--  =========================  -->
+
+	<Shadow
+		x:Key="CardShadow"
+		Brush="#1E293B"
+		Opacity="0.07"
+		Radius="18"
+		Offset="0,3" />
+
+	<Shadow
+		x:Key="SoftShadow"
+		Brush="#1E293B"
+		Opacity="0.04"
+		Radius="10"
+		Offset="0,2" />
+
+	<!--  =========================  -->
+	<!--  PAGE CARD  -->
+	<!--  =========================  -->
+
+	<Style x:Key="PageCardStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceColor}" />
+		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Padding" Value="18" />
+		<Setter Property="Shadow" Value="{StaticResource CardShadow}" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="18" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  =========================  -->
+	<!--  TOOLBAR PILL (search box, etc.)  -->
+	<!--  =========================  -->
+
+	<Style x:Key="ToolbarPillStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="White" />
+		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Padding" Value="14,8" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="11" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  =========================  -->
+	<!--  NEW: NAV/ICON BUTTON (prev / next chevrons)  -->
+	<!--  =========================  -->
+
+	<Style x:Key="NavIconButtonStyle" TargetType="Border">
+		<Setter Property="WidthRequest" Value="38" />
+		<Setter Property="HeightRequest" Value="38" />
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="HorizontalOptions" Value="Center" />
+		<Setter Property="VerticalOptions" Value="Center" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="10" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  =========================  -->
+	<!--  NEW: SEGMENTED VIEW TABS (Day / Week / Month / Staff)  -->
+	<!--  =========================  -->
+
+	<Style x:Key="SegmentedTabsWrapperStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceSecondary}" />
+		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Padding" Value="4" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="12" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="SegmentedTabInactiveStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="FontAttributes" Value="None" />
+		<Setter Property="TextColor" Value="{StaticResource SubtitleColor}" />
+		<Setter Property="Padding" Value="14,7" />
+		<Setter Property="HorizontalTextAlignment" Value="Center" />
+	</Style>
+
+	<Style x:Key="SegmentedTabActiveStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceColor}" />
+		<Setter Property="Shadow" Value="{StaticResource SoftShadow}" />
+		<Setter Property="Padding" Value="14,7" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="9" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  =========================  -->
+	<!--  NEW: FILTER DROPDOWN CHIP (All status / All staff)  -->
+	<!--  =========================  -->
+
+	<Style x:Key="FilterChipStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="White" />
+		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Padding" Value="12,8" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="10" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  =========================  -->
+	<!--  METRIC CARD  -->
+	<!--  =========================  -->
+
+	<Style
+		x:Key="MetricCardStyle"
+		BasedOn="{StaticResource PageCardStyle}"
+		TargetType="Border">
+		<Setter Property="HeightRequest" Value="118" />
+		<Setter Property="Padding" Value="18,16" />
+	</Style>
+
+	<!--  NEW: trend pill shown inside metric card ("+12% vs last week")  -->
+	<Style x:Key="TrendUpPillStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource TrendUpBg}" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="Padding" Value="6,2" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="6" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style
+		x:Key="TrendDownPillStyle"
+		BasedOn="{StaticResource TrendUpPillStyle}"
+		TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource TrendDownBg}" />
+	</Style>
+
+	<Style x:Key="TrendUpTextStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="11" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="TextColor" Value="{StaticResource TrendUpText}" />
+	</Style>
+
+	<Style
+		x:Key="TrendDownTextStyle"
+		BasedOn="{StaticResource TrendUpTextStyle}"
+		TargetType="Label">
+		<Setter Property="TextColor" Value="{StaticResource TrendDownText}" />
+	</Style>
+
+	<!--  =========================  -->
+	<!--  ICON CHIP  -->
+	<!--  =========================  -->
+
+	<Style x:Key="IconChipStyle" TargetType="Border">
+		<Setter Property="WidthRequest" Value="40" />
+		<Setter Property="HeightRequest" Value="40" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="BackgroundColor" Value="{StaticResource PrimaryLight}" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="12" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  =========================  -->
+	<!--  TEXT STYLES  -->
+	<!--  =========================  -->
+
+	<Style x:Key="TitleStyle" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="30" />
+		<Setter Property="TextColor" Value="{StaticResource TitleColor}" />
+	</Style>
+
+	<Style x:Key="SectionStyle" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="20" />
+		<Setter Property="TextColor" Value="{StaticResource TitleColor}" />
+	</Style>
+
+	<Style x:Key="SmallLabelStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="TextColor" Value="{StaticResource SubtitleColor}" />
+	</Style>
+
+	<Style
+		x:Key="MutedLabelStyle"
+		BasedOn="{StaticResource SmallLabelStyle}"
+		TargetType="Label">
+		<Setter Property="TextColor" Value="{StaticResource MutedColor}" />
+	</Style>
+
+	<Style x:Key="ValueStyle" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="28" />
+		<Setter Property="TextColor" Value="{StaticResource TitleColor}" />
+	</Style>
+
+	<!--  =========================  -->
+	<!--  NEW: WEEK DAY HEADER (date badge column header)  -->
+	<!--  =========================  -->
+
+	<Style x:Key="WeekDayHeaderStyle" TargetType="Border">
+		<Setter Property="Padding" Value="10,8" />
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="10" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  Circle date-number badge; default (not-today) state  -->
+	<Style x:Key="DateBadgeStyle" TargetType="Border">
+		<Setter Property="WidthRequest" Value="30" />
+		<Setter Property="HeightRequest" Value="30" />
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="HorizontalOptions" Value="Center" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="15" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  Today variant: dark filled circle, white text (bind via converter/trigger)  -->
+	<Style
+		x:Key="DateBadgeTodayStyle"
+		BasedOn="{StaticResource DateBadgeStyle}"
+		TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource TodayBadgeBg}" />
+	</Style>
+
+	<!--  =========================  -->
+	<!--  NEW: TIME GRID (hour labels + grid lines)  -->
+	<!--  =========================  -->
+
+	<Style x:Key="HourLabelStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="11" />
+		<Setter Property="TextColor" Value="{StaticResource MutedColor}" />
+		<Setter Property="HorizontalTextAlignment" Value="End" />
+	</Style>
+
+	<Style x:Key="TimeGridLineStyle" TargetType="BoxView">
+		<Setter Property="HeightRequest" Value="1" />
+		<Setter Property="Color" Value="{StaticResource DividerColor}" />
+	</Style>
+
+	<Style x:Key="TimeGridColumnDividerStyle" TargetType="BoxView">
+		<Setter Property="WidthRequest" Value="1" />
+		<Setter Property="Color" Value="{StaticResource DividerColor}" />
+	</Style>
+
+	<!--  Current-time indicator line  -->
+	<Style x:Key="NowLineStyle" TargetType="BoxView">
+		<Setter Property="HeightRequest" Value="2" />
+		<Setter Property="Color" Value="{StaticResource DangerColor}" />
+	</Style>
+
+	<!--  =========================  -->
+	<!--  APPOINTMENT BLOCK (positioned absolutely inside the time grid)  -->
+	<!--  =========================  -->
+
+	<Style x:Key="AppointmentCardStyle" TargetType="Border">
+		<Setter Property="Padding" Value="8,6" />
+		<Setter Property="Margin" Value="2,0" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="9" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="AppointmentTimeStyle" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="11" />
+	</Style>
+
+	<Style x:Key="AppointmentTitleStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="11" />
+	</Style>
+
+	<!--  =========================  -->
+	<!--  RIGHT PANEL (Waitlist / side list)  -->
+	<!--  =========================  -->
+
+	<Style
+		x:Key="SidePanelStyle"
+		BasedOn="{StaticResource PageCardStyle}"
+		TargetType="Border">
+		<Setter Property="Padding" Value="0" />
+	</Style>
+
+	<!--  NEW: "Add" pill button top-right of side panel  -->
+	<Style x:Key="PrimaryPillButtonStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource TitleColor}" />
+		<Setter Property="Padding" Value="14,9" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="10" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  NEW: Waiting/Expired/Booked segmented sub-tabs with count badge  -->
+	<Style x:Key="ListTabActiveStyle" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="TextColor" Value="{StaticResource TitleColor}" />
+	</Style>
+
+	<Style x:Key="ListTabInactiveStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="TextColor" Value="{StaticResource MutedColor}" />
+	</Style>
+
+	<Style x:Key="ListTabUnderlineActiveStyle" TargetType="BoxView">
+		<Setter Property="HeightRequest" Value="2" />
+		<Setter Property="Color" Value="{StaticResource TitleColor}" />
+	</Style>
+
+	<!--  Avatar circle with initials  -->
+	<Style x:Key="AvatarBadgeStyle" TargetType="Border">
+		<Setter Property="WidthRequest" Value="36" />
+		<Setter Property="HeightRequest" Value="36" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="18" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="AvatarInitialsStyle" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="TextColor" Value="White" />
+		<Setter Property="HorizontalTextAlignment" Value="Center" />
+		<Setter Property="VerticalTextAlignment" Value="Center" />
+	</Style>
+
+	<!--  DETAIL / list item card (used for waitlist entries and today's list)  -->
+	<Style x:Key="DetailCardStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceSecondary}" />
+		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Padding" Value="14" />
+		<Setter Property="Margin" Value="0,0,0,12" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="12" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="BookNowButtonStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="{StaticResource TitleColor}" />
+		<Setter Property="Padding" Value="0,10" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="HorizontalOptions" Value="Fill" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="10" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="BookNowLabelStyle" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="TextColor" Value="White" />
+		<Setter Property="HorizontalTextAlignment" Value="Center" />
+	</Style>
+
+	<Style x:Key="MoreButtonStyle" TargetType="Border">
+		<Setter Property="WidthRequest" Value="38" />
+		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceColor}" />
+		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="10" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+</ResourceDictionary>
