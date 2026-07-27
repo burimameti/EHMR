@@ -1,11 +1,108 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
 	x:Class="EHMR.Views.Calendar.MainPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	xmlns:vm="clr-namespace:EHMR.ViewModels.Calendar"
+	x:Name="CurrentPage"
 	x:DataType="vm:CalendarDashboardViewModel"
 	BackgroundColor="#FAFAFA">
+	<ContentPage.Resources>
+		<!--
+			Картичка за преглед во неделниот грид.
+			Како во дизајнот: „10:00-10:30 Име" во еден ред, услугата под него.
+		-->
+		<DataTemplate x:Key="CalendarEventCardTemplate" x:DataType="vm:CalendarEventDto">
+			<Border
+				Padding="6,4"
+				BackgroundColor="{Binding BackgroundColor}"
+				StrokeShape="RoundRectangle 6"
+				StrokeThickness="0">
+				<Border.GestureRecognizers>
+					<TapGestureRecognizer Command="{Binding BindingContext.ProcessEncounterSelectionCommand, Source={x:Reference CurrentPage}}" CommandParameter="{Binding Id}" />
+				</Border.GestureRecognizers>
+				<VerticalStackLayout Spacing="1">
+					<Label
+						FontSize="10"
+						LineBreakMode="TailTruncation"
+						MaxLines="1"
+						Text="{Binding CardTitle}"
+						TextColor="{Binding TextColor}" />
+					<Label
+						FontSize="9"
+						LineBreakMode="TailTruncation"
+						MaxLines="1"
+						Opacity="0.7"
+						Text="{Binding DoctorName}"
+						TextColor="{Binding TextColor}" />
+				</VerticalStackLayout>
+			</Border>
+		</DataTemplate>
+
+		<!--  Larger card for the single-day layout, which has one wide column to fill.  -->
+		<DataTemplate x:Key="CalendarEventDayCardTemplate" x:DataType="vm:CalendarEventDto">
+			<Border
+				Padding="12,8"
+				BackgroundColor="{Binding BackgroundColor}"
+				StrokeShape="RoundRectangle 8"
+				StrokeThickness="0">
+				<Border.GestureRecognizers>
+					<TapGestureRecognizer Command="{Binding BindingContext.ProcessEncounterSelectionCommand, Source={x:Reference CurrentPage}}" CommandParameter="{Binding Id}" />
+				</Border.GestureRecognizers>
+				<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+					<Label
+						FontAttributes="Bold"
+						FontSize="12"
+						Text="{Binding ScheduledTime, StringFormat='{0:HH:mm}'}"
+						TextColor="{Binding TextColor}"
+						VerticalOptions="Center" />
+					<VerticalStackLayout Grid.Column="1" Spacing="1">
+						<Label
+							FontAttributes="Bold"
+							FontSize="13"
+							LineBreakMode="TailTruncation"
+							MaxLines="1"
+							Text="{Binding PatientName}"
+							TextColor="{Binding TextColor}" />
+						<Label
+							FontSize="11"
+							LineBreakMode="TailTruncation"
+							MaxLines="1"
+							Opacity="0.85"
+							Text="{Binding DoctorName}"
+							TextColor="{Binding TextColor}" />
+					</VerticalStackLayout>
+					<Label
+						Grid.Column="2"
+						FontSize="10"
+						Text="{Binding Status}"
+						TextColor="{Binding TextColor}"
+						VerticalOptions="Center" />
+				</Grid>
+			</Border>
+		</DataTemplate>
+
+		<!--  Compact chip for a day cell in the month grid.  -->
+		<DataTemplate x:Key="CalendarEventMonthChipTemplate" x:DataType="vm:CalendarEventDto">
+			<Border
+				Padding="4,1"
+				BackgroundColor="{Binding BackgroundColor}"
+				StrokeShape="RoundRectangle 4"
+				StrokeThickness="0">
+				<Border.GestureRecognizers>
+					<TapGestureRecognizer Command="{Binding BindingContext.ProcessEncounterSelectionCommand, Source={x:Reference CurrentPage}}" CommandParameter="{Binding Id}" />
+				</Border.GestureRecognizers>
+				<Label
+					FontSize="8"
+					LineBreakMode="TailTruncation"
+					MaxLines="1"
+					Text="{Binding PatientName}"
+					TextColor="{Binding TextColor}" />
+			</Border>
+		</DataTemplate>
+	</ContentPage.Resources>
+
 	<Grid ColumnDefinitions="290,*">
 
 		<!--  LEFT MENU  -->
@@ -14,10 +111,17 @@
 		</Border>
 		<Grid
 			Grid.Column="1"
-			RowDefinitions="Auto,*"
+			RowDefinitions="*"
 			RowSpacing="8">
-			<!--  MAIN PAGE GRID: 2 COLUMNS (CALENDAR DASHBOARD | WAITLIST PANEL)  -->
-			<Grid ColumnDefinitions="*, 340" ColumnSpacing="0">
+			<!--
+				MAIN PAGE GRID: 2 COLUMNS (CALENDAR DASHBOARD | WAITLIST PANEL)
+				
+				Row must be star-sized. In an Auto row the hour grid is measured at its full
+				24-row natural height, so its CollectionView never gets a viewport to scroll in
+				and the bottom hours are simply cut off the page.
+			-->
+			<!--  Auto за десната колона за да може панелот да се собере; ширината ја диктира самиот панел.  -->
+			<Grid ColumnDefinitions="*, Auto" ColumnSpacing="0">
 
 				<!--  ==================== LEFT AREA: CALENDAR & METRICS ====================  -->
 				<Grid
@@ -31,277 +135,217 @@
 						Grid.Row="0"
 						FontAttributes="Bold"
 						FontSize="24"
-						Text="Календар на Прегледи"
+						Text="{Binding PageTitle}"
 						TextColor="#0F172A" />
 
 					<!--  2. TOOLBAR CONTROLS  -->
-					<Grid Grid.Row="1" ColumnDefinitions="4*,8*">
+					<!--  Auto за левата група: со 4* текстот на 22px и двете стрелки не собираа и се сечеа.  -->
+					<Grid
+						Grid.Row="1"
+						ColumnDefinitions="Auto,*"
+						ColumnSpacing="16">
 						<!--  Navigation & Date Title  -->
 						<HorizontalStackLayout
 							Grid.Column="0"
 							Spacing="10"
 							VerticalOptions="Center">
-							<Border
-								Padding="14,6"
-								BackgroundColor="#FFFFFF"
-								Stroke="#E2E8F0"
-								StrokeShape="RoundRectangle 6">
-								<Border.GestureRecognizers>
+							<!--  „Денес" — обичен текст како во дизајнот, без рамка.  -->
+							<Grid BackgroundColor="Transparent" VerticalOptions="Center">
+								<Grid.GestureRecognizers>
 									<TapGestureRecognizer Command="{Binding GoToTodayCommand}" />
-								</Border.GestureRecognizers>
+								</Grid.GestureRecognizers>
 								<Label
-									FontAttributes="Bold"
-									FontSize="22"
+									Padding="4,6"
+									FontSize="14"
 									Text="Денес"
-									TextColor="#1E293B" />
-							</Border>
+									TextColor="#0F172A"
+									VerticalOptions="Center" />
+							</Grid>
 
 							<Label
-								Margin="0,-5,0,0"
 								FontAttributes="Bold"
-								FontSize="22"
+								FontSize="15"
 								Text="{Binding CurrentMonthYearText}"
 								TextColor="#0F172A"
 								VerticalOptions="Center" />
 
+							<!--  Мали стрелки во заедничка рамка, како во дизајнот.  -->
+							<!--
+								Допирот е на Grid-от со проѕирна позадина, не на самиот Label —
+								инаку целта е само знакот и копчето изгледа мртво.
+							-->
 							<Border
-								Margin="0,-5,0,0"
-								Padding="0"
-								BackgroundColor="White"
-								HeightRequest="36"
-								Stroke="#E2E8F0"
-								StrokeShape="RoundRectangle 12"
-								WidthRequest="36">
-								<Border.GestureRecognizers>
-									<TapGestureRecognizer Command="{Binding PreviousWeekCommand}" />
-								</Border.GestureRecognizers>
-								<Label
-									Margin="0,-5,0,0"
-									FontSize="22"
-									HorizontalOptions="Center"
-									HorizontalTextAlignment="Center"
-									Text="‹"
-									TextColor="#64748B"
-									VerticalOptions="Center"
-									VerticalTextAlignment="Center" />
-							</Border>
-							<Border
-								Margin="0,-5,0,0"
 								Padding="0"
 								BackgroundColor="#FFFFFF"
-								HeightRequest="36"
+								HeightRequest="30"
 								Stroke="#E2E8F0"
-								StrokeShape="RoundRectangle 12"
-								WidthRequest="36">
-								<Border.GestureRecognizers>
-									<TapGestureRecognizer Command="{Binding NextWeekCommand}" />
-								</Border.GestureRecognizers>
-								<Label
-									Margin="0,-5,0,0"
-									FontSize="22"
-									HorizontalOptions="Center"
-									Text="›"
-									TextColor="#64748B"
-									VerticalOptions="Center" />
+								StrokeShape="RoundRectangle 8"
+								StrokeThickness="1"
+								VerticalOptions="Center">
+								<Grid ColumnDefinitions="32,1,32">
+									<Grid Grid.Column="0" BackgroundColor="Transparent">
+										<Grid.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding PreviousPeriodCommand}" />
+										</Grid.GestureRecognizers>
+										<Label
+											FontSize="15"
+											HorizontalOptions="Center"
+											HorizontalTextAlignment="Center"
+											Text="‹"
+											TextColor="#64748B"
+											VerticalOptions="Center"
+											VerticalTextAlignment="Center" />
+									</Grid>
+
+									<BoxView Grid.Column="1" Color="#E2E8F0" />
+
+									<Grid Grid.Column="2" BackgroundColor="Transparent">
+										<Grid.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding NextPeriodCommand}" />
+										</Grid.GestureRecognizers>
+										<Label
+											FontSize="15"
+											HorizontalOptions="Center"
+											HorizontalTextAlignment="Center"
+											Text="›"
+											TextColor="#64748B"
+											VerticalOptions="Center"
+											VerticalTextAlignment="Center" />
+									</Grid>
+								</Grid>
 							</Border>
 						</HorizontalStackLayout>
 
 						<!--  View Switchers & Dropdowns  -->
 						<HorizontalStackLayout
-							Grid.Column="2"
+							Grid.Column="1"
 							HorizontalOptions="End"
-							MinimumWidthRequest="400"
 							Spacing="8"
 							VerticalOptions="Center">
 
-							<!--  View Switcher Toggle Buttons  -->
+							<!--  Што прикажува календарот: прегледи или термини.  -->
 							<Border
-								Padding="4"
-								BackgroundColor="{StaticResource Transparent}"
-								StrokeShape="RoundRectangle 16">
+								Padding="3"
+								BackgroundColor="#F1F5F9"
+								StrokeShape="RoundRectangle 9"
+								StrokeThickness="0"
+								VerticalOptions="Center">
 								<HorizontalStackLayout Spacing="2">
-									<Button
-										BackgroundColor="{StaticResource StatTealBg}"
-										Command="{Binding SetCalendarViewCommand}"
-										CommandParameter="Day"
-										CornerRadius="16"
-										FontAttributes="Bold"
-										FontSize="12"
-										HeightRequest="32"
-										Text="Day"
-										TextColor="#0D9488"
-										WidthRequest="80" />
-									<Button
-										BackgroundColor="{StaticResource StatTealBg}"
-										Command="{Binding SetCalendarViewCommand}"
-										CommandParameter="Week"
-										CornerRadius="16"
-										FontAttributes="Bold"
-										FontSize="12"
-										HeightRequest="32"
-										Text="Week"
-										TextColor="#0D9488"
-										WidthRequest="80" />
-									<Button
-										BackgroundColor="{StaticResource StatTealBg}"
-										Command="{Binding SetCalendarViewCommand}"
-										CommandParameter="Month"
-										CornerRadius="16"
-										FontAttributes="Bold"
-										FontSize="12"
-										HeightRequest="32"
-										Style="{StaticResource BaseButtonStyle}"
-										Text="Month"
-										TextColor="#0D9488"
-										WidthRequest="80" />
+									<controls:CalendarViewSegment
+										Command="{Binding SetContentModeCommand}"
+										CommandParameter="Encounters"
+										IsActive="{Binding IsEncounterContentActive}"
+										Text="Прегледи" />
+									<controls:CalendarViewSegment
+										Command="{Binding SetContentModeCommand}"
+										CommandParameter="Appointments"
+										IsActive="{Binding IsAppointmentContentActive}"
+										Text="Термини" />
 								</HorizontalStackLayout>
 							</Border>
 
-							<!--  Status Picker Container  -->
-							<VerticalStackLayout Spacing="2" VerticalOptions="Center">
-								<Label
-									Margin="4,0,0,0"
-									FontSize="10"
-									Text="Пребарување по Статус"
-									TextColor="#64748B" />
 
-								<Border
-									Padding="8,0"
-									BackgroundColor="#FFFFFF"
-									HeightRequest="44"
-									Stroke="#E2E8F0"
-									StrokeShape="RoundRectangle 16">
+							<!--
+								Сегментирана контрола како во дизајнот: сива патека, активниот
+								сегмент е бел со сенка. Нема „Staff" — немаме таков поим.
+							-->
+							<Border
+								Padding="3"
+								BackgroundColor="#F1F5F9"
+								StrokeShape="RoundRectangle 9"
+								StrokeThickness="0"
+								VerticalOptions="Center">
+								<HorizontalStackLayout Spacing="2">
+									<controls:CalendarViewSegment
+										Command="{Binding SetCalendarViewCommand}"
+										CommandParameter="Day"
+										IsActive="{Binding IsDayModeActive}"
+										Text="Ден" />
+									<controls:CalendarViewSegment
+										Command="{Binding SetCalendarViewCommand}"
+										CommandParameter="Week"
+										IsActive="{Binding IsWeekModeActive}"
+										Text="Недела" />
+									<controls:CalendarViewSegment
+										Command="{Binding SetCalendarViewCommand}"
+										CommandParameter="Month"
+										IsActive="{Binding IsMonthModeActive}"
+										Text="Месец" />
+								</HorizontalStackLayout>
+							</Border>
+
+							<!--
+								Филтер по статус — на иста линија со преклопувачот.
+								Натписот над него го креваше и го фрлаше надвор од линијата.
+							-->
+							<Border
+								Padding="10,0"
+								BackgroundColor="#FFFFFF"
+								HeightRequest="34"
+								Stroke="#E2E8F0"
+								StrokeShape="RoundRectangle 9"
+								StrokeThickness="1"
+								VerticalOptions="Center">
+								<Grid ColumnDefinitions="Auto,*" ColumnSpacing="6">
+									<Label
+										FontSize="12"
+										Text="◍"
+										TextColor="#94A3B8"
+										VerticalOptions="Center" />
 									<Picker
+										Grid.Column="1"
 										FontSize="12"
 										HorizontalOptions="Fill"
 										ItemsSource="{Binding Statuses}"
 										SelectedItem="{Binding SelectedStatus}"
 										TextColor="#0F172A"
 										TitleColor="#94A3B8"
-										VerticalOptions="Start"
-										WidthRequest="120" />
-								</Border>
-							</VerticalStackLayout>
+										VerticalOptions="Center"
+										WidthRequest="128" />
+								</Grid>
+							</Border>
 
 						</HorizontalStackLayout>
 					</Grid>
 
-					<!--  3. KPI METRIC CARDS SECTION  -->
+					<!--  3. KPI КАРТИЧКИ  -->
 					<Grid
 						Grid.Row="2"
 						ColumnDefinitions="*, *, *"
 						ColumnSpacing="12"
 						IsVisible="{Binding IsStatsViewActive}">
-						<!--  Card 1: Total Appointments  -->
-						<Border
+
+						<controls:CalendarKpiCard
+							Title="{Binding ContentTotalTitle}"
 							Grid.Column="0"
-							Padding="14,10"
-							BackgroundColor="#FFFFFF"
-							Stroke="#00FF28"
-							StrokeShape="RoundRectangle 8">
-							<Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
-								<Label
-									Grid.Row="0"
-									Grid.Column="0"
-									FontSize="16"
-									Text="Сите Прегледи ⓘ"
-									TextColor="#00FF28" />
-								<Label
-									Grid.Row="1"
-									Grid.Column="0"
-									FontAttributes="Bold"
-									FontSize="22"
-									Text="{Binding MonthlyEncountersCount}"
-									TextColor="#ADE6B6" />
-								<Border
-									Grid.Row="1"
-									Grid.Column="1"
-									Padding="6,2"
-									BackgroundColor="#00FF28"
-									StrokeShape="RoundRectangle 10">
-									<Label
-										Padding="10"
-										FontAttributes="Bold"
-										FontSize="10"
-										Text="+12% vs last week"
-										TextColor="#ffffff" />
-								</Border>
-							</Grid>
-						</Border>
+							Command="{Binding OpenEncountersCommand}"
+							ComparisonText="{Binding KpiComparisonText}"
+							DeltaText="{Binding TotalDeltaText}"
+							DeltaTone="{Binding TotalDeltaTone}"
+							PeriodText="{Binding KpiPeriodText}"
+							Value="{Binding MonthlyEncountersCount}" />
 
-						<!--  Card 2: Completed Appointments  -->
-						<Border
+						<controls:CalendarKpiCard
+							Title="Завршени"
 							Grid.Column="1"
-							Padding="14,10"
-							BackgroundColor="#00D4C8"
-							Stroke="#E2E8F0"
-							StrokeShape="RoundRectangle 8">
-							<Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
-								<Label
-									Grid.Row="0"
-									Grid.Column="0"
-									FontSize="16"
-									Text="Завршени. ⓘ"
-									TextColor="#FFFFFF" />
-								<Label
-									Grid.Row="1"
-									Grid.Column="0"
-									FontAttributes="Bold"
-									FontSize="22"
-									Text="{Binding CompletedPercentageText}"
-									TextColor="#FFFFFF" />
-								<Border
-									Grid.Row="1"
-									Grid.Column="1"
-									Padding="0,2"
-									BackgroundColor="#FFFFFF"
-									StrokeShape="RoundRectangle 10">
-									<Label
-										Padding="10"
-										FontAttributes="Bold"
-										FontSize="10"
-										Text="+12% vs last week"
-										TextColor="#00D4C8" />
-								</Border>
-							</Grid>
-						</Border>
+							Command="{Binding OpenEncountersCommand}"
+							CommandParameter="Completed"
+							ComparisonText="{Binding KpiComparisonText}"
+							DeltaText="{Binding CompletedDeltaText}"
+							DeltaTone="{Binding CompletedDeltaTone}"
+							PeriodText="{Binding KpiPeriodText}"
+							Value="{Binding CompletedPercentageText}" />
 
-						<!--  Card 3: No Show Appointments  -->
-						<Border
+						<controls:CalendarKpiCard
+							Title="Не се јавиле"
 							Grid.Column="2"
-							Padding="14,10"
-							BackgroundColor="#DFFFFC"
-							Stroke="#E2E8F0"
-							StrokeShape="RoundRectangle 8">
-							<Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
-								<Label
-									Grid.Row="0"
-									Grid.Column="0"
-									FontSize="16"
-									Text="Не се дојдени ⓘ"
-									TextColor="#64748B" />
-								<Label
-									Grid.Row="1"
-									Grid.Column="0"
-									FontAttributes="Bold"
-									FontSize="22"
-									Text="{Binding NoShowPercentageText}"
-									TextColor="#0F172A" />
-								<Border
-									Grid.Row="1"
-									Grid.Column="1"
-									Padding="6,2"
-									BackgroundColor="#FFFFFF"
-									StrokeShape="RoundRectangle 10">
-									<Label
-										Padding="10"
-										FontAttributes="Bold"
-										FontSize="10"
-										Text="+12% vs last week"
-										TextColor="#0F172A" />
-								</Border>
-							</Grid>
-						</Border>
+							Command="{Binding OpenEncountersCommand}"
+							CommandParameter="NoShow"
+							ComparisonText="{Binding KpiComparisonText}"
+							DeltaText="{Binding NoShowDeltaText}"
+							DeltaTone="{Binding NoShowDeltaTone}"
+							PeriodText="{Binding KpiPeriodText}"
+							Value="{Binding NoShowPercentageText}" />
 					</Grid>
 
 					<!--  4. WEEKLY CALENDAR GRID AREA  -->
@@ -321,210 +365,477 @@
 								Offset="0,4" />
 						</Border.Shadow>
 
-						<Grid RowDefinitions="Auto, *">
+						<!--  Border прима само едно дете, па трите приказа мора да се во заеднички контејнер.  -->
+						<Grid>
 
-							<!--  ==================== 1. ХЕДЕР ЗА ДЕНОВИ ====================  -->
-							<Border
-								Grid.Row="0"
-								Padding="0"
-								BackgroundColor="#F8FAFC"
-								Stroke="#E2E8F0"
-								StrokeShape="RoundRectangle 1"
-								StrokeThickness="1">
-								<Grid ColumnDefinitions="64, *, *, *, *, *, *, *">
+							<!--
+								Заглавјето и телото се во иста колона (0). Порано заглавјето одеше преку
+								цела ширина, а телото беше стеснето за FFScrollBar во десната колона —
+								затоа седумте колони не се совпаѓаа и линиите бегаа.
+							-->
+							<Grid
+								ColumnDefinitions="*,Auto"
+								IsVisible="{Binding IsWeekModeActive}"
+								RowDefinitions="Auto, *">
 
-									<BoxView
+								<!--  ==================== 1. ХЕДЕР ЗА ДЕНОВИ ====================  -->
+								<Border
+									Grid.Row="0"
+									Grid.Column="0"
+									Padding="0"
+									BackgroundColor="#F8FAFC"
+									Stroke="#E2E8F0"
+									StrokeShape="RoundRectangle 1"
+									StrokeThickness="1">
+									<Grid ColumnDefinitions="64,*,*,*,*,*,*,*">
+
+										<BoxView
+											Grid.Column="0"
+											HorizontalOptions="End"
+											VerticalOptions="Fill"
+											WidthRequest="1"
+											Color="#E2E8F0" />
+										<BoxView
+											Grid.Column="1"
+											HorizontalOptions="End"
+											VerticalOptions="Fill"
+											WidthRequest="1"
+											Color="#E2E8F0" />
+										<BoxView
+											Grid.Column="2"
+											HorizontalOptions="End"
+											VerticalOptions="Fill"
+											WidthRequest="1"
+											Color="#E2E8F0" />
+										<BoxView
+											Grid.Column="3"
+											HorizontalOptions="End"
+											VerticalOptions="Fill"
+											WidthRequest="1"
+											Color="#E2E8F0" />
+										<BoxView
+											Grid.Column="4"
+											HorizontalOptions="End"
+											VerticalOptions="Fill"
+											WidthRequest="1"
+											Color="#E2E8F0" />
+										<BoxView
+											Grid.Column="5"
+											HorizontalOptions="End"
+											VerticalOptions="Fill"
+											WidthRequest="1"
+											Color="#E2E8F0" />
+										<BoxView
+											Grid.Column="6"
+											HorizontalOptions="End"
+											VerticalOptions="Fill"
+											WidthRequest="1"
+											Color="#E2E8F0" />
+
+										<Label
+											Grid.Column="0"
+											FontAttributes="Bold"
+											FontSize="9"
+											HorizontalOptions="Center"
+											Text="GMT+7"
+											TextColor="#94A3B8"
+											VerticalOptions="Center" />
+
+										<!--
+											Заглавјата се врзани по индекс, секое во својата колона од овој грид,
+											за да се совпаднат со вертикалните линии на редовите под нив.
+										-->
+										<controls:CalendarDayHeader
+											Grid.Column="1"
+											Day="{Binding WeekDay0}"
+											SelectCommand="{Binding SelectCalendarDayCommand}" />
+										<controls:CalendarDayHeader
+											Grid.Column="2"
+											Day="{Binding WeekDay1}"
+											SelectCommand="{Binding SelectCalendarDayCommand}" />
+										<controls:CalendarDayHeader
+											Grid.Column="3"
+											Day="{Binding WeekDay2}"
+											SelectCommand="{Binding SelectCalendarDayCommand}" />
+										<controls:CalendarDayHeader
+											Grid.Column="4"
+											Day="{Binding WeekDay3}"
+											SelectCommand="{Binding SelectCalendarDayCommand}" />
+										<controls:CalendarDayHeader
+											Grid.Column="5"
+											Day="{Binding WeekDay4}"
+											SelectCommand="{Binding SelectCalendarDayCommand}" />
+										<controls:CalendarDayHeader
+											Grid.Column="6"
+											Day="{Binding WeekDay5}"
+											SelectCommand="{Binding SelectCalendarDayCommand}" />
+										<controls:CalendarDayHeader
+											Grid.Column="7"
+											Day="{Binding WeekDay6}"
+											SelectCommand="{Binding SelectCalendarDayCommand}" />
+									</Grid>
+								</Border>
+
+								<!--
+									==================== 2. КАЛЕНДАРСКА МРЕЖА ====================
+									ScrollView наместо CollectionView: само 24 реда се, па виртуелизацијата
+									не носи ништо, а ScrollView дава точен ScrollY што FFScrollBar го следи.
+								-->
+								<ScrollView
+									x:Name="WeekGridScroll"
+									Grid.Row="1"
+									Grid.Column="0"
+									VerticalScrollBarVisibility="Never">
+									<VerticalStackLayout BindableLayout.ItemsSource="{Binding HourlyTimelineSlots}" Spacing="0">
+										<BindableLayout.ItemTemplate>
+											<DataTemplate x:DataType="vm:HourlyTimelineSlotDto">
+												<Grid ColumnDefinitions="64,*,*,*,*,*,*,*" MinimumHeightRequest="40">
+													<BoxView
+														Grid.ColumnSpan="8"
+														HeightRequest="1"
+														VerticalOptions="Start"
+														Color="#EDF1F5" />
+
+													<!--  Column separators, aligned with the day header above  -->
+													<BoxView
+														Grid.Column="0"
+														HorizontalOptions="End"
+														VerticalOptions="Fill"
+														WidthRequest="1"
+														Color="#E2E8F0" />
+													<BoxView
+														Grid.Column="1"
+														HorizontalOptions="End"
+														VerticalOptions="Fill"
+														WidthRequest="1"
+														Color="#E2E8F0" />
+													<BoxView
+														Grid.Column="2"
+														HorizontalOptions="End"
+														VerticalOptions="Fill"
+														WidthRequest="1"
+														Color="#E2E8F0" />
+													<BoxView
+														Grid.Column="3"
+														HorizontalOptions="End"
+														VerticalOptions="Fill"
+														WidthRequest="1"
+														Color="#E2E8F0" />
+													<BoxView
+														Grid.Column="4"
+														HorizontalOptions="End"
+														VerticalOptions="Fill"
+														WidthRequest="1"
+														Color="#E2E8F0" />
+													<BoxView
+														Grid.Column="5"
+														HorizontalOptions="End"
+														VerticalOptions="Fill"
+														WidthRequest="1"
+														Color="#E2E8F0" />
+													<BoxView
+														Grid.Column="6"
+														HorizontalOptions="End"
+														VerticalOptions="Fill"
+														WidthRequest="1"
+														Color="#E2E8F0" />
+
+													<Label
+														Grid.Column="0"
+														Margin="0,6,10,0"
+														FontAttributes="None"
+														FontSize="10"
+														HorizontalOptions="End"
+														Text="{Binding HourDisplay}"
+														TextColor="#94A3B8"
+														VerticalOptions="Start" />
+
+													<VerticalStackLayout
+														Grid.Column="1"
+														Margin="4,3,4,3"
+														BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
+														BindableLayout.ItemsSource="{Binding DayColumns[0]}"
+														Spacing="3" />
+													<VerticalStackLayout
+														Grid.Column="2"
+														Margin="4,3,4,3"
+														BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
+														BindableLayout.ItemsSource="{Binding DayColumns[1]}"
+														Spacing="3" />
+													<VerticalStackLayout
+														Grid.Column="3"
+														Margin="4,3,4,3"
+														BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
+														BindableLayout.ItemsSource="{Binding DayColumns[2]}"
+														Spacing="3" />
+													<VerticalStackLayout
+														Grid.Column="4"
+														Margin="4,3,4,3"
+														BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
+														BindableLayout.ItemsSource="{Binding DayColumns[3]}"
+														Spacing="3" />
+													<VerticalStackLayout
+														Grid.Column="5"
+														Margin="4,3,4,3"
+														BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
+														BindableLayout.ItemsSource="{Binding DayColumns[4]}"
+														Spacing="3" />
+													<VerticalStackLayout
+														Grid.Column="6"
+														Margin="4,3,4,3"
+														BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
+														BindableLayout.ItemsSource="{Binding DayColumns[5]}"
+														Spacing="3" />
+													<VerticalStackLayout
+														Grid.Column="7"
+														Margin="4,3,4,3"
+														BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
+														BindableLayout.ItemsSource="{Binding DayColumns[6]}"
+														Spacing="3" />
+												</Grid>
+											</DataTemplate>
+										</BindableLayout.ItemTemplate>
+									</VerticalStackLayout>
+								</ScrollView>
+
+								<controls:FFScrollBar
+									x:Name="WeekGridScrollBar"
+									Grid.Row="1"
+									Grid.Column="1"
+									Margin="4" />
+							</Grid>
+
+							<!--  ==================== ДНЕВЕН ПРИКАЗ ====================  -->
+							<Grid IsVisible="{Binding IsDayModeActive}" RowDefinitions="Auto, *">
+
+								<Border
+									Grid.Row="0"
+									Padding="16,12"
+									BackgroundColor="#F8FAFC"
+									Stroke="#E2E8F0"
+									StrokeShape="RoundRectangle 1"
+									StrokeThickness="1">
+									<Grid ColumnDefinitions="*,Auto">
+										<Label
+											FontAttributes="Bold"
+											FontSize="14"
+											Text="{Binding SelectedDayTitle}"
+											TextColor="#0F172A"
+											VerticalOptions="Center" />
+										<Label
+											Grid.Column="1"
+											FontSize="11"
+											Text="{Binding SelectedCalendarDay.EncountersCountText}"
+											TextColor="#94A3B8"
+											VerticalOptions="Center" />
+									</Grid>
+								</Border>
+
+								<!--  ScrollView + FFScrollBar, исто како неделниот приказ, за постојано видлива лента.  -->
+								<Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+									<ScrollView
+										x:Name="DayGridScroll"
 										Grid.Column="0"
-										HorizontalOptions="End"
-										VerticalOptions="Fill"
-										WidthRequest="1"
-										Color="#E2E8F0" />
-									<BoxView
-										Grid.Column="1"
-										HorizontalOptions="End"
-										VerticalOptions="Fill"
-										WidthRequest="1"
-										Color="#E2E8F0" />
-									<BoxView
-										Grid.Column="2"
-										HorizontalOptions="End"
-										VerticalOptions="Fill"
-										WidthRequest="1"
-										Color="#E2E8F0" />
-									<BoxView
-										Grid.Column="3"
-										HorizontalOptions="End"
-										VerticalOptions="Fill"
-										WidthRequest="1"
-										Color="#E2E8F0" />
-									<BoxView
-										Grid.Column="4"
-										HorizontalOptions="End"
-										VerticalOptions="Fill"
-										WidthRequest="1"
-										Color="#E2E8F0" />
-									<BoxView
-										Grid.Column="5"
-										HorizontalOptions="End"
-										VerticalOptions="Fill"
-										WidthRequest="1"
-										Color="#E2E8F0" />
-									<BoxView
-										Grid.Column="6"
-										HorizontalOptions="End"
-										VerticalOptions="Fill"
-										WidthRequest="1"
-										Color="#E2E8F0" />
+										VerticalScrollBarVisibility="Never">
+										<VerticalStackLayout BindableLayout.ItemsSource="{Binding HourlyTimelineSlots}" Spacing="0">
+											<BindableLayout.ItemTemplate>
+												<DataTemplate x:DataType="vm:HourlyTimelineSlotDto">
+													<Grid ColumnDefinitions="64,*" MinimumHeightRequest="44">
+														<BoxView
+															Grid.ColumnSpan="2"
+															HeightRequest="1"
+															VerticalOptions="Start"
+															Color="#EDF1F5" />
+														<BoxView
+															Grid.Column="0"
+															HorizontalOptions="End"
+															VerticalOptions="Fill"
+															WidthRequest="1"
+															Color="#E2E8F0" />
+														<Label
+															Grid.Column="0"
+															Margin="0,6,10,0"
+															FontAttributes="None"
+															FontSize="10"
+															HorizontalOptions="End"
+															Text="{Binding HourDisplay}"
+															TextColor="#94A3B8"
+															VerticalOptions="Start" />
+														<VerticalStackLayout
+															Grid.Column="1"
+															Margin="10,4,10,4"
+															BindableLayout.ItemTemplate="{StaticResource CalendarEventDayCardTemplate}"
+															BindableLayout.ItemsSource="{Binding DayColumns[0]}"
+															Spacing="4" />
+													</Grid>
+												</DataTemplate>
+											</BindableLayout.ItemTemplate>
+										</VerticalStackLayout>
+									</ScrollView>
 
-									<Label
-										Grid.Column="0"
-										FontAttributes="Bold"
-										FontSize="9"
-										HorizontalOptions="Center"
-										Text="GMT+7"
-										TextColor="#94A3B8"
-										VerticalOptions="Center" />
-
-									<!--  Week day headers driven by CollectionView so no index-based bindings needed  -->
-									<CollectionView
+									<controls:FFScrollBar
+										x:Name="DayGridScrollBar"
 										Grid.Column="1"
-										Grid.ColumnSpan="7"
-										ItemsSource="{Binding WeekDays}"
-										SelectionMode="None">
-										<CollectionView.ItemsLayout>
-											<GridItemsLayout Orientation="Vertical" Span="7" />
-										</CollectionView.ItemsLayout>
-										<CollectionView.ItemTemplate>
-											<DataTemplate x:DataType="vm:CalendarDayDto">
-												<VerticalStackLayout
-													Padding="0,10"
-													HorizontalOptions="Center"
-													VerticalOptions="Center">
-													<VerticalStackLayout.GestureRecognizers>
-														<TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCalendarDayCommand}" CommandParameter="{Binding .}" />
-													</VerticalStackLayout.GestureRecognizers>
-													<HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+										Margin="4" />
+								</Grid>
+							</Grid>
+
+							<!--
+								==================== МЕСЕЧЕН ПРИКАЗ ====================
+								Bound to CalendarDays, which the ViewModel already built on every
+								load but which nothing rendered until now.
+							-->
+							<Grid IsVisible="{Binding IsMonthModeActive}" RowDefinitions="Auto, *">
+
+								<Border
+									Grid.Row="0"
+									Padding="0"
+									BackgroundColor="#F8FAFC"
+									Stroke="#E2E8F0"
+									StrokeShape="RoundRectangle 1"
+									StrokeThickness="1">
+									<Grid ColumnDefinitions="*,*,*,*,*,*,*">
+										<Label
+											Grid.Column="0"
+											Padding="0,10"
+											FontAttributes="Bold"
+											FontSize="11"
+											HorizontalTextAlignment="Center"
+											Text="ПОН"
+											TextColor="#64748B" />
+										<Label
+											Grid.Column="1"
+											Padding="0,10"
+											FontAttributes="Bold"
+											FontSize="11"
+											HorizontalTextAlignment="Center"
+											Text="ВТО"
+											TextColor="#64748B" />
+										<Label
+											Grid.Column="2"
+											Padding="0,10"
+											FontAttributes="Bold"
+											FontSize="11"
+											HorizontalTextAlignment="Center"
+											Text="СРЕ"
+											TextColor="#64748B" />
+										<Label
+											Grid.Column="3"
+											Padding="0,10"
+											FontAttributes="Bold"
+											FontSize="11"
+											HorizontalTextAlignment="Center"
+											Text="ЧЕТ"
+											TextColor="#64748B" />
+										<Label
+											Grid.Column="4"
+											Padding="0,10"
+											FontAttributes="Bold"
+											FontSize="11"
+											HorizontalTextAlignment="Center"
+											Text="ПЕТ"
+											TextColor="#64748B" />
+										<Label
+											Grid.Column="5"
+											Padding="0,10"
+											FontAttributes="Bold"
+											FontSize="11"
+											HorizontalTextAlignment="Center"
+											Text="САБ"
+											TextColor="#64748B" />
+										<Label
+											Grid.Column="6"
+											Padding="0,10"
+											FontAttributes="Bold"
+											FontSize="11"
+											HorizontalTextAlignment="Center"
+											Text="НЕД"
+											TextColor="#64748B" />
+									</Grid>
+								</Border>
+
+								<CollectionView
+									Grid.Row="1"
+									ItemsSource="{Binding CalendarDays}"
+									SelectionMode="None"
+									VerticalScrollBarVisibility="Always">
+									<CollectionView.ItemsLayout>
+										<GridItemsLayout Orientation="Vertical" Span="7" />
+									</CollectionView.ItemsLayout>
+									<CollectionView.ItemTemplate>
+										<DataTemplate x:DataType="vm:CalendarDayDto">
+											<Border
+												Margin="1"
+												Padding="6"
+												BackgroundColor="#FFFFFF"
+												MinimumHeightRequest="92"
+												Stroke="#E2E8F0"
+												StrokeShape="RoundRectangle 6"
+												StrokeThickness="1">
+												<Border.GestureRecognizers>
+													<TapGestureRecognizer Command="{Binding BindingContext.SelectCalendarDayCommand, Source={x:Reference CurrentPage}}" CommandParameter="{Binding .}" />
+												</Border.GestureRecognizers>
+												<VerticalStackLayout Spacing="3">
+													<Grid ColumnDefinitions="Auto,*">
 														<Border
-															Padding="6,2"
+															Padding="5,1"
 															BackgroundColor="#0284C7"
 															IsVisible="{Binding IsToday}"
-															StrokeShape="RoundRectangle 10"
+															StrokeShape="RoundRectangle 9"
 															StrokeThickness="0">
 															<Label
 																FontAttributes="Bold"
-																FontSize="11"
+																FontSize="10"
 																Text="{Binding DayNumber}"
 																TextColor="White" />
 														</Border>
 														<Label
 															FontAttributes="Bold"
-															FontSize="12"
+															FontSize="11"
 															IsVisible="{Binding IsToday, Converter={StaticResource InvertedBoolConverter}}"
 															Text="{Binding DayNumber}"
 															TextColor="#0F172A" />
-														<Label
-															FontAttributes="Bold"
-															FontSize="12"
-															Text="{Binding DayNameShort}"
-															TextColor="#0F172A" />
-													</HorizontalStackLayout>
+														<BoxView
+															Grid.Column="1"
+															HeightRequest="3"
+															HorizontalOptions="End"
+															IsVisible="{Binding IsSelected}"
+															VerticalOptions="Center"
+															WidthRequest="16"
+															Color="#0284C7" />
+													</Grid>
+
+													<VerticalStackLayout
+														BindableLayout.ItemTemplate="{StaticResource CalendarEventMonthChipTemplate}"
+														BindableLayout.ItemsSource="{Binding VisibleEvents}"
+														Spacing="2" />
+
 													<Label
-														Margin="0,3,0,0"
-														FontSize="10"
-														HorizontalOptions="Center"
-														Text="{Binding EncountersCountText}"
+														FontSize="8"
+														IsVisible="{Binding HasHiddenEvents}"
+														Text="{Binding HiddenEventsCount, StringFormat='+{0} уште'}"
 														TextColor="#94A3B8" />
 												</VerticalStackLayout>
-											</DataTemplate>
-										</CollectionView.ItemTemplate>
-									</CollectionView>
-								</Grid>
-							</Border>
+											</Border>
+										</DataTemplate>
+									</CollectionView.ItemTemplate>
+								</CollectionView>
+							</Grid>
 
-							<!--  ==================== 2. КАЛЕНДАРСКА МРЕЖА — VIRTUALIZED  ====================  -->
-							<CollectionView
-								Grid.Row="1"
-								ItemsSource="{Binding HourlyTimelineSlots}"
-								SelectionMode="None"
-								VerticalScrollBarVisibility="Default">
-								<CollectionView.ItemTemplate>
-									<DataTemplate x:DataType="vm:HourlyTimelineSlotDto">
-										<Grid ColumnDefinitions="64,*,*,*,*,*,*,*" MinimumHeightRequest="64">
-											<BoxView
-												Grid.ColumnSpan="8"
-												HeightRequest="1"
-												VerticalOptions="Start"
-												Color="#EDF1F5" />
-
-											<Label
-												Grid.Column="0"
-												Margin="0,10,0,0"
-												FontAttributes="Bold"
-												FontSize="10"
-												HorizontalOptions="Center"
-												Text="{Binding HourText}"
-												TextColor="#94A3B8"
-												VerticalOptions="Start" />
-
-											<VerticalStackLayout
-												Grid.Column="1"
-												Margin="4,3,4,3"
-												BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
-												BindableLayout.ItemsSource="{Binding DayColumns[0]}"
-												Spacing="3" />
-											<VerticalStackLayout
-												Grid.Column="2"
-												Margin="4,3,4,3"
-												BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
-												BindableLayout.ItemsSource="{Binding DayColumns[1]}"
-												Spacing="3" />
-											<VerticalStackLayout
-												Grid.Column="3"
-												Margin="4,3,4,3"
-												BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
-												BindableLayout.ItemsSource="{Binding DayColumns[2]}"
-												Spacing="3" />
-											<VerticalStackLayout
-												Grid.Column="4"
-												Margin="4,3,4,3"
-												BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
-												BindableLayout.ItemsSource="{Binding DayColumns[3]}"
-												Spacing="3" />
-											<VerticalStackLayout
-												Grid.Column="5"
-												Margin="4,3,4,3"
-												BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
-												BindableLayout.ItemsSource="{Binding DayColumns[4]}"
-												Spacing="3" />
-											<VerticalStackLayout
-												Grid.Column="6"
-												Margin="4,3,4,3"
-												BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
-												BindableLayout.ItemsSource="{Binding DayColumns[5]}"
-												Spacing="3" />
-											<VerticalStackLayout
-												Grid.Column="7"
-												Margin="4,3,4,3"
-												BindableLayout.ItemTemplate="{StaticResource CalendarEventCardTemplate}"
-												BindableLayout.ItemsSource="{Binding DayColumns[6]}"
-												Spacing="3" />
-										</Grid>
-									</DataTemplate>
-								</CollectionView.ItemTemplate>
-							</CollectionView>
 						</Grid>
 					</Border>
 
 				</Grid>
 
 				<!--  ==================== RIGHT AREA: WAITLIST PANEL ====================  -->
-				<Grid Grid.Column="1" WidthRequest="340">
+				<Grid Grid.Column="1" WidthRequest="{Binding WaitlistPanelWidth}">
 					<BoxView
 						HorizontalOptions="Start"
 						VerticalOptions="Fill"
 						WidthRequest="1"
 						Color="#E2E8F0" />
 
+					<!--  Собери / рашири го панелот. Ова копче досега немаше никаква команда.  -->
 					<Border
 						Margin="-14,12,0,0"
 						BackgroundColor="#FFFFFF"
@@ -532,30 +843,39 @@
 						HorizontalOptions="Start"
 						Stroke="#E2E8F0"
 						StrokeShape="RoundRectangle 14"
+						ToolTipProperties.Text="Собери / рашири ја листата на чекање"
 						VerticalOptions="Start"
 						WidthRequest="28"
 						ZIndex="10">
+						<Border.GestureRecognizers>
+							<TapGestureRecognizer Command="{Binding ToggleWaitlistPanelCommand}" />
+						</Border.GestureRecognizers>
 						<Label
 							FontSize="16"
 							HorizontalOptions="Center"
-							Text="›"
+							Text="{Binding WaitlistToggleGlyph}"
 							TextColor="#64748B"
 							VerticalOptions="Center" />
 					</Border>
 
 					<Grid
 						Padding="20,16,16,16"
+						IsVisible="{Binding IsWaitlistExpanded}"
 						RowDefinitions="Auto, Auto, Auto, *"
 						RowSpacing="16">
 
 						<Grid Grid.Row="0" ColumnDefinitions="*, Auto">
-							<Label
-								Grid.Column="0"
-								FontAttributes="Bold"
-								FontSize="18"
-								Text="Листа на чекање"
-								TextColor="#0F172A"
-								VerticalOptions="Center" />
+							<VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+								<Label
+									FontAttributes="Bold"
+									FontSize="18"
+									Text="{Binding WaitlistTitle}"
+									TextColor="#0F172A" />
+								<Label
+									FontSize="11"
+									Text="{Binding WaitlistDateText}"
+									TextColor="#64748B" />
+							</VerticalStackLayout>
 							<Button
 								Grid.Column="1"
 								Padding="12,0"
@@ -565,7 +885,7 @@
 								FontAttributes="Bold"
 								FontSize="12"
 								HeightRequest="36"
-								Text="Додај преглед"
+								Text="{Binding ContentNewButtonText}"
 								TextColor="White" />
 						</Grid>
 
@@ -580,20 +900,35 @@
 								HeightRequest="38"
 								Stroke="#E2E8F0"
 								StrokeShape="RoundRectangle 8">
-								<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
 									<Label
 										FontSize="12"
 										Text="🔍"
 										TextColor="#94A3B8"
 										VerticalOptions="Center" />
 									<Entry
+										Grid.Column="1"
 										BackgroundColor="Transparent"
 										FontSize="12"
-										Placeholder="Пребарај..."
+										Placeholder="Пребарај пациент или број..."
 										PlaceholderColor="#94A3B8"
+										ReturnCommand="{Binding ApplyCalendarSearchCommand}"
 										Text="{Binding SearchText}"
-										TextColor="#0F172A" />
-								</HorizontalStackLayout>
+										TextColor="#0F172A"
+										VerticalOptions="Center" />
+									<Label
+										Grid.Column="2"
+										FontSize="14"
+										IsVisible="{Binding HasSearchText}"
+										Text="✕"
+										TextColor="#94A3B8"
+										ToolTipProperties.Text="Исчисти пребарување"
+										VerticalOptions="Center">
+										<Label.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding ClearSearchCommand}" />
+										</Label.GestureRecognizers>
+									</Label>
+								</Grid>
 							</Border>
 							<Border
 								Grid.Column="1"

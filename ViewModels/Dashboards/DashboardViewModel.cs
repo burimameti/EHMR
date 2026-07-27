@@ -8,6 +8,7 @@ using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
 using EHMR.Services;
+using EHMR.ViewModels.Admin;
 using EHMR.ViewModels.Dashboard.Models;
 using EHMR.ViewModels.Dashboards.Models;
 using EHMR.ViewModels.Patients.Extensions;
@@ -390,6 +391,36 @@ public partial class DashboardViewModel : ObservableObject
             State.UpcomingAppointmentsCount=todayAppointments.Count;
 
             // =====================================================
+            // THERAPY CYCLE KPI
+            // These State properties existed but were never assigned, so the
+            // numbers behind them were always 0.
+            // =====================================================
+            var cyclesQuery =
+                from c in db.TherapyCycles.AsNoTracking()
+                join p in db.Patients.AsNoTracking() on c.PatientId equals p.Id
+                select new
+                {
+                    c.Status,
+                    c.EndDate,
+                    p.DoctorId
+                };
+
+            if(isScoped)
+                cyclesQuery=cyclesQuery.Where(x => x.DoctorId==doctorId);
+
+            var cycles = await cyclesQuery.ToListAsync();
+
+            State.ActiveTherapies=cycles.Count(x => x.Status==TherapyStatus.Active);
+            State.CompletedCycles=cycles.Count(x => x.Status==TherapyStatus.Completed);
+            State.MissedCycles=cycles.Count(x => x.Status==TherapyStatus.Missed);
+
+            // Still running but past its planned end date.
+            State.OverdueCycles=cycles.Count(x =>
+                x.Status==TherapyStatus.Active&&
+                x.EndDate.HasValue&&
+                x.EndDate.Value.Date<DateTime.Today);
+
+            // =====================================================
             // WEEK RANGE FOR ANALYTICS
             // =====================================================
             var last7Days = Enumerable.Range(0, 7)
@@ -684,6 +715,10 @@ public partial class DashboardViewModel : ObservableObject
         await Shell.Current.GoToAsync(AppRoutes.Encounters.List, query);
     }
     [RelayCommand]
+    private async Task NavigateToTherapies() =>
+        await Shell.Current.GoToAsync(AppRoutes.Therapy.List);
+
+    [RelayCommand]
     private async Task NavigateToAlerts() =>
         await Shell.Current.GoToAsync("notifications?filter=critical");
 
@@ -814,6 +849,88 @@ public partial class DashboardViewModel : ObservableObject
         if(span.TotalDays<1) return $"пред {(int)span.TotalHours} часа";
         if(span.TotalDays<7) return $"пред {(int)span.TotalDays} дена";
         return createdAt.ToString("dd.MM.yyyy");
+    }
+
+    // =========================================================
+    // KPI TILES
+    //
+    // The dashboard already computed these numbers on every load but rendered
+    // none of them — only four collections were bound in the view. Surfacing
+    // them through the existing FFMetricTile control keeps the dashboard on the
+    // same design system as the admin dashboard instead of hand-rolled cards.
+    // =========================================================
+    public ObservableCollection<FFMetricTileItem> Kpis { get; } = new();
+
+    private void BuildKpiTiles()
+    {
+        Kpis.Clear();
+
+        Kpis.Add(new FFMetricTileItem
+        {
+            Title="Пациенти",
+            Value=State.TotalPatients.ToString("N0"),
+            Subtitle="вкупно во системот",
+            Icon="",
+            Variant=MetricTileVariant.Primary,
+            Command=NavigateToPatientsCommand
+        });
+
+        Kpis.Add(new FFMetricTileItem
+        {
+            Title="Термини денес",
+            Value=State.UpcomingAppointmentsCount.ToString("N0"),
+            Subtitle="закажани за денес",
+            Icon="",
+            Variant=MetricTileVariant.Info,
+            Command=NavigateToAppointmentsCommand
+        });
+
+        Kpis.Add(new FFMetricTileItem
+        {
+            Title="Завршени денес",
+            Value=State.CompletedToday.ToString("N0"),
+            Subtitle="завршени прегледи",
+            Icon="",
+            Variant=MetricTileVariant.Success,
+            Command=NavigateToEncountersCommand,
+            CommandParameter="Completed"
+        });
+
+        Kpis.Add(new FFMetricTileItem
+        {
+            Title="Чекаат",
+            Value=State.WaitingToday.ToString("N0"),
+            Subtitle="закажани и пријавени",
+            Icon="",
+            Variant=MetricTileVariant.Warning,
+            Command=NavigateToEncountersCommand,
+            CommandParameter="Scheduled"
+        });
+
+        Kpis.Add(new FFMetricTileItem
+        {
+            Title="Не се јавиле",
+            Value=State.NoShowToday.ToString("N0"),
+            Subtitle="пропуштени денес",
+            Icon="",
+            Variant=MetricTileVariant.Danger,
+            Command=NavigateToEncountersCommand,
+            CommandParameter="NoShow"
+        });
+
+        Kpis.Add(new FFMetricTileItem
+        {
+            Title="Терапии во тек",
+            Value=State.ActiveTherapies.ToString("N0"),
+            Subtitle=State.OverdueCycles>0
+                ? $"{State.OverdueCycles} со поминат рок"
+                : "сите во рок",
+            Icon="",
+            Variant=State.OverdueCycles>0
+                ? MetricTileVariant.Warning
+                : MetricTileVariant.Neutral,
+            Command=NavigateToTherapiesCommand
+        });
     }
 
     // =========================================================
@@ -1289,6 +1406,7 @@ public partial class DashboardViewModel : ObservableObject
         RefreshSparkGridRows();
         BuildDayStrip();
         RefreshDailyEncounters();
+        BuildKpiTiles();
     }
 
 

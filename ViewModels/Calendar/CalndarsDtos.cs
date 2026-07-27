@@ -16,6 +16,14 @@ public enum CalendarSection
 public enum CalendarMode
 {
     Month,
+    Week,
     Day,
     Agenda
+}
+
+/// <summary>Што прикажува календарот — прегледи или термини.</summary>
+public enum CalendarContentMode
+{
+    Encounters,
+    Appointments
 }

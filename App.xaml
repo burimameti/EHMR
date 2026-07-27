@@ -43,7 +43,8 @@
 			<converters:AppointmentsInitialsConverter x:Key="AppointmentsInitialsConverter" />
 			<converters:AppointmentStatusToColorConverter x:Key="AppointmentStatusToColorConverter" />
 			<converters:AppointmentInvertedBoolConverter x:Key="AppointmentInvertedBoolConverter" />
-			<converters:InvertedBoolConverter x:Key="InvertedBoolConverter " />
+			<!--  Клучот имаше празно место на крајот, па ниту едно од 7-те повикувања не се совпаѓаше.  -->
+			<converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
 			<converters:GreaterThanOneConverter x:Key="GreaterThanOneConverter  " />
 			<converters:MetricTileVariantToColorConverter x:Key="MetricTileVariantToColorConverter" />
 			<converters:PatientStatusToLabelConverter x:Key="PatientStatusToLabelConverter" />

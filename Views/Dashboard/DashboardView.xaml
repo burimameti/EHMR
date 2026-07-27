@@ -3,6 +3,7 @@
 	x:Class="EHMR.Views.DashboardView"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:admin="clr-namespace:EHMR.ViewModels.Admin"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	xmlns:converters="clr-namespace:EHMR.Converters"
 	xmlns:dash="clr-namespace:EHMR.ViewModels.Dashboard.Models"
@@ -170,7 +171,41 @@
 				<VerticalStackLayout Spacing="8">
 
 					<!--  ===================================================  -->
-					<!--  ALERT SUMMARY STRIP  -->
+					<!--
+						KPI STRIP
+						
+						These numbers were already computed on every dashboard load but
+						nothing rendered them. Uses FFMetricTile so the dashboard matches
+						the admin dashboard's design system rather than hand-rolled cards.
+					-->
+					<!--  ===================================================  -->
+					<Border Style="{StaticResource PageHeaderCardStyle}">
+						<FlexLayout
+							AlignItems="Center"
+							BindableLayout.ItemsSource="{Binding Kpis}"
+							Direction="Row"
+							JustifyContent="SpaceBetween"
+							Wrap="Wrap">
+							<BindableLayout.ItemTemplate>
+								<DataTemplate x:DataType="admin:FFMetricTileItem">
+									<controls:FFMetricTile
+										Title="{Binding Title}"
+										Margin="0,0,12,12"
+										Command="{Binding Command}"
+										CommandParameter="{Binding CommandParameter}"
+										DisplayMode="Metric"
+										Icon="{Binding Icon}"
+										MaximumHeightRequest="160"
+										MinimumWidthRequest="240"
+										Subtitle="{Binding Subtitle}"
+										Variant="{Binding Variant}"
+										Value="{Binding Value}" />
+								</DataTemplate>
+							</BindableLayout.ItemTemplate>
+						</FlexLayout>
+					</Border>
+
+					<!--  ===================================================  -->
 					<!--  ===================================================  -->
 
 					<!--  ===================================================  -->
@@ -224,11 +259,12 @@
 										MinimumHeightRequest="28"
 										MinimumWidthRequest="28"
 										Style="{StaticResource DashboardCardCountBadge}">
+										<!--  Was bound to DailyEncounters.Count — the count of the *other* card's list.  -->
 										<Label
 											FontAttributes="Bold"
 											FontSize="14"
 											Style="{StaticResource DashboardCardCountLabel}"
-											Text="{Binding State.DailyEncounters.Count}" />
+											Text="{Binding State.Appointments.Count}" />
 									</Border>
 								</Grid>
 

@@ -5,8 +5,10 @@ using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
+using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace EHMR.ViewModels.Calendar;
@@ -14,6 +16,7 @@ namespace EHMR.ViewModels.Calendar;
 public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQueryAttributable
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
+    private readonly ISelectedItemService<Appointment> _appointmentSelect;
 
     private DateTime _currentDate;
     private DateTime _currentWeekStart;
@@ -43,8 +46,112 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
     [ObservableProperty]
     private CalendarMode currentMode;
 
+    // ═══════════════════════════════════════════ ПРЕГЛЕДИ / ТЕРМИНИ ═══════════════════════════════════════════
+
+    [ObservableProperty] private CalendarContentMode _contentMode = CalendarContentMode.Encounters;
+
+    public bool IsEncounterContentActive => ContentMode==CalendarContentMode.Encounters;
+    public bool IsAppointmentContentActive => ContentMode==CalendarContentMode.Appointments;
+
+    private bool ShowsAppointments => ContentMode==CalendarContentMode.Appointments;
+
+    // Натписите низ страната се менуваат заедно со режимот.
+    public string PageTitle => ShowsAppointments ? "Календар на Термини" : "Календар на Прегледи";
+    public string ContentTotalTitle => ShowsAppointments ? "Вкупно термини" : "Вкупно прегледи";
+    public string ContentNewButtonText => ShowsAppointments ? "Додај термин" : "Додај преглед";
+    public string WaitlistTitle => ShowsAppointments ? "Листа на термини" : "Листа на чекање";
+
+    partial void OnContentModeChanged(CalendarContentMode value)
+    {
+        OnPropertyChanged(nameof(IsEncounterContentActive));
+        OnPropertyChanged(nameof(IsAppointmentContentActive));
+        OnPropertyChanged(nameof(PageTitle));
+        OnPropertyChanged(nameof(ContentTotalTitle));
+        OnPropertyChanged(nameof(ContentNewButtonText));
+        OnPropertyChanged(nameof(WaitlistTitle));
+
+        // Статусите се различни по режим — освежи ја листата и врати го изборот на „Сите".
+        // Вчитувањето е потиснато тука: SetContentModeAsync го прави еднаш, по промената.
+        _suppressStatusReload=true;
+        try
+        {
+            Statuses.Clear();
+            foreach(var status in StatusLookup.DisplayValues)
+                Statuses.Add(status);
+
+            SelectedStatus="Сите";
+        }
+        finally
+        {
+            _suppressStatusReload=false;
+        }
+    }
+
+    private bool _suppressStatusReload;
+
+    [RelayCommand]
+    private async Task SetContentModeAsync(string mode)
+    {
+        if(!Enum.TryParse<CalendarContentMode>(mode, true, out var parsed))
+            return;
+
+        if(parsed==ContentMode)
+            return;
+
+        ContentMode=parsed;
+        await LoadDashboardDataAsync();
+    }
+
+    // Which of the three layouts on the page is showing. Week is the default.
+    public bool IsWeekModeActive => CurrentMode==CalendarMode.Week;
+    public bool IsMonthModeActive => CurrentMode==CalendarMode.Month;
+    public bool IsDayModeActive => CurrentMode==CalendarMode.Day;
+
+    /// <summary>Header label for the single-day layout, e.g. "Понеделник, 27 јули 2026".</summary>
+    public string SelectedDayTitle =>
+        SelectedCalendarDay is null
+            ? string.Empty
+            : SelectedCalendarDay.Date.ToString("dddd, dd MMMM yyyy", new CultureInfo("mk-MK"));
+
+    partial void OnCurrentModeChanged(CalendarMode value)
+    {
+        OnPropertyChanged(nameof(IsWeekModeActive));
+        OnPropertyChanged(nameof(IsMonthModeActive));
+        OnPropertyChanged(nameof(IsDayModeActive));
+    }
+
+    partial void OnSelectedCalendarDayChanged(CalendarDayDto? value)
+        => OnPropertyChanged(nameof(SelectedDayTitle));
+
     [ObservableProperty] private ObservableCollection<HourlyTimelineSlotDto> _hourlyTimelineSlots = new();
     [ObservableProperty] private ObservableCollection<CalendarDayDto> _weekDays = new();
+
+    // ═══════════════════════════════════════════ ЗАГЛАВЈА ПО ДЕН ═══════════════════════════════════════════
+    //
+    // Седумте заглавја се врзуваат за овие обични својства, не за WeekDays[0..6].
+    // Индексираното врзување се пресметува при градење на страната, кога колекцијата
+    // е сè уште празна, и не се освежува кога подоцна ќе се наполни — заглавјата
+    // остануваа празни, а сината значка се прикажуваше насекаде затоа што паднатото
+    // врзување на IsVisible се враќа на true.
+
+    public CalendarDayDto? WeekDay0 => WeekDays.ElementAtOrDefault(0);
+    public CalendarDayDto? WeekDay1 => WeekDays.ElementAtOrDefault(1);
+    public CalendarDayDto? WeekDay2 => WeekDays.ElementAtOrDefault(2);
+    public CalendarDayDto? WeekDay3 => WeekDays.ElementAtOrDefault(3);
+    public CalendarDayDto? WeekDay4 => WeekDays.ElementAtOrDefault(4);
+    public CalendarDayDto? WeekDay5 => WeekDays.ElementAtOrDefault(5);
+    public CalendarDayDto? WeekDay6 => WeekDays.ElementAtOrDefault(6);
+
+    private void NotifyWeekDayHeaders()
+    {
+        OnPropertyChanged(nameof(WeekDay0));
+        OnPropertyChanged(nameof(WeekDay1));
+        OnPropertyChanged(nameof(WeekDay2));
+        OnPropertyChanged(nameof(WeekDay3));
+        OnPropertyChanged(nameof(WeekDay4));
+        OnPropertyChanged(nameof(WeekDay5));
+        OnPropertyChanged(nameof(WeekDay6));
+    }
 
     public ObservableCollection<CalendarDayDto> CalendarDays { get; } = new();
 
@@ -53,15 +160,48 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
 
     // ═══════════════════════════════════════════ STATUS FILTER ═══════════════════════════════════════════
 
+    /// <summary>
+    /// Статусите се различни за прегледи и термини: EncounterStatus има NoShow,
+    /// AppointmentStatus има Missed и ReScheduled. Затоа две одделни мапи.
+    /// </summary>
+    public static FilterLookup EncounterStatusLookup { get; } = new(new[]
+    {
+        ("Сите", "All"),
+        ("Закажан", "Scheduled"),
+        ("Пријавен", "CheckedIn"),
+        ("Во тек", "InProgress"),
+        ("Завршен", "Completed"),
+        ("Откажан", "Cancelled"),
+        ("Не се јавил", "NoShow")
+    });
+
+    public static FilterLookup AppointmentStatusLookup { get; } = new(new[]
+    {
+        ("Сите", "All"),
+        ("Закажан", "Scheduled"),
+        ("Пријавен", "CheckedIn"),
+        ("Во тек", "InProgress"),
+        ("Завршен", "Completed"),
+        ("Откажан", "Cancelled"),
+        ("Пропуштен", "Missed"),
+        ("Презакажан", "ReScheduled")
+    });
+
+    private FilterLookup StatusLookup =>
+        ContentMode==CalendarContentMode.Appointments
+            ? AppointmentStatusLookup
+            : EncounterStatusLookup;
+
     public ObservableCollection<string> Statuses
     {
         get;
-    } = new(new[]
-    {
-        "Сите", "Scheduled", "CheckedIn", "InProgress", "Completed", "Cancelled", "NoShow"
-    });
+    } = new(EncounterStatusLookup.DisplayValues);
 
+    /// <summary>The Macedonian label shown in the picker.</summary>
     [ObservableProperty] private string _selectedStatus = "Сите";
+
+    /// <summary>The enum name the query filters on.</summary>
+    private string SelectedStatusValue => StatusLookup.ToInternal(SelectedStatus);
 
     // ═══════════════════════════════════════════ WAITLIST PANEL ═══════════════════════════════════════════
 
@@ -73,6 +213,25 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
     public int InProgressCount => InProgressEncounters.Count;
     public int ScheduledCount => ScheduledEncounters.Count;
 
+    // ═══════════════════════════════════════════ WAITLIST PANEL COLLAPSE ═══════════════════════════════════════════
+
+    [ObservableProperty] private bool _isWaitlistExpanded = true;
+
+    /// <summary>Ширина на десниот панел: полна кога е отворен, само лентата со копчето кога е собран.</summary>
+    public double WaitlistPanelWidth => IsWaitlistExpanded ? 340 : 34;
+
+    /// <summary>Стрелката се врти според состојбата.</summary>
+    public string WaitlistToggleGlyph => IsWaitlistExpanded ? "›" : "‹";
+
+    partial void OnIsWaitlistExpandedChanged(bool value)
+    {
+        OnPropertyChanged(nameof(WaitlistPanelWidth));
+        OnPropertyChanged(nameof(WaitlistToggleGlyph));
+    }
+
+    [RelayCommand]
+    private void ToggleWaitlistPanel() => IsWaitlistExpanded=!IsWaitlistExpanded;
+
     [ObservableProperty] private bool _isPendingTabActive = true;
     [ObservableProperty] private bool _isInProgressTabActive;
     [ObservableProperty] private bool _isScheduledTabActive;
@@ -83,13 +242,22 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
         IUserDialogService dialog,
         IMenuService menu,
         IAuthorizationService authorization,
-        ISelectedItemService<Encounter> encounterSelect)
+        ISelectedItemService<Encounter> encounterSelect,
+        ISelectedItemService<Appointment> appointmentSelect)
         : base(navigationService, dialog, menu, authorization, encounterSelect)
     {
         _dbFactory=dbFactory;
+        _appointmentSelect=appointmentSelect;
 
         _currentDate=DateTime.Today;
         _currentWeekStart=StartOfWeek(_currentDate);
+        CurrentMode=CalendarMode.Week;
+
+        // SearchText живее во BaseViewModel и неговиот setter вика ApplyPipeline(),
+        // што работи врз AllItems — колекција што календарот воопшто не ја полни.
+        // Затоа пишувањето во полето за пребарување немаше никаков ефект: терминот
+        // се читаше во LoadEventsInRangeAsync, но никој не го повикуваше повторно.
+        PropertyChanged+=OnSelfPropertyChanged;
 
         EvaluatePermissions();
         BuildSparkButtons();
@@ -103,18 +271,53 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
 
     // ═══════════════════════════════════════════ COMMANDS ═══════════════════════════════════════════
 
+    /// <summary>
+    /// Set by pages that render the 7-column week grid (MainPage). Those pages have no
+    /// day-view flyout, so selecting a day must only move the highlight — collapsing the
+    /// timeline to a single day there empties six of the seven visible columns.
+    /// </summary>
+    public bool UsesWeekTimeline
+    {
+        get; set;
+    }
+
     [RelayCommand]
-    private void SelectCalendarDay(CalendarDayDto? day)
+    private async Task SelectCalendarDayAsync(CalendarDayDto? day)
     {
         if(day==null||day.IsEmptySlot)
             return;
 
         SelectedCalendarDay=day;
+        HighlightSelectedDay();
+
+        if(UsesWeekTimeline)
+        {
+            // Picking a day opens the single-day layout for it and re-points the side panel
+            // at that day's encounters/appointments.
+            _currentDate=day.Date;
+            _currentWeekStart=StartOfWeek(day.Date);
+            CurrentMode=CalendarMode.Day;
+
+            await LoadDashboardDataAsync();
+            return;
+        }
+
         IsMonthViewActive=false;
         IsDayViewActive=true;
         IsStatsViewActive=false;
 
         BuildHourlyTimeline();
+    }
+
+    private void HighlightSelectedDay()
+    {
+        var selected = SelectedCalendarDay?.Date.Date;
+
+        foreach(var day in WeekDays)
+            day.IsSelected=day.Date.Date==selected;
+
+        foreach(var day in CalendarDays)
+            day.IsSelected=day.Date.Date==selected;
     }
 
     [RelayCommand]
@@ -125,6 +328,8 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
         IsStatsViewActive=true;
 
         SelectedCalendarDay=null;
+        HighlightSelectedDay();
+        RefreshWaitlist();
 
         HourlyTimelineSlots.Clear();
     }
@@ -138,8 +343,23 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
     [RelayCommand]
     private async Task SetCalendarViewAsync(string mode)
     {
-        if(Enum.TryParse<CalendarMode>(mode, true, out var parsed))
-            CurrentMode=parsed;
+        // The XAML sends "Day" / "Week" / "Month"; an unparsed value used to leave the mode
+        // untouched, which made the buttons look dead.
+        if(!Enum.TryParse<CalendarMode>(mode, true, out var parsed))
+            return;
+
+        CurrentMode=parsed;
+
+        if(parsed==CalendarMode.Day)
+        {
+            // Day mode needs a concrete day; fall back to today when nothing is picked.
+            _currentDate=SelectedCalendarDay?.Date??DateTime.Today;
+            _currentWeekStart=StartOfWeek(_currentDate);
+
+            SelectedCalendarDay??=
+                WeekDays.FirstOrDefault(x => x.IsToday)
+                ??CalendarDays.FirstOrDefault(x => x.IsToday);
+        }
 
         await LoadDashboardDataAsync();
     }
@@ -152,8 +372,47 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
 
         await LoadDashboardDataAsync();
 
-        var todayDay = CalendarDays.FirstOrDefault(x => x.IsToday);
-        SelectCalendarDay(todayDay);
+        // Само означи го денешниот ден. Не го менувај приказот — „Денес" значи
+        // оди на денешен датум, не префрли се во дневен приказ.
+        SelectedCalendarDay=
+            WeekDays.FirstOrDefault(x => x.IsToday)
+            ??CalendarDays.FirstOrDefault(x => x.IsToday);
+
+        HighlightSelectedDay();
+        RefreshWaitlist();
+    }
+
+    /// <summary>
+    /// The ‹ › arrows step by whatever the active mode shows, so the header text and the
+    /// visible days always move together.
+    /// </summary>
+    [RelayCommand]
+    private async Task NextPeriodAsync() => await ShiftPeriodAsync(1);
+
+    [RelayCommand]
+    private async Task PreviousPeriodAsync() => await ShiftPeriodAsync(-1);
+
+    private async Task ShiftPeriodAsync(int direction)
+    {
+        switch(CurrentMode)
+        {
+            case CalendarMode.Month:
+                _currentDate=_currentDate.AddMonths(direction);
+                _currentWeekStart=StartOfWeek(_currentDate);
+                break;
+
+            case CalendarMode.Day:
+                _currentDate=_currentDate.AddDays(direction);
+                _currentWeekStart=StartOfWeek(_currentDate);
+                break;
+
+            default:
+                _currentWeekStart=_currentWeekStart.AddDays(7*direction);
+                _currentDate=_currentWeekStart;
+                break;
+        }
+
+        await LoadDashboardDataAsync();
     }
 
     [RelayCommand]
@@ -170,20 +429,10 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
     }
 
     [RelayCommand]
-    private async Task NextWeekAsync()
-    {
-        _currentWeekStart=_currentWeekStart.AddDays(7);
-        _currentDate=_currentWeekStart;
-        await LoadDashboardDataAsync();
-    }
+    private async Task NextWeekAsync() => await ShiftPeriodAsync(1);
 
     [RelayCommand]
-    private async Task PreviousWeekAsync()
-    {
-        _currentWeekStart=_currentWeekStart.AddDays(-7);
-        _currentDate=_currentWeekStart;
-        await LoadDashboardDataAsync();
-    }
+    private async Task PreviousWeekAsync() => await ShiftPeriodAsync(-1);
 
     [RelayCommand]
     private async Task CreateNewEncounterForSelectedDayAsync()
@@ -192,6 +441,14 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
             SelectedCalendarDay!=null
                 ? SelectedCalendarDay.Date
                 : DateTime.Today;
+
+        // Во режим „Термини" копчето отвора нов термин, не нов преглед.
+        if(ShowsAppointments)
+        {
+            _appointmentSelect.SelectedItem=null;
+            await NavigationService.GoToAsync(AppRoutes.Appointments.Detail);
+            return;
+        }
 
         SelectedItemService.SelectedItem=null;
         await NavigationService.GoToAsync($"{AppRoutes.Encounters.Create}?date={targetDate.Ticks}");
@@ -211,16 +468,36 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
         await NavigationService.GoToAsync($"{AppRoutes.Encounters.Create}?date={targetDateTime.Ticks}");
     }
 
+    /// <summary>
+    /// Отвора детали за ставката од календарот. Во режим „Термини" Id-то е на термин,
+    /// не на преглед — порано клик врз картичка во тој режим тивко не правеше ништо.
+    /// </summary>
     [RelayCommand]
-    public async Task ProcessEncounterSelectionAsync(Guid encounterId)
+    public async Task ProcessEncounterSelectionAsync(Guid itemId)
     {
         await using var db = await _dbFactory.CreateDbContextAsync();
+
+        if(ShowsAppointments)
+        {
+            var appointment = await db.Appointments
+                .Include(x => x.Patient)
+                .Include(x => x.Doctor)
+                    .ThenInclude(x => x.User)
+                .FirstOrDefaultAsync(x => x.Id==itemId);
+
+            if(appointment==null)
+                return;
+
+            _appointmentSelect.SelectedItem=appointment;
+            await NavigationService.GoToAsync(AppRoutes.Appointments.Detail);
+            return;
+        }
 
         var encounter = await db.Encounters
             .Include(x => x.Patient)
             .Include(x => x.Doctor)
                 .ThenInclude(x => x.User)
-            .FirstOrDefaultAsync(x => x.Id==encounterId);
+            .FirstOrDefaultAsync(x => x.Id==itemId);
 
         if(encounter==null)
             return;
@@ -251,7 +528,86 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
     }
 
     [RelayCommand]
-    private async Task ApplyCalendarSearchAsync() => await LoadDashboardDataAsync();
+    private async Task ApplyCalendarSearchAsync()
+    {
+        _searchDebounceCts?.Cancel();
+        await LoadDashboardDataAsync();
+    }
+
+    // ═══════════════════════════════════════════ SEARCH ═══════════════════════════════════════════
+
+    private CancellationTokenSource? _searchDebounceCts;
+
+    private const int SearchDebounceMs = 350;
+
+    public bool HasSearchText => !string.IsNullOrWhiteSpace(SearchText);
+
+    [RelayCommand]
+    private void ClearSearch() => SearchText=string.Empty;
+
+    private async void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if(e.PropertyName!=nameof(SearchText))
+            return;
+
+        OnPropertyChanged(nameof(HasSearchText));
+
+        await DebouncedSearchReloadAsync();
+    }
+
+    /// <summary>
+    /// Го чека корисникот да престане да пишува, па повторно го вчитува опсегот.
+    /// Пребарувањето се извршува во базата (LoadEventsInRangeAsync), не во меморија,
+    /// па не смее да оди по притисок на секое копче.
+    /// </summary>
+    private async Task DebouncedSearchReloadAsync()
+    {
+        _searchDebounceCts?.Cancel();
+        _searchDebounceCts=new CancellationTokenSource();
+        var token = _searchDebounceCts.Token;
+
+        try
+        {
+            await Task.Delay(SearchDebounceMs, token);
+
+            // LoadDashboardDataAsync тивко излегува ако веќе тече вчитување,
+            // па почекај да заврши за да не се изгуби последниот внес.
+            while(IsBusy)
+                await Task.Delay(50, token);
+
+            await LoadDashboardDataAsync();
+        }
+        catch(OperationCanceledException)
+        {
+            // Пристигна понов внес — овој пат нема што да се прави.
+        }
+    }
+
+    public override void Dispose()
+    {
+        PropertyChanged-=OnSelfPropertyChanged;
+
+        _searchDebounceCts?.Cancel();
+        _searchDebounceCts?.Dispose();
+        _searchDebounceCts=null;
+
+        base.Dispose();
+    }
+
+    /// <summary>
+    /// The KPI cards above the grid open the encounters list, filtered to what the card counts.
+    /// Pass an EncounterStatus name, or null/empty for "all".
+    /// </summary>
+    [RelayCommand]
+    private async Task OpenEncountersAsync(string? statusFilter)
+    {
+        var query = new Dictionary<string, object>();
+
+        if(!string.IsNullOrWhiteSpace(statusFilter))
+            query["statusFilter"]=statusFilter;
+
+        await NavigationService.GoToAsync(AppRoutes.Encounters.List, query);
+    }
 
     [RelayCommand]
     private void SelectWaitlistTab(string tab)
@@ -261,7 +617,13 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
         IsScheduledTabActive=tab=="Scheduled";
     }
 
-    async partial void OnSelectedStatusChanged(string value) => await LoadDashboardDataAsync();
+    async partial void OnSelectedStatusChanged(string value)
+    {
+        if(_suppressStatusReload)
+            return;
+
+        await LoadDashboardDataAsync();
+    }
 
     // ═══════════════════════════════════════════ SPARK WEEK TABS ═══════════════════════════════════════════
 
@@ -339,39 +701,46 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
         await using var db = await _dbFactory.CreateDbContextAsync();
 
         var events = await LoadEventsInRangeAsync(db, queryStart, queryEnd);
+        _loadedEvents=events;
 
-        UpdateStatistics(events);
+        // Претходниот период се вчитува одделно за споредбите во KPI картичките.
+        // Оди низ истиот филтер (пребарување + статус), за да е споредбата фер.
+        var (previousStart, previousEnd)=PreviousPeriod;
+        var previousEvents = await LoadEventsInRangeAsync(db, previousStart, previousEnd);
+
+        UpdateStatistics(events, previousEvents);
 
         var calendarDays = BuildCalendarDays(events);
         var weekDays = BuildWeekDays(events);
-        var hourlySlots = BuildWeeklyHourlyTimeline(weekDays);
-        var waitlistBuckets = BuildWaitlistBuckets(events);
+
+        // Day mode collapses the timeline to the picked day in column 0; week/month keep the
+        // seven columns. Built from the freshly loaded weekDays, not from the stale
+        // SelectedCalendarDay instance left over from the previous load.
+        var hourlySlots =
+            CurrentMode==CalendarMode.Day
+                ? BuildSingleDayTimeline(
+                    weekDays.FirstOrDefault(d => d.Date.Date==(SelectedCalendarDay?.Date.Date??_currentDate.Date)))
+                : BuildWeeklyHourlyTimeline(weekDays);
 
         // Awaited (not fire-and-forget) so any exception here is caught by
         // ExecuteSafeAsync and the busy state gets reset correctly.
         await MainThread.InvokeOnMainThreadAsync(() =>
         {
-            RefreshCalendar(calendarDays);
             BuildWeekTabs(calendarDays);
 
             WeekDays.Clear();
             foreach(var d in weekDays) WeekDays.Add(d);
+            NotifyWeekDayHeaders();
 
             HourlyTimelineSlots.Clear();
             foreach(var s in hourlySlots) HourlyTimelineSlots.Add(s);
 
-            PendingEncounters.Clear();
-            foreach(var w in waitlistBuckets.Pending) PendingEncounters.Add(w);
+            // Last: RefreshCalendar re-applies the day-view timeline when one is open, and it
+            // has to win over the weekly slots written just above rather than be overwritten.
+            RefreshCalendar(calendarDays);
 
-            InProgressEncounters.Clear();
-            foreach(var w in waitlistBuckets.InProgress) InProgressEncounters.Add(w);
-
-            ScheduledEncounters.Clear();
-            foreach(var w in waitlistBuckets.Scheduled) ScheduledEncounters.Add(w);
-
-            OnPropertyChanged(nameof(PendingCount));
-            OnPropertyChanged(nameof(InProgressCount));
-            OnPropertyChanged(nameof(ScheduledCount));
+            // After RefreshCalendar, so the panel buckets against the re-resolved selected day.
+            RefreshWaitlist();
         });
     }
 
@@ -386,39 +755,147 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
             .AddMonths(1)
             .AddDays(-1);
 
-        CurrentMonthYearText=
-            _startOfMonth
-                .ToString("MMMM yyyy")
-                .ToUpperInvariant();
+        // The label has to describe what the grid is actually showing, otherwise stepping
+        // through weeks looks like nothing moved whenever the week stays inside one month.
+        var weekEnd = _currentWeekStart.AddDays(6);
+
+        CurrentMonthYearText=CurrentMode switch
+        {
+            CalendarMode.Day =>
+                _currentDate.ToString("dd MMMM yyyy").ToUpperInvariant(),
+
+            CalendarMode.Week when _currentWeekStart.Month==weekEnd.Month =>
+                $"{_currentWeekStart:dd} – {weekEnd:dd MMMM yyyy}".ToUpperInvariant(),
+
+            CalendarMode.Week =>
+                $"{_currentWeekStart:dd MMM} – {weekEnd:dd MMM yyyy}".ToUpperInvariant(),
+
+            _ => _startOfMonth.ToString("MMMM yyyy").ToUpperInvariant()
+        };
 
         IsViewingCurrentMonth=
             _currentDate.Year==DateTime.Today.Year&&
             _currentDate.Month==DateTime.Today.Month;
     }
 
-    private void UpdateStatistics(List<CalendarSourceItem> encounters)
+    // ═══════════════════════════════════════════ KPI ПЕРИОДИ ═══════════════════════════════════════════
+
+    /// <summary>Периодот што календарот моментално го прикажува.</summary>
+    private (DateTime Start, DateTime End) CurrentPeriod => CurrentMode switch
+    {
+        CalendarMode.Day => (_currentDate.Date, _currentDate.Date),
+        CalendarMode.Month => (_startOfMonth, _endOfMonth),
+        _ => (_currentWeekStart, _currentWeekStart.AddDays(6))
+    };
+
+    /// <summary>Претходниот еквивалентен период, за споредба.</summary>
+    private (DateTime Start, DateTime End) PreviousPeriod
+    {
+        get
+        {
+            var (start, end)=CurrentPeriod;
+
+            return CurrentMode switch
+            {
+                CalendarMode.Day => (start.AddDays(-1), end.AddDays(-1)),
+                // Претходниот месец завршува ден пред почетокот на тековниот.
+                CalendarMode.Month => (start.AddMonths(-1), start.AddDays(-1)),
+                _ => (start.AddDays(-7), end.AddDays(-7))
+            };
+        }
+    }
+
+    [ObservableProperty] private string _kpiPeriodText = string.Empty;
+    [ObservableProperty] private string _kpiComparisonText = string.Empty;
+
+    [ObservableProperty] private string _totalDeltaText = string.Empty;
+    [ObservableProperty] private KpiDeltaTone _totalDeltaTone;
+
+    [ObservableProperty] private string _completedDeltaText = string.Empty;
+    [ObservableProperty] private KpiDeltaTone _completedDeltaTone;
+
+    [ObservableProperty] private string _noShowDeltaText = string.Empty;
+    [ObservableProperty] private KpiDeltaTone _noShowDeltaTone;
+
+    private void UpdateStatistics(
+        List<CalendarSourceItem> encounters,
+        List<CalendarSourceItem> previousEncounters)
     {
         var today = DateTime.Today;
+        var (periodStart, periodEnd)=CurrentPeriod;
 
-        // Statistics stay scoped to the visible month, matching CurrentMonthYearText.
-        var monthScoped = encounters
-            .Where(x => x.EffectiveDate.Date>=_startOfMonth&&x.EffectiveDate.Date<=_endOfMonth)
+        // Бројките се врзани за периодот што се гледа, за да се совпаднат
+        // со насловот над календарот.
+        var scoped = encounters
+            .Where(x => x.EffectiveDate.Date>=periodStart&&x.EffectiveDate.Date<=periodEnd)
             .ToList();
 
-        MonthlyEncountersCount=monthScoped.Count;
+        MonthlyEncountersCount=scoped.Count;
 
-        TodaysEncountersCount=monthScoped.Count(x =>
-            x.EffectiveDate.Date==today);
+        TodaysEncountersCount=scoped.Count(x => x.EffectiveDate.Date==today);
+        UpcomingEncountersCount=scoped.Count(x => x.EffectiveDate.Date>today);
 
-        UpcomingEncountersCount=monthScoped.Count(x =>
-            x.EffectiveDate.Date>today);
+        var completedRate = RateOf(scoped, "Completed");
+        var noShowRate = RateOf(scoped, "NoShow");
 
-        int total = monthScoped.Count;
-        int completed = monthScoped.Count(x => x.StatusText=="Completed");
-        int noShow = monthScoped.Count(x => x.StatusText=="NoShow");
+        CompletedPercentageText=$"{completedRate:0}%";
+        NoShowPercentageText=$"{noShowRate:0}%";
 
-        CompletedPercentageText=total==0 ? "0%" : $"{completed*100/total}%";
-        NoShowPercentageText=total==0 ? "0%" : $"{noShow*100/total}%";
+        // ── споредба со претходниот период ──
+        var previousCompletedRate = RateOf(previousEncounters, "Completed");
+        var previousNoShowRate = RateOf(previousEncounters, "NoShow");
+
+        TotalDeltaText=FormatCountDelta(scoped.Count, previousEncounters.Count);
+        TotalDeltaTone=ToneFor(scoped.Count-previousEncounters.Count, higherIsBetter: true);
+
+        CompletedDeltaText=FormatRateDelta(completedRate, previousCompletedRate);
+        CompletedDeltaTone=ToneFor(completedRate-previousCompletedRate, higherIsBetter: true);
+
+        NoShowDeltaText=FormatRateDelta(noShowRate, previousNoShowRate);
+        NoShowDeltaTone=ToneFor(noShowRate-previousNoShowRate, higherIsBetter: false);
+
+        (KpiPeriodText, KpiComparisonText)=CurrentMode switch
+        {
+            CalendarMode.Day => ("Овој ден", "од вчера"),
+            CalendarMode.Month => ("Овој месец", "од минатиот месец"),
+            _ => ("Оваа недела", "од минатата недела")
+        };
+    }
+
+    /// <summary>Процент на ставки со даден статус во множеството.</summary>
+    private static double RateOf(List<CalendarSourceItem> items, string status)
+        => items.Count==0
+            ? 0
+            : items.Count(x => x.StatusText==status)*100.0/items.Count;
+
+    /// <summary>Релативна промена во број на прегледи.</summary>
+    private static string FormatCountDelta(int current, int previous)
+    {
+        if(previous==0)
+            return current==0 ? string.Empty : "ново";
+
+        var change = (current-previous)*100.0/previous;
+        return $"{(change>=0 ? "+" : "")}{change:0}%";
+    }
+
+    /// <summary>Промена на стапка, прикажана како процент.</summary>
+    private static string FormatRateDelta(double current, double previous)
+    {
+        var diff = current-previous;
+
+        if(Math.Abs(diff)<0.5)
+            return "0%";
+
+        return $"{(diff>=0 ? "+" : "")}{diff:0}%";
+    }
+
+    private static KpiDeltaTone ToneFor(double diff, bool higherIsBetter)
+    {
+        if(Math.Abs(diff)<0.5)
+            return KpiDeltaTone.Neutral;
+
+        var improved = higherIsBetter ? diff>0 : diff<0;
+        return improved ? KpiDeltaTone.Positive : KpiDeltaTone.Negative;
     }
 
     private List<CalendarDayDto> BuildCalendarDays(List<CalendarSourceItem> allEvents)
@@ -525,11 +1002,20 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
         return days;
     }
 
+    /// <summary>
+    /// The clinic day opens at 07:00, so the timeline is rotated to start there and wrap through
+    /// midnight to 06:00 — all 24 slots, in the order the day is actually worked.
+    /// </summary>
+    private const int DayStartHour = 7;
+
+    private static IEnumerable<int> TimelineHours()
+        => Enumerable.Range(0, 24).Select(i => (DayStartHour+i)%24);
+
     private static List<HourlyTimelineSlotDto> BuildWeeklyHourlyTimeline(List<CalendarDayDto> weekDays)
     {
         var slots = new List<HourlyTimelineSlotDto>();
 
-        for(int hour = 0; hour<24; hour++)
+        foreach(var hour in TimelineHours())
         {
             var slot = new HourlyTimelineSlotDto
             {
@@ -537,14 +1023,14 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
                 HourValue=hour
             };
 
-            foreach(var day in weekDays)
+            for(int column = 0; column<HourlyTimelineSlotDto.WeekColumnCount; column++)
             {
-                var eventsInHour = day.Events
-                    .Where(x => x.ScheduledTime.Hour==hour)
-                    .OrderBy(x => x.ScheduledTime)
-                    .ToList();
+                if(column>=weekDays.Count)
+                    break;
 
-                slot.DayColumns.Add(new ObservableCollection<CalendarEventDto>(eventsInHour));
+                slot.SetColumn(column, weekDays[column].Events
+                    .Where(x => x.ScheduledTime.Hour==hour)
+                    .OrderBy(x => x.ScheduledTime));
             }
 
             slots.Add(slot);
@@ -553,11 +1039,45 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
         return slots;
     }
 
+    /// <summary>
+    /// Events currently loaded for the visible range, kept so the side panel can be re-bucketed
+    /// for a newly picked day without another round trip to the database.
+    /// </summary>
+    private List<CalendarSourceItem> _loadedEvents = new();
+
+    /// <summary>The day the side panel is listing — the picked day, or today when nothing is picked.</summary>
+    private DateTime WaitlistDate => SelectedCalendarDay?.Date.Date??DateTime.Today;
+
+    [ObservableProperty] private string _waitlistDateText = string.Empty;
+
+    private void RefreshWaitlist()
+    {
+        var buckets = BuildWaitlistBuckets(_loadedEvents);
+
+        PendingEncounters.Clear();
+        foreach(var w in buckets.Pending) PendingEncounters.Add(w);
+
+        InProgressEncounters.Clear();
+        foreach(var w in buckets.InProgress) InProgressEncounters.Add(w);
+
+        ScheduledEncounters.Clear();
+        foreach(var w in buckets.Scheduled) ScheduledEncounters.Add(w);
+
+        var date = WaitlistDate;
+        WaitlistDateText=date==DateTime.Today
+            ? "Денес"
+            : date.ToString("dd MMMM yyyy");
+
+        OnPropertyChanged(nameof(PendingCount));
+        OnPropertyChanged(nameof(InProgressCount));
+        OnPropertyChanged(nameof(ScheduledCount));
+    }
+
     private (List<WaitlistItemDto> Pending, List<WaitlistItemDto> InProgress, List<WaitlistItemDto> Scheduled)
         BuildWaitlistBuckets(List<CalendarSourceItem> allEvents)
     {
-        var today = DateTime.Today;
-        var todaysItems = allEvents.Where(x => x.EffectiveDate.Date==today).ToList();
+        var target = WaitlistDate;
+        var todaysItems = allEvents.Where(x => x.EffectiveDate.Date==target).ToList();
 
         var pending = todaysItems
             .Where(x => x.StatusText is "Scheduled" or "CheckedIn")
@@ -571,8 +1091,9 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
             .Select(ToWaitlistDto)
             .ToList();
 
+        // Missed и ReScheduled постојат само кај термините, NoShow само кај прегледите.
         var scheduled = todaysItems
-            .Where(x => x.StatusText is "Completed" or "Cancelled" or "NoShow")
+            .Where(x => x.StatusText is "Completed" or "Cancelled" or "NoShow" or "Missed" or "ReScheduled")
             .OrderBy(x => x.EffectiveDate)
             .Select(ToWaitlistDto)
             .ToList();
@@ -610,9 +1131,15 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
         if(previousSelected==null)
             return;
 
-        SelectedCalendarDay=CalendarDays.FirstOrDefault(x => x.Date.Date==previousSelected.Value.Date);
+        SelectedCalendarDay=
+            CalendarDays.FirstOrDefault(x => x.Date.Date==previousSelected.Value.Date)
+            ??WeekDays.FirstOrDefault(x => x.Date.Date==previousSelected.Value.Date);
 
-        if(SelectedCalendarDay!=null)
+        HighlightSelectedDay();
+
+        // Only the day-view flyout replaces the timeline. On a week grid the seven columns
+        // built by the caller must stay as they are.
+        if(SelectedCalendarDay!=null&&!UsesWeekTimeline&&IsDayViewActive)
             BuildHourlyTimeline();
     }
 
@@ -650,13 +1177,71 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
 
     private async Task<List<CalendarSourceItem>> LoadEventsInRangeAsync(
         DesktopTherapyDbContext db, DateTime rangeStart, DateTime rangeEnd)
+        => ShowsAppointments
+            ? await LoadAppointmentsInRangeAsync(db, rangeStart, rangeEnd)
+            : await LoadEncountersInRangeAsync(db, rangeStart, rangeEnd);
+
+    /// <summary>
+    /// Режим „Термини": сите закажани термини во опсегот — и оние што веќе имаат
+    /// отворен преглед. Во режим „Прегледи" тие се прикажуваат како преглед, тука
+    /// како термин, зашто тоа е она што се закажува.
+    /// </summary>
+    private async Task<List<CalendarSourceItem>> LoadAppointmentsInRangeAsync(
+        DesktopTherapyDbContext db, DateTime rangeStart, DateTime rangeEnd)
     {
+        rangeStart=rangeStart.Date;
+        var rangeEndExclusive = rangeEnd.Date.AddDays(1);
+
+        var query = db.Appointments
+            .AsNoTracking()
+            .Include(x => x.Patient)
+            .Include(x => x.Doctor).ThenInclude(x => x.User)
+            .Include(x => x.Encounter)
+            .Where(x => x.ScheduledStart>=rangeStart&&x.ScheduledStart<rangeEndExclusive)
+            .AsQueryable();
+
+        if(!string.IsNullOrWhiteSpace(SearchText))
+        {
+            var term = SearchText.Trim();
+            query=query.Where(x =>
+                x.Patient!=null&&(x.Patient.FirstName+" "+x.Patient.LastName).Contains(term));
+        }
+
+        var statusValue = SelectedStatusValue;
+        if(statusValue!="All")
+            query=query.Where(x => x.Status.ToString()==statusValue);
+
+        var appointments = await query.ToListAsync();
+
+        return appointments
+            .Select(appt => new CalendarSourceItem
+            {
+                Id=appt.Id,
+                Kind=CalendarItemKind.Appointment,
+                EffectiveDate=appt.ScheduledStart,
+                StatusText=appt.Status.ToString(),
+                Patient=appt.Patient,
+                Doctor=appt.Doctor,
+                AppointmentId=appt.Id,
+                EncounterId=appt.Encounter?.Id
+            })
+            .ToList();
+    }
+
+    private async Task<List<CalendarSourceItem>> LoadEncountersInRangeAsync(
+        DesktopTherapyDbContext db, DateTime rangeStart, DateTime rangeEnd)
+    {
+        // rangeEnd arrives as a date at midnight. Comparing with <= against it dropped every
+        // event on the last day of the range that had a time on it — i.e. all of Sunday.
+        rangeStart=rangeStart.Date;
+        var rangeEndExclusive = rangeEnd.Date.AddDays(1);
+
         var appointmentsQuery = db.Appointments
             .AsNoTracking()
             .Include(x => x.Patient)
             .Include(x => x.Doctor).ThenInclude(x => x.User)
             .Include(x => x.Encounter)
-            .Where(x => x.ScheduledStart>=rangeStart&&x.ScheduledStart<=rangeEnd)
+            .Where(x => x.ScheduledStart>=rangeStart&&x.ScheduledStart<rangeEndExclusive)
             .AsQueryable();
 
         var encountersQuery = db.Encounters
@@ -664,8 +1249,8 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
             .Include(x => x.Patient)
             .Include(x => x.Doctor).ThenInclude(x => x.User)
             .Where(x => x.AppointmentId==null&&
-                (x.ScheduledStart??x.EncounterDate)>=rangeStart&&
-                (x.ScheduledStart??x.EncounterDate)<=rangeEnd)
+                (x.ScheduledStart??x.StartTime??x.CheckInTime??x.EncounterDate)>=rangeStart&&
+                (x.ScheduledStart??x.StartTime??x.CheckInTime??x.EncounterDate)<rangeEndExclusive)
             .AsQueryable();
 
         if(!string.IsNullOrWhiteSpace(SearchText))
@@ -678,10 +1263,11 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
                 (x.EncounterNumber??"").Contains(term));
         }
 
-        if(!string.IsNullOrWhiteSpace(SelectedStatus)&&SelectedStatus!="Сите")
+        var statusValue = SelectedStatusValue;
+        if(statusValue!="All")
         {
-            appointmentsQuery=appointmentsQuery.Where(x => x.Status.ToString()==SelectedStatus);
-            encountersQuery=encountersQuery.Where(x => x.Status.ToString()==SelectedStatus);
+            appointmentsQuery=appointmentsQuery.Where(x => x.Status.ToString()==statusValue);
+            encountersQuery=encountersQuery.Where(x => x.Status.ToString()==statusValue);
         }
 
         var appointments = await appointmentsQuery.ToListAsync();
@@ -727,7 +1313,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
             {
                 Id=enc.Id,
                 Kind=CalendarItemKind.Encounter,
-                EffectiveDate=enc.ScheduledStart??enc.EncounterDate,
+                EffectiveDate=ResolveEncounterTime(enc),
                 StatusText=enc.Status.ToString(),
                 Patient=enc.Patient,
                 Doctor=enc.Doctor,
@@ -740,8 +1326,55 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
     }
 
     /// <summary>
-    /// Builds the 24-hour timeline for the single selected day (day-view flyout).
-    /// DayColumns will contain exactly one column (index 0) representing that day.
+    /// Timeline for the single-day layout: the day's events all sit in column 0, which is what
+    /// the day layout binds. Empty slots still render so the hour rulers stay continuous.
+    /// </summary>
+    private static List<HourlyTimelineSlotDto> BuildSingleDayTimeline(CalendarDayDto? day)
+    {
+        var slots = new List<HourlyTimelineSlotDto>();
+        var dayEvents = day?.Events??new List<CalendarEventDto>();
+
+        foreach(var hour in TimelineHours())
+        {
+            var slot = new HourlyTimelineSlotDto
+            {
+                HourText=$"{hour:D2}:00",
+                HourValue=hour
+            };
+
+            slot.SetColumn(0, dayEvents
+                .Where(x => x.ScheduledTime.Hour==hour)
+                .OrderBy(x => x.ScheduledTime));
+
+            slots.Add(slot);
+        }
+
+        return slots;
+    }
+
+    /// <summary>
+    /// Which clock time an encounter occupies on the grid. An encounter started straight from
+    /// the waitlist has no ScheduledStart and an EncounterDate at midnight — using that alone
+    /// parked every in-progress visit in the 00:00 row instead of the hour it actually began.
+    /// </summary>
+    private static DateTime ResolveEncounterTime(Encounter encounter)
+    {
+        if(encounter.ScheduledStart.HasValue)
+            return encounter.ScheduledStart.Value;
+
+        if(encounter.StartTime.HasValue)
+            return encounter.StartTime.Value;
+
+        if(encounter.CheckInTime.HasValue)
+            return encounter.CheckInTime.Value;
+
+        return encounter.EncounterDate;
+    }
+
+    /// <summary>
+    /// Builds the timeline for the single selected day (day-view flyout on CalendarDashboardPage).
+    /// The day's events land in the column matching its weekday so a week grid bound to the same
+    /// collection still lines up; the other six columns stay empty rather than missing.
     /// </summary>
     public void BuildHourlyTimeline()
     {
@@ -752,19 +1385,21 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
 
         var dayEvents = SelectedCalendarDay.Events;
 
-        for(int hour = 0; hour<24; hour++)
-        {
-            var eventsInHour = dayEvents
-                .Where(x => x.ScheduledTime.Hour==hour)
-                .OrderBy(x => x.ScheduledTime)
-                .ToList();
+        var columnIndex = (int)(SelectedCalendarDay.Date.Date-_currentWeekStart).TotalDays;
+        if(columnIndex<0||columnIndex>=HourlyTimelineSlotDto.WeekColumnCount)
+            columnIndex=0;
 
+        foreach(var hour in TimelineHours())
+        {
             var slot = new HourlyTimelineSlotDto
             {
                 HourText=$"{hour:D2}:00",
                 HourValue=hour
             };
-            slot.DayColumns.Add(new ObservableCollection<CalendarEventDto>(eventsInHour));
+
+            slot.SetColumn(columnIndex, dayEvents
+                .Where(x => x.ScheduledTime.Hour==hour)
+                .OrderBy(x => x.ScheduledTime));
 
             HourlyTimelineSlots.Add(slot);
         }
@@ -852,16 +1487,48 @@ internal class CalendarSourceItem
 
 public class HourlyTimelineSlotDto
 {
+    public const int WeekColumnCount = 7;
+
     public string HourText { get; set; } = string.Empty;
     public int HourValue
     {
         get; set;
     }
 
+    /// <summary>Часот со AM/PM, како во дизајнот: „09:00 AM".</summary>
+    public string HourDisplay =>
+        DateTime.Today.AddHours(HourValue).ToString("hh:mm tt", CultureInfo.InvariantCulture);
+
     /// <summary>
-    /// Week grid: 7 columns (Mon..Sun). Day view: 1 column for the selected day.
+    /// Always exactly 7 columns (Mon..Sun). The week grid binds DayColumns[0..6] by index,
+    /// so a shorter list silently blanks out every column past the end — the list is padded
+    /// on construction instead of being sized to whatever the caller happened to have.
     /// </summary>
-    public List<ObservableCollection<CalendarEventDto>> DayColumns { get; set; } = new();
+    public List<ObservableCollection<CalendarEventDto>> DayColumns { get; } =
+        Enumerable.Range(0, WeekColumnCount)
+            .Select(_ => new ObservableCollection<CalendarEventDto>())
+            .ToList();
+
+    /// <summary>
+    /// Every event in this hour across all columns — used by the single-day timeline
+    /// on CalendarDashboardPage, which has no per-weekday columns.
+    /// </summary>
+    public ObservableCollection<CalendarEventDto> SlotEvents { get; } = new();
+
+    public void SetColumn(int index, IEnumerable<CalendarEventDto> events)
+    {
+        if(index<0||index>=WeekColumnCount)
+            return;
+
+        var column = DayColumns[index];
+        column.Clear();
+
+        foreach(var e in events)
+        {
+            column.Add(e);
+            SlotEvents.Add(e);
+        }
+    }
 }
 
 public partial class CalendarDayDto : ObservableObject
@@ -880,6 +1547,9 @@ public partial class CalendarDayDto : ObservableObject
         get; set;
     }
     public bool IsToday => Date.Date==DateTime.Today;
+
+    /// <summary>За заглавјето: сивиот број се крие кај денешниот ден, без конвертор.</summary>
+    public bool IsNotToday => !IsToday;
     public int EventCount => Events.Count;
     public List<CalendarEventDto> Events { get; set; } = new();
     public List<CalendarEventDto> VisibleEvents => Events.Take(3).ToList();
@@ -890,7 +1560,12 @@ public partial class CalendarDayDto : ObservableObject
         Date.ToString("ddd", new CultureInfo("mk-MK")).ToUpperInvariant();
 
     public string EncountersCountText =>
-        EventCount==0 ? "нема прегледи" : $"{EventCount} прегледи";
+        EventCount switch
+        {
+            0 => "нема прегледи",
+            1 => "1 преглед",
+            _ => $"{EventCount} прегледи"
+        };
 
     public int WeekIndex
     {
@@ -898,6 +1573,8 @@ public partial class CalendarDayDto : ObservableObject
     }
 
     [ObservableProperty] private bool isWeekHighlighted;
+
+    [ObservableProperty] private bool isSelected;
 }
 
 public class CalendarEventDto
@@ -924,6 +1601,13 @@ public class CalendarEventDto
     public string IconGlyph { get; set; } = "\uf073";
     public Color BackgroundColor { get; set; } = Colors.LightGreen;
     public Color TextColor { get; set; } = Colors.DarkGreen;
+
+    /// <summary>\u201e10:00-10:30" \u2014 \u0432\u0440\u0435\u043c\u0435\u043d\u0441\u043a\u0438 \u043e\u043f\u0441\u0435\u0433 \u043a\u0430\u043a\u043e \u0432\u043e \u0434\u0438\u0437\u0430\u0458\u043d\u043e\u0442.</summary>
+    public string TimeRangeText =>
+        $"{ScheduledTime:HH:mm}-{ScheduledTime.Add(Duration):HH:mm}";
+
+    /// <summary>\u041d\u0430\u0441\u043b\u043e\u0432\u043e\u0442 \u043d\u0430 \u043a\u0430\u0440\u0442\u0438\u0447\u043a\u0430\u0442\u0430: \u043e\u043f\u0441\u0435\u0433 + \u043f\u0430\u0446\u0438\u0435\u043d\u0442 \u0432\u043e \u0435\u0434\u0435\u043d \u0440\u0435\u0434.</summary>
+    public string CardTitle => $"{TimeRangeText} {PatientName}".Trim();
 }
 
 public class WaitlistItemDto

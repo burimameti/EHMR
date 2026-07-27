@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+	x:Class="EHMR.Resources.Controls.CalendarKpiCard"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	x:Name="Root">
+
+	<!--
+		KPI картичка над календарот.
+		Распоред како во дизајнот: наслов со ⓘ, период под него,
+		па голем број со значка за промена во истиот ред.
+	-->
+	<Border
+		Padding="16,14"
+		BackgroundColor="#FFFFFF"
+		Stroke="#E9EDF2"
+		StrokeShape="RoundRectangle 12"
+		StrokeThickness="1">
+		<Border.GestureRecognizers>
+			<TapGestureRecognizer Command="{Binding Command, Source={x:Reference Root}}" CommandParameter="{Binding CommandParameter, Source={x:Reference Root}}" />
+		</Border.GestureRecognizers>
+
+		<VerticalStackLayout Spacing="2">
+
+			<HorizontalStackLayout Spacing="5">
+				<Label
+					FontSize="12"
+					Text="{Binding Title, Source={x:Reference Root}}"
+					TextColor="#475569" />
+				<Label
+					FontSize="11"
+					Text="ⓘ"
+					TextColor="#CBD5E1"
+					VerticalOptions="Center" />
+			</HorizontalStackLayout>
+
+			<Label
+				FontSize="10"
+				Text="{Binding PeriodText, Source={x:Reference Root}}"
+				TextColor="#94A3B8" />
+
+			<Grid
+				Margin="0,8,0,0"
+				ColumnDefinitions="Auto,Auto,*"
+				ColumnSpacing="8">
+				<Label
+					FontAttributes="Bold"
+					FontSize="26"
+					Text="{Binding Value, Source={x:Reference Root}}"
+					TextColor="#0F172A"
+					VerticalOptions="Center" />
+
+				<Border
+					Grid.Column="1"
+					Padding="7,3"
+					BackgroundColor="{Binding DeltaBackground, Source={x:Reference Root}}"
+					IsVisible="{Binding HasDelta, Source={x:Reference Root}}"
+					StrokeShape="RoundRectangle 8"
+					StrokeThickness="0"
+					VerticalOptions="Center">
+					<Label
+						FontAttributes="Bold"
+						FontSize="10"
+						Text="{Binding DeltaText, Source={x:Reference Root}}"
+						TextColor="{Binding DeltaForeground, Source={x:Reference Root}}" />
+				</Border>
+
+				<Label
+					Grid.Column="2"
+					FontSize="10"
+					IsVisible="{Binding HasDelta, Source={x:Reference Root}}"
+					Text="{Binding ComparisonText, Source={x:Reference Root}}"
+					TextColor="#94A3B8"
+					VerticalOptions="Center" />
+			</Grid>
+		</VerticalStackLayout>
+	</Border>
+</ContentView>

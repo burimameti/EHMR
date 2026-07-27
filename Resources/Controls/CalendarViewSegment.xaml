@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+	x:Class="EHMR.Resources.Controls.CalendarViewSegment"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	x:Name="Root">
+
+	<!--
+		Еден сегмент од преклопувачот Ден / Недела / Месец.
+		BackgroundColor="Transparent" е задолжително: без експлицитна позадина
+		layout-от на Windows не прима допир и копчето изгледа мртво.
+	-->
+	<Grid BackgroundColor="Transparent">
+		<!--  Активен: бела подлога со сенка.  -->
+		<Border
+			BackgroundColor="#FFFFFF"
+			IsVisible="{Binding IsActive, Source={x:Reference Root}}"
+			StrokeShape="RoundRectangle 7"
+			StrokeThickness="0">
+			<Border.Shadow>
+				<Shadow
+					Brush="Black"
+					Opacity="0.10"
+					Radius="4"
+					Offset="0,1" />
+			</Border.Shadow>
+		</Border>
+
+		<Label
+			Padding="18,7"
+			FontAttributes="Bold"
+			FontSize="12"
+			HorizontalTextAlignment="Center"
+			Text="{Binding Text, Source={x:Reference Root}}"
+			TextColor="{Binding LabelColor, Source={x:Reference Root}}"
+			VerticalTextAlignment="Center" />
+
+		<Grid.GestureRecognizers>
+			<TapGestureRecognizer Command="{Binding Command, Source={x:Reference Root}}" CommandParameter="{Binding CommandParameter, Source={x:Reference Root}}" />
+		</Grid.GestureRecognizers>
+	</Grid>
+</ContentView>

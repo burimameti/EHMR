@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+	x:Class="EHMR.Resources.Controls.CalendarDayHeader"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:vm="clr-namespace:EHMR.ViewModels.Calendar"
+	x:Name="Root">
+
+	<!--
+		Едно заглавје за ден во неделниот приказ. Се става директно во колона од
+		надворешниот грид, за да се совпадне со вертикалните линии на телото.
+	-->
+	<VerticalStackLayout
+		Padding="14,10"
+		BindingContext="{Binding Day, Source={x:Reference Root}}"
+		HorizontalOptions="Start"
+		IsVisible="{Binding HasDay, Source={x:Reference Root}}"
+		Spacing="3"
+		VerticalOptions="Center">
+		<VerticalStackLayout.GestureRecognizers>
+			<TapGestureRecognizer Command="{Binding SelectCommand, Source={x:Reference Root}}" CommandParameter="{Binding .}" />
+		</VerticalStackLayout.GestureRecognizers>
+
+		<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+
+			<!--
+				Бројот е поголем од името на денот, како во дизајнот.
+				Денешниот е бел во полна сина значка, останатите се сив број.
+			-->
+			<Border
+				BackgroundColor="#0284C7"
+				HeightRequest="28"
+				IsVisible="{Binding IsToday}"
+				StrokeShape="RoundRectangle 7"
+				StrokeThickness="0"
+				VerticalOptions="Center"
+				WidthRequest="28">
+				<Label
+					FontAttributes="Bold"
+					FontSize="15"
+					HorizontalTextAlignment="Center"
+					Text="{Binding DayNumber}"
+					TextColor="White"
+					VerticalTextAlignment="Center" />
+			</Border>
+			<Label
+				FontAttributes="Bold"
+				FontSize="17"
+				IsVisible="{Binding IsNotToday}"
+				Text="{Binding DayNumber}"
+				TextColor="#94A3B8"
+				VerticalOptions="Center" />
+
+			<Label
+				FontAttributes="Bold"
+				FontSize="11"
+				Text="{Binding DayNameShort}"
+				TextColor="#334155"
+				VerticalOptions="Center" />
+		</HorizontalStackLayout>
+
+		<Label
+			FontSize="10"
+			Text="{Binding EncountersCountText}"
+			TextColor="#94A3B8" />
+
+		<BoxView
+			Margin="0,2,0,0"
+			HeightRequest="2"
+			HorizontalOptions="Fill"
+			IsVisible="{Binding IsSelected}"
+			Color="#0284C7" />
+	</VerticalStackLayout>
+</ContentView>
