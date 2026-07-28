@@ -55,6 +55,11 @@ public partial class BackupDetailsViewModel : ObservableObject
         _selectedItemService=selectedItemService;
     }
 
+    /// <summary>Враќање на претходната страница. Копчето „назад" беше врзано на команда што не постоеше.</summary>
+    [RelayCommand]
+    private async Task GoBackAsync()
+        => await Shell.Current.GoToAsync("..");
+
     [RelayCommand]
     public async Task LoadAsync()
     {

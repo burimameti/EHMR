@@ -36,7 +36,7 @@
 						Command="{Binding NewCommand}"
 						ContentPadding="20,0"
 						HeightRequestEx="45"
-						IsVisible="{Binding CanCreateEncounter}"
+						IsVisible="{Binding CanCreate}"
 						Text="Нов Преглед" />
 				</Grid>
 			</Border>
@@ -64,12 +64,12 @@
 										x:Name="EncounterGrid"
 										Columns="{Binding GridColumns}"
 										CurrentPage="{Binding CurrentPage}"
-										EditRowCommand="{Binding EditEncounterCommand}"
+										EditRowCommand="{Binding EditCommand}"
 										NextPageCommand="{Binding NextPageCommand}"
 										PageChangedCommand="{Binding PageChangedCommand}"
 										PageInfoText="{Binding PageInfoText}"
 										PreviousPageCommand="{Binding PreviousPageCommand}"
-										RowTappedCommand="{Binding OpenEncounterCommand}"
+										RowTappedCommand="{Binding SelectCommand}"
 										Rows="{Binding GridRows}"
 										ShowPagination="True"
 										ShowRowNumbers="True"

@@ -1,6 +1,7 @@
 ﻿using EHMR.Backups.Encryption;
 using EHMR.Backups.Interfaces;
 using EHMR.Backups.Services;
+using EHMR.Infrastructure.Persistence.Configs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -22,18 +23,24 @@ public sealed class DesktopTherapyDbContextFactory
                 .Build();
 
 
-        // SQL Connection
-        var connectionString =
-            configuration.GetConnectionString("Default")
-            ??throw new InvalidOperationException(
-                "Connection string 'Default' was not found.");
+        // Истиот избор на провајдер како при работа — инаку `dotnet ef` би
+        // генерирал миграции за друга база од онаа што апликацијата ја користи.
+        var databaseOptions =
+            configuration.GetSection(DatabaseOptions.SectionName).Get<DatabaseOptions>()
+            ??new DatabaseOptions();
 
+        if(string.IsNullOrWhiteSpace(databaseOptions.SqlServerConnection))
+        {
+            databaseOptions.SqlServerConnection=
+                configuration.GetConnectionString("Default")
+                ??throw new InvalidOperationException(
+                    "Нема ниту Database:SqlServerConnection ниту ConnectionStrings:Default.");
+        }
 
-        // EF Options
-        var options =
-            new DbContextOptionsBuilder<DesktopTherapyDbContext>()
-                .UseSqlServer(connectionString)
-                .Options;
+        var builder = new DbContextOptionsBuilder<DesktopTherapyDbContext>();
+        EHMRServiceCollectionExtensions.ConfigureDatabase(builder, databaseOptions);
+
+        var options = builder.Options;
 
 
         // Encryption

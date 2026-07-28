@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Backups.Interfaces;
+using EHMR.Domain.Entities.Rbac;
 
 namespace EHMR.Backups.ViewModels;
 
@@ -109,6 +110,14 @@ public partial class BackupDashboardViewModel : ObservableObject
             IsBusy=false;
         }
     }
+
+    /// <summary>
+    /// Отвора управување со дестинациите. Групата за резервни копии во AppNavigation
+    /// е закоментирана, па страницата нема ставка во менито — до неа се стигнува оттука.
+    /// </summary>
+    [RelayCommand]
+    private async Task OpenDestinationsAsync()
+        => await Shell.Current.GoToAsync(AppRoutes.Backup.Destinations);
 
     [RelayCommand]
     private async Task RunBackupAsync()

@@ -55,7 +55,7 @@
 									Pickers="{Binding Pickers}"
 									SearchCommand="{Binding SearchCommand}"
 									SearchPlaceholder="Пребарување на пациенти..."
-									SearchText="{Binding PatientSearchText}"
+									SearchText="{Binding SearchText}"
 									Tabs="{Binding Tabs}" />
 
 								<!--  DATA GRID  -->

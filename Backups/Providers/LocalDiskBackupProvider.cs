@@ -26,11 +26,18 @@ public sealed class LocalStorageProvider : IBackupStorageProvider
         DestinationId=options.Id;
         Name=options.Name;
         _localPath=options.Path;
-        Directory.CreateDirectory(_localPath);
+
+        // Не создавај папка во конструктор — тој се извршува при градење на DI
+        // контејнерот. Се создава при првото запишување.
     }
+
+    private void EnsureDirectory()
+        => Directory.CreateDirectory(_localPath);
 
     public Task<string> SaveAsync(string file, CancellationToken cancellationToken = default)
     {
+        EnsureDirectory();
+
         // If SqlServerBackupProvider already wrote the .bak into this same folder,
         // there's nothing to move. Only copy if it landed somewhere else.
         var destination = Path.Combine(_localPath, Path.GetFileName(file));

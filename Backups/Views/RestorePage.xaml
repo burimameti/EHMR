@@ -1,4 +1,4 @@
-<!--  File: EHMR.Backups/Views/RestorePage.xaml  -->
+﻿<!--  File: EHMR.Backups/Views/RestorePage.xaml  -->
 <ContentPage
 	x:Class="EHMR.Backups.Views.RestorePage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -57,6 +57,7 @@
 						VerticalOptions="Center">
 						<Button
 							BackgroundColor="{StaticResource SparkDanger}"
+							TextColor="White"
 							Command="{Binding RestoreCommand}"
 							HeightRequest="45"
 							IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"

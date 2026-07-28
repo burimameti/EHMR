@@ -59,6 +59,7 @@
 									HeightRequest="45"
 									Style="{StaticResource TabButtonActiveStyle}"
 									Text="Нов Бекап"
+									TextColor="White"
 									WidthRequest="160" />
 							</HorizontalStackLayout>
 						</Grid>
@@ -126,15 +127,11 @@
 									<Label Style="{StaticResource BackupCardTitle}" Text="Историја на бекапи" />
 								</Grid>
 
+								<!--  Таблата покажува фиксна скорешна листа — овој VM нема страничење.  -->
 								<controls:SparkDataGridView
 									Grid.Row="1"
 									Columns="{Binding GridColumns}"
-									CurrentPage="{Binding CurrentPage}"
-									NextPageCommand="{Binding NextPageCommand}"
-									PageChangedCommand="{Binding PageChangedCommand}"
-									PreviousPageCommand="{Binding PreviousPageCommand}"
-									Rows="{Binding GridRows}"
-									TotalPages="{Binding TotalPages}" />
+									Rows="{Binding GridRows}" />
 
 							</Grid>
 						</Border>

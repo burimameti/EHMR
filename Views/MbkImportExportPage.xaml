@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ContentPage
 	x:Class="EHMR.Views.MbkImportExportPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -69,6 +69,7 @@
 						VerticalOptions="Center">
 						<Button
 							BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
+							TextColor="White"
 							Command="{Binding CancelImportCommand}"
 							HeightRequest="45"
 							IsVisible="{Binding IsImporting}"
@@ -77,6 +78,7 @@
 							WidthRequest="140" />
 						<Button
 							BackgroundColor="{StaticResource SparkAccentTeal}"
+							TextColor="White"
 							Command="{Binding ImportCommand}"
 							HeightRequest="45"
 							Style="{StaticResource TabButtonActiveStyle}"
@@ -124,6 +126,7 @@
 										<Button
 											Grid.Column="1"
 											BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
+											TextColor="White"
 											Command="{Binding BrowseFileCommand}"
 											HeightRequest="38"
 											Style="{StaticResource TabButtonActiveStyle}"

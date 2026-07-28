@@ -195,7 +195,7 @@ namespace EHMR.Domain.Entities.Reports
                 new SparkButtonItem
                 {
                     Label = "Освежи",
-                    IsPrimary = false,
+                    IsPrimary = true, 
                     Command = new RelayCommand(() => FiltersChanged?.Invoke())
                 }
             ];

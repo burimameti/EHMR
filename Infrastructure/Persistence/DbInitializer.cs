@@ -1,4 +1,5 @@
-﻿using EHMR.Infrastructure.Persistence;
+﻿using EHMR.Domain.Interfaces;
+using EHMR.Infrastructure.Persistence;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -29,16 +30,74 @@ public class DatabaseMigrationService
         if(!IsMigrationAllowed())
             return;
 
-        var pending = await db.Database.GetPendingMigrationsAsync();
-
-        if(pending.Any())
+        // EF миграциите се врзани за провајдерот — оние во Migrations/ се генерирани
+        // за SQL Server и не поминуваат на SQLite. За SQLite шемата се создава
+        // директно од моделот.
+        if(db.Database.IsSqlite())
         {
-            BackupDatabase(db);
-            await db.Database.MigrateAsync();
+            await db.Database.EnsureCreatedAsync();
+        }
+        else
+        {
+            var pending = await db.Database.GetPendingMigrationsAsync();
+
+            if(pending.Any())
+            {
+                BackupDatabase(db);
+                await db.Database.MigrateAsync();
+            }
+        }
+
+        // Демо податоците се нудат точно еднаш, при првото подигање.
+        // Одлуката — прифатена или одбиена — се памти во AppLicense и повеќе
+        // не се прашува.
+        var license = scope.ServiceProvider.GetRequiredService<ILicenseService>();
+
+        var includeDemo = false;
+
+        if(await license.ShouldOfferDemoAsync())
+        {
+            includeDemo=await AskForDemoDataAsync();
+            await license.RecordDemoDecisionAsync(includeDemo);
+        }
+        else
+        {
+            var state = await license.GetStateAsync();
+            includeDemo=state.DemoDataSeeded;
         }
 
         var runner = scope.ServiceProvider.GetRequiredService<SeederRunner>();
-        await runner.RunAsync();
+        await runner.RunAsync(includeDemo);
+    }
+
+    /// <summary>
+    /// Прашува дали да се внесат демо податоци. Дијалогот бара UI нишка —
+    /// иницијализацијата се врти во позадина.
+    /// </summary>
+    private static async Task<bool> AskForDemoDataAsync()
+    {
+        try
+        {
+            return await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                var page = Application.Current?.Windows.FirstOrDefault()?.Page;
+
+                if(page is null)
+                    return false;
+
+                return await page.DisplayAlert(
+                    "Демо податоци",
+                    "Дали сакате да се внесат демо податоци за проба? "+
+                    "Ова се нуди само еднаш.",
+                    "Да",
+                    "Не");
+            });
+        }
+        catch
+        {
+            // Ако дијалогот не може да се прикаже, не внесувај ништо.
+            return false;
+        }
     }
 
     private bool IsMigrationAllowed()

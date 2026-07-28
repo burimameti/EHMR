@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="EHMR.Backups.Views.BackupDestinationsPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:models="clr-namespace:EHMR.Backups.Models"
+	xmlns:viewModels="clr-namespace:EHMR.Backups.ViewModels"
+	x:Name="Page"
+	x:DataType="viewModels:BackupDestinationViewModel"
+	BackgroundColor="{StaticResource SparkBorder}">
+
+	<Grid Padding="24" RowDefinitions="Auto,Auto,*">
+
+		<controls:FFPageHeader
+			Title="Дестинации за резервни копии"
+			Grid.Row="0"
+			Subtitle="Каде се зачувуваат копиите — локален диск, мрежна папка или облак." />
+
+		<Label
+			Grid.Row="1"
+			Margin="0,10,0,10"
+			FontSize="13"
+			Text="{Binding StatusMessage}"
+			TextColor="{StaticResource SparkTextSecondary}" />
+
+		<Grid
+			Grid.Row="2"
+			ColumnDefinitions="*,360"
+			ColumnSpacing="18">
+
+			<!--  ==================== ЛИСТА ====================  -->
+			<Border
+				Grid.Column="0"
+				Padding="0"
+				BackgroundColor="{StaticResource SparkSurface}"
+				Stroke="{StaticResource SparkBorderSubtle}"
+				StrokeShape="RoundRectangle 12"
+				StrokeThickness="1">
+
+				<CollectionView
+					ItemsSource="{Binding Destinations}"
+					SelectedItem="{Binding SelectedDestination}"
+					SelectionMode="Single">
+
+					<CollectionView.EmptyView>
+						<Label
+							Padding="24"
+							FontSize="13"
+							HorizontalTextAlignment="Center"
+							Text="Нема зачувани дестинации. Додај нова оддесно."
+							TextColor="{StaticResource SparkTextMuted}" />
+					</CollectionView.EmptyView>
+
+					<CollectionView.ItemTemplate>
+						<DataTemplate x:DataType="models:BackupDestination">
+							<Grid Padding="16,12" ColumnDefinitions="*,Auto">
+								<VerticalStackLayout Spacing="2">
+									<Label
+										FontAttributes="Bold"
+										FontSize="14"
+										Text="{Binding Name}"
+										TextColor="{StaticResource SparkTextPrimary}" />
+									<Label
+										FontSize="11"
+										Text="{Binding Path}"
+										TextColor="{StaticResource SparkTextMuted}" />
+								</VerticalStackLayout>
+
+								<Border
+									Grid.Column="1"
+									Padding="8,3"
+									BackgroundColor="{StaticResource SparkBadgeNeutralBg}"
+									StrokeShape="RoundRectangle 10"
+									StrokeThickness="0"
+									VerticalOptions="Center">
+									<Label
+										FontAttributes="Bold"
+										FontSize="10"
+										Text="{Binding Key}"
+										TextColor="{StaticResource SparkTextSecondary}" />
+								</Border>
+							</Grid>
+						</DataTemplate>
+					</CollectionView.ItemTemplate>
+				</CollectionView>
+			</Border>
+
+			<!--  ==================== ФОРМА ====================  -->
+			<Border
+				Grid.Column="1"
+				Padding="18"
+				BackgroundColor="{StaticResource SparkSurface}"
+				Stroke="{StaticResource SparkBorderSubtle}"
+				StrokeShape="RoundRectangle 12"
+				StrokeThickness="1">
+
+				<VerticalStackLayout Spacing="12">
+
+					<Label
+						FontAttributes="Bold"
+						FontSize="16"
+						Text="Детали"
+						TextColor="{StaticResource SparkTextPrimary}" />
+
+					<VerticalStackLayout Spacing="4">
+						<Label
+							FontSize="11"
+							Text="Име"
+							TextColor="{StaticResource SparkTextSecondary}" />
+						<Entry Placeholder="на пр. Главен NAS" Text="{Binding EditName}" />
+					</VerticalStackLayout>
+
+					<VerticalStackLayout Spacing="4">
+						<Label
+							FontSize="11"
+							Text="Тип"
+							TextColor="{StaticResource SparkTextSecondary}" />
+						<Picker ItemsSource="{Binding AvailableKeys}" SelectedItem="{Binding EditKey}" />
+					</VerticalStackLayout>
+
+					<VerticalStackLayout Spacing="4">
+						<Label
+							FontSize="11"
+							Text="Патека"
+							TextColor="{StaticResource SparkTextSecondary}" />
+						<Entry Placeholder="C:\EHMR\Backups или \\nas01\ehmr" Text="{Binding EditPath}" />
+						<Label
+							FontSize="10"
+							Text="За облак: тука се внесува името на контејнерот."
+							TextColor="{StaticResource SparkTextMuted}" />
+					</VerticalStackLayout>
+
+					<HorizontalStackLayout Spacing="8">
+						<Switch IsToggled="{Binding EditIsActive}" />
+						<Label
+							FontSize="12"
+							Text="Активна"
+							TextColor="{StaticResource SparkTextSecondary}"
+							VerticalOptions="Center" />
+					</HorizontalStackLayout>
+
+					<Grid
+						ColumnDefinitions="*,*"
+						ColumnSpacing="8"
+						RowDefinitions="Auto,Auto"
+						RowSpacing="8">
+						<Button
+							Grid.Row="0"
+							Grid.Column="0"
+							Command="{Binding SaveCommand}"
+							IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+							Text="Зачувај" />
+						<Button
+							Grid.Row="0"
+							Grid.Column="1"
+							Command="{Binding NewCommand}"
+							Text="Нова" />
+						<Button
+							Grid.Row="1"
+							Grid.Column="0"
+							Command="{Binding TestConnectionCommand}"
+							IsEnabled="{Binding HasSelection}"
+							Text="Тестирај" />
+						<Button
+							Grid.Row="1"
+							Grid.Column="1"
+							Command="{Binding DeleteCommand}"
+							IsEnabled="{Binding HasSelection}"
+							Text="Избриши" />
+					</Grid>
+				</VerticalStackLayout>
+			</Border>
+		</Grid>
+	</Grid>
+</ContentPage>

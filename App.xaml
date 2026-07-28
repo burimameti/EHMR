@@ -15,14 +15,14 @@
 			<converters:SparkStringNotEmptyConverter x:Key="SparkStringNotEmptyConverter" />
 			<converters:SparkToneToTextColorConverter x:Key="SparkToneToTextColorConverter" />
 			<converters:SparkToneToBackgroundColorConverter x:Key="SparkToneToBackgroundColorConverter" />
-			<converters:SparkNotNullConverter x:Key="SparkNotNullConverter " />
-			<converters:SparkCollectionNotEmptyConverter x:Key="SparkCollectionNotEmptyConverter  " />
+			<converters:SparkNotNullConverter x:Key="SparkNotNullConverter" />
+			<converters:SparkCollectionNotEmptyConverter x:Key="SparkCollectionNotEmptyConverter" />
 			<converters:StringNotNullOrEmptyConverter x:Key="StringNotNullOrEmptyConverter" />
 			<converters:BrushToColorConverter x:Key="BrushToColorConverter" />
 			<converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
 			<converters:SuggestionSelectionStrokeConverter x:Key="SuggestionSelectionStrokeConverter" />
-			<converters:GenderDisplayConverter x:Key="GenderDisplayConverter " />
-			<converters:StatusDisplayConverter x:Key="StatusDisplayConverter " />
+			<converters:GenderDisplayConverter x:Key="GenderDisplayConverter" />
+			<converters:StatusDisplayConverter x:Key="StatusDisplayConverter" />
 			<converters:HighlightMatchConverter x:Key="HighlightMatchConverter" />
 			<converters:SearchEntityTypeToIconConverter x:Key="SearchEntityTypeToIconConverter" />
 			<converters:BoolToTabBackgroundConverter x:Key="BoolToTabBackgroundConverter" />
@@ -45,14 +45,14 @@
 			<converters:AppointmentInvertedBoolConverter x:Key="AppointmentInvertedBoolConverter" />
 			<!--  Клучот имаше празно место на крајот, па ниту едно од 7-те повикувања не се совпаѓаше.  -->
 			<converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
-			<converters:GreaterThanOneConverter x:Key="GreaterThanOneConverter  " />
+			<converters:GreaterThanOneConverter x:Key="GreaterThanOneConverter" />
 			<converters:MetricTileVariantToColorConverter x:Key="MetricTileVariantToColorConverter" />
 			<converters:PatientStatusToLabelConverter x:Key="PatientStatusToLabelConverter" />
 			<converters:PatientStatusToTextColorConverter x:Key="PatientStatusToTextColorConverter" />
 			<converters:PatientStatusDisplayConverter x:Key="PatientStatusDisplayConverter" />
-			<converters:PatientStatusToPillBgConverter x:Key="PatientStatusToPillBgConverter " />
+			<converters:PatientStatusToPillBgConverter x:Key="PatientStatusToPillBgConverter" />
 
-			<converters:PatientStatusToPillFgConverter x:Key="PatientStatusToPillFgConverter  " />
+			<converters:PatientStatusToPillFgConverter x:Key="PatientStatusToPillFgConverter" />
 			<converters:StatusToColorConverter x:Key="StatusToColorConverter" />
 			<converters:StatusToBgConverter x:Key="StatusToBgConverter" />
 			<converters:NullToBoolConverter x:Key="NullToBoolConverter" />

@@ -19,6 +19,7 @@ public partial class MainPage : ContentPage
         // Постојано видлива лента наместо системскиот scrollbar што се крие.
         WeekGridScrollBar.AttachTo(WeekGridScroll);
         DayGridScrollBar.AttachTo(DayGridScroll);
+        MonthGridScrollBar.AttachTo(MonthGridScroll);
     }
 
     protected override async void OnAppearing()

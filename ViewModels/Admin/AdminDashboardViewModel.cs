@@ -20,6 +20,7 @@ public partial class AdminDashboardViewModel : ObservableObject
     private readonly IMkb10CodeService _mkbImportService;
     private readonly IBackupHistoryRepository _backupService;
    private readonly INavigationService _navigationService;
+    private readonly ISelectedItemService<BackupHistory> _selectedBackup;
 
 
     [ObservableProperty]
@@ -81,6 +82,7 @@ public partial class AdminDashboardViewModel : ObservableObject
         IDoctorService doctorService,
         IMkb10CodeService mkbImportService,
         IBackupHistoryRepository backupService,
+        ISelectedItemService<BackupHistory> selectedBackup,
         INavigationService navigationService)
     {
 
@@ -88,6 +90,7 @@ public partial class AdminDashboardViewModel : ObservableObject
         _doctorService=doctorService;
         _mkbImportService=mkbImportService;
         _backupService=backupService;
+        _selectedBackup=selectedBackup;
 
 
         _navigationService=navigationService;
@@ -203,6 +206,24 @@ public partial class AdminDashboardViewModel : ObservableObject
             IsBusy=false;
         }
 
+    }
+
+    /// <summary>
+    /// Отвора детали за копијата од таблата. Гридот праќа BackupHistory директно
+    /// (BackupGridRows се самите записи, без SparkGridRow обвивка).
+    /// </summary>
+    [RelayCommand]
+    private async Task OpenBackupAsync(object? row)
+    {
+        if(row is not BackupHistory backup)
+        {
+            // Без препознатлив ред — барем отвори ја историјата.
+            await Shell.Current.GoToAsync(AppRoutes.Backup.History);
+            return;
+        }
+
+        _selectedBackup.SelectedItem=backup;
+        await Shell.Current.GoToAsync(AppRoutes.Backup.BackupDetails);
     }
 
     private void BuildCards()

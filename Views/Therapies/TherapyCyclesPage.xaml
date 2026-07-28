@@ -68,7 +68,7 @@
 								Pickers="{Binding Pickers}"
 								SearchCommand="{Binding SearchCommand}"
 								SearchPlaceholder="Пребарај по име или презиме..."
-								SearchText="{Binding SearchPatientText}"
+								SearchText="{Binding SearchText}"
 								Tabs="{Binding Tabs}" />
 
 							<!--  SPLIT CONTENT: LEFT GRID | RIGHT EDIT PANEL  -->

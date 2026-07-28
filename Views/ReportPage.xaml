@@ -214,7 +214,7 @@
 								<Label Style="{StaticResource InputLabel}" Text="КЛУЧ ЗА ФИЛТРИРАЊЕ" />
 								<Border Style="{StaticResource InputBorderStyle}">
 									<Entry
-										Placeholder="Филтрирај редови..."
+										Placeholder="Филтрирај редовиеее..."
 										PlaceholderColor="{StaticResource TextMuted}"
 										Style="{StaticResource InputEntry}"
 										Text="{Binding AdvancedFilterText}"

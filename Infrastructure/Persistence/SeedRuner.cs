@@ -1,4 +1,5 @@
-﻿using Microsoft.Maui;
+﻿using EHMR.Infrastructure.Persistence.Seeders;
+using Microsoft.Maui;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,35 @@ namespace EHMR.Infrastructure.Persistence
             _context=context;
         }
 
-        public async Task RunAsync(CancellationToken ct = default)
+        /// <summary>
+        /// Seeder-и што внесуваат само примероци. Се извршуваат само кога
+        /// корисникот побарал демо податоци. Каталозите и системските записи
+        /// (МКБ-10, корисници, доктори) одат секогаш.
+        /// </summary>
+        private static readonly HashSet<string> DemoOnlySeeders = new(StringComparer.Ordinal)
+        {
+            "PatientSeeder",
+            "AppointmentSeeder",
+            "EncounterSeeder",
+            "DiagnosisSeeder",
+            "PrescriptionSeeder",
+            "TherapyCycleSeeder",
+            "PatientMedicineSeeder",
+            "DocumentSeeder",
+            "AlertSeeder",
+            "NotificationSeeder",
+            "AuditLogSeeder",
+            "InventorySeeder"
+        };
+
+        /// <param name="includeDemoData">
+        /// Кога е false, демо seeder-ите се прескокнуваат — базата останува
+        /// празна освен каталозите и системските корисници.
+        /// </param>
+        public async Task RunAsync(bool includeDemoData, CancellationToken ct = default)
         {
             var ordered = _seeders
+                .Where(x => includeDemoData||!DemoOnlySeeders.Contains(x.GetType().Name))
                 .OrderBy(x => x.Order)
                 .ToList();
 
@@ -44,8 +71,22 @@ namespace EHMR.Infrastructure.Persistence
                 }
                 catch(Exception ex)
                 {
-                    Console.WriteLine($"[SEEDER FAIL] {seeder.GetType().Name}");
+                    var name = seeder.GetType().Name;
+
+                    Console.WriteLine($"[SEEDER FAIL] {name}");
                     Console.WriteLine(ex);
+
+                    // Демо податоците се само примероци — нивниот пад не смее да го
+                    // спречи подигањето на апликацијата. Порано DiagnosisSeeder
+                    // фрлаше кога каталогот на МКБ-10 е празен и целата апликација
+                    // не се подигаше.
+                    if(DemoOnlySeeders.Contains(name))
+                    {
+                        // Неуспешниот seeder може да остави недовршени измени
+                        // во контекстот; тие се фрлаат за да не му пречат на следниот.
+                        _context.ChangeTracker.Clear();
+                        continue;
+                    }
 
                     throw;
                 }
@@ -53,5 +94,9 @@ namespace EHMR.Infrastructure.Persistence
 
             Console.WriteLine("[SEEDER DONE]");
         }
+
+        /// <summary>Задржано за повикувачи што не одлучуваат за демо — без демо податоци.</summary>
+        public Task RunAsync(CancellationToken ct = default)
+            => RunAsync(includeDemoData: false, ct);
     }
 }

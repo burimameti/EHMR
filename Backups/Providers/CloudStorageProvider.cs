@@ -27,12 +27,26 @@ public sealed class CloudStorageProvider : IBackupStorageProvider
         DestinationId=options.Id;
         Name=options.Name;
 
+        // CreateIfNotExists() е мрежен повик кон Azure. Во конструктор значи дека
+        // градењето на DI контејнерот чека на мрежа — се одложува до прво запишување.
         _containerClient=new BlobContainerClient(connectionString, options.Path);
+    }
+
+    private bool _containerChecked;
+
+    private void EnsureContainer()
+    {
+        if(_containerChecked)
+            return;
+
         _containerClient.CreateIfNotExists();
+        _containerChecked=true;
     }
 
     public async Task<string> SaveAsync(string file, CancellationToken cancellationToken = default)
     {
+        EnsureContainer();
+
         var blobName = Path.GetFileName(file);
         var blobClient = _containerClient.GetBlobClient(blobName);
 

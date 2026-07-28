@@ -35,9 +35,30 @@ public partial class MedicineDetailFormViewModel : ObservableObject
     [ObservableProperty]
     private string pageSubtitle = string.Empty;
 
+    // ── ТАБОВИ ──────────────────────────────────────────────────────────
+    //
+    // Страницата има три таба и врзуваше IsTab1Active/IsTab2Active/IsTab3Active
+    // и SelectTabCommand — ниту едно од нив не постоеше. Кога врзувањето падне
+    // IsVisible се враќа на true, па сите три секции се прикажуваа една под друга,
+    // а кликот на таб не правеше ништо.
+
+    [ObservableProperty]
+    private int activeTab = 1;
+
     #endregion
 
     #region Computed Properties
+
+    public bool IsTab1Active => ActiveTab==1;
+    public bool IsTab2Active => ActiveTab==2;
+    public bool IsTab3Active => ActiveTab==3;
+
+    partial void OnActiveTabChanged(int value)
+    {
+        OnPropertyChanged(nameof(IsTab1Active));
+        OnPropertyChanged(nameof(IsTab2Active));
+        OnPropertyChanged(nameof(IsTab3Active));
+    }
 
     public bool IsEditMode => !IsReadOnly;
 
@@ -85,7 +106,10 @@ public partial class MedicineDetailFormViewModel : ObservableObject
         {
             Medicine=new Medicine();
 
-            _originalMedicine=MedicineExtensions.Clone(selected);
+            // Тука `selected` е null по дефиниција — Clone(selected) го читаше
+            // source.Id и фрлаше NullReferenceException штом ќе се притисне „Нов лек".
+            // Основата за споредба е самиот празен лек.
+            _originalMedicine=Medicine.Clone();
 
             _isNewMode=true;
             IsReadOnly=false;
@@ -129,6 +153,14 @@ public partial class MedicineDetailFormViewModel : ObservableObject
         OnPropertyChanged(nameof(InputBackground));
         OnPropertyChanged(nameof(InputBorder));
         OnPropertyChanged(nameof(IsEditMode));
+    }
+
+    /// <summary>Префрлање меѓу трите таба. Параметарот доаѓа од XAML како "1" / "2" / "3".</summary>
+    [RelayCommand]
+    private void SelectTab(string? tab)
+    {
+        if(int.TryParse(tab, out var index)&&index>=1&&index<=3)
+            ActiveTab=index;
     }
 
     [RelayCommand]

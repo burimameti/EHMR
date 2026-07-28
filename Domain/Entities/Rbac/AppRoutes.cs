@@ -24,6 +24,7 @@
             public const string BackupDetails = "BackupDetailsPage";
             public const string Backups = "BackupPage";
             public const string Restore = "RestorePage";
+            public const string Destinations = "BackupDestinationsPage";
         }
 
         public static class Doctors

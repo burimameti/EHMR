@@ -226,5 +226,24 @@
 		<Setter Property="StrokeThickness" Value="1" />
 	</Style>
 
+	<!--
+		Овие два ги бараат Spark шаблоните за полиња (Combo, Currency, Date, Lookup…)
+		но никаде не беа дефинирани — нерешен StaticResource фрла при исцртување
+		на формата.
+	-->
+	<Style x:Key="SparkFieldLabelStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="TextColor" Value="#64748B" />
+		<Setter Property="Margin" Value="0,0,0,4" />
+	</Style>
+
+	<Style x:Key="SparkLookupButtonStyle" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="#0EA5B8" />
+		<Setter Property="TextColor" Value="#FFFFFF" />
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="HeightRequest" Value="38" />
+		<Setter Property="CornerRadius" Value="8" />
+		<Setter Property="Padding" Value="12,0" />
+	</Style>
 
 </ResourceDictionary>

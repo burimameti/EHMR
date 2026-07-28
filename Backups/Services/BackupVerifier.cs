@@ -32,37 +32,46 @@ public sealed class BackupVerifier : IBackupVerifier
             return false;
 
 
-        await using var connection =
-            new SqlConnection(_connectionString);
+        try
+        {
+            await using var connection =
+                new SqlConnection(_connectionString);
 
 
-        await connection.OpenAsync(cancellationToken);
+            await connection.OpenAsync(cancellationToken);
 
 
-        const string sql = """
-        RESTORE VERIFYONLY
-        FROM DISK = @file
-        WITH CHECKSUM;
-        """;
+            const string sql = """
+            RESTORE VERIFYONLY
+            FROM DISK = @file
+            WITH CHECKSUM;
+            """;
 
 
-        await using var command =
-            new SqlCommand(sql, connection);
+            await using var command =
+                new SqlCommand(sql, connection);
 
 
-        command.Parameters.AddWithValue(
-            "@file",
-            backupFile);
+            command.Parameters.AddWithValue(
+                "@file",
+                backupFile);
 
 
-        command.CommandTimeout=0;
+            command.CommandTimeout=0;
 
 
-        await command.ExecuteNonQueryAsync(
-            cancellationToken);
+            await command.ExecuteNonQueryAsync(
+                cancellationToken);
 
 
-        return true;
+            return true;
+        }
+        catch(SqlException)
+        {
+            // Неисправна или нечитлива копија — тоа е неуспешна проверка,
+            // не пад на целата операција.
+            return false;
+        }
     }
 
 

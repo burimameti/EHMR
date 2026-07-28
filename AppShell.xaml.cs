@@ -163,6 +163,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(AppRoutes.Backup.Restore, typeof(RestorePage));
         Routing.RegisterRoute(AppRoutes.Backup.History, typeof(BackupHistoryPage));
         Routing.RegisterRoute(AppRoutes.Backup.BackupDetails, typeof(BackupDetailPage));
+        Routing.RegisterRoute(AppRoutes.Backup.Destinations, typeof(BackupDestinationsPage));
         Routing.RegisterRoute(AppRoutes.Admin.AdminPanel, typeof(AdminPage));
         // MKB
         Routing.RegisterRoute(AppRoutes.Mkb10Codes.List, typeof(MbkImportExportPage));

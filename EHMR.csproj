@@ -19,11 +19,16 @@
 	<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 <!--	<ApplicationVersion>1</ApplicationVersion>-->
 
-	<WindowsPackageType>None</WindowsPackageType>
+<WindowsPackageType>MSIX</WindowsPackageType>
+<ApplicationTitle>EHMR</ApplicationTitle>
+<ApplicationId>com.ehmr.desktop</ApplicationId>
+<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
+<ApplicationVersion>1</ApplicationVersion>
 
 	<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
 	<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<Platforms>AnyCPU;x64</Platforms>
 
 </PropertyGroup>
 
@@ -43,6 +48,9 @@
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+
+		<!-- Каталогот на МКБ-10 шифри; се чита при првo подигање ако табелата е празна. -->
+		<None Update="MKB10.xlsx" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -68,6 +76,7 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.16" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.16">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

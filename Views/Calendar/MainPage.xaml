@@ -128,7 +128,7 @@
 					Grid.Column="0"
 					Padding="28,18,16,0"
 					RowDefinitions="Auto, Auto, Auto, *"
-					RowSpacing="36">
+					RowSpacing="14">
 
 					<!--  1. HEADER TITLE  -->
 					<Label
@@ -685,10 +685,15 @@
 								Bound to CalendarDays, which the ViewModel already built on every
 								load but which nothing rendered until now.
 							-->
-							<Grid IsVisible="{Binding IsMonthModeActive}" RowDefinitions="Auto, *">
+							<!--  Иста поставка како неделниот: заглавје и решетка во колона 0, лентата во колона 1.  -->
+							<Grid
+								ColumnDefinitions="*,Auto"
+								IsVisible="{Binding IsMonthModeActive}"
+								RowDefinitions="Auto, *">
 
 								<Border
 									Grid.Row="0"
+									Grid.Column="0"
 									Padding="0"
 									BackgroundColor="#F8FAFC"
 									Stroke="#E2E8F0"
@@ -754,20 +759,28 @@
 									</Grid>
 								</Border>
 
-								<CollectionView
+								<!--
+									ScrollView + FlexLayout наместо CollectionView: FFScrollBar бара
+									точен ScrollY, а CollectionView не го дава. 42 ќелии се — нема
+									што да се виртуелизира. Basis 14.28% дава седум по ред.
+								-->
+								<ScrollView
+									x:Name="MonthGridScroll"
 									Grid.Row="1"
-									ItemsSource="{Binding CalendarDays}"
-									SelectionMode="None"
-									VerticalScrollBarVisibility="Always">
-									<CollectionView.ItemsLayout>
-										<GridItemsLayout Orientation="Vertical" Span="7" />
-									</CollectionView.ItemsLayout>
-									<CollectionView.ItemTemplate>
+									Grid.Column="0"
+									VerticalScrollBarVisibility="Never">
+									<FlexLayout
+										AlignContent="Start"
+										BindableLayout.ItemsSource="{Binding CalendarDays}"
+										Direction="Row"
+										Wrap="Wrap">
+										<BindableLayout.ItemTemplate>
 										<DataTemplate x:DataType="vm:CalendarDayDto">
 											<Border
 												Margin="1"
 												Padding="6"
 												BackgroundColor="#FFFFFF"
+												FlexLayout.Basis="14.28%"
 												MinimumHeightRequest="92"
 												Stroke="#E2E8F0"
 												StrokeShape="RoundRectangle 6"
@@ -818,8 +831,15 @@
 												</VerticalStackLayout>
 											</Border>
 										</DataTemplate>
-									</CollectionView.ItemTemplate>
-								</CollectionView>
+										</BindableLayout.ItemTemplate>
+									</FlexLayout>
+								</ScrollView>
+
+								<controls:FFScrollBar
+									x:Name="MonthGridScrollBar"
+									Grid.Row="1"
+									Grid.Column="1"
+									Margin="4" />
 							</Grid>
 
 						</Grid>
@@ -876,17 +896,14 @@
 									Text="{Binding WaitlistDateText}"
 									TextColor="#64748B" />
 							</VerticalStackLayout>
-							<Button
+							<!--  Истиот FFButton како на почетната страна, наместо сина боја однадвор.  -->
+							<controls:FFButton
 								Grid.Column="1"
-								Padding="12,0"
-								BackgroundColor="#0EA5E9"
+								ButtonKind="Primary"
 								Command="{Binding CreateNewEncounterForSelectedDayCommand}"
-								CornerRadius="8"
-								FontAttributes="Bold"
-								FontSize="12"
-								HeightRequest="36"
-								Text="{Binding ContentNewButtonText}"
-								TextColor="White" />
+								ContentPadding="16,0"
+								HeightRequestEx="36"
+								Text="{Binding ContentNewButtonText}" />
 						</Grid>
 
 						<Grid

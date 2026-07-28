@@ -27,11 +27,19 @@ public sealed class NetworkStorageProvider : IBackupStorageProvider
         Name=options.Name;
         _networkPath=options.Path;
 
-        Directory.CreateDirectory(_networkPath);
+        // НЕ допирај ја мрежата тука. Овој конструктор се извршува при градење на
+        // DI контејнерот; ако споделувањето е недостапно, Directory.CreateDirectory
+        // блокира на SMB timeout и го задржува подигањето на апликацијата.
+        // Папката се создава при првото запишување.
     }
+
+    private void EnsureDirectory()
+        => Directory.CreateDirectory(_networkPath);
 
     public async Task<string> SaveAsync(string file, CancellationToken cancellationToken = default)
     {
+        EnsureDirectory();
+
         var destination = Path.Combine(_networkPath, Path.GetFileName(file));
 
         await using var source = File.OpenRead(file);

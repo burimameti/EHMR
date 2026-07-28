@@ -26,7 +26,7 @@
 			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
 				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 					<controls:FFPageHeader
-						Title="Шифрарник на Медикаменти"
+						Title="Регистар на лекови"
 						Grid.Column="0"
 						Subtitle="Регистар на лекови во клиниката со нивните стандардни дози" />
 
@@ -37,7 +37,7 @@
 						ContentPadding="20,0"
 						HeightRequestEx="45"
 						IsVisible="{Binding CanCreate}"
-						Text="Нов Медикамент" />
+						Text="Нов Лек" />
 				</Grid>
 			</Border>
 

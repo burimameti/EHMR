@@ -5,6 +5,7 @@ using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Resources.Controls;
 using EHMR.Services;
+using EHMR.ViewModels.Patients.Extensions;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -88,6 +89,101 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
         }
     }
 
+
+    // ═══════════════════════════════════════════ УРЕДУВАЊЕ НА ЦИКЛУС ═══════════════════════════════════════════
+    //
+    // Целиот десен панел беше врзан за членови што не постоеја: SelectedCycle,
+    // EditStatus, EditStartDate, EditEndDate, EditNotes, SaveCycleChangesCommand,
+    // IsCycleSelected. Панелот се прикажуваше, се пополнуваше рачно и копчето
+    // „Зачувај" не правеше ништо — корисникот мислеше дека зачувал.
+
+    /// <summary>Македонски натписи за статусот, мапирани на TherapyStatus.</summary>
+    public static FilterLookup StatusLookup { get; } = new(new[]
+    {
+        ("Планиран", "Planned"),
+        ("Активен", "Active"),
+        ("Закажан", "Scheduled"),
+        ("Завршен", "Completed"),
+        ("Суспендиран", "Suspended"),
+        ("Откажан", "Canceled"),
+        ("Пропуштен", "Missed")
+    });
+
+    public ObservableCollection<string> StatusOptions
+    {
+        get;
+    } = new(StatusLookup.DisplayValues);
+
+    [ObservableProperty] private TherapyCycle? selectedCycle;
+
+    [ObservableProperty] private string editCycleNumber = string.Empty;
+    [ObservableProperty] private string editStatus = "Планиран";
+    [ObservableProperty] private DateTime editStartDate = DateTime.Today;
+    [ObservableProperty] private DateTime editEndDate = DateTime.Today;
+    [ObservableProperty] private string editNotes = string.Empty;
+
+    public bool IsCycleSelected => SelectedCycle is not null;
+
+    partial void OnSelectedCycleChanged(TherapyCycle? value)
+    {
+        OnPropertyChanged(nameof(IsCycleSelected));
+
+        if(value is null)
+            return;
+
+        EditCycleNumber=value.TherapyCyleNumber??string.Empty;
+        EditStatus=StatusLookup.ToDisplay(value.Status?.ToString());
+        EditStartDate=value.StartDate??DateTime.Today;
+        EditEndDate=value.EndDate??value.StartDate??DateTime.Today;
+        EditNotes=value.Notes??string.Empty;
+    }
+
+    /// <summary>Клик на ред во гридот. SparkDataGridView праќа row.Tag, што овде е самиот циклус.</summary>
+    [RelayCommand]
+    private void SelectCycle(TherapyCycle? cycle) => SelectedCycle=cycle;
+
+    [RelayCommand]
+    private void EditCycle(TherapyCycle? cycle) => SelectedCycle=cycle;
+
+    [RelayCommand]
+    private async Task SaveCycleChangesAsync()
+    {
+        if(SelectedCycle is null)
+            return;
+
+        if(!CanUpdate)
+        {
+            await UserDialogService.ShowAlertAsync(
+                PermissionDeniedTitle,
+                "Немате авторизација за измена на терапевтски циклус.",
+                "OK");
+            return;
+        }
+
+        if(EditEndDate<EditStartDate)
+        {
+            OnError("Датумот на завршување не смее да биде пред датумот на почеток.");
+            return;
+        }
+
+        await ExecuteSafeAsync(async () =>
+        {
+            SelectedCycle.TherapyCyleNumber=EditCycleNumber?.Trim()??string.Empty;
+            SelectedCycle.Status=Enum.Parse<TherapyStatus>(StatusLookup.ToInternal(EditStatus));
+            SelectedCycle.StartDate=EditStartDate;
+            SelectedCycle.EndDate=EditEndDate;
+            SelectedCycle.Notes=EditNotes?.Trim();
+
+            await _therapyService.UpdateCycleAsync(SelectedCycle);
+
+            // Освежи ја листата за гридот да го покаже новиот статус.
+            var saved = SelectedCycle;
+            await LoadAsync();
+            SelectedCycle=AllItems.FirstOrDefault(x => x.Id==saved.Id)??saved;
+
+            await UserDialogService.ShowAlertAsync("Зачувано", "Циклусот е успешно зачуван.", "OK");
+        }, "Грешка при зачувување на циклусот");
+    }
 
     // ================= PIPELINE HOOKS =================
     protected override IEnumerable<TherapyCycle> ApplySearch(IEnumerable<TherapyCycle> items, string search)

@@ -97,6 +97,26 @@
 	<Color x:Key="SparkBadgeNeutralText">#556072</Color>
 	<Color x:Key="SparkBadgeNeutralTextSelected">#FFFFFF</Color>
 
+	<!--
+		Danger — овие три се користеа на 5 места (RestorePage, MbkImportExportPage,
+		ReportsListPage, двата popup-а) но никаде не беа дефинирани. Нерешен
+		StaticResource фрла кога страницата се отвора.
+		Вредностите се усогласени со постоечките SparkStatusDanger* / SparkBadgeDanger*.
+	-->
+	<Color x:Key="SparkDanger">#C0304A</Color>
+	<Color x:Key="SparkDangerBg">#FCE3E7</Color>
+	<Color x:Key="SparkDangerText">#C0304A</Color>
+
+	<!--
+		Површини — исто така се користеа низ повеќе страници без да бидат
+		дефинирани (SparkExpandableCardView, TherapyCyclesPage, BackupHistoryPage,
+		страницата за дестинации). Врзани се за постоечките еквиваленти.
+	-->
+	<Color x:Key="SparkSurface">#FFFFFF</Color>
+	<Color x:Key="SparkSurfaceAlt">#F7F9FC</Color>
+	<Color x:Key="SparkBorderSubtle">#E1E6ED</Color>
+	<Color x:Key="SparkOverlay">#80191E29</Color>
+
 	<!--  ============================================================  -->
 	<!--  RADIUS SCALE  -->
 	<!--  ============================================================  -->

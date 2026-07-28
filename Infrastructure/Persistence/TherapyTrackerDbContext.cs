@@ -76,6 +76,10 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     public DbSet<BackupHistory> BackupHistories => Set<BackupHistory>();
 
     public DbSet<BackupDestination> BackupDestinations => Set<BackupDestination>();
+
+    /// <summary>Состојба на лиценцата — најмногу еден запис.</summary>
+    public DbSet<AppLicense> AppLicenses => Set<AppLicense>();
+
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         try

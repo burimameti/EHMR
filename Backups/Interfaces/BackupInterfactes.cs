@@ -14,6 +14,34 @@ namespace EHMR.Backups.Interfaces
             CancellationToken cancellationToken = default);
     }
 
+    /// <summary>
+    /// Автоматско правење копии по распоред од <c>Backup:ScheduleCron</c>
+    /// и чистење на постари од <c>Backup:RetentionDays</c>.
+    /// </summary>
+    public interface IBackupScheduler
+    {
+        bool IsRunning
+        {
+            get;
+        }
+
+        /// <summary>Кога распоредот следно се совпаѓа, или null ако не е активен.</summary>
+        DateTime? LastRunUtc
+        {
+            get;
+        }
+
+        Task StartAsync(CancellationToken cancellationToken = default);
+
+        Task StopAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>Веднаш прави копија на стандардната дестинација, без да чека распоред.</summary>
+        Task<OperationResult<BackupResult>> RunNowAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>Брише копии и записи постари од зададениот рок. Враќа колку се избришани.</summary>
+        Task<int> ApplyRetentionAsync(CancellationToken cancellationToken = default);
+    }
+
     public interface IRestoreEngine
     {
         Task<OperationResult<bool>> ExecuteAsync(
@@ -133,8 +161,23 @@ namespace EHMR.Backups.Interfaces
 
     public interface IBackupVerifier
     {
+        /// <summary>
+        /// Проверува дека резервната копија е читлива за SQL Server (RESTORE VERIFYONLY).
+        /// Мора да се повика врз сировиот .bak — по компресија или шифрирање
+        /// SQL Server не може да го прочита фајлот.
+        /// </summary>
         Task<bool> VerifyAsync(
             string filePath,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>SHA-256 на фајлот, за проверка дека качувањето не го оштетило.</summary>
+        Task<string> GenerateChecksumAsync(
+            string filePath,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> VerifyChecksumAsync(
+            string filePath,
+            string checksum,
             CancellationToken cancellationToken = default);
     }
 

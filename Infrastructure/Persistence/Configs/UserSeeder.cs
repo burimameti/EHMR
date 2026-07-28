@@ -6,6 +6,15 @@ using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
 
 public class UserSeeder : IEntitySeeder
 {
+    /// <summary>
+    /// Стандардна лозинка за сите освен администраторот. Докторите и сестрата
+    /// досега воопшто немаа поставена лозинка — полето остануваше празно и
+    /// најавата беше невозможна.
+    ///
+    /// Се чува во отворен текст, како и досега: LoginViewModel споредува директно.
+    /// </summary>
+    private const string DefaultPassword = "123456";
+
     public int Order => 1;
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
@@ -49,6 +58,11 @@ public class UserSeeder : IEntitySeeder
                 IsActive = true
             }
         };
+
+        // Админот си ја задржува својата лозинка; сите останати ја добиваат
+        // стандардната.
+        foreach(var user in users.Where(u => u.Id!=SeedIds.AdminUser))
+            user.PasswordHash=DefaultPassword;
 
         await context.Users.AddRangeAsync(users, ct);
         await context.SaveChangesAsync(ct);

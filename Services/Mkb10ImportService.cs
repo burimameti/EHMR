@@ -115,8 +115,11 @@ public class Mkb10ImportService
                 continue;
             }
 
-            string code = parts[0];
-            string description = parts[1];
+            // Редот изгледа „A00.0 | ОПИС" — по делењето шифрата задржува празно
+            // место пред исправката, па се запишуваше како "A00.0 ". Секое
+            // барање по точна шифра потоа не наоѓаше ништо.
+            string code = parts[0].Trim();
+            string description = parts[1].Trim();
             string chapter = row.Cell(3).GetString().Trim();
 
             // Skip consecutive duplicates

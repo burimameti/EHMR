@@ -35,11 +35,13 @@ public sealed class BackupEngine : IBackupEngine
         CancellationToken cancellationToken = default)
     {
         var started = DateTime.UtcNow;
-        string? tempFile = null;
+
+        // Секој фајл создаден локално по пат, за да не остане ништо во staging.
+        var staged = new List<string>();
 
         try
         {
-            progress?.Report(new BackupProgress { Percentage=5, Message="Initializing backup..." });
+            progress?.Report(new BackupProgress { Percentage=5, Message="Се подготвува резервна копија..." });
 
             var databaseProvider = _databaseResolver.Resolve();
             var storageProvider = _storageResolver.Resolve(settings.DestinationId);
@@ -49,38 +51,69 @@ public sealed class BackupEngine : IBackupEngine
                 tempDir=Path.Combine(AppContext.BaseDirectory, "BackupStaging"); // safe fallback
             Directory.CreateDirectory(tempDir);
 
-            progress?.Report(new BackupProgress { Percentage=20, Message="Creating database backup..." });
+            progress?.Report(new BackupProgress { Percentage=20, Message="Се создава копија на базата..." });
 
-            tempFile=await databaseProvider.CreateBackupAsync(tempDir, cancellationToken);
-            var workingFile = tempFile;
+            var rawFile = await databaseProvider.CreateBackupAsync(tempDir, cancellationToken);
+            staged.Add(rawFile);
 
-            //if(!settings.Compress)
-            //{
-            //    progress?.Report(new BackupProgress { Percentage=40, Message="Compressing backup..." });
-            //    workingFile=await _compressionService.CompressAsync(workingFile, cancellationToken);
-            //}
-
-            if(settings.Encrypt)
-            {
-                progress?.Report(new BackupProgress { Percentage=60, Message="Encrypting backup..." });
-                workingFile=await _securityProvider.EncryptAsync(workingFile, cancellationToken);
-            }
-
-            progress?.Report(new BackupProgress { Percentage=80, Message="Saving backup..." });
-            var finalFile = await storageProvider.SaveAsync(workingFile, cancellationToken);
-
-            var verified = true;
-
+            // ── 1. ПРОВЕРКА ─────────────────────────────────────────────────
+            // Мора да е тука, врз сировиот .bak. Порано се правеше на крајот, врз
+            // веќе шифрираниот фајл — SQL Server не може да го прочита, па секој
+            // backup со Encrypt=true пријавуваше неуспех иако бил исправен.
             if(settings.VerifyAfterBackup)
             {
-                progress?.Report(new BackupProgress { Percentage=90, Message="Verifying backup..." });
-                verified=await _verifier.VerifyAsync(finalFile, cancellationToken);
+                progress?.Report(new BackupProgress { Percentage=35, Message="Се проверува копијата..." });
+
+                if(!await _verifier.VerifyAsync(rawFile, cancellationToken))
+                    return OperationResult<BackupResult>.Fail(
+                        "Проверката на резервната копија не успеа — копијата не е читлива.");
             }
 
-            if(!verified)
-                return OperationResult<BackupResult>.Fail("Backup verification failed.");
+            var workingFile = rawFile;
 
-            var info = new FileInfo(finalFile);
+            // ── 2. КОМПРЕСИЈА ───────────────────────────────────────────────
+            // Условот беше обратен (`if(!settings.Compress)`) и целиот блок закоментиран.
+            if(settings.Compress)
+            {
+                progress?.Report(new BackupProgress { Percentage=50, Message="Се компресира копијата..." });
+                workingFile=await _compressionService.CompressAsync(workingFile, cancellationToken);
+                staged.Add(workingFile);
+            }
+
+            // ── 3. ШИФРИРАЊЕ ────────────────────────────────────────────────
+            if(settings.Encrypt)
+            {
+                progress?.Report(new BackupProgress { Percentage=65, Message="Се шифрира копијата..." });
+                workingFile=await _securityProvider.EncryptAsync(workingFile, cancellationToken);
+                staged.Add(workingFile);
+            }
+
+            // Големината се чита сега, додека фајлот е локален. Кај cloud дестинација
+            // SaveAsync враќа URL, па FileInfo врз резултатот дава нула.
+            var uploadInfo = new FileInfo(workingFile);
+            var size = uploadInfo.Exists ? uploadInfo.Length : 0;
+
+            var checksum = await _verifier.GenerateChecksumAsync(workingFile, cancellationToken);
+
+            // ── 4. ЗАЧУВУВАЊЕ ───────────────────────────────────────────────
+            progress?.Report(new BackupProgress { Percentage=80, Message="Се зачувува копијата..." });
+            var finalFile = await storageProvider.SaveAsync(workingFile, cancellationToken);
+
+            // ── 5. ПРОВЕРКА НА ЗАЧУВАНОТО ───────────────────────────────────
+            // Само кај дестинации што враќаат локална патека. Cloud враќа URL —
+            // таму се потпираме на проверката од чекор 1.
+            var verified = true;
+
+            if(settings.VerifyAfterBackup&&File.Exists(finalFile))
+            {
+                progress?.Report(new BackupProgress { Percentage=92, Message="Се проверува зачуваната копија..." });
+
+                verified=await _verifier.VerifyChecksumAsync(finalFile, checksum, cancellationToken);
+
+                if(!verified)
+                    return OperationResult<BackupResult>.Fail(
+                        "Контролната сума не се совпаѓа — копијата е оштетена при зачувување.");
+            }
 
             var result = new BackupResult
             {
@@ -89,16 +122,16 @@ public sealed class BackupEngine : IBackupEngine
                 Type=settings.Type,
                 IsEncrypted=settings.Encrypt,
                 IsCompressed=settings.Compress,
-                Size=info.Exists ? info.Length : 0,
+                Size=size,
                 CreatedAt=DateTime.UtcNow,
                 Duration=DateTime.UtcNow-started,
                 Destination=settings.DestinationPath,
                 Verified=verified
             };
 
-            progress?.Report(new BackupProgress { Percentage=100, Message="Backup completed." });
+            progress?.Report(new BackupProgress { Percentage=100, Message="Резервната копија е завршена." });
 
-            return OperationResult<BackupResult>.Ok(result, "Backup completed successfully.");
+            return OperationResult<BackupResult>.Ok(result, "Резервната копија е успешно направена.");
         }
         catch(Exception ex)
         {
@@ -106,10 +139,14 @@ public sealed class BackupEngine : IBackupEngine
         }
         finally
         {
-            // Clean up any leftover local temp artifacts (uncompressed/unencrypted intermediate files).
-            if(tempFile is not null&&File.Exists(tempFile))
+            // Порано се бришеше само сировиот .bak — а шифрирањето веќе го имаше
+            // избришано него и оставаше .enc фајл во staging засекогаш.
+            foreach(var file in staged)
             {
-                try { File.Delete(tempFile); } catch { /* best effort */ }
+                if(File.Exists(file))
+                {
+                    try { File.Delete(file); } catch { /* best effort */ }
+                }
             }
         }
     }

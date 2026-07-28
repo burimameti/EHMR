@@ -40,6 +40,7 @@ using EHMR.Views.Protocols;
 using EHMR.Views.Reports;
 using EHMR.Views.Therapies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System.Reflection;
 namespace EHMR
@@ -67,29 +68,79 @@ namespace EHMR
             return services;
         }
 
+        /// <summary>
+        /// Стандардната SQL Server врска. Се користи само ако appsettings.json нема
+        /// секција "Database" — за да не се смени однесувањето на постоечки инсталации.
+        /// </summary>
+        private const string FallbackSqlServerConnection =
+            "Server=.\\SQLEXPRESS;Database=TherapyTrackerDesktopPoc;User Id=t24test;Password=t24test;MultipleActiveResultSets=True;TrustServerCertificate=True;";
+
+        private static DatabaseOptions ReadDatabaseOptions()
+        {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+                .Build();
+
+            var options =
+                configuration.GetSection(DatabaseOptions.SectionName).Get<DatabaseOptions>()
+                ??new DatabaseOptions();
+
+            if(string.IsNullOrWhiteSpace(options.SqlServerConnection))
+            {
+                // Стар формат: ConnectionStrings:Default, инаку вградената врска.
+                options.SqlServerConnection=
+                    configuration.GetConnectionString("Default")
+                    ??FallbackSqlServerConnection;
+            }
+
+            return options;
+        }
+
+        /// <summary>Го применува избраниот провајдер врз EF опциите.</summary>
+        public static void ConfigureDatabase(DbContextOptionsBuilder builder, DatabaseOptions options)
+        {
+            switch(options.Provider)
+            {
+                case DatabaseProvider.Sqlite:
+                    builder.UseSqlite(options.BuildConnectionString());
+                    break;
+
+                default:
+                    builder.UseSqlServer(options.BuildConnectionString());
+                    break;
+            }
+        }
+
         private static IServiceCollection RegisterDb(this IServiceCollection services)
         {
-            const string connectionString =
-                "Server=.\\SQLEXPRESS;Database=TherapyTrackerDesktopPoc;User Id=t24test;Password=t24test;MultipleActiveResultSets=True;TrustServerCertificate=True;";
-
-            // =========================
-            // EF CORE CONTEXT (Scoped)
-            //// =========================
-            //services.AddDbContext<DesktopTherapyDbContext>(options =>
-            //{
-            //    options.UseSqlServer(connectionString);
-            //});
-
-            // =========================
-            // FACTORY (for background/threaded usage)
-
             services.AddSingleton<IDbExceptionParserProvider,
                               DbExceptionParserProvider>();
-            // =========================
+
+            // =====================================================
+            // ИЗБОР НА БАЗА
+            //
+            // Провајдерот и врската се читаат од секцијата "Database" во
+            // appsettings.json. Порано врската беше зашиена тука како константа,
+            // а обете регистрации на контекстот беа закоментирани — оттука
+            // „No service for type 'DesktopTherapyDbContext' has been registered".
+            // =====================================================
+            var databaseOptions = ReadDatabaseOptions();
+
+            services.AddSingleton(databaseOptions);
+
             services.AddDbContextFactory<DesktopTherapyDbContext>(options =>
-            {
-                options.UseSqlServer(connectionString);
-            });
+                ConfigureDatabase(options, databaseOptions));
+
+            // DatabaseMigrationService и делови од апликацијата го бараат самиот
+            // контекст, а AddDbContextFactory регистрира само IDbContextFactory<T>.
+            // Овој scoped запис го добива од факторот, за да има еден извор.
+            services.AddScoped(sp =>
+                sp.GetRequiredService<IDbContextFactory<DesktopTherapyDbContext>>()
+                  .CreateDbContext());
+            // Order = 0 — каталогот на МКБ-10 се полни пред сите останати seeder-и.
+            services.AddScoped<IEntitySeeder, Mkb10CatalogSeeder>();
+
             services.AddScoped<IEntitySeeder, AlertSeeder>();
             services.AddScoped<IEntitySeeder, AppointmentSeeder>();
             services.AddScoped<IEntitySeeder, AuditLogSeeder>();
@@ -128,19 +179,56 @@ namespace EHMR
 
             services.AddSingleton<IDatabaseBackupProvider, SqlServerBackupProvider>();
             services.AddSingleton<IDatabaseProviderResolver, DatabaseProviderResolver>();
-            services.AddSingleton<IBackupStorageProvider>(sp =>
+            // =========================
+            // BACKUP DESTINATIONS
+            //
+            // Секоја дестинација од Backup:Destinations се регистрира како посебен
+            // провајдер. Порано беше врзан само "local", па StorageProviderResolver
+            // фрлаше за "cloud" и "network" иако провајдерите се напишани — а UI-то
+            // ја гради листата на дестинации од регистрираните провајдери, значи
+            // прикажуваше само една.
+            // =========================
+            services.AddSingleton<IEnumerable<IBackupStorageProvider>>(sp =>
             {
                 var opts = sp.GetRequiredService<IOptions<BackupOptions>>().Value;
-                var dest = opts.Destinations.FirstOrDefault(d => d.Key=="local");
-                if(dest is null)
-                    throw new InvalidOperationException(
-                        $"No backup destination with Key='local' found. Found: {string.Join(", ", opts.Destinations.Select(d => d.Key))}");
+                var configuration = sp.GetRequiredService<IConfiguration>();
 
-                return new LocalStorageProvider(dest);
+                var providers = new List<IBackupStorageProvider>();
+
+                foreach(var dest in opts.Destinations)
+                {
+                    if(string.IsNullOrWhiteSpace(dest.Path))
+                        continue;
+
+                    switch(dest.Key?.ToLowerInvariant())
+                    {
+                        case "local":
+                            providers.Add(new LocalStorageProvider(dest));
+                            break;
+
+                        case "network":
+                            providers.Add(new NetworkStorageProvider(dest));
+                            break;
+
+                        case "cloud":
+                            // Без стринг за поврзување BlobContainerClient фрла веднаш,
+                            // што би го срушило подигањето на апликацијата. Затоа само
+                            // кога е конфигуриран.
+                            var azure = configuration["Azure:StorageConnectionString"];
+                            if(!string.IsNullOrWhiteSpace(azure))
+                                providers.Add(new CloudStorageProvider(dest, azure));
+                            break;
+                    }
+                }
+
+                return providers;
             });
-            // register CloudStorageProvider similarly if/when you use it
 
-            services.AddSingleton<IStorageProviderResolver, StorageProviderResolver>();
+            // Резолверот бара IEnumerable<IBackupStorageProvider>; сврти го кон горната
+            // регистрација наместо кон поединечни AddSingleton повици.
+            services.AddSingleton<IStorageProviderResolver>(sp =>
+                new StorageProviderResolver(
+                    sp.GetRequiredService<IEnumerable<IBackupStorageProvider>>()));
 
             services.AddSingleton<IBackupEngine, BackupEngine>();
             services.AddSingleton<IRestoreEngine, RestoreEngine>();
@@ -161,11 +249,11 @@ namespace EHMR
             // services.AddSingleton<IAuthService, AuthService>();
 
             services.AddSingleton<IAuthorizationService, AuthorizationService>();
-            //services.AddSingleton<IBackupScheduler, BackupScheduler>();
+            services.AddSingleton<IBackupScheduler, BackupScheduler>();
             services.AddSingleton<ICompressionService, CompressionService>();
             // services.AddSingleton<IAnalyticsService, AnalyticsService>();
             // services.AddSingleton<IPolicyEngine, PolicyEngine>();
-            // services.AddSingleton<ILicenseService, LicenseService>();
+            services.AddSingleton<ILicenseService, LicenseService>();
             // services.AddSingleton<IPermissionService, PermissionService>();
             services.AddSingleton<IAppointmentSearchQueryHandler, AppointmentSearchQueryHandler>();
             services.AddSingleton<IPreferencesService, SecurePreferencesService>();
@@ -200,6 +288,7 @@ namespace EHMR
             services.AddSingleton<ISparkFormBuilder, SparkFormBuilder>();
             services.AddSingleton<IReportExportService, ReportExportService>();
             services.AddScoped<IBackupHistoryRepository, BackupHistoryRepository>();
+            services.AddScoped<IBackupDestinationRepository, BackupDestinationRepository>();
             services.AddScoped<IBackupVerifier, BackupVerifier>();
             // services.AddSingleton<ThemeService>();
             services.AddSingleton<IFileDialogService, MauiFileDialogService>();
@@ -395,6 +484,8 @@ namespace EHMR
             services.AddTransient<BackupHistoryViewModel>();
             services.AddTransient<BackupDetailPage>();
             services.AddTransient<BackupDetailsViewModel>();
+            services.AddTransient<BackupDestinationsPage>();
+            services.AddTransient<BackupDestinationViewModel>();
             ///
 
 

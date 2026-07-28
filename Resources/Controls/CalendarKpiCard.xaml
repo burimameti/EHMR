@@ -10,42 +10,43 @@
 		Распоред како во дизајнот: наслов со ⓘ, период под него,
 		па голем број со значка за промена во истиот ред.
 	-->
+	<!--  Потенка од порано: помал внатрешен простор, за да не зема висина од гридот.  -->
 	<Border
-		Padding="16,14"
+		Padding="14,9"
 		BackgroundColor="#FFFFFF"
 		Stroke="#E9EDF2"
-		StrokeShape="RoundRectangle 12"
+		StrokeShape="RoundRectangle 10"
 		StrokeThickness="1">
 		<Border.GestureRecognizers>
 			<TapGestureRecognizer Command="{Binding Command, Source={x:Reference Root}}" CommandParameter="{Binding CommandParameter, Source={x:Reference Root}}" />
 		</Border.GestureRecognizers>
 
-		<VerticalStackLayout Spacing="2">
+		<VerticalStackLayout Spacing="1">
 
 			<HorizontalStackLayout Spacing="5">
 				<Label
-					FontSize="12"
+					FontSize="11"
 					Text="{Binding Title, Source={x:Reference Root}}"
 					TextColor="#475569" />
 				<Label
-					FontSize="11"
+					FontSize="10"
 					Text="ⓘ"
 					TextColor="#CBD5E1"
 					VerticalOptions="Center" />
 			</HorizontalStackLayout>
 
 			<Label
-				FontSize="10"
+				FontSize="9"
 				Text="{Binding PeriodText, Source={x:Reference Root}}"
 				TextColor="#94A3B8" />
 
 			<Grid
-				Margin="0,8,0,0"
+				Margin="0,4,0,0"
 				ColumnDefinitions="Auto,Auto,*"
 				ColumnSpacing="8">
 				<Label
 					FontAttributes="Bold"
-					FontSize="26"
+					FontSize="21"
 					Text="{Binding Value, Source={x:Reference Root}}"
 					TextColor="#0F172A"
 					VerticalOptions="Center" />

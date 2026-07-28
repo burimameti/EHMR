@@ -4,6 +4,7 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Helpers;
+using EHMR.Infrastructure.Persistence;
 using EHMR.Services.Dto;
 using EHMR.ViewModels.Patients;
 using EHMR.ViewModels.Patients.Extensions;
@@ -21,6 +22,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     private readonly ISelectedItemService<Patient> _selectedItemService;
     private readonly INavigationService _navigationService;
     private readonly IUserDialogService _userDialogService;
+    private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
+    private readonly ILicenseService _licenseService;
 
     private PatientEditDto? _originalPatient;
     private bool _isNewPatientMode;
@@ -86,12 +89,16 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         IPatientService patientService,
         ISelectedItemService<Patient> selectedItemService,
         INavigationService navigationService,
-        IUserDialogService userDialogService)
+        IUserDialogService userDialogService,
+        IDbContextFactory<DesktopTherapyDbContext> dbFactory,
+        ILicenseService licenseService)
     {
+        _licenseService=licenseService;
         _patientService=patientService;
         _selectedItemService=selectedItemService;
         _navigationService=navigationService;
         _userDialogService=userDialogService;
+        _dbFactory=dbFactory;
         InitializeForm();
     }
 
@@ -157,12 +164,86 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             SelectedDoctorDisplay=full.DoctorDisplay;
             DoctorSearchText=SelectedDoctorDisplay;
 
+            await LoadHistoryAsync(patientId);
+
             _childrenLoaded=true;
         }
         catch(Exception ex)
         {
             Debug.WriteLine(ex.ToString());
             throw;
+        }
+    }
+
+    // ═══════════════════════════════════════════ ИСТОРИЈА НА ПАЦИЕНТОТ ═══════════════════════════════════════════
+    //
+    // Шесте картици со историја беа врзани за колекции што не постоеја во овој
+    // ViewModel, па сите шест секогаш стоеја празни со порака „нема евидентирани…"
+    // без разлика колку записи има пациентот.
+    //
+    // Прикажувањето е само за читање, па се вчитуваат директно како ентитети —
+    // PatientDto носи само дијагнози, лекови и документи, не и прегледи,
+    // термини, циклуси и рецепти.
+
+    [ObservableProperty] private ObservableCollection<Diagnosis> diagnosisHistory = new();
+    [ObservableProperty] private ObservableCollection<Encounter> encounterHistory = new();
+    [ObservableProperty] private ObservableCollection<Appointment> appointmentHistory = new();
+    [ObservableProperty] private ObservableCollection<TherapyCycle> therapyCycleHistory = new();
+    [ObservableProperty] private ObservableCollection<Prescription> prescriptionHistory = new();
+    [ObservableProperty] private ObservableCollection<PatientMedicine> medicineHistory = new();
+
+    private async Task LoadHistoryAsync(Guid patientId)
+    {
+        try
+        {
+            await using var db = await _dbFactory.CreateDbContextAsync();
+
+            DiagnosisHistory=new ObservableCollection<Diagnosis>(
+                await db.Diagnoses
+                    .AsNoTracking()
+                    .Where(x => x.PatientId==patientId)
+                    .ToListAsync());
+
+            EncounterHistory=new ObservableCollection<Encounter>(
+                await db.Encounters
+                    .AsNoTracking()
+                    .Where(x => x.PatientId==patientId)
+                    .OrderByDescending(x => x.EncounterDate)
+                    .ToListAsync());
+
+            AppointmentHistory=new ObservableCollection<Appointment>(
+                await db.Appointments
+                    .AsNoTracking()
+                    .Where(x => x.PatientId==patientId)
+                    .OrderByDescending(x => x.ScheduledStart)
+                    .ToListAsync());
+
+            TherapyCycleHistory=new ObservableCollection<TherapyCycle>(
+                await db.TherapyCycles
+                    .AsNoTracking()
+                    .Where(x => x.PatientId==patientId)
+                    .OrderByDescending(x => x.StartDate)
+                    .ToListAsync());
+
+            PrescriptionHistory=new ObservableCollection<Prescription>(
+                await db.Prescriptions
+                    .AsNoTracking()
+                    .Where(x => x.PatientId==patientId)
+                    .ToListAsync());
+
+            // Редот на картичката покажува Medicine.Name — без Include останува празен.
+            MedicineHistory=new ObservableCollection<PatientMedicine>(
+                await db.PatientMedicines
+                    .AsNoTracking()
+                    .Include(x => x.Medicine)
+                    .Where(x => x.PatientId==patientId)
+                    .ToListAsync());
+        }
+        catch(Exception ex)
+        {
+            // Историјата е придружна информација — нејзиниот пад не смее да го
+            // сруши отворањето на досието.
+            Debug.WriteLine($"Не успеа вчитување на историјата за пациентот: {ex}");
         }
     }
 
@@ -246,6 +327,22 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         {
             await _userDialogService.ShowAlertAsync("Валидација", "Реуматолог не е доделен.", "OK");
             return;
+        }
+
+        // Лимитот важи само за нови пациенти — измена на постоечки останува можна
+        // и по заклучување, за да не се изгуби пристап до веќе внесените досиеја.
+        if(_isNewPatientMode)
+        {
+            var check = await _licenseService.CanAddPatientAsync();
+
+            if(!check.Allowed)
+            {
+                await _userDialogService.ShowAlertAsync(
+                    "Лиценца",
+                    check.Message??"Лимитот е достигнат.",
+                    "OK");
+                return;
+            }
         }
 
         var saveModel = new PatientSaveModel

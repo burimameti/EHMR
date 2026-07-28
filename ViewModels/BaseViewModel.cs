@@ -42,6 +42,15 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     // ================= PAGINATION =================
     public int TotalItems => FilteredItems.Count;
 
+    /// <summary>
+    /// Спротивно од <see cref="HasItems"/> — за празни состојби во XAML.
+    /// ReportHistoryPage го врзуваше ова на непостоечко својство, па пораката
+    /// „нема податоци" се прикажуваше и кога има податоци.
+    /// </summary>
+    public bool IsEmpty => !HasItems;
+
+    partial void OnHasItemsChanged(bool value) => OnPropertyChanged(nameof(IsEmpty));
+
     public int TotalPages =>
         PageSize<=0
             ? 0
@@ -255,6 +264,19 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
 
     [RelayCommand]
     public void Reset()
+    {
+        CurrentPage=1;
+        ApplyPipeline();
+    }
+
+    /// <summary>
+    /// Изрично пребарување — за копчето „барај" и за Enter во полето.
+    /// Пет страници го врзуваа ова копче на команда што не постоеше
+    /// (EncounterList, BackupHistory, ProtocolRegistry, ReportsList, TherapyCycles),
+    /// па копчето не правеше апсолутно ништо.
+    /// </summary>
+    [RelayCommand]
+    public void Search()
     {
         CurrentPage=1;
         ApplyPipeline();
