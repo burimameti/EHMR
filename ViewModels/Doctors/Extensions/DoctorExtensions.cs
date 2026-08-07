@@ -40,18 +40,18 @@ namespace EHMR.ViewModels.Doctors.Extensions
         /// (data-driven, e.g. from a SpecialtyLookup source) if specialties
         /// come from the database rather than a fixed set.
         /// </summary>
-        public static FilterLookup Specialty
-        {
-            get;
-        } = new(new[]
-        {
-            ("Сите", "All"),
-            ("Ревматологија", "Rheumatology"),
-            ("Кардиологија", "Cardiology"),
-            ("Неврологија", "Neurology"),
-            ("Психијатрија", "Psychiatry"),
-            ("Психологија", "Psychology"),
-        });
+        //public static FilterLookup Specialty
+        //{
+        //    get;
+        //} = new(new[]
+        //{
+        //    ("Сите", "All"),
+        //    ("Ревматологија", "Rheumatology"),
+        //    ("Кардиологија", "Cardiology"),
+        //    ("Неврологија", "Neurology"),
+        //    ("Психијатрија", "Psychiatry"),
+        //    ("Психологија", "Psychology"),
+        //});
     
 
     public static Doctor Clone(this Doctor source)
@@ -62,8 +62,7 @@ namespace EHMR.ViewModels.Doctors.Extensions
             return new Doctor
             {
                 Id=source.Id,
-                Specialty=source.Specialty,
-                LicenseNumber=source.LicenseNumber,
+               
                 ContactPhone=source.ContactPhone,
                 Email=source.Email,
                 Gender=source.Gender,

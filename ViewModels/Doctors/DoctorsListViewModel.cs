@@ -5,13 +5,9 @@ using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Resources.Controls;
 using EHMR.ViewModels.Doctors.Extensions;
-using Microsoft.Maui;
-using Microsoft.Maui.Controls;
-using System;
-using System.Collections.Generic;
+
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
+
 using System.Windows.Input;
 
 namespace EHMR.ViewModels;
@@ -23,11 +19,10 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
 
     // ================= FILTER STATE =================
     [ObservableProperty] private string selectedStatus = "All";
-    [ObservableProperty] private string selectedSpecialty = "All";
     [ObservableProperty] private string filteredDoctorsCount = "";
     [ObservableProperty] private ObservableCollection<Doctor> filteredDoctors = new();
 
-    // ================= QUERY STATE (deep-link support) =================
+    // ================= QUERY STATE =================
     private string? _pendingSearch;
     private string? _pendingStatus;
 
@@ -36,8 +31,11 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
     protected override string DetailRoute => AppRoutes.Doctors.Detail;
     protected override string PermissionDeniedMessage => "Немате авторизација за додавање нов лекар.";
 
-    public ObservableCollection<string> StatusFilters { get; } = DoctorFilterLookups.Status.ToObservableCollection();
-    public ObservableCollection<string> SpecialtyFilters { get; } = DoctorFilterLookups.Specialty.ToObservableCollection();
+    public ObservableCollection<string> StatusFilters
+    {
+        get;
+    } =
+        DoctorFilterLookups.Status.ToObservableCollection();
 
     public string SelectedStatusDisplay
     {
@@ -52,20 +50,7 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
         }
     }
 
-    public string SelectedSpecialtyDisplay
-    {
-        get => DoctorFilterLookups.Specialty.ToDisplay(SelectedSpecialty);
-        set
-        {
-            var internalValue = DoctorFilterLookups.Specialty.ToInternal(value);
-            if(SelectedSpecialty==internalValue) return;
-            SelectedSpecialty=internalValue;
-            ApplyPipeline();
-            OnPropertyChanged();
-        }
-    }
-
-    /// <summary>Alias kept for XAML compatibility — forwards to the base class's SearchText.</summary>
+    /// <summary>Alias kept for XAML compatibility.</summary>
     public string DoctorSearchText
     {
         get => SearchText;
@@ -118,6 +103,15 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
         ApplyPipeline();
     }
 
+    // ================= NAVIGATION (hyperlink) =================
+    [RelayCommand]
+    private async Task OpenDetail(object tag)
+    {
+        if(tag is not Doctor doctor) return;
+        SelectedItemService.SelectedItem=doctor;
+        await NavigationService.GoToAsync(AppRoutes.Doctors.Detail);
+    }
+
     // ================= SEARCH =================
     protected override IEnumerable<Doctor> ApplySearch(IEnumerable<Doctor> query, string search)
     {
@@ -126,8 +120,6 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
         var s = search.Trim();
         return query.Where(x =>
             (!string.IsNullOrWhiteSpace(x.FullName)&&x.FullName.Contains(s, StringComparison.OrdinalIgnoreCase))||
-            (!string.IsNullOrWhiteSpace(x.Specialty)&&x.Specialty.Contains(s, StringComparison.OrdinalIgnoreCase))||
-            (!string.IsNullOrWhiteSpace(x.LicenseNumber)&&x.LicenseNumber.Contains(s, StringComparison.OrdinalIgnoreCase))||
             (!string.IsNullOrWhiteSpace(x.ContactPhone)&&x.ContactPhone.Contains(s, StringComparison.OrdinalIgnoreCase))
         );
     }
@@ -135,14 +127,8 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
     // ================= FILTER =================
     protected override IEnumerable<Doctor> ApplyFilters(IEnumerable<Doctor> query)
     {
-        if(SelectedStatus=="Active")
-            query=query.Where(x => x.IsActive);
-        else if(SelectedStatus=="Inactive")
-            query=query.Where(x => !x.IsActive);
-
-        if(SelectedSpecialty!="All")
-            query=query.Where(x => x.Specialty==SelectedSpecialty);
-
+        if(SelectedStatus=="Active") query=query.Where(x => x.IsActive);
+        if(SelectedStatus=="Inactive") query=query.Where(x => !x.IsActive);
         return query;
     }
 
@@ -161,14 +147,11 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
     protected override void ResetFilters()
     {
         SelectedStatus="All";
-        SelectedSpecialty="All";
         SearchText="";
-
         OnPropertyChanged(nameof(SelectedStatusDisplay));
-        OnPropertyChanged(nameof(SelectedSpecialtyDisplay));
     }
 
-    // ================= QUERY =================
+    // ================= QUERY ATTRIBUTES =================
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         _pendingSearch=query.TryGetValue("search", out var s) ? s?.ToString() : null;
@@ -181,6 +164,9 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
         foreach(var (internalValue, tab) in _statusTabsByInternal)
             tab.IsSelected=internalValue==value;
     }
+
+    partial void OnFilteredDoctorsChanged(ObservableCollection<Doctor> value)
+        => RefreshSparkGridRows();
 
     // ============================================================
     // TABS
@@ -201,7 +187,6 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
                 Title=display,
                 IsSelected=SelectedStatus==internalValue
             };
-
             tab.Command=new RelayCommand(() => SelectTab(tab, () => SelectedStatusDisplay=display));
 
             Tabs.Add(tab);
@@ -226,21 +211,15 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
     }
 
     // ============================================================
-    // PICKERS
+    // PICKERS  (specialty removed — no pickers for now)
     // ============================================================
-    private SparkPickerItem _specialtyPicker;
-
     private void BuildSparkPickers()
     {
         Pickers.Clear();
-        _specialtyPicker=MakePicker("Специјалност", SpecialtyFilters, SelectedSpecialtyDisplay, s => SelectedSpecialtyDisplay=s);
-        Pickers.Add(_specialtyPicker);
     }
 
     protected override void SyncSparkPickersFromFilters()
     {
-        if(_specialtyPicker==null) return;
-        _specialtyPicker.SelectedItem=SelectedSpecialtyDisplay;
     }
 
     // ============================================================
@@ -253,30 +232,31 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
-                  new() { Header = "БРОЈ", Key = "DoctorNumber", Width = new GridLength(1.3, GridUnitType.Star) },
-            new() { Header = "ЛЕКАР", Key = "FullName", Width = new GridLength(2.2, GridUnitType.Star) },
-            new() { Header = "Е-ПОШТА", Key = "Email", Width = new GridLength(2, GridUnitType.Star) },
-            new() { Header = "СПЕЦИЈАЛНОСТ", Key = "Specialty", Width = new GridLength(1.5, GridUnitType.Star) },
-            new() { Header = "ЛИЦЕНЦА", Key = "LicenseNumber", Width = new GridLength(1.2, GridUnitType.Star) },
-            new() { Header = "ТЕЛЕФОН", Key = "ContactPhone", Width = new GridLength(1.3, GridUnitType.Star) },
-            new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1, GridUnitType.Star) },
-            new() { Header = "АКЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
+            new() { Header="БРОЈ",     Key="DoctorNumber", Width=new GridLength(1.3, GridUnitType.Star) },
+
+            // Hyperlink → OpenDetailCommand(row.Tag)
+            new() { Header="ЛЕКАР",   Key="FullName",     Width=new GridLength(2.2, GridUnitType.Star),
+                    CellType=SparkGridCellType.Hyperlink },
+
+            new() { Header="Е-ПОШТА", Key="Email",        Width=new GridLength(2,   GridUnitType.Star) },
+            new() { Header="ТЕЛЕФОН", Key="ContactPhone",  Width=new GridLength(1.3, GridUnitType.Star) },
+            new() { Header="СТАТУС",  Key="Status",        Width=new GridLength(1,   GridUnitType.Star),
+                    CellType=SparkGridCellType.Badge },
+            new() { Header="ОПЦИИ",   Key="Actions",       Width=GridLength.Auto,
+                    CellType=SparkGridCellType.Actions }
         };
     }
-
-    partial void OnFilteredDoctorsChanged(ObservableCollection<Doctor> value) => RefreshSparkGridRows();
 
     private void RefreshSparkGridRows()
     {
         var rows = new ObservableCollection<SparkGridRow>();
+
         foreach(var d in FilteredDoctors)
         {
             var row = new SparkGridRow { Tag=d };
             row["DoctorNumber"]=d.DoctorNumber;
             row["FullName"]=d.FullName;
-            row["Email"]=d.Email??"email@klinika.com"; // TODO: додади Email во база
-            row["Specialty"]=d.Specialty;
-            row["LicenseNumber"]=d.LicenseNumber;
+            row["Email"]=d.Email??"—";
             row["ContactPhone"]=d.ContactPhone;
             row["Status"]=new SparkBadgeValue(
                 d.IsActive ? "Активен" : "Неактивен",
@@ -286,6 +266,7 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
 
             rows.Add(row);
         }
+
         GridRows=rows;
     }
 
