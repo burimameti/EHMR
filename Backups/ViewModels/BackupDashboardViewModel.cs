@@ -3,6 +3,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Backups.Interfaces;
 using EHMR.Domain.Entities.Rbac;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
+using Color = Microsoft.Maui.Graphics.Color;
 
 namespace EHMR.Backups.ViewModels;
 
@@ -22,6 +29,7 @@ public partial class BackupDashboardViewModel : ObservableObject
     [ObservableProperty]
     private string backupStatus = "Unknown";
 
+    // Change the type of statusColor from System.Drawing.Color to Microsoft.Maui.Graphics.Color
     [ObservableProperty]
     private Color statusColor = Colors.Gray;
 

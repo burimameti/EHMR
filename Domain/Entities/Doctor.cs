@@ -12,8 +12,6 @@ namespace EHMR.Domain.Entities
 
         public User User { get; set; } = null!;
 
-        public string LicenseNumber { get; set; } = string.Empty;
-        public string Specialty { get; set; } = string.Empty;
         public string ContactPhone { get; set; } = string.Empty;
         public string? Email { get; set; } = string.Empty;
 
@@ -45,7 +43,6 @@ namespace EHMR.Domain.Entities
     public enum Status
     {
         Active,
-        Inactive,
-        Suspended
+        Inactive
     }
 }

@@ -38,9 +38,36 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 _ => SqlServerConnection
             };
 
+        /// <summary>
+        /// Апсолутна патека се користи како што е зададена. Релативната оди во
+        /// %LOCALAPPDATA%\EHMR, не во папката на програмата — инсталирана
+        /// апликација живее во „Program Files", каде обичен корисник нема право
+        /// да пишува и базата не би можела да се создаде.
+        /// </summary>
         public string ResolveSqlitePath()
             => Path.IsPathRooted(SqliteDatabase)
                 ? SqliteDatabase
-                : Path.Combine(AppContext.BaseDirectory, SqliteDatabase);
+                : Path.Combine(DataDirectory, SqliteDatabase);
+
+        /// <summary>Папката за податоци на корисникот.</summary>
+        public static string DataDirectory
+            => Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "EHMR");
+
+        /// <summary>
+        /// SQLite не создава папка сам — отворањето на врска кон непостоечка
+        /// папка паѓа со „unable to open database file".
+        /// </summary>
+        public void EnsureSqliteDirectory()
+        {
+            if(Provider!=DatabaseProvider.Sqlite)
+                return;
+
+            var folder = Path.GetDirectoryName(ResolveSqlitePath());
+
+            if(!string.IsNullOrWhiteSpace(folder))
+                Directory.CreateDirectory(folder);
+        }
     }
 }

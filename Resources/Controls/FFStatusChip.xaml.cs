@@ -1,4 +1,7 @@
-﻿namespace EHMR.Resources.Controls;
+﻿using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
+
+namespace EHMR.Resources.Controls;
 
 public partial class FFStatusChip : ContentView
 {

@@ -1,7 +1,10 @@
 ﻿using EHMR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
-
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 namespace EHMR.Infrastructure.Persistence.Configs
 {
     public class NotificationSeeder : IEntitySeeder

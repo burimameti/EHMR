@@ -6,9 +6,17 @@ using EHMR.Backups.Models;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Resources.Controls;
-using EHMR.Resources.Controls.Actions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Linq;
+
 using EHMR.ViewModels;
 using System.Collections.ObjectModel;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui;
 
 namespace EHMR.Backups.ViewModels;
 

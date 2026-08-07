@@ -1,7 +1,8 @@
 ﻿using EHMR.Domain.Entities;
 using EHMR.Services;
 using EHMR.Services.Dto;
-
+using System.Threading;
+using System.Threading.Tasks;
 namespace EHMR.Domain.Interfaces;
 
 public interface IPatientService

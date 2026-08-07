@@ -1,4 +1,8 @@
-﻿using System.Windows.Input;
+﻿using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
+using System.Drawing;
+using System.Windows.Input;
+using Color = Microsoft.Maui.Graphics.Color;
 
 namespace EHMR.Resources.Controls;
 

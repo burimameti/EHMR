@@ -13,6 +13,10 @@ using EHMR.Views.Prescription;
 using EHMR.Views.Protocols;
 using EHMR.Views.Reports;
 using EHMR.Views.Therapies;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Controls;
+using System;
+using System.Threading.Tasks;
 
 namespace EHMR;
 
@@ -32,6 +36,7 @@ public partial class AppShell : Shell
         _auth=auth;
         _coordinator=coordinator;
 
+        _authorization=authorization;
         RegisterRoutes();
         SetupCoordinator();
 

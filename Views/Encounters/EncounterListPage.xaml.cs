@@ -1,5 +1,6 @@
 ﻿
 using EHMR.ViewModels.Encounters;
+using Microsoft.Maui.Controls;
 
 namespace EHMR.Views.Encounters
 {

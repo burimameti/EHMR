@@ -1,5 +1,5 @@
 ﻿using EHMR.ViewModels;
-
+using Microsoft.Maui.Controls;
 namespace EHMR.Views
 {
     public partial class UsersPage : ContentPage

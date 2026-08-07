@@ -1,5 +1,6 @@
 ﻿namespace EHMR.Views
 {
+    using Microsoft.Maui.Controls;
     public partial class LoadingPage : ContentPage
     {
         public LoadingPage()

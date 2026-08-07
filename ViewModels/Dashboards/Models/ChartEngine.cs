@@ -1,4 +1,9 @@
 ﻿namespace EHMR.ViewModels.Dashboards.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 public static class ChartEngine
 {

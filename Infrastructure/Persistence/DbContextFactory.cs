@@ -1,12 +1,12 @@
 ﻿using EHMR.Backups.Encryption;
-using EHMR.Backups.Interfaces;
+
 using EHMR.Backups.Services;
 using EHMR.Infrastructure.Persistence.Configs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using System.IO.Packaging;
+
 
 namespace EHMR.Infrastructure.Persistence;
 
@@ -19,7 +19,7 @@ public sealed class DesktopTherapyDbContextFactory
         IConfiguration configuration =
             new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false)
+                .AddJsonFile("appsettings.json", optional: true)
                 .Build();
 
 

@@ -28,7 +28,7 @@ public class UserSeeder : IEntitySeeder
             {
                 Id = SeedIds.AdminUser,
                 Username = "admin",
-                PasswordHash = "HASH_ADMIN",
+                PasswordHash = "123456",
                 FirstName = "Игор",
                 LastName = "Ангеловски",
                 Role = UserRole.Admin,
@@ -36,16 +36,16 @@ public class UserSeeder : IEntitySeeder
                 IsActive = true
             },
 
-            new() { Id = SeedIds.DocUser1, Username="dr.mitrev", FirstName="Никола", LastName="Митрев", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
-            new() { Id = SeedIds.DocUser2, Username="dr.anastoj", FirstName="Ана", LastName="Стојанова", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
-            new() { Id = SeedIds.DocUser3, Username="dr.goran", FirstName="Горан", LastName="Петров", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
-            new() { Id = SeedIds.DocUser4, Username="dr.elena", FirstName="Елена", LastName="Костова", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
-            new() { Id = SeedIds.DocUser5, Username="dr.ivan", FirstName="Иван", LastName="Димитров", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
-            new() { Id = SeedIds.DocUser6, Username="dr.marija", FirstName="Марија", LastName="Трајкова", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
-            new() { Id = SeedIds.DocUser7, Username="dr.dejan", FirstName="Дејан", LastName="Стојков", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
-            new() { Id = SeedIds.DocUser8, Username="dr.sara", FirstName="Сара", LastName="Јованова", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
-            new() { Id = SeedIds.DocUser9, Username="dr.vlatko", FirstName="Влатко", LastName="Николов", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
-            new() { Id = SeedIds.DocUser10, Username="dr.jovana", FirstName="Јована", LastName="Ристовска", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true },
+            new() { Id = SeedIds.DocUser1, Username="dr.mitrev", FirstName="Никола", LastName="Митрев", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true, PasswordHash="123456" },
+            new() { Id = SeedIds.DocUser2, Username="dr.anastoj", FirstName="Ана", LastName="Стојанова", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true , PasswordHash="123456" },
+            new() { Id = SeedIds.DocUser3, Username="dr.goran", FirstName="Горан", LastName="Петров", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true , PasswordHash = "123456"},
+            new() { Id = SeedIds.DocUser4, Username="dr.elena", FirstName="Елена", LastName="Костова", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true , PasswordHash = "123456"},
+            new() { Id = SeedIds.DocUser5, Username="dr.ivan", FirstName="Иван", LastName="Димитров", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true , PasswordHash = "123456"},
+            new() { Id = SeedIds.DocUser6, Username="dr.marija", FirstName="Марија", LastName="Трајкова", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true , PasswordHash = "123456"},
+            new() { Id = SeedIds.DocUser7, Username="dr.dejan", FirstName="Дејан", LastName="Стојков", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true  , PasswordHash="123456"   },
+            new() { Id = SeedIds.DocUser8, Username="dr.sara", FirstName="Сара", LastName="Јованова", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true , PasswordHash = "123456"},
+            new() { Id = SeedIds.DocUser9, Username="dr.vlatko", FirstName="Влатко", LastName="Николов", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true , PasswordHash = "123456"},
+            new() { Id = SeedIds.DocUser10, Username="dr.jovana", FirstName="Јована", LastName="Ристовска", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true , PasswordHash = "123456"},
 
             new()
             {
@@ -55,7 +55,7 @@ public class UserSeeder : IEntitySeeder
                 LastName = "Главна",
                 Role = UserRole.MainNurse,
                 Position = UserPosition.Regular,
-                IsActive = true
+                IsActive = true,  PasswordHash="123456"
             }
         };
 

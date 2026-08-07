@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using EHMR.Domain.Entities;
 using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
-
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 namespace EHMR.Infrastructure.Persistence.Configs;
 
 public sealed class PatientMedicineSeeder : IEntitySeeder

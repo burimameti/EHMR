@@ -23,6 +23,8 @@ public partial class MenuViewModel : ObservableObject, IDisposable
     private int _refreshToken;
 
     public ObservableCollection<NavigationGroup> Items { get; } = [];
+    private readonly List<NavigationGroup> _allItems = [];
+    private NavigationGroup? _focusedGroup;
 
     public MenuViewModel(
         IAuthStateService auth,
@@ -33,10 +35,50 @@ public partial class MenuViewModel : ObservableObject, IDisposable
         _menuService=menuService;
         _navigation=navigation;
         _auth.AuthStateChanged+=OnAuthChanged;
+        Shell.Current.Navigated+=OnShellNavigated;
         ApplyUserInfo();
         _=RefreshMenuAsync();
     }
 
+    private void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
+    {
+        var route=ResolveMenuRoute(e.Current?.Location);
+        if(string.IsNullOrWhiteSpace(route))
+            return;
+
+        ActiveRoute=route;
+
+        if(e.Source==ShellNavigationSource.Pop||
+           (_focusedGroup!=null&&!BelongsToGroup(_focusedGroup, route)))
+            ShowMainMenu();
+    }
+
+    private string? ResolveMenuRoute(Uri? location)
+    {
+        if(location==null)
+            return null;
+
+        var route=location.OriginalString
+            .Split(['/', '?', '#'], StringSplitOptions.RemoveEmptyEntries)
+            .LastOrDefault();
+
+        if(string.IsNullOrWhiteSpace(route))
+            return null;
+
+        var exactRoute=_allItems
+            .SelectMany(group => group.Items.Select(item => item.Route).Append(group.Route))
+            .FirstOrDefault(itemRoute =>
+                itemRoute.Equals(route, StringComparison.OrdinalIgnoreCase));
+
+        if(!string.IsNullOrWhiteSpace(exactRoute))
+            return exactRoute;
+
+        var parentRoute=AppNavigation.ResolveMenuRoute(route);
+        return _allItems
+            .Select(group => group.Route)
+            .FirstOrDefault(groupRoute =>
+                groupRoute.Equals(parentRoute, StringComparison.OrdinalIgnoreCase));
+    }
     private async void OnAuthChanged(object? sender, EventArgs e)
     {
         try
@@ -163,7 +205,37 @@ public partial class MenuViewModel : ObservableObject, IDisposable
             return;
         }
 
-        group.IsExpanded=!group.IsExpanded;
+        FocusGroup(group);
+
+        if(!string.IsNullOrWhiteSpace(group.Route)&&
+           !group.Route.Equals(ActiveRoute, StringComparison.OrdinalIgnoreCase))
+            await NavigateGroupAsync(group);
+    }
+
+    private async Task NavigateGroupAsync(NavigationGroup group)
+    {
+        if(!await _navigationLock.WaitAsync(0))
+            return;
+
+        var previousRoute=ActiveRoute;
+        IsNavigating=true;
+        try
+        {
+            ActiveRoute=group.Route;
+            await _navigation.GoToAsync(group.Route);
+        }
+        catch(Exception ex)
+        {
+            ActiveRoute=previousRoute;
+            ShowMainMenu();
+            System.Diagnostics.Debug.WriteLine(
+                $"Navigation to '{group.Route}' failed: {ex}");
+        }
+        finally
+        {
+            IsNavigating=false;
+            _navigationLock.Release();
+        }
     }
 
     public async Task RefreshMenuAsync()
@@ -185,10 +257,13 @@ public partial class MenuViewModel : ObservableObject, IDisposable
                 if(token!=_refreshToken)
                     return;
 
-                Items.Clear();
+                _allItems.Clear();
                 foreach(var group in groups)
-                    Items.Add(group);
-                ActiveRoute??=AppRoutes.Dashboard;
+                    _allItems.Add(group);
+
+                ShowMainMenu();                ActiveRoute=ResolveMenuRoute(Shell.Current.CurrentState?.Location)
+                    ??ActiveRoute
+                    ??AppRoutes.Dashboard;
                 ApplyActiveState();
             });
         }
@@ -214,7 +289,7 @@ public partial class MenuViewModel : ObservableObject, IDisposable
 
     private void ApplyActiveState()
     {
-        foreach(var group in Items)
+        foreach(var group in _allItems)
         {
             if(group.Items.Count==0)
             {
@@ -238,8 +313,41 @@ public partial class MenuViewModel : ObservableObject, IDisposable
                     hasActiveChild=true;
             }
             group.IsActive=hasActiveChild;
-            group.IsExpanded=hasActiveChild;
+            group.IsExpanded=_focusedGroup!=null&&
+                ReferenceEquals(group, _focusedGroup);
         }
+    }
+
+    private static bool BelongsToGroup(NavigationGroup group, string route)
+    {
+        var menuRoute=AppNavigation.ResolveMenuRoute(route);
+        return group.Route.Equals(menuRoute, StringComparison.OrdinalIgnoreCase)||
+               group.Items.Any(item =>
+                   item.Route.Equals(route, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void FocusGroup(NavigationGroup group)
+    {
+        _focusedGroup=group;
+        foreach(var item in _allItems)
+            item.IsExpanded=ReferenceEquals(item, group);
+
+        Items.Clear();
+        Items.Add(group);
+        group.IsExpanded=true;
+        group.IsActive=true;
+    }
+
+    private void ShowMainMenu()
+    {
+        _focusedGroup=null;
+        Items.Clear();
+        foreach(var group in _allItems)
+        {
+            group.IsExpanded=false;
+            Items.Add(group);
+        }
+        ApplyActiveState();
     }
 
     // ============== LOGOUT ==============
@@ -254,6 +362,7 @@ public partial class MenuViewModel : ObservableObject, IDisposable
     public void Dispose()
     {
         _auth.AuthStateChanged-=OnAuthChanged;
+        Shell.Current.Navigated-=OnShellNavigated;
         _navigationLock.Dispose();
     }
 }

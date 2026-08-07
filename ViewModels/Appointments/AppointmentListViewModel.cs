@@ -8,8 +8,14 @@ using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
 using EHMR.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Maui;
+using Microsoft.Maui.Controls;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace EHMR.ViewModels.Appointments;

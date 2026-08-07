@@ -1,4 +1,7 @@
-﻿namespace EHMR.ViewModels.Constants;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace EHMR.ViewModels.Constants;
 
 public static class EncounterStatusSchema
 {

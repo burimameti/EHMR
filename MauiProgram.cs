@@ -74,7 +74,18 @@ namespace EHMR
       .SetBasePath(AppContext.BaseDirectory)
       .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
       .Build();
+            Logger.Init();
 
+            AppDomain.CurrentDomain.UnhandledException+=(s, e) =>
+            {
+                Logger.LogException("AppDomain.UnhandledException", (Exception)e.ExceptionObject);
+            };
+
+            TaskScheduler.UnobservedTaskException+=(s, e) =>
+            {
+                Logger.LogException("TaskScheduler.UnobservedTaskException", e.Exception);
+                e.SetObserved();
+            };
             builder.Configuration.AddConfiguration(configuration);
 
             builder.Services.AddSingleton<AppShell>();

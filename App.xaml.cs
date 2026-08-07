@@ -1,7 +1,6 @@
 ﻿using EHMR.Backups.Interfaces;
-using EHMR.Infrastructure.Persistence;
+
 using EHMR.Views;
-using Microsoft.EntityFrameworkCore;
 
 namespace EHMR
 {
@@ -9,93 +8,88 @@ namespace EHMR
     {
         public static IServiceProvider ServiceProvider { get; private set; } = default!;
 
-        /// <summary>
-        /// Ако подигањето падне, исклучокот се чува овде за да може да се прикаже
-        /// наместо празен екран.
-        /// </summary>
         private static Exception? _startupException;
-
-        /// <summary>Сигнализира дека иницијализацијата на базата завршила (успешно или не).</summary>
         private static readonly TaskCompletionSource<bool> _databaseReady = new();
 
         public App(IServiceProvider services)
         {
             InitializeComponent();
+
+            // Logger.Init() MORA да е прво нешто што се извршува - ако ова падне,
+            // сакаме барем да пробаме fallback патека пред да продолжиме понатаму.
+            Logger.Init();
+            Logger.Log("App constructor started");
+
+            AppDomain.CurrentDomain.UnhandledException+=(s, e) =>
+            {
+                Logger.LogException("AppDomain UnhandledException",
+                    e.ExceptionObject as Exception??new Exception("Unknown exception object"));
+            };
+
+            // Логира ВСЕКОЈ throw во моментот кога се случува, дури и ако нешто
+            // подоцна го фати и "проголта". Ова е единствениот начин да видиме
+            // исклучоци што Shell/MAUI internals ги имаат catch-нато тивко.
+            AppDomain.CurrentDomain.FirstChanceException+=(s, e) =>
+            {
+                Logger.Log($"FirstChanceException: {e.Exception.GetType().Name}: {e.Exception.Message}");
+            };
+
+            TaskScheduler.UnobservedTaskException+=(s, e) =>
+            {
+                Logger.LogException("TaskScheduler UnobservedTaskException", e.Exception);
+                e.SetObserved();
+            };
+
             ServiceProvider=services;
+            Logger.Log("ServiceProvider assigned, starting database initialization task");
 
             _=Task.Run(async () => await InitializeDatabaseAsync());
         }
 
         private async Task InitializeDatabaseAsync()
         {
+            Logger.Log("InitializeDatabaseAsync started");
             try
             {
                 using var scope = ServiceProvider.CreateScope();
+                Logger.Log("DI scope created, resolving DatabaseMigrationService");
 
                 var migrator = scope.ServiceProvider.GetRequiredService<DatabaseMigrationService>();
-                await migrator.MigrateAsync();
+                Logger.Log("DatabaseMigrationService resolved, running MigrateAsync");
 
-                // await StartBackupSchedulerAsync();
+                await migrator.MigrateAsync();
+                Logger.Log("Database migration completed successfully");
 
                 _databaseReady.TrySetResult(true);
             }
             catch(Exception ex)
             {
-                // Ова беше без try/catch и се вртеше како fire-and-forget задача.
-                // Секој пад при миграција (SQL Server не работи, одбиена врска,
-                // неуспешна миграција) исчезнуваше тивко како непронајден исклучок
-                // — оттука црниот екран без ниту една порака.
                 _startupException=ex;
-                LogStartupFailure("Иницијализација на базата", ex);
-
+                Logger.LogException("Database initialization", ex);
                 _databaseReady.TrySetResult(false);
             }
         }
 
-        /// <summary>
-        /// Запишува во %LOCALAPPDATA%\EHMR\startup.log. Console.WriteLine во
-        /// unpackaged WinUI апликација не оди никаде видливо.
-        /// </summary>
-        private static void LogStartupFailure(string stage, Exception ex)
-        {
-            try
-            {
-                var dir = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "EHMR");
-
-                Directory.CreateDirectory(dir);
-
-                File.AppendAllText(
-                    Path.Combine(dir, "startup.log"),
-                    $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}  [{stage}]{Environment.NewLine}{ex}{Environment.NewLine}{Environment.NewLine}");
-            }
-            catch
-            {
-                // Ако ни логирањето падне, нема што повеќе да се направи.
-            }
-        }
-
-        /// <summary>
-        /// Го подига распоредот за автоматски копии по миграциите.
-        /// Неуспехот тука не смее да го спречи стартувањето на апликацијата.
-        /// </summary>
         private async Task StartBackupSchedulerAsync()
         {
             try
             {
+                Logger.Log("Starting backup scheduler");
                 var scheduler = ServiceProvider.GetRequiredService<IBackupScheduler>();
                 await scheduler.StartAsync();
+                Logger.Log("Backup scheduler started successfully");
             }
             catch(Exception ex)
             {
-                Console.WriteLine($"Не успеа подигање на распоредот за резервни копии: {ex}");
+                Logger.LogException("StartBackupSchedulerAsync", ex);
+                // Не смее да спречи стартување на апликацијата - веќе точно.
             }
         }
 
         protected override Window CreateWindow(IActivationState activationState)
         {
-            // 1. НА СТАРТОТ: Го прикажуваме само LoadingPage екранот
+            Logger.Log("CreateWindow called");
+
             var loadingPage = new LoadingPage();
             var window = new Window(loadingPage);
 
@@ -104,35 +98,38 @@ namespace EHMR
             window.MinimumWidth=1600;
             window.MinimumHeight=1200;
 
-            // 2. БЕЗБЕДНО ИНИЦИЈАЛИЗИРАЊЕ: Се активира кога прозорецот е подготвен на оперативниот систем
             window.Created+=async (s, e) =>
             {
+                Logger.Log("Window.Created fired - waiting for database readiness");
                 try
                 {
-                    // Почекај ја базата — ако падне, прикажи ја грешката наместо празен екран.
                     await _databaseReady.Task;
+                    Logger.Log("Database readiness task completed");
 
                     if(_startupException is not null)
+                    {
+                        Logger.Log("Startup exception was set - throwing to show ErrorPage");
                         throw new InvalidOperationException(
-                            "Иницијализацијата на базата не успеа. Види %LOCALAPPDATA%\\EHMR\\startup.log",
+                            $"Иницијализацијата на базата не успеа. Види лог: {Logger.GetLogFilePath()}",
                             _startupException);
+                    }
 
-                    // Го земаме AppShell од Dependency Injection контејнерот
+                    Logger.Log("Resolving AppShell from DI");
                     var shell = ServiceProvider.GetRequiredService<AppShell>();
 
-                    // Изврши ја првичната проверка (дали е логиран, кои менија му се видливи)
-                    // ПРЕД да го прикажеме самиот Shell
+                    Logger.Log("Calling shell.HandleInitialNavigationAsync (checks login state)");
                     await shell.HandleInitialNavigationAsync();
+                    Logger.Log("HandleInitialNavigationAsync completed successfully");
 
-                    // 3. ТРАНЗИЦИЈА: Кога сè е успешно проверено, го заменуваме LoadingPage со спремниот AppShell
                     await MainThread.InvokeOnMainThreadAsync(() =>
                     {
+                        Logger.Log("Swapping window.Page to AppShell");
                         window.Page=shell;
                     });
                 }
                 catch(Exception ex)
                 {
-                    LogStartupFailure("Подигнување на системот", ex);
+                    Logger.LogException("Window startup / navigation", ex);
 
                     await MainThread.InvokeOnMainThreadAsync(() =>
                     {

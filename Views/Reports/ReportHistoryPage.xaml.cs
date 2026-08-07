@@ -1,5 +1,7 @@
 ﻿using EHMR.ViewModels;
 using EHMR.ViewModels.Reports;
+using Microsoft.Maui.Controls;
+using System;
 
 namespace EHMR.Views.Reports
 {

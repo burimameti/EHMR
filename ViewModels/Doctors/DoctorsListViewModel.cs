@@ -5,7 +5,13 @@ using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Resources.Controls;
 using EHMR.ViewModels.Doctors.Extensions;
+using Microsoft.Maui;
+using Microsoft.Maui.Controls;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace EHMR.ViewModels;

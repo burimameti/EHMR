@@ -1,5 +1,7 @@
 ﻿namespace EHMR.Domain.Interfaces
 {
+    using System.Threading;
+    using System.Threading.Tasks;
     public interface IPreferencesService
     {
         Task SaveAsync(string key, string value);

@@ -4,7 +4,12 @@ using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Maui;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace EHMR.Domain.Entities.Reports
 {

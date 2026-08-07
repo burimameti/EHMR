@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ContentView
 	x:Class="EHMR.Resources.Controls.SparkExplorerHeaderView"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -35,12 +35,12 @@
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkTabItem">
 								<!--
-									Border наместо гол Grid: заоблени агли + тенка граница
-									кога табот НЕ е селектиран, за да личи на кликабилно
-									копче ("тапкаво"). Кога Е селектиран - полна teal
-									позадина со teal граница. Растојанието меѓу табовите
-									доаѓа од Spacing="10" на HorizontalStackLayout погоре -
-									нема повеќе BoxView divider по секој таб.
+									Border РЅР°РјРµСЃС‚Рѕ РіРѕР» Grid: Р·Р°РѕР±Р»РµРЅРё Р°РіР»Рё + С‚РµРЅРєР° РіСЂР°РЅРёС†Р°
+									РєРѕРіР° С‚Р°Р±РѕС‚ РќР• Рµ СЃРµР»РµРєС‚РёСЂР°РЅ, Р·Р° РґР° Р»РёС‡Рё РЅР° РєР»РёРєР°Р±РёР»РЅРѕ
+									РєРѕРїС‡Рµ ("С‚Р°РїРєР°РІРѕ"). РљРѕРіР° Р• СЃРµР»РµРєС‚РёСЂР°РЅ - РїРѕР»РЅР° teal
+									РїРѕР·Р°РґРёРЅР° СЃРѕ teal РіСЂР°РЅРёС†Р°. Р Р°СЃС‚РѕСР°РЅРёРµС‚Рѕ РјРµС“Сѓ С‚Р°Р±РѕРІРёС‚Рµ
+									РґРѕР°С“Р° РѕРґ Spacing="10" РЅР° HorizontalStackLayout РїРѕРіРѕСЂРµ -
+									РЅРµРјР° РїРѕРІРµСњРµ BoxView divider РїРѕ СЃРµРєРѕС С‚Р°Р±.
 								-->
 								<Border
 									Padding="16,10"
@@ -111,7 +111,7 @@
 					</HorizontalStackLayout>
 				</ScrollView>
 
-				<!--  ============ 1: DIVIDER (се појавува само еднаш, на крајот од табовите) ============  -->
+				<!--  ============ 1: DIVIDER (СЃРµ РїРѕСР°РІСѓРІР° СЃР°РјРѕ РµРґРЅР°С€, РЅР° РєСЂР°СРѕС‚ РѕРґ С‚Р°Р±РѕРІРёС‚Рµ) ============  -->
 				<BoxView
 					Grid.Column="1"
 					Margin="10,10"
@@ -119,7 +119,7 @@
 					WidthRequest="1" />
 
 				<!--  ============ 2: SPACER ============  -->
-				<!--  intentionally empty — pushes trailing action to the right edge  -->
+				<!--  intentionally empty вЂ” pushes trailing action to the right edge  -->
 
 				<!--  ============ 3: TRAILING ACTION ============  -->
 				<!--<Border
@@ -190,7 +190,7 @@
 					<Border.StrokeShape>
 						<RoundRectangle CornerRadius="12" />
 					</Border.StrokeShape>
-					<Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
+					<Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8">
 						<HorizontalStackLayout
 							Grid.Column="0"
 							Spacing="4"
@@ -209,7 +209,7 @@
 						</HorizontalStackLayout>
 						<!--
 							FIX: the original fixed MinimumWidthRequest="500" sat
-							inside a "*"-width grid column — on a narrower content
+							inside a "*"-width grid column вЂ” on a narrower content
 							pane that hard floor could force the whole toolbar to
 							overflow horizontally. HorizontalOptions="Fill" lets
 							the entry size to whatever room row 2 actually has,
@@ -227,6 +227,20 @@
 							Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}"
 							TextColor="{StaticResource SparkTextPrimary}"
 							VerticalOptions="Center" />
+						<HorizontalStackLayout
+							Grid.Column="3"
+							IsVisible="{Binding ShowCyrillicToggle, Source={x:Reference Root}}"
+							Spacing="4"
+							VerticalOptions="Center">
+							<CheckBox
+								IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
+								VerticalOptions="Center" />
+							<Label
+								FontSize="12"
+								Text="&#x041A;&#x0438;&#x0440;&#x0438;&#x043B;&#x0438;&#x0446;&#x0430;"
+								TextColor="{StaticResource SparkTextSecondary}"
+								VerticalOptions="Center" />
+						</HorizontalStackLayout>
 						<Border
 							Grid.Column="1"
 							Padding="0"
@@ -308,7 +322,7 @@
 								<!--
 									FIX: both IsPrimary branches previously set the SAME
 									BackgroundColor (SparkAccentTeal), so the trigger did
-									nothing — every button looked identical regardless of
+									nothing вЂ” every button looked identical regardless of
 									intent. False now uses the existing SparkButtonSecondaryBg
 									token (same one already used for the trailing action
 									button above), matching the pattern already established
@@ -361,7 +375,7 @@
 										VerticalOptions="Center">
 										<!--
 											Label text now follows the same IsPrimary split as the
-											background — was hardcoded White before, which is
+											background вЂ” was hardcoded White before, which is
 											correct on the accent-filled primary button but
 											invisible on the light SparkButtonSecondaryBg one.
 										-->
@@ -388,7 +402,7 @@
 
 			</Grid>
 
-			<!--  bottom rule — same BoxView stand-in as row 1, same SparkBorder token  -->
+			<!--  bottom rule вЂ” same BoxView stand-in as row 1, same SparkBorder token  -->
 			<BoxView
 				BackgroundColor="{StaticResource SparkSidebarBgHover}"
 				HeightRequest="1"
@@ -404,3 +418,4 @@
 
 	</VerticalStackLayout>
 </ContentView>
+

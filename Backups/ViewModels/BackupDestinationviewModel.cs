@@ -3,6 +3,12 @@ using CommunityToolkit.Mvvm.Input;
 using EHMR.Backups.Interfaces;
 using EHMR.Backups.Models;
 using System.Collections.ObjectModel;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace EHMR.Backups.ViewModels
 {

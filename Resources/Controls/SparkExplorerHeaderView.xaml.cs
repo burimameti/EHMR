@@ -119,6 +119,33 @@ namespace EHMR.Resources.Controls
 
         #region Search
 
+        public static readonly BindableProperty ShowCyrillicToggleProperty =
+            BindableProperty.Create(
+                nameof(ShowCyrillicToggle),
+                typeof(bool),
+                typeof(SparkExplorerHeaderView),
+                false);
+
+        public bool ShowCyrillicToggle
+        {
+            get => (bool)GetValue(ShowCyrillicToggleProperty);
+            set => SetValue(ShowCyrillicToggleProperty, value);
+        }
+
+        public static readonly BindableProperty UseCyrillicInputProperty =
+            BindableProperty.Create(
+                nameof(UseCyrillicInput),
+                typeof(bool),
+                typeof(SparkExplorerHeaderView),
+                false,
+                BindingMode.TwoWay);
+
+        public bool UseCyrillicInput
+        {
+            get => (bool)GetValue(UseCyrillicInputProperty);
+            set => SetValue(UseCyrillicInputProperty, value);
+        }
+
 
        
 

@@ -2,6 +2,26 @@
 <?xaml-comp compile="true" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
+	<!--
+		Оваа датотека е закоментирана во App.xaml, па стиловите подолу засега не
+		се вчитуваат. Клучевите што ги користеа не постоеја никаде — ако некој
+		го врати редот во App.xaml, секој StaticResource оттука ќе фрлеше.
+		Затоа се дефинирани тука, за датотеката да биде самостојна.
+	-->
+	<x:Double x:Key="TitleSize">22</x:Double>
+	<x:Double x:Key="SubtitleSize">16</x:Double>
+	<x:Double x:Key="BodySize">13</x:Double>
+	<x:Double x:Key="ButtonSize">13</x:Double>
+
+	<Color x:Key="Text">#1E2733</Color>
+	<Color x:Key="TextBody">#475569</Color>
+	<Color x:Key="SurfaceSoft">#F7F9FC</Color>
+
+	<Color x:Key="SuccessBg">#DCF3E3</Color>
+	<Color x:Key="WarningBg">#FEF3C7</Color>
+	<Color x:Key="DangerBg">#FCE3E7</Color>
+	<Color x:Key="InfoBg">#E3F6F9</Color>
+
 	<!--  Main  -->
 </ResourceDictionary>
 

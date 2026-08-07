@@ -1,6 +1,10 @@
 ﻿using EHMR.Domain.Entities;
 using EHMR.ViewModels;
 using System.Diagnostics;
+using Microsoft.Maui.Controls;
+using System;
+using System.Threading.Tasks;
+using System.Threading;
 namespace EHMR.Views;
 
 public partial class DashboardView : ContentPage

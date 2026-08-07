@@ -1,3 +1,5 @@
+using Microsoft.Maui.Controls;
+
 namespace EHMR.Resources.Controls;
 
 public partial class FFSwitch : ContentView

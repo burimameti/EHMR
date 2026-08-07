@@ -1,4 +1,7 @@
-﻿namespace EHMR.Domain.Interfaces
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace EHMR.Domain.Interfaces
 {
     public interface INavigationService
     {

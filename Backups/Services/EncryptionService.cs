@@ -2,6 +2,12 @@
 using System.Security.Cryptography;
 using Microsoft.Extensions.Options;
 using EHMR.Backups.Encryption;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace EHMR.Backups.Services;
 

@@ -1,5 +1,9 @@
 ﻿namespace EHMR.Domain.Interfaces
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
     public interface INavigationCoordinator
     {
         void RegisterHandler(Func<string, Task> handler);

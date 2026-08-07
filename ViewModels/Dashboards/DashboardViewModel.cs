@@ -13,10 +13,21 @@ using EHMR.ViewModels.Dashboard.Models;
 using EHMR.ViewModels.Dashboards.Models;
 using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.UI.Xaml.Controls;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
+using System.Linq;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Graphics;
+using Microsoft.Maui;
+
 
 namespace EHMR.ViewModels;
 
@@ -113,6 +124,7 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty] private string selectedCity = "All";
     [ObservableProperty] private string selectedAgeGroup = "All";
     [ObservableProperty] private string statusText;
+    [ObservableProperty] private bool useCyrillicSearch;
     //
     public ObservableCollection<string> StatusFilters { get; } = PatientFilterLookups.Status.ToObservableCollection();
     public ObservableCollection<string> GenderFilters { get; } = PatientFilterLookups.Gender.ToObservableCollection();
@@ -599,6 +611,16 @@ public partial class DashboardViewModel : ObservableObject
 
     partial void OnPatientSearchTextChanged(string value)
     {
+        if(UseCyrillicSearch&&!string.IsNullOrEmpty(value))
+        {
+            var converted = MacedonianTransliterator.ToCyrillic(value);
+            if(converted!=value)
+            {
+                PatientSearchText=converted;
+                return;
+            }
+        }
+
         if(string.IsNullOrWhiteSpace(value))
         {
             FilteredPatients=new ObservableCollection<DashboardPatientAggregate>();
@@ -611,6 +633,15 @@ public partial class DashboardViewModel : ObservableObject
         ApplySearch();
     }
 
+
+    partial void OnUseCyrillicSearchChanged(bool value)
+    {
+        if(!value||string.IsNullOrWhiteSpace(PatientSearchText))
+            return;
+
+        PatientSearchText=MacedonianTransliterator.ToCyrillic(PatientSearchText);
+        ApplySearch();
+    }
     partial void OnFilteredPatientsChanged(ObservableCollection<DashboardPatientAggregate> value) => RefreshSparkGridRows();
 
     [RelayCommand]

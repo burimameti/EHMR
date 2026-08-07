@@ -28,7 +28,7 @@ public static class AppNavigation
         //    [
         //        new()
         //        {
-                    GroupTitle = "Календар  на Прегледи",
+                    GroupTitle = "Календар",
                     Route = AppRoutes.CalendarPage,
                     Module = Modules.Calendar,
                     Icon = new IconDefinition { Glyph = "\uf133", Font = IconFontType.FontAwesomeSolid } // Alternative Calendar
@@ -40,36 +40,28 @@ public static class AppNavigation
         // ==========================
         new()
         {
-           // GroupTitle = "Прегледи",
-           // Module = Modules.Encounters,
-           // Icon = new IconDefinition { Glyph = "\uf0f1", Font = IconFontType.FontAwesomeSolid }, // Stethoscope
-            //Items =
-            //[
-                //new()
-               // {
-                         GroupTitle = "Прегледи",
-                   // Title = "Листа на прегледи",
+            GroupTitle = "\u041F\u0440\u0435\u0433\u043B\u0435\u0434\u0438",
+            Route = AppRoutes.Encounters.List,
+            Module = Modules.Encounters,
+            Icon = new IconDefinition { Glyph = "\uf0f1", Font = IconFontType.FontAwesomeSolid },
+            Items =
+            [
+                new()
+                {
+                    Title = "\u041B\u0438\u0441\u0442\u0430 \u043D\u0430 \u043F\u0440\u0435\u0433\u043B\u0435\u0434\u0438",
                     Route = AppRoutes.Encounters.List,
                     Module = Modules.Encounters,
-                    Icon = new IconDefinition { Glyph = "\uf0ae", Font = IconFontType.FontAwesomeSolid } // Tasks / List
-               // }
-            //]
-        },  new()
-        {
-            //GroupTitle = "Пациенти",
-            //Module = Modules.Patients,
-            //Icon = new IconDefinition { Glyph = "\uf0c0", Font = IconFontType.FontAwesomeSolid }, // Users
-            //Items =
-            //[
-               
-                    GroupTitle = "Медицински Картони",
-                    Route = AppRoutes.Patients.List,
-                    Module = Modules.Patients,
-                    Icon = new IconDefinition { Glyph = "\uf2bd", Font = IconFontType.FontAwesomeSolid } // User Card
-                
-            //]
+                    Icon = new IconDefinition { Glyph = "\uf0ae", Font = IconFontType.FontAwesomeSolid }
+                },
+                new()
+                {
+                    Title = "\u041D\u043E\u0432 \u043F\u0440\u0435\u0433\u043B\u0435\u0434",
+                    Route = AppRoutes.Encounters.Create,
+                    Module = Modules.Encounters,
+                    Icon = new IconDefinition { Glyph = "\uf067", Font = IconFontType.FontAwesomeSolid }
+                }
+            ]
         },
-
         // ==========================
         // APPOINTMENTS (ТЕРМИНИ)
         // ==========================
@@ -274,4 +266,31 @@ public static class AppNavigation
             //]
         }
     ];
+    private static readonly IReadOnlyDictionary<string, string> ParentRoutes =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            [AppRoutes.Patients.Detail]=AppRoutes.Patients.List,
+            [AppRoutes.Doctors.Detail]=AppRoutes.Doctors.List,
+            [AppRoutes.Appointments.Detail]=AppRoutes.Appointments.List,
+            [AppRoutes.Medicines.Detail]=AppRoutes.Medicines.List,
+            [AppRoutes.Prescriptions.Detail]=AppRoutes.Prescriptions.List,
+            [AppRoutes.Reports.Detail]=AppRoutes.Reports.List,
+            [AppRoutes.Users.Detail]=AppRoutes.Admin.AdminPanel,
+            [AppRoutes.Therapy.Detail]=AppRoutes.Therapy.List,
+            [AppRoutes.Protocols.Detail]=AppRoutes.Protocols.List,
+            [AppRoutes.Encounters.Create]=AppRoutes.Encounters.List,
+            [AppRoutes.Encounters.Edit]=AppRoutes.Encounters.List,
+            [AppRoutes.Encounters.Detail]=AppRoutes.Encounters.List
+        };
+
+    public static string ResolveMenuRoute(string route)
+    {
+        if(string.IsNullOrWhiteSpace(route))
+            return string.Empty;
+
+        var normalized=route.Trim('/');
+        return ParentRoutes.TryGetValue(normalized, out var parent)
+            ? parent
+            : normalized;
+    }
 }

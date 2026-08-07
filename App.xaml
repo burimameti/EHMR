@@ -18,6 +18,15 @@
 			<converters:SparkNotNullConverter x:Key="SparkNotNullConverter" />
 			<converters:SparkCollectionNotEmptyConverter x:Key="SparkCollectionNotEmptyConverter" />
 			<converters:StringNotNullOrEmptyConverter x:Key="StringNotNullOrEmptyConverter" />
+			<!--  Класата постоеше, но не беше регистрирана — PatientDetailFormPage ја бараше.  -->
+			<converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
+
+			<!--  Конвертори што XAML ги бараше, а класите не постоеја.  -->
+			<converters:BoolToActiveBadgeColorConverter x:Key="BoolToActiveBadgeColorConverter" />
+			<converters:BoolToActiveLabelConverter x:Key="BoolToActiveLabelConverter" />
+			<converters:GuidToBoolConverter x:Key="GuidToBoolConverter" />
+			<converters:AppointmentStatusToLabelConverter x:Key="AppointmentStatusToLabelConverter" />
+			<converters:DoctorStatusToColorConverter x:Key="DoctorStatusToColorConverter" />
 			<converters:BrushToColorConverter x:Key="BrushToColorConverter" />
 			<converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
 			<converters:SuggestionSelectionStrokeConverter x:Key="SuggestionSelectionStrokeConverter" />

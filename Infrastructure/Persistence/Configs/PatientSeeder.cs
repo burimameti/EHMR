@@ -48,7 +48,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38970111223",
                 EmergencyRelationship = "Spouse",
                 BloodType = "A+",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Active,
                 RegistrationDate = now.AddDays(-30),
                 IsDeleted = false
@@ -71,7 +71,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38970222334",
                 EmergencyRelationship = "Brother",
                 BloodType = "A+",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Active,
                 RegistrationDate = now.AddDays(-30),
                 IsDeleted = false
@@ -140,7 +140,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38970555667",
                 EmergencyRelationship = "Sister",
                 BloodType = "AB+",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Active,
                 RegistrationDate = now.AddDays(-24),
                 IsDeleted = false
@@ -163,7 +163,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38970666778",
                 EmergencyRelationship = "Husband",
                 BloodType = "O-",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Active,
                 RegistrationDate = now.AddDays(-22),
                 IsDeleted = false
@@ -209,7 +209,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38970888990",
                 EmergencyRelationship = "Wife",
                 BloodType = "B+",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Active,
                 RegistrationDate = now.AddDays(-18),
                 IsDeleted = false
@@ -232,7 +232,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38970999001",
                 EmergencyRelationship = "Brother",
                 BloodType = "A+",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Active,
                 RegistrationDate = now.AddDays(-16),
                 IsDeleted = false
@@ -255,7 +255,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38975000112",
                 EmergencyRelationship = "Wife",
                 BloodType = "O+",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Inactive,
                 RegistrationDate = now.AddDays(-14),
                 IsDeleted = false
@@ -278,7 +278,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38970111334",
                 EmergencyRelationship = "Husband",
                 BloodType = "A+",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Active,
                 RegistrationDate = now.AddDays(-12),
                 IsDeleted = false
@@ -347,7 +347,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38970444667",
                 EmergencyRelationship = "Wife",
                 BloodType = "A+",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Active,
                 RegistrationDate = now.AddDays(-8),
                 IsDeleted = false
@@ -370,7 +370,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38975555778",
                 EmergencyRelationship = "Татко",
                 BloodType = "O+",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Active,
                 RegistrationDate = now.AddDays(-7),
                 IsDeleted = false
@@ -393,7 +393,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38970666889",
                 EmergencyRelationship = "Wife",
                 BloodType = "B-",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Active,
                 RegistrationDate = now.AddDays(-6),
                 IsDeleted = false
@@ -439,7 +439,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38970777998",
                 EmergencyRelationship = "Wife",
                 BloodType = "O+",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Active,
                 RegistrationDate = now.AddDays(-4),
                 IsDeleted = false
@@ -462,7 +462,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38975888112",
                 EmergencyRelationship = "Husband",
                 BloodType = "AB+",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Inactive,
                 RegistrationDate = now.AddDays(-3),
                 IsDeleted = false
@@ -485,7 +485,7 @@ public class PatientSeeder : IEntitySeeder
                 EmergencyContactPhone = "+38970999223",
                 EmergencyRelationship = "Sister",
                 BloodType = "A+",
-                Allergies = "None",
+                Allergies = "Нема",
                 Status = PatientStatus.Active,
                 RegistrationDate = now.AddDays(-2),
                 IsDeleted = false

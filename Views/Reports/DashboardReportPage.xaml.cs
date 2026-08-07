@@ -1,4 +1,6 @@
 ﻿using EHMR.ViewModels;
+using Microsoft.Maui.Controls;
+using System;
 
 namespace EHMR.Views.Reports
 {

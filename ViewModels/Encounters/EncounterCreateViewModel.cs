@@ -5,6 +5,9 @@ using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Services;
 using EHMR.ViewModels.Encounters;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace EHMR.ViewModels.Encounters;
 public partial class EncounterCreateViewModel : EncounterBaseViewModel

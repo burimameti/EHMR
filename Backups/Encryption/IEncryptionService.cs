@@ -1,4 +1,7 @@
-﻿namespace EHMR.Backups.Encryption
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace EHMR.Backups.Encryption
 {
     // File: EHMR.Backups/Services/IEncryptionService.cs
 

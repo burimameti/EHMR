@@ -1,5 +1,8 @@
 ﻿// EHMR.UI/Converters/RiskConverters.cs
 using EHMR.Resources.Theming;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
+using System;
 using System.Globalization;
 
 namespace EHMR.Converters;

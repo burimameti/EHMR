@@ -118,6 +118,155 @@
 	<Color x:Key="SparkOverlay">#80191E29</Color>
 
 	<!--  ============================================================  -->
+	<!--
+		Ресурси што се користеа низ апликацијата без никаде да бидат
+		дефинирани. Нерешен StaticResource фрла XamlParseException штом
+		страницата се вчита — FFHeader ја рушеше почетната страна со
+		„StaticResource not found for key EhmrIconButton".
+	-->
+	<!--  ============================================================  -->
+
+	<!--  FFInput, FFDatePickerPage  -->
+	<Color x:Key="InputText">#1E2733</Color>
+	<Color x:Key="InputPlaceholder">#94A3B8</Color>
+
+	<!--  Components\PageHeader.xaml, SearchFilterBarView.xaml  -->
+	<Style x:Key="DashboardCard" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
+		<Setter Property="Stroke" Value="#E1E6ED" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+		<Setter Property="StrokeThickness" Value="1" />
+	</Style>
+
+	<Style x:Key="MedicalSectionTitle" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="18" />
+		<Setter Property="TextColor" Value="#1E2733" />
+	</Style>
+
+	<Style x:Key="MutedText" TargetType="Label">
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="TextColor" Value="#94A3B8" />
+	</Style>
+
+	<Style x:Key="InputLabel" TargetType="Label">
+		<Setter Property="FontSize" Value="11" />
+		<Setter Property="TextColor" Value="#64748B" />
+		<Setter Property="Margin" Value="0,0,0,4" />
+	</Style>
+
+	<!--  FFHeader — копче со само иконка  -->
+	<Style x:Key="EhmrIconButton" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
+		<Setter Property="TextColor" Value="#475569" />
+		<Setter Property="BorderColor" Value="#E1E6ED" />
+		<Setter Property="BorderWidth" Value="1" />
+		<Setter Property="CornerRadius" Value="8" />
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="Padding" Value="0" />
+	</Style>
+
+	<!--  AppointmentDetailPage, PatientDetailFormPage — „x" во чипче  -->
+	<Style x:Key="TokenChipRemoveButtonStyle" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="TextColor" Value="#64748B" />
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="WidthRequest" Value="24" />
+		<Setter Property="HeightRequest" Value="24" />
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="CornerRadius" Value="12" />
+	</Style>
+
+	<!--  ── ReportPage ──────────────────────────────────────────────  -->
+
+	<x:Double x:Key="SpaceXs">4</x:Double>
+	<x:Double x:Key="SpaceSm">8</x:Double>
+	<x:Double x:Key="SpaceLg">20</x:Double>
+
+	<Color x:Key="BorderDefaultStrong">#CBD5E1</Color>
+
+	<Style x:Key="GridHeaderLabel" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="22" />
+		<Setter Property="TextColor" Value="#1E2733" />
+	</Style>
+
+	<Style x:Key="ToolbarContainer" TargetType="Border">
+		<Setter Property="Padding" Value="16,12" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
+		<Setter Property="Stroke" Value="#E1E6ED" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+		<Setter Property="StrokeThickness" Value="1" />
+	</Style>
+
+	<Style x:Key="ElevatedCard" TargetType="Border">
+		<Setter Property="Padding" Value="16" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
+		<Setter Property="Stroke" Value="#E1E6ED" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+		<Setter Property="StrokeThickness" Value="1" />
+	</Style>
+
+	<Style x:Key="InputEntry" TargetType="Entry">
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
+		<Setter Property="TextColor" Value="#1E2733" />
+		<Setter Property="PlaceholderColor" Value="#94A3B8" />
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="HeightRequest" Value="40" />
+	</Style>
+
+	<Style x:Key="PrimaryButtonStyle" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="#0EA5B8" />
+		<Setter Property="TextColor" Value="#FFFFFF" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="HeightRequest" Value="40" />
+		<Setter Property="CornerRadius" Value="8" />
+		<Setter Property="Padding" Value="16,0" />
+	</Style>
+
+	<Style x:Key="ToolbarButton" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
+		<Setter Property="TextColor" Value="#475569" />
+		<Setter Property="BorderColor" Value="#E1E6ED" />
+		<Setter Property="BorderWidth" Value="1" />
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="HeightRequest" Value="36" />
+		<Setter Property="CornerRadius" Value="8" />
+		<Setter Property="Padding" Value="12,0" />
+	</Style>
+
+	<Style x:Key="ActiveTabButtonStyle" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="#0EA5B8" />
+		<Setter Property="TextColor" Value="#FFFFFF" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="HeightRequest" Value="36" />
+		<Setter Property="CornerRadius" Value="8" />
+		<Setter Property="Padding" Value="12,0" />
+	</Style>
+
+	<Style x:Key="GridHeaderStyle" TargetType="Border">
+		<Setter Property="Padding" Value="12,10" />
+		<Setter Property="BackgroundColor" Value="#F7F9FC" />
+		<Setter Property="Stroke" Value="#E1E6ED" />
+		<Setter Property="StrokeThickness" Value="1" />
+	</Style>
+
+	<Style x:Key="GridHeaderTextStyle" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="TextColor" Value="#475569" />
+	</Style>
+
+	<Style x:Key="GridRowStyle" TargetType="Border">
+		<Setter Property="Padding" Value="12,8" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
+		<Setter Property="Stroke" Value="#EDF1F5" />
+		<Setter Property="StrokeThickness" Value="1" />
+	</Style>
+
+	<!--  ============================================================  -->
 	<!--  RADIUS SCALE  -->
 	<!--  ============================================================  -->
 	<x:Double x:Key="SparkRadiusXs">4</x:Double>

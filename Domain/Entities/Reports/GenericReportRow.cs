@@ -1,4 +1,7 @@
-﻿namespace EHMR.Domain.Entities.Reports
+﻿using System;
+using System.Collections.Generic;
+
+namespace EHMR.Domain.Entities.Reports
 {
 
     public enum ReportType

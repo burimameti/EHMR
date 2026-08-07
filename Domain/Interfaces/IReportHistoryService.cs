@@ -1,6 +1,9 @@
 ﻿using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Reports;
-
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 namespace EHMR.Domain.Interfaces;
 
 public interface IReportHistoryService

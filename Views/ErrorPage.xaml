@@ -6,14 +6,51 @@
 	xmlns:vm="clr-namespace:EHMR.ViewModels"
 	BackgroundColor="#F4F7FC"
 	NavigationPage.HasNavigationBar="False">
-
 	<ContentPage.Content>
-		<Grid>
-			<Label
-				HorizontalOptions="Center"
-				Text="Error Occured Please Rech Admin!!!"
-				TextColor="Purple"
-				VerticalOptions="Center" />
-		</Grid>
+		<ScrollView>
+			<VerticalStackLayout Padding="30" Spacing="12">
+
+				<Label
+					FontAttributes="Bold"
+					FontSize="20"
+					HorizontalOptions="Center"
+					Text="Настана грешка при подигнување на системот"
+					TextColor="Purple" />
+
+				<Label
+					x:Name="MessageLabel"
+					Margin="0,10,0,0"
+					FontSize="16"
+					TextColor="Black" />
+
+				<Label
+					x:Name="InnerMessageLabel"
+					FontSize="14"
+					TextColor="DarkRed" />
+
+				<Label
+					x:Name="LogPathLabel"
+					Margin="0,10,0,0"
+					FontSize="13"
+					TextColor="Gray" />
+
+				<Button
+					x:Name="CopyButton"
+					Margin="0,15,0,0"
+					Clicked="OnCopyClicked"
+					Text="Копирај детали за грешка" />
+
+				<BoxView
+					Margin="0,15,0,15"
+					HeightRequest="1"
+					Color="LightGray" />
+
+				<Label
+					x:Name="StackTraceLabel"
+					FontSize="11"
+					TextColor="Gray" />
+
+			</VerticalStackLayout>
+		</ScrollView>
 	</ContentPage.Content>
 </ContentPage>

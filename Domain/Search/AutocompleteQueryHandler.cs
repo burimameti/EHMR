@@ -1,6 +1,12 @@
 ﻿using EHMR.Infrastructure.Persistence;
 using EHMR.Services;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace EHMR.Domain.Search
 {

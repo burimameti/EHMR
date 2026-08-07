@@ -1,4 +1,6 @@
-﻿namespace EHMR.Views.Reports
+﻿using Microsoft.Maui.Controls;
+
+namespace EHMR.Views.Reports
 {
     public partial class ReportsListPage : ContentPage
     {

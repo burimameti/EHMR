@@ -221,6 +221,8 @@
 									SearchCommand="{Binding SearchCommand}"
 									SearchPlaceholder="Пребарување на пациенти..."
 									SearchText="{Binding PatientSearchText}"
+									ShowCyrillicToggle="True"
+									UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}"
 									Tabs="{Binding Tabs}" />
 
 								<Border Padding="0">

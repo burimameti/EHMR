@@ -43,7 +43,7 @@ public class DatabaseMigrationService
 
             if(pending.Any())
             {
-                BackupDatabase(db);
+                //BackupDatabase(db);
                 await db.Database.MigrateAsync();
             }
         }

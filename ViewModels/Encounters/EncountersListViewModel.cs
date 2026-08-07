@@ -9,6 +9,14 @@ using EHMR.Resources.Controls;
 using EHMR.ViewModels.Constants;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.Maui;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Controls;
 
 namespace EHMR.ViewModels.Encounters;
 

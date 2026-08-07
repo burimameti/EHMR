@@ -4,8 +4,16 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Services;
-
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Linq;
+
 
 namespace EHMR.ViewModels.Appointments;
 

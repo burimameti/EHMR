@@ -1,4 +1,8 @@
 ﻿using EHMR.ViewModels.Encounters;
+using Microsoft.Maui.Controls;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 namespace EHMR.Views.Encounters;
 [QueryProperty(nameof(EncounterId), "EncounterId")]
 public partial class EncounterDetailPage : ContentPage

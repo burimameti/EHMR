@@ -2,7 +2,7 @@
 
 <PropertyGroup>
 
-<TargetFrameworks>net9.0-windows10.0.19041.0</TargetFrameworks>
+	<TargetFrameworks>net9.0-windows10.0.19041.0</TargetFrameworks>
 
 	<UseMaui>true</UseMaui>
 	<SingleProject>true</SingleProject>
@@ -10,25 +10,28 @@
 	<OutputType>Exe</OutputType>
 	<RootNamespace>EHMR</RootNamespace>
 
+	<!--
+		ImplicitUsings мора да остане вклучено. Целиот проект се потпира на
+		автоматските using-и (System, System.Linq, System.Collections.Generic,
+		System.Threading.Tasks). Без него секој фајл губи по неколку namespace-и
+		и билдот дава илјадници грешки.
+	-->
 	<ImplicitUsings>enable</ImplicitUsings>
 	<Nullable>enable</Nullable>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-<!--	<ApplicationTitle>EHMR</ApplicationTitle>
-	<ApplicationId>com.EHMR.mk</ApplicationId>-->
-
-	<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-<!--	<ApplicationVersion>1</ApplicationVersion>-->
-
-<WindowsPackageType>MSIX</WindowsPackageType>
-<ApplicationTitle>EHMR</ApplicationTitle>
-<ApplicationId>com.ehmr.desktop</ApplicationId>
-<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
-<ApplicationVersion>1</ApplicationVersion>
+	<ApplicationTitle>EHMR</ApplicationTitle>
+	<ApplicationId>com.ehmr.desktop</ApplicationId>
+	<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
+	<ApplicationVersion>1</ApplicationVersion>
 
 	<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
 	<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	<Platforms>AnyCPU;x64</Platforms>
+
+	<!-- Поставки за инсталерот: unpackaged, 64-битно, самостоен WindowsAppSDK. -->
+	<WindowsPackageType>None</WindowsPackageType>
+	<Platforms>x64</Platforms>
+	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
 </PropertyGroup>
 
@@ -66,7 +69,12 @@
 		    <PackageReference Include="ClosedXML" Version="0.105.0" />
 		    <PackageReference Include="ClosedXML.Report" Version="0.2.12" />
 		    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-
+			<!--
+				Мора да е >= верзијата што ја бара CommunityToolkit.Maui преку
+				Microsoft.Maui.Core, инаку NU1605 (package downgrade) го спречува билдот
+				штом WindowsAppSDKSelfContained е вклучено.
+			-->
+			<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250909003" />
     <!-- MAUI UI TOOLKIT -->
     <PackageReference Include="CommunityToolkit.Maui" Version="12.2.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.16" />
@@ -549,6 +557,7 @@
 	<ItemGroup>
 	  <Folder Include="Domain\NewFolder\" />
 	  <Folder Include="Infrastructure\Security\" />
+	  <Folder Include="Installer\Output\" />
 	  <Folder Include="Resources\Controls\Actions\" />
 	  <Folder Include="Resources\Controls\SparkForm\Services\" />
 	  <Folder Include="Views\Ter\" />

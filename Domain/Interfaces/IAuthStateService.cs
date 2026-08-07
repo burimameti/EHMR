@@ -1,4 +1,5 @@
 ﻿using EHMR.Domain.Entities.Rbac;
+using System;
 
 namespace EHMR.Domain.Interfaces;
 

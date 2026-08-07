@@ -154,8 +154,7 @@ public class Patient : BaseEntity
 public enum Gender
 {
     Male,
-    Female,
-    Other
+    Female
 }
 
 public enum DosesFrequency

@@ -138,6 +138,7 @@ public class AuthorizationService : IAuthorizationService
     private string? ResolveModule(string route)
     {
         route=Normalize(route);
+        route=Normalize(AppNavigation.ResolveMenuRoute(route));
 
         var routes = AppNavigation.AllGroups
             .SelectMany(g =>

@@ -6,7 +6,10 @@ using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Resources.Controls;
 using EHMR.Services;
+using Microsoft.Maui.Controls;
+using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace EHMR.ViewModels.Admin;

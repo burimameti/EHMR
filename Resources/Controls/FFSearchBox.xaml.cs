@@ -1,3 +1,6 @@
+using Microsoft.Maui.Controls;
+using System;
+
 namespace EHMR.Resources.Controls;
 public partial class FFSearchBox : ContentView
 {

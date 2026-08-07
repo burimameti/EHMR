@@ -1,3 +1,6 @@
+using Microsoft.Maui;
+using Microsoft.Maui.Controls;
+using System;
 using System.Windows.Input;
 
 namespace EHMR.Resources.Controls;

@@ -1,7 +1,9 @@
 ﻿using EHMR.Domain.Entities;
 using EHMR.ViewModels.Patients.Extensions;
 using System.Globalization;
-
+using Microsoft.Maui.Controls;
+using System;
+using Microsoft.Maui.Graphics;
 namespace EHMR.Converters
 {
   

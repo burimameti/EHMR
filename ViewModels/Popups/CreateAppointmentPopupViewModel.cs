@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
-using EHMR.Domain.Interfaces;
 using EHMR.Services;
 using System.Collections.ObjectModel;
 

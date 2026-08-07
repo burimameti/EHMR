@@ -1,6 +1,8 @@
 ﻿using EHMR.ViewModels;
 using Microsoft.Maui.Controls;
 using EHMR.ViewModels.Appointments;
+using System;
+
 
 
 #if WINDOWS

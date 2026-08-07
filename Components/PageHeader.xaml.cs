@@ -1,4 +1,6 @@
-﻿namespace EHMR.Components
+﻿using Microsoft.Maui.Controls;
+
+namespace EHMR.Components
 {
     public partial class PageHeader : Grid
     {

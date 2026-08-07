@@ -3,8 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
-using EHMR.Services;
+
 using EHMR.ViewModels.Doctors.Extensions;
+
 
 namespace EHMR.ViewModels;
 
@@ -42,52 +43,47 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
     [ObservableProperty] private bool canShowEditToggle;
 
     // =====================================================
-    // СВОЈСТВА ЗА ДВОЈНО МАПИРАЊЕ (МАКЕДОНСКИ <-> ENUM)
+    // ПОЛ — Radio buttons: Машки / Женски
     // =====================================================
-    [ObservableProperty] private string selectedGenderDisplay = string.Empty;
-    [ObservableProperty] private string selectedStatusDisplay = string.Empty;
+    [ObservableProperty] private bool isMale = true;
+    [ObservableProperty] private bool isFemale;
 
-    partial void OnSelectedGenderDisplayChanged(string value)
+    partial void OnIsMaleChanged(bool value)
     {
-        if(string.IsNullOrEmpty(value)) return;
-
-        // Претворање од македонски текст во англиски Enum за базата
-        Doctors.Gender=value switch
+        if(value)
         {
-            "Машки" => Gender.Male,
-            "Женски" => Gender.Female,
-            _ => Gender.Other
-        };
+            IsFemale=false;
+            Doctors.Gender=Gender.Male;
+        }
     }
 
-    partial void OnSelectedStatusDisplayChanged(string value)
+    partial void OnIsFemaleChanged(bool value)
     {
-        if(string.IsNullOrEmpty(value)) return;
-
-        // Претворање од македонски текст во англиски Enum за базата
-        Doctors.Status=value switch
+        if(value)
         {
-            "Активен" => Status.Active,
-            "Неактивен" => Status.Inactive,
-            _ => Status.Suspended
-        };
+            IsMale=false;
+            Doctors.Gender=Gender.Female;
+        }
+    }
+
+    // =====================================================
+    // СТАТУС — Toggle (само во Edit Mode)
+    // Нов лекар: секогаш Active
+    // Edit: корисникот може да го направи Inactive
+    // =====================================================
+    [ObservableProperty] private bool isActive = true;
+
+    partial void OnIsActiveChanged(bool value)
+    {
+        Doctors.Status=value ? Status.Active : Status.Inactive;
     }
 
     private void SyncDisplayFromDoctor()
     {
-        SelectedGenderDisplay=Doctors.Gender switch
-        {
-            Gender.Male => "Машки",
-            Gender.Female => "Женски",
-            _ => "Друго"
-        };
+        IsMale=Doctors.Gender==Gender.Male;
+        IsFemale=Doctors.Gender==Gender.Female;
 
-        SelectedStatusDisplay=Doctors.Status switch
-        {
-            Status.Active => "Активен",
-            Status.Inactive => "Неактивен",
-            _ => "Суспендиран"
-        };
+        IsActive=Doctors.Status==Status.Active;
     }
 
     private void RefreshButtonVisibility()
@@ -115,7 +111,13 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
         }
         else
         {
-            Doctors=new Doctor { User=new User(), Gender=Gender.Male, Status=Status.Active };
+            // Нов лекар — секогаш Active
+            Doctors=new Doctor
+            {
+                User=new User(),
+                Gender=Gender.Male,
+                Status=Status.Active
+            };
             _isExistingDoctor=false;
 
             IsEditMode=true;
@@ -123,9 +125,7 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
             PageTitle="Нов лекар";
         }
 
-        // Наполни ги македонските стрингови во интерфејсот
         SyncDisplayFromDoctor();
-
         _snapshot=null;
         RefreshButtonVisibility();
     }
@@ -148,13 +148,10 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
         await ExecuteSafeAsync(async () =>
         {
             if(_isExistingDoctor)
-            {
                 await _doctorService.UpdateAsync(Doctors);
-            }
             else
-            {
                 await _doctorService.AddAsync(Doctors);
-            }
+
             await NavigationService.GoBackAsync();
         },
         "Грешка при зачувување на лекар");
@@ -164,8 +161,7 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
     [RelayCommand]
     private async Task Delete()
     {
-        if(!_isExistingDoctor)
-            return;
+        if(!_isExistingDoctor) return;
 
         await ExecuteSafeAsync(async () =>
         {
@@ -175,29 +171,21 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
         "Грешка при бришење");
     }
 
-    // ================= CANCEL =================
+    // ================= CANCEL / ОТКАЖИ =================
+    // Секогаш оди назад:
+    //   - Нов лекар → GoBack (без зачувување)
+    //   - Edit постоечки → врати snapshot, оди назад
     [RelayCommand]
     private async Task Cancel()
     {
-        if(_isExistingDoctor)
+        if(_isExistingDoctor&&_snapshot is not null)
         {
-            if(_snapshot is not null)
-            {
-                Doctors=_snapshot;
-            }
+            Doctors=_snapshot;
             _snapshot=null;
-
-            // Врати го преводот во првобитна состојба
             SyncDisplayFromDoctor();
+        }
 
-            IsEditMode=false;
-            IsReadOnly=true;
-            PageTitle="Детали за лекар";
-        }
-        else
-        {
-            await NavigationService.GoBackAsync();
-        }
+        await NavigationService.GoBackAsync();
     }
 
     protected override IEnumerable<Doctor> ApplyFilters(IEnumerable<Doctor> query) => query;

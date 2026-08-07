@@ -1,4 +1,7 @@
-﻿namespace EHMR.Domain.Entities
+﻿using System;
+using System.Collections.Generic;
+
+namespace EHMR.Domain.Entities
 {
     public class TherapyCycle : BaseEntity
     {

@@ -7,7 +7,12 @@ using EHMR.Domain.Interfaces;
 using EHMR.Services;
 using EHMR.ViewModels.Appointments;
 using EHMR.ViewModels.Constants;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 namespace EHMR.ViewModels.Encounters;
 
 public abstract partial class EncounterBaseViewModel : ObservableObject, IDisposable

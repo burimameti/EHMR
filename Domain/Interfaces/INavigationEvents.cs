@@ -1,4 +1,6 @@
-﻿namespace EHMR.Domain.Interfaces
+﻿using System;
+
+namespace EHMR.Domain.Interfaces
 {
     public interface INavigationEvents
     {

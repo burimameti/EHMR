@@ -1,4 +1,7 @@
 ﻿using EHMR.ViewModels;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Controls;
+using System.Collections.Generic;
 
 namespace EHMR.Views
 {

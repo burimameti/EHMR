@@ -45,10 +45,12 @@
 				HeightRequest="1"
 				HorizontalOptions="Fill" />
 			<!--  ================= NAVIGATION =================  -->
-			<ScrollView Grid.Row="2" VerticalScrollBarVisibility="Never">
-				<VerticalStackLayout Padding="12,8,12,14" Spacing="2">
-
-					<CollectionView ItemsSource="{Binding Items}" SelectionMode="None">
+			<CollectionView
+				Grid.Row="2"
+				Margin="12,8,12,14"
+				ItemsSource="{Binding Items}"
+				SelectionMode="None"
+				VerticalScrollBarVisibility="Never">
 						<CollectionView.ItemTemplate>
 							<DataTemplate>
 								<VerticalStackLayout Spacing="0">
@@ -261,9 +263,7 @@
 								</VerticalStackLayout>
 							</DataTemplate>
 						</CollectionView.ItemTemplate>
-					</CollectionView>
-				</VerticalStackLayout>
-			</ScrollView>
+			</CollectionView>
 
 			<!--  ================= USER CARD =================  -->
 			<Border
