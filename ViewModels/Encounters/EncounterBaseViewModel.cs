@@ -5,14 +5,11 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Services;
-using EHMR.ViewModels.Appointments;
+
 using EHMR.ViewModels.Constants;
-using System;
-using System.Collections.Generic;
+
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+
 namespace EHMR.ViewModels.Encounters;
 
 public abstract partial class EncounterBaseViewModel : ObservableObject, IDisposable
@@ -34,10 +31,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     private bool _isApplyingContext;
 
     // Guards against overlapping "no results -> offer to create" dialogs.
-    // Without this, fast typing (or clicking "+ Нов ..." while a
-    // typing-triggered offer dialog is already open) stacks multiple
-    // popups on top of each other. Cancelling the top one then leaves
-    // the other in a half-closed state -> looks like "dispose didn't happen".
+    // Without this, fast typing (or clicking "+ Нов ..." додека веќе имате отворено
+    // дијалог за понуда) стака повеќе попапи еден врз друг. Откажувањето на врвниот
+    // потоа остава друг во полузатворена состојба -> изгледа како "dispose didn't happen".
     private bool _isOfferingCycleCreation;
     private bool _isOfferingAppointmentCreation;
 
@@ -62,7 +58,14 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     protected Encounter encounter = new();
     [ObservableProperty]
     private string pageTitle = string.Empty;
-    [ObservableProperty] private bool isPatientLockedFromContext;
+
+    private bool _isPatientLockedFromContext;
+    public bool IsPatientLockedFromContext
+    {
+        get => _isPatientLockedFromContext;
+        set => SetProperty(ref _isPatientLockedFromContext, value);
+    }
+
     // =====================================================
     // UI STATE
     // =====================================================
@@ -522,9 +525,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         if(SelectedPatient==null)
             return;
 
-        // Same re-entrancy guard as therapy cycles - prevents typing-triggered
-        // offers and the manual "+ Нов термин" button from opening overlapping
-        // popups.
+        // Сличен како горниот - спречува преклопување на попапи
         if(_isOfferingAppointmentCreation)
             return;
 
@@ -635,10 +636,10 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         if(SelectedPatient==null)
             return;
 
-        // Re-entrancy guard: without this, typing quickly (each keystroke
-        // re-triggers the debounced search) or clicking "+ Нов циклус"
-        // пока типувана понуда за дијалог се' уште е отворена може да се создадат
-        // повеќе од еден popup. Откажувањето на еден потоа остава дека другото
+        // Re-entrancy guard: без ова, брзо типување (секој клучен удар
+        // повторно го активира дебонсираното пребарување) или кликање на "+ Нов циклус"
+        // додека типуваната понуда за дијалог сѐ уште е отворена може да создаде
+        // повеќе од еден popup. Откажувањето на едниот потоаостаава дека другото
         // popup's RequestClose укажува на дијалог што веќе е "употребено" - изгледа како
         // popup-от не се затвора/раскинува правилно.
         if(_isOfferingCycleCreation)

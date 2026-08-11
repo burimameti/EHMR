@@ -59,6 +59,7 @@
         public static class Documents
         {
             public const string List = "documentslist";
+            public const string Preview = "documentslist";
         }
 
         public static class Medicines

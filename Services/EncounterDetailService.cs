@@ -1,4 +1,4 @@
-﻿using EHMR.Domain.Entities;
+using EHMR.Domain.Entities;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +30,7 @@ public class EncounterDetailService : IEncounterDetailService
         await using var db = await _factory.CreateDbContextAsync();
         return await db.Patients
             .AsNoTracking()
-            .Include(x => x.PatientMedicines)
+            .Include(x => x.PatientMedicines).Include(x=>x.Doctor)
             .OrderBy(x => x.LastName)
             .ThenBy(x => x.FirstName)
             .ToListAsync();
@@ -47,6 +47,84 @@ public class EncounterDetailService : IEncounterDetailService
             .ToListAsync();
     }
 
+    public async Task<DateTime> GetNextAvailableSlot(
+        Guid doctorId,
+        DateTime from,
+        int durationMinutes = 30)
+    {
+        if(doctorId==Guid.Empty)
+            return from;
+
+        var slotMinutes=Math.Max(5, durationMinutes);
+        var candidate=new DateTime(
+            from.Year,
+            from.Month,
+            from.Day,
+            from.Hour,
+            from.Minute<30 ? 30 : 0,
+            0);
+
+        if(from.Minute>=30)
+            candidate=candidate.AddHours(1);
+
+        await using var db = await _factory.CreateDbContextAsync();
+        var searchUntil=candidate.AddDays(30);
+
+        var appointments=await db.Appointments
+            .AsNoTracking()
+            .Where(x =>
+                x.DoctorId==doctorId&&
+                x.Status!=AppointmentStatus.Cancelled&&
+                x.Status!=AppointmentStatus.Missed&&
+                x.ScheduledStart<searchUntil&&
+                x.ScheduledEnd>candidate)
+            .Select(x => new { Start=(DateTime?)x.ScheduledStart, End=(DateTime?)x.ScheduledEnd })
+            .ToListAsync();
+
+        var encounters=await db.Encounters
+            .AsNoTracking()
+            .Where(x =>
+                x.DoctorId==doctorId&&
+                x.Status!=EncounterStatus.Cancelled&&
+                x.Status!=EncounterStatus.NoShow&&
+                x.ScheduledStart.HasValue&&
+                x.ScheduledStart<searchUntil)
+            .Select(x => new
+            {
+                Start=x.ScheduledStart,
+                End=x.ScheduledEnd??x.ScheduledStart!.Value.AddMinutes(slotMinutes)
+            })
+            .ToListAsync();
+
+        var occupied=appointments
+            .Select(x => (Start:x.Start!.Value, End:x.End!.Value))
+            .Concat(encounters.Select(x => (Start:x.Start!.Value, End:x.End)))
+            .OrderBy(x => x.Start)
+            .ToList();
+
+        while(candidate<searchUntil)
+        {
+            var candidateEnd=candidate.AddMinutes(slotMinutes);
+            var conflict=occupied.FirstOrDefault(x =>
+                x.Start<candidateEnd&&x.End>candidate);
+
+            if(conflict==default)
+                return candidate;
+
+            candidate=new DateTime(
+                conflict.End.Year,
+                conflict.End.Month,
+                conflict.End.Day,
+                conflict.End.Hour,
+                conflict.End.Minute<30 ? 30 : 0,
+                0);
+
+            if(conflict.End.Minute>=30)
+                candidate=candidate.AddHours(1);
+        }
+
+        return candidate;
+    }
     // ── Encounter ────────────────────────────────────────────────────────────
 
     public async Task<EncounterDetailDto> GetEncounter(Guid id)
@@ -346,6 +424,58 @@ public class EncounterDetailService : IEncounterDetailService
         encounter.UpdatedAt=DateTime.UtcNow;
         await db.SaveChangesAsync();
     }
+    public async Task UpdateEncounterClinicalData(
+        Guid encounterId,
+        List<Diagnosis> diagnoses,
+        string? remarks)
+    {
+        await using var db=await _factory.CreateDbContextAsync();
+        await using var tx=await db.Database.BeginTransactionAsync();
+
+        var encounter=await db.Encounters
+            .FirstOrDefaultAsync(x => x.Id==encounterId)
+            ??throw new InvalidOperationException("Прегледот не е пронајден.");
+
+        encounter.SetNotes(remarks);
+        encounter.UpdatedAt=DateTime.UtcNow;
+        encounter.UpdatedBy=_authorizationService.CurrentUser.Id;
+
+        var existing=await db.Diagnoses
+            .Where(x => x.EncounterId==encounterId)
+            .ToListAsync();
+        db.Diagnoses.RemoveRange(existing);
+
+        foreach(var diagnosis in diagnoses)
+        {
+            diagnosis.Id=Guid.NewGuid();
+            diagnosis.PatientId=encounter.PatientId;
+            diagnosis.EncounterId=encounter.Id;
+            diagnosis.Mkb10Code=null;
+            if(diagnosis.DiagnosedAt==default)
+                diagnosis.DiagnosedAt=DateTime.Now;
+            if(string.IsNullOrWhiteSpace(diagnosis.DiagnosisNumber))
+                diagnosis.DiagnosisNumber=await SequenceHelper.GenerateNumberAsync(
+                    db, SequenceNames.Diagnosis, "DX");
+            db.Diagnoses.Add(diagnosis);
+        }
+
+        if(diagnoses.Count>0)
+        {
+            encounter.Complete(DateTime.Now);
+
+            if(encounter.AppointmentId is { } appointmentId)
+            {
+                var appointment=await db.Appointments
+                    .FirstOrDefaultAsync(x => x.Id==appointmentId);
+                if(appointment is not null)
+                    appointment.Status=AppointmentStatus.Completed;
+            }
+        }
+
+        await db.SaveChangesAsync();
+        await tx.CommitAsync();
+    }
+
     public async Task SaveEncounter(
         Encounter encounter,
         List<Diagnosis> diagnoses,
@@ -358,6 +488,10 @@ public class EncounterDetailService : IEncounterDetailService
 
         try
         {
+            if(diagnoses.Count>0)
+                encounter.Schedule(DateTime.Now);
+            if(medicines.Count>0)
+                encounter.Complete(DateTime.Now);
             var exists = encounter.Id!=Guid.Empty
                 &&await db.Encounters.AsNoTracking().AnyAsync(e => e.Id==encounter.Id);
 

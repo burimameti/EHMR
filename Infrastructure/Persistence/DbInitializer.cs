@@ -41,7 +41,7 @@ public class DatabaseMigrationService
         {
             var pending = await db.Database.GetPendingMigrationsAsync();
 
-            if(pending.Any())
+          //  if(pending.Any())
             {
                 //BackupDatabase(db);
                 await db.Database.MigrateAsync();

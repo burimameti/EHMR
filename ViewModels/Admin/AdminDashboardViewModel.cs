@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Backups.Interfaces;
 using EHMR.Backups.Models;
@@ -244,8 +244,8 @@ public partial class AdminDashboardViewModel : ObservableObject
             },
             new()
             {
-                Title="Доктори",
-                Subtitle="Регистрирани доктори",
+                Title="Реуматолози",
+                Subtitle="Регистрирани реуматолози",
                 Icon="\uf0f0",
                 Variant=MetricTileVariant.Primary,
                 Value="—",

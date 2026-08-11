@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -21,7 +21,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     [ObservableProperty] private DateTime startDate = DateTime.Today.AddMonths(-1);
     [ObservableProperty] private DateTime endDate = DateTime.Today;
 
-    [ObservableProperty] private string col1Header = "ПАЦИЕНТ";
+    [ObservableProperty] private string col1Header = "ИМЕ И ПРЕЗИМЕ";
     [ObservableProperty] private string col2Header = "ПРОТОКОЛ / ТЕРАПИЈА";
     [ObservableProperty] private string col3Header = "ЦИКЛУС";
     [ObservableProperty] private string col4Header = "ДАТУМ";
@@ -121,11 +121,11 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
             case ReportType.Auditing:
                 Col1Header="КОРИСНИК"; Col2Header="АКЦИЈА / НАСТАН"; Col3Header="МОДУЛ"; Col4Header="ВРЕМЕ"; Col5Header="ДЕТАЛИ ОД АУДИТ ПАТЕКА";
-                Metric1Title="Вкупно Акции"; Metric2Title="Безбедносни Критични"; Metric3Title="Системски Статус";
+                Metric1Title="Вкупно активности"; Metric2Title="Безбедносни Критични"; Metric3Title="Системски Статус";
                 break;
 
             case ReportType.AppointmentStatuses:
-                Col1Header="ПАЦИЕНТ"; Col2Header="ДОКТОР / ТЕРАПЕВТ"; Col3Header="СТАТУС"; Col4Header="ТЕРМИН"; Col5Header="ЗАБЕЛЕШКА ОД ПРЕГЛЕД";
+                Col1Header="ИМЕ И ПРЕЗИМЕ"; Col2Header="РЕУМАТОЛОГ"; Col3Header="СТАТУС"; Col4Header="ТЕРМИН"; Col5Header="ЗАБЕЛЕШКА ОД ПРЕГЛЕД";
                 Metric1Title="Закажани Прегледи"; Metric2Title="Откажани Термини"; Metric3Title="Ефикасност на Сали";
                 break;
 
@@ -208,7 +208,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             SecondaryHeader=c.Patient.FirstName,
             HighlightValue=$"Ц-#{c.TherapyCyleNumber}",
             DateValue=c.StartDate?.ToString("dd.MM.yyyy"),
-            InformationalText=string.IsNullOrEmpty(c.Notes) ? "Нема внесено причина од лекар!" : c.Notes,
+            InformationalText=string.IsNullOrEmpty(c.Notes) ? "Нема внесено причина од реуматолог!" : c.Notes,
             IsAlertSeverity=string.IsNullOrEmpty(c.Notes)
         }).ToList();
     }

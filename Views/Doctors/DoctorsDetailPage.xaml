@@ -432,7 +432,7 @@
 						HeightRequest="46"
 						HorizontalOptions="Start"
 						IsVisible="{Binding CanShowDelete}"
-						Text="🗑 Избриши лекар"
+						Text="🗑 Избриши реуматолог"
 						TextColor="#DC2626" />
 
 					<!--  RIGHT BUTTONS  -->

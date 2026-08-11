@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -365,16 +365,16 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
-                 new() { Header = "БРОЈ-Пациент", Key = "PatientNumber", Width = new GridLength(1.3, GridUnitType.Star) },
+                 new() { Header = "БРОЈ НА ПАЦИЕНТ", Key = "PatientNumber", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "ЕМБГ", Key = "NationalId", Width = new GridLength(1.3, GridUnitType.Star) },
-            new() { Header = "ПАЦИЕНТ", Key = "FullName", Width = new GridLength(2.8, GridUnitType.Star) },
+            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "FullName", Width = new GridLength(2.8, GridUnitType.Star) },
             new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.8, GridUnitType.Star) },
             new() { Header = "ВОЗРАСТ", Key = "Age", CellType = SparkGridCellType.Number, Width = new GridLength(0.9, GridUnitType.Star) },
             new() { Header = "КРВ", Key = "BloodType", Width = new GridLength(0.8, GridUnitType.Star) },
             new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.5, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1.2, GridUnitType.Star) },
             new() { Header = "ЗАКАЖИ ПРЕГЛЕД", Key = "Pregled", CellType = SparkGridCellType.Button, Width = new GridLength(1.4, GridUnitType.Star) },
-            new() { Header = "АКЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
+            new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
 

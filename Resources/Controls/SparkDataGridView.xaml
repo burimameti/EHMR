@@ -4,38 +4,52 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	x:Name="Root">
-	<Grid Background="{StaticResource Gray100}" RowDefinitions="*, Auto">
-		<ScrollView
-			x:Name="HostScroll"
-			Grid.Row="0"
-			HorizontalOptions="Fill"
-			Orientation="Vertical"
-			VerticalOptions="Fill">
-			<Grid
-				x:Name="GridRoot"
-				ColumnSpacing="0"
+	<Border
+		Background="{StaticResource SparkPageBackground}"
+		Stroke="#D8DEE8"
+		StrokeShape="RoundRectangle 8"
+		StrokeThickness="1">
+		<Border.Shadow>
+			<Shadow
+				Brush="#000000"
+				Opacity="0.05"
+				Radius="10"
+				Offset="0,3" />
+		</Border.Shadow>
+		<Grid RowDefinitions="*, Auto">
+			<ScrollView
+				x:Name="HostScroll"
+				Grid.Row="0"
 				HorizontalOptions="Fill"
-				RowSpacing="0"
-				VerticalOptions="Fill" />
-		</ScrollView>
-		<Grid
-			x:Name="PagerContainer"
-			Grid.Row="1"
-			Padding="16,12"
-			Background="{StaticResource SparkTabActiveBg}"
-			ColumnDefinitions="*,Auto"
-			IsVisible="True">
-			<Label
-				x:Name="PagerInfoLabel"
-				Grid.Column="0"
-				HorizontalOptions="Center"
-				Style="{StaticResource SparkPagerLabelStyle}"
-				VerticalOptions="Center" />
-			<HorizontalStackLayout
-				x:Name="PagerRow"
-				Grid.Column="1"
-				Spacing="6"
-				VerticalOptions="Center" />
+				Orientation="Vertical"
+				VerticalOptions="Fill">
+				<Grid
+					x:Name="GridRoot"
+					ColumnSpacing="0"
+					HorizontalOptions="Fill"
+					RowSpacing="0"
+					VerticalOptions="Fill" />
+			</ScrollView>
+			<Grid
+				x:Name="PagerContainer"
+				Grid.Row="1"
+				Padding="16,12"
+				Background="{StaticResource SparkPageBackground2}"
+				ColumnDefinitions="*,Auto"
+				IsClippedToBounds="True"
+				IsVisible="True">
+				<Label
+					x:Name="PagerInfoLabel"
+					Grid.Column="0"
+					HorizontalOptions="Center"
+					Style="{StaticResource SparkPagerLabelStyle}"
+					VerticalOptions="Center" />
+				<HorizontalStackLayout
+					x:Name="PagerRow"
+					Grid.Column="1"
+					Spacing="6"
+					VerticalOptions="Center" />
+			</Grid>
 		</Grid>
-	</Grid>
+	</Border>
 </ContentView>

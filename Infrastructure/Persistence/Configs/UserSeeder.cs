@@ -29,13 +29,23 @@ public class UserSeeder : IEntitySeeder
                 Id = SeedIds.AdminUser,
                 Username = "admin",
                 PasswordHash = "123456",
-                FirstName = "Игор",
-                LastName = "Ангеловски",
+                FirstName = "Admin",
+                LastName = "Admin",
                 Role = UserRole.Admin,
                 Position = UserPosition.SuperAdmin,
                 IsActive = true
             },
-
+             new()
+            {
+                Id = SeedIds.SuperAdminUser,
+                Username = "SuperAdmin",
+                PasswordHash = "123456",
+                FirstName = "SuperAdmin",
+                LastName = "SuperAdmin",
+                Role = UserRole.SuperAdmin,
+                Position = UserPosition.SuperAdmin,
+                IsActive = true
+            },
             new() { Id = SeedIds.DocUser1, Username="dr.mitrev", FirstName="Никола", LastName="Митрев", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true, PasswordHash="123456" },
             new() { Id = SeedIds.DocUser2, Username="dr.anastoj", FirstName="Ана", LastName="Стојанова", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true , PasswordHash="123456" },
             new() { Id = SeedIds.DocUser3, Username="dr.goran", FirstName="Горан", LastName="Петров", Role=UserRole.Doctor, Position=UserPosition.Regular, IsActive=true , PasswordHash = "123456"},

@@ -1,23 +1,51 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
+using EHMR.Helpers;
 using EHMR.Services;
-using EHMR.ViewModels.Encounters;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace EHMR.ViewModels.Encounters;
+
 public partial class EncounterCreateViewModel : EncounterBaseViewModel
 {
     private readonly ISelectedItemService<Appointment> _appointmentContext;
     private readonly ISelectedItemService<Patient> _patientContext;
 
+    // ── Side-panel ────────────────────────────────────────────────────────────
     [ObservableProperty]
-    private string? expandedSection;
+    private ObservableCollection<Encounter> recentEncounters = [];
 
+    [ObservableProperty]
+    private ImageSource? patientPhotoSource;
+
+    // ── Patient search ────────────────────────────────────────────────────────
+    [ObservableProperty]
+    private string patientSearchText = string.Empty;
+
+    [ObservableProperty]
+    private bool useCyrillicPatientSearch = true;
+
+    [ObservableProperty]
+    private ObservableCollection<Patient> patientSuggestions = [];
+
+    [ObservableProperty]
+    private Patient? patientSuggestionSelection;
+
+    [ObservableProperty]
+    private bool showPatientSuggestions;
+
+    // ── Medicine table visibility ─────────────────────────────────────────────
+    public bool HasEncounterMedicines => EncounterMedicines.Count>0;
+
+    // ── Constructor ───────────────────────────────────────────────────────────
     public EncounterCreateViewModel(
         IEncounterDetailService service,
         INavigationService navigationService,
@@ -29,83 +57,217 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
         _appointmentContext=appointmentContext;
         _patientContext=patientContext;
         PageTitle="Нов Преглед";
+
+        EncounterMedicines.CollectionChanged+=OnEncounterMedicinesChanged;
     }
 
+    private void OnEncounterMedicinesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        => OnPropertyChanged(nameof(HasEncounterMedicines));
+
+    // ── Load ──────────────────────────────────────────────────────────────────
     public async Task LoadAsync()
     {
         await InitializeAsync(null);
-        Encounter.Status=EncounterStatus.Scheduled;
 
-        // Flow 1: "Започни преглед" from Appointment row
+        // Flow 1: arrived from an Appointment row
         var incomingAppointment = _appointmentContext.SelectedItem;
         if(incomingAppointment!=null&&incomingAppointment.Id!=Guid.Empty)
         {
             await ApplyAppointmentContextAsync(incomingAppointment);
-            _appointmentContext.SelectedItem=null;
 
-            IsPatientLockedFromContext=true;  // ← was false: patient+doctor come from the appointment, lock them
+            var duration = Math.Max(
+                1,
+                (int)(incomingAppointment.ScheduledEnd-incomingAppointment.ScheduledStart).TotalMinutes);
+
+            Encounter.Schedule(incomingAppointment.ScheduledStart, duration);
+            OnPropertyChanged(nameof(AutomaticScheduleDisplay));
+
+            _appointmentContext.SelectedItem=null;
+            IsPatientLockedFromContext=true;
             IsEditMode=true;
             IsReadOnly=false;
+            RefreshSidePanel();
             return;
         }
 
-        // Flow 2: "Нов преглед" from Patient grid row — walk-in, patient pre-filled
+        // Flow 2: arrived from a Patient row
         var incomingPatient = _patientContext.SelectedItem;
         if(incomingPatient!=null&&incomingPatient.Id!=Guid.Empty)
         {
             var matchedPatient = Patients.FirstOrDefault(p => p.Id==incomingPatient.Id)
                                  ??incomingPatient;
 
-            IsPatientLockedFromContext=true;  // ← was false: patient came from context, lock it
+            IsPatientLockedFromContext=true;
             SelectedPatient=matchedPatient;
 
             if(matchedPatient.DoctorId!=Guid.Empty)
                 SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==matchedPatient.DoctorId);
 
+            await AssignNextAvailableSlotAsync();
             await LoadTherapyCyclesForPatientAsync(matchedPatient.Id);
             await LoadAppointmentsForPatientAsync(matchedPatient.Id);
             await LoadPatientContextAsync(matchedPatient.Id);
 
             _patientContext.SelectedItem=null;
+            RefreshSidePanel();
+            return;
         }
 
-        // Flow 3: Pure walk-in — everything selected manually
+        // Flow 3: walk-in, no prior context
         IsPatientLockedFromContext=false;
         IsEditMode=true;
         IsReadOnly=false;
     }
 
-    [RelayCommand]
-    private void ToggleSection(string section)
+    // ── Patient search ────────────────────────────────────────────────────────
+    partial void OnPatientSuggestionSelectionChanged(Patient? value)
     {
-        if(string.IsNullOrWhiteSpace(section))
-            return;
+        if(value is not null)
+            SelectPatientSuggestionCommand.Execute(value);
+    }
 
-        ExpandedSection=ExpandedSection==section ? null : section;
+    partial void OnPatientSearchTextChanged(string value)
+    {
+        var query = value?.Trim()??string.Empty;
+
+        if(query.Length<1||IsPatientLockedFromContext)
+        {
+            PatientSuggestions.Clear();
+            ShowPatientSuggestions=false;
+            return;
+        }
+
+        var cyrillicQuery = UseCyrillicPatientSearch
+            ? MacedonianTransliterator.ToCyrillic(query)
+            : query;
+
+        var suggestions = Patients
+            .Where(p =>
+                p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)||
+                p.FullName.Contains(cyrillicQuery, StringComparison.OrdinalIgnoreCase)||
+                p.PatientNumber.Contains(query, StringComparison.OrdinalIgnoreCase)||
+                p.NationalId.Contains(query, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(p => p.FullName)
+            .Take(8);
+
+        PatientSuggestions=new ObservableCollection<Patient>(suggestions);
+        ShowPatientSuggestions=PatientSuggestions.Count>0;
+    }
+
+    partial void OnUseCyrillicPatientSearchChanged(bool value)
+        => OnPatientSearchTextChanged(PatientSearchText);
+
+    [RelayCommand]
+    private async Task SelectPatientSuggestion(Patient? patient)
+    {
+        if(patient is null) return;
+
+        PatientSearchText=patient.FullName;
+        ShowPatientSuggestions=false;
+        SelectedPatient=patient;
+
+        if(patient.DoctorId!=Guid.Empty)
+            SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==patient.DoctorId);
+
+        await AssignNextAvailableSlotAsync();
+    }
+
+    // ── Schedule display ──────────────────────────────────────────────────────
+    public string AutomaticScheduleDisplay =>
+        Encounter.ScheduledStart is { } start
+            ? $"{start:dd.MM.yyyy HH:mm} – {Encounter.ScheduledEnd:HH:mm}"
+            : "Се пресметува...";
+
+    private async Task AssignNextAvailableSlotAsync()
+    {
+        if(SelectedDoctor is null) return;
+
+        var start = await EncounterService.GetNextAvailableSlot(
+            SelectedDoctor.Id,
+            DateTime.Now,
+            30);
+
+        Encounter.Schedule(start);
+
+        OnPropertyChanged(nameof(StatusDisplay));
+        OnPropertyChanged(nameof(ScheduledStartDate));
+        OnPropertyChanged(nameof(ScheduledStartTime));
+        OnPropertyChanged(nameof(AutomaticScheduleDisplay));
+    }
+
+    // ── Side panel ────────────────────────────────────────────────────────────
+    protected void OnSelectedPatientChanged(Patient? value)
+    {
+        if(value is not null)
+            RefreshSidePanel();
+        else
+        {
+            RecentEncounters.Clear();
+            PatientPhotoSource=null;
+        }
+    }
+
+    private void RefreshSidePanel()
+    {
+        RecentEncounters=new ObservableCollection<Encounter>(
+            PatientEncounters
+                .OrderByDescending(e => e.EncounterDate)
+                .Take(5));
+
+        var photo = PatientDocuments
+            .Where(d => !d.IsDeleted&&
+                        d.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(d => d.UploadedAt)
+            .FirstOrDefault();
+
+        PatientPhotoSource=photo is not null
+            ? ImageSource.FromFile(photo.StoredPath)
+            : null;
+    }
+
+    // ── Commands ──────────────────────────────────────────────────────────────
+    [RelayCommand]
+    private void ClearAppointment()
+    {
+        LinkedAppointment=null;
+        SelectedAppointment=null;
+        Encounter.AppointmentId=null;
     }
 
     [RelayCommand]
-    public async Task SaveAsync()
+    private void ClearTherapyCycle()
+    {
+        SelectedTherapyCycle=null;
+        Encounter.TherapyCycleId=null;
+    }
+
+    [RelayCommand]
+    private async Task PreviewDocument(PatientDocument doc)
+    {
+        if(doc is null) return;
+        await NavigationService.GoToAsync(
+            AppRoutes.Documents.Preview,
+            new Dictionary<string, object> { ["DocumentId"]=doc.Id });
+    }
+
+    [RelayCommand]
+    private async Task SaveEncounter()
     {
         if(SelectedPatient is null||SelectedDoctor is null)
         {
             await UserDialogService.ShowAlertAsync(
                 "Валидација",
-                "Мора да изберете пациент и лекар пред зачувување.",
+                "Мора да изберете пациент и реуматолог пред зачувување.",
                 "Во ред");
             return;
         }
 
         await ExecuteSafeAsync(async () =>
         {
-            Encounter.ClinicalNotes=EncounterDiagnosisNotes;
+            Encounter.SetNotes(EncounterDiagnosisNotes);
             Encounter.PatientId=SelectedPatient.Id;
             Encounter.DoctorId=SelectedDoctor.Id;
             Encounter.TherapyCycleId=SelectedTherapyCycle?.Id;
-
-            // DO NOT populate Encounter.Diagnoses nav collection —
-            // SaveEncounter clears it anyway and writes via db.Diagnoses directly.
-            // Populating it here causes EF to attempt double-insert on tracked entities.
             Encounter.Diagnoses.Clear();
 
             await EncounterService.SaveEncounter(
@@ -119,4 +281,8 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
 
         }, "Грешка при перзистирање на податоците за прегледот");
     }
+
+    [RelayCommand]
+    private async Task Cancel()
+        => await NavigationService.GoBackAsync();
 }

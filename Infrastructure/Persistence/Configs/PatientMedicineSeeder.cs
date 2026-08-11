@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+﻿
 using Microsoft.EntityFrameworkCore;
 using EHMR.Domain.Entities;
 using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+
 namespace EHMR.Infrastructure.Persistence.Configs;
 
 public sealed class PatientMedicineSeeder : IEntitySeeder
 {
-    public int Order => 9; // По уфрлање на лекови и пациенти
+    public int Order => 9; 
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {

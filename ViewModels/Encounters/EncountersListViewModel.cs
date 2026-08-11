@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Maui.Core.Extensions;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
@@ -126,6 +126,11 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     // =====================================================
     // SPARK GRID
     // =====================================================
+    [ObservableProperty] private ObservableCollection<Encounter> encounterSuggestions = new();
+    [ObservableProperty] private bool showEncounterSuggestions;
+    [ObservableProperty] private Encounter? selectedEncounterSuggestion;
+    private bool _isSelectingEncounterSuggestion;
+
     [ObservableProperty] private ObservableCollection<Encounter> filteredEncounters = new();
     [ObservableProperty] private ObservableCollection<SparkGridColumn> gridColumns = new();
     [ObservableProperty] private ObservableCollection<SparkGridRow> gridRows = new();
@@ -137,13 +142,13 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
             new() { Header = "БРОЈ", Key = "EncounterNumber", Width = new GridLength(1.1, GridUnitType.Star) },
-            new() { Header = "ПАЦИЕНТ", Key = "PatientName", Width = new GridLength(2, GridUnitType.Star) },
-            new() { Header = "ДОКТОР", Key = "DoctorName", Width = new GridLength(1.8, GridUnitType.Star) },
+            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "PatientName", Width = new GridLength(2, GridUnitType.Star) },
+            new() { Header = "РЕУМАТОЛОГ", Key = "DoctorName", Width = new GridLength(1.8, GridUnitType.Star) },
             new() { Header = "ТИП", Key = "EncounterType", Width = new GridLength(1.2, GridUnitType.Star) },
             new() { Header = "ПРИОРИТЕТ", Key = "Priority", CellType = SparkGridCellType.Badge, Width = new GridLength(1, GridUnitType.Star) },
             new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1.2, GridUnitType.Star) },
-            new() { Header = "АКЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
+            new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
 
@@ -431,6 +436,36 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     // =====================================================
     // PIPELINE HOOKS
     // =====================================================
+    protected override void OnSearchTextChanged(string value)
+    {
+        if(_isSelectingEncounterSuggestion) return;
+
+        var term=value?.Trim()??string.Empty;
+        if(string.IsNullOrWhiteSpace(term))
+        {
+            EncounterSuggestions.Clear();
+            ShowEncounterSuggestions=false;
+            return;
+        }
+
+        EncounterSuggestions=new ObservableCollection<Encounter>(
+            ApplySearch(AllItems, term)
+                .OrderByDescending(x => x.ScheduledStart??x.EncounterDate)
+                .Take(8));
+        ShowEncounterSuggestions=EncounterSuggestions.Count>0;
+    }
+
+    partial void OnSelectedEncounterSuggestionChanged(Encounter? value)
+    {
+        if(value is null) return;
+
+        _isSelectingEncounterSuggestion=true;
+        SearchText=value.EncounterNumber;
+        _isSelectingEncounterSuggestion=false;
+        ShowEncounterSuggestions=false;
+        EncounterSuggestions.Clear();
+    }
+
     protected override IEnumerable<Encounter> ApplySearch(IEnumerable<Encounter> query, string search)
     {
         if(string.IsNullOrWhiteSpace(search)) return query;

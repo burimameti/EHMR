@@ -9,6 +9,9 @@ namespace EHMR.Domain.Entities
         {
             get; set;
         }
+        public string DoctorName{get;set; }
+        = string.Empty;
+        public string? DoctorSurname { get; set; } = string.Empty;
 
         public User User { get; set; } = null!;
 
@@ -32,9 +35,8 @@ namespace EHMR.Domain.Entities
         {
             get
             {
-                if(User==null) return string.Empty;
-                var name = $"{User.FirstName} {User.LastName}".Trim();
-                return string.IsNullOrWhiteSpace(name) ? "Не е доделен" : name;
+               
+                return DoctorName + " " + DoctorSurname;
             }
         }
 

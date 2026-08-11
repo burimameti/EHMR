@@ -54,7 +54,8 @@
 		</Border>
 
 		<!--  RIGHT MAIN CONTAINER  -->
-		<Grid Grid.Column="1" RowDefinitions="Auto,*">
+		<Grid Grid.Column="1"
+            Margin="12,0,12,12" RowDefinitions="Auto,*">
 
 			<!--  =========================================================  -->
 			<!--  HEADER — same PageHeaderCardStyle + FFPageHeader + FFButton as Dashboard  -->

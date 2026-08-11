@@ -49,7 +49,7 @@ public sealed class DesktopTherapyDbContext : TherapyTrackerDbContext
 
         // ================= USERS =================
         public static readonly Guid AdminUser = Guid.Parse("00000000-0000-0000-0000-000000000101");
-
+        public static readonly Guid SuperAdminUser = Guid.Parse("00000000-0000-0000-0000-000000000103");
         public static readonly Guid NurseUser = Guid.Parse("00000000-0000-0000-0000-000000010020");
 
         public static readonly Guid DocUser1 = Guid.Parse("00000000-0000-0000-0000-000000010001");
@@ -137,9 +137,9 @@ public sealed class DesktopTherapyDbContext : TherapyTrackerDbContext
         public static readonly Guid Inv1 = Guid.Parse("90000000-0000-0000-0000-000000005002");
 
         // ================= PRESCRIPTIONS =================
-        public static readonly Guid Presc1 = Guid.Parse("00000000-0000-0000-0000-000000006001");
+       // public static readonly Guid Presc1 = Guid.Parse("00000000-0000-0000-0000-000000006001");
 
-        public static readonly Guid Presc2 = Guid.Parse("00000000-0000-0000-0000-000000006002");
+        //public static readonly Guid Presc2 = Guid.Parse("00000000-0000-0000-0000-000000006002");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

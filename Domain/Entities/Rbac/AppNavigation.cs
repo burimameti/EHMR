@@ -1,4 +1,4 @@
-﻿using EHMR.Constants;
+using EHMR.Constants;
 
 namespace EHMR.Domain.Entities.Rbac;
 
@@ -82,25 +82,25 @@ public static class AppNavigation
             //]
         },
 
-        // ==========================
-        // THERAPY
-        // ==========================
-        new()
-        {
-            //GroupTitle = "Терапии",
-            //Module = Modules.Therapy,
-            //Icon = new IconDefinition { Glyph = "\uf0c3", Font = IconFontType.FontAwesomeSolid }, // Flask / Vial
-            //Items =
-            //[
-            //    new()
-            //    {
-                    GroupTitle = "Циклуси",
-                    Route = AppRoutes.Therapy.List,
-                    Module = Modules.Therapy,
-                    Icon = new IconDefinition { Glyph = "\uf1b1", Font = IconFontType.FontAwesomeSolid } // Cubes
-            //    }
-            //]
-        },
+        //// ==========================
+        //// THERAPY
+        //// ==========================
+        //new()
+        //{
+        //    //GroupTitle = "Терапии",
+        //    //Module = Modules.Therapy,
+        //    //Icon = new IconDefinition { Glyph = "\uf0c3", Font = IconFontType.FontAwesomeSolid }, // Flask / Vial
+        //    //Items =
+        //    //[
+        //    //    new()
+        //    //    {
+        //            GroupTitle = "Терапии",
+        //            Route = AppRoutes.Therapy.List,
+        //            Module = Modules.Therapy,
+        //            Icon = new IconDefinition { Glyph = "\uf1b1", Font = IconFontType.FontAwesomeSolid } // Cubes
+        //    //    }
+        //    //]
+        //},
 
         // ==========================
         // PROTOCOLS
@@ -126,13 +126,13 @@ public static class AppNavigation
         // MKB-10
         // ==========================
      
-         new(){ GroupTitle = "Рецепти",
-                    Route = AppRoutes.Prescriptions.List,
-                    Module = Modules.Inventory,
-                    Icon = new IconDefinition { Glyph = "\uf461", Font = IconFontType.FontAwesomeSolid } // Prescription Clipboard
-            //    }
-            //]
-        },
+        // new(){ GroupTitle = "Рецепти",
+        //            Route = AppRoutes.Prescriptions.List,
+        //            Module = Modules.Inventory,
+        //            Icon = new IconDefinition { Glyph = "\uf461", Font = IconFontType.FontAwesomeSolid } // Prescription Clipboard
+        //    //    }
+        //    //]
+        //},
         // ==========================
         // MEDICINES
         // ==========================
@@ -246,24 +246,30 @@ public static class AppNavigation
               Route = AppRoutes.Admin.AdminPanel,
             Module = Modules.Administration,
             Icon = new IconDefinition { Glyph = "\uf13e", Font = IconFontType.FontAwesomeSolid }, // Shield User Lock
-            //Items =
-            //[
-            //    new()
-            //    {
-            //        Title = "Админ",
-            //        Route = AppRoutes.Admin.AdminPanel,
-            //        Module = Modules.Administration,
-            //        Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
-            //    },
-            //     new()
-            //    {
-            //        Title = "Доктори",
-            //        Route = AppRoutes.Doctors.List,
-            //        Module = Modules.Doctors,
-            //        Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
-            //    }
+            Items =
+            [
+                new()
+                {
+                    Title = "Корисници",
+                    Route = AppRoutes.Admin.AdminPanel,
+                    Module = Modules.Administration,
+                    Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
+                },new()
+                {
+                    Title = "",
+                    Route = AppRoutes.Admin.AdminPanel,
+                    Module = Modules.Administration,
+                    Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
+                },
+                 new()
+                {
+                    Title = "Реуматолози",
+                    Route = AppRoutes.Doctors.List,
+                    Module = Modules.Doctors,
+                    Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
+                }
 
-            //]
+            ]
         }
     ];
     private static readonly IReadOnlyDictionary<string, string> ParentRoutes =

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -65,7 +65,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
     public string PageTitle => ShowsAppointments ? "Календар на Термини" : "Календар на Прегледи";
     public string ContentTotalTitle => ShowsAppointments ? "Вкупно термини" : "Вкупно прегледи";
     public string ContentNewButtonText => ShowsAppointments ? "Додај термин" : "Додај преглед";
-    public string WaitlistTitle => ShowsAppointments ? "Листа на термини" : "Листа на чекање";
+    public string WaitlistTitle => ShowsAppointments ? "Термини" : "Листа на чекање";
 
     partial void OnContentModeChanged(CalendarContentMode value)
     {

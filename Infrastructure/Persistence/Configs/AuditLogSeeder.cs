@@ -1,9 +1,6 @@
 ﻿using EHMR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+
 namespace EHMR.Infrastructure.Persistence.Configs
 {
     public class AuditLogSeeder : IEntitySeeder

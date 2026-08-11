@@ -25,8 +25,8 @@
 
 			<controls:FFPicker
 				ItemsSource="{Binding Doctors}"
-				Label="Лекар"
-				Placeholder="Изберете лекар *"
+				Label="Реуматолог"
+				Placeholder="Изберете реуматолог *"
 				SelectedItem="{Binding SelectedDoctor}" />
 
 			<Grid ColumnDefinitions="*,*" ColumnSpacing="16">

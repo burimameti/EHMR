@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -36,7 +36,7 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
 
     [ObservableProperty] private bool isEditMode;
     [ObservableProperty] private bool isReadOnly;
-    [ObservableProperty] private string pageTitle = "Нов лекар";
+    [ObservableProperty] private string pageTitle = "Нов реуматолог";
 
     [ObservableProperty] private bool canShowDelete;
     [ObservableProperty] private bool canShowSave;
@@ -68,7 +68,7 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
 
     // =====================================================
     // СТАТУС — Toggle (само во Edit Mode)
-    // Нов лекар: секогаш Active
+    // Нов реуматолог: секогаш Active
     // Edit: корисникот може да го направи Inactive
     // =====================================================
     [ObservableProperty] private bool isActive = true;
@@ -107,11 +107,11 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
 
             IsEditMode=false;
             IsReadOnly=true;
-            PageTitle="Детали за лекар";
+            PageTitle="Детали за реуматолог";
         }
         else
         {
-            // Нов лекар — секогаш Active
+            // Нов реуматолог — секогаш Active
             Doctors=new Doctor
             {
                 User=new User(),
@@ -122,7 +122,7 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
 
             IsEditMode=true;
             IsReadOnly=false;
-            PageTitle="Нов лекар";
+            PageTitle="Нов реуматолог";
         }
 
         SyncDisplayFromDoctor();
@@ -138,7 +138,7 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
 
         IsEditMode=true;
         IsReadOnly=false;
-        PageTitle="Измени лекар";
+        PageTitle="Измени реуматолог";
     }
 
     // ================= SAVE =================
@@ -154,7 +154,7 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
 
             await NavigationService.GoBackAsync();
         },
-        "Грешка при зачувување на лекар");
+        "Грешка при зачувување на реуматолог");
     }
 
     // ================= DELETE =================
@@ -173,7 +173,7 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
 
     // ================= CANCEL / ОТКАЖИ =================
     // Секогаш оди назад:
-    //   - Нов лекар → GoBack (без зачувување)
+    //   - Нов реуматолог → GoBack (без зачувување)
     //   - Edit постоечки → врати snapshot, оди назад
     [RelayCommand]
     private async Task Cancel()

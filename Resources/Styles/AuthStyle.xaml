@@ -40,7 +40,9 @@
 	<!--  =====================================================  -->
 
 	<Color x:Key="SparkPageBackground">#F4F7FB</Color>
-
+	<Color x:Key="SparkPageBackground1">#E4ECF5</Color>
+	<Color x:Key="SparkPageBackground2">#D5E2F0</Color>
+	<Color x:Key="SparkPageBackground3">#C5D6EC</Color>
 	<Color x:Key="SparkedDarkBg">#1F2937</Color>
 	<!--  Cards  -->
 	<Color x:Key="SparkContentBackground">#FFFFFF</Color>

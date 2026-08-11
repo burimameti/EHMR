@@ -4,6 +4,7 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:entities="clr-namespace:EHMR.Domain.Entities"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Encounters"
 	x:Name="PageRoot"
 	x:DataType="viewModels:EncountersListViewModel"
@@ -19,16 +20,17 @@
 		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
+            Margin="12,0,12,12"
 			RowDefinitions="Auto,*"
-			RowSpacing="8">
+			RowSpacing="0">
 
 			<!--  HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
 				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 					<controls:FFPageHeader
-						Title="Регистар на прегледи"
+						Title="Прегледи"
 						Grid.Column="0"
-						Subtitle="Преглед, пребарување и управување со прегледи" />
+						Subtitle="Управување со податоци за прегледи" />
 
 					<controls:FFButton
 						Grid.Column="1"
@@ -46,8 +48,8 @@
 				<VerticalStackLayout Spacing="8">
 
 					<Border Style="{StaticResource PageHeaderCardStyle}">
-						<Grid ColumnSpacing="5" RowSpacing="20">
-							<VerticalStackLayout Spacing="10">
+						<Grid ColumnSpacing="5">
+							<VerticalStackLayout Spacing="1">
 
 								<!--  SEARCH & FILTERS  -->
 								<controls:SparkExplorerHeaderView
@@ -56,7 +58,23 @@
 									SearchCommand="{Binding SearchCommand}"
 									SearchPlaceholder="Пребарување на прегледи..."
 									SearchText="{Binding SearchText}"
-									Tabs="{Binding Tabs}" />
+									SelectedSuggestion="{Binding SelectedEncounterSuggestion, Mode=TwoWay}"
+									ShowSuggestions="{Binding ShowEncounterSuggestions}"
+									Suggestions="{Binding EncounterSuggestions}"
+									Tabs="{Binding Tabs}">
+									<controls:SparkExplorerHeaderView.SuggestionTemplate>
+										<DataTemplate x:DataType="entities:Encounter">
+											<Border Margin="2" Padding="12,8" BackgroundColor="White" Stroke="#D8DEE8" StrokeShape="RoundRectangle 6" StrokeThickness="1">
+												<Grid ColumnDefinitions="1.2*,2*,1.3*,1*" ColumnSpacing="12">
+													<Label FontAttributes="Bold" FontSize="12" Text="{Binding EncounterNumber}" TextColor="{StaticResource SparkTextPrimary}" />
+													<Label Grid.Column="1" FontSize="12" Text="{Binding Patient.FullName}" TextColor="{StaticResource SparkTextPrimary}" />
+													<Label Grid.Column="2" FontSize="11" Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}" TextColor="{StaticResource SparkTextSecondary}" />
+													<Label Grid.Column="3" FontAttributes="Bold" FontSize="11" Text="{Binding Status}" TextColor="{StaticResource SparkAccentTealDark}" />
+												</Grid>
+											</Border>
+										</DataTemplate>
+									</controls:SparkExplorerHeaderView.SuggestionTemplate>
+								</controls:SparkExplorerHeaderView>
 
 								<!--  DATA GRID  -->
 								<Border Padding="0">

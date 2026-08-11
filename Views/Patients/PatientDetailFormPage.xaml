@@ -10,7 +10,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="PageRoot"
 	x:DataType="viewModels:PatientDetailFormViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
+	BackgroundColor="{StaticResource SparkAccentTealDark}">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
@@ -210,7 +210,7 @@
 		<Grid
 			Grid.Column="1"
 			RowDefinitions="Auto,*"
-			RowSpacing="12">
+			RowSpacing="1">
 
 			<!--  =========================================================  -->
 			<!--  PAGE HEADER  -->
@@ -253,32 +253,7 @@
 					</VerticalStackLayout>
 
 					<!--  Action buttons  -->
-					<HorizontalStackLayout
-						Grid.Column="2"
-						Spacing="12"
-						VerticalOptions="Center">
-						<controls:FFButton
-							ButtonKind="Secondary"
-							Command="{Binding CancelCommand}"
-							ContentPadding="24,0"
-							HeightRequestEx="42"
-							IsVisible="{Binding IsEditMode}"
-							Text="Откажи" />
-						<controls:FFButton
-							ButtonKind="Primary"
-							Command="{Binding SaveCommand}"
-							ContentPadding="24,0"
-							HeightRequestEx="42"
-							IsVisible="{Binding IsEditMode}"
-							Text="💾 Зачувај промени" />
-						<controls:FFButton
-							ButtonKind="Primary"
-							Command="{Binding ToggleEditModeCommand}"
-							ContentPadding="24,0"
-							HeightRequestEx="42"
-							IsVisible="{Binding IsReadOnly}"
-							Text="✎ Измени податоци" />
-					</HorizontalStackLayout>
+
 
 				</Grid>
 			</Border>
@@ -287,8 +262,12 @@
 			<!--  FORM CONTENT WORKSPACE  -->
 			<!--  =====================================================  -->
 			<Border Grid.Row="1" Style="{StaticResource PageHeaderCardStyle}">
-				<ScrollView VerticalScrollBarVisibility="Never">
-					<VerticalStackLayout Padding="16" Spacing="28">
+				<controls:CustomScrollView
+					x:Name="FormScrollView"
+					Margin="0"
+					Padding="0"
+					ScrollBarColor="{StaticResource SparkAccentTeal}">
+					<VerticalStackLayout Padding="6" Spacing="6">
 
 						<!--  ═══════════════════════════════════════  -->
 						<!--  ФОРМА — 3 КОЛОНИ  -->
@@ -296,7 +275,7 @@
 						<Grid
 							Padding="12,0"
 							ColumnDefinitions="*,1,*,1,*"
-							ColumnSpacing="24">
+							ColumnSpacing="22">
 
 							<BoxView Grid.Column="1" Style="{StaticResource ColumnDividerStyle}" />
 							<BoxView Grid.Column="3" Style="{StaticResource ColumnDividerStyle}" />
@@ -612,7 +591,7 @@
 												<Entry
 													BackgroundColor="Transparent"
 													FontSize="13"
-													Placeholder="Пребарај лекар..."
+													Placeholder="Пребарај реуматолог..."
 													PlaceholderColor="{StaticResource SparkTextSecondary}"
 													Text="{Binding DoctorSearchText}"
 													TextColor="{StaticResource SparkTextPrimary}"
@@ -671,7 +650,7 @@
 											<Label
 												Grid.Column="1"
 												Style="{StaticResource ReadRowValueStyle}"
-												Text="{Binding SelectedDoctorDisplay, FallbackValue='Не е избран лекар'}" />
+												Text="{Binding SelectedDoctorDisplay, FallbackValue='Не е избран реуматолог'}" />
 										</Grid>
 									</VerticalStackLayout>
 								</Grid>
@@ -1243,7 +1222,37 @@
 
 							</VerticalStackLayout>
 						</Grid>
-
+						<BoxView
+							BackgroundColor="{StaticResource SparkAccentTealDark}"
+							HeightRequest="1"
+							HorizontalOptions="Fill" />
+						<HorizontalStackLayout
+							Grid.Column="2"
+							HorizontalOptions="End"
+							Spacing="6"
+							VerticalOptions="Center">
+							<controls:FFButton
+								ButtonKind="Secondary"
+								Command="{Binding CancelCommand}"
+								ContentPadding="24,0"
+								HeightRequestEx="42"
+								IsVisible="{Binding IsEditMode}"
+								Text="Откажи" />
+							<controls:FFButton
+								ButtonKind="Primary"
+								Command="{Binding SaveCommand}"
+								ContentPadding="24,0"
+								HeightRequestEx="42"
+								IsVisible="{Binding IsEditMode}"
+								Text="💾 Зачувај промени" />
+							<controls:FFButton
+								ButtonKind="Primary"
+								Command="{Binding ToggleEditModeCommand}"
+								ContentPadding="24,0"
+								HeightRequestEx="42"
+								IsVisible="{Binding IsReadOnly}"
+								Text="✎ Измени податоци" />
+						</HorizontalStackLayout>
 						<!--  ═══════════════════════════════════════════════════  -->
 						<!--  ИСТОРИЈА НА ПАЦИЕНТОТ  -->
 						<!--  ═══════════════════════════════════════════════════  -->
@@ -1317,7 +1326,7 @@
 						</VerticalStackLayout>
 
 					</VerticalStackLayout>
-				</ScrollView>
+				</controls:CustomScrollView>
 			</Border>
 
 		</Grid>

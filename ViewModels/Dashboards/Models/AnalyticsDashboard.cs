@@ -7,6 +7,7 @@ public partial class DashboardEncounterItem : ObservableObject
 {
     public Encounter Source { get; set; } = null!;
     [ObservableProperty] private string patientName = string.Empty;
+    [ObservableProperty] private string nationalId = string.Empty;
     [ObservableProperty] private string time = string.Empty;
     [ObservableProperty] private string statusText = string.Empty;
     [ObservableProperty] private Color statusColor = Colors.Transparent;

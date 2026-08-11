@@ -49,12 +49,12 @@
 
 			<Button
 				BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
-				TextColor="White"
 				Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
 				HeightRequest="45"
 				IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
 				Style="{StaticResource TabButtonActiveStyle}"
 				Text="{Binding PrimaryButtonText, Source={x:Reference Root}}"
+				TextColor="White"
 				WidthRequest="150" />
 
 			<Button

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -828,9 +828,10 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                     activeFilters.Add($"по пол ({selectedVal})");
                 }
                 else if(filterType.Contains("Доктор", StringComparison.OrdinalIgnoreCase)||
-                         filterType.Contains("Лекар", StringComparison.OrdinalIgnoreCase))
+                         filterType.Contains("Лекар", StringComparison.OrdinalIgnoreCase)||
+                         filterType.Contains("Реуматолог", StringComparison.OrdinalIgnoreCase))
                 {
-                    activeFilters.Add($"за доктор {selectedVal}");
+                    activeFilters.Add($"за реуматолог {selectedVal}");
                 }
                 else if(filterType.Contains("Дијагноза", StringComparison.OrdinalIgnoreCase))
                 {

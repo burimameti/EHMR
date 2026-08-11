@@ -1,4 +1,4 @@
-﻿using EHMR.Resources.Theming;
+using EHMR.Resources.Theming;
 using Microsoft.Maui.Controls.Shapes;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -176,22 +176,27 @@ namespace EHMR.Resources.Controls
         #endregion
 
         #region Build
-
+        private static readonly Color HeaderBg = Color.FromArgb("#334155");        // slate-700, was #5B6B79
         private static readonly Color HeaderTextColor = Color.FromArgb("#FFFFFF");
-        private static readonly Color RowMutedTextColor = Color.FromArgb("#5B6B85");
-        private static readonly Color BorderColor = Color.FromArgb("#F0F2F5");
-        private static readonly Color RowAltBg = Color.FromArgb("#F7F9FB");
+        private static readonly Color RowMutedTextColor = Color.FromArgb("#64748B"); // slate-500
+        private static readonly Color RowTextColor = Color.FromArgb("#1E293B");      // slate-800, was hardcoded Colors.Black in BuildText
+        private static readonly Color BorderColor = Color.FromArgb("#E2E8F0");       // slate-200, was #F0F2F5 (too faint to read as a grid)
+        private static readonly Color RowAltBg = Color.FromArgb("#F8FAFC");          // slate-50
         private static readonly Color RowBg = Colors.White;
 
-        private static readonly Color BadgeNeutralBg = Color.FromArgb("#EDF1F5");
-        private static readonly Color BadgeNeutralText = Color.FromArgb("#5B6B85");
-        private static readonly Color BadgeSuccessBg = Color.FromArgb("#E7F6E9");
-        private static readonly Color BadgeSuccessText = Color.FromArgb("#3CB35B");
-        private static readonly Color BadgeDangerBg = Color.FromArgb("#FDE8E8");
-        private static readonly Color BadgeDangerText = Color.FromArgb("#E0554F");
+        private static readonly Color BadgeNeutralBg = Color.FromArgb("#F1F5F9");
+        private static readonly Color BadgeNeutralText = Color.FromArgb("#475569");
+        private static readonly Color BadgeSuccessBg = Color.FromArgb("#ECFDF5");
+        private static readonly Color BadgeSuccessText = Color.FromArgb("#059669");
+        private static readonly Color BadgeDangerBg = Color.FromArgb("#FEF2F2");
+        private static readonly Color BadgeDangerText = Color.FromArgb("#DC2626");
 
-        // Spark green — matches the rest of the UI accent
-        private static readonly Color HyperlinkColor = Color.FromArgb("#059669");
+        // Spark teal, darkened one step for AA contrast against white — was #059669 (green, off-brand)
+        private static readonly Color HyperlinkColor = Color.FromArgb("#0F766E");
+
+        private static readonly Color AccentColor = Color.FromArgb("#0F766E");        // primary actions / checkbox / selection
+        private static readonly Color AccentColorMuted = Color.FromArgb("#64748B");
+
 
         private void BuildGrid()
         {
@@ -241,6 +246,9 @@ namespace EHMR.Resources.Controls
                 bool isSelected = r==SelectedRowIndex;
                 var rowBg = isSelected ? SelectedRowBg : (r%2==0 ? RowBg : RowAltBg);
 
+                // FIX: checkbox cell was only added to the header, never to data rows
+                if(ShowCheckboxColumn) AddCheckboxCell(r, rows[r], rowIndex, rowBg, checkboxColumnIndex);
+
                 if(ShowRowNumbers) AddRowNumberCell(r, rowIndex, rowBg, rowNumberColumnIndex);
 
                 for(int c = 0; c<Columns.Count; c++)
@@ -261,7 +269,7 @@ namespace EHMR.Resources.Controls
         {
             var border = new Border
             {
-                Background=new SolidColorBrush(Color.FromArgb("#5B6B79")),
+                Background=new SolidColorBrush(HeaderBg),
                 Stroke=Colors.Transparent,
                 Padding=new Thickness(4, 0)
             };
@@ -283,7 +291,7 @@ namespace EHMR.Resources.Controls
             var checkbox = new CheckBox
             {
                 IsChecked=localRowIndex==SelectedRowIndex,
-                Color=Color.FromArgb("#21B6C4"),
+                Color=AccentColor,   // was #21B6C4
                 HorizontalOptions=LayoutOptions.Center,
                 VerticalOptions=LayoutOptions.Center
             };
@@ -457,7 +465,7 @@ namespace EHMR.Resources.Controls
                 SparkGridCellType.Actions => BuildActions(row),
                 SparkGridCellType.Button => BuildSingleButton(value as SparkButtonItem, row),
                 // ── NEW ──────────────────────────────────────────────
-                SparkGridCellType.Hyperlink => BuildHyperlink(value?.ToString(), row),
+                SparkGridCellType.Hyperlink => BuildHyperlink(value?.ToString(), row, rowIndex-1),
                 // ─────────────────────────────────────────────────────
                 _ => BuildText(value?.ToString()??string.Empty, false)
             };
@@ -481,7 +489,7 @@ namespace EHMR.Resources.Controls
         // Underline label — fires HyperlinkCommand(row.Tag ?? row) on tap.
         // AttachRowTap skips Hyperlink columns so there is no competing gesture.
         // ─────────────────────────────────────────────────────────────────────────
-        private View BuildHyperlink(string? text, SparkGridRow row)
+        private View BuildHyperlink(string? text, SparkGridRow row, int localRowIndex)
         {
             var label = new Label
             {
@@ -501,6 +509,7 @@ namespace EHMR.Resources.Controls
             tap.Tapped+=(_, _) =>
             {
                 var param = row.Tag??row;
+                SelectedRowIndex=localRowIndex;
                 if(HyperlinkCommand?.CanExecute(param)==true)
                     HyperlinkCommand.Execute(param);
             };
@@ -513,7 +522,7 @@ namespace EHMR.Resources.Controls
         {
             if(item==null) return new Label();
             return BuildActionIcon(item.Label??"", item.Command, item.CommandParameter,
-                item.IsPrimary ? "#21B6C4" : "#69D3DD");
+                item.IsPrimary ? "#0F766E" : "#94A3B8");   // was #21B6C4 / #69D3DD
         }
 
         private View BuildActions(SparkGridRow row)
@@ -531,7 +540,7 @@ namespace EHMR.Resources.Controls
                 layout.Children.Add(BuildActionIcon(
                     action.Label??"", action.Command,
                     action.CommandParameter??row.Tag??row,
-                    action.IsPrimary ? "#21B6C4" : "#8FA2AB"));
+                    action.IsPrimary ? "#0F766E" : "#94A3B8"));  // was #11A6C4 / #9AA2AB
 
             return layout;
         }
@@ -594,7 +603,7 @@ namespace EHMR.Resources.Controls
             return new Label
             {
                 Text=text,
-                TextColor=Colors.Black,
+                TextColor=RowTextColor,   // was Colors.Black
                 FontSize=13,
                 Margin=new Thickness(4, 0, 0, 0),
                 HorizontalOptions=LayoutOptions.Fill,
@@ -625,8 +634,7 @@ namespace EHMR.Resources.Controls
             get => (int)GetValue(SelectedRowIndexProperty);
             set => SetValue(SelectedRowIndexProperty, value);
         }
-
-        private static readonly Color SelectedRowBg = Color.FromArgb("#E7F7FA");
+        private static readonly Color SelectedRowBg = Color.FromArgb("#E6F4F3"); // was #B7F7FA — muted teal tint, not neon
 
         #endregion
 
@@ -667,7 +675,7 @@ namespace EHMR.Resources.Controls
 
             var circle = new Border
             {
-                BackgroundColor=Color.FromArgb("#E7F7FA"),
+                BackgroundColor=Color.FromArgb("#E2E8F0"),   // was #E7F7FA (cyan) — neutral slate now
                 Stroke=Colors.Transparent,
                 WidthRequest=26,
                 HeightRequest=26,
@@ -678,7 +686,7 @@ namespace EHMR.Resources.Controls
             circle.Content=new Label
             {
                 Text=initials,
-                TextColor=Color.FromArgb("#16374A"),
+                TextColor=Color.FromArgb("#334155"),   // was #16374A
                 FontSize=11,
                 FontAttributes=FontAttributes.Bold,
                 HorizontalTextAlignment=TextAlignment.Center,
@@ -700,16 +708,16 @@ namespace EHMR.Resources.Controls
         // PAGER  (unchanged)
         // ─────────────────────────────────────────────────────────────
 
-        private static readonly Color PagerActiveBg = Color.FromArgb("#21B6C4");
+        private static readonly Color PagerActiveBg = Color.FromArgb("#0F766E");     // was #21B6C4
         private static readonly Color PagerActiveText = Colors.White;
-        private static readonly Color PagerInactiveText = Color.FromArgb("#2E3A4E");
+        private static readonly Color PagerInactiveText = Color.FromArgb("#334155"); // was #2E3A4E
         public static Color PagerBackground => Colors.White;
-        public static Color PagerBorder => FFColors.Gray300;
-        public static Color PagerBorderColor => FFColors.Gray300;
-        public static Color PagerActiveBackground => FFColors.Azure600;
-        public static Color PagerActiveForeground => FFColors.White;
-        public static Color PagerForeground => FFColors.Slate700;
-        public static Color PagerDisabledForeground => FFColors.Gray400;
+        public static Color PagerBorder => Color.FromArgb("#E2E8F0");                // was FFColors.Gray300
+        public static Color PagerBorderColor => Color.FromArgb("#E2E8F0");
+        public static Color PagerActiveBackground => Color.FromArgb("#0F766E");
+        public static Color PagerActiveForeground => Colors.White;
+        public static Color PagerForeground => Color.FromArgb("#334155");
+        public static Color PagerDisabledForeground => Color.FromArgb("#CBD5E1");
 
         private void BuildPager()
         {

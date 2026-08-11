@@ -21,15 +21,13 @@ public class UserScopeSeeder : IEntitySeeder
                 ScopeType = ScopeType.Admin,
                 TargetId = SeedIds.Tenant,
             },
-
-            new()
+              new()
             {
-                Id = SeedIds.Doctor1Scope,
-                UserId = SeedIds.DocUser1,
-                ScopeType =  ScopeType.Hospital,
+                Id = SeedIds.SuperAdminUser,
+                UserId = SeedIds.SuperAdminUser,
+                ScopeType = ScopeType.Admin,
                 TargetId = SeedIds.Tenant,
             },
-
             new()
             {
                 Id = SeedIds.Doctor2Scope,

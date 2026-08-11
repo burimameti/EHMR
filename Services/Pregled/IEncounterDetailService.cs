@@ -1,4 +1,4 @@
-﻿using EHMR.Domain.Entities;
+using EHMR.Domain.Entities;
 using EHMR.Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
@@ -19,10 +19,16 @@ public interface IEncounterDetailService
         List<Prescription> prescriptions,
         List<PatientMedicine> medicines,
         List<Guid> deletedMedicineIds); 
+
+    Task UpdateEncounterClinicalData(
+        Guid encounterId,
+        List<Diagnosis> diagnoses,
+        string? remarks);
     Task<EncounterDetailDto> GetEncounter(Guid id);
     Task<List<Patient>> GetPatients();
     Task BuildEncounterAsync(DesktopTherapyDbContext db, Appointment appointment, string encounterNumber);
     Task<List<Doctor>> GetDoctors();
+    Task<DateTime> GetNextAvailableSlot(Guid doctorId, DateTime from, int durationMinutes = 30);
     Task<PatientContextDto> GetPatientContext(Guid patientId);
     Task<Appointment?> GetAppointment(Guid id);
     Task<IEnumerable<Appointment?>> GetAppointments(Guid appointmentId);

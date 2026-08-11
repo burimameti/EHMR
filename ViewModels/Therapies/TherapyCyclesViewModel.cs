@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -286,12 +286,12 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
-            new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
+            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
             new() { Header = "ЦИКЛУС БР.", Key = "CycleNumber", Width = new GridLength(1, GridUnitType.Star) },
             new() { Header = "ПОЧЕТОК", Key = "StartDate", Width = new GridLength(1, GridUnitType.Star) },
             new() { Header = "КРАЈ", Key = "EndDate", Width = new GridLength(1, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1, GridUnitType.Star) },
-            new() { Header = "АКЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
+            new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
 

@@ -19,13 +19,14 @@
 		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
+            Margin="12,0,12,12"
 			RowDefinitions="Auto,*"
 			RowSpacing="8">
 
 			<!--  HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
 				<controls:FFPageHeader
-					Title="Регистар на термини"
+					Title="Термини"
 					PrimaryButtonCommand="{Binding NewCommand}"
 					PrimaryButtonText="Нов Термин"
 					RefreshCommand="{Binding LoadCommand}"
@@ -47,7 +48,7 @@
 									Buttons="{Binding Buttons}"
 									Pickers="{Binding Pickers}"
 									SearchCommand="{Binding SearchCommand}"
-									SearchPlaceholder="Пациент или доктор..."
+									SearchPlaceholder="Пациент или реуматолог..."
 									SearchText="{Binding SearchText}"
 									Tabs="{Binding Tabs}" />
 

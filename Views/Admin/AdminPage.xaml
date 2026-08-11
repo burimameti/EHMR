@@ -77,6 +77,7 @@
 		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
+            Margin="12,0,12,12"
 			RowDefinitions="Auto,*"
 			RowSpacing="8">
 
@@ -86,7 +87,7 @@
 					<controls:FFPageHeader
 						Title="Администрација"
 						Grid.Column="0"
-						Subtitle="Управување со корисници, доктори, МКБ шифрарник и бекапи." />
+						Subtitle="Управување со корисници, реуматолози, МКБ шифрарник и бекапи." />
 
 					<controls:FFButton
 						Grid.Column="1"
@@ -188,7 +189,7 @@
 									Command="{Binding GoToDoctorsCommand}"
 									ContentPadding="18,0"
 									HeightRequestEx="42"
-									Text="+ Нов доктор" />
+									Text="+ Нов реуматолог" />
 
 								<controls:FFButton
 									Margin="0,0,12,12"

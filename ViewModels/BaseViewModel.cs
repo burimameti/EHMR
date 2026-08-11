@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
@@ -210,8 +210,13 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
             {
                 CurrentPage=1;
                 ApplyPipeline();
+                OnSearchTextChanged(value);
             }
         }
+    }
+
+    protected virtual void OnSearchTextChanged(string value)
+    {
     }
 
     private int _currentPage = 1;

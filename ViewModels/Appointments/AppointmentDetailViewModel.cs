@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -327,7 +327,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     {
         if(SelectedPatientForAppointment==null||SelectedDoctorForAppointment==null)
         {
-            await UserDialogService.ShowAlertAsync("Валидација", "Пациентот и лекарот се задолжителни.", "OK");
+            await UserDialogService.ShowAlertAsync("Валидација", "Пациентот и реуматологот се задолжителни.", "OK");
             return;
         }
 

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
@@ -55,16 +55,10 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     {
         await ExecuteSafeAsync(async () =>
         {
-            Encounter.TherapyCycleId=SelectedTherapyCycle?.Id;
-
-            await EncounterService.SaveEncounter(
-                Encounter,
+            await EncounterService.UpdateEncounterClinicalData(
+                Encounter.Id,
                 Diagnoses.ToList(),
-                Prescriptions.ToList(),
-                EncounterMedicines.ToList(),
-                DeletedMedicineIds.ToList());
-
-            _deletedMedicineIds.Clear();
+                EncounterDiagnosisNotes);
 
             await UserDialogService.ShowMessageAsync("Податоци за преглед се успешно зачувани", "");
             await NavigationService.GoToAsync(AppRoutes.Encounters.List);

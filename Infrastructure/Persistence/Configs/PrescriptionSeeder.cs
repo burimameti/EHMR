@@ -26,11 +26,11 @@ public sealed class PrescriptionSeeder : IEntitySeeder
                 Id = Guid.NewGuid(),
                 PatientId = SeedIds.Patient1,
              
-                EncounterId = null, // Може да се врзе со Encounter доколку има генерирано
+                EncounterId = null, 
                 Medication = "Ибупрофен 400мг таблети",
                 Dosage = "400mg",
                 Instructions = "По потреба, максимум 3 пати на ден по јадење. Не на празен желудник.",
-                Status = "Active", // Или соодветната вредност од вашиот домен/енум кој го средивме во базата
+                Status = "Active",
                 IssuedDate = DateTime.UtcNow.AddDays(-2),
                 ExpiryDate = DateTime.UtcNow.AddDays(28),
                 Notes = "За ублажување на акутна болка во долниот дел на грбот."

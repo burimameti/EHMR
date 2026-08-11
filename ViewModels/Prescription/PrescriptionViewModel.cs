@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -216,11 +216,11 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>, IQ
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
         { new() { Header = "БРОЈ", Key = "PrescriptionNumber", Width = new GridLength(1.3, GridUnitType.Star) },
-            new() { Header = "ПАЦИЕНТ", Key = "PatientName", Width = new GridLength(2.0, GridUnitType.Star) },
+            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "PatientName", Width = new GridLength(2.0, GridUnitType.Star) },
             new() { Header = "МЕДИКАМЕНТ", Key = "Medication", Width = new GridLength(2.0, GridUnitType.Star) },
             new() { Header = "ДОЗИРАЊЕ", Key = "Dosage", Width = new GridLength(1.2, GridUnitType.Star) },
             new() { Header = "ИНСТРУКЦИИ", Key = "Instructions", Width = new GridLength(3.0, GridUnitType.Star) },
-            new() { Header = "АКЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
+            new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
 

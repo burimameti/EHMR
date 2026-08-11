@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -149,7 +149,7 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
             new() { Header = "ОПИС", Key = "Description", Width = new GridLength(2.8, GridUnitType.Star) },
             new() { Header = "ТРАЕЊЕ (ДЕНОВИ)", Key = "DurationInDays", CellType = SparkGridCellType.Number, Width = new GridLength(1.1, GridUnitType.Star) },
             new() { Header = "ИЗРАБОТИЛ", Key = "CreatedByDoctor", Width = new GridLength(1.4, GridUnitType.Star) },
-            new() { Header = "АКЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
+            new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
 

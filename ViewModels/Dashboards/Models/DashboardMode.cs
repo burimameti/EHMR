@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using EHMR.Domain.Entities;
 using System.Windows.Input;
 using System;
@@ -84,6 +84,19 @@ public partial class DashboardViewModel
             Encounters
                 .OrderByDescending(x => x.ScheduledStart)
                 .ToList();
+
+        public string Contact => !string.IsNullOrWhiteSpace(Patient.Phone) ? Patient.Phone : Patient.Email??"—";
+
+        public string LatestEncounterStatus => EncounterHistory.FirstOrDefault()?.Status switch
+        {
+            EncounterStatus.Scheduled => "Закажан",
+            EncounterStatus.CheckedIn => "Пријавен",
+            EncounterStatus.InProgress => "Во тек",
+            EncounterStatus.Completed => "Завршен",
+            EncounterStatus.Cancelled => "Откажан",
+            EncounterStatus.NoShow => "Не дојде",
+            _ => "Нема прегледи"
+        };
 
         public List<Appointment> UpcomingAppointments =>
             Appointments

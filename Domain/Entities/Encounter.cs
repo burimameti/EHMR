@@ -1,7 +1,16 @@
-﻿namespace EHMR.Domain.Entities;
+namespace EHMR.Domain.Entities;
 
 public class Encounter
 {
+    public const int DefaultDurationMinutes = 30;
+
+    public Encounter()
+    {
+        var start=RoundUpToHalfHour(DateTime.Now);
+        Schedule(start);
+        CreatedAt=DateTime.Now;
+    }
+
     public Guid Id
     {
         get; set;
@@ -37,7 +46,7 @@ public class Encounter
     /// <summary>
     /// Outpatient, Inpatient, Emergency, Telehealth, FollowUp...
     /// </summary>
-    public string EncounterType { get; set; } = "Outpatient";
+    public string EncounterType { get; set; } = "Амбулантски";
 
     // =========================================================
     // Workflow
@@ -47,7 +56,7 @@ public class Encounter
     /// Scheduled, CheckedIn, Waiting, InProgress,
     /// Completed, Cancelled, NoShow
     /// </summary>
-    public EncounterStatus Status { get; set; }
+    public EncounterStatus Status { get; set; } = EncounterStatus.Scheduled;
 
     /// <summary>
     /// Routine, Urgent, Emergency, STAT
@@ -224,9 +233,47 @@ public class Encounter
     public virtual ICollection<Medicine> MedicationOrders { get; set; } = new List<Medicine>();
 
 
-    public string? ClinicalNotes { get; set; } = string.Empty;
+    public string? ClinicalNotes { get; set; }
 
     public virtual ICollection<PatientDocument> Attachments { get; set; } = new List<PatientDocument>();
+
+    public void Schedule(DateTime start, int durationMinutes = DefaultDurationMinutes)
+    {
+        if(durationMinutes<=0)
+            throw new ArgumentOutOfRangeException(nameof(durationMinutes), "Времетраењето мора да биде поголемо од нула.");
+
+        Status=EncounterStatus.Scheduled;
+        EncounterDate=start;
+        ScheduledStart=start;
+        ScheduledEnd=start.AddMinutes(durationMinutes);
+        DurationMinutes=durationMinutes;
+    }
+
+    public void Complete(DateTime completedAt)
+    {
+        Status=EncounterStatus.Completed;
+        EndTime=completedAt;
+        IsLocked=true;
+
+        var start=StartTime??ScheduledStart;
+        DurationMinutes=start.HasValue
+            ? Math.Max(0, (int)(completedAt-start.Value).TotalMinutes)
+            : DurationMinutes;
+    }
+
+    public void SetNotes(string? notes)
+    {
+        var normalized=string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
+        Notes=normalized;
+        ClinicalNotes=normalized;
+    }
+
+    private static DateTime RoundUpToHalfHour(DateTime value)
+    {
+        var rounded=value.Date.AddHours(value.Hour);
+        rounded=rounded.AddMinutes(value.Minute<30 ? 30 : 60);
+        return DateTime.SpecifyKind(rounded, value.Kind);
+    }
 
   
 }

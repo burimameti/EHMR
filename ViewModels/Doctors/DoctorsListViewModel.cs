@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -29,7 +29,7 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
     // ================= BASE OVERRIDES =================
     protected override string ModuleName => Modules.Doctors;
     protected override string DetailRoute => AppRoutes.Doctors.Detail;
-    protected override string PermissionDeniedMessage => "Немате авторизација за додавање нов лекар.";
+    protected override string PermissionDeniedMessage => "Немате авторизација за додавање нов реуматолог.";
 
     public ObservableCollection<string> StatusFilters
     {
@@ -235,7 +235,7 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
             new() { Header="БРОЈ",     Key="DoctorNumber", Width=new GridLength(1.3, GridUnitType.Star) },
 
             // Hyperlink → OpenDetailCommand(row.Tag)
-            new() { Header="ЛЕКАР",   Key="FullName",     Width=new GridLength(2.2, GridUnitType.Star),
+            new() { Header="РЕУМАТОЛОГ",   Key="FullName",     Width=new GridLength(2.2, GridUnitType.Star),
                     CellType=SparkGridCellType.Hyperlink },
 
             new() { Header="Е-ПОШТА", Key="Email",        Width=new GridLength(2,   GridUnitType.Star) },

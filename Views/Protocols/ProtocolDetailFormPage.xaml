@@ -224,7 +224,7 @@
 								StrokeThickness="1">
 								<VerticalStackLayout Spacing="12">
 									<Grid ColumnDefinitions="*,Auto">
-										<Label Style="{StaticResource ReadRowLabelStyle}" Text="Креирано од доктор:" />
+										<Label Style="{StaticResource ReadRowLabelStyle}" Text="Креирано од реуматолог:" />
 										<Label
 											Grid.Column="1"
 											Style="{StaticResource ReadRowValueStyle}"

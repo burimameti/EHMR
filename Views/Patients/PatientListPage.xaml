@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
 	x:Class="EHMR.Views.PatientListPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -19,6 +19,7 @@
 		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
+            Margin="12,0,12,12"
 			RowDefinitions="Auto,*"
 			RowSpacing="8">
 
@@ -26,9 +27,9 @@
 			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
 				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 					<controls:FFPageHeader
-						Title="Медицински Досијеа"
+						Title="Пациенти"
 						Grid.Column="0"
-						Subtitle="Преглед, пребарување и управување со медициснки картони" />
+						Subtitle="Преглед, пребарување и управување со пациенти" />
 
 					<controls:FFButton
 						Grid.Column="1"
@@ -37,7 +38,7 @@
 						ContentPadding="20,0"
 						HeightRequestEx="45"
 						IsVisible="{Binding CanCreate}"
-						Text="Нов Картон" />
+						Text="Нов пациент" />
 				</Grid>
 			</Border>
 

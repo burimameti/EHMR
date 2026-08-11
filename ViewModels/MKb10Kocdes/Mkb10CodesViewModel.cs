@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -308,7 +308,7 @@ public partial class Mkb10CodeListViewModel : BaseViewModel<Mkb10Code>, IQueryAt
             new() { Header = "ОПИС", Key = "Description", Width = new GridLength(3, GridUnitType.Star) },
             new() { Header = "ПОГЛАВЈЕ", Key = "Chapter", Width = new GridLength(1.5, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "IsActive", CellType = SparkGridCellType.Badge, Width = new GridLength(1, GridUnitType.Star) },
-            new() { Header = "АКЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
+            new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
 

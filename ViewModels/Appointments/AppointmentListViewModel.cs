@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -595,12 +595,12 @@ public partial class AppointmentListViewModel
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
         {      new() { Header = "БРОЈ", Key = "AppointmentNumber", Width = new GridLength(1.3, GridUnitType.Star) },
-            new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
-            new() { Header = "ДОКТОР", Key = "Doctor", Width = new GridLength(2, GridUnitType.Star) },
+            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
+            new() { Header = "РЕУМАТОЛОГ", Key = "Doctor", Width = new GridLength(2, GridUnitType.Star) },
             new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1, GridUnitType.Star) },
             new() { Header = "ВРЕМЕ", Key = "Time", Width = new GridLength(1, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1, GridUnitType.Star) },
-            new() { Header = "АКЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
+            new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
 

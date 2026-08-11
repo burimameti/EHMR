@@ -16,8 +16,8 @@ public partial class LoginViewModel : ObservableObject
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
     private readonly ILicenseService _licenseService;
 
-    [ObservableProperty] private string username;
-    [ObservableProperty] private string password;
+    [ObservableProperty] private string username = "admin";
+    [ObservableProperty] private string password="123456";
     [ObservableProperty] private bool rememberMe;
     [ObservableProperty] private bool isBusy;
     [ObservableProperty] private string errorMessage = string.Empty;
@@ -152,7 +152,7 @@ public partial class LoginViewModel : ObservableObject
             Logger.Log("Creating DB context");
             await using var db = await _dbFactory.CreateDbContextAsync();
             Logger.Log("DB context created, querying user");
-
+            
             var user = await db.Users
                 .AsNoTracking()
                 .Include(x => x.Modules)

@@ -6,115 +6,89 @@
 	x:Name="Root">
 
 	<Border
-		Margin="6"
-		Padding="0"
+		Margin="4"
+		Padding="14,10"
 		BackgroundColor="{Binding TileBackground, Source={x:Reference Root}}"
 		Stroke="{Binding TileBorder, Source={x:Reference Root}}"
 		StrokeThickness="1">
 		<Border.StrokeShape>
-			<RoundRectangle CornerRadius="16" />
+			<RoundRectangle CornerRadius="12" />
 		</Border.StrokeShape>
 		<Border.Shadow>
 			<Shadow
 				Brush="#000000"
-				Opacity="0.06"
-				Radius="12"
-				Offset="0,3" />
+				Opacity="0.05"
+				Radius="8"
+				Offset="0,2" />
 		</Border.Shadow>
-		<Border.GestureRecognizers>
-			<TapGestureRecognizer Command="{Binding Command, Source={x:Reference Root}}" CommandParameter="{Binding CommandParameter, Source={x:Reference Root}}" />
-		</Border.GestureRecognizers>
 
-		<Grid RowDefinitions="4,*" RowSpacing="0">
-
-			<!--  TOP ACCENT BAR  -->
-			<BoxView
-				Grid.Row="0"
-				BackgroundColor="{Binding AccentColor, Source={x:Reference Root}}"
-				HeightRequest="4"
-				HorizontalOptions="Fill"
-				IsVisible="{Binding ShowAccentBar, Source={x:Reference Root}}">
-				<BoxView.Clip>
-					<RoundRectangleGeometry CornerRadius="16,16,0,0" Rect="0,0,9999,4" />
-				</BoxView.Clip>
-			</BoxView>
-
-			<!--  CARD BODY  -->
-			<Grid
-				Grid.Row="1"
-				Padding="18,14,18,16"
-				RowDefinitions="Auto,Auto,Auto"
-				RowSpacing="10">
-
-				<!--  ROW 0: ICON + TITLE/SUBTITLE  -->
-				<Grid
-					Grid.Row="0"
-					ColumnDefinitions="Auto,*"
-					ColumnSpacing="12">
-
-					<!--  ICON CHIP  -->
-					<Border
-						Grid.Column="0"
-						BackgroundColor="{Binding IconBackground, Source={x:Reference Root}}"
-						HeightRequest="40"
-						IsVisible="{Binding ShowIcon, Source={x:Reference Root}}"
-						StrokeThickness="0"
-						VerticalOptions="Center"
-						WidthRequest="40">
-						<Border.StrokeShape>
-							<RoundRectangle CornerRadius="12" />
-						</Border.StrokeShape>
-						<Label
-							FontFamily="FASolid"
-							FontSize="17"
-							HorizontalOptions="Center"
-							Text="{Binding Icon, Source={x:Reference Root}}"
-							TextColor="{Binding AccentColor, Source={x:Reference Root}}"
-							VerticalOptions="Center" />
-					</Border>
-
-					<!--  TITLE + SUBTITLE  -->
-					<VerticalStackLayout
-						Grid.Column="1"
-						Spacing="2"
-						VerticalOptions="Center">
-						<Label
-							CharacterSpacing="0.4"
-							FontAttributes="Bold"
-							FontSize="11"
-							LineBreakMode="TailTruncation"
-							Text="{Binding Title, Source={x:Reference Root}}"
-							TextColor="{Binding TitleColor, Source={x:Reference Root}}"
-							TextTransform="Uppercase" />
-						<Label
-							FontSize="11"
-							IsVisible="{Binding ShowSubtitle, Source={x:Reference Root}}"
-							LineBreakMode="TailTruncation"
-							Text="{Binding Subtitle, Source={x:Reference Root}}"
-							TextColor="{Binding SubtitleColor, Source={x:Reference Root}}" />
-					</VerticalStackLayout>
-				</Grid>
-
-				<!--  ROW 1: BIG VALUE  -->
+		<Grid RowDefinitions="Auto,Auto" RowSpacing="8">
+			<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="9">
+				<Border
+					BackgroundColor="{Binding IconBackground, Source={x:Reference Root}}"
+					HeightRequest="32"
+					IsVisible="{Binding ShowIcon, Source={x:Reference Root}}"
+					StrokeThickness="0"
+					VerticalOptions="Center"
+					WidthRequest="32">
+					<Border.StrokeShape>
+						<RoundRectangle CornerRadius="9" />
+					</Border.StrokeShape>
+					<Label
+						FontFamily="FASolid"
+						FontSize="12"
+						HorizontalOptions="Center"
+						Text="{Binding Icon, Source={x:Reference Root}}"
+						TextColor="{Binding AccentColor, Source={x:Reference Root}}"
+						VerticalOptions="Center" />
+				</Border>
 				<Label
-					Grid.Row="1"
+					Grid.Column="1"
+					CharacterSpacing="0.2"
 					FontAttributes="Bold"
-					FontSize="32"
+					FontSize="9"
+					LineBreakMode="TailTruncation"
+					MaxLines="1"
+					Text="{Binding Title, Source={x:Reference Root}}"
+					TextColor="{Binding TitleColor, Source={x:Reference Root}}"
+					VerticalOptions="Center" />
+				<Label
+					Grid.Column="2"
+					FontAttributes="Bold"
+					FontSize="22"
 					Text="{Binding Value, Source={x:Reference Root}}"
-					TextColor="{Binding ValueColor, Source={x:Reference Root}}" />
-
-				<!--  ROW 2: BOTTOM ACCENT RULE  -->
-				<BoxView
-					Grid.Row="2"
-					BackgroundColor="{Binding AccentColor, Source={x:Reference Root}}"
-					CornerRadius="2"
-					HeightRequest="3"
-					HorizontalOptions="Start"
-					IsVisible="{Binding ShowAccentBar, Source={x:Reference Root}}"
-					Opacity="0.35"
-					WidthRequest="32" />
-
+					TextColor="{Binding ValueColor, Source={x:Reference Root}}"
+					VerticalOptions="Center" />
 			</Grid>
+
+			<Border
+				Grid.Row="1"
+				Padding="10,5"
+				BackgroundColor="{Binding AccentColor, Source={x:Reference Root}}"
+				HorizontalOptions="End"
+				IsVisible="{Binding Command, Source={x:Reference Root}, Converter={StaticResource SparkNotNullConverter}}"
+				StrokeThickness="0">
+				<Border.StrokeShape>
+					<RoundRectangle CornerRadius="7" />
+				</Border.StrokeShape>
+				<Border.GestureRecognizers>
+					<TapGestureRecognizer Command="{Binding Command, Source={x:Reference Root}}" CommandParameter="{Binding CommandParameter, Source={x:Reference Root}}" />
+				</Border.GestureRecognizers>
+				<HorizontalStackLayout Spacing="5">
+					<Label
+						FontAttributes="Bold"
+						FontSize="11"
+						Text="Повеќе"
+						TextColor="White"
+						VerticalOptions="Center" />
+					<Label
+						FontAttributes="Bold"
+						FontSize="12"
+						Text="›"
+						TextColor="White"
+						VerticalOptions="Center" />
+				</HorizontalStackLayout>
+			</Border>
 		</Grid>
 	</Border>
 </ContentView>

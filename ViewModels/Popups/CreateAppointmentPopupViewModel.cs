@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Services;
@@ -71,7 +71,7 @@ public partial class CreateAppointmentPopupViewModel : ObservableObject
         if(SelectedDoctor==null)
         {
             HasError=true;
-            ErrorMessage="Изберете лекар";
+            ErrorMessage="Изберете реуматолог";
             return;
         }
 
