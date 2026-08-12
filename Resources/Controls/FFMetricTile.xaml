@@ -39,7 +39,7 @@
 						FontSize="12"
 						HorizontalOptions="Center"
 						Text="{Binding Icon, Source={x:Reference Root}}"
-						TextColor="{Binding AccentColor, Source={x:Reference Root}}"
+						TextColor="White"
 						VerticalOptions="Center" />
 				</Border>
 				<Label

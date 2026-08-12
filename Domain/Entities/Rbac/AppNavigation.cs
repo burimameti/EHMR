@@ -97,19 +97,30 @@ public static class AppNavigation
         // ==========================
         new()
         {
-            //GroupTitle = "Термин",
-            //Module = Modules.Appointments,
-            //Icon = new IconDefinition { Glyph = "\uf274", Font = IconFontType.FontAwesomeSolid }, // Calendar Check
-            //Items =
-            //[
-            //    new()
-            //    {
-                    GroupTitle = "Термини",
+            GroupTitle = "Термини",
+            Route = AppRoutes.Appointments.List,
+            Module = Modules.Appointments,
+            Icon = new IconDefinition { Glyph = "\uf274", Font = IconFontType.FontAwesomeSolid },
+            Items =
+            [
+                new()
+                {
+                    Title = "Листа на термини",
                     Route = AppRoutes.Appointments.List,
                     Module = Modules.Appointments,
-                    Icon = new IconDefinition { Glyph = "\uf017", Font = IconFontType.FontAwesomeSolid } // Clock
-            //    }
-            //]
+                    RequiredAction = ModuleAction.View,
+                    Icon = new IconDefinition { Glyph = "\uf03a", Font = IconFontType.FontAwesomeSolid }
+                },
+                new()
+                {
+                    Title = "Нов термин",
+                    Route = AppRoutes.Appointments.Detail,
+                    Module = Modules.Appointments,
+                    RequiredAction = ModuleAction.Create,
+                    StartsNewRecord = true,
+                    Icon = new IconDefinition { Glyph = "\uf067", Font = IconFontType.FontAwesomeSolid }
+                }
+            ]
         },
 
         //// ==========================
@@ -273,32 +284,35 @@ public static class AppNavigation
         new()
         {
             GroupTitle = "Администрација",
-              Route = AppRoutes.Admin.AdminPanel,
+            Route = AppRoutes.Admin.AdminPanel,
             Module = Modules.Administration,
-            Icon = new IconDefinition { Glyph = "\uf13e", Font = IconFontType.FontAwesomeSolid }, // Shield User Lock
+            Icon = new IconDefinition { Glyph = "\uf13e", Font = IconFontType.FontAwesomeSolid },
             Items =
             [
                 new()
                 {
-                    Title = "Корисници",
+                    Title = "Преглед",
                     Route = AppRoutes.Admin.AdminPanel,
                     Module = Modules.Administration,
-                    Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
-                },new()
-                {
-                    Title = "",
-                    Route = AppRoutes.Admin.AdminPanel,
-                    Module = Modules.Administration,
-                    Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
+                    RequiredAction = ModuleAction.View,
+                    Icon = new IconDefinition { Glyph = "\uf00a", Font = IconFontType.FontAwesomeSolid }
                 },
-                 new()
+                new()
+                {
+                    Title = "Корисници",
+                    Route = AppRoutes.Users.List,
+                    Module = Modules.Administration,
+                    RequiredAction = ModuleAction.View,
+                    Icon = new IconDefinition { Glyph = "\uf0c0", Font = IconFontType.FontAwesomeSolid }
+                },
+                new()
                 {
                     Title = "Реуматолози",
                     Route = AppRoutes.Doctors.List,
                     Module = Modules.Doctors,
-                    Icon = new IconDefinition { Glyph = "\uf508", Font = IconFontType.FontAwesomeSolid } // User Cog
+                    RequiredAction = ModuleAction.View,
+                    Icon = new IconDefinition { Glyph = "\uf0f0", Font = IconFontType.FontAwesomeSolid }
                 }
-
             ]
         }
     ];

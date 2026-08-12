@@ -233,17 +233,19 @@
 						Spacing="10"
 						VerticalOptions="Center">
 						<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 							ButtonKind="Primary"
 							Command="{Binding NewEncounterCommand}"
 							ContentPadding="20,0"
 							HeightRequestEx="45"
-							Text="Нов Преглед" />
+							Text="Нов преглед" />
 						<controls:FFButton
 							ButtonKind="Secondary"
 							Command="{Binding NewAppointmentCommand}"
 							ContentPadding="20,0"
 							HeightRequestEx="45"
-							Text="Нов Термин" />
+							Text="Нов термин" />
 					</HorizontalStackLayout>-->
 				</Grid>
 			</Border>

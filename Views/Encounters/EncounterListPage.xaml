@@ -22,7 +22,7 @@
 			Grid.Column="1"
             Margin="12,0,12,12"
 			RowDefinitions="Auto,*"
-			RowSpacing="0">
+			RowSpacing="8">
 
 			<!--  HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
@@ -33,13 +33,15 @@
 						Subtitle="Управување со податоци за прегледи" />
 
 					<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 						Grid.Column="1"
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
 						ContentPadding="20,0"
 						HeightRequestEx="45"
 						IsVisible="{Binding CanCreate}"
-						Text="Нов Преглед" />
+						Text="Нов преглед" />
 				</Grid>
 			</Border>
 

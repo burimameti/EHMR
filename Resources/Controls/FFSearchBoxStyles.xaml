@@ -1,4 +1,4 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
 	<Style x:Key="SurfaceCard" TargetType="Border">
 		<Setter Property="BackgroundColor" Value="{StaticResource White}" />
@@ -20,7 +20,7 @@
 		<Setter Property="Padding" Value="10" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
-				<RoundRectangle CornerRadius="12" />
+				<RoundRectangle CornerRadius="6" />
 			</Setter.Value>
 		</Setter>
 	</Style>

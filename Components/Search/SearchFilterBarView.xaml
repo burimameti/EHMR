@@ -42,7 +42,7 @@
 
 			<Button Command="{Binding ClearFiltersCommand}" Text="Исчисти" />
 
-			<Button Command="{Binding AddCommand}" Text="＋ Нов" />
+			<Button Command="{Binding AddCommand}" Text="Нов" />
 		</Grid>
 	</Border>
 </ContentView>

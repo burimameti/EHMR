@@ -191,7 +191,7 @@
 							<VerticalStackLayout Spacing="12">
 
 								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label
+									<Label Style="{StaticResource SectionPillLabelStyle}"
 										CharacterSpacing="0.8"
 										FontAttributes="Bold"
 										FontSize="13"
@@ -361,7 +361,7 @@
 							<VerticalStackLayout Spacing="12">
 
 								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label
+									<Label Style="{StaticResource SectionPillLabelStyle}"
 										CharacterSpacing="0.5"
 										FontAttributes="Bold"
 										FontSize="13"
@@ -485,7 +485,7 @@
 							<VerticalStackLayout Spacing="12">
 
 								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label
+									<Label Style="{StaticResource SectionPillLabelStyle}"
 										CharacterSpacing="0.5"
 										FontAttributes="Bold"
 										FontSize="13"
@@ -552,7 +552,7 @@
 							<VerticalStackLayout Spacing="12">
 
 								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label
+									<Label Style="{StaticResource SectionPillLabelStyle}"
 										CharacterSpacing="0.5"
 										FontAttributes="Bold"
 										FontSize="13"
@@ -682,12 +682,14 @@
 									Text="Назад"
 									WidthRequestEx="150" />
 								<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 									ButtonKind="Primary"
 									Command="{Binding EditCommand}"
 									HeightRequestEx="44"
 									HorizontalOptionsEx="Fill"
 									IsVisible="{Binding CanEditEncounter}"
-									Text="Уреди преглед"
+									Text="Уреди"
 									WidthRequestEx="180" />
 							</HorizontalStackLayout>
 
@@ -704,7 +706,7 @@
 
 							<!--  Section: Историја на прегледи  -->
 							<Border Style="{StaticResource SectionPillBorderStyle}">
-								<Label
+								<Label Style="{StaticResource SectionPillLabelStyle}"
 									CharacterSpacing="0.5"
 									FontAttributes="Bold"
 									FontSize="13"

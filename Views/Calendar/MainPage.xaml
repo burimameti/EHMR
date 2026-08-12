@@ -899,6 +899,8 @@
 							</VerticalStackLayout>
 							<!--  Истиот FFButton како на почетната страна, наместо сина боја однадвор.  -->
 							<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 								Grid.Column="1"
 								ButtonKind="Primary"
 								Command="{Binding CreateNewEncounterForSelectedDayCommand}"

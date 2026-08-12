@@ -7,7 +7,7 @@
 	<Color x:Key="SparkSidebarBg">#293441</Color>
 	<!--  was #32404D — slightly deeper, reads as "premium dark" not "washed navy"  -->
 	<Color x:Key="SparkSidebarBgHover">#333F4D</Color>
-	<Color x:Key="SparkSidebarActiveBg">#22B8C6</Color>
+	<Color x:Key="SparkSidebarActiveBg">#4DD9C7</Color>
 	<!--  aligned to the refined accent teal below, was a mismatched #4CC3D9  -->
 	<Color x:Key="SparkSidebarText">#96A5B5</Color>
 	<Color x:Key="SparkSidebarTextActive">#FFFFFF</Color>
@@ -34,23 +34,23 @@
 	<!--  Tailwind slate-500, replaces the slightly muddy #718096  -->
 	<Color x:Key="SparkTextMuted">#94A3B8</Color>
 	<!--  slate-400  -->
-	<Color x:Key="SparkLink">#2563EB</Color>
+	<Color x:Key="SparkLink">#4DD9C7</Color>
 	<!--  cleaner, more standard SaaS link blue than #2F8FE0  -->
 
 	<!--  ============================================================  -->
 	<!--  ACCENTS (Vibrant Dashboard Teal)  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkAccentTeal">#0EA5B8</Color>
+	<Color x:Key="SparkAccentTeal">#4DD9C7</Color>
 	<!--  was #21B6C4 — a touch deeper/more saturated, better text contrast on white  -->
-	<Color x:Key="SparkAccentTealDark">#0B8494</Color>
-	<Color x:Key="SparkAccentTealBg">#E3F6F9</Color>
+	<Color x:Key="SparkAccentTealDark">#32B9AA</Color>
+	<Color x:Key="SparkAccentTealBg">#F0F7F5</Color>
 
 	<!--  ============================================================  -->
 	<!--  BUTTONS & INTERACTIVE ELEMENTS  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkButtonPrimaryBg">#0EA5B8</Color>
-	<Color x:Key="SparkButtonPrimaryBgPressed">#0B8494</Color>
-	<Color x:Key="SparkButtonPrimaryText">#FFFFFF</Color>
+	<Color x:Key="SparkButtonPrimaryBg">#4DD9C7</Color>
+	<Color x:Key="SparkButtonPrimaryBgPressed">#32B9AA</Color>
+	<Color x:Key="SparkButtonPrimaryText">#0F2E2A</Color>
 
 	<Color x:Key="SparkButtonSecondaryBg">#475569</Color>
 	<!--  slate-600, was #5B6B79 — cooler, matches sidebar family  -->
@@ -61,9 +61,9 @@
 	<!--  ============================================================  -->
 	<!--  TABS CONFIGURATION  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkTabActiveBg">#E3F6F9</Color>
-	<Color x:Key="SparkTabActiveBorder">#0EA5B8</Color>
-	<Color x:Key="SparkTabActiveText">#0F3B45</Color>
+	<Color x:Key="SparkTabActiveBg">#F0F7F5</Color>
+	<Color x:Key="SparkTabActiveBorder">#4DD9C7</Color>
+	<Color x:Key="SparkTabActiveText">#0F2E2A</Color>
 	<Color x:Key="SparkTabInactiveText">#7C8798</Color>
 	<Color x:Key="SparkTabHoverBg">#F1F5F8</Color>
 
@@ -93,7 +93,7 @@
 	<Color x:Key="SparkStatusNeutralBg">#E8EBF0</Color>
 	<Color x:Key="SparkStatusNeutralText">#52586B</Color>
 	<Color x:Key="SparkBadgeNeutralBg">#EBEFF3</Color>
-	<Color x:Key="SparkBadgeNeutralBgSelected">#0EA5B8</Color>
+	<Color x:Key="SparkBadgeNeutralBgSelected">#4DD9C7</Color>
 	<Color x:Key="SparkBadgeNeutralText">#556072</Color>
 	<Color x:Key="SparkBadgeNeutralTextSelected">#FFFFFF</Color>
 
@@ -216,7 +216,7 @@
 	</Style>
 
 	<Style x:Key="PrimaryButtonStyle" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="#0EA5B8" />
+		<Setter Property="BackgroundColor" Value="#4DD9C7" />
 		<Setter Property="TextColor" Value="#FFFFFF" />
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="13" />
@@ -237,7 +237,7 @@
 	</Style>
 
 	<Style x:Key="ActiveTabButtonStyle" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="#0EA5B8" />
+		<Setter Property="BackgroundColor" Value="#4DD9C7" />
 		<Setter Property="TextColor" Value="#FFFFFF" />
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="12" />

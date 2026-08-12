@@ -9,12 +9,12 @@
 
 	<VerticalStackLayout
 		Margin="0,0,0,14"
-		BackgroundColor="{StaticResource AppBg}"
+		BackgroundColor="Transparent"
 		Spacing="8">
 
 		<!--  ============ ROW 1: TABS + TRAILING ============  -->
 		<Border
-			BackgroundColor="{StaticResource SparkBackgroundAlt}"
+			BackgroundColor="Transparent"
 			IsVisible="{Binding TabsVisible, Source={x:Reference Root}}"
 			StrokeShape="RoundRectangle 0">
 
@@ -88,14 +88,14 @@
 												Binding="{Binding IsSelected}"
 												TargetType="Label"
 												Value="True">
-												<Setter Property="TextColor" Value="{StaticResource White}" />
+												<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 												<Setter Property="FontAttributes" Value="Bold" />
 											</DataTrigger>
 											<DataTrigger
 												Binding="{Binding IsSelected}"
 												TargetType="Label"
 												Value="False">
-												<Setter Property="TextColor" Value="{StaticResource White}" />
+												<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 												<Setter Property="FontAttributes" Value="None" />
 											</DataTrigger>
 										</Label.Triggers>
@@ -133,7 +133,7 @@
 					<Label
 						FontSize="11"
 						Text="Пребарување"
-						TextColor="{StaticResource SparkAccentTeal}" />
+						TextColor="{StaticResource SparkTextSecondary}" />
 					<Border
 						Padding="12,0"
 						BackgroundColor="White"
@@ -220,7 +220,7 @@
 						FontSize="12"
 						HorizontalOptions="Start"
 						Text="Кирилица"
-						TextColor="{StaticResource SparkAccentTeal}" />
+						TextColor="{StaticResource SparkTextSecondary}" />
 					<Border
 						Margin="-28,22,0,0"
 						Padding="0"
@@ -247,7 +247,7 @@
 									FontSize="11"
 									HorizontalOptions="Center"
 									Text="{Binding Placeholder}"
-									TextColor="{StaticResource SparkAccentTeal}" />
+									TextColor="{StaticResource SparkTextSecondary}" />
 								<Border
 									Padding="10,0"
 									BackgroundColor="White"
@@ -275,14 +275,14 @@
 						FontSize="11"
 						HorizontalOptions="Center"
 						Text="Акции"
-						TextColor="{StaticResource SparkAccentTeal}" />
+						TextColor="{StaticResource SparkTextSecondary}" />
 					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}" Spacing="8">
 
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkButtonItem">
 								<Border
 									Padding="16,10"
-									BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
+									BackgroundColor="{StaticResource SparkAccentTeal}"
 									HeightRequest="44"
 									Stroke="{StaticResource SparkAccentTeal}"
 									StrokeShape="RoundRectangle 6"
@@ -295,7 +295,7 @@
 										FontSize="14"
 										HorizontalOptions="Center"
 										Text="{Binding Label}"
-										TextColor="White"
+										TextColor="{StaticResource SparkTextPrimary}"
 										VerticalOptions="Center" />
 								</Border>
 							</DataTemplate>

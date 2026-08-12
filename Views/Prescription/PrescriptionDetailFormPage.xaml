@@ -72,7 +72,7 @@
 							ContentPadding="20,0"
 							HeightRequestEx="40"
 							IsVisible="{Binding Id, Converter={StaticResource GuidToBoolConverter}}"
-							Text="✎ Измени" />
+							Text="Уреди" />
 
 						<controls:FFButton
 							ButtonKind="Secondary"
@@ -82,12 +82,14 @@
 							Text="Назад" />
 
 						<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 							ButtonKind="Primary"
 							Command="{Binding SaveCommand}"
 							ContentPadding="20,0"
 							HeightRequestEx="40"
 							IsVisible="{Binding IsReadOnly, Converter={StaticResource InverseBoolConverter}}"
-							Text="💾 Зачувај" />
+							Text="Зачувај" />
 					</HorizontalStackLayout>
 				</Grid>
 			</Border>

@@ -19,7 +19,7 @@
 		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
-            Margin="12,0,12,12"
+			Margin="12,0,12,12"
 			RowDefinitions="Auto,*"
 			RowSpacing="8">
 
@@ -33,12 +33,14 @@
 
 					<controls:FFButton
 						Grid.Column="1"
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
 						ContentPadding="20,0"
 						HeightRequestEx="45"
 						IsVisible="{Binding CanCreate}"
-						Text="Нов Рецепт" />
+						Text="Нов рецепт"
+						TextColorEx="{StaticResource SidebarActiveText}" />
 				</Grid>
 			</Border>
 

@@ -1,4 +1,4 @@
-﻿<!--  File: EHMR.Backups/Views/BackupHistoryPage.xaml  -->
+<!--  File: EHMR.Backups/Views/BackupHistoryPage.xaml  -->
 <ContentPage
 	x:Class="EHMR.Backups.Views.BackupHistoryPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -92,11 +92,13 @@
 						Spacing="10"
 						VerticalOptions="Center">
 						<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 							ButtonKind="Primary"
 							Command="{Binding RunBackupCommand}"
 							ContentPadding="20,0"
 							HeightRequestEx="45"
-							Text="Нов Бекап" />
+							Text="Нов бекап" />
 					</HorizontalStackLayout>
 				</Grid>
 			</Border>

@@ -74,12 +74,13 @@
 							WidthRequest="140" />
 
 						<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 							ButtonKind="Primary"
 							Command="{Binding SaveCommand}"
 							ContentPadding="20,0"
 							HeightRequestEx="40"
-							Text="💾 Зачувај"
-							TextColorEx="White"
+							Text="Зачувај"
 							WidthRequest="140" />
 					</HorizontalStackLayout>
 				</Grid>

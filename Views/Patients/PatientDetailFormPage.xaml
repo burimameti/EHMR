@@ -1243,19 +1243,23 @@
 								IsVisible="{Binding IsEditMode}"
 								Text="Откажи" />
 							<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 								ButtonKind="Primary"
 								Command="{Binding SaveCommand}"
 								ContentPadding="24,0"
 								HeightRequestEx="42"
 								IsVisible="{Binding IsEditMode}"
-								Text="💾 Зачувај" />
+								Text="Зачувај" />
 							<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 								ButtonKind="Primary"
 								Command="{Binding ToggleEditModeCommand}"
 								ContentPadding="24,0"
 								HeightRequestEx="42"
 								IsVisible="{Binding IsReadOnly}"
-								Text="✎ Измени податоци" />
+								Text="Уреди" />
 						</HorizontalStackLayout>
 						<!--  ═══════════════════════════════════════════════════  -->
 						<!--  ИСТОРИЈА НА ПАЦИЕНТОТ  -->

@@ -215,11 +215,13 @@ public partial class MenuViewModel : ObservableObject, IDisposable
             return;
         }
 
-        FocusGroup(group);
-
-        if(!string.IsNullOrWhiteSpace(group.Route)&&
-           !group.Route.Equals(ActiveRoute, StringComparison.OrdinalIgnoreCase))
-            await NavigateGroupAsync(group);
+        // Групата служи само за отворање/затворање на submenu.
+        // Навигацијата се извршува исклучиво преку child ставка, за новата
+        // страница да не создаде ново, повторно затворено мени.
+        if(ReferenceEquals(_focusedGroup, group)&&group.IsExpanded)
+            ShowMainMenu();
+        else
+            FocusGroup(group);
     }
 
     private async Task NavigateGroupAsync(NavigationGroup group)
@@ -342,8 +344,15 @@ public partial class MenuViewModel : ObservableObject, IDisposable
         foreach(var item in _allItems)
             item.IsExpanded=ReferenceEquals(item, group);
 
-        Items.Clear();
-        Items.Add(group);
+        // Главните групи секогаш остануваат видливи; се отвора само
+        // child листата на избраната група.
+        if(Items.Count!=_allItems.Count||!Items.SequenceEqual(_allItems))
+        {
+            Items.Clear();
+            foreach(var item in _allItems)
+                Items.Add(item);
+        }
+
         group.IsExpanded=true;
         group.IsActive=true;
     }

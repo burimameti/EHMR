@@ -77,11 +77,13 @@
 						VerticalOptions="Center">
 
 						<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 							ButtonKind="Primary"
 							Command="{Binding SaveCommand}"
 							HeightRequestEx="36"
 							IsVisible="{Binding IsEditMode}"
-							Text="💾 Зачувај"
+							Text="Зачувај"
 							WidthRequest="200" />
 
 						<controls:FFButton
@@ -94,12 +96,13 @@
 							WidthRequest="200" />
 
 						<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 							ButtonKind="Primary"
 							Command="{Binding ToggleEditCommand}"
 							HeightRequestEx="36"
 							IsVisible="{Binding IsReadOnly}"
-							Text="✎ Промени"
-							TextColorEx="White"
+							Text="Уреди"
 							WidthRequest="200" />
 
 					</HorizontalStackLayout>

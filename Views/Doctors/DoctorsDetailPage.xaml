@@ -431,7 +431,7 @@
 						HeightRequest="46"
 						HorizontalOptions="Start"
 						IsVisible="{Binding CanShowDelete}"
-						Text="🗑 Избриши реуматолог"
+						Text="Избриши"
 						TextColor="#DC2626" />
 
 					<!--  RIGHT BUTTONS  -->
@@ -465,7 +465,7 @@
 							FontSize="14"
 							HeightRequest="46"
 							IsVisible="{Binding CanShowEditToggle}"
-							Text="✎ Промени"
+							Text="Уреди"
 							TextColor="#059669"
 							WidthRequest="130" />
 
@@ -478,7 +478,7 @@
 							FontSize="14"
 							HeightRequest="46"
 							IsVisible="{Binding CanShowSave}"
-							Text="💾 Зачувај"
+							Text="Зачувај"
 							TextColor="White"
 							WidthRequest="150" />
 

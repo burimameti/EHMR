@@ -32,6 +32,8 @@
 						Subtitle="Преглед, пребарување и управување со пациенти" />
 
 					<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 						Grid.Column="1"
 						ButtonKind="Primary"
 						Command="{Binding AddCommand}"

@@ -54,8 +54,10 @@
 		</Border>
 
 		<!--  RIGHT MAIN CONTAINER  -->
-		<Grid Grid.Column="1"
-            Margin="12,0,12,12" RowDefinitions="Auto,*">
+		<Grid
+			Grid.Column="1"
+			Margin="12,0,12,12"
+			RowDefinitions="Auto,*">
 
 			<!--  =========================================================  -->
 			<!--  HEADER — same PageHeaderCardStyle + FFPageHeader + FFButton as Dashboard  -->
@@ -324,12 +326,14 @@
 
 									<sc:FFButton
 										Grid.Column="5"
+										BackgroundColorEx="{StaticResource SidebarActiveBg}"
 										ButtonKind="Primary"
 										Command="{Binding ExecuteReportGenerationCommand}"
 										ContentPadding="16,0"
 										HeightRequestEx="45"
 										IsVisible="{Binding CanCreate}"
-										Text="🔄 Генерирај" />
+										Text="🔄 Генерирај"
+										TextColorEx="{StaticResource SidebarActiveText}" />
 								</Grid>
 							</Border>
 
@@ -378,9 +382,7 @@
 									<VerticalStackLayout Spacing="6">
 
 										<Border Style="{StaticResource SectionPillBorderStyle}">
-											<Label
-												Style="{StaticResource SectionPillLabelStyle}"
-												Text="АНАЛИТИКА" />
+											<Label Style="{StaticResource SectionPillLabelStyle}" Text="АНАЛИТИКА" />
 										</Border>
 
 										<!--  Metric 1  -->
@@ -490,9 +492,7 @@
 									<VerticalStackLayout Spacing="10">
 
 										<Border Style="{StaticResource SectionPillBorderStyle}">
-											<Label
-												Style="{StaticResource SectionPillLabelStyle}"
-												Text="ОПЦИИ ЗА ИЗВОЗ" />
+											<Label Style="{StaticResource SectionPillLabelStyle}" Text="ОПЦИИ ЗА ИЗВОЗ" />
 										</Border>
 
 										<sc:FFButton
@@ -503,11 +503,13 @@
 											Text="📄 Извези во PDF" />
 
 										<sc:FFButton
+											BackgroundColorEx="{StaticResource SidebarActiveBg}"
 											ButtonKind="Primary"
 											Command="{Binding ExportToExcelCommand}"
 											ContentPadding="16,0"
 											HeightRequestEx="45"
-											Text="📊 Извези во Excel" />
+											Text="📊 Извези во Excel"
+											TextColorEx="{StaticResource SidebarActiveText}" />
 
 									</VerticalStackLayout>
 								</Border>

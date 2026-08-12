@@ -29,7 +29,7 @@
 				<controls:FFPageHeader
 					Title="Термини"
 					PrimaryButtonCommand="{Binding NewCommand}"
-					PrimaryButtonText="Нов Термин"
+					PrimaryButtonText="Нов термин"
 					RefreshCommand="{Binding LoadCommand}"
 					ShowPrimaryButton="{Binding CanCreate}"
 					ShowRefreshButton="True"

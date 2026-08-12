@@ -96,11 +96,13 @@
 					<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 
 						<controls:FFPageHeader
-							Title="Нов Бекап"
+							Title="Нов бекап"
 							Grid.Column="0"
 							Subtitle="Креирање нов бекап на базата на податоци." />
 
 						<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 							Grid.Column="1"
 							ButtonKind="Primary"
 							Command="{Binding StartBackupCommand}"

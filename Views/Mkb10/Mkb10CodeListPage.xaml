@@ -42,7 +42,7 @@
 									Command="{Binding NewCommand}"
 									HeightRequest="45"
 									Style="{StaticResource TabButtonActiveStyle}"
-									Text="+ Нов Код"
+									Text="Нов код"
 									WidthRequest="160" />
 							</HorizontalStackLayout>
 						</Grid>

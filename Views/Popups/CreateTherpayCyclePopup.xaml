@@ -118,6 +118,8 @@
 					HeightRequestEx="42"
 					Text="Откажи" />
 				<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 					ButtonKind="Primary"
 					Command="{Binding SaveCommand}"
 					ContentPadding="20,0"

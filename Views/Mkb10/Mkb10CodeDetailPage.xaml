@@ -52,10 +52,12 @@
 					<HorizontalStackLayout Grid.Column="1" Spacing="10">
 
 						<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 							ButtonKind="Primary"
 							Command="{Binding SaveCommand}"
 							IsVisible="{Binding IsEditMode}"
-							Text="💾 Save"
+							Text="Зачувај"
 							WidthRequest="160" />
 
 						<controls:FFButton
@@ -66,10 +68,12 @@
 							WidthRequest="160" />
 
 						<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 							ButtonKind="Primary"
 							Command="{Binding ToggleEditModeCommand}"
 							IsVisible="{Binding IsReadOnly}"
-							Text="✎ Edit"
+							Text="Уреди"
 							WidthRequest="160" />
 
 					</HorizontalStackLayout>

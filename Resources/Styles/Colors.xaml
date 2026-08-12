@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
 	<!--  Sidebar / Shell  -->
@@ -7,7 +7,7 @@
 	<Color x:Key="OffBlack">#0F172A</Color>
 
 	<!--  Legacy Accent  -->
-	<Color x:Key="Magenta">#2563EB</Color>
+	<Color x:Key="Magenta">#4DD9C7</Color>
 
 	<!--  Primary Blues  -->
 	<Color x:Key="MidnightBlue">#1E3A8A</Color>
@@ -31,9 +31,9 @@
 	<Color x:Key="CardBg">#FFFFFF</Color>
 
 	<!--  Primary  -->
-	<Color x:Key="EpicPrimary">#2563EB</Color>
-	<Color x:Key="EpicPrimaryDark">#1D4ED8</Color>
-	<Color x:Key="EpicPrimaryLight">#60A5FA</Color>
+	<Color x:Key="EpicPrimary">#4DD9C7</Color>
+	<Color x:Key="EpicPrimaryDark">#32B9AA</Color>
+	<Color x:Key="EpicPrimaryLight">#82E7DB</Color>
 
 	<!--  Secondary  -->
 	<Color x:Key="EpicSecondary">#1E40AF</Color>
@@ -42,9 +42,9 @@
 	<Color x:Key="EpicSecondaryLight">#93C5FD</Color>
 
 	<!--  Primary Text  -->
-	<Color x:Key="EpicPrimaryText">#2563EB</Color>
-	<Color x:Key="EpicPrimaryDarkText">#1D4ED8</Color>
-	<Color x:Key="EpicPrimaryLightText">#60A5FA</Color>
+	<Color x:Key="EpicPrimaryText">#4DD9C7</Color>
+	<Color x:Key="EpicPrimaryDarkText">#32B9AA</Color>
+	<Color x:Key="EpicPrimaryLightText">#82E7DB</Color>
 
 	<!--  Secondary Text  -->
 	<Color x:Key="EpicSecondaryText">#1E40AF</Color>
@@ -135,7 +135,7 @@
 	</Color>
 
 	<Color x:Key="InputFocus">
-		#2563EB
+		#4DD9C7
 	</Color>
 
 	<Color x:Key="InputDisabled">
@@ -149,13 +149,13 @@
 	</Color>
 
 	<Color x:Key="TabActive">
-		#2563EB
+		#4DD9C7
 	</Color>
 
 
 	<!--  Blue clinical  -->
 	<Color x:Key="MedicalBlue">
-		#2563EB
+		#4DD9C7
 	</Color>
 
 	<Color x:Key="MedicalBlueSoft">

@@ -1,4 +1,4 @@
-﻿<!--  File: EHMR.Backups/Views/BackupDashboardPage.xaml  -->
+<!--  File: EHMR.Backups/Views/BackupDashboardPage.xaml  -->
 <!--  (same XAML as before — unchanged, included here for completeness)  -->
 <ContentPage
 	x:Class="EHMR.Backups.Views.BackupDashboardPage"
@@ -58,7 +58,7 @@
 									Command="{Binding RunBackupCommand}"
 									HeightRequest="45"
 									Style="{StaticResource TabButtonActiveStyle}"
-									Text="Нов Бекап"
+									Text="Нов бекап"
 									TextColor="White"
 									WidthRequest="160" />
 							</HorizontalStackLayout>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
 	x:Class="EHMR.Views.Reports.ReportHistoryPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -55,12 +55,12 @@
 
 						<Button
 							BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
-							TextColor="White"
 							Command="{Binding NavigateToReportCommand}"
 							HeightRequest="45"
 							IsVisible="{Binding CanCreate}"
 							Style="{StaticResource TabButtonActiveStyle}"
-							Text="Нов Извештаи"
+							Text="Нов извештај"
+							TextColor="White"
 							WidthRequest="160" />
 
 					</HorizontalStackLayout>

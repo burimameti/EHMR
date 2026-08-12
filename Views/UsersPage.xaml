@@ -32,13 +32,15 @@
 						Subtitle="Управување со кориснички сметки, безбедносни роли и системски пристап" />
 
 					<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 						Grid.Column="1"
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
 						ContentPadding="20,0"
 						HeightRequestEx="45"
 						IsVisible="{Binding CanCreate}"
-						Text="Нов Корисник" />
+						Text="Нов" />
 				</Grid>
 			</Border>
 

@@ -181,7 +181,7 @@
 									Command="{Binding GoToUsersCommand}"
 									ContentPadding="18,0"
 									HeightRequestEx="42"
-									Text="+ Нов корисник" />
+									Text="Нов корисник" />
 
 								<controls:FFButton
 									Margin="0,0,12,12"
@@ -189,7 +189,7 @@
 									Command="{Binding GoToDoctorsCommand}"
 									ContentPadding="18,0"
 									HeightRequestEx="42"
-									Text="+ Нов реуматолог" />
+									Text="Нов реуматолог" />
 
 								<controls:FFButton
 									Margin="0,0,12,12"
@@ -200,6 +200,8 @@
 									Text="Увези МКБ-10" />
 
 								<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 									Margin="0,0,12,12"
 									ButtonKind="Primary"
 									Command="{Binding CreateBackupCommand}"

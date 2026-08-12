@@ -65,7 +65,7 @@
 							FontSize="12"
 							HeightRequest="40"
 							IsVisible="{Binding CanShowEditButton}"
-							Text="✎ Уреди Корисник"
+							Text="Уреди"
 							TextColor="#2563EB" />
 
 						<Button
@@ -77,7 +77,7 @@
 							FontSize="12"
 							HeightRequest="40"
 							IsVisible="{Binding CanShowDeleteButton}"
-							Text="🗑 Избриши"
+							Text="Избриши"
 							TextColor="#DC2626" />
 
 						<Button
@@ -101,7 +101,7 @@
 							FontSize="12"
 							HeightRequest="40"
 							IsVisible="{Binding IsEditMode}"
-							Text="💾 Зачувај"
+							Text="Зачувај"
 							TextColor="White" />
 					</HorizontalStackLayout>
 				</Grid>

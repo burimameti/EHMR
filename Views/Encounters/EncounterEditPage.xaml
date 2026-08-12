@@ -66,7 +66,7 @@
 							FontAttributes="Bold"
 							FontFamily="Segoe UI"
 							FontSize="19"
-							Text="Уреди преглед"
+							Text="Уреди"
 							TextColor="{StaticResource SparkTextPrimary}" />
 						<Label
 							FontFamily="Segoe UI"
@@ -86,11 +86,13 @@
 							HeightRequestEx="40"
 							Text="Откажи" />
 						<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 							ButtonKind="Primary"
 							Command="{Binding SaveCommand}"
 							ContentPadding="20,0"
 							HeightRequestEx="40"
-							Text="Зачувај промени" />
+							Text="Зачувај" />
 					</HorizontalStackLayout>
 				</Grid>
 			</Border>
@@ -147,7 +149,7 @@
 							<!--  ── СЕКЦИЈА 2: ТИП И ПРИОРИТЕТ ────────────────────  -->
 							<VerticalStackLayout IsVisible="False" Spacing="14">
 								<Border Style="{StaticResource SectionPillBorderStyle}" >
-									<Label
+									<Label Style="{StaticResource SectionPillLabelStyle}"
 										CharacterSpacing="0.5"
 										FontAttributes="Bold"
 										FontSize="12"
@@ -233,7 +235,7 @@
 							</VerticalStackLayout><!--  ── СЕКЦИЈА 4: МКБ-10 ДИЈАГНОСТИКА ───────────────  -->
 							<VerticalStackLayout Spacing="14">
 								<Border Style="{StaticResource SectionPillBorderStyle}" >
-									<Label
+									<Label Style="{StaticResource SectionPillLabelStyle}"
 										CharacterSpacing="0.5"
 										FontAttributes="Bold"
 										FontSize="12"
@@ -377,7 +379,7 @@
 							<VerticalStackLayout Spacing="12">
 
 								<Border Style="{StaticResource SectionPillBorderStyle}" >
-									<Label
+									<Label Style="{StaticResource SectionPillLabelStyle}"
 										CharacterSpacing="0.5"
 										FontAttributes="Bold"
 										FontSize="12"
@@ -564,7 +566,7 @@
 						<VerticalStackLayout>
 
 							<Border Style="{StaticResource SectionPillBorderStyle}" >
-								<Label
+								<Label Style="{StaticResource SectionPillLabelStyle}"
 									CharacterSpacing="0.5"
 									FontAttributes="Bold"
 									FontSize="16"
@@ -638,13 +640,13 @@
 										Command="{Binding AddNewAppointmentCommand}"
 										ContentPadding="10,0"
 										HeightRequestEx="38"
-										Text="+ Нов термин" />
+										Text="Нов термин" />
 									<controls:FFButton
 										ButtonKind="Secondary"
 										Command="{Binding AddNewTherapyCycleCommand}"
 										ContentPadding="10,0"
 										HeightRequestEx="38"
-										Text="+ Нов циклус" />
+										Text="Нов циклус" />
 								</VerticalStackLayout>
 							</Grid>
 
@@ -696,7 +698,7 @@
 							<VerticalStackLayout Padding="16" Spacing="16">
 
 								<Border Style="{StaticResource SectionPillBorderStyle}" >
-									<Label
+									<Label Style="{StaticResource SectionPillLabelStyle}"
 										CharacterSpacing="0.5"
 										FontAttributes="Bold"
 										FontSize="16"

@@ -32,6 +32,8 @@
 						Subtitle="Преглед, пребарување и управување со медицински персонал" />
 
 					<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 						Grid.Column="1"
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
@@ -48,7 +50,7 @@
 
 					<Border Style="{StaticResource PageHeaderCardStyle}">
 						<Grid ColumnSpacing="5" RowSpacing="20">
-							<VerticalStackLayout Spacing="10">
+							<VerticalStackLayout Spacing="1">
 
 								<!--  SEARCH & FILTERS  -->
 								<controls:SparkExplorerHeaderView

@@ -98,7 +98,7 @@
 						CornerRadius="10"
 						HeightRequest="45"
 						IsVisible="{Binding CanUpdate}"
-						Text="💾 Зачувај"
+						Text="Зачувај"
 						TextColor="White" />
 
 					<Button
@@ -106,7 +106,7 @@
 						Command="{Binding DeleteCycleCommand}"
 						CornerRadius="10"
 						HeightRequest="45"
-						Text="🗑 Избриши"
+						Text="Избриши"
 						TextColor="White" />
 				</VerticalStackLayout>
 			</Border>

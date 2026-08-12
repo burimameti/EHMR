@@ -77,8 +77,8 @@
 							<VerticalStackLayout Spacing="12">
 
 								<!--  Section header  -->
-								<Border Style="{StaticResource SectionPillBorderStyle}" >
-									<Label
+								<Border Style="{StaticResource SectionPillBorderStyle}">
+									<Label Style="{StaticResource SectionPillLabelStyle}"
 										CharacterSpacing="0.5"
 										FontAttributes="Bold"
 										FontSize="12"
@@ -209,16 +209,33 @@
 											SelectionMode="Single">
 											<CollectionView.ItemTemplate>
 												<DataTemplate x:DataType="entities:Patient">
-                                                    <Border Margin="1" Padding="10,7" BackgroundColor="#F8FAFC" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 7" StrokeThickness="1">
-                                                        <Grid ColumnDefinitions="2*,1.2*" ColumnSpacing="12">
-                                                            <Label FontAttributes="Bold" FontSize="12" Text="{Binding FullName}" TextColor="{StaticResource SparkTextPrimary}" />
-                                                            <VerticalStackLayout Grid.Column="1" Spacing="1">
-                                                                <Label FontSize="9.5" Text="СЗБО број" TextColor="{StaticResource SparkTextSecondary}" />
-                                                                <Label FontAttributes="Bold" FontSize="11.5" Text="{Binding SzboNumber}" TextColor="{StaticResource SparkAccentTealDark}" />
-                                                            </VerticalStackLayout>
-                                                        </Grid>
-                                                    </Border>
-                                                </DataTemplate>
+													<Border
+														Margin="1"
+														Padding="10,7"
+														BackgroundColor="#F8FAFC"
+														Stroke="{StaticResource SparkBorderSubtle}"
+														StrokeShape="RoundRectangle 7"
+														StrokeThickness="1">
+														<Grid ColumnDefinitions="2*,1.2*" ColumnSpacing="12">
+															<Label
+																FontAttributes="Bold"
+																FontSize="12"
+																Text="{Binding FullName}"
+																TextColor="{StaticResource SparkTextPrimary}" />
+															<VerticalStackLayout Grid.Column="1" Spacing="1">
+																<Label
+																	FontSize="9.5"
+																	Text="СЗБО број"
+																	TextColor="{StaticResource SparkTextSecondary}" />
+																<Label
+																	FontAttributes="Bold"
+																	FontSize="11.5"
+																	Text="{Binding SzboNumber}"
+																	TextColor="{StaticResource SparkAccentTealDark}" />
+															</VerticalStackLayout>
+														</Grid>
+													</Border>
+												</DataTemplate>
 											</CollectionView.ItemTemplate>
 										</CollectionView>
 									</Border>
@@ -342,63 +359,118 @@
 
 							<!--  ── 2. МКБ-10 ДИЈАГНОСТИКА ─────────────────  -->
 							<VerticalStackLayout Spacing="14">
-								<Border Style="{StaticResource SectionPillBorderStyle}" >
-									<Label
+								<Border Style="{StaticResource SectionPillBorderStyle}">
+									<Label Style="{StaticResource SectionPillLabelStyle}"
 										CharacterSpacing="0.5"
 										FontAttributes="Bold"
 										FontSize="12"
 										Text="МКБ-10 ДИЈАГНОСТИКА" />
 								</Border>
 
-								<Grid ColumnDefinitions="*,*" ColumnSpacing="24" RowDefinitions="Auto,Auto" RowSpacing="12">
-                                    <VerticalStackLayout Grid.ColumnSpan="2" Spacing="5">
-                                        <Label FontAttributes="Bold" FontSize="11" Text="МКБ СЕКЦИЈА · ЛАТИНИЦА A–Z" TextColor="{StaticResource SparkTextSecondary}" />
-                                        <Border Padding="6,5" BackgroundColor="#F4F7FA" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 9" StrokeThickness="1">
-                                            <ScrollView HorizontalScrollBarVisibility="Never" Orientation="Horizontal">
-                                                <FlexLayout BindableLayout.ItemsSource="{Binding MkbAlphabetSections}" Direction="Row" JustifyContent="Start" Wrap="NoWrap">
-                                                    <BindableLayout.ItemTemplate>
-                                                        <DataTemplate x:DataType="vm:MkbAlphabetSection">
-                                                            <Border Margin="1" HeightRequest="30" WidthRequest="28" Padding="2" StrokeShape="RoundRectangle 6" StrokeThickness="1">
-                                                                <Border.Triggers>
-                                                                    <DataTrigger Binding="{Binding IsSelected}" TargetType="Border" Value="True">
-                                                                        <Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTeal}" />
-                                                                        <Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
-                                                                    </DataTrigger>
-                                                                    <DataTrigger Binding="{Binding IsSelected}" TargetType="Border" Value="False">
-                                                                        <Setter Property="BackgroundColor" Value="White" />
-                                                                        <Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
-                                                                    </DataTrigger>
-                                                                </Border.Triggers>
-                                                                <Border.GestureRecognizers>
-                                                                    <TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectMkbSectionCommand}" CommandParameter="{Binding .}" />
-                                                                </Border.GestureRecognizers>
-                                                                <Label FontAttributes="Bold" FontSize="10.5" HorizontalOptions="Center" Text="{Binding Letter}" VerticalOptions="Center">
-                                                                    <Label.Triggers>
-                                                                        <DataTrigger Binding="{Binding IsSelected}" TargetType="Label" Value="True"><Setter Property="TextColor" Value="White" /></DataTrigger>
-                                                                        <DataTrigger Binding="{Binding IsSelected}" TargetType="Label" Value="False"><Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" /></DataTrigger>
-                                                                    </Label.Triggers>
-                                                                </Label>
-                                                            </Border>
-                                                        </DataTemplate>
-                                                    </BindableLayout.ItemTemplate>
-                                                </FlexLayout>
-                                            </ScrollView>
-                                        </Border>
-                                    </VerticalStackLayout>
+								<Grid
+									ColumnDefinitions="*,*"
+									ColumnSpacing="24"
+									RowDefinitions="Auto,Auto"
+									RowSpacing="12">
+									<VerticalStackLayout Grid.ColumnSpan="2" Spacing="5">
+										<Label
+											FontAttributes="Bold"
+											FontSize="11"
+											Text="МКБ СЕКЦИЈА · ЛАТИНИЦА A–Z"
+											TextColor="{StaticResource SparkTextSecondary}" />
+										<Border
+											Padding="6,5"
+											BackgroundColor="#F4F7FA"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											StrokeShape="RoundRectangle 9"
+											StrokeThickness="1">
+											<ScrollView HorizontalScrollBarVisibility="Never" Orientation="Horizontal">
+												<FlexLayout
+													BindableLayout.ItemsSource="{Binding MkbAlphabetSections}"
+													Direction="Row"
+													JustifyContent="Start"
+													Wrap="NoWrap">
+													<BindableLayout.ItemTemplate>
+														<DataTemplate x:DataType="vm:MkbAlphabetSection">
+															<Border
+																Margin="1"
+																Padding="2"
+																HeightRequest="30"
+																StrokeShape="RoundRectangle 6"
+																StrokeThickness="1"
+																WidthRequest="28">
+																<Border.Triggers>
+																	<DataTrigger
+																		Binding="{Binding IsSelected}"
+																		TargetType="Border"
+																		Value="True">
+																		<Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTeal}" />
+																		<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
+																	</DataTrigger>
+																	<DataTrigger
+																		Binding="{Binding IsSelected}"
+																		TargetType="Border"
+																		Value="False">
+																		<Setter Property="BackgroundColor" Value="White" />
+																		<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
+																	</DataTrigger>
+																</Border.Triggers>
+																<Border.GestureRecognizers>
+																	<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectMkbSectionCommand}" CommandParameter="{Binding .}" />
+																</Border.GestureRecognizers>
+																<Label
+																	FontAttributes="Bold"
+																	FontSize="10.5"
+																	HorizontalOptions="Center"
+																	Text="{Binding Letter}"
+																	VerticalOptions="Center">
+																	<Label.Triggers>
+																		<DataTrigger
+																			Binding="{Binding IsSelected}"
+																			TargetType="Label"
+																			Value="True">
+																			<Setter Property="TextColor" Value="White" />
+																		</DataTrigger>
+																		<DataTrigger
+																			Binding="{Binding IsSelected}"
+																			TargetType="Label"
+																			Value="False">
+																			<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+																		</DataTrigger>
+																	</Label.Triggers>
+																</Label>
+															</Border>
+														</DataTemplate>
+													</BindableLayout.ItemTemplate>
+												</FlexLayout>
+											</ScrollView>
+										</Border>
+									</VerticalStackLayout>
 
-                                    <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="12">
-										
+									<VerticalStackLayout
+										Grid.Row="1"
+										Grid.Column="0"
+										Spacing="12">
 
-									<Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                                            <VerticalStackLayout Spacing="5">
-                                                <Label FontAttributes="Bold" FontSize="11.5" Text="Пребарување по МКБ код (латиница)" TextColor="{StaticResource SparkTextSecondary}" />
-                                                <controls:FFSearchBox Placeholder="Пример: M06.9" Text="{Binding MkbCodeSearchText, Mode=TwoWay}" />
-                                            </VerticalStackLayout>
-                                            <VerticalStackLayout Grid.Column="1" Spacing="5">
-                                                <Label FontAttributes="Bold" FontSize="11.5" Text="Пребарување по опис (кирилица)" TextColor="{StaticResource SparkTextSecondary}" />
-                                                <controls:FFSearchBox Placeholder="Пример: ревматоиден артритис" Text="{Binding MkbDescriptionSearchText, Mode=TwoWay}" />
-                                            </VerticalStackLayout>
-                                        </Grid>
+
+										<Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+											<VerticalStackLayout Spacing="5">
+												<Label
+													FontAttributes="Bold"
+													FontSize="11.5"
+													Text="Пребарување по МКБ код (латиница)"
+													TextColor="{StaticResource SparkTextSecondary}" />
+												<controls:FFSearchBox Placeholder="Пример: M06.9" Text="{Binding MkbCodeSearchText, Mode=TwoWay}" />
+											</VerticalStackLayout>
+											<VerticalStackLayout Grid.Column="1" Spacing="5">
+												<Label
+													FontAttributes="Bold"
+													FontSize="11.5"
+													Text="Пребарување по опис (кирилица)"
+													TextColor="{StaticResource SparkTextSecondary}" />
+												<controls:FFSearchBox Placeholder="Пример: ревматоиден артритис" Text="{Binding MkbDescriptionSearchText, Mode=TwoWay}" />
+											</VerticalStackLayout>
+										</Grid>
 										<CollectionView
 											HeightRequest="180"
 											IsVisible="{Binding ShowMkbDropdown}"
@@ -431,30 +503,66 @@
 										</CollectionView>
 									</VerticalStackLayout>
 
-									<VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="14">
-                                        <VerticalStackLayout
-                                            BindableLayout.ItemsSource="{Binding Diagnoses}"
-                                            Spacing="8">
-                                            <BindableLayout.EmptyView>
-                                                <Label FontSize="12" Text="Нема доделени дијагнози." TextColor="{StaticResource SparkTextSecondary}" />
-                                            </BindableLayout.EmptyView>
-                                            <BindableLayout.ItemTemplate>
-                                                <DataTemplate x:DataType="entities:Diagnosis">
-                                                    <Border Padding="12,10" BackgroundColor="#F8FAFC" Stroke="#CBD5E1" StrokeShape="RoundRectangle 8" StrokeThickness="1">
-                                                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                                                            <Border Padding="9,5" BackgroundColor="{StaticResource SparkAccentTealBg}" StrokeShape="RoundRectangle 6" StrokeThickness="0" VerticalOptions="Start">
-                                                                <Label FontAttributes="Bold" FontSize="13" Text="{Binding Mkb10Code.Code}" TextColor="{StaticResource SparkAccentTealDark}" />
-                                                            </Border>
-                                                            <VerticalStackLayout Grid.Column="1" Spacing="2">
-                                                                <Label FontSize="10" Text="ОПИС НА ДИЈАГНОЗА" TextColor="{StaticResource SparkTextSecondary}" />
-                                                                <Label FontSize="12" LineBreakMode="WordWrap" Text="{Binding Mkb10Code.Description}" TextColor="{StaticResource SparkTextPrimary}" />
-                                                            </VerticalStackLayout>
-                                                            <Button Grid.Column="2" Padding="0" BackgroundColor="Transparent" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMkbCommand}" CommandParameter="{Binding .}" FontSize="13" HeightRequest="30" Text="✕" TextColor="#DC2626" VerticalOptions="Center" WidthRequest="30" />
-                                                        </Grid>
-                                                    </Border>
-                                                </DataTemplate>
-                                            </BindableLayout.ItemTemplate>
-                                        </VerticalStackLayout>
+									<VerticalStackLayout
+										Grid.Row="1"
+										Grid.Column="1"
+										Spacing="14">
+										<VerticalStackLayout BindableLayout.ItemsSource="{Binding Diagnoses}" Spacing="8">
+											<BindableLayout.EmptyView>
+												<Label
+													FontSize="12"
+													Text="Нема доделени дијагнози."
+													TextColor="{StaticResource SparkTextSecondary}" />
+											</BindableLayout.EmptyView>
+											<BindableLayout.ItemTemplate>
+												<DataTemplate x:DataType="entities:Diagnosis">
+													<Border
+														Padding="12,10"
+														BackgroundColor="#F8FAFC"
+														Stroke="#CBD5E1"
+														StrokeShape="RoundRectangle 8"
+														StrokeThickness="1">
+														<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+															<Border
+																Padding="9,5"
+																BackgroundColor="{StaticResource SparkAccentTealBg}"
+																StrokeShape="RoundRectangle 6"
+																StrokeThickness="0"
+																VerticalOptions="Start">
+																<Label
+																	FontAttributes="Bold"
+																	FontSize="13"
+																	Text="{Binding Mkb10Code.Code}"
+																	TextColor="{StaticResource SparkAccentTealDark}" />
+															</Border>
+															<VerticalStackLayout Grid.Column="1" Spacing="2">
+																<Label
+																	FontSize="10"
+																	Text="ОПИС НА ДИЈАГНОЗА"
+																	TextColor="{StaticResource SparkTextSecondary}" />
+																<Label
+																	FontSize="12"
+																	LineBreakMode="WordWrap"
+																	Text="{Binding Mkb10Code.Description}"
+																	TextColor="{StaticResource SparkTextPrimary}" />
+															</VerticalStackLayout>
+															<Button
+																Grid.Column="2"
+																Padding="0"
+																BackgroundColor="Transparent"
+																Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMkbCommand}"
+																CommandParameter="{Binding .}"
+																FontSize="13"
+																HeightRequest="30"
+																Text="✕"
+																TextColor="#DC2626"
+																VerticalOptions="Center"
+																WidthRequest="30" />
+														</Grid>
+													</Border>
+												</DataTemplate>
+											</BindableLayout.ItemTemplate>
+										</VerticalStackLayout>
 
 										<VerticalStackLayout Spacing="8">
 											<Label
@@ -486,8 +594,8 @@
 							<!--  ── 3. ЛЕКОВИ ──────────────────────────────  -->
 							<VerticalStackLayout Spacing="12">
 
-								<Border Style="{StaticResource SectionPillBorderStyle}" >
-									<Label
+								<Border Style="{StaticResource SectionPillBorderStyle}">
+									<Label Style="{StaticResource SectionPillLabelStyle}"
 										CharacterSpacing="0.5"
 										FontAttributes="Bold"
 										FontSize="12"
@@ -554,40 +662,40 @@
 											<Border
 												Grid.Column="0"
 												Padding="10,7"
-												BackgroundColor="#2F3944"
-												Stroke="#2F3944"
+												BackgroundColor="{StaticResource SparkBackgroundAlt}"
+												Stroke="{StaticResource SparkBorderSubtle}"
 												StrokeShape="Rectangle"
 												StrokeThickness="1">
 												<Label
 													FontAttributes="Bold"
 													FontSize="10"
 													Text="ИМЕ НА ЛЕКОТ"
-													TextColor="White" />
+													TextColor="{StaticResource SparkTextSecondary}" />
 											</Border>
 											<Border
 												Grid.Column="1"
 												Padding="10,7"
-												BackgroundColor="#2F3944"
-												Stroke="#2F3944"
+												BackgroundColor="{StaticResource SparkBackgroundAlt}"
+												Stroke="{StaticResource SparkBorderSubtle}"
 												StrokeShape="Rectangle"
 												StrokeThickness="1">
 												<Label
 													FontAttributes="Bold"
 													FontSize="10"
 													Text="КОЛИЧИНА"
-													TextColor="White" />
+													TextColor="{StaticResource SparkTextSecondary}" />
 											</Border>
 											<!--  Delete column header — empty  -->
 											<Border
 												Grid.Column="2"
-												BackgroundColor="#2F3944"
-												Stroke="#2F3944"
+												BackgroundColor="{StaticResource SparkBackgroundAlt}"
+												Stroke="{StaticResource SparkBorderSubtle}"
 												StrokeShape="Rectangle"
 												StrokeThickness="1" />
 										</Grid>
 
 										<!--  Table rows  -->
-										<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="0">
+										<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="6">
 											<BindableLayout.EmptyView>
 												<Label
 													Padding="0,6"
@@ -660,8 +768,8 @@
 							<!--  ── 4. ДЕТАЛИ ЗА ПРЕГЛЕДОТ ────────────────  -->
 							<VerticalStackLayout Spacing="12">
 
-								<Border Style="{StaticResource SectionPillBorderStyle}" >
-									<Label
+								<Border Style="{StaticResource SectionPillBorderStyle}">
+									<Label Style="{StaticResource SectionPillLabelStyle}"
 										CharacterSpacing="0.5"
 										FontAttributes="Bold"
 										FontSize="12"
@@ -695,7 +803,8 @@
 										Text="{Binding AutomaticScheduleDisplay}"
 										TextColor="{StaticResource SparkTextPrimary}"
 										VerticalOptions="Center" />
-								</Grid></VerticalStackLayout>
+								</Grid>
+							</VerticalStackLayout>
 
 							<!--  ── АКЦИИ ────────────────────────────────────  -->
 							<Grid
@@ -709,6 +818,8 @@
 									HeightRequestEx="46"
 									Text="Откажи" />
 								<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
 									Grid.Column="1"
 									ButtonKind="Primary"
 									Command="{Binding SaveEncounterCommand}"
@@ -728,8 +839,8 @@
 						<VerticalStackLayout Padding="14" Spacing="14">
 
 							<!--  Section: Поврзување  -->
-							<Border Style="{StaticResource SectionPillBorderStyle}" >
-								<Label
+							<Border Style="{StaticResource SectionPillBorderStyle}">
+								<Label Style="{StaticResource SectionPillLabelStyle}"
 									CharacterSpacing="0.5"
 									FontAttributes="Bold"
 									FontSize="11"
@@ -834,8 +945,8 @@
 							</Border>
 
 							<!--  Section: Последни прегледи  -->
-							<Border Style="{StaticResource SectionPillBorderStyle}" >
-								<Label
+							<Border Style="{StaticResource SectionPillBorderStyle}">
+								<Label Style="{StaticResource SectionPillLabelStyle}"
 									CharacterSpacing="0.5"
 									FontAttributes="Bold"
 									FontSize="11"
@@ -865,9 +976,9 @@
 											BackgroundColor="{StaticResource SparkTabActiveBg}"
 											StrokeShape="RoundRectangle 10"
 											StrokeThickness="0">
-												<Border.GestureRecognizers>
-													<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.OpenEncounterCommand}" CommandParameter="{Binding .}" />
-												</Border.GestureRecognizers>
+											<Border.GestureRecognizers>
+												<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.OpenEncounterCommand}" CommandParameter="{Binding .}" />
+											</Border.GestureRecognizers>
 											<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
 												<Border
 													BackgroundColor="{StaticResource SparkAccentTealBg}"
@@ -920,14 +1031,44 @@
 							<Border IsVisible="{Binding HasPatientContext}" Style="{StaticResource SectionPillBorderStyle}">
 								<Label Style="{StaticResource SectionPillLabelStyle}" Text="ИСТОРИЈА НА ДИЈАГНОЗИ" />
 							</Border>
-							<VerticalStackLayout BindableLayout.ItemsSource="{Binding PatientDiagnoses}" IsVisible="{Binding HasPatientContext}" Spacing="6">
-								<BindableLayout.EmptyView><Label FontSize="12" Text="Нема претходни дијагнози." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
-								<BindableLayout.ItemTemplate><DataTemplate x:DataType="entities:Diagnosis"><Border Padding="10,8" BackgroundColor="{StaticResource SparkContentBackground}" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 10" StrokeThickness="1"><Grid ColumnDefinitions="Auto,*" ColumnSpacing="10"><Label FontAttributes="Bold" FontSize="12.5" Text="{Binding Mkb10Code.Code}" TextColor="{StaticResource SparkAccentTealDark}" /><Label Grid.Column="1" FontSize="11.5" LineBreakMode="TailTruncation" Text="{Binding Mkb10Code.Description}" TextColor="{StaticResource SparkTextPrimary}" /></Grid></Border></DataTemplate></BindableLayout.ItemTemplate>
+							<VerticalStackLayout
+								BindableLayout.ItemsSource="{Binding PatientDiagnoses}"
+								IsVisible="{Binding HasPatientContext}"
+								Spacing="6">
+								<BindableLayout.EmptyView>
+									<Label
+										FontSize="12"
+										Text="Нема претходни дијагнози."
+										TextColor="{StaticResource SparkTextSecondary}" />
+								</BindableLayout.EmptyView>
+								<BindableLayout.ItemTemplate>
+									<DataTemplate x:DataType="entities:Diagnosis">
+										<Border
+											Padding="10,8"
+											BackgroundColor="{StaticResource SparkContentBackground}"
+											Stroke="{StaticResource SparkBorder}"
+											StrokeShape="RoundRectangle 10"
+											StrokeThickness="1">
+											<Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+												<Label
+													FontAttributes="Bold"
+													FontSize="12.5"
+													Text="{Binding Mkb10Code.Code}"
+													TextColor="{StaticResource SparkAccentTealDark}" />
+												<Label
+													Grid.Column="1"
+													FontSize="11.5"
+													LineBreakMode="TailTruncation"
+													Text="{Binding Mkb10Code.Description}"
+													TextColor="{StaticResource SparkTextPrimary}" />
+											</Grid>
+										</Border>
+									</DataTemplate>
+								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
 
 							<!--  Section: Документи  -->
-							<Border Style="{StaticResource SectionPillBorderStyle}" IsVisible="{Binding HasPatientContext}"
-								>
+							<Border IsVisible="{Binding HasPatientContext}" Style="{StaticResource SectionPillBorderStyle}">
 								<Label
 									CharacterSpacing="0.5"
 									FontAttributes="Bold"
@@ -949,15 +1090,42 @@
 								StrokeShape="RoundRectangle 12"
 								StrokeThickness="1">
 								<Grid ColumnDefinitions="110,*,Auto" ColumnSpacing="12">
-									<Border HeightRequest="90" StrokeShape="RoundRectangle 10" StrokeThickness="0" WidthRequest="110">
+									<Border
+										HeightRequest="90"
+										StrokeShape="RoundRectangle 10"
+										StrokeThickness="0"
+										WidthRequest="110">
 										<Image Aspect="AspectFill" Source="{Binding LatestPatientDocument.StoredPath}" />
 									</Border>
-									<VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
-										<Label FontAttributes="Bold" FontSize="13" Text="{Binding LatestPatientDocument.Title}" TextColor="{StaticResource SparkTextPrimary}" />
-										<Label FontSize="11.5" Text="{Binding LatestPatientDocument.DocumentType}" TextColor="{StaticResource SparkTextSecondary}" />
-										<Label FontSize="11.5" Text="{Binding LatestPatientDocument.UploadedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" TextColor="{StaticResource SparkTextSecondary}" />
+									<VerticalStackLayout
+										Grid.Column="1"
+										Spacing="4"
+										VerticalOptions="Center">
+										<Label
+											FontAttributes="Bold"
+											FontSize="13"
+											Text="{Binding LatestPatientDocument.Title}"
+											TextColor="{StaticResource SparkTextPrimary}" />
+										<Label
+											FontSize="11.5"
+											Text="{Binding LatestPatientDocument.DocumentType}"
+											TextColor="{StaticResource SparkTextSecondary}" />
+										<Label
+											FontSize="11.5"
+											Text="{Binding LatestPatientDocument.UploadedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+											TextColor="{StaticResource SparkTextSecondary}" />
 									</VerticalStackLayout>
-									<controls:FFButton Grid.Column="2" ButtonKind="Primary" Command="{Binding PreviewDocumentCommand}" CommandParameter="{Binding LatestPatientDocument}" ContentPadding="12,0" HeightRequestEx="38" Text="🔍 Отвори" WidthRequestEx="110" />
+									<controls:FFButton
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						TextColorEx="{StaticResource SidebarActiveText}"
+										Grid.Column="2"
+										ButtonKind="Primary"
+										Command="{Binding PreviewDocumentCommand}"
+										CommandParameter="{Binding LatestPatientDocument}"
+										ContentPadding="12,0"
+										HeightRequestEx="38"
+										Text="🔍 Отвори"
+										WidthRequestEx="110" />
 								</Grid>
 							</Border>
 							<FlexLayout
@@ -1025,7 +1193,7 @@
 															FontFamily="FASolid"
 															FontSize="9"
 															Text="&#xf00e;"
-															TextColor="White" />
+															TextColor="{StaticResource SparkTextSecondary}" />
 													</Border>
 												</Grid>
 												<Border
