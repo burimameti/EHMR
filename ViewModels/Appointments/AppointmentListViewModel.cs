@@ -59,6 +59,12 @@ public partial class AppointmentListViewModel
     // Drives the "showing full history for X" banner above the grid.
     [ObservableProperty] private bool isViewingPersonHistory;
     [ObservableProperty] private string activeHistoryLabel = "";
+
+    partial void OnSelectedSuggestionChanged(SearchSuggestionDto? value)
+    {
+        if(value!=null)
+            _=SelectSuggestionAsync(value);
+    }
     protected override Func<Appointment, Guid?>? DoctorOwnerSelector => e => e.DoctorId;
 
     public static IEnumerable<TextSpan> BuildHighlighted(string text, string query)
@@ -391,7 +397,8 @@ public partial class AppointmentListViewModel
     }
 
     private static bool CanEdit(Appointment a) =>
-        a.Status is AppointmentStatus.Scheduled or AppointmentStatus.CheckedIn&&a.ScheduledStart.Date>=DateTime.Today;
+        a.Status is (AppointmentStatus.Scheduled or AppointmentStatus.CheckedIn)&&
+        a.ScheduledStart.Date>=DateTime.Today;
 
     private static bool CanCancel(Appointment a) =>
         a.Status==AppointmentStatus.Scheduled&&a.ScheduledStart.Date>=DateTime.Today;
@@ -417,7 +424,7 @@ public partial class AppointmentListViewModel
         ShowSuggestions=false;
 
         FilterDate=DateTime.Today;
-        FilterByDate=true;
+        FilterByDate=false;
         SelectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
 
         RefreshSparkTabCounts();
@@ -433,7 +440,7 @@ public partial class AppointmentListViewModel
         return items.Where(x =>
             (x.Patient?.FullName?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
             (x.Doctor?.FullName?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
-            (x.ReasonForVisit?.Contains(term, StringComparison.OrdinalIgnoreCase)??false));
+            (x.ClinicalNotes?.Contains(term, StringComparison.OrdinalIgnoreCase)??false));
     }
 
     protected override IEnumerable<Appointment> ApplyFilters(IEnumerable<Appointment> items)

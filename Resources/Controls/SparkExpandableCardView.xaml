@@ -10,15 +10,15 @@
 		x:Name="CardBorder"
 		Margin="0"
 		Padding="0"
-		BackgroundColor="{StaticResource SparkBackground}"
-		Stroke="{StaticResource Gray400}"
-		StrokeShape="RoundRectangle 8"
+		BackgroundColor="{StaticResource SparkContentBackground}"
+		Stroke="{StaticResource SparkBorder}"
+		StrokeShape="RoundRectangle 12"
 		StrokeThickness="1">
 
 		<Grid RowSpacing="0">
 
 			<Grid.RowDefinitions>
-				<RowDefinition Height="48" />
+				<RowDefinition Height="56" />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
@@ -27,8 +27,8 @@
 			<Grid
 				x:Name="HeaderGrid"
 				Grid.Row="0"
-				Padding="14,0"
-				BackgroundColor="{StaticResource SparkSurface}"
+				Padding="12,0"
+				BackgroundColor="Transparent"
 				ColumnSpacing="12">
 
 				<Grid.GestureRecognizers>
@@ -106,17 +106,24 @@
 
 				<!--  expand  -->
 
-				<Label
-					x:Name="ExpandIcon"
+				<Border
 					Grid.Column="3"
-					FontAttributes="Bold"
-					FontSize="13"
-					HorizontalOptions="Center"
-					HorizontalTextAlignment="Center"
-					Text="▾"
-					TextColor="{StaticResource SparkTextPrimary}"
-					VerticalOptions="Center"
-					VerticalTextAlignment="Center" />
+					BackgroundColor="{StaticResource SparkAccentTealBg}"
+					HeightRequest="30"
+					StrokeShape="RoundRectangle 15"
+					StrokeThickness="0"
+					WidthRequest="30">
+					<Label
+						x:Name="ExpandIcon"
+						FontAttributes="Bold"
+						FontSize="18"
+						HorizontalOptions="Center"
+						HorizontalTextAlignment="Center"
+						Text="▾"
+						TextColor="{StaticResource SparkAccentTealDark}"
+						VerticalOptions="Center"
+						VerticalTextAlignment="Center" />
+				</Border>
 
 			</Grid>
 

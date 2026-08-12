@@ -81,7 +81,7 @@
 							Command="{Binding SaveCommand}"
 							HeightRequestEx="36"
 							IsVisible="{Binding IsEditMode}"
-							Text="💾 Зачувај Промени"
+							Text="💾 Зачувај"
 							WidthRequest="200" />
 
 						<controls:FFButton
@@ -221,12 +221,11 @@
 
 						<VerticalStackLayout IsVisible="{Binding IsTab1Active}" Spacing="20">
 
-							<Label
-								CharacterSpacing="1"
-								FontAttributes="Bold"
-								FontSize="13"
-								Text="ИНФОРМАЦИИ ЗА ЛЕКОТ"
-								TextColor="{StaticResource SparkTextPrimary}" />
+							<Border Style="{StaticResource SectionPillBorderStyle}">
+
+								<Label Style="{StaticResource SectionPillLabelStyle}" Text="ИНФОРМАЦИИ ЗА ЛЕКОТ" />
+
+							</Border>
 
 							<BoxView
 								Margin="0,10"
@@ -372,12 +371,11 @@
 
 						<VerticalStackLayout IsVisible="{Binding IsTab2Active}" Spacing="20">
 
-							<Label
-								CharacterSpacing="1"
-								FontAttributes="Bold"
-								FontSize="13"
-								Text="ДОПОЛНИТЕЛНИ ИНФОРМАЦИИ ЗА АПЛИКАЦИЈА"
-								TextColor="{StaticResource SparkTextPrimary}" />
+							<Border Style="{StaticResource SectionPillBorderStyle}">
+
+								<Label Style="{StaticResource SectionPillLabelStyle}" Text="ДОПОЛНИТЕЛНИ ИНФОРМАЦИИ ЗА АПЛИКАЦИЈА" />
+
+							</Border>
 
 							<BoxView
 								Margin="0,10"
@@ -415,12 +413,11 @@
 
 						<VerticalStackLayout IsVisible="{Binding IsTab3Active}" Spacing="20">
 
-							<Label
-								CharacterSpacing="1"
-								FontAttributes="Bold"
-								FontSize="13"
-								Text="СИСТЕМСКИ ИНФОРМАЦИИ"
-								TextColor="{StaticResource SparkTextPrimary}" />
+							<Border Style="{StaticResource SectionPillBorderStyle}">
+
+								<Label Style="{StaticResource SectionPillLabelStyle}" Text="СИСТЕМСКИ ИНФОРМАЦИИ" />
+
+							</Border>
 
 							<BoxView
 								Margin="0,10"

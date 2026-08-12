@@ -26,7 +26,7 @@
 		<!--  LEFT MENU  -->
 		<Border
 			Grid.Column="0"
-			BackgroundColor="#FFFFFF"
+			BackgroundColor="#F3F6FA"
 			StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
@@ -44,11 +44,11 @@
 
 			<Border
 				Padding="22"
-				BackgroundColor="White"
-				Stroke="#E5E7EB"
+				BackgroundColor="#F3F6FA"
+				Stroke="#DCE5EE"
 				StrokeThickness="1">
 				<Border.StrokeShape>
-					<RoundRectangle CornerRadius="8" />
+					<RoundRectangle CornerRadius="14" />
 				</Border.StrokeShape>
 
 				<Grid ColumnDefinitions="70,*" ColumnSpacing="18">
@@ -138,11 +138,11 @@
 			<Border
 				Grid.Row="1"
 				Padding="40,36"
-				BackgroundColor="White"
-				Stroke="#E5E7EB"
+				BackgroundColor="#F3F6FA"
+				Stroke="#DCE5EE"
 				StrokeThickness="1">
 				<Border.StrokeShape>
-					<RoundRectangle CornerRadius="8" />
+					<RoundRectangle CornerRadius="14" />
 				</Border.StrokeShape>
 
 				<ScrollView>
@@ -152,11 +152,11 @@
 						<!--  СЕКЦИЈА: Основни информации  -->
 						<!--  ============================  -->
 
-						<Label
-							FontAttributes="Bold"
-							FontSize="15"
-							Text="👤 Основни информации"
-							TextColor="#059669" />
+						<Border Style="{StaticResource SectionPillBorderStyle}">
+
+							<Label Style="{StaticResource SectionPillLabelStyle}" Text="👤 Основни информации" />
+
+						</Border>
 
 						<!--  ИМЕ  -->
 						<Grid ColumnDefinitions="160,*" ColumnSpacing="{StaticResource FormRowSpacing}">
@@ -284,12 +284,11 @@
 						<!--  СЕКЦИЈА: Контакт  -->
 						<!--  ============================  -->
 
-						<Label
-							Margin="0,8,0,0"
-							FontAttributes="Bold"
-							FontSize="15"
-							Text="📞 Контакт информации"
-							TextColor="#059669" />
+						<Border Margin="0,8,0,0" Style="{StaticResource SectionPillBorderStyle}">
+
+							<Label Style="{StaticResource SectionPillLabelStyle}" Text="📞 Контакт информации" />
+
+						</Border>
 
 						<!--  ТЕЛЕФОН  -->
 						<Grid ColumnDefinitions="160,*" ColumnSpacing="{StaticResource FormRowSpacing}">
@@ -409,11 +408,11 @@
 			<Border
 				Grid.Row="2"
 				Padding="20"
-				BackgroundColor="#FFFFFF"
-				Stroke="#E5E7EB"
+				BackgroundColor="#F3F6FA"
+				Stroke="#DCE5EE"
 				StrokeThickness="1">
 				<Border.StrokeShape>
-					<RoundRectangle CornerRadius="8" />
+					<RoundRectangle CornerRadius="14" />
 				</Border.StrokeShape>
 
 				<Grid ColumnDefinitions="*,Auto">

@@ -1,4 +1,4 @@
-﻿using EHMR.Infrastructure.Persistence.Seeders;
+using EHMR.Infrastructure.Persistence.Seeders;
 using Microsoft.Maui;
 using System;
 using System.Collections.Generic;
@@ -31,6 +31,7 @@ namespace EHMR.Infrastructure.Persistence
             "PatientSeeder",
             "AppointmentSeeder",
             "EncounterSeeder",
+            "ClinicalScenarioSeeder",
             "DiagnosisSeeder",
             "PrescriptionSeeder",
             "TherapyCycleSeeder",

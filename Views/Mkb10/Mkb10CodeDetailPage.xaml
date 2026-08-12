@@ -91,12 +91,11 @@
 
 					<VerticalStackLayout Padding="30" Spacing="28">
 
-						<Label
-							CharacterSpacing="1"
-							FontAttributes="Bold"
-							FontSize="13"
-							Text="GENERAL INFORMATION"
-							TextColor="{StaticResource SparkTextPrimary}" />
+						<Border Style="{StaticResource SectionPillBorderStyle}">
+
+							<Label Style="{StaticResource SectionPillLabelStyle}" Text="ОПШТИ ИНФОРМАЦИИ" />
+
+						</Border>
 
 						<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
 
@@ -180,13 +179,11 @@
 
 						</Grid>
 
-						<Label
-							Margin="0,20,0,0"
-							CharacterSpacing="1"
-							FontAttributes="Bold"
-							FontSize="13"
-							Text="SYSTEM INFORMATION"
-							TextColor="{StaticResource SparkTextPrimary}" />
+						<Border Margin="0,20,0,0" Style="{StaticResource SectionPillBorderStyle}">
+
+							<Label Style="{StaticResource SectionPillLabelStyle}" Text="СИСТЕМСКИ ИНФОРМАЦИИ" />
+
+						</Border>
 
 						<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
 

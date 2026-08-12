@@ -1,6 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Constants;
+using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using System.Collections.ObjectModel;
@@ -12,6 +13,7 @@ public partial class MenuViewModel : ObservableObject, IDisposable
     private readonly IAuthStateService _auth;
     private readonly IMenuService _menuService;
     private readonly INavigationService _navigation;
+    private readonly ISelectedItemService<Patient> _selectedPatientService;
 
     // Ensures only one Shell navigation is ever in flight at a time.
     // Overlapping GoToAsync calls are the actual cause of the menu
@@ -29,11 +31,13 @@ public partial class MenuViewModel : ObservableObject, IDisposable
     public MenuViewModel(
         IAuthStateService auth,
         IMenuService menuService,
-        INavigationService navigation)
+        INavigationService navigation,
+        ISelectedItemService<Patient> selectedPatientService)
     {
         _auth=auth;
         _menuService=menuService;
         _navigation=navigation;
+        _selectedPatientService=selectedPatientService;
         _auth.AuthStateChanged+=OnAuthChanged;
         Shell.Current.Navigated+=OnShellNavigated;
         ApplyUserInfo();
@@ -137,7 +141,7 @@ public partial class MenuViewModel : ObservableObject, IDisposable
     {
         if(item==null||string.IsNullOrWhiteSpace(item.Route))
             return;
-        if(ActiveRoute==item.Route)
+        if(ActiveRoute==item.Route&&!item.StartsNewRecord)
             return;
 
         if(!await _navigationLock.WaitAsync(0))
@@ -145,6 +149,12 @@ public partial class MenuViewModel : ObservableObject, IDisposable
 
         var previousRoute = ActiveRoute;
         IsNavigating=true;
+
+        if(item.StartsNewRecord&&item.Route==AppRoutes.Patients.Detail)
+        {
+            _selectedPatientService.SelectedItem=null;
+            _selectedPatientService.OpenInEditMode=true;
+        }
 
         try
         {

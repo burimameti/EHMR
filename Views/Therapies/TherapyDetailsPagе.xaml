@@ -30,8 +30,8 @@
 			<!--  LEFT SIDE  -->
 			<Border
 				Padding="20"
-				BackgroundColor="White"
-				Stroke="#E2E8F0"
+				BackgroundColor="#F3F6FA"
+				Stroke="#DCE5EE"
 				StrokeShape="RoundRectangle 12">
 
 				<VerticalStackLayout Spacing="20">
@@ -115,8 +115,8 @@
 			<Border
 				Grid.Column="1"
 				Padding="20"
-				BackgroundColor="White"
-				Stroke="#E2E8F0"
+				BackgroundColor="#F3F6FA"
+				Stroke="#DCE5EE"
 				StrokeShape="RoundRectangle 12">
 
 				<Grid RowDefinitions="Auto,*">
@@ -141,7 +141,7 @@
 									Margin="0,5"
 									Padding="15"
 									BackgroundColor="#F8FAFC"
-									Stroke="#E2E8F0"
+									Stroke="#DCE5EE"
 									StrokeShape="RoundRectangle 10">
 
 									<Grid ColumnDefinitions="60,*,Auto">

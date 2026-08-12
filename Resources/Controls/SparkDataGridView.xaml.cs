@@ -25,7 +25,7 @@ namespace EHMR.Resources.Controls
         #region Bindable properties
 
         public static readonly BindableProperty AutoSelectFirstRowProperty =
-            BindableProperty.Create(nameof(AutoSelectFirstRow), typeof(bool), typeof(SparkDataGridView), true,
+            BindableProperty.Create(nameof(AutoSelectFirstRow), typeof(bool), typeof(SparkDataGridView), false,
                 propertyChanged: (b, o, n) => ((SparkDataGridView)b).BuildGrid());
         public bool AutoSelectFirstRow
         {
@@ -48,7 +48,7 @@ namespace EHMR.Resources.Controls
         }
 
         public static readonly BindableProperty ShowCheckboxColumnProperty =
-            BindableProperty.Create(nameof(ShowCheckboxColumn), typeof(bool), typeof(SparkDataGridView), true,
+            BindableProperty.Create(nameof(ShowCheckboxColumn), typeof(bool), typeof(SparkDataGridView), false,
                 propertyChanged: (b, o, n) => ((SparkDataGridView)b).BuildGrid());
         public bool ShowCheckboxColumn
         {
@@ -618,7 +618,7 @@ namespace EHMR.Resources.Controls
         #region Row numbers + default selection
 
         public static readonly BindableProperty ShowRowNumbersProperty =
-            BindableProperty.Create(nameof(ShowRowNumbers), typeof(bool), typeof(SparkDataGridView), true,
+            BindableProperty.Create(nameof(ShowRowNumbers), typeof(bool), typeof(SparkDataGridView), false,
                 propertyChanged: (b, o, n) => ((SparkDataGridView)b).BuildGrid());
         public bool ShowRowNumbers
         {
@@ -627,7 +627,7 @@ namespace EHMR.Resources.Controls
         }
 
         public static readonly BindableProperty SelectedRowIndexProperty =
-            BindableProperty.Create(nameof(SelectedRowIndex), typeof(int), typeof(SparkDataGridView), 0,
+            BindableProperty.Create(nameof(SelectedRowIndex), typeof(int), typeof(SparkDataGridView), -1,
                 propertyChanged: (b, o, n) => ((SparkDataGridView)b).BuildGrid());
         public int SelectedRowIndex
         {
@@ -708,13 +708,13 @@ namespace EHMR.Resources.Controls
         // PAGER  (unchanged)
         // ─────────────────────────────────────────────────────────────
 
-        private static readonly Color PagerActiveBg = Color.FromArgb("#0F766E");     // was #21B6C4
+        private static readonly Color PagerActiveBg = Color.FromArgb("#2eD4BF");     // was #21B6C4
         private static readonly Color PagerActiveText = Colors.White;
         private static readonly Color PagerInactiveText = Color.FromArgb("#334155"); // was #2E3A4E
-        public static Color PagerBackground => Colors.White;
+        public static Color PagerBackground => Color.FromArgb("#E2E8F0");
         public static Color PagerBorder => Color.FromArgb("#E2E8F0");                // was FFColors.Gray300
         public static Color PagerBorderColor => Color.FromArgb("#E2E8F0");
-        public static Color PagerActiveBackground => Color.FromArgb("#0F766E");
+        public static Color PagerActiveBackground => Color.FromArgb("#2eD4BF");
         public static Color PagerActiveForeground => Colors.White;
         public static Color PagerForeground => Color.FromArgb("#334155");
         public static Color PagerDisabledForeground => Color.FromArgb("#CBD5E1");

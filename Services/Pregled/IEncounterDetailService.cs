@@ -28,7 +28,7 @@ public interface IEncounterDetailService
     Task<List<Patient>> GetPatients();
     Task BuildEncounterAsync(DesktopTherapyDbContext db, Appointment appointment, string encounterNumber);
     Task<List<Doctor>> GetDoctors();
-    Task<DateTime> GetNextAvailableSlot(Guid doctorId, DateTime from, int durationMinutes = 30);
+    Task<DateTime> GetNextAvailableSlot(Guid doctorId, DateTime from, int durationMinutes = 30, Guid? patientId = null);
     Task<PatientContextDto> GetPatientContext(Guid patientId);
     Task<Appointment?> GetAppointment(Guid id);
     Task<IEnumerable<Appointment?>> GetAppointments(Guid appointmentId);
@@ -38,7 +38,9 @@ public interface IEncounterDetailService
     Task<TherapyCycle> CreateTherapyCycle(TherapyCycle cycle);
     Task<List<Mkb10Code>> SearchDiagnoses(
         string query,
-        CancellationToken token);
+        CancellationToken token,
+        string? codeSection = null,
+        string? descriptionQuery = null);
 
    Task UpdateAppointmentStatus(Guid? appointmentId, AppointmentStatus newStatus);
 

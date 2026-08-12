@@ -1,4 +1,4 @@
-﻿using EHMR.Domain.Entities;
+using EHMR.Domain.Entities;
 using EHMR.Infrastructure.Persistence;
 using EHMR.ViewModels.Appointments;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +12,7 @@ namespace EHMR.Services
         Task<PatientContextDto> GetPatientContext(Guid patientId);
         Task UpdateAppointmentStatus(Guid appointmentId, AppointmentStatus newStatus);
         Task<List<Mkb10Code>> SearchDiagnoses(string query, CancellationToken token);
+        Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30);
         Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, TherapyCycle? cycle);
         Task GenerateNextTherapyCycle(Appointment appointment);
     }
@@ -85,6 +86,7 @@ namespace EHMR.Services
 
             var patients = await db.Patients
                 .AsNoTracking()
+                .Include(x => x.Doctor)
                 .OrderBy(x => x.LastName)
                 .ThenBy(x => x.FirstName)
                 .ToListAsync();
@@ -126,6 +128,7 @@ namespace EHMR.Services
 
             var patients = await db.Patients
                 .AsNoTracking()
+                .Include(x => x.Doctor)
                 .OrderBy(x => x.LastName)
                 .ThenBy(x => x.FirstName)
                 .ToListAsync();
@@ -204,6 +207,9 @@ namespace EHMR.Services
                 .ToListAsync(token);
         }
 
+        public Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30) =>
+            _encounterService.GetNextAvailableSlot(doctorId, from, durationMinutes, patientId);
+
         // ─── Commands ─────────────────────────────────────────────────────────
         public async Task SaveAppointment(
             Appointment appointment,
@@ -258,7 +264,7 @@ namespace EHMR.Services
                     encounter.ScheduledStart=appointment.ScheduledStart;
                     encounter.ScheduledEnd=appointment.ScheduledEnd;
                     encounter.Notes=appointment.ClinicalNotes;
-                    encounter.ReasonForVisit=appointment.ReasonForVisit;
+                    encounter.ReasonForVisit=null;
 
                     // ── Reconcile status — both sides converge ────────────────
                     var (resolvedEncounter, resolvedAppointment)=

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace EHMR.Domain.Entities;
 
@@ -15,6 +15,8 @@ public class Patient : BaseEntity
     public string LastName { get; set; } = string.Empty;
 
     public string NationalId { get; set; } = string.Empty;
+
+    public string SzboNumber { get; set; } = string.Empty;
 
     public DateTime BirthDate
     {

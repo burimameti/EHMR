@@ -3,6 +3,8 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Services;
+using System.Collections.ObjectModel;
+using System.IO;
 namespace EHMR.ViewModels.Encounters;
 public partial class EncounterDetailViewModel : EncounterBaseViewModel
 {
@@ -32,6 +34,8 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
         {
             // EXISTING ENCOUNTER — unchanged path
             await LoadForViewAsync(selectedEncounter.Id, "Не е избран преглед за прикажување.");
+            EncounterMedicines=new ObservableCollection<PatientMedicine>(
+                PatientMedicines.Where(x => x.EncounterId==Encounter.Id).OrderByDescending(x => x.StartDate));
             _selectedItemService.SelectedItem=null;
             OnPropertyChanged(nameof(CanEditEncounter));
             return;   // ← излегува тука, не стигнува до "нов" делот подолу
@@ -48,9 +52,16 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
             SelectedDoctor = SelectedPatient.Doctor;
             _selectedPatientService.SelectedItem=null;
         }
+    }    [RelayCommand]
+    private async Task PreviewDocument(PatientDocument doc)
+    {
+        if(doc is null||string.IsNullOrWhiteSpace(doc.StoredPath)||!File.Exists(doc.StoredPath))
+            return;
+
+        await Launcher.Default.OpenAsync(new OpenFileRequest(
+            doc.Title,
+            new ReadOnlyFile(doc.StoredPath)));
     }
-
-
     [RelayCommand]
     private async Task Edit()
     {

@@ -10,8 +10,8 @@ namespace EHMR.Infrastructure.Persistence.Configs;
 /// шифри, па ако каталогот е празен тие остануваат без важечка шифра.
 /// Order = 0 — најнискиот; останатите почнуваат од 1.
 ///
-/// Се извршува само кога табелата е празна. Повторно подигање не го дира каталогот,
-/// ниту рачно додадените шифри.
+/// Import-от е идемпотентен: при повторно подигање ги дополнува и ажурира шифрите,
+/// без да ги брише рачно додадените записи.
 /// </summary>
 public sealed class Mkb10CatalogSeeder : IEntitySeeder
 {
@@ -28,9 +28,6 @@ public sealed class Mkb10CatalogSeeder : IEntitySeeder
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {
-        if(await context.Mkb10Codes.AnyAsync(ct))
-            return;
-
         var path = ResolveCatalogPath();
 
         if(path is null)

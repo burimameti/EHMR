@@ -61,16 +61,18 @@
 									SelectedSuggestion="{Binding SelectedEncounterSuggestion, Mode=TwoWay}"
 									ShowSuggestions="{Binding ShowEncounterSuggestions}"
 									Suggestions="{Binding EncounterSuggestions}"
-									Tabs="{Binding Tabs}">
+									Tabs="{Binding Tabs}"
+                                    UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}">
 									<controls:SparkExplorerHeaderView.SuggestionTemplate>
 										<DataTemplate x:DataType="entities:Encounter">
 											<Border Margin="2" Padding="12,8" BackgroundColor="White" Stroke="#D8DEE8" StrokeShape="RoundRectangle 6" StrokeThickness="1">
-												<Grid ColumnDefinitions="1.2*,2*,1.3*,1*" ColumnSpacing="12">
-													<Label FontAttributes="Bold" FontSize="12" Text="{Binding EncounterNumber}" TextColor="{StaticResource SparkTextPrimary}" />
-													<Label Grid.Column="1" FontSize="12" Text="{Binding Patient.FullName}" TextColor="{StaticResource SparkTextPrimary}" />
-													<Label Grid.Column="2" FontSize="11" Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}" TextColor="{StaticResource SparkTextSecondary}" />
-													<Label Grid.Column="3" FontAttributes="Bold" FontSize="11" Text="{Binding Status}" TextColor="{StaticResource SparkAccentTealDark}" />
-												</Grid>
+												<Grid ColumnDefinitions="1.1*,1.8*,1.2*,1.3*,1*" ColumnSpacing="12">
+                                                    <Label FontAttributes="Bold" FontSize="12" Text="{Binding EncounterNumber}" TextColor="{StaticResource SparkTextPrimary}" />
+                                                    <Label Grid.Column="1" FontSize="12" Text="{Binding Patient.FullName}" TextColor="{StaticResource SparkTextPrimary}" />
+                                                    <Label Grid.Column="2" FontAttributes="Bold" FontSize="11" Text="{Binding Patient.SzboNumber}" TextColor="{StaticResource SparkAccentTealDark}" />
+                                                    <Label Grid.Column="3" FontSize="11" Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}" TextColor="{StaticResource SparkTextSecondary}" />
+                                                    <Label Grid.Column="4" FontAttributes="Bold" FontSize="11" Text="{Binding Status}" TextColor="{StaticResource SparkAccentTealDark}" />
+                                                </Grid>
 											</Border>
 										</DataTemplate>
 									</controls:SparkExplorerHeaderView.SuggestionTemplate>
@@ -80,6 +82,7 @@
 								<Border Padding="0">
 									<controls:SparkDataGridView
 										x:Name="EncounterGrid"
+                                        AutoSelectFirstRow="False"
 										Columns="{Binding GridColumns}"
 										CurrentPage="{Binding CurrentPage}"
 										EditRowCommand="{Binding EditCommand}"

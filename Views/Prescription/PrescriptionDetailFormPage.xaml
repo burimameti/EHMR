@@ -103,11 +103,10 @@
 						<!--  СЕКЦИЈА — ПАЦИЕНТ  -->
 						<!--  ================================================  -->
 						<VerticalStackLayout Spacing="14">
-							<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+							<Border Style="{StaticResource SectionPillBorderStyle}">
 								<Label
 									Style="{StaticResource SectionPillLabelStyle}"
-									Text="ПАЦИЕНТ"
-									TextColor="{StaticResource SparkAccentTealDark}" />
+									Text="ПАЦИЕНТ" />
 							</Border>
 
 							<Grid Padding="{StaticResource FormRowPadding}">
@@ -142,8 +141,7 @@
 										<HorizontalStackLayout Spacing="8">
 											<Label
 												Style="{StaticResource InfoPillIconStyle}"
-												Text="&#xf007;"
-												TextColor="{StaticResource SparkAccentTealDark}" />
+												Text="&#xf007;" />
 											<Label
 												Style="{StaticResource InfoPillTextStyle}"
 												Text="{Binding SelectedPatient.FullName, FallbackValue='—'}"
@@ -158,11 +156,10 @@
 						<!--  СЕКЦИЈА — ДЕТАЛИ ЗА РЕЦЕПТОТ  -->
 						<!--  ================================================  -->
 						<VerticalStackLayout Spacing="14">
-							<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+							<Border Style="{StaticResource SectionPillBorderStyle}">
 								<Label
 									Style="{StaticResource SectionPillLabelStyle}"
-									Text="ДЕТАЛИ ЗА РЕЦЕПТОТ"
-									TextColor="{StaticResource SparkAccentTealDark}" />
+									Text="ДЕТАЛИ ЗА РЕЦЕПТОТ" />
 							</Border>
 
 							<Grid

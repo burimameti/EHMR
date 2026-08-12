@@ -47,8 +47,8 @@
 				<VerticalStackLayout Spacing="8">
 
 					<Border Style="{StaticResource PageHeaderCardStyle}">
-						<Grid ColumnSpacing="5" RowSpacing="20">
-							<VerticalStackLayout Spacing="10">
+						<Grid ColumnSpacing="5">
+							<VerticalStackLayout Spacing="1">
 
 								<!--  SEARCH & FILTERS  -->
 								<controls:SparkExplorerHeaderView
@@ -57,7 +57,8 @@
 									SearchCommand="{Binding SearchCommand}"
 									SearchPlaceholder="Пребарување на пациенти..."
 									SearchText="{Binding SearchText}"
-									Tabs="{Binding Tabs}" />
+									Tabs="{Binding Tabs}"
+                                    UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}" />
 
 								<!--  DATA GRID  -->
 								<Border Padding="0">

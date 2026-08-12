@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EHMR.Domain.Entities.Rbac;
 
@@ -28,6 +28,8 @@ public partial class NavigationItem : ObservableObject
     public string Route { get; set; } = string.Empty;
     public IconDefinition Icon { get; set; } = new IconDefinition();
     public string Module { get; set; } = string.Empty;
+    public ModuleAction RequiredAction { get; set; } = ModuleAction.View;
+    public bool StartsNewRecord { get; set; }
 
     private bool _isActive;
 

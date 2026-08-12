@@ -4,6 +4,7 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:search="clr-namespace:EHMR.Domain.Search"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Appointments"
 	x:Name="PageRoot"
 	x:DataType="viewModels:AppointmentListViewModel"
@@ -47,10 +48,24 @@
 								<controls:SparkExplorerHeaderView
 									Buttons="{Binding Buttons}"
 									Pickers="{Binding Pickers}"
-									SearchCommand="{Binding SearchCommand}"
 									SearchPlaceholder="Пациент или реуматолог..."
 									SearchText="{Binding SearchText}"
-									Tabs="{Binding Tabs}" />
+									SelectedSuggestion="{Binding SelectedSuggestion, Mode=TwoWay}"
+									ShowSuggestions="{Binding ShowSuggestions}"
+									Suggestions="{Binding Suggestions}"
+									Tabs="{Binding Tabs}">
+									<controls:SparkExplorerHeaderView.SuggestionTemplate>
+										<DataTemplate x:DataType="search:SearchSuggestionDto">
+											<Border Margin="2" Padding="12,9" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
+												<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+													<Label FontFamily="FASolid" FontSize="13" Text="&#xf007;" TextColor="{StaticResource SparkAccentTeal}" VerticalOptions="Center" />
+													<Label Grid.Column="1" FontAttributes="Bold" FontSize="12.5" Text="{Binding DisplayText}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+													<Label Grid.Column="2" FontSize="11" Text="{Binding Group}" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
+												</Grid>
+											</Border>
+										</DataTemplate>
+									</controls:SparkExplorerHeaderView.SuggestionTemplate>
+								</controls:SparkExplorerHeaderView>
 
 								<!--  History drill-down banner  -->
 								<Border
@@ -70,6 +85,7 @@
 								<Border Padding="0">
 									<controls:SparkDataGridView
 										x:Name="AppointmentGrid"
+										AutoSelectFirstRow="False"
 										Columns="{Binding GridColumns}"
 										CurrentPage="{Binding CurrentPage}"
 										EditRowCommand="{Binding EditCommand}"

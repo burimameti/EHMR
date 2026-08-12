@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
 	<!--  ============================================================  -->
@@ -18,7 +18,7 @@
 	<!--  ============================================================  -->
 	<Color x:Key="SparkCanvasBackground">#EEF2F6</Color>
 	<!--  Canvas behind the cards  -->
-	<Color x:Key="SparkBackground">#FFFFFF</Color>
+	<Color x:Key="SparkBackground">#F8FAFC</Color>
 	<!--  White card surface  -->
 	<Color x:Key="SparkBackgroundAlt">#F7F9FC</Color>
 	<!--  Alternating rows/nested sections  -->
@@ -112,7 +112,7 @@
 		дефинирани (SparkExpandableCardView, TherapyCyclesPage, BackupHistoryPage,
 		страницата за дестинации). Врзани се за постоечките еквиваленти.
 	-->
-	<Color x:Key="SparkSurface">#FFFFFF</Color>
+	<Color x:Key="SparkSurface">#F7F9FC</Color>
 	<Color x:Key="SparkSurfaceAlt">#F7F9FC</Color>
 	<Color x:Key="SparkBorderSubtle">#E1E6ED</Color>
 	<Color x:Key="SparkOverlay">#80191E29</Color>

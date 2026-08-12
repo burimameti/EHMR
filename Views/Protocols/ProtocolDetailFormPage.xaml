@@ -101,11 +101,10 @@
 						<VerticalStackLayout Grid.Column="0" Spacing="24">
 
 							<VerticalStackLayout Spacing="16">
-								<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+								<Border Style="{StaticResource SectionPillBorderStyle}">
 									<Label
 										Style="{StaticResource SectionPillLabelStyle}"
-										Text="ОСНОВНИ ПОДАТОЦИ ЗА ПРОТОКОЛОТ"
-										TextColor="{StaticResource SparkAccentTealDark}" />
+										Text="ОСНОВНИ ПОДАТОЦИ ЗА ПРОТОКОЛОТ" />
 								</Border>
 
 								<!--  Наслов  -->
@@ -209,11 +208,10 @@
 						<!--  ================================================  -->
 						<VerticalStackLayout Grid.Column="1" Spacing="14">
 
-							<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+							<Border Style="{StaticResource SectionPillBorderStyle}">
 								<Label
 									Style="{StaticResource SectionPillLabelStyle}"
-									Text="СИСТЕМСКИ ЗАПИС"
-									TextColor="{StaticResource SparkAccentTealDark}" />
+									Text="СИСТЕМСКИ ЗАПИС" />
 							</Border>
 
 							<Border
@@ -260,7 +258,6 @@
 											FontSize="14"
 											HorizontalOptions="Center"
 											Text="&#xf3ed;"
-											TextColor="{StaticResource SparkAccentTealDark}"
 											VerticalOptions="Center" />
 									</Border>
 									<VerticalStackLayout

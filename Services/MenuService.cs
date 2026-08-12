@@ -1,4 +1,4 @@
-﻿using EHMR.Constants;
+using EHMR.Constants;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 
@@ -25,13 +25,15 @@ public class MenuService : IMenuService
                 Module=group.Module,
 
                 Items=group.Items
-                    .Where(x => _auth.CanAccessModule(x.Module))
+                    .Where(x => _auth.CanPerform(x.Module, x.RequiredAction))
                     .Select(item => new NavigationItem
                     {
                         Title=item.Title,
                         Route=item.Route,
                         Module=item.Module,
-                        Icon=item.Icon
+                        Icon=item.Icon,
+                        RequiredAction=item.RequiredAction,
+                        StartsNewRecord=item.StartsNewRecord
                     })
                     .ToList()
             })

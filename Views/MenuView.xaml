@@ -11,7 +11,7 @@
 
 	<Border
 		Padding="0"
-		BackgroundColor="{StaticResource Surface}"
+		BackgroundColor="{StaticResource SidebarBg}"
 		StrokeThickness="0">
 
 		<Grid RowDefinitions="Auto,Auto,*,Auto" WidthRequest="290">

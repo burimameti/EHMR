@@ -41,7 +41,7 @@
 					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Tabs, Source={x:Reference Root}}" Spacing="10">
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkTabItem">
-						
+
 								<Border
 									Padding="16,10"
 									HeightRequest="44"
@@ -82,7 +82,7 @@
 												<Span Text="{Binding Value, StringFormat='({0})'}" />
 											</FormattedString>
 										</Label.FormattedText>
-								
+
 										<Label.Triggers>
 											<DataTrigger
 												Binding="{Binding IsSelected}"
@@ -113,10 +113,10 @@
 					BackgroundColor="{StaticResource SparkAccentTeal}"
 					WidthRequest="1" />
 
-				
+
 			</Grid>
 
-		
+
 		</Border>
 
 		<!--  ============ ROW 2: SEARCH + FILTERS + BUTTONS ============  -->
@@ -167,41 +167,46 @@
 
 					<Border
 						Padding="4"
-						BackgroundColor="White"		IsVisible="{Binding ShowSuggestions, Source={x:Reference Root}}"
+						BackgroundColor="White"
+						IsVisible="{Binding ShowSuggestions, Source={x:Reference Root}}"
 						Stroke="{StaticResource SparkBorderSubtle}"
 						StrokeShape="RoundRectangle 8"
 						StrokeThickness="1">
 						<Grid ColumnDefinitions="*,12" ColumnSpacing="4">
-                            <CollectionView
-                                x:Name="SuggestionList"
-                                Grid.Column="0"
-                                HeightRequest="164"
-                                ItemTemplate="{Binding SuggestionTemplate, Source={x:Reference Root}}"
-                                ItemsSource="{Binding Suggestions, Source={x:Reference Root}}"
-                                Scrolled="OnSuggestionListScrolled"
-                                SelectedItem="{Binding SelectedSuggestion, Source={x:Reference Root}, Mode=TwoWay}"
-                                SelectionMode="Single"
-                                VerticalScrollBarVisibility="Never" />
-                            <Border
-                                x:Name="SuggestionScrollRail"
-                                Grid.Column="1"
-                                Margin="2,4"
-                                BackgroundColor="#E2E8F0"
-                                StrokeThickness="0">
-                                <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
-                                <Border
-                                    x:Name="SuggestionScrollThumb"
-                                    BackgroundColor="{StaticResource SparkAccentTeal}"
-                                    HeightRequest="38"
-                                    StrokeThickness="0"
-                                    VerticalOptions="Start">
-                                    <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
-                                    <Border.GestureRecognizers>
-                                        <PanGestureRecognizer PanUpdated="OnSuggestionThumbPanUpdated" />
-                                    </Border.GestureRecognizers>
-                                </Border>
-                            </Border>
-                        </Grid>
+							<CollectionView
+								x:Name="SuggestionList"
+								Grid.Column="0"
+								HeightRequest="164"
+								ItemTemplate="{Binding SuggestionTemplate, Source={x:Reference Root}}"
+								ItemsSource="{Binding Suggestions, Source={x:Reference Root}}"
+								Scrolled="OnSuggestionListScrolled"
+								SelectedItem="{Binding SelectedSuggestion, Source={x:Reference Root}, Mode=TwoWay}"
+								SelectionMode="Single"
+								VerticalScrollBarVisibility="Never" />
+							<Border
+								x:Name="SuggestionScrollRail"
+								Grid.Column="1"
+								Margin="2,4"
+								BackgroundColor="#E2E8F0"
+								StrokeThickness="0">
+								<Border.StrokeShape>
+									<RoundRectangle CornerRadius="4" />
+								</Border.StrokeShape>
+								<Border
+									x:Name="SuggestionScrollThumb"
+									BackgroundColor="{StaticResource SparkAccentTeal}"
+									HeightRequest="38"
+									StrokeThickness="0"
+									VerticalOptions="Start">
+									<Border.StrokeShape>
+										<RoundRectangle CornerRadius="4" />
+									</Border.StrokeShape>
+									<Border.GestureRecognizers>
+										<PanGestureRecognizer PanUpdated="OnSuggestionThumbPanUpdated" />
+									</Border.GestureRecognizers>
+								</Border>
+							</Border>
+						</Grid>
 					</Border>
 				</VerticalStackLayout>
 				<HorizontalStackLayout
@@ -217,7 +222,7 @@
 						Text="Кирилица"
 						TextColor="{StaticResource SparkAccentTeal}" />
 					<Border
-						Margin="-28,10,0,0"
+						Margin="-28,22,0,0"
 						Padding="0"
 						BackgroundColor="{StaticResource Transparent}"
 						Stroke="Transparent"
@@ -262,33 +267,40 @@
 					</BindableLayout.ItemTemplate>
 				</HorizontalStackLayout>
 
-				<VerticalStackLayout Grid.Column="3" Spacing="4" VerticalOptions="Start">
-					<Label FontSize="11" HorizontalOptions="Center" Text="Акции" TextColor="{StaticResource SparkAccentTeal}" />
+				<VerticalStackLayout
+					Grid.Column="3"
+					Spacing="4"
+					VerticalOptions="Start">
+					<Label
+						FontSize="11"
+						HorizontalOptions="Center"
+						Text="Акции"
+						TextColor="{StaticResource SparkAccentTeal}" />
 					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}" Spacing="8">
 
-					<BindableLayout.ItemTemplate>
-						<DataTemplate x:DataType="sc:SparkButtonItem">
-							<Border
-								Padding="16,10"
-								BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
-								HeightRequest="44"
-								Stroke="{StaticResource SparkAccentTeal}"
-								StrokeShape="RoundRectangle 6"
-								StrokeThickness="1">
-								<Border.GestureRecognizers>
-									<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
-								</Border.GestureRecognizers>
-								<Label
-									FontAttributes="Bold"
-									FontSize="14"
-									HorizontalOptions="Center"
-									Text="{Binding Label}"
-									TextColor="White"
-									VerticalOptions="Center" />
-							</Border>
-						</DataTemplate>
-					</BindableLayout.ItemTemplate>
-				
+						<BindableLayout.ItemTemplate>
+							<DataTemplate x:DataType="sc:SparkButtonItem">
+								<Border
+									Padding="16,10"
+									BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
+									HeightRequest="44"
+									Stroke="{StaticResource SparkAccentTeal}"
+									StrokeShape="RoundRectangle 6"
+									StrokeThickness="1">
+									<Border.GestureRecognizers>
+										<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
+									</Border.GestureRecognizers>
+									<Label
+										FontAttributes="Bold"
+										FontSize="14"
+										HorizontalOptions="Center"
+										Text="{Binding Label}"
+										TextColor="White"
+										VerticalOptions="Center" />
+								</Border>
+							</DataTemplate>
+						</BindableLayout.ItemTemplate>
+
 					</HorizontalStackLayout>
 				</VerticalStackLayout>
 			</Grid>

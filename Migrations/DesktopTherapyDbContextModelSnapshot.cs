@@ -813,6 +813,11 @@ namespace EHMR.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<string>("SzboNumber")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -823,6 +828,10 @@ namespace EHMR.Migrations
                     b.HasIndex("LastName");
 
                     b.HasIndex("Status");
+
+                    b.HasIndex("SzboNumber")
+                        .IsUnique()
+                        .HasFilter("[SzboNumber] <> ''");
 
                     b.HasIndex("FirstName", "LastName");
 
@@ -931,6 +940,9 @@ namespace EHMR.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<Guid?>("EncounterId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -957,6 +969,8 @@ namespace EHMR.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EncounterId");
 
                     b.HasIndex("MedicineId");
 
@@ -1524,6 +1538,11 @@ namespace EHMR.Migrations
 
             modelBuilder.Entity("EHMR.Domain.Entities.PatientMedicine", b =>
                 {
+                    b.HasOne("EHMR.Domain.Entities.Encounter", "Encounter")
+                        .WithMany()
+                        .HasForeignKey("EncounterId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("EHMR.Domain.Entities.Medicine", "Medicine")
                         .WithMany()
                         .HasForeignKey("MedicineId")
@@ -1535,6 +1554,8 @@ namespace EHMR.Migrations
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Encounter");
 
                     b.Navigation("Medicine");
 

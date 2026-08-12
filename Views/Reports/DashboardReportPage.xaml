@@ -377,11 +377,10 @@
 								<Border Style="{StaticResource PageHeaderCardStyle}">
 									<VerticalStackLayout Spacing="6">
 
-										<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+										<Border Style="{StaticResource SectionPillBorderStyle}">
 											<Label
 												Style="{StaticResource SectionPillLabelStyle}"
-												Text="АНАЛИТИКА"
-												TextColor="{StaticResource SparkAccentTealDark}" />
+												Text="АНАЛИТИКА" />
 										</Border>
 
 										<!--  Metric 1  -->
@@ -490,11 +489,10 @@
 								<Border Style="{StaticResource PageHeaderCardStyle}">
 									<VerticalStackLayout Spacing="10">
 
-										<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+										<Border Style="{StaticResource SectionPillBorderStyle}">
 											<Label
 												Style="{StaticResource SectionPillLabelStyle}"
-												Text="ОПЦИИ ЗА ИЗВОЗ"
-												TextColor="{StaticResource SparkAccentTealDark}" />
+												Text="ОПЦИИ ЗА ИЗВОЗ" />
 										</Border>
 
 										<sc:FFButton

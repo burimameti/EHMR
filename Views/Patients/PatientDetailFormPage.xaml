@@ -10,7 +10,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="PageRoot"
 	x:DataType="viewModels:PatientDetailFormViewModel"
-	BackgroundColor="{StaticResource SparkAccentTealDark}">
+	BackgroundColor="{StaticResource SparkBorder}">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
@@ -67,7 +67,7 @@
 						Grid.Column="1"
 						FontSize="12"
 						LineBreakMode="TailTruncation"
-						Text="{Binding ReasonForVisit}"
+						Text="{Binding ClinicalNotes, TargetNullValue='Без забелешка'}"
 						TextColor="{StaticResource SparkTextPrimary}"
 						VerticalOptions="Center" />
 					<Border
@@ -99,7 +99,7 @@
 						Margin="10,0,0,0"
 						FontSize="12"
 						LineBreakMode="TailTruncation"
-						Text="{Binding ReasonForVisit}"
+						Text="{Binding ClinicalNotes, TargetNullValue='Без забелешка'}"
 						TextColor="{StaticResource SparkTextPrimary}"
 						VerticalOptions="Center" />
 				</Grid>
@@ -199,7 +199,7 @@
 		</ResourceDictionary>
 	</ContentPage.Resources>
 
-	<Grid ColumnDefinitions="285,*">
+	<Grid ColumnDefinitions="290,*">
 
 		<!--  ─── LEFT MENU SIDEBAR ───  -->
 		<Border Grid.Column="0" StrokeThickness="0">
@@ -208,9 +208,10 @@
 
 		<!--  ─── MAIN CONTENT AREA ───  -->
 		<Grid
-			Grid.Column="1"
-			RowDefinitions="Auto,*"
-			RowSpacing="1">
+            Grid.Column="1"
+            Margin="12,0,12,12"
+            RowDefinitions="Auto,*"
+            RowSpacing="0">
 
 			<!--  =========================================================  -->
 			<!--  PAGE HEADER  -->
@@ -285,11 +286,10 @@
 							<!--  ================================================  -->
 							<VerticalStackLayout Grid.Column="0" Spacing="16">
 
-								<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+								<Border Style="{StaticResource SectionPillBorderStyle}">
 									<Label
 										Style="{StaticResource SectionPillLabelStyle}"
-										Text="ЛИЧНИ ПОДАТОЦИ"
-										TextColor="{StaticResource SparkAccentTealDark}" />
+										Text="ЛИЧНИ ПОДАТОЦИ" />
 								</Border>
 
 								<!--  Име  -->
@@ -398,8 +398,21 @@
 											Text="{Binding Patient.NationalId}" />
 									</Grid>
 								</Grid>
+                                <!--  СЗБО број  -->
+                                <Grid Padding="{StaticResource FormRowPadding}">
+                                    <Grid ColumnDefinitions="130,*" ColumnSpacing="{StaticResource FormRowSpacing}" IsVisible="{Binding IsEditMode}">
+                                        <Label Grid.Column="0" Style="{StaticResource EditFieldLabelStyle}" Text="СЗБО број *" />
+                                        <Border Grid.Column="1" Style="{StaticResource EditFieldBoxStyle}">
+                                            <Entry BackgroundColor="Transparent" FontSize="13" MaxLength="64" Placeholder="Внесете СЗБО број" PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.SzboNumber}" TextColor="{StaticResource SparkTextPrimary}" />
+                                        </Border>
+                                    </Grid>
+                                    <Grid ColumnDefinitions="130,*" ColumnSpacing="{StaticResource FormRowSpacing}" IsVisible="{Binding IsReadOnly}">
+                                        <Label Grid.Column="0" Style="{StaticResource ReadRowLabelStyle}" Text="СЗБО број:" />
+                                        <Label Grid.Column="1" Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.SzboNumber, TargetNullValue='—'}" />
+                                    </Grid>
+                                </Grid>
 
-								<!--  Датум на раѓање  -->
+                                <!--  Датум на раѓање  -->
 								<Grid Padding="{StaticResource FormRowPadding}">
 									<Grid
 										ColumnDefinitions="130,*"
@@ -482,12 +495,10 @@
 								<!--  ДОКУМЕНТИ / РЕШЕНИЕ  -->
 								<Border
 									Margin="0,10,0,0"
-									BackgroundColor="{StaticResource SparkTabActiveBg}"
 									Style="{StaticResource SectionPillBorderStyle}">
 									<Label
 										Style="{StaticResource SectionPillLabelStyle}"
-										Text="ДОКУМЕНТИ / РЕШЕНИЕ"
-										TextColor="{StaticResource SparkAccentTealDark}" />
+										Text="ДОКУМЕНТИ / РЕШЕНИЕ" />
 								</Border>
 
 								<Border
@@ -533,7 +544,6 @@
 																FontFamily="FASolid"
 																FontSize="14"
 																Text="&#xf15b;"
-																TextColor="{StaticResource SparkAccentTealDark}"
 																VerticalOptions="Center" />
 															<Label
 																Grid.Column="1"
@@ -569,11 +579,10 @@
 							<!--  ================================================  -->
 							<VerticalStackLayout Grid.Column="2" Spacing="16">
 
-								<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+								<Border Style="{StaticResource SectionPillBorderStyle}">
 									<Label
 										Style="{StaticResource SectionPillLabelStyle}"
-										Text="МЕДИЦИНСКИ ПОДАТОЦИ"
-										TextColor="{StaticResource SparkAccentTealDark}" />
+										Text="МЕДИЦИНСКИ ПОДАТОЦИ" />
 								</Border>
 
 								<!--  Матичен реуматолог  -->
@@ -630,8 +639,7 @@
 											<HorizontalStackLayout Spacing="8">
 												<Label
 													Style="{StaticResource InfoPillIconStyle}"
-													Text="&#xf0f0;"
-													TextColor="{StaticResource SparkAccentTealDark}" />
+													Text="&#xf0f0;" />
 												<Label
 													Style="{StaticResource InfoPillTextStyle}"
 													Text="{Binding SelectedDoctorDisplay}"
@@ -928,11 +936,10 @@
 							<!--  ================================================  -->
 							<VerticalStackLayout Grid.Column="4" Spacing="16">
 
-								<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+								<Border Style="{StaticResource SectionPillBorderStyle}">
 									<Label
 										Style="{StaticResource SectionPillLabelStyle}"
-										Text="КОНТАКТ ИНФОРМАЦИИ"
-										TextColor="{StaticResource SparkAccentTealDark}" />
+										Text="КОНТАКТ ИНФОРМАЦИИ" />
 								</Border>
 
 								<!--  Телефон  -->
@@ -1040,8 +1047,7 @@
 											<HorizontalStackLayout Spacing="8">
 												<Label
 													Style="{StaticResource InfoPillIconStyle}"
-													Text="&#xf3c5;"
-													TextColor="{StaticResource SparkAccentTealDark}" />
+													Text="&#xf3c5;" />
 												<Label
 													Style="{StaticResource InfoPillTextStyle}"
 													Text="{Binding SelectedCityDisplay}"
@@ -1104,12 +1110,10 @@
 								<!--  ИТЕН КОНТАКТ  -->
 								<Border
 									Margin="0,10,0,0"
-									BackgroundColor="{StaticResource SparkTabActiveBg}"
 									Style="{StaticResource SectionPillBorderStyle}">
 									<Label
 										Style="{StaticResource SectionPillLabelStyle}"
-										Text="ИТЕН КОНТАКТ"
-										TextColor="{StaticResource SparkAccentTealDark}" />
+										Text="ИТЕН КОНТАКТ" />
 								</Border>
 
 								<!--  Ime i prezime na iten kontakt  -->
@@ -1223,7 +1227,7 @@
 							</VerticalStackLayout>
 						</Grid>
 						<BoxView
-							BackgroundColor="{StaticResource SparkAccentTealDark}"
+							BackgroundColor="{StaticResource SparkBorder}"
 							HeightRequest="1"
 							HorizontalOptions="Fill" />
 						<HorizontalStackLayout
@@ -1244,7 +1248,7 @@
 								ContentPadding="24,0"
 								HeightRequestEx="42"
 								IsVisible="{Binding IsEditMode}"
-								Text="💾 Зачувај промени" />
+								Text="💾 Зачувај" />
 							<controls:FFButton
 								ButtonKind="Primary"
 								Command="{Binding ToggleEditModeCommand}"
@@ -1255,14 +1259,13 @@
 						</HorizontalStackLayout>
 						<!--  ═══════════════════════════════════════════════════  -->
 						<!--  ИСТОРИЈА НА ПАЦИЕНТОТ  -->
-						<!--  ═══════════════════════════════════════════════════  -->
-						<VerticalStackLayout Padding="12,0" Spacing="16">
+                        <!--  ═══════════════════════════════════════════════════  -->
+                        <VerticalStackLayout Padding="12,0" Spacing="16" IsVisible="{Binding IsNewPatient, Converter={StaticResource InvertedBoolConverter}}">
 
-							<Border BackgroundColor="{StaticResource SparkTabActiveBg}" Style="{StaticResource SectionPillBorderStyle}">
+							<Border Style="{StaticResource SectionPillBorderStyle}">
 								<Label
 									Style="{StaticResource SectionPillLabelStyle}"
-									Text="ИСТОРИЈА НА ПАЦИЕНТОТ"
-									TextColor="{StaticResource SparkAccentTealDark}" />
+									Text="ИСТОРИЈА НА ПАЦИЕНТОТ" />
 							</Border>
 
 							<Grid

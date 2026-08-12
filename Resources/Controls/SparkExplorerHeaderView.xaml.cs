@@ -137,7 +137,7 @@ namespace EHMR.Resources.Controls
                 nameof(UseCyrillicInput),
                 typeof(bool),
                 typeof(SparkExplorerHeaderView),
-                false,
+                true,
                 BindingMode.TwoWay);
 
         /// <summary>Whether Cyrillic transliteration is enabled for the search input.</summary>

@@ -1,4 +1,4 @@
-﻿using EHMR.Domain.Entities;
+using EHMR.Domain.Entities;
 using EHMR.Helpers;
 using EHMR.UI.Lookup;
 using System;
@@ -236,6 +236,7 @@ namespace EHMR.ViewModels.Patients.Extensions
                 LastName=source.LastName,
 
                 NationalId=PrivacyMaskHelper.MaskNationalId(source.NationalId),
+                SzboNumber=source.SzboNumber,
 
                 DoctorId=source.DoctorId,
 

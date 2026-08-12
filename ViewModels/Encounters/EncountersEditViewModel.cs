@@ -13,8 +13,6 @@ namespace EHMR.ViewModels.Encounters;
 public partial class EncounterEditViewModel : EncounterBaseViewModel
 {
     private readonly ISelectedItemService<Encounter> _selectedItemService;
-    private readonly List<Guid> _deletedMedicineIds = [];
-    protected IReadOnlyList<Guid> DeletedMedicineIds => _deletedMedicineIds;
     public EncounterEditViewModel(
         IEncounterDetailService service,
         INavigationService navigationService,
@@ -42,6 +40,9 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         // medicine history is left completely alone.
         await InitializeAsync(selected.Id);
 
+        EncounterMedicines=new System.Collections.ObjectModel.ObservableCollection<PatientMedicine>(
+            PatientMedicines.Where(x => x.EncounterId==Encounter.Id));
+
         // load the cycle picker for this encounter's patient and preselect its current cycle
    
 
@@ -55,10 +56,13 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     {
         await ExecuteSafeAsync(async () =>
         {
-            await EncounterService.UpdateEncounterClinicalData(
-                Encounter.Id,
+            Encounter.SetNotes(EncounterDiagnosisNotes);
+            await EncounterService.SaveEncounter(
+                Encounter,
                 Diagnoses.ToList(),
-                EncounterDiagnosisNotes);
+                Prescriptions.ToList(),
+                EncounterMedicines.ToList(),
+                DeletedMedicineIds.ToList());
 
             await UserDialogService.ShowMessageAsync("Податоци за преглед се успешно зачувани", "");
             await NavigationService.GoToAsync(AppRoutes.Encounters.List);

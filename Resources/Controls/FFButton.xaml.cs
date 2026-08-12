@@ -1,4 +1,4 @@
-﻿using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls;
 using System.Windows.Input;
 
 namespace EHMR.Resources.Controls;
@@ -186,36 +186,43 @@ public partial class FFButton : ContentView
     {
         switch(ButtonKind)
         {
+            // Main action: Save, Create, Confirm
             case FFButtonKind.Primary:
-                BackgroundColorEx=Color.FromArgb("#67D0DD");
+                BackgroundColorEx=Color.FromArgb("#0F6B78");
                 TextColorEx=Colors.White;
-                BorderColor=Colors.Transparent;
+                BorderColor=Color.FromArgb("#0F6B78");
                 BorderThickness=0;
                 break;
 
+            // Supporting action: Edit, Preview, Back
             case FFButtonKind.Secondary:
-                BackgroundColorEx=Color.FromArgb("#8FA2AB");
+                BackgroundColorEx=Color.FromArgb("#475569");
                 TextColorEx=Colors.White;
-                BorderColor=Colors.Transparent;
-                BorderThickness=0;
-                break;
-            case FFButtonKind.Green:
-                BackgroundColorEx=Color.FromArgb("#DAF6BA");
-                TextColorEx=Color.FromArgb("#334155");
-                BorderColor=Color.FromArgb("#E2E8F0");
-                BorderThickness=1;
-                break;
-            case FFButtonKind.Danger:
-                BackgroundColorEx=Color.FromArgb("#EF4444");
-                TextColorEx=Colors.White;
-                BorderColor=Colors.Transparent;
+                BorderColor=Color.FromArgb("#475569");
                 BorderThickness=0;
                 break;
 
+            // Positive clinical action: Complete, Approve
+            case FFButtonKind.Green:
+                BackgroundColorEx=Color.FromArgb("#15803D");
+                TextColorEx=Colors.White;
+                BorderColor=Color.FromArgb("#15803D");
+                BorderThickness=0;
+                break;
+
+            // Destructive action: Delete, Cancel therapy
+            case FFButtonKind.Danger:
+                BackgroundColorEx=Color.FromArgb("#B42318");
+                TextColorEx=Colors.White;
+                BorderColor=Color.FromArgb("#B42318");
+                BorderThickness=0;
+                break;
+
+            // Quiet action: Close, Clear filters
             case FFButtonKind.Ghost:
                 BackgroundColorEx=Colors.Transparent;
-                TextColorEx=Color.FromArgb("#B4CAD9");
-                BorderColor=Color.FromArgb("#E2E8F0");
+                TextColorEx=Color.FromArgb("#1F2933");
+                BorderColor=Color.FromArgb("#64748B");
                 BorderThickness=1;
                 break;
         }

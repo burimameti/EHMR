@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace EHMR.ViewModels.Encounters;
@@ -18,6 +19,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
 {
     private readonly ISelectedItemService<Appointment> _appointmentContext;
     private readonly ISelectedItemService<Patient> _patientContext;
+    private readonly ISelectedItemService<Encounter> _encounterContext;
 
     // ── Side-panel ────────────────────────────────────────────────────────────
     [ObservableProperty]
@@ -25,6 +27,9 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
 
     [ObservableProperty]
     private ImageSource? patientPhotoSource;
+
+    [ObservableProperty]
+    private PatientDocument? latestPatientDocument;
 
     // ── Patient search ────────────────────────────────────────────────────────
     [ObservableProperty]
@@ -51,11 +56,13 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
         INavigationService navigationService,
         IUserDialogService userDialogService,
         ISelectedItemService<Appointment> appointmentContext,
-        ISelectedItemService<Patient> patientContext)
+        ISelectedItemService<Patient> patientContext,
+        ISelectedItemService<Encounter> encounterContext)
         : base(service, navigationService, userDialogService)
     {
         _appointmentContext=appointmentContext;
         _patientContext=patientContext;
+        _encounterContext=encounterContext;
         PageTitle="Нов Преглед";
 
         EncounterMedicines.CollectionChanged+=OnEncounterMedicinesChanged;
@@ -146,7 +153,8 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                 p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)||
                 p.FullName.Contains(cyrillicQuery, StringComparison.OrdinalIgnoreCase)||
                 p.PatientNumber.Contains(query, StringComparison.OrdinalIgnoreCase)||
-                p.NationalId.Contains(query, StringComparison.OrdinalIgnoreCase))
+                p.NationalId.Contains(query, StringComparison.OrdinalIgnoreCase)||
+                p.SzboNumber.Contains(query, StringComparison.OrdinalIgnoreCase))
             .OrderBy(p => p.FullName)
             .Take(8);
 
@@ -170,6 +178,10 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==patient.DoctorId);
 
         await AssignNextAvailableSlotAsync();
+        await LoadTherapyCyclesForPatientAsync(patient.Id);
+        await LoadAppointmentsForPatientAsync(patient.Id);
+        await LoadPatientContextAsync(patient.Id);
+        RefreshSidePanel();
     }
 
     // ── Schedule display ──────────────────────────────────────────────────────
@@ -211,12 +223,16 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     {
         RecentEncounters=new ObservableCollection<Encounter>(
             PatientEncounters
-                .OrderByDescending(e => e.EncounterDate)
-                .Take(5));
+                .OrderByDescending(e => e.EncounterDate));
 
         var photo = PatientDocuments
             .Where(d => !d.IsDeleted&&
                         d.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(d => d.UploadedAt)
+            .FirstOrDefault();
+
+        LatestPatientDocument=PatientDocuments
+            .Where(d => !d.IsDeleted)
             .OrderByDescending(d => d.UploadedAt)
             .FirstOrDefault();
 
@@ -244,10 +260,25 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     [RelayCommand]
     private async Task PreviewDocument(PatientDocument doc)
     {
-        if(doc is null) return;
-        await NavigationService.GoToAsync(
-            AppRoutes.Documents.Preview,
-            new Dictionary<string, object> { ["DocumentId"]=doc.Id });
+        if(doc is null||string.IsNullOrWhiteSpace(doc.StoredPath)) return;
+        if(!File.Exists(doc.StoredPath))
+        {
+            await UserDialogService.ShowAlertAsync("Документ", "Документот не е пронајден на дискот.", "Во ред");
+            return;
+        }
+
+        await Launcher.Default.OpenAsync(new OpenFileRequest(
+            doc.Title,
+            new ReadOnlyFile(doc.StoredPath)));
+    }
+
+    [RelayCommand]
+    private async Task OpenEncounter(Encounter encounter)
+    {
+        if(encounter is null||encounter.Id==Guid.Empty) return;
+        _encounterContext.SelectedItem=encounter;
+        _encounterContext.OpenInEditMode=false;
+        await NavigationService.GoToAsync(AppRoutes.Encounters.Detail);
     }
 
     [RelayCommand]

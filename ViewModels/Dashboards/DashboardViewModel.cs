@@ -125,6 +125,10 @@ public partial class DashboardViewModel : ObservableObject
     // =========================================================
     [ObservableProperty] private DashboardPatientAggregate? previewPatient;
     [ObservableProperty] private ObservableCollection<DashboardEncounterItem> previewRecentVisits = new();
+    [ObservableProperty] private ObservableCollection<int> availableEncounterYears = new();
+    [ObservableProperty] private int selectedEncounterYear = DateTime.Today.Year;
+    [ObservableProperty] private bool hasEncounterYearOptions;
+    private List<Encounter> _previewPatientEncounters = [];
     [ObservableProperty] private ObservableCollection<SparkGridColumn> recentEncounterColumns = new();
     [ObservableProperty] private ObservableCollection<SparkGridRow> recentEncounterRows = new();
     [ObservableProperty] private bool isPreviewPanelOpen;
@@ -156,43 +160,91 @@ public partial class DashboardViewModel : ObservableObject
 
         var lastVisits = await db.Encounters
             .AsNoTracking()
-            .Where(e => e.PatientId==item.Patient.Id&&e.ScheduledStart.HasValue)
-            .OrderByDescending(e => e.ScheduledStart)
+            .Where(e => e.PatientId==item.Patient.Id)
+            .OrderByDescending(e => e.ScheduledStart??e.EncounterDate)
             .ToListAsync();
 
         if(previewVersion!=_patientPreviewVersion) return;
 
-        var visitItems = lastVisits.Select(e => new DashboardEncounterItem
-        {
-            Source=e,
-            PatientName=item.Patient.FullName,
-            // ─── FIX: show ЕМБГ + FullName + date so the panel shows all three
-            NationalId=item.Patient.NationalId,
-            Time=e.ScheduledStart!.Value.Date.ToString("dd.MM.yyyy"),
-            StatusText=EncounterStatusDisplay.TryGetValue(e.Status, out var label) ? label : e.Status.ToString(),
-            StatusColor=EncounterStatusToColor(e.Status)
-        });
+        _previewPatientEncounters=lastVisits;
+        var years=lastVisits
+            .Select(GetEncounterYear)
+            .Distinct()
+            .OrderByDescending(x => x)
+            .ToList();
 
-        PreviewRecentVisits=new ObservableCollection<DashboardEncounterItem>(visitItems);
+        AvailableEncounterYears=new ObservableCollection<int>(years);
+        HasEncounterYearOptions=years.Count>0;
+        SelectedEncounterYear=years.Contains(DateTime.Today.Year)
+            ? DateTime.Today.Year
+            : years.FirstOrDefault(DateTime.Today.Year);
+        ApplyPreviewEncounterYear();
         IsEncounterHistoryMode=true;
         BuildSelectedPatientEncounterGrid();
         BuildSparkButtons();
     }
 
+    partial void OnSelectedEncounterYearChanged(int value)
+    {
+        if(IsEncounterHistoryMode&&_previewPatientEncounters.Count>0)
+            ApplyPreviewEncounterYear();
+    }
+
+    private void ApplyPreviewEncounterYear()
+    {
+        if(PreviewPatient?.Patient is not { } patient)
+            return;
+
+        var visits=_previewPatientEncounters
+            .Where(x => GetEncounterYear(x)==SelectedEncounterYear)
+            .OrderByDescending(x => x.ScheduledStart??x.EncounterDate)
+            .Select(e => new DashboardEncounterItem
+            {
+                Source=e,
+                PatientName=patient.FullName,
+                NationalId=patient.NationalId,
+                SzboNumber=patient.SzboNumber,
+                Time=(e.ScheduledStart??e.EncounterDate).ToString("dd.MM.yyyy"),
+                StatusText=EncounterStatusDisplay.TryGetValue(e.Status, out var label)
+                    ? label
+                    : e.Status.ToString(),
+                StatusColor=EncounterStatusToColor(e.Status)
+            });
+
+        PreviewRecentVisits=new ObservableCollection<DashboardEncounterItem>(visits);
+        BuildSelectedPatientEncounterGrid();
+    }
+
+    private static int GetEncounterYear(Encounter encounter) =>
+        (encounter.ScheduledStart??encounter.EncounterDate).Year;
     [RelayCommand]
     private void ClosePreviewPanel()
     {
         _patientPreviewVersion++;
         PreviewPatient=null;
         PreviewRecentVisits=new ObservableCollection<DashboardEncounterItem>();
+        _previewPatientEncounters=[];
+        AvailableEncounterYears=new ObservableCollection<int>();
+        HasEncounterYearOptions=false;
+        SelectedEncounterYear=DateTime.Today.Year;
         RecentEncounterRows=new ObservableCollection<SparkGridRow>();
         IsPreviewPanelOpen=false;
         IsEncounterHistoryMode=false;
         BuildSparkGridColumns();
-        RefreshSparkGridRows();
+        _searchResults.Clear();
+        FilteredPatients=new ObservableCollection<DashboardPatientAggregate>();
+        GridRows=new ObservableCollection<SparkGridRow>();
+        TotalPages=0;
         BuildSparkButtons();
     }
 
+    [RelayCommand]
+    private async Task PreviewDashboardDocument(PatientDocument document)
+    {
+        if(document is null||string.IsNullOrWhiteSpace(document.StoredPath)||!System.IO.File.Exists(document.StoredPath))
+            return;
+        await Launcher.Default.OpenAsync(new OpenFileRequest(document.Title, new ReadOnlyFile(document.StoredPath)));
+    }
     // =========================================================
     // INFO
     // =========================================================
@@ -217,7 +269,7 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty] private string selectedCity = "All";
     [ObservableProperty] private string selectedAgeGroup = "All";
     [ObservableProperty] private string statusText;
-    [ObservableProperty] private bool useCyrillicSearch;
+    [ObservableProperty] private bool useCyrillicSearch = true;
 
     public ObservableCollection<string> StatusFilters { get; } = PatientFilterLookups.Status.ToObservableCollection();
     public ObservableCollection<string> GenderFilters { get; } = PatientFilterLookups.Gender.ToObservableCollection();
@@ -576,47 +628,18 @@ public partial class DashboardViewModel : ObservableObject
     // =========================================================
     public void ApplySearch(string? query = null)
     {
-        if(query!=null)
+        if(query!=null&&PatientSearchText!=query)
             PatientSearchText=query;
 
-        if(string.IsNullOrWhiteSpace(PatientSearchText))
-        {
-            _searchResults=new List<DashboardPatientAggregate>();
-            FilteredPatients=new ObservableCollection<DashboardPatientAggregate>();
-            FilteredPatientsCount="";
+        if(IsEncounterHistoryMode)
             return;
-        }
 
-        IEnumerable<DashboardPatientAggregate> result = _allPatients;
-        var search = PatientSearchText.Trim();
-        var cyrillicSearch=UseCyrillicSearch ? MacedonianTransliterator.ToCyrillic(search) : search;
-
-        result=result.Where(x =>
-            x.Patient.FullName.Contains(search, StringComparison.OrdinalIgnoreCase)||
-            x.Patient.FullName.Contains(cyrillicSearch, StringComparison.OrdinalIgnoreCase)||
-            x.Patient.NationalId.Contains(search, StringComparison.OrdinalIgnoreCase)||
-            x.Patient.Phone.Contains(search, StringComparison.OrdinalIgnoreCase)||
-            x.Patient.City.Contains(search, StringComparison.OrdinalIgnoreCase));
-
-        if(SelectedStatus!="All")
-            result=result.Where(x => x.Patient.Status.ToString().Equals(SelectedStatus, StringComparison.OrdinalIgnoreCase));
-
-        if(SelectedGender!="All")
-            result=result.Where(x => x.Patient.Gender.ToString().Equals(SelectedGender, StringComparison.OrdinalIgnoreCase));
-
-        if(SelectedBloodType!="All")
-            result=result.Where(x => x.Patient.BloodType.Equals(SelectedBloodType, StringComparison.OrdinalIgnoreCase));
-
-        if(SelectedCity!="All")
-            result=result.Where(x => x.Patient.City.Equals(SelectedCity, StringComparison.OrdinalIgnoreCase));
-
-        if(SelectedAgeGroup!="All")
-            result=result.Where(x => x.Patient.Age.IsInAgeGroup(SelectedAgeGroup));
-
-        _searchResults=result.OrderBy(x => x.State).ToList();
-        TotalPages=Math.Max(1, (int)Math.Ceiling(_searchResults.Count/(double)PageSize));
+        _searchResults.Clear();
+        FilteredPatients=new ObservableCollection<DashboardPatientAggregate>();
+        FilteredPatientsCount="";
+        GridRows=new ObservableCollection<SparkGridRow>();
+        TotalPages=0;
         CurrentPage=1;
-        ProjectPage();
     }
 
     partial void OnCurrentPageChanged(int value) => OnPropertyChanged(nameof(PageInfoText));
@@ -687,7 +710,8 @@ public partial class DashboardViewModel : ObservableObject
                     x.Patient.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)||
                     x.Patient.FullName.Contains(cyrillicQuery, StringComparison.OrdinalIgnoreCase)||
                     x.Patient.PatientNumber.Contains(query, StringComparison.OrdinalIgnoreCase)||
-                    x.Patient.NationalId.Contains(query, StringComparison.OrdinalIgnoreCase))
+                    x.Patient.NationalId.Contains(query, StringComparison.OrdinalIgnoreCase)||
+                    x.Patient.SzboNumber.Contains(query, StringComparison.OrdinalIgnoreCase))
                 .OrderBy(x => x.Patient.FullName)
                 .Take(8));
         ShowPatientSuggestions=PatientSuggestions.Count>0;
@@ -1094,12 +1118,12 @@ public partial class DashboardViewModel : ObservableObject
 
         if(IsEncounterHistoryMode&&PreviewPatient?.Patient is { } patient)
         {
-            Buttons.Add(new SparkButtonItem { Label="Назад кон пациенти", IsPrimary=false, Command=ClosePreviewPanelCommand });
-            Buttons.Add(new SparkButtonItem { Label="Закажи преглед", IsPrimary=true, Command=NewEncounterForSelectedCommand, CommandParameter=patient });
+            Buttons.Add(new SparkButtonItem { Label="Назад", IsPrimary=false, Command=ClosePreviewPanelCommand });
+            Buttons.Add(new SparkButtonItem { Label="Закажи преглед", IsPrimary=false, Command=NewEncounterForSelectedCommand, CommandParameter=patient });
             return;
         }
 
-        Buttons.Add(new SparkButtonItem { Label="✕ Исчисти", IsPrimary=true, Command=ClearFiltersCommand });
+        Buttons.Add(new SparkButtonItem { Label="✕ Исчисти", IsPrimary=false, Command=ClearFiltersCommand });
     }
 
     // =========================================================
@@ -1113,6 +1137,7 @@ public partial class DashboardViewModel : ObservableObject
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
             new() { Header = "ЕМБГ",           Key = "NationalId", Width = new GridLength(1.3, GridUnitType.Star) },
+            new() { Header = "СЗБО БРОЈ",      Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
             // ─── FIX: Hyperlink fires OpenPatientFromGridCommand via HyperlinkCommand binding in XAML
             new() { Header = "ИМЕ И ПРЕЗИМЕ",        Key = "FullName",   Width = new GridLength(2.8, GridUnitType.Star), CellType = SparkGridCellType.Hyperlink },
             new() { Header = "ПОЛ",            Key = "Gender",     Width = new GridLength(0.8, GridUnitType.Star) },
@@ -1128,20 +1153,22 @@ public partial class DashboardViewModel : ObservableObject
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
-            new() { Header="БРОЈ", Key="EncounterNumber", Width=new GridLength(1.5, GridUnitType.Star), CellType=SparkGridCellType.Hyperlink },
-            new() { Header="ДАТУМ НА ПРЕГЛЕД", Key="Date", Width=new GridLength(1.4, GridUnitType.Star) },
+            new() { Header="ИМЕ И ПРЕЗИМЕ", Key="PatientName", Width=new GridLength(2.4, GridUnitType.Star) },
+            new() { Header="МАТИЧЕН БРОЈ", Key="NationalId", Width=new GridLength(1.4, GridUnitType.Star) },
+            new() { Header="СЗБО БРОЈ", Key="SzboNumber", Width=new GridLength(1.25, GridUnitType.Star) },
+            new() { Header="ДАТУМ НА ПРЕГЛЕД", Key="Date", Width=new GridLength(1.5, GridUnitType.Star) },
             new() { Header="СТАТУС", Key="Status", Width=new GridLength(1.1, GridUnitType.Star), CellType=SparkGridCellType.Badge },
-            new() { Header="ПРИЧИНА ЗА ПОСЕТА", Key="Reason", Width=new GridLength(2.5, GridUnitType.Star) },
             new() { Header="ОПЦИИ", Key="Actions", Width=GridLength.Auto, CellType=SparkGridCellType.Actions }
         };
 
         GridRows=new ObservableCollection<SparkGridRow>(PreviewRecentVisits.Select(item =>
         {
             var row=new SparkGridRow { Tag=item };
-            row["EncounterNumber"]=item.Source.EncounterNumber;
+            row["PatientName"]=item.PatientName;
+            row["NationalId"]=PrivacyMaskHelper.MaskNationalId(item.NationalId);
+            row["SzboNumber"]=item.SzboNumber;
             row["Date"]=item.Source.ScheduledStart?.ToString("dd.MM.yyyy HH:mm")??"—";
             row["Status"]=new SparkBadgeValue(item.StatusText, EncounterStatusToTone(item.Source.Status));
-            row["Reason"]=string.IsNullOrWhiteSpace(item.Source.ReasonForVisit) ? "—" : item.Source.ReasonForVisit;
             row["Actions"]=new List<SparkButtonItem>
             {
                 new() { IsPrimary=true, Label="Детали", Command=OpenEncounterFromPreviewCommand, CommandParameter=item }
@@ -1155,6 +1182,7 @@ public partial class DashboardViewModel : ObservableObject
         RecentEncounterColumns=new ObservableCollection<SparkGridColumn>
         {
             new() { Header = "ЕМБГ", Key = "NationalId", Width = new GridLength(1.4, GridUnitType.Star) },
+            new() { Header = "СЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "Patient", Width = new GridLength(2.2, GridUnitType.Star), CellType = SparkGridCellType.Hyperlink },
             new() { Header = "ДАТУМ НА ПРЕГЛЕД", Key = "Date", Width = new GridLength(1.5, GridUnitType.Star) }
         };
@@ -1166,6 +1194,7 @@ public partial class DashboardViewModel : ObservableObject
         {
             var row = new SparkGridRow { Tag=item };
             row["NationalId"]=PrivacyMaskHelper.MaskNationalId(item.NationalId);
+            row["SzboNumber"]=item.SzboNumber;
             row["Date"]=item.Time;
             row["Patient"]=item.PatientName;
             return row;
@@ -1181,6 +1210,7 @@ public partial class DashboardViewModel : ObservableObject
             var row = new SparkGridRow { Tag=item };
 
             row["NationalId"]=PrivacyMaskHelper.MaskNationalId(patient.NationalId);
+            row["SzboNumber"]=patient.SzboNumber;
             row["FullName"]=patient.FullName;
             row["City"]=patient.City;
             row["Gender"]=patient.Gender.ToDisplay();
@@ -1319,6 +1349,7 @@ public partial class DashboardViewModel : ObservableObject
                 Source=x.Encounter,
                 PatientName=x.Patient.FullName,
                 NationalId=x.Patient.NationalId,
+                SzboNumber=x.Patient.SzboNumber,
                 Time=x.Encounter.ScheduledStart!.Value.ToString("HH:mm"),
                 StatusText=EncounterStatusDisplay.TryGetValue(x.Encounter.Status, out var lbl) ? lbl : x.Encounter.Status.ToString(),
                 StatusColor=EncounterStatusToColor(x.Encounter.Status)
@@ -1427,7 +1458,6 @@ public partial class DashboardViewModel : ObservableObject
     private void InitializeSparkControls()
     {
         BuildSparkTabs();
-        BuildSparkPickers();
         BuildSparkButtons();
         BuildSparkGridColumns();
         BuildRecentEncounterColumns();

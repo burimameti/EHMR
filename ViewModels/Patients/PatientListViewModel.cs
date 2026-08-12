@@ -28,6 +28,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     [ObservableProperty] private string selectedAgeGroup = "All";
 
     [ObservableProperty] private string filteredPatientCount = "";
+    [ObservableProperty] private bool useCyrillicSearch = true;
     private bool _sparkInitialized;
     // ================= QUERY STATE (deep-link support) =================
     private string? _pendingSearch;
@@ -166,15 +167,25 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     {
         if(string.IsNullOrWhiteSpace(search)) return query;
 
-        var s = search.Trim();
+        var s=search.Trim();
+        var cyrillicSearch=UseCyrillicSearch
+            ? MacedonianTransliterator.ToCyrillic(s)
+            : s;
+
         return query.Where(x =>
-            (!string.IsNullOrWhiteSpace(x.FullName)&&x.FullName.Contains(s, StringComparison.OrdinalIgnoreCase))||
+            (!string.IsNullOrWhiteSpace(x.FullName)&&(
+                x.FullName.Contains(s, StringComparison.OrdinalIgnoreCase)||
+                x.FullName.Contains(cyrillicSearch, StringComparison.OrdinalIgnoreCase)))||
             (!string.IsNullOrWhiteSpace(x.NationalId)&&x.NationalId.Contains(s, StringComparison.OrdinalIgnoreCase))||
+            (!string.IsNullOrWhiteSpace(x.SzboNumber)&&x.SzboNumber.Contains(s, StringComparison.OrdinalIgnoreCase))||
             (!string.IsNullOrWhiteSpace(x.Phone)&&x.Phone.Contains(s, StringComparison.OrdinalIgnoreCase))||
-            (!string.IsNullOrWhiteSpace(x.City)&&x.City.Contains(s, StringComparison.OrdinalIgnoreCase))
+            (!string.IsNullOrWhiteSpace(x.City)&&(
+                x.City.Contains(s, StringComparison.OrdinalIgnoreCase)||
+                x.City.Contains(cyrillicSearch, StringComparison.OrdinalIgnoreCase)))
         );
     }
 
+    partial void OnUseCyrillicSearchChanged(bool value) => ApplyPipeline();
     protected override IEnumerable<Patient> ApplyFilters(IEnumerable<Patient> query)
     {
         if(SelectedStatus!="All")
@@ -367,6 +378,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         {
                  new() { Header = "БРОЈ НА ПАЦИЕНТ", Key = "PatientNumber", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "ЕМБГ", Key = "NationalId", Width = new GridLength(1.3, GridUnitType.Star) },
+            new() { Header = "СЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "FullName", Width = new GridLength(2.8, GridUnitType.Star) },
             new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.8, GridUnitType.Star) },
             new() { Header = "ВОЗРАСТ", Key = "Age", CellType = SparkGridCellType.Number, Width = new GridLength(0.9, GridUnitType.Star) },
@@ -386,6 +398,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             var row = new SparkGridRow { Tag=p };
             row["PatientNumber"]=p.PatientNumber;
             row["NationalId"]=PrivacyMaskHelper.MaskNationalId(p.NationalId);
+            row["SzboNumber"]=p.SzboNumber;
             row["FullName"]=p.FullName;
             row["Gender"]=p.Gender.ToDisplay();
             row["Age"]=p.Age;

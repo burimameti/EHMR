@@ -1,4 +1,4 @@
-﻿namespace EHMR.Domain.Entities;
+namespace EHMR.Domain.Entities;
 
 /// <summary>
 /// Join entity between Patient and Medicine. Carries the per-patient
@@ -16,6 +16,9 @@ public class PatientMedicine : BaseEntity
     {
         get; set;
     }
+
+    public Guid? EncounterId { get; set; }
+    public Encounter? Encounter { get; set; }
 
     public Guid MedicineId
     {

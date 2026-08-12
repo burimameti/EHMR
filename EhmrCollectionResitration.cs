@@ -1,4 +1,4 @@
-﻿using EHMR.Abstraction;
+using EHMR.Abstraction;
 using EHMR.Backups.Encryption;
 using EHMR.Backups.Engine;
 using EHMR.Backups.Interfaces;
@@ -154,6 +154,7 @@ namespace EHMR
             services.AddScoped<IEntitySeeder, DiagnosisSeeder>();
             services.AddScoped<IEntitySeeder, DocumentSeeder>();
             services.AddScoped<IEntitySeeder, EncounterSeeder>();
+            services.AddScoped<IEntitySeeder, ClinicalScenarioSeeder>();
 
             services.AddScoped<IEntitySeeder, UserSeeder>();
             services.AddScoped<IEntitySeeder, UserScopeSeeder>();

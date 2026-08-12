@@ -50,22 +50,14 @@ public class EncounterDetailService : IEncounterDetailService
     public async Task<DateTime> GetNextAvailableSlot(
         Guid doctorId,
         DateTime from,
-        int durationMinutes = 30)
+        int durationMinutes = 30,
+        Guid? patientId = null)
     {
         if(doctorId==Guid.Empty)
             return from;
 
         var slotMinutes=Math.Max(5, durationMinutes);
-        var candidate=new DateTime(
-            from.Year,
-            from.Month,
-            from.Day,
-            from.Hour,
-            from.Minute<30 ? 30 : 0,
-            0);
-
-        if(from.Minute>=30)
-            candidate=candidate.AddHours(1);
+        var candidate=NormalizeWorkingSlot(from, slotMinutes);
 
         await using var db = await _factory.CreateDbContextAsync();
         var searchUntil=candidate.AddDays(30);
@@ -73,7 +65,7 @@ public class EncounterDetailService : IEncounterDetailService
         var appointments=await db.Appointments
             .AsNoTracking()
             .Where(x =>
-                x.DoctorId==doctorId&&
+                (x.DoctorId==doctorId||(patientId.HasValue&&x.PatientId==patientId.Value))&&
                 x.Status!=AppointmentStatus.Cancelled&&
                 x.Status!=AppointmentStatus.Missed&&
                 x.ScheduledStart<searchUntil&&
@@ -84,7 +76,7 @@ public class EncounterDetailService : IEncounterDetailService
         var encounters=await db.Encounters
             .AsNoTracking()
             .Where(x =>
-                x.DoctorId==doctorId&&
+                (x.DoctorId==doctorId||(patientId.HasValue&&x.PatientId==patientId.Value))&&
                 x.Status!=EncounterStatus.Cancelled&&
                 x.Status!=EncounterStatus.NoShow&&
                 x.ScheduledStart.HasValue&&
@@ -111,16 +103,31 @@ public class EncounterDetailService : IEncounterDetailService
             if(conflict==default)
                 return candidate;
 
-            candidate=new DateTime(
-                conflict.End.Year,
-                conflict.End.Month,
-                conflict.End.Day,
-                conflict.End.Hour,
-                conflict.End.Minute<30 ? 30 : 0,
-                0);
+            candidate=NormalizeWorkingSlot(conflict.End, slotMinutes);
+        }
 
-            if(conflict.End.Minute>=30)
-                candidate=candidate.AddHours(1);
+        return candidate;
+    }
+    private static DateTime NormalizeWorkingSlot(DateTime value, int durationMinutes)
+    {
+        var candidate=new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, 0);
+        var remainder=candidate.Minute%30;
+        if(remainder!=0)
+            candidate=candidate.AddMinutes(30-remainder);
+        else if(candidate<value)
+            candidate=candidate.AddMinutes(30);
+
+        while(candidate.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+            candidate=candidate.Date.AddDays(1).AddHours(9);
+
+        if(candidate.TimeOfDay<TimeSpan.FromHours(9))
+            candidate=candidate.Date.AddHours(9);
+
+        if(candidate.TimeOfDay.Add(TimeSpan.FromMinutes(durationMinutes))>TimeSpan.FromHours(17))
+        {
+            candidate=candidate.Date.AddDays(1).AddHours(9);
+            while(candidate.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                candidate=candidate.Date.AddDays(1).AddHours(9);
         }
 
         return candidate;
@@ -326,18 +333,39 @@ public class EncounterDetailService : IEncounterDetailService
 
     // ── Search ───────────────────────────────────────────────────────────────
 
-    public async Task<List<Mkb10Code>> SearchDiagnoses(string query, CancellationToken token)
+    public async Task<List<Mkb10Code>> SearchDiagnoses(
+        string query,
+        CancellationToken token,
+        string? codeSection = null,
+        string? descriptionQuery = null)
     {
         await using var db = await _factory.CreateDbContextAsync();
-        if(string.IsNullOrWhiteSpace(query)) return [];
 
-        query=query.Trim();
-        return await db.Mkb10Codes
-            .AsNoTracking()
-            .Where(x => x.Code.StartsWith(query)||
-                        EF.Functions.Like(x.Description, $"%{query}%"))
+        query=(query??string.Empty).Trim();
+        descriptionQuery=(descriptionQuery??string.Empty).Trim();
+        codeSection=string.IsNullOrWhiteSpace(codeSection)
+            ? null
+            : codeSection.Trim().ToUpperInvariant();
+
+        var codes=db.Mkb10Codes.AsNoTracking().AsQueryable();
+
+        if(codeSection!=null)
+            codes=codes.Where(x => x.Code.StartsWith(codeSection));
+
+        if(query.Length>0)
+        {
+            var codeQuery=query.ToUpperInvariant();
+            codes=codes.Where(x => x.Code.Contains(codeQuery));
+        }
+
+        if(descriptionQuery.Length>0)
+            codes=codes.Where(x => EF.Functions.Like(
+                x.Description,
+                $"%{descriptionQuery}%"));
+
+        return await codes
             .OrderBy(x => x.Code)
-            .Take(30)
+            .Take(50)
             .ToListAsync(token);
     }
 
@@ -596,6 +624,7 @@ public class EncounterDetailService : IEncounterDetailService
                     {
                         Id=vm.Id==Guid.Empty ? Guid.NewGuid() : vm.Id,
                         PatientId=encounter.PatientId,
+                        EncounterId=encounter.Id,
                         MedicineId=vm.MedicineId,
                         Dosage=vm.Dosage,
                         DosesFrequency=vm.DosesFrequency,
@@ -607,6 +636,7 @@ public class EncounterDetailService : IEncounterDetailService
                 }
                 else
                 {
+                    entity.EncounterId=encounter.Id;
                     entity.MedicineId=vm.MedicineId;
                     entity.Dosage=vm.Dosage;
                     entity.DosesFrequency=vm.DosesFrequency;
@@ -685,7 +715,7 @@ public class EncounterDetailService : IEncounterDetailService
             EncounterDate=appointment.ScheduledStart,
             ScheduledStart=appointment.ScheduledStart,
             ScheduledEnd=appointment.ScheduledEnd,
-            ReasonForVisit=appointment.ReasonForVisit,
+            ReasonForVisit=null,
             Notes=appointment.ClinicalNotes,
             VisitSource="Appointment",
             Status=EncounterStatus.Scheduled,

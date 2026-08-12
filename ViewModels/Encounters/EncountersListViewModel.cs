@@ -31,6 +31,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     [ObservableProperty] private string selectedPriority = "All";
     [ObservableProperty] private string selectedEncounterType = "All";
     [ObservableProperty] private string selectedDoctor = "All";
+    [ObservableProperty] private bool useCyrillicSearch = true;
 
     protected override string ModuleName => "encounters";
     protected override string PermissionDeniedMessage => "Немате авторизација за креирање прегледи.";
@@ -143,6 +144,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         {
             new() { Header = "БРОЈ", Key = "EncounterNumber", Width = new GridLength(1.1, GridUnitType.Star) },
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "PatientName", Width = new GridLength(2, GridUnitType.Star) },
+            new() { Header = "СЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.2, GridUnitType.Star) },
             new() { Header = "РЕУМАТОЛОГ", Key = "DoctorName", Width = new GridLength(1.8, GridUnitType.Star) },
             new() { Header = "ТИП", Key = "EncounterType", Width = new GridLength(1.2, GridUnitType.Star) },
             new() { Header = "ПРИОРИТЕТ", Key = "Priority", CellType = SparkGridCellType.Badge, Width = new GridLength(1, GridUnitType.Star) },
@@ -160,6 +162,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
             var row = new SparkGridRow { Tag=e };
             row["EncounterNumber"]=e.EncounterNumber;
             row["PatientName"]=e.Patient!=null ? $"{e.Patient.FirstName} {e.Patient.LastName}" : "";
+            row["SzboNumber"]=e.Patient?.SzboNumber??"—";
             row["DoctorName"]=e.Doctor?.User!=null ? $"{e.Doctor.User.FirstName} {e.Doctor.User.LastName}" : "";
             row["EncounterType"]=EncounterTypeSchema.ToDisplay(e.EncounterType);
             row["Priority"]=new SparkBadgeValue(
@@ -436,6 +439,12 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     // =====================================================
     // PIPELINE HOOKS
     // =====================================================
+    partial void OnUseCyrillicSearchChanged(bool value)
+    {
+        ApplyPipeline();
+        OnSearchTextChanged(SearchText);
+    }
+
     protected override void OnSearchTextChanged(string value)
     {
         if(_isSelectingEncounterSuggestion) return;
@@ -471,12 +480,18 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         if(string.IsNullOrWhiteSpace(search)) return query;
 
         var term = search.Trim();
+        var cyrillicTerm=UseCyrillicSearch ? EHMR.Helpers.MacedonianTransliterator.ToCyrillic(term) : term;
         return query.Where(x =>
             (x.EncounterNumber??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
-            (x.Patient!=null&&(x.Patient.FirstName+" "+x.Patient.LastName).Contains(term, StringComparison.OrdinalIgnoreCase))||
-            (x.Doctor!=null&&(x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(term, StringComparison.OrdinalIgnoreCase))||
+            (x.Patient!=null&&((x.Patient.FirstName+" "+x.Patient.LastName).Contains(term, StringComparison.OrdinalIgnoreCase)||
+                                 (x.Patient.FirstName+" "+x.Patient.LastName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)||
+                                 x.Patient.SzboNumber.Contains(term, StringComparison.OrdinalIgnoreCase)))||
+            (x.Doctor!=null&&((x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(term, StringComparison.OrdinalIgnoreCase)||
+                                (x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)))||
             (x.ChiefComplaint??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
-            (x.ReasonForVisit??"").Contains(term, StringComparison.OrdinalIgnoreCase)
+            (x.ChiefComplaint??"").Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)||
+            (x.ClinicalNotes??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
+            (x.ClinicalNotes??"").Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)
         );
     }
 

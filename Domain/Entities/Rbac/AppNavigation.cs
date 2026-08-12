@@ -36,6 +36,36 @@ public static class AppNavigation
             //]
         },
         // ==========================
+        // PATIENTS (ПАЦИЕНТИ)
+        // ==========================
+        new()
+        {
+            GroupTitle="Пациенти",
+            Route=AppRoutes.Patients.List,
+            Module=Modules.Patients,
+            Icon=AppGroupIcons.Patients,
+            Items=
+            [
+                new()
+                {
+                    Title="Регистар на пациенти",
+                    Route=AppRoutes.Patients.List,
+                    Module=Modules.Patients,
+                    RequiredAction=ModuleAction.View,
+                    Icon=new IconDefinition { Glyph="\uf03a", Font=IconFontType.FontAwesomeSolid }
+                },
+                new()
+                {
+                    Title="Нов пациент",
+                    Route=AppRoutes.Patients.Detail,
+                    Module=Modules.Patients,
+                    RequiredAction=ModuleAction.Create,
+                    StartsNewRecord=true,
+                    Icon=new IconDefinition { Glyph="\uf234", Font=IconFontType.FontAwesomeSolid }
+                }
+            ]
+        },
+        // ==========================
         // ENCOUNTERS (ПРЕГЛЕДИ)
         // ==========================
         new()

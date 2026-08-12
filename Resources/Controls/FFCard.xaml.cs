@@ -126,8 +126,8 @@ public partial class FFCard : Border
     {
         StrokeThickness=1;
         Background=null;
-        SetDynamicResource(BackgroundProperty, "Surface");
-        SetDynamicResource(StrokeProperty, "BorderStuble");
+        SetDynamicResource(BackgroundProperty, "SparkContentBackground");
+        SetDynamicResource(StrokeProperty, "SparkCardBorder");
 
         Shadow=CreateShadow(0.06f, 0, 4, 16);
     }
@@ -135,7 +135,7 @@ public partial class FFCard : Border
     private void ApplyElevated()
     {
         StrokeThickness=0;
-        SetDynamicResource(BackgroundProperty, "Surface");
+        SetDynamicResource(BackgroundProperty, "SparkContentBackground");
         SetDynamicResource(StrokeProperty, "Transparent");
 
         Shadow=CreateShadow(0.08f, 0, 8, 22);
@@ -144,7 +144,7 @@ public partial class FFCard : Border
     private void ApplyFlat()
     {
         StrokeThickness=0;
-        SetDynamicResource(BackgroundProperty, "Surface");
+        SetDynamicResource(BackgroundProperty, "SparkContentBackground");
         SetDynamicResource(StrokeProperty, "Transparent");
 
         Shadow=null;
@@ -153,8 +153,8 @@ public partial class FFCard : Border
     private void ApplyOutlined()
     {
         StrokeThickness=1;
-        SetDynamicResource(BackgroundProperty, "Surface");
-        SetDynamicResource(StrokeProperty, "Border");
+        SetDynamicResource(BackgroundProperty, "SparkContentBackground");
+        SetDynamicResource(StrokeProperty, "SparkCardBorder");
 
         Shadow=null;
     }
@@ -162,8 +162,8 @@ public partial class FFCard : Border
     private void ApplySoft()
     {
         StrokeThickness=1;
-        SetDynamicResource(BackgroundProperty, "SurfaceVariant");
-        SetDynamicResource(StrokeProperty, "BorderColor");
+        SetDynamicResource(BackgroundProperty, "SparkBackgroundAlt");
+        SetDynamicResource(StrokeProperty, "SparkCardBorder");
 
         Shadow=CreateShadow(0.04f, 0, 2, 10);
     }

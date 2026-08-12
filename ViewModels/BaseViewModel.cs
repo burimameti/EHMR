@@ -446,7 +446,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     protected virtual void AddDefaultActions(
      T item,
      SparkGridRow row,
-     string detailLabel = "Детали",
+     string detailLabel = "Повеќе",
      string editLabel = "✎",
      Func<T, bool>? canEditPredicate = null)
     {
@@ -454,7 +454,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     {
         new SparkButtonItem
         {
-            IsPrimary=true,
+            IsPrimary=false,
             IconGlyph="👁",
             Label=detailLabel,
             Command=SelectCommand,

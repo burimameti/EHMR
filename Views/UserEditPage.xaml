@@ -101,7 +101,7 @@
 							FontSize="12"
 							HeightRequest="40"
 							IsVisible="{Binding IsEditMode}"
-							Text="💾 Зачувај Запис"
+							Text="💾 Зачувај"
 							TextColor="White" />
 					</HorizontalStackLayout>
 				</Grid>
@@ -124,12 +124,9 @@
 										FontSize="18"
 										Text="👤"
 										VerticalOptions="Center" />
-									<Label
-										FontAttributes="Bold"
-										FontSize="16"
-										Text="Профил на Корисник"
-										TextColor="#0F172A"
-										VerticalOptions="Center" />
+									<Border Style="{StaticResource SectionPillBorderStyle}">
+										<Label Style="{StaticResource SectionPillLabelStyle}" Text="Профил на Корисник" />
+									</Border>
 								</HorizontalStackLayout>
 
 								<Grid
@@ -256,12 +253,9 @@
 											FontSize="18"
 											Text="🔐"
 											VerticalOptions="Center" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="16"
-											Text="Експлицитни Системски Дозволи"
-											TextColor="#0F172A"
-											VerticalOptions="Center" />
+										<Border Style="{StaticResource SectionPillBorderStyle}">
+											<Label Style="{StaticResource SectionPillLabelStyle}" Text="Експлицитни Системски Дозволи" />
+										</Border>
 									</HorizontalStackLayout>
 
 									<Button
@@ -326,12 +320,9 @@
 							StrokeShape="RoundRectangle 16"
 							StrokeThickness="1">
 							<VerticalStackLayout Spacing="14">
-								<Label
-									CharacterSpacing="0.5"
-									FontAttributes="Bold"
-									FontSize="11"
-									Text="СИСТЕМСКА УЛОГА (ROLE) *"
-									TextColor="#475569" />
+								<Border Style="{StaticResource SectionPillBorderStyle}">
+									<Label Style="{StaticResource SectionPillLabelStyle}" Text="СИСТЕМСКА УЛОГА (ROLE) *" />
+								</Border>
 								<Grid>
 									<Border
 										Padding="12,6"
@@ -400,12 +391,9 @@
 							StrokeShape="RoundRectangle 16"
 							StrokeThickness="1">
 							<VerticalStackLayout Spacing="14">
-								<Label
-									CharacterSpacing="0.5"
-									FontAttributes="Bold"
-									FontSize="11"
-									Text="ПОЗИЦИЈА / ОДДЕЛ (POSITION) *"
-									TextColor="#475569" />
+								<Border Style="{StaticResource SectionPillBorderStyle}">
+									<Label Style="{StaticResource SectionPillLabelStyle}" Text="ПОЗИЦИЈА / ОДДЕЛ (POSITION) *" />
+								</Border>
 								<Grid>
 									<Border
 										Padding="12,6"

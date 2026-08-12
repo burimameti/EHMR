@@ -11,7 +11,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="ThisPage"
 	x:DataType="viewModels:DashboardViewModel"
-	BackgroundColor="{StaticResource SparkBackground}">
+	BackgroundColor="{StaticResource SparkBorder}">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
@@ -20,7 +20,7 @@
 
 			<Style
 				x:Key="DashboardSummaryCard"
-				BasedOn="{StaticResource PageHeaderCardStyle1}"
+				BasedOn="{StaticResource PageHeaderCardStyle}"
 				TargetType="Border">
 				<Setter Property="Padding" Value="20" />
 			</Style>
@@ -72,7 +72,72 @@
 				<Setter Property="StrokeThickness" Value="1" />
 				<Setter Property="StrokeShape" Value="RoundRectangle 9" />
 			</Style>
-
+			<DataTemplate x:Key="DashboardDiagnosisHistoryTemplate" x:DataType="domain:Diagnosis">
+				<Border
+					Margin="0,0,0,6"
+					Padding="10,8"
+					BackgroundColor="{StaticResource SparkContentBackground}"
+					Stroke="{StaticResource SparkBorder}"
+					StrokeShape="RoundRectangle 10"
+					StrokeThickness="1">
+					<Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+						<Label
+							FontAttributes="Bold"
+							FontSize="12.5"
+							Text="{Binding Mkb10Code.Code}"
+							TextColor="{StaticResource SparkAccentTealDark}" />
+						<Label
+							Grid.Column="1"
+							FontSize="11.5"
+							Text="{Binding Mkb10Code.Description}"
+							TextColor="{StaticResource SparkTextPrimary}" />
+					</Grid>
+				</Border>
+			</DataTemplate>
+			<DataTemplate x:Key="DashboardAppointmentHistoryTemplate" x:DataType="domain:Appointment">
+				<Border
+					Margin="0,0,0,6"
+					Padding="10,8"
+					BackgroundColor="{StaticResource SparkContentBackground}"
+					Stroke="{StaticResource SparkBorder}"
+					StrokeShape="RoundRectangle 10"
+					StrokeThickness="1">
+					<Grid ColumnDefinitions="*,Auto">
+						<Label
+							FontAttributes="Bold"
+							FontSize="12.5"
+							Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+							TextColor="{StaticResource SparkTextPrimary}" />
+						<Label
+							Grid.Column="1"
+							FontSize="11.5"
+							Text="{Binding Status}"
+							TextColor="{StaticResource SparkAccentTealDark}" />
+					</Grid>
+				</Border>
+			</DataTemplate>
+			<DataTemplate x:Key="DashboardMedicineHistoryTemplate" x:DataType="domain:PatientMedicine">
+				<Border
+					Margin="0,0,0,6"
+					Padding="10,8"
+					BackgroundColor="{StaticResource SparkContentBackground}"
+					Stroke="{StaticResource SparkBorder}"
+					StrokeShape="RoundRectangle 10"
+					StrokeThickness="1">
+					<Grid ColumnDefinitions="*,Auto">
+						<Label
+							FontAttributes="Bold"
+							FontSize="12.5"
+							Text="{Binding Medicine.Name}"
+							TextColor="{StaticResource SparkTextPrimary}" />
+						<Label
+							Grid.Column="1"
+							FontSize="11.5"
+							Text="{Binding Dosage}"
+							TextColor="{StaticResource SparkAccentTealDark}" />
+					</Grid>
+				</Border>
+			</DataTemplate>
 		</ResourceDictionary>
 	</ContentPage.Resources>
 
@@ -86,9 +151,9 @@
 		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
-			Margin="12,0,12,12"
-			RowDefinitions="Auto,*"
-			RowSpacing="0">
+			Margin="0,0,0,0"
+			RowDefinitions="88,*"
+			RowSpacing="6">
 
 			<!--  ===================================================  -->
 			<!--  HEADER  -->
@@ -118,7 +183,6 @@
 					-->
 					<HorizontalStackLayout
 						Grid.Column="1"
-						Margin="1,0"
 						BindableLayout.ItemsSource="{Binding State.AlertSummaries}"
 						Spacing="10"
 						VerticalOptions="Center">
@@ -183,68 +247,63 @@
 					</HorizontalStackLayout>-->
 				</Grid>
 			</Border>
+			<Border Grid.Row="1" Style="{StaticResource PageHeaderCardStyle}">
+				<!--  MAIN SCROLL AREA  -->
+				<ScrollView
+					Grid.Row="1"
+					Style="{StaticResource BaseInputStyle}"
+					VerticalScrollBarVisibility="Never">
+					<VerticalStackLayout Spacing="22">
 
-			<!--  MAIN SCROLL AREA  -->
-			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-				<VerticalStackLayout Spacing="0">
-
-					<!--  ===================================================  -->
-					<!--
-						KPI STRIP
-						
-						These numbers were already computed on every dashboard load but
-						nothing rendered them. Uses FFMetricTile so the dashboard matches
-						the admin dashboard's design system rather than hand-rolled cards.
-					-->
-					<!--  ===================================================  -->
-					<Border Style="{StaticResource PageHeaderCardStyle}">
-						<FlexLayout
-							AlignItems="Center"
-							BindableLayout.ItemsSource="{Binding Kpis}"
-							Direction="Row"
-							JustifyContent="SpaceBetween"
-							Wrap="Wrap">
-							<BindableLayout.ItemTemplate>
-								<DataTemplate x:DataType="admin:FFMetricTileItem">
-									<controls:FFMetricTile
-										Title="{Binding Title}"
-										Margin="0,0,8,2"
-										Command="{Binding Command}"
-										CommandParameter="{Binding CommandParameter}"
-										DisplayMode="Metric"
-										Icon="{Binding Icon}"
-										MinimumHeightRequest="92"
-										MinimumWidthRequest="240"
-										Subtitle="{Binding Subtitle}"
-										Variant="{Binding Variant}"
-										Value="{Binding Value}" />
-								</DataTemplate>
-							</BindableLayout.ItemTemplate>
-						</FlexLayout>
-					</Border>
-
-					<!--  ===================================================  -->
-					<!--  ===================================================  -->
-
-					<!--  ===================================================  -->
-					<!--  PATIENT EXPLORER  -->
-					<!--  ===================================================  -->
-					<Border
-						Grid.Row="1"
-						Padding="0"
-						Style="{StaticResource PageHeaderCardStyle}">
 						<!--  ===================================================  -->
-						<!--  PATIENT EXPLORER + PREVIEW PANEL  -->
+						<!--
+							KPI STRIP
+							
+							These numbers were already computed on every dashboard load but
+							nothing rendered them. Uses FFMetricTile so the dashboard matches
+							the admin dashboard's design system rather than hand-rolled cards.
+						-->
 						<!--  ===================================================  -->
+						<Border Style="{StaticResource PageHeaderCardStyle1}">
+							<FlexLayout
+								AlignItems="Center"
+								BindableLayout.ItemsSource="{Binding Kpis}"
+								Direction="Row"
+								JustifyContent="SpaceBetween"
+								Wrap="Wrap">
+								<BindableLayout.ItemTemplate>
+									<DataTemplate x:DataType="admin:FFMetricTileItem">
+										<controls:FFMetricTile
+											Title="{Binding Title}"
+											Margin="0,0,8,2"
+											Command="{Binding Command}"
+											CommandParameter="{Binding CommandParameter}"
+											DisplayMode="Metric"
+											Icon="{Binding Icon}"
+											MinimumHeightRequest="92"
+											MinimumWidthRequest="240"
+											Subtitle="{Binding Subtitle}"
+											Variant="{Binding Variant}"
+											Value="{Binding Value}" />
+									</DataTemplate>
+								</BindableLayout.ItemTemplate>
+							</FlexLayout>
+						</Border>
+
+						<!--  ===================================================  -->
+						<!--  ===================================================  -->
+
+						<!--  ===================================================  -->
+						<!--  PATIENT EXPLORER  -->
+						<!--  ===================================================  -->
+
 						<Grid ColumnDefinitions="*" ColumnSpacing="6">
 
-							<Border Padding="10" Style="{StaticResource PageHeaderCardStyle}">
-								<VerticalStackLayout Spacing="0">
+							<Border Padding="10" Style="{StaticResource PageHeaderCardStyle1}">
+								<VerticalStackLayout Spacing="22">
 
 									<controls:SparkExplorerHeaderView
 										Buttons="{Binding Buttons}"
-										Pickers="{Binding Pickers}"
-										SearchCommand="{Binding SearchCommand}"
 										SearchPlaceholder="Пребарување на пациенти..."
 										SearchText="{Binding PatientSearchText}"
 										SelectedSuggestion="{Binding SelectedPatientSuggestion, Mode=TwoWay}"
@@ -263,7 +322,7 @@
 													Stroke="{StaticResource SparkBorderSubtle}"
 													StrokeShape="RoundRectangle 2"
 													StrokeThickness="1.2">
-													<Grid ColumnDefinitions="1.8*,1.2*,1*" ColumnSpacing="16">
+													<Grid ColumnDefinitions="1.7*,1.1*,1.1*,1*" ColumnSpacing="14">
 														<VerticalStackLayout Spacing="1">
 															<Label
 																FontSize="10"
@@ -289,6 +348,17 @@
 														<VerticalStackLayout Grid.Column="2" Spacing="1">
 															<Label
 																FontSize="10"
+																Text="СЗБО број"
+																TextColor="{StaticResource SparkAccentTealDark}" />
+															<Label
+																FontAttributes="Bold"
+																FontSize="12"
+																Text="{Binding Patient.SzboNumber}"
+																TextColor="{StaticResource SparkTextPrimary}" />
+														</VerticalStackLayout>
+														<VerticalStackLayout Grid.Column="3" Spacing="1">
+															<Label
+																FontSize="10"
 																Text="Последен преглед"
 																TextColor="{StaticResource SparkAccentTealDark}" />
 															<Label
@@ -302,6 +372,44 @@
 											</DataTemplate>
 										</controls:SparkExplorerHeaderView.SuggestionTemplate>
 									</controls:SparkExplorerHeaderView>
+
+									<Grid
+										Margin="0,8,0,10"
+										ColumnDefinitions="*,Auto"
+										ColumnSpacing="12"
+										IsVisible="{Binding IsEncounterHistoryMode}">
+										<Border Style="{StaticResource SectionPillBorderStyle}">
+											<Label Style="{StaticResource SectionPillLabelStyle}" Text="ПРЕГЛЕДИ НА ИЗБРАН ПАЦИЕНТ" />
+										</Border>
+										<HorizontalStackLayout
+											Grid.Column="1"
+											IsVisible="{Binding HasEncounterYearOptions}"
+											Spacing="8"
+											VerticalOptions="Center">
+											<Label
+												FontAttributes="Bold"
+												FontSize="11.5"
+												Text="Година"
+												TextColor="{StaticResource SparkTextSecondary}"
+												VerticalOptions="Center" />
+											<Border
+												Padding="8,0"
+												BackgroundColor="{StaticResource SparkContentBackground}"
+												HeightRequest="36"
+												Stroke="{StaticResource SparkBorderSubtle}"
+												StrokeShape="RoundRectangle 8"
+												StrokeThickness="1"
+												WidthRequest="105">
+												<Picker
+													BackgroundColor="Transparent"
+													FontSize="12"
+													ItemsSource="{Binding AvailableEncounterYears}"
+													SelectedItem="{Binding SelectedEncounterYear, Mode=TwoWay}"
+													TextColor="{StaticResource SparkTextPrimary}"
+													VerticalOptions="Center" />
+											</Border>
+										</HorizontalStackLayout>
+									</Grid>
 
 									<controls:SparkDataGridView
 										AutoSelectFirstRow="False"
@@ -320,30 +428,26 @@
 								</VerticalStackLayout>
 							</Border>
 
-							<!--  PREVIEW PANEL — appears to the right when a row is selected  -->
+
 
 						</Grid>
-					</Border>
 
-					<!--  ===================================================  -->
-					<!--  BOTTOM ROW — BOTH CARDS USE APPOINTMENTS  -->
-					<!--  ===================================================  -->
 
-					<Grid
-						Margin="0,12,0,0"
-						Padding="0"
-						ColumnDefinitions="*"
-						ColumnSpacing="0">
+
+
 
 						<!--  ── Термини по датум ────────────────────────────  -->
-						<Border Style="{StaticResource AppointmentCardStyle}">
-							<VerticalStackLayout Padding="16,14" Spacing="12">
+						<Border Style="{StaticResource PageCardStyle}">
+							<VerticalStackLayout
+								Padding="16,14"
+								Spacing="8"
+								Style="{StaticResource FFInputContainerStyle}">
 
 								<Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
 									<VerticalStackLayout Spacing="1">
-										<Label Style="{StaticResource DashboardCardTitle}" Text="Термини по датум" />
+										<Label Style="{StaticResource PageHeaderSubtitleStyle}" Text="Термини по датум" />
 										<Label
-											FontSize="10"
+											FontSize="11"
 											Text="{Binding SelectedDate, StringFormat='{0:dddd, dd MMMM yyyy}'}"
 											TextColor="{StaticResource SparkTextMuted}" />
 									</VerticalStackLayout>
@@ -424,17 +528,18 @@
 
 									<!--  caption above the day strip  -->
 									<Label
-										FontSize="11"
+										FontSize="12"
 										Text="Изберете од неделните датуми"
-										TextColor="{StaticResource SparkTextMuted}" />
+										TextColor="{StaticResource SparkAccentTeal}" />
 
 									<!--
 										Day navigator — clean, no negative padding / oversized fonts (that overflow was
 										blocking touch on the tiles), small refined calendar icon on its own row
 									-->
 									<Grid
-										ColumnDefinitions="Auto,*,Auto"
+										ColumnDefinitions="Auto,Auto,Auto"
 										ColumnSpacing="6"
+										HorizontalOptions="Start"
 										VerticalOptions="Center">
 
 										<Border
@@ -450,6 +555,13 @@
 											<Border.StrokeShape>
 												<RoundRectangle CornerRadius="6" />
 											</Border.StrokeShape>
+											<Border.Shadow>
+												<Shadow
+													Brush="#334155"
+													Opacity="0.20"
+													Radius="5"
+													Offset="0,2" />
+											</Border.Shadow>
 											<Border.GestureRecognizers>
 												<TapGestureRecognizer Command="{Binding PreviousWeekCommand}" />
 											</Border.GestureRecognizers>
@@ -470,9 +582,11 @@
 										-->
 										<ScrollView
 											Grid.Column="1"
+											Padding="3,5"
 											HorizontalScrollBarVisibility="Never"
 											Orientation="Horizontal"
-											VerticalOptions="Center">
+											VerticalOptions="Center"
+											WidthRequest="294">
 											<HorizontalStackLayout
 												BindableLayout.ItemsSource="{Binding State.DayStrip}"
 												Spacing="6"
@@ -489,6 +603,13 @@
 															<Border.StrokeShape>
 																<RoundRectangle CornerRadius="8" />
 															</Border.StrokeShape>
+															<Border.Shadow>
+																<Shadow
+																	Brush="#334155"
+																	Opacity="0.16"
+																	Radius="4"
+																	Offset="0,2" />
+															</Border.Shadow>
 															<Border.GestureRecognizers>
 																<TapGestureRecognizer Command="{Binding Command}" />
 															</Border.GestureRecognizers>
@@ -573,6 +694,13 @@
 											<Border.StrokeShape>
 												<RoundRectangle CornerRadius="6" />
 											</Border.StrokeShape>
+											<Border.Shadow>
+												<Shadow
+													Brush="#334155"
+													Opacity="0.20"
+													Radius="5"
+													Offset="0,2" />
+											</Border.Shadow>
 											<Border.GestureRecognizers>
 												<TapGestureRecognizer Command="{Binding NextWeekCommand}" />
 											</Border.GestureRecognizers>
@@ -663,11 +791,11 @@
 							</VerticalStackLayout>
 						</Border>
 
-					</Grid>
 
-				</VerticalStackLayout>
-			</ScrollView>
 
+					</VerticalStackLayout>
+				</ScrollView>
+			</Border>
 		</Grid>
 
 		<!--  LOADING OVERLAY  -->

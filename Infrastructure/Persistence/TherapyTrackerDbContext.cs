@@ -1,4 +1,4 @@
-﻿using EHMR.Backups.Encryption;
+using EHMR.Backups.Encryption;
 using EHMR.Backups.Interfaces;
 using EHMR.Backups.Models;
 using EHMR.Domain.Entities;
@@ -202,6 +202,10 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
                   .IsRequired()
                   .HasMaxLength(500);
 
+            entity.Property(x => x.SzboNumber)
+                  .IsRequired()
+                  .HasMaxLength(64);
+
 
 
             // ============================================
@@ -305,6 +309,10 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             // Consider adding NationalIdHash later.
             entity.HasIndex(x => x.LastName);
 
+            entity.HasIndex(x => x.SzboNumber)
+                  .IsUnique()
+                  .HasFilter("[SzboNumber] <> ''");
+
             entity.HasIndex(x => x.DoctorId);
 
             entity.HasIndex(x => x.Status);
@@ -397,6 +405,11 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
                 .HasForeignKey(x => x.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            entity.HasOne(x => x.Encounter)
+                .WithMany()
+                .HasForeignKey(x => x.EncounterId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             entity.HasOne(x => x.Medicine)
                 .WithMany()
                 .HasForeignKey(x => x.MedicineId)
@@ -404,6 +417,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
 
             entity.HasIndex(x => x.PatientId);
             entity.HasIndex(x => x.MedicineId);
+            entity.HasIndex(x => x.EncounterId);
             entity.HasIndex(x => new { x.PatientId, x.MedicineId, x.IsActive });
         });
     }

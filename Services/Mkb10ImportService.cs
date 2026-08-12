@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using EHMR.Domain.Entities;
 using EHMR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -87,91 +87,95 @@ public class Mkb10ImportService
 
         using var workbook = new XLWorkbook(filePath);
 
-        var worksheet = workbook.Worksheet(1);
+        var worksheets = workbook.Worksheets
+            .Select(x => new
+            {
+                Worksheet=x,
+                Rows=x.RowsUsed().ToList()
+            })
+            .Where(x => x.Rows.Count>0)
+            .ToList();
 
-        var rows = worksheet.RowsUsed().ToList();
-
-        if(rows.Count<=1)
+        if(worksheets.Count==0)
         {
             errors.Add("Excel датотеката е празна.");
-
             return new Mkb10ImportResult(0, 0, 0, errors);
         }
 
-        int totalRows = rows.Count-1;
-        string? previousCode = null;
-        string? previousDescription = null;
-        string? previousChapter = null;
-        for(int i = 2; i<=rows.Count; i++)
+        int totalRows=worksheets.Sum(x => x.Rows.Count);
+        int processedRows=0;
+        var importedCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach(var sheet in worksheets)
         {
-            var row = worksheet.Row(i);
+            string currentChapter=string.Empty;
 
-            string rowExtract = row.Cell(1).GetString().Trim().ToUpperInvariant();
-
-            var parts = rowExtract.Split('|', 2);
-            if(parts.Length<2)
+            foreach(var row in sheet.Rows)
             {
-                skipped++;
-                continue;
-            }
+                cancellationToken.ThrowIfCancellationRequested();
+                processedRows++;
 
-            // Редот изгледа „A00.0 | ОПИС" — по делењето шифрата задржува празно
-            // место пред исправката, па се запишуваше како "A00.0 ". Секое
-            // барање по точна шифра потоа не наоѓаше ништо.
-            string code = parts[0].Trim();
-            string description = parts[1].Trim();
-            string chapter = row.Cell(3).GetString().Trim();
+                string rowExtract=row.Cell(1).GetString().Trim();
+                var parts=rowExtract.Split('|', 2);
 
-            // Skip consecutive duplicates
-            if(code==previousCode&&
-                description==previousDescription
-                )
-            {
-                skipped++;
-                continue;
-            }
-
-            previousCode=code;
-            previousDescription=description;
-            previousChapter=chapter;
-
-            if(string.IsNullOrWhiteSpace(code))
-            {
-                skipped++;
-                continue;
-            }
-
-            if(existing.TryGetValue(code, out var current))
-            {
-                if(current.Description!=description||
-                    current.Chapter!=chapter)
+                if(parts.Length<2)
                 {
-                    current.Description=description;
-                    current.Chapter=chapter;
-                    updated++;
+                    // Насловите на поглавјата се во истата колона, на пример
+                    // „II: C00–D48, Неоплазми“. Го паметиме насловот за кодовите
+                    // што следуваат, но самиот ред не е МКБ шифра.
+                    if(!string.IsNullOrWhiteSpace(rowExtract)&&rowExtract.Contains(':'))
+                        currentChapter=rowExtract;
+
+                    skipped++;
+                    ReportProgress(progress, processedRows, totalRows);
+                    continue;
+                }
+
+                string code=parts[0].Trim().ToUpperInvariant();
+                string description=parts[1].Trim();
+                string chapter=currentChapter;
+
+                // Истата шифра може да се повтори меѓу листовите. Во една import
+                // операција ја обработуваме само првата валидна појава.
+                if(string.IsNullOrWhiteSpace(code)||!importedCodes.Add(code))
+                {
+                    skipped++;
+                    ReportProgress(progress, processedRows, totalRows);
+                    continue;
+                }
+
+                if(existing.TryGetValue(code, out var current))
+                {
+                    if(current.Description!=description||current.Chapter!=chapter)
+                    {
+                        current.Description=description;
+                        current.Chapter=chapter;
+                        updated++;
+                    }
+                    else
+                    {
+                        skipped++;
+                    }
                 }
                 else
                 {
-                    skipped++;
+                    var codeEntity=new Mkb10Code
+                    {
+                        Id=Guid.NewGuid(),
+                        Code=code,
+                        Description=description,
+                        Chapter=chapter,
+                        IsActive=true
+                    };
+
+                    db.Set<Mkb10Code>().Add(codeEntity);
+                    existing[code]=codeEntity;
+                    inserted++;
                 }
-            }
-            else
-            {
-                db.Set<Mkb10Code>().Add(new Mkb10Code
-                {
-                    Id=Guid.NewGuid(),
-                    Code=code,
-                    Description=description,
-                    Chapter=chapter,
-                    IsActive=true
-                });
 
-                inserted++;
+                ReportProgress(progress, processedRows, totalRows);
             }
-
-            ReportProgress(progress, i-1, totalRows);
         }
-
         await db.SaveChangesAsync(cancellationToken);
 
         return new Mkb10ImportResult(inserted, updated, skipped, errors);

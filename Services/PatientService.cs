@@ -1,4 +1,4 @@
-﻿using EHMR.Domain.Entities;
+using EHMR.Domain.Entities;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Services.Dto;
@@ -64,6 +64,7 @@ public class PatientService : IPatientService
                 p.FirstName.Contains(term)||
                 p.LastName.Contains(term)||
                 p.NationalId.Contains(term)||
+                p.SzboNumber.Contains(term)||
                 p.Phone.Contains(term));
         }
 
@@ -94,6 +95,7 @@ public class PatientService : IPatientService
                 p.FirstName.Contains(term)||
                 p.LastName.Contains(term)||
                 p.NationalId.Contains(term)||
+                p.SzboNumber.Contains(term)||
                 p.Phone.Contains(term))
             .OrderBy(p => p.LastName)
             .ThenBy(p => p.FirstName)
@@ -303,6 +305,15 @@ public class PatientService : IPatientService
 
         await using var db = await _factory.CreateDbContextAsync(ct);
 
+        patientDto.SzboNumber=patientDto.SzboNumber.Trim();
+        if(string.IsNullOrWhiteSpace(patientDto.SzboNumber))
+            throw new InvalidOperationException("СЗБО бројот е задолжителен.");
+
+        var szboExists=await db.Patients
+            .AnyAsync(x => x.SzboNumber==patientDto.SzboNumber&&x.Id!=patientDto.Id, ct);
+        if(szboExists)
+            throw new InvalidOperationException("Веќе постои пациент со овој СЗБО број.");
+
         try
         {
             // =====================================================
@@ -318,6 +329,7 @@ public class PatientService : IPatientService
                 patient.Id=patient.Id==Guid.Empty
                    ? Guid.NewGuid()
                    : patient.Id;
+                patientDto.Id=patient.Id;
 
                 if(string.IsNullOrWhiteSpace(patient.PatientNumber))
                 {
@@ -573,6 +585,7 @@ public class PatientService : IPatientService
             FirstName=p.FirstName,
             LastName=p.LastName,
             NationalId=p.NationalId,
+            SzboNumber=p.SzboNumber,
             BirthDate=p.BirthDate,
             Gender=p.Gender,
             DoctorId=p.DoctorId,
@@ -656,6 +669,7 @@ public class PatientService : IPatientService
         target.FirstName=source.FirstName;
         target.LastName=source.LastName;
         target.NationalId=source.NationalId;
+        target.SzboNumber=source.SzboNumber.Trim();
         target.DoctorId=source.DoctorId;
         target.BirthDate=source.BirthDate;
         target.Gender=source.Gender;

@@ -7,16 +7,15 @@
 	x:Name="Root">
 
 
-	<Border Padding="16" StrokeThickness="1">
+	<Border Padding="18" BackgroundColor="{StaticResource SparkContentBackground}" Stroke="{StaticResource SparkCardBorder}" StrokeShape="RoundRectangle 14" StrokeThickness="1"><Border.Shadow><Shadow Brush="#000000" Opacity="0.05" Radius="10" Offset="0,3" /></Border.Shadow>
 
 
 		<VerticalStackLayout Spacing="15">
 
 
-			<Label
-				FontAttributes="Bold"
-				FontSize="20"
-				Text="{Binding Section.Header, Source={x:Reference Root}}" />
+			<Border Style="{StaticResource SectionPillBorderStyle}">
+				<Label Style="{StaticResource SectionPillLabelStyle}" Text="{Binding Section.Header, Source={x:Reference Root}}" />
+			</Border>
 
 
 

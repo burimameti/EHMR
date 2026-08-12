@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -253,6 +253,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         FirstName=source.FirstName,
         LastName=source.LastName,
         NationalId=PrivacyMaskHelper.MaskNationalId(source.NationalId),
+        SzboNumber=source.SzboNumber,
         BirthDate=source.BirthDate,
         Gender=source.Gender,
         DoctorId=source.DoctorId,
@@ -274,6 +275,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         FirstName=p.FirstName,
         LastName=p.LastName,
         NationalId=p.NationalId,
+        SzboNumber=p.SzboNumber,
         BirthDate=p.BirthDate,
         Gender=p.Gender,
         DoctorId=p.DoctorId,
@@ -322,6 +324,14 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             await _userDialogService.ShowAlertAsync("Валидација", "ЕМБГ мора да содржи точно 13 цифри.", "OK");
             return;
         }
+
+        if(string.IsNullOrWhiteSpace(Patient.SzboNumber))
+        {
+            await _userDialogService.ShowAlertAsync("Валидација", "СЗБО бројот е задолжителен.", "OK");
+            return;
+        }
+
+        Patient.SzboNumber=Patient.SzboNumber.Trim();
 
         if(Patient.DoctorId==Guid.Empty)
         {
@@ -434,6 +444,10 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                 await _navigationService.GoToAsync(AppRoutes.Patients.List);
             }
         }
+        catch(InvalidOperationException ex)
+        {
+            await _userDialogService.ShowAlertAsync("Валидација", ex.Message, "OK");
+        }
         catch(DbUpdateConcurrencyException)
         {
             Debug.WriteLine("CONCURRENCY ERROR");
@@ -506,6 +520,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         FirstName=string.Empty,
         LastName=string.Empty,
         NationalId=string.Empty,
+        SzboNumber=string.Empty,
         DoctorId=Guid.Empty,
         BirthDate=DateTime.Today.AddYears(-30),
         Gender=Gender.Male,

@@ -1,9 +1,10 @@
-﻿using CommunityToolkit.Maui.Core.Extensions;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
+using EHMR.Helpers;
 using EHMR.Services;
 
 using EHMR.ViewModels.Constants;
@@ -48,6 +49,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         EncounterService=encounterService;
         NavigationService=navigationService;
         UserDialogService=userDialogService;
+
+        for(var letter='A'; letter<='Z'; letter++)
+            MkbAlphabetSections.Add(new MkbAlphabetSection(letter.ToString(), letter=='A'));
     }
 
     // =====================================================
@@ -138,7 +142,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     public string AppointmentDisplay =>
         LinkedAppointment==null
             ? "Без термин"
-            : $"{LinkedAppointment.ScheduledStart:dd.MM.yyyy HH:mm} - {LinkedAppointment.ReasonForVisit}";
+            : $"{LinkedAppointment.ScheduledStart:dd.MM.yyyy HH:mm}";
 
     partial void OnLinkedAppointmentChanged(Appointment? value)
     {
@@ -320,7 +324,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             Encounter.PatientId=appointment.PatientId;
             Encounter.DoctorId=appointment.DoctorId;
             Encounter.TherapyCycleId=appointment.TherapyCycleId;
-            Encounter.ReasonForVisit=appointment.ReasonForVisit;
+            Encounter.ReasonForVisit=null;
 
             SelectedPatient=
                 Patients.FirstOrDefault(x =>
@@ -500,7 +504,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         var matches =
             AvailableAppointments
                 .Where(x =>
-                    (x.ReasonForVisit??string.Empty)
+                    (x.ClinicalNotes??string.Empty)
                         .Contains(query, StringComparison.OrdinalIgnoreCase)
                     ||
                     x.ScheduledStart
@@ -931,6 +935,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             try
             {
                 await LoadLookupsAsync();
+                await SearchMkbAsync(string.Empty);
 
                 // ── NEW ENCOUNTER — early exit, no DB call needed ────────────
                 if(encounterId==null||encounterId==Guid.Empty)
@@ -1051,12 +1056,20 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     // DIAGNOSIS / MKB10
     // =====================================================
 
+    public ObservableCollection<MkbAlphabetSection> MkbAlphabetSections { get; } = new();
+
+    [ObservableProperty]
+    protected string selectedMkbSection = "A";
+
     [ObservableProperty]
     protected ObservableCollection<Mkb10Code> mkbResults = new();
     [ObservableProperty]
     protected ObservableCollection<Diagnosis> diagnoses = new();
     [ObservableProperty]
-    protected string mkbSearchText = string.Empty;
+    protected string mkbCodeSearchText = string.Empty;
+
+    [ObservableProperty]
+    protected string mkbDescriptionSearchText = string.Empty;
 
     [ObservableProperty]
     protected bool showMkbDropdown;
@@ -1066,60 +1079,62 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     [ObservableProperty]
     private string encounterDiagnosisNotes = string.Empty;
-    partial void OnMkbSearchTextChanging(string value)
+    partial void OnMkbCodeSearchTextChanged(string value) =>
+        _=SearchMkbAsync(value??string.Empty);
+
+    partial void OnMkbDescriptionSearchTextChanged(string value) =>
+        _=SearchMkbAsync(value??string.Empty);
+
+    [RelayCommand]
+    protected async Task SelectMkbSectionAsync(MkbAlphabetSection section)
     {
-        if(string.IsNullOrWhiteSpace(value)||
-            value.Length<2)
-        {
-            MkbResults.Clear();
-            ShowMkbDropdown=false;
+        if(section==null)
             return;
-        }
-        _=SearchMkbAsync(value);
+
+        SelectedMkbSection=section.Letter;
+        foreach(var item in MkbAlphabetSections)
+            item.IsSelected=item.Letter==SelectedMkbSection;
+
+        await SearchMkbAsync(string.Empty);
     }
 
     // =====================================================
-    // SEARCH MKB
+    // SEARCH MKB — секогаш ограничено на избраната A-Z секција
     // =====================================================
 
     [RelayCommand]
     protected async Task SearchMkbAsync(string query)
     {
-        if(string.IsNullOrWhiteSpace(query)||
-            query.Length<2)
+        if(string.IsNullOrWhiteSpace(SelectedMkbSection))
         {
             MkbResults.Clear();
             ShowMkbDropdown=false;
             return;
         }
+
         SearchCts.Cancel();
         SearchCts.Dispose();
-
         SearchCts=new CancellationTokenSource();
+
         await ExecuteSafeAsync(async () =>
         {
             try
             {
-                var result =
-                    await EncounterService
-                        .SearchDiagnoses(
-                            query,
-                            SearchCts.Token);
-                MkbResults=
-                    new ObservableCollection<Mkb10Code>(
-                        result);
-                ShowMkbDropdown=
-                    MkbResults.Count>0;
+                var result=await EncounterService.SearchDiagnoses(
+                    MkbCodeSearchText,
+                    SearchCts.Token,
+                    SelectedMkbSection,
+                    MacedonianTransliterator.ToCyrillic(MkbDescriptionSearchText));
+
+                MkbResults=new ObservableCollection<Mkb10Code>(result);
+                ShowMkbDropdown=MkbResults.Count>0;
             }
             catch(OperationCanceledException)
             {
-                // user continued typing
+                // Корисникот продолжил со пребарување или избрал друга секција.
             }
-
-        },
-        "Грешка при пребарување дијагнози");
+        }, "Грешка при пребарување дијагнози");
     }
-
     // =====================================================
     // ADD DIAGNOSIS
     // =====================================================
@@ -1152,11 +1167,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
                 DiagnosisStatus.Active
         };
         Diagnoses.Add(diagnosis);
-        MkbSearchText=string.Empty;
-
-        MkbResults.Clear();
-
-        ShowMkbDropdown=false;
+        MkbResults.Remove(code);
+        ShowMkbDropdown=MkbResults.Count>0;
     }
 
     // =====================================================
@@ -1248,7 +1260,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         var patientMedicine = new PatientMedicine
         {
             Id=Guid.NewGuid(),
-            PatientId=Encounter.PatientId,            
+            PatientId=Encounter.PatientId,
+            EncounterId=Encounter.Id==Guid.Empty ? null : Encounter.Id,
             MedicineId=medicine.Id,
             Medicine=medicine,
             Dosage="1", // Дозата се користи како количина (quantity) — пр. "1" таблета
@@ -1336,4 +1349,17 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
         GC.SuppressFinalize(this);
     }
+}
+public partial class MkbAlphabetSection : ObservableObject
+{
+    public MkbAlphabetSection(string letter, bool isSelected)
+    {
+        Letter=letter;
+        IsSelected=isSelected;
+    }
+
+    public string Letter { get; }
+
+    [ObservableProperty]
+    private bool isSelected;
 }
