@@ -39,20 +39,7 @@
 						FontSize="13"
 						Text="Датум"
 						TextColor="{StaticResource SparkTextSecondary}" />
-					<Border
-						Grid.Row="1"
-						Padding="10,0"
-						BackgroundColor="{StaticResource SparkBackground}"
-						HeightRequest="46"
-						Stroke="{StaticResource SparkBorder}"
-						StrokeShape="RoundRectangle 6"
-						StrokeThickness="0">
-						<DatePicker
-							BackgroundColor="Transparent"
-							Date="{Binding AppointmentDate}"
-							FontSize="13"
-							TextColor="{StaticResource SparkTextPrimary}" />
-					</Border>
+					<controls:FFDatePicker Grid.Row="1" SelectedDate="{Binding AppointmentDate}" />
 				</Grid>
 
 				<Grid
@@ -64,20 +51,7 @@
 						FontSize="13"
 						Text="Време"
 						TextColor="{StaticResource SparkTextSecondary}" />
-					<Border
-						Grid.Row="1"
-						Padding="10,0"
-						BackgroundColor="{StaticResource SparkBackground}"
-						HeightRequest="46"
-						Stroke="{StaticResource SparkBorder}"
-						StrokeShape="RoundRectangle 6"
-						StrokeThickness="1">
-						<TimePicker
-							BackgroundColor="Transparent"
-							FontSize="13"
-							TextColor="{StaticResource SparkTextPrimary}"
-							Time="{Binding AppointmentTime}" />
-					</Border>
+					<controls:FFTimePicker Grid.Row="1" SelectedTime="{Binding AppointmentTime}" />
 				</Grid>
 			</Grid>
 
@@ -87,21 +61,7 @@
 					FontSize="13"
 					Text="Причина за посета"
 					TextColor="{StaticResource SparkTextSecondary}" />
-				<Border
-					Grid.Row="1"
-					Padding="12,0"
-					BackgroundColor="{StaticResource SparkBackground}"
-					HeightRequest="46"
-					Stroke="{StaticResource SparkBorder}"
-					StrokeShape="RoundRectangle 6"
-					StrokeThickness="1">
-					<Entry
-						BackgroundColor="Transparent"
-						FontSize="13"
-						Placeholder="Пр. Редовна контрола"
-						Text="{Binding ReasonForVisit}"
-						TextColor="{StaticResource SparkTextPrimary}" />
-				</Border>
+				<controls:FFInput Grid.Row="1" Placeholder="Пр. Редовна контрола" Text="{Binding ReasonForVisit}" />
 			</Grid>
 
 			<Label
@@ -119,7 +79,7 @@
 					Text="Откажи" />
 				<controls:FFButton
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
+						TextColorEx="White"
 					ButtonKind="Primary"
 					Command="{Binding SaveCommand}"
 					ContentPadding="20,0"

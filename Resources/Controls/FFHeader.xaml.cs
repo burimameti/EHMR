@@ -222,7 +222,7 @@ public partial class FFPageHeader : ContentView
             nameof(TitleColor),
             typeof(Color),
             typeof(FFPageHeader),
-            Color.FromArgb("#111827"));
+            Color.FromArgb("#4DD9C7"));
 
     public Color TitleColor
     {

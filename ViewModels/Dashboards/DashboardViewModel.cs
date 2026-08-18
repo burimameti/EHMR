@@ -1119,11 +1119,11 @@ public partial class DashboardViewModel : ObservableObject
         if(IsEncounterHistoryMode&&PreviewPatient?.Patient is { } patient)
         {
             Buttons.Add(new SparkButtonItem { Label="Назад", IsPrimary=false, Command=ClosePreviewPanelCommand });
-            Buttons.Add(new SparkButtonItem { Label="Закажи преглед", IsPrimary=false, Command=NewEncounterForSelectedCommand, CommandParameter=patient });
+            Buttons.Add(new SparkButtonItem { Label="Нов преглед", IsPrimary=false, Command=NewEncounterForSelectedCommand, CommandParameter=patient });
             return;
         }
 
-        Buttons.Add(new SparkButtonItem { Label="✕ Исчисти", IsPrimary=false, Command=ClearFiltersCommand });
+        Buttons.Add(new SparkButtonItem { Label="Исчисти", IsPrimary=true, Command=ClearFiltersCommand });
     }
 
     // =========================================================
@@ -1171,7 +1171,7 @@ public partial class DashboardViewModel : ObservableObject
             row["Status"]=new SparkBadgeValue(item.StatusText, EncounterStatusToTone(item.Source.Status));
             row["Actions"]=new List<SparkButtonItem>
             {
-                new() { IsPrimary=true, Label="Детали", Command=OpenEncounterFromPreviewCommand, CommandParameter=item }
+                new() { IsPrimary=true, Label="Повеќе", Command=OpenEncounterFromPreviewCommand, CommandParameter=item }
             };
             return row;
         }));
@@ -1226,7 +1226,7 @@ public partial class DashboardViewModel : ObservableObject
 
             row["Actions"]=new List<SparkButtonItem>
             {
-                new() { IsPrimary = true, IconGlyph = "👁", Label = "Детали",  Command = SelectCommand,  CommandParameter = item },
+                new() { IsPrimary = true, IconGlyph = "👁", Label = "Повеќе",  Command = SelectCommand,  CommandParameter = item },
                 new() {                   IconGlyph = "✎",  Label = "Промени", Command = EditCommand,    CommandParameter = patient }
             };
 

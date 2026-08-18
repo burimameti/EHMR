@@ -140,24 +140,40 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     // =========================================================
     // LOAD
     // =========================================================
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = false)]
     public async Task LoadAsync()
     {
-        var data = await _patientService.GetAllBaseAsync();
-        AllItems=data.ToList();
+        if(IsBusy) return;
 
-        if(!_sparkInitialized)
+        try
         {
-            InitializeSparkControls();
-            _sparkInitialized=true;
+            IsBusy=true;
+            ClearError();
+
+            var data=await _patientService.GetAllBaseAsync();
+            AllItems=data.ToList();
+
+            if(!_sparkInitialized)
+            {
+                InitializeSparkControls();
+                _sparkInitialized=true;
+            }
+
+            if(!string.IsNullOrWhiteSpace(_pendingSearch)) SearchText=_pendingSearch;
+            if(!string.IsNullOrWhiteSpace(_pendingStatus)) SelectedStatus=_pendingStatus;
+            _pendingSearch=null;
+            _pendingStatus=null;
+
+            ApplyPipeline();
         }
-
-        if(!string.IsNullOrWhiteSpace(_pendingSearch)) SearchText=_pendingSearch;
-        if(!string.IsNullOrWhiteSpace(_pendingStatus)) SelectedStatus=_pendingStatus;
-        _pendingSearch=null;
-        _pendingStatus=null;
-
-        ApplyPipeline();
+        catch(Exception ex)
+        {
+            OnError($"Неуспешно вчитување на пациентите: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy=false;
+        }
     }
 
     // =========================================================
@@ -385,7 +401,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             new() { Header = "КРВ", Key = "BloodType", Width = new GridLength(0.8, GridUnitType.Star) },
             new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.5, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1.2, GridUnitType.Star) },
-            new() { Header = "ЗАКАЖИ ПРЕГЛЕД", Key = "Pregled", CellType = SparkGridCellType.Button, Width = new GridLength(1.4, GridUnitType.Star) },
+            new() { Header = "НОВ ПРЕГЛЕД", Key = "Pregled", CellType = SparkGridCellType.Button, Width = new GridLength(1.4, GridUnitType.Star) },
             new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
@@ -406,12 +422,12 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             row["Phone"]=p.Phone;
             row["Status"]=new SparkBadgeValue(p.Status.ToDisplay(), StatusToTone(p.Status));
 
-            AddDefaultActions(p, row, detailLabel: "Детали", editLabel: "Промени");
+            AddDefaultActions(p, row, detailLabel: "Повеќе", editLabel: "Промени");
 
             row["Pregled"]=new SparkButtonItem
             {
                 IconGlyph="\uD83D\uDCC5",
-                Label="Закажи преглед",
+                Label="Нов преглед",
                 IsPrimary=true,
                 Command=NewEncounterForSelectedCommand,
                 CommandParameter=p

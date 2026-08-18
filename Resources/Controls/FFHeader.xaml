@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentView
 	x:Class="EHMR.Resources.Controls.FFPageHeader"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -8,72 +7,92 @@
 	x:Name="Root"
 	x:DataType="controls:FFPageHeader">
 
-	<Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
+	<Border
+		Padding="0"
+		StrokeShape="RoundRectangle 0"
+		StrokeThickness="0">
+		<Grid ColumnDefinitions="4,Auto,*,Auto" ColumnSpacing="16">
+			<BoxView Grid.Column="0" Color="{StaticResource SidebarActiveBg}" />
 
-		<!--  Left  -->
-
-		<VerticalStackLayout
-			Grid.Column="0"
-			Spacing="4"
-			VerticalOptions="Center">
-
-			<Label
-				IsVisible="{Binding Caption, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
-				Style="{StaticResource FormLabelStyle}"
-				Text="{Binding Caption, Source={x:Reference Root}}"
-				TextColor="{StaticResource Gray500}" />
-
-			<Label
-				FontAttributes="Bold"
-				FontSize="28"
-				Text="{Binding Title, Source={x:Reference Root}}"
-				TextColor="{Binding TitleColor, Source={x:Reference Root}}" />
-
-			<Label
-				FontSize="16"
-				IsVisible="{Binding Subtitle, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
-				LineBreakMode="TailTruncation"
-				MaxLines="2"
-				Text="{Binding Subtitle, Source={x:Reference Root}}"
-				TextColor="{Binding SubtitleColor, Source={x:Reference Root}}" />
-
-		</VerticalStackLayout>
-
-		<!--  Right  -->
-
-		<HorizontalStackLayout
-			Grid.Column="1"
-			HorizontalOptions="End"
-			Spacing="12"
-			VerticalOptions="Center">
-
-			<Button
-				BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
-				Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
-				HeightRequest="45"
-				IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
-				Style="{StaticResource TabButtonActiveStyle}"
-				Text="{Binding PrimaryButtonText, Source={x:Reference Root}}"
-				TextColor="White"
-				WidthRequest="150" />
-
-			<Button
-				Command="{Binding SecondaryButtonCommand, Source={x:Reference Root}}"
-				HeightRequest="45"
-				IsVisible="{Binding ShowSecondaryButton, Source={x:Reference Root}}"
-				Style="{StaticResource TabButtonStyle}"
-				Text="{Binding SecondaryButtonText, Source={x:Reference Root}}"
-				WidthRequest="150" />
-
-			<Button
-				Command="{Binding RefreshCommand, Source={x:Reference Root}}"
+			<Border
+				Grid.Column="1"
+				Margin="16,12,12,16"
+				BackgroundColor="{StaticResource SparkAccentTealBg}"
 				HeightRequest="44"
-				IsVisible="{Binding ShowRefreshButton, Source={x:Reference Root}}"
-				Style="{StaticResource EhmrIconButton}"
-				WidthRequest="44" />
+				Stroke="{StaticResource SparkAccentTeal}"
+				StrokeShape="RoundRectangle 10"
+				StrokeThickness="1"
+				WidthRequest="44">
+				<Label
+					FontFamily="FASolid"
+					FontSize="16"
+					HorizontalOptions="Center"
+					Text="&#xf15c;"
+					TextColor="{StaticResource SparkAccentTealDark}"
+					VerticalOptions="Center" />
+			</Border>
 
-		</HorizontalStackLayout>
+			<VerticalStackLayout
+				Grid.Column="2"
+				Spacing="3"
+				VerticalOptions="Center">
+				<Label
+					FontSize="11"
+					IsVisible="{Binding Caption, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
+					Text="{Binding Caption, Source={x:Reference Root}}"
+					TextColor="{StaticResource SparkTextSecondary}" />
+				<Label
+					FontAttributes="Bold"
+					FontSize="22"
+					Text="{Binding Title, Source={x:Reference Root}}"
+					TextColor="{StaticResource SparkTextPrimary}" />
+				<Label
+					FontSize="12"
+					IsVisible="{Binding Subtitle, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
+					LineBreakMode="TailTruncation"
+					MaxLines="1"
+					Text="{Binding Subtitle, Source={x:Reference Root}}"
+					TextColor="{StaticResource SparkTextSecondary}" />
+				<BoxView
+					Margin="0,2,0,0"
+					HeightRequest="2"
+					HorizontalOptions="Start"
+					WidthRequest="54"
+					Color="{StaticResource SidebarActiveBg}" />
+			</VerticalStackLayout>
 
-	</Grid>
-
+			<HorizontalStackLayout
+				Grid.Column="3"
+				Margin="0,0,16,0"
+				HorizontalOptions="End"
+				Spacing="10"
+				VerticalOptions="Center">
+				<ContentView Content="{Binding HeaderContent, Source={x:Reference Root}}" />
+				<Button
+					BackgroundColor="{StaticResource SidebarActiveBg}"
+					Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
+					HeightRequest="42"
+					IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
+					Style="{StaticResource TabButtonActiveStyle}"
+					Text="{Binding PrimaryButtonText, Source={x:Reference Root}}"
+					TextColor="White"
+					WidthRequest="150" />
+				<Button
+					BackgroundColor="#475569"
+					Command="{Binding SecondaryButtonCommand, Source={x:Reference Root}}"
+					HeightRequest="42"
+					IsVisible="{Binding ShowSecondaryButton, Source={x:Reference Root}}"
+					Style="{StaticResource TabButtonStyle}"
+					Text="{Binding SecondaryButtonText, Source={x:Reference Root}}"
+					TextColor="White"
+					WidthRequest="150" />
+				<Button
+					Command="{Binding RefreshCommand, Source={x:Reference Root}}"
+					HeightRequest="42"
+					IsVisible="{Binding ShowRefreshButton, Source={x:Reference Root}}"
+					Style="{StaticResource EhmrIconButton}"
+					WidthRequest="42" />
+			</HorizontalStackLayout>
+		</Grid>
+	</Border>
 </ContentView>

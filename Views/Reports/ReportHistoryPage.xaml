@@ -28,8 +28,8 @@
 
 		<Grid
 			Grid.Column="1"
-			Padding="24"
-			BackgroundColor="{StaticResource Gray200}"
+			Padding="0"
+			BackgroundColor="{StaticResource PageBackground}"
 			RowDefinitions="Auto,Auto,*"
 			RowSpacing="16">
 
@@ -37,7 +37,7 @@
 			<!--  PAGE HEADER  -->
 			<!--  =====================================================  -->
 
-			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 
 				<Grid ColumnDefinitions="*,Auto">
 
@@ -73,16 +73,19 @@
 			<!--  SEARCH / FILTER / GRID  -->
 			<!--  =====================================================  -->
 
-			<Border Grid.Row="1" Padding="0">
+			<Border
+				Grid.Row="1"
+				Padding="0"
+				StrokeThickness="0">
 
-				<Grid ColumnSpacing="8" RowSpacing="18">
+				<Grid ColumnSpacing="0" RowSpacing="0">
 
-					<VerticalStackLayout>
+					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
 						<!--  =====================================================  -->
 						<!--  SEARCH / FILTER BAR  -->
 						<!--  =====================================================  -->
 
-						<Border Margin="0,8,0,8" Padding="0">
+						<controls:FFSectionCard>
 
 							<controls:SparkExplorerHeaderView
 								Buttons="{Binding Buttons}"
@@ -92,13 +95,13 @@
 								SearchText="{Binding ReportSearchText}"
 								Tabs="{Binding Tabs}" />
 
-						</Border>
+						</controls:FFSectionCard>
 
 						<!--  =====================================================  -->
 						<!--  REPORT GRID  -->
 						<!--  =====================================================  -->
 
-						<Border Padding="0" Style="{StaticResource SurfaceCard}">
+						<controls:FFSectionCard>
 
 							<controls:SparkDataGridView
 								x:Name="ReportHistoryGrid"
@@ -113,14 +116,17 @@
 								TotalPages="{Binding TotalPages}" />
 
 
-						</Border>
+						</controls:FFSectionCard>
 
 						<!--  Empty state  -->
 						<Border
 							Margin="0,16,0,0"
 							Padding="24"
+							BackgroundColor="White"
 							IsVisible="{Binding IsEmpty}"
-							Style="{StaticResource SurfaceCard}">
+							Stroke="{StaticResource BorderColor}"
+							StrokeShape="RoundRectangle 12"
+							StrokeThickness="1">
 
 							<VerticalStackLayout HorizontalOptions="Center" Spacing="12">
 

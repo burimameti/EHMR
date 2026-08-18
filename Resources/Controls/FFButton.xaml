@@ -15,7 +15,10 @@
 		StrokeThickness="{Binding BorderThickness, Source={x:Reference Root}}"
 		VerticalOptions="Center">
 		<Border.Shadow>
-			<Shadow Brush="#18000000" Radius="4" Offset="0,1" />
+			<Shadow
+				Brush="#18000000"
+				Radius="4"
+				Offset="0,1" />
 		</Border.Shadow>
 		<Border.StrokeShape>
 			<RoundRectangle CornerRadius="{Binding CornerRadius, Source={x:Reference Root}}" />

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <ContentPage
 	x:Class="EHMR.Views.MbkImportExportPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -56,10 +56,10 @@
 	</ContentPage.ToolbarItems>
 
 	<Border BackgroundColor="{StaticResource Gray200}" StrokeThickness="0">
-		<Grid RowDefinitions="110,*" RowSpacing="0">
+		<Grid RowDefinitions="Auto,*" RowSpacing="1">
 
 			<!--  HEADER  -->
-			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<Grid ColumnDefinitions="*,*" VerticalOptions="Center">
 					<controls:FFPageHeader Title="Увоз / Извоз на МКБ" Subtitle="Увезете МКБ-10 шифрарник од датотека." />
 					<HorizontalStackLayout
@@ -89,7 +89,7 @@
 			</Border>
 
 			<!--  FORM  -->
-			<Border Grid.Row="1" Padding="16,20,16,20">
+			<Border Grid.Row="1" Margin="16,0,16,2" Padding="0">
 				<Border
 					Padding="30"
 					BackgroundColor="{StaticResource White}"

@@ -20,6 +20,8 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     private readonly ISelectedItemService<Appointment> _appointmentContext;
     private readonly ISelectedItemService<Patient> _patientContext;
     private readonly ISelectedItemService<Encounter> _encounterContext;
+    private bool _isLoading;
+    private bool _isLoaded;
 
     // ── Side-panel ────────────────────────────────────────────────────────────
     [ObservableProperty]
@@ -74,58 +76,55 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     // ── Load ──────────────────────────────────────────────────────────────────
     public async Task LoadAsync()
     {
-        await InitializeAsync(null);
-
-        // Flow 1: arrived from an Appointment row
-        var incomingAppointment = _appointmentContext.SelectedItem;
-        if(incomingAppointment!=null&&incomingAppointment.Id!=Guid.Empty)
+        if(_isLoading||_isLoaded) return;
+        _isLoading=true;
+        try
         {
-            await ApplyAppointmentContextAsync(incomingAppointment);
-
-            var duration = Math.Max(
-                1,
-                (int)(incomingAppointment.ScheduledEnd-incomingAppointment.ScheduledStart).TotalMinutes);
-
-            Encounter.Schedule(incomingAppointment.ScheduledStart, duration);
-            OnPropertyChanged(nameof(AutomaticScheduleDisplay));
-
-            _appointmentContext.SelectedItem=null;
-            IsPatientLockedFromContext=true;
+            await InitializeAsync(null);
+            var incomingAppointment=_appointmentContext.SelectedItem;
+            if(incomingAppointment!=null&&incomingAppointment.Id!=Guid.Empty)
+            {
+                await ApplyAppointmentContextAsync(incomingAppointment);
+                var duration=Math.Max(1, (int)(incomingAppointment.ScheduledEnd-incomingAppointment.ScheduledStart).TotalMinutes);
+                Encounter.Schedule(incomingAppointment.ScheduledStart, duration);
+                OnPropertyChanged(nameof(AutomaticScheduleDisplay));
+                _appointmentContext.SelectedItem=null;
+                IsPatientLockedFromContext=true;
+                IsEditMode=true;
+                IsReadOnly=false;
+                RefreshSidePanel();
+                _isLoaded=true;
+                return;
+            }
+            var incomingPatient=_patientContext.SelectedItem;
+            if(incomingPatient!=null&&incomingPatient.Id!=Guid.Empty)
+            {
+                var matchedPatient=Patients.FirstOrDefault(p => p.Id==incomingPatient.Id)??incomingPatient;
+                IsPatientLockedFromContext=true;
+                _isApplyingContext=true;
+                try
+                {
+                    SelectedPatient=matchedPatient;
+                    if(matchedPatient.DoctorId!=Guid.Empty)
+                        SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==matchedPatient.DoctorId);
+                    await AssignNextAvailableSlotAsync();
+                    await LoadTherapyCyclesForPatientAsync(matchedPatient.Id);
+                    await LoadAppointmentsForPatientAsync(matchedPatient.Id);
+                    await LoadPatientContextAsync(matchedPatient.Id);
+                }
+                finally { _isApplyingContext=false; }
+                _patientContext.SelectedItem=null;
+                RefreshSidePanel();
+                _isLoaded=true;
+                return;
+            }
+            IsPatientLockedFromContext=false;
             IsEditMode=true;
             IsReadOnly=false;
-            RefreshSidePanel();
-            return;
+            _isLoaded=true;
         }
-
-        // Flow 2: arrived from a Patient row
-        var incomingPatient = _patientContext.SelectedItem;
-        if(incomingPatient!=null&&incomingPatient.Id!=Guid.Empty)
-        {
-            var matchedPatient = Patients.FirstOrDefault(p => p.Id==incomingPatient.Id)
-                                 ??incomingPatient;
-
-            IsPatientLockedFromContext=true;
-            SelectedPatient=matchedPatient;
-
-            if(matchedPatient.DoctorId!=Guid.Empty)
-                SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==matchedPatient.DoctorId);
-
-            await AssignNextAvailableSlotAsync();
-            await LoadTherapyCyclesForPatientAsync(matchedPatient.Id);
-            await LoadAppointmentsForPatientAsync(matchedPatient.Id);
-            await LoadPatientContextAsync(matchedPatient.Id);
-
-            _patientContext.SelectedItem=null;
-            RefreshSidePanel();
-            return;
-        }
-
-        // Flow 3: walk-in, no prior context
-        IsPatientLockedFromContext=false;
-        IsEditMode=true;
-        IsReadOnly=false;
+        finally { _isLoading=false; }
     }
-
     // ── Patient search ────────────────────────────────────────────────────────
     partial void OnPatientSuggestionSelectionChanged(Patient? value)
     {
@@ -169,21 +168,22 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     private async Task SelectPatientSuggestion(Patient? patient)
     {
         if(patient is null) return;
-
         PatientSearchText=patient.FullName;
         ShowPatientSuggestions=false;
-        SelectedPatient=patient;
-
-        if(patient.DoctorId!=Guid.Empty)
-            SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==patient.DoctorId);
-
-        await AssignNextAvailableSlotAsync();
-        await LoadTherapyCyclesForPatientAsync(patient.Id);
-        await LoadAppointmentsForPatientAsync(patient.Id);
-        await LoadPatientContextAsync(patient.Id);
+        _isApplyingContext=true;
+        try
+        {
+            SelectedPatient=patient;
+            if(patient.DoctorId!=Guid.Empty)
+                SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==patient.DoctorId);
+            await AssignNextAvailableSlotAsync();
+            await LoadTherapyCyclesForPatientAsync(patient.Id);
+            await LoadAppointmentsForPatientAsync(patient.Id);
+            await LoadPatientContextAsync(patient.Id);
+        }
+        finally { _isApplyingContext=false; }
         RefreshSidePanel();
     }
-
     // ── Schedule display ──────────────────────────────────────────────────────
     public string AutomaticScheduleDisplay =>
         Encounter.ScheduledStart is { } start

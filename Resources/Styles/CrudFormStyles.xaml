@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls">
+
+	<Thickness x:Key="CrudFormPageMargin">16,0</Thickness>
+	<Thickness x:Key="CrudFormCardPadding">18</Thickness>
+	<x:Double x:Key="CrudFormSectionSpacing">18</x:Double>
+	<x:Double x:Key="CrudFormColumnSpacing">8</x:Double>
+
+	<Style x:Key="CrudFormPageGridStyle" TargetType="Grid">
+		<Setter Property="Margin" Value="0" />
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="RowSpacing" Value="16" />
+	</Style>
+
+	<Style x:Key="CrudFormBodyGridStyle" TargetType="Grid">
+		<Setter Property="BackgroundColor" Value="{StaticResource PageBackground}" />
+
+
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="Margin" Value="16,0,16,0" />
+		<Setter Property="Shadow" Value="{x:Null}" />
+
+
+	</Style>
+
+	<Style x:Key="CrudFormCardStyle" TargetType="controls:FFSectionCard">
+		<Setter Property="Margin" Value="0" />
+		<Setter Property="ContentPadding" Value="{StaticResource CrudFormCardPadding}" />
+	</Style>
+
+	<Style x:Key="CrudFormContentStackStyle" TargetType="VerticalStackLayout">
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="Spacing" Value="{StaticResource CrudFormSectionSpacing}" />
+	</Style>
+
+	<Style x:Key="CrudFormSidebarStackStyle" TargetType="VerticalStackLayout">
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="Spacing" Value="0" />
+	</Style>
+
+	<Style x:Key="CrudFormSectionStackStyle" TargetType="VerticalStackLayout">
+		<Setter Property="Spacing" Value="12" />
+	</Style>
+
+	<Style x:Key="CrudFormSummarySurfaceStyle" TargetType="Border">
+		<Setter Property="Padding" Value="14,12" />
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkContentBackground}" />
+		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Shadow" Value="{x:Null}" />
+	</Style>
+
+	<Style x:Key="CrudFormValueSurfaceStyle" TargetType="Border">
+		<Setter Property="Padding" Value="12,8" />
+		<Setter Property="MinimumHeightRequest" Value="40" />
+		<Setter Property="BackgroundColor" Value="#F1F5F9" />
+		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 4" />
+		<Setter Property="Shadow" Value="{x:Null}" />
+	</Style>
+	<Style x:Key="CrudFormValueSurfaceLargeStyle" TargetType="Border">
+		<Setter Property="Padding" Value="14,12" />
+		<Setter Property="MinimumHeightRequest" Value="72" />
+		<Setter Property="BackgroundColor" Value="#F1F5F9" />
+		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 4" />
+		<Setter Property="Shadow" Value="{x:Null}" />
+	</Style>
+
+	<Style x:Key="CrudFormHistoryCardStyle" TargetType="controls:SparkExpandableCard">
+		<Setter Property="CardBackgroundColor" Value="#4A5863" />
+		<Setter Property="HeaderTextColor" Value="White" />
+		<Setter Property="Subtitle" Value="" />
+	</Style>
+
+	<Style x:Key="CrudFormHistoryRowStyle" TargetType="Border">
+		<Setter Property="Margin" Value="0,0,0,5" />
+		<Setter Property="Padding" Value="9,6" />
+		<Setter Property="BackgroundColor" Value="White" />
+		<Setter Property="Stroke" Value="#D7E0E8" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Shadow" Value="{x:Null}" />
+	</Style>
+	<Style x:Key="CrudCollectionItemStyle" TargetType="Border">
+		<Setter Property="Margin" Value="0,0,0,5" />
+		<Setter Property="Padding" Value="9,6" />
+		<Setter Property="BackgroundColor" Value="White" />
+		<Setter Property="Stroke" Value="#D7E0E8" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Shadow" Value="{x:Null}" />
+	</Style>
+	<Style x:Key="CrudCollectionTitleStyle" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="11.5" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="VerticalOptions" Value="Center" />
+	</Style>
+	<Style x:Key="CrudCollectionCodeStyle" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="11.5" />
+		<Setter Property="VerticalOptions" Value="Center" />
+		<Setter Property="TextColor" Value="{StaticResource SparkAccentTealDark}" />
+	</Style>
+	<Style x:Key="CrudCollectionMetaStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="10.5" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+		<Setter Property="VerticalOptions" Value="Center" />
+	</Style>
+	<Style x:Key="CrudCollectionChevronStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="Text" Value="&#x276F;" />
+		<Setter Property="TextColor" Value="{StaticResource SparkAccentTealDark}" />
+		<Setter Property="VerticalOptions" Value="Center" />
+	</Style>
+	<Style x:Key="CrudFormActionBarStyle" TargetType="HorizontalStackLayout">
+		<Setter Property="HorizontalOptions" Value="End" />
+		<Setter Property="Spacing" Value="8" />
+		<Setter Property="VerticalOptions" Value="Center" />
+	</Style>
+</ResourceDictionary>

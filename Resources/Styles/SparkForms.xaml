@@ -10,6 +10,9 @@
 	<Thickness x:Key="PageContentMargin">12,0,12,12</Thickness>
 	<x:Double x:Key="PageSectionSpacing">8</x:Double>
 	<x:Double x:Key="ControlCornerRadius">6</x:Double>
+	<Thickness x:Key="CrudPageHorizontalMargin">18,0</Thickness>
+	<Thickness x:Key="CrudCardPadding">18</Thickness>
+	<Thickness x:Key="CrudSectionMargin">18,0,18,14</Thickness>
 
 	<!--  ============================================================  -->
 	<!--  COMMON SHADOWS (Дефиниција за меки сенки кои даваат длабочина)  -->
@@ -32,14 +35,38 @@
 	<!--  PAGE CHROME — Префинет изглед со заоблени агли и меки сенки  -->
 	<!--  ============================================================  -->
 	<Style x:Key="PageHeaderCardStyle" TargetType="Border">
-		<Setter Property="Padding" Value="16" />
-		<Setter Property="Margin" Value="0,0,0,0" />
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
-		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
-
-		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="Margin" Value="0,0,0,12" />
+		<Setter Property="BackgroundColor" Value="Transparent" />
 		<Setter Property="StrokeThickness" Value="0" />
 		<Setter Property="Shadow" Value="{x:Null}" />
+	</Style>
+
+	<Style x:Key="FormWorkspaceCardStyle" TargetType="Border">
+		<Setter Property="Padding" Value="18" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
+		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+		<Setter Property="Shadow" Value="{x:Null}" />
+	</Style>
+	<!--  Единствена геометрија за CRUD листи: search/filter и grid се одделни карти.  -->
+	<!--  Unified read-only value surfaces used by detail pages.  -->
+	<Style x:Key="DetailValueSurfaceStyle" TargetType="Border">
+		<Setter Property="Padding" Value="12,8" />
+		<Setter Property="MinimumHeightRequest" Value="40" />
+		<Setter Property="BackgroundColor" Value="#F1F5F9" />
+		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 4" />
+		<Setter Property="Shadow" Value="{x:Null}" />
+	</Style>
+	<Style
+		x:Key="DetailValueSurfaceLargeStyle"
+		BasedOn="{StaticResource DetailValueSurfaceStyle}"
+		TargetType="Border">
+		<Setter Property="Padding" Value="14,12" />
+		<Setter Property="MinimumHeightRequest" Value="72" />
 	</Style>
 	<Style x:Key="MetricStyle" TargetType="Border">
 		<Setter Property="Padding" Value="0,0" />
@@ -49,6 +76,15 @@
 		<Setter Property="StrokeShape" Value="RoundRectangle 0" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Shadow" Value="{x:Null}" />
+	</Style>
+	<!--  Единствена геометрија за сите list/registry страници.  -->
+	<Style x:Key="ListPageRootGridStyle" TargetType="Grid">
+		<Setter Property="Margin" Value="0" />
+		<Setter Property="RowSpacing" Value="16" />
+	</Style>
+	<Style x:Key="ListPageContentStackStyle" TargetType="VerticalStackLayout">
+		<Setter Property="Padding" Value="0,0,0,16" />
+		<Setter Property="Spacing" Value="16" />
 	</Style>
 	<Style x:Key="PageHeaderCardStyle1" TargetType="Border">
 		<Setter Property="Padding" Value="16,18" />
@@ -60,10 +96,10 @@
 		<Setter Property="Shadow" Value="{x:Null}" />
 	</Style>
 	<Style x:Key="AvatarCircleStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="#EBF8FF" />
+		<Setter Property="BackgroundColor" Value="White" />
 		<Setter Property="HeightRequest" Value="54" />
 		<Setter Property="WidthRequest" Value="54" />
-		<Setter Property="Stroke" Value="#BEE3F8" />
+		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 27" />
 		<!--  Совршен круг  -->
 		<Setter Property="StrokeThickness" Value="1" />
@@ -74,7 +110,7 @@
 		<Setter Property="FontSize" Value="18" />
 		<Setter Property="HorizontalOptions" Value="Center" />
 		<Setter Property="VerticalOptions" Value="Center" />
-		<Setter Property="TextColor" Value="#2B6CB0" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 	</Style>
 
 	<Style x:Key="PageTitleStyle" TargetType="Label">
@@ -93,30 +129,38 @@
 		<Setter Property="Shadow" Value="{StaticResource SoftCardShadow}" />
 	</Style>
 
+	<!--  Vertical structure marker shared by multi-column forms.  -->
 	<Style x:Key="ColumnDividerStyle" TargetType="BoxView">
-		<Setter Property="WidthRequest" Value="1" />
+		<Setter Property="WidthRequest" Value="2" />
 		<Setter Property="VerticalOptions" Value="Fill" />
-		<Setter Property="Color" Value="#EDF2F7" />
+		<Setter Property="Color" Value="#9ADBD3" />
+		<Setter Property="Opacity" Value="0.72" />
 	</Style>
 
-	<!--  ============================================================  -->
-	<!--  SECTION HEADERS — чисти наслови без темна полна позадина  -->
-	<!--  ============================================================  -->
+	<!--  Neutral horizontal separator for cards and form groups.  -->
+	<Style x:Key="HorizontalFormDividerStyle" TargetType="BoxView">
+		<Setter Property="HeightRequest" Value="1" />
+		<Setter Property="HorizontalOptions" Value="Fill" />
+		<Setter Property="Color" Value="#DDE6EC" />
+	</Style>
+
+	<!--  Clean section title with a calm teal underline.  -->
 	<Style x:Key="SectionPillBorderStyle" TargetType="Border">
-		<Setter Property="Padding" Value="12,8" />
-		<!--  Единствен минимален третман за сите секции во формите.  -->
-		<Setter Property="BackgroundColor" Value="Transparent" />
-		<Setter Property="StrokeThickness" Value="0" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 0" />
+		<Setter Property="Padding" Value="12,9" />
+		<Setter Property="BackgroundColor" Value="#4A5863" />
+
+		<Setter Property="Stroke" Value="#5B6672" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 5" />
 		<Setter Property="Shadow" Value="{x:Null}" />
 		<Setter Property="HorizontalOptions" Value="Fill" />
 	</Style>
 
 	<Style x:Key="SectionPillLabelStyle" TargetType="Label">
-		<Setter Property="CharacterSpacing" Value="0.8" />
+		<Setter Property="CharacterSpacing" Value="0.2" />
 		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="FontSize" Value="12.5" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="TextColor" Value="White" />
 		<Setter Property="HorizontalOptions" Value="Start" />
 	</Style>
 
@@ -134,6 +178,8 @@
 		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 		<Setter Property="VerticalOptions" Value="Center" />
 		<Setter Property="LineBreakMode" Value="TailTruncation" />
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="Padding" Value="0" />
 	</Style>
 
 	<!--  ============================================================  -->
@@ -141,18 +187,19 @@
 	<!--  ============================================================  -->
 	<Style x:Key="EditFieldLabelStyle" TargetType="Label">
 		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="FontSize" Value="13" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="TextColor" Value="{StaticResource SubtitleColor}" />
 		<Setter Property="VerticalOptions" Value="Center" />
+		<Setter Property="Margin" Value="0,0,0,5" />
 	</Style>
 
 	<Style x:Key="EditFieldBoxStyle" TargetType="Border">
 		<Setter Property="Padding" Value="12,0" />
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
-		<Setter Property="HeightRequest" Value="44" />
+		<Setter Property="HeightRequest" Value="46" />
 		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
 		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 4" />
 		<Setter Property="Shadow" Value="{x:Null}" />
 	</Style>
 
@@ -200,9 +247,9 @@
 	<!--  ============================================================  -->
 	<Style x:Key="InfoPillBorderStyle" TargetType="Border">
 		<Setter Property="Padding" Value="12,6" />
-		<Setter Property="BackgroundColor" Value="#EBF8FF" />
+		<Setter Property="BackgroundColor" Value="White" />
 		<Setter Property="HorizontalOptions" Value="Start" />
-		<Setter Property="Stroke" Value="#BEE3F8" />
+		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 20" />
 		<!--  Претворено во Pill  -->
 		<Setter Property="StrokeThickness" Value="1" />
@@ -210,12 +257,12 @@
 	<Style x:Key="InfoPillIconStyle" TargetType="Label">
 		<Setter Property="FontFamily" Value="FASolid" />
 		<Setter Property="FontSize" Value="12" />
-		<Setter Property="TextColor" Value="#2B6CB0" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 	</Style>
 	<Style x:Key="InfoPillTextStyle" TargetType="Label">
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="12" />
-		<Setter Property="TextColor" Value="#2B6CB0" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 	</Style>
 
 	<!--  ============================================================  -->
@@ -233,7 +280,7 @@
 
 	<Style x:Key="TokenChipBorderStyle" TargetType="Border">
 		<Setter Property="Padding" Value="12,6" />
-		<Setter Property="BackgroundColor" Value="#2F3944" />
+		<Setter Property="BackgroundColor" Value="#4A5863" />
 		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 20" />
 		<Setter Property="StrokeThickness" Value="1" />

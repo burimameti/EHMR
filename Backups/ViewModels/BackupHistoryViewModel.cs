@@ -476,13 +476,13 @@ public partial class BackupHistoryViewModel : BaseViewModel<BackupHistory>
     {
         IsPrimary = true,
         IconGlyph = "👁",
-        Label = "Детали",
+        Label = "Повеќе",
         Command = new AsyncRelayCommand(() => OpenDetailsAsync(backup))
     },
     new SparkButtonItem
     {
         IconGlyph = "\uf0e2",
-        Label = "Restore",
+        Label = "Враќање на податоци",
         Command = new AsyncRelayCommand(() => RestoreAsync(backup))
     },
     new SparkButtonItem

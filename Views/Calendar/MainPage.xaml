@@ -103,7 +103,7 @@
 		</DataTemplate>
 	</ContentPage.Resources>
 
-	<Grid ColumnDefinitions="290,*">
+	<Grid ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
 		<Border Grid.Column="0" StrokeThickness="0">
@@ -900,7 +900,7 @@
 							<!--  Истиот FFButton како на почетната страна, наместо сина боја однадвор.  -->
 							<controls:FFButton
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
+						TextColorEx="White"
 								Grid.Column="1"
 								ButtonKind="Primary"
 								Command="{Binding CreateNewEncounterForSelectedDayCommand}"

@@ -7,7 +7,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="PageRoot"
 	x:DataType="viewModels:ProtocolDetailFormViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
+	BackgroundColor="{StaticResource PageBackground}">
 
 	<Grid ColumnDefinitions="285,*">
 
@@ -19,77 +19,30 @@
 		<!--  ─── MAIN CONTENT AREA ───  -->
 		<Grid
 			Grid.Column="1"
+			Padding="0"
 			RowDefinitions="Auto,*"
-			RowSpacing="12">
+			RowSpacing="16">
 
 			<!--  =========================================================  -->
 			<!--  PAGE HEADER  -->
 			<!--  =========================================================  -->
-			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
-				<Grid
-					ColumnDefinitions="Auto,*,Auto"
-					ColumnSpacing="16"
-					VerticalOptions="Center">
-
-					<!--  Avatar circle  -->
-					<Border
-						BackgroundColor="{StaticResource SparkTabActiveBg}"
-						HeightRequest="48"
-						StrokeShape="RoundRectangle 24"
-						StrokeThickness="0"
-						WidthRequest="48">
-						<Label
-							FontFamily="FASolid"
-							FontSize="18"
-							HorizontalOptions="Center"
-							Text="&#xf3ed;"
-							TextColor="{StaticResource SparkAccentTeal}"
-							VerticalOptions="Center" />
-					</Border>
-
-					<!--  Title + subtitle  -->
-					<VerticalStackLayout
-						Grid.Column="1"
-						Spacing="2"
-						VerticalOptions="Center">
-						<Label Style="{StaticResource PageTitleStyle}" Text="{Binding PageTitle}" />
-						<Label
-							FontFamily="Segoe UI"
-							FontSize="12"
-							Text="Дефинирање на стандардизирани чекори, времетраење и клинички таргети за третманот"
-							TextColor="{StaticResource SparkTextSecondary}" />
-					</VerticalStackLayout>
-
-					<!--  Action buttons  -->
-					<HorizontalStackLayout
-						Grid.Column="2"
-						Spacing="10"
-						VerticalOptions="Center">
-						<controls:FFButton
-							ButtonKind="Secondary"
-							Command="{Binding CancelCommand}"
-							ContentPadding="20,0"
-							HeightRequestEx="40"
-							Text="Откажи"
-							WidthRequest="140" />
-
-						<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
-							ButtonKind="Primary"
-							Command="{Binding SaveCommand}"
-							ContentPadding="20,0"
-							HeightRequestEx="40"
-							Text="Зачувај"
-							WidthRequest="140" />
-					</HorizontalStackLayout>
-				</Grid>
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+				<controls:FFPageHeader
+	Grid.Row="0"
+	Title="{Binding PageTitle}"
+	Subtitle="Дефинирање на стандардизирани чекори, времетраење и клинички таргети за третманот"
+	PrimaryButtonCommand="{Binding SaveCommand}"
+	PrimaryButtonText="Зачувај"
+	SecondaryButtonCommand="{Binding CancelCommand}"
+	SecondaryButtonText="Откажи"
+	ShowPrimaryButton="True"
+	ShowSecondaryButton="True" />
 			</Border>
 
 			<!--  =====================================================  -->
 			<!--  FORM CONTENT WORKSPACE  -->
 			<!--  =====================================================  -->
-			<Border Grid.Row="1" Style="{StaticResource PageHeaderCardStyle}">
+			<controls:FFSectionCard Grid.Row="1" Margin="0" ContentPadding="18">
 				<ScrollView VerticalScrollBarVisibility="Never">
 					<Grid
 						Padding="16"
@@ -102,26 +55,13 @@
 						<VerticalStackLayout Grid.Column="0" Spacing="24">
 
 							<VerticalStackLayout Spacing="16">
-								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label
-										Style="{StaticResource SectionPillLabelStyle}"
-										Text="ОСНОВНИ ПОДАТОЦИ ЗА ПРОТОКОЛОТ" />
-								</Border>
+								<controls:CrudSectionHeader Title="ОСНОВНИ ПОДАТОЦИ ЗА ПРОТОКОЛОТ" />
 
 								<!--  Наслов  -->
 								<Grid Padding="{StaticResource FormRowPadding}">
 									<VerticalStackLayout Spacing="8">
 										<Label Style="{StaticResource EditFieldLabelStyle}" Text="Наслов на медицинскиот протокол *" />
-										<Border Style="{StaticResource EditFieldBoxStyle}">
-											<Entry
-												BackgroundColor="Transparent"
-												FontSize="13"
-												Placeholder="Пр. Протокол за третман на секундарна хипертензија"
-												PlaceholderColor="{StaticResource SparkTextSecondary}"
-												Text="{Binding CurrentProtocol.Name, Mode=TwoWay}"
-												TextColor="{StaticResource SparkTextPrimary}"
-												VerticalOptions="Center" />
-										</Border>
+										<controls:FFInput Placeholder="Пр. Протокол за третман на секундарна хипертензија" Text="{Binding CurrentProtocol.Name, Mode=TwoWay}" />
 									</VerticalStackLayout>
 								</Grid>
 
@@ -134,31 +74,12 @@
 
 									<VerticalStackLayout Grid.Column="0" Spacing="8">
 										<Label Style="{StaticResource EditFieldLabelStyle}" Text="Медицинска категорија *" />
-										<Border Style="{StaticResource EditFieldBoxStyle}">
-											<Entry
-												BackgroundColor="Transparent"
-												FontSize="13"
-												Placeholder="Пр. Кардиологија"
-												PlaceholderColor="{StaticResource SparkTextSecondary}"
-												Text="{Binding CurrentProtocol.DiseaseCategory, Mode=TwoWay}"
-												TextColor="{StaticResource SparkTextPrimary}"
-												VerticalOptions="Center" />
-										</Border>
+										<controls:FFInput Placeholder="Пр. Кардиологија" Text="{Binding CurrentProtocol.DiseaseCategory, Mode=TwoWay}" />
 									</VerticalStackLayout>
 
 									<VerticalStackLayout Grid.Column="2" Spacing="8">
 										<Label Style="{StaticResource EditFieldLabelStyle}" Text="Стандардно времетраење (денови)" />
-										<Border Style="{StaticResource EditFieldBoxStyle}">
-											<Entry
-												BackgroundColor="Transparent"
-												FontSize="13"
-												Keyboard="Numeric"
-												Placeholder="Пр. 30"
-												PlaceholderColor="{StaticResource SparkTextSecondary}"
-												Text="{Binding CurrentProtocol.DurationInDays, Mode=TwoWay}"
-												TextColor="{StaticResource SparkTextPrimary}"
-												VerticalOptions="Center" />
-										</Border>
+										<controls:FFInput Keyboard="Numeric" Placeholder="Пр. 30" Text="{Binding CurrentProtocol.DurationInDays, Mode=TwoWay}" />
 									</VerticalStackLayout>
 								</Grid>
 
@@ -209,11 +130,7 @@
 						<!--  ================================================  -->
 						<VerticalStackLayout Grid.Column="1" Spacing="14">
 
-							<Border Style="{StaticResource SectionPillBorderStyle}">
-								<Label
-									Style="{StaticResource SectionPillLabelStyle}"
-									Text="СИСТЕМСКИ ЗАПИС" />
-							</Border>
+							<controls:CrudSectionHeader Title="СИСТЕМСКИ ЗАПИС" />
 
 							<Border
 								Padding="16"
@@ -281,7 +198,7 @@
 						</VerticalStackLayout>
 					</Grid>
 				</ScrollView>
-			</Border>
+			</controls:FFSectionCard>
 		</Grid>
 	</Grid>
 </ContentPage>

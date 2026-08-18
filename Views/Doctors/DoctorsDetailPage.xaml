@@ -7,7 +7,7 @@
 	xmlns:vm="clr-namespace:EHMR.ViewModels"
 	x:Name="PageRoot"
 	x:DataType="vm:DoctorsDetailViewModel"
-	BackgroundColor="#F4F7FB">
+	BackgroundColor="{StaticResource PageBackground}">
 
 	<!--  =========================================================  -->
 	<!--  RESOURCES  -->
@@ -21,7 +21,7 @@
 	<!--  ROOT LAYOUT: LEFT MENU + RIGHT CONTENT  -->
 	<!--  =========================================================  -->
 
-	<Grid ColumnDefinitions="290,*">
+	<Grid ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
 		<Border
@@ -34,104 +34,20 @@
 		<!--  RIGHT SIDE  -->
 		<Grid
 			Grid.Column="1"
-			Padding="28"
+			Padding="0"
 			RowDefinitions="Auto,*,Auto"
-			RowSpacing="20">
+			RowSpacing="16">
 
 			<!--  =====================================================  -->
 			<!--  HEADER  -->
-			<!--  =====================================================  -->
-
-			<Border
-				Padding="22"
-				BackgroundColor="#F3F6FA"
-				Stroke="#DCE5EE"
-				StrokeThickness="1">
-				<Border.StrokeShape>
-					<RoundRectangle CornerRadius="14" />
-				</Border.StrokeShape>
-
-				<Grid ColumnDefinitions="70,*" ColumnSpacing="18">
-
-					<!--  ICON  -->
-					<Border
-						BackgroundColor="#ECFDF5"
-						HeightRequest="60"
-						StrokeThickness="0"
-						WidthRequest="60">
-						<Border.StrokeShape>
-							<RoundRectangle CornerRadius="30" />
-						</Border.StrokeShape>
-						<Label
-							FontFamily="FASolid"
-							FontSize="22"
-							HorizontalOptions="Center"
-							Text="&#xf0f0;"
-							TextColor="#10B981"
-							VerticalOptions="Center" />
-					</Border>
-
-					<!--  TITLE + STATUS BADGE  -->
-					<VerticalStackLayout
-						Grid.Column="1"
-						Spacing="6"
-						VerticalOptions="Center">
-
-						<Label
-							FontAttributes="Bold"
-							FontSize="24"
-							Text="{Binding PageTitle}"
-							TextColor="#111827" />
-
-						<!--  Status badge — само во Read Only  -->
-						<Border
-							Padding="10,4"
-							HorizontalOptions="Start"
-							IsVisible="{Binding IsReadOnly}"
-							StrokeThickness="0">
-							<Border.StrokeShape>
-								<RoundRectangle CornerRadius="12" />
-							</Border.StrokeShape>
-							<Border.Triggers>
-								<DataTrigger
-									Binding="{Binding Doctors.Status}"
-									TargetType="Border"
-									Value="Active">
-									<Setter Property="BackgroundColor" Value="#DCFCE7" />
-								</DataTrigger>
-								<DataTrigger
-									Binding="{Binding Doctors.Status}"
-									TargetType="Border"
-									Value="Inactive">
-									<Setter Property="BackgroundColor" Value="#F1F5F9" />
-								</DataTrigger>
-							</Border.Triggers>
-							<Label FontAttributes="Bold" FontSize="12">
-								<Label.Triggers>
-									<DataTrigger
-										Binding="{Binding Doctors.Status}"
-										TargetType="Label"
-										Value="Active">
-										<Setter Property="Text" Value="Активен" />
-										<Setter Property="TextColor" Value="#16A34A" />
-									</DataTrigger>
-									<DataTrigger
-										Binding="{Binding Doctors.Status}"
-										TargetType="Label"
-										Value="Inactive">
-										<Setter Property="Text" Value="Неактивен" />
-										<Setter Property="TextColor" Value="#64748B" />
-									</DataTrigger>
-								</Label.Triggers>
-							</Label>
-						</Border>
-
-					</VerticalStackLayout>
-
-				</Grid>
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+				<controls:FFPageHeader Title="{Binding PageTitle}" Subtitle="Податоци и пристап за избраниот реуматолог">
+				<controls:FFPageHeader.HeaderContent>
+					<controls:FFStatusChip IsVisible="{Binding IsReadOnly}" Text="{Binding Doctors.Status}" />
+				</controls:FFPageHeader.HeaderContent>
+			</controls:FFPageHeader>
 			</Border>
 
-			<!--  =====================================================  -->
 			<!--  FORM  -->
 			<!--  =====================================================  -->
 
@@ -142,7 +58,7 @@
 				Stroke="#DCE5EE"
 				StrokeThickness="1">
 				<Border.StrokeShape>
-					<RoundRectangle CornerRadius="14" />
+					<RoundRectangle CornerRadius="0" />
 				</Border.StrokeShape>
 
 				<ScrollView>
@@ -152,11 +68,7 @@
 						<!--  СЕКЦИЈА: Основни информации  -->
 						<!--  ============================  -->
 
-						<Border Style="{StaticResource SectionPillBorderStyle}">
-
-							<Label Style="{StaticResource SectionPillLabelStyle}" Text="👤 Основни информации" />
-
-						</Border>
+						<controls:CrudSectionHeader Title="👤 Основни информации" />
 
 						<!--  ИМЕ  -->
 						<Grid ColumnDefinitions="160,*" ColumnSpacing="{StaticResource FormRowSpacing}">
@@ -165,18 +77,7 @@
 								Style="{StaticResource EditFieldLabelStyle}"
 								Text="Име *"
 								VerticalOptions="Center" />
-							<Border
-								Grid.Column="1"
-								IsVisible="{Binding IsEditMode}"
-								Style="{StaticResource EditFieldBoxStyle}">
-								<Entry
-									BackgroundColor="Transparent"
-									FontSize="14"
-									Placeholder="Внесете име"
-									PlaceholderColor="#94A3B8"
-									Text="{Binding Doctors.User.FirstName}"
-									TextColor="#111827" />
-							</Border>
+							<controls:FFInput Grid.Column="1" IsVisible="{Binding IsEditMode}" Placeholder="Внесете име" Text="{Binding Doctors.User.FirstName}" />
 							<Border
 								Grid.Column="1"
 								IsVisible="{Binding IsReadOnly}"
@@ -192,18 +93,7 @@
 								Style="{StaticResource EditFieldLabelStyle}"
 								Text="Презиме *"
 								VerticalOptions="Center" />
-							<Border
-								Grid.Column="1"
-								IsVisible="{Binding IsEditMode}"
-								Style="{StaticResource EditFieldBoxStyle}">
-								<Entry
-									BackgroundColor="Transparent"
-									FontSize="14"
-									Placeholder="Внесете презиме"
-									PlaceholderColor="#94A3B8"
-									Text="{Binding Doctors.User.LastName}"
-									TextColor="#111827" />
-							</Border>
+							<controls:FFInput Grid.Column="1" IsVisible="{Binding IsEditMode}" Placeholder="Внесете презиме" Text="{Binding Doctors.User.LastName}" />
 							<Border
 								Grid.Column="1"
 								IsVisible="{Binding IsReadOnly}"
@@ -284,11 +174,7 @@
 						<!--  СЕКЦИЈА: Контакт  -->
 						<!--  ============================  -->
 
-						<Border Margin="0,8,0,0" Style="{StaticResource SectionPillBorderStyle}">
-
-							<Label Style="{StaticResource SectionPillLabelStyle}" Text="📞 Контакт информации" />
-
-						</Border>
+						<controls:CrudSectionHeader Title="📞 Контакт информации" />
 
 						<!--  ТЕЛЕФОН  -->
 						<Grid ColumnDefinitions="160,*" ColumnSpacing="{StaticResource FormRowSpacing}">
@@ -297,19 +183,7 @@
 								Style="{StaticResource EditFieldLabelStyle}"
 								Text="Телефон *"
 								VerticalOptions="Center" />
-							<Border
-								Grid.Column="1"
-								IsVisible="{Binding IsEditMode}"
-								Style="{StaticResource EditFieldBoxStyle}">
-								<Entry
-									BackgroundColor="Transparent"
-									FontSize="14"
-									Keyboard="Telephone"
-									Placeholder="Внесете телефон"
-									PlaceholderColor="#94A3B8"
-									Text="{Binding Doctors.ContactPhone}"
-									TextColor="#111827" />
-							</Border>
+							<controls:FFInput Grid.Column="1" IsVisible="{Binding IsEditMode}" Keyboard="Telephone" Placeholder="Внесете телефон" Text="{Binding Doctors.ContactPhone}" />
 							<Border
 								Grid.Column="1"
 								IsVisible="{Binding IsReadOnly}"
@@ -325,19 +199,7 @@
 								Style="{StaticResource EditFieldLabelStyle}"
 								Text="Е-пошта *"
 								VerticalOptions="Center" />
-							<Border
-								Grid.Column="1"
-								IsVisible="{Binding IsEditMode}"
-								Style="{StaticResource EditFieldBoxStyle}">
-								<Entry
-									BackgroundColor="Transparent"
-									FontSize="14"
-									Keyboard="Email"
-									Placeholder="doctor@hospital.mk"
-									PlaceholderColor="#94A3B8"
-									Text="{Binding Doctors.Email}"
-									TextColor="#111827" />
-							</Border>
+							<controls:FFInput Grid.Column="1" IsVisible="{Binding IsEditMode}" Keyboard="Email" Placeholder="doctor@hospital.mk" Text="{Binding Doctors.Email}" />
 							<Border
 								Grid.Column="1"
 								IsVisible="{Binding IsReadOnly}"
@@ -412,7 +274,7 @@
 				Stroke="#DCE5EE"
 				StrokeThickness="1">
 				<Border.StrokeShape>
-					<RoundRectangle CornerRadius="14" />
+					<RoundRectangle CornerRadius="0" />
 				</Border.StrokeShape>
 
 				<Grid ColumnDefinitions="*,Auto">

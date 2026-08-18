@@ -5,6 +5,7 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:entities="clr-namespace:EHMR.Domain.Entities"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Therapies"
 	x:DataType="viewModels:TherapyDetailsViewModel"
 	BackgroundColor="#F8FAFC">
@@ -30,6 +31,7 @@
 			<!--  LEFT SIDE  -->
 			<Border
 				Padding="20"
+				Grid.Row="1"
 				BackgroundColor="#F3F6FA"
 				Stroke="#DCE5EE"
 				StrokeShape="RoundRectangle 12">
@@ -66,7 +68,7 @@
 							Text="Број на циклус"
 							TextColor="#64748B" />
 
-						<Entry Keyboard="Numeric" Text="{Binding TherapyCycleNumber}" />
+						<controls:FFInput Keyboard="Numeric" Text="{Binding TherapyCycleNumber, Mode=TwoWay}" />
 					</VerticalStackLayout>
 
 					<!--  Selected cycle  -->

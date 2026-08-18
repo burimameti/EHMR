@@ -64,7 +64,7 @@
 		</ResourceDictionary>
 	</ContentPage.Resources>
 
-	<Grid ColumnDefinitions="290,*">
+	<Grid ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
 		<Border
@@ -77,12 +77,12 @@
 		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
-            Margin="12,0,12,12"
+            Margin="0"
 			RowDefinitions="Auto,*"
-			RowSpacing="8">
+			RowSpacing="16">
 
 			<!--  HEADER  -->
-			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 					<controls:FFPageHeader
 						Title="Администрација"
@@ -91,7 +91,7 @@
 
 					<controls:FFButton
 						Grid.Column="1"
-						ButtonKind="Secondary"
+						ButtonKind="Green"
 						Command="{Binding RefreshCommand}"
 						ContentPadding="20,0"
 						HeightRequestEx="45"
@@ -101,7 +101,7 @@
 
 			<!--  MAIN SCROLL AREA  -->
 			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Always">
-				<VerticalStackLayout Padding="0,0,0,0" Spacing="8">
+				<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
 
 					<!--  ===================================================  -->
 					<!--  SUMMARY / NAVIGATION CARDS  -->
@@ -118,14 +118,14 @@
 						Padding="0"
 						ColumnDefinitions="*,*,*,*"
 						ColumnSpacing="0"
-						HeightRequest="150">
+						HeightRequest="112">
 						<controls:FFMetricTile
 							Title="{Binding Cards[0].Title}"
 							Grid.Column="0"
 							Command="{Binding Cards[0].Command}"
 							DisplayMode="Metric"
 							Icon="{Binding Cards[0].Icon}"
-							MaximumHeightRequest="140"
+							MaximumHeightRequest="84"
 							Subtitle="{Binding Cards[0].Subtitle}"
 							Variant="{Binding Cards[0].Variant}"
 							Value="{Binding Cards[0].Value}" />
@@ -135,7 +135,7 @@
 							Command="{Binding Cards[1].Command}"
 							DisplayMode="Metric"
 							Icon="{Binding Cards[1].Icon}"
-							MaximumHeightRequest="140"
+							MaximumHeightRequest="84"
 							Subtitle="{Binding Cards[1].Subtitle}"
 							Variant="{Binding Cards[1].Variant}"
 							Value="{Binding Cards[1].Value}" />
@@ -145,7 +145,7 @@
 							Command="{Binding Cards[2].Command}"
 							DisplayMode="Metric"
 							Icon="{Binding Cards[2].Icon}"
-							MaximumHeightRequest="140"
+							MaximumHeightRequest="84"
 							Subtitle="{Binding Cards[2].Subtitle}"
 							Variant="{Binding Cards[2].Variant}"
 							Value="{Binding Cards[2].Value}" />
@@ -155,7 +155,7 @@
 							Command="{Binding Cards[3].Command}"
 							DisplayMode="Metric"
 							Icon="{Binding Cards[3].Icon}"
-							MaximumHeightRequest="140"
+							MaximumHeightRequest="84"
 							Subtitle="{Binding Cards[3].Subtitle}"
 							Variant="{Binding Cards[3].Variant}"
 							Value="{Binding Cards[3].Value}" />
@@ -164,7 +164,7 @@
 					<!--  ===================================================  -->
 					<!--  QUICK ACTIONS ROW  -->
 					<!--  ===================================================  -->
-					<!--<Border Style="{StaticResource PageHeaderCardStyle}">
+					<!--<controls:FFSectionCard>
 						<Grid RowDefinitions="Auto,Auto" RowSpacing="14">
 
 							<Label Style="{StaticResource AdminSectionTitle}" Text="Брзи акции" />
@@ -201,7 +201,7 @@
 
 								<controls:FFButton
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
+						TextColorEx="White"
 									Margin="0,0,12,12"
 									ButtonKind="Primary"
 									Command="{Binding CreateBackupCommand}"
@@ -211,12 +211,12 @@
 
 							</FlexLayout>
 						</Grid>
-					</Border>-->
+					</controls:FFSectionCard>-->
 
 					<!--  ===================================================  -->
 					<!--  RECENT BACKUPS LIST  -->
 					<!--  ===================================================  -->
-					<Border Style="{StaticResource PageHeaderCardStyle}">
+					<Border Style="{StaticResource PageCardStyleDashboard}">
 						<Grid RowDefinitions="Auto,Auto" RowSpacing="12">
 
 							<Grid ColumnDefinitions="*,Auto">

@@ -16,99 +16,22 @@
 
 		<Grid
 			Grid.Column="1"
-			Padding="24"
-			BackgroundColor="{StaticResource Gray200}"
+			Padding="0"
+			
+			BackgroundColor="{StaticResource PageBackground}"
 			RowDefinitions="Auto,Auto,*"
-			RowSpacing="20">
+			RowSpacing="16">
 
-			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
-
-				<Grid ColumnDefinitions="Auto,*,440">
-
-					<VerticalStackLayout
-						Grid.Column="1"
-						Spacing="6"
-						VerticalOptions="Center">
-
-						<Label
-							FontAttributes="Bold"
-							FontSize="28"
-							Text="{Binding HeaderTitle}"
-							TextColor="{StaticResource SparkTextPrimary}" />
-
-						<Label
-							FontSize="14"
-							Text="{Binding HeaderSubtitle}"
-							TextColor="{StaticResource SparkTextSecondary}" />
-
-						<HorizontalStackLayout Margin="0,12,0,0" Spacing="10">
-
-							<Border
-								Padding="10,4"
-								BackgroundColor="#EDF7F9"
-								StrokeShape="RoundRectangle 0"
-								StrokeThickness="0">
-
-								<HorizontalStackLayout Spacing="6">
-
-									<Label
-										FontFamily="FASolid"
-										FontSize="12"
-										Text="&#xf46b;"
-										TextColor="{StaticResource SparkAccentTeal}" />
-
-									<Label
-										FontAttributes="Bold"
-										FontSize="12"
-										Text="Медикамент"
-										TextColor="{StaticResource SparkTextPrimary}" />
-
-								</HorizontalStackLayout>
-
-							</Border>
-
-						</HorizontalStackLayout>
-
-					</VerticalStackLayout>
-
-					<HorizontalStackLayout
-						Grid.Column="2"
-						Margin="0,0,0,0"
-						VerticalOptions="Center">
-
-						<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
-							ButtonKind="Primary"
-							Command="{Binding SaveCommand}"
-							HeightRequestEx="36"
-							IsVisible="{Binding IsEditMode}"
-							Text="Зачувај"
-							WidthRequest="200" />
-
-						<controls:FFButton
-							ButtonKind="Secondary"
-							Command="{Binding CancelCommand}"
-							HeightRequestEx="36"
-							IsVisible="{Binding IsEditMode}"
-							Text="Откажи"
-							TextColorEx="White"
-							WidthRequest="200" />
-
-						<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
-							ButtonKind="Primary"
-							Command="{Binding ToggleEditCommand}"
-							HeightRequestEx="36"
-							IsVisible="{Binding IsReadOnly}"
-							Text="Уреди"
-							WidthRequest="200" />
-
-					</HorizontalStackLayout>
-
-				</Grid>
-
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+				<controls:FFPageHeader Grid.Row="0" Title="{Binding HeaderTitle}" Subtitle="{Binding HeaderSubtitle}">
+	<controls:FFPageHeader.HeaderContent>
+		<HorizontalStackLayout Spacing="10">
+			<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" Command="{Binding SaveCommand}" HeightRequestEx="40" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" />
+			<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="40" IsVisible="{Binding IsEditMode}" Text="Откажи" />
+			<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" Command="{Binding ToggleEditCommand}" HeightRequestEx="40" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="White" />
+		</HorizontalStackLayout>
+	</controls:FFPageHeader.HeaderContent>
+</controls:FFPageHeader>
 			</Border>
 
 			<Border
@@ -213,22 +136,15 @@
 
 			</Border>
 
-			<Border
-				Grid.Row="2"
-				BackgroundColor="{StaticResource SparkBackground}"
-				StrokeShape="RoundRectangle 1"
-				StrokeThickness="0">
+			<controls:FFSectionCard
+				Grid.Row="2" Margin="0" ContentPadding="18">
 
 				<ScrollView>
 					<VerticalStackLayout Padding="32" Spacing="24">
 
 						<VerticalStackLayout IsVisible="{Binding IsTab1Active}" Spacing="20">
 
-							<Border Style="{StaticResource SectionPillBorderStyle}">
-
-								<Label Style="{StaticResource SectionPillLabelStyle}" Text="ИНФОРМАЦИИ ЗА ЛЕКОТ" />
-
-							</Border>
+							<controls:CrudSectionHeader Title="ИНФОРМАЦИИ ЗА ЛЕКОТ" />
 
 							<BoxView
 								Margin="0,10"
@@ -247,24 +163,7 @@
 										Text="Име на лек *"
 										TextColor="{StaticResource SparkTextSecondary}"
 										VerticalOptions="Center" />
-									<Border
-										Grid.Column="1"
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
-										<Entry
-											BackgroundColor="Transparent"
-											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
-											Placeholder="Пр. Paracetamol"
-											PlaceholderColor="{StaticResource SparkTextSecondary}"
-											Text="{Binding Medicine.Name}"
-											TextColor="{StaticResource SparkTextPrimary}"
-											VerticalOptions="Center" />
-									</Border>
+									<controls:FFInput Grid.Column="1" IsReadOnly="{Binding IsReadOnly}" Placeholder="Пр. Paracetamol" Text="{Binding Medicine.Name}" />
 								</Grid>
 
 								<Grid
@@ -278,24 +177,7 @@
 										Text="Генеричко име"
 										TextColor="{StaticResource SparkTextSecondary}"
 										VerticalOptions="Center" />
-									<Border
-										Grid.Column="1"
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
-										<Entry
-											BackgroundColor="Transparent"
-											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
-											Placeholder="Пр. Acetaminophen"
-											PlaceholderColor="{StaticResource SparkTextSecondary}"
-											Text="{Binding Medicine.GenericName}"
-											TextColor="{StaticResource SparkTextPrimary}"
-											VerticalOptions="Center" />
-									</Border>
+									<controls:FFInput Grid.Column="1" IsReadOnly="{Binding IsReadOnly}" Placeholder="Пр. Acetaminophen" Text="{Binding Medicine.GenericName}" />
 								</Grid>
 
 							</Grid>
@@ -317,24 +199,7 @@
 										Text="Фармацевтска форма"
 										TextColor="{StaticResource SparkTextSecondary}"
 										VerticalOptions="Center" />
-									<Border
-										Grid.Column="1"
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
-										<Entry
-											BackgroundColor="Transparent"
-											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
-											Placeholder="Таблети, Сируп..."
-											PlaceholderColor="{StaticResource SparkTextSecondary}"
-											Text="{Binding Medicine.DosageForm}"
-											TextColor="{StaticResource SparkTextPrimary}"
-											VerticalOptions="Center" />
-									</Border>
+									<controls:FFInput Grid.Column="1" IsReadOnly="{Binding IsReadOnly}" Placeholder="Таблети, Сируп..." Text="{Binding Medicine.DosageForm}" />
 								</Grid>
 
 								<Grid
@@ -348,24 +213,7 @@
 										Text="Стандардна доза"
 										TextColor="{StaticResource SparkTextSecondary}"
 										VerticalOptions="Center" />
-									<Border
-										Grid.Column="1"
-										Padding="12,0"
-										BackgroundColor="{StaticResource SparkBackground}"
-										HeightRequest="46"
-										Stroke="{StaticResource SparkBorder}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
-										<Entry
-											BackgroundColor="Transparent"
-											FontSize="13"
-											IsReadOnly="{Binding IsReadOnly}"
-											Placeholder="Пр. 500 mg"
-											PlaceholderColor="{StaticResource SparkTextSecondary}"
-											Text="{Binding Medicine.DefaultDosage}"
-											TextColor="{StaticResource SparkTextPrimary}"
-											VerticalOptions="Center" />
-									</Border>
+									<controls:FFInput Grid.Column="1" IsReadOnly="{Binding IsReadOnly}" Placeholder="Пр. 500 mg" Text="{Binding Medicine.DefaultDosage}" />
 								</Grid>
 
 							</Grid>
@@ -374,11 +222,7 @@
 
 						<VerticalStackLayout IsVisible="{Binding IsTab2Active}" Spacing="20">
 
-							<Border Style="{StaticResource SectionPillBorderStyle}">
-
-								<Label Style="{StaticResource SectionPillLabelStyle}" Text="ДОПОЛНИТЕЛНИ ИНФОРМАЦИИ ЗА АПЛИКАЦИЈА" />
-
-							</Border>
+							<controls:CrudSectionHeader Title="ДОПОЛНИТЕЛНИ ИНФОРМАЦИИ ЗА АПЛИКАЦИЈА" />
 
 							<BoxView
 								Margin="0,10"
@@ -416,11 +260,7 @@
 
 						<VerticalStackLayout IsVisible="{Binding IsTab3Active}" Spacing="20">
 
-							<Border Style="{StaticResource SectionPillBorderStyle}">
-
-								<Label Style="{StaticResource SectionPillLabelStyle}" Text="СИСТЕМСКИ ИНФОРМАЦИИ" />
-
-							</Border>
+							<controls:CrudSectionHeader Title="СИСТЕМСКИ ИНФОРМАЦИИ" />
 
 							<BoxView
 								Margin="0,10"
@@ -470,7 +310,7 @@
 					</VerticalStackLayout>
 				</ScrollView>
 
-			</Border>
+			</controls:FFSectionCard>
 
 		</Grid>
 	</Grid>

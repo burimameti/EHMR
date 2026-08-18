@@ -46,7 +46,7 @@
 	</ContentPage.Resources>
 
 	<!--  Same 290,* split as the Dashboard menu/content column  -->
-	<Grid ColumnDefinitions="290,*">
+	<Grid ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
 		<Border Grid.Column="0" StrokeThickness="0">
@@ -56,13 +56,17 @@
 		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
-			Margin="12,0,12,12"
-			RowDefinitions="Auto,*">
+			RowDefinitions="Auto,*"
+			RowSpacing="16"
+			Style="{StaticResource ListPageRootGridStyle}">
 
 			<!--  =========================================================  -->
 			<!--  HEADER — same PageHeaderCardStyle + FFPageHeader + FFButton as Dashboard  -->
 			<!--  =========================================================  -->
-			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+			<Border
+				Grid.Row="0"
+				Margin="0"
+				Style="{StaticResource PageCardStyleDashboard}">
 				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 					<sc:FFPageHeader
 						Title="Извештаи"
@@ -70,13 +74,14 @@
 						Subtitle="Преглед, пребарување и преземање на генерирани извештаи" />
 					<HorizontalStackLayout
 						Grid.Column="1"
+						Margin="0,8,8,8"
 						Spacing="10"
 						VerticalOptions="Center">
 						<sc:FFButton
 							ButtonKind="Secondary"
 							Command="{Binding BackToHubCommand}"
 							ContentPadding="0,0"
-							Text="← Назад" />
+							Text="Назад" />
 					</HorizontalStackLayout>
 				</Grid>
 			</Border>
@@ -85,12 +90,12 @@
 			<!--  MAIN SCROLL AREA  -->
 			<!--  =========================================================  -->
 			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-				<VerticalStackLayout Spacing="8">
+				<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
 
 					<!--  =========================================================  -->
 					<!--  HUB VIEW — report definition cards  -->
 					<!--  =========================================================  -->
-					<Border x:Name="HubGrid" Style="{StaticResource PageHeaderCardStyle}">
+					<sc:FFSectionCard>
 						<Border.Triggers>
 							<DataTrigger
 								Binding="{Binding IsShowingDetails}"
@@ -105,7 +110,7 @@
 								<VerticalStackLayout
 									Padding="20"
 									HorizontalOptions="Center"
-									Spacing="6"
+									Spacing="16"
 									VerticalOptions="Center">
 									<Label Style="{StaticResource DashboardEmptyStateLabel}" Text="Нема достапни извештаи" />
 								</VerticalStackLayout>
@@ -214,15 +219,16 @@
 								</DataTemplate>
 							</CollectionView.ItemTemplate>
 						</CollectionView>
-					</Border>
+					</sc:FFSectionCard>
 
 					<!--  =========================================================  -->
 					<!--  DETAIL VIEW — table + analytics sidebar  -->
 					<!--  =========================================================  -->
 					<Grid
 						x:Name="DetailsGrid"
-						ColumnDefinitions="*,260"
-						ColumnSpacing="8"
+						Margin="16,0,16,0"
+						ColumnDefinitions="*,320"
+						ColumnSpacing="16"
 						IsVisible="False">
 						<Grid.Triggers>
 							<DataTrigger
@@ -234,10 +240,10 @@
 						</Grid.Triggers>
 
 						<!--  LEFT COLUMN  -->
-						<VerticalStackLayout Grid.Column="0" Spacing="8">
+						<VerticalStackLayout Grid.Column="0" Spacing="16">
 
 							<!--  Report controls bar  -->
-							<Border Style="{StaticResource PageHeaderCardStyle}">
+							<sc:FFSectionCard Margin="0">
 								<Grid
 									ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto"
 									ColumnSpacing="10"
@@ -266,15 +272,11 @@
 											Style="{StaticResource SparkTabTitleLabelStyle}"
 											Text="Периодичен"
 											VerticalOptions="Center" />
-										<Border Style="{StaticResource EditFieldBoxStyle}">
-											<Picker
-												FontSize="13"
-												ItemsSource="{Binding PeriodTypeOptions}"
-												SelectedItem="{Binding SelectedPeriodTypeLabel}"
-												TextColor="{StaticResource SparkAccentTeal}"
-												VerticalOptions="Center"
-												WidthRequest="130" />
-										</Border>
+										<sc:FFPicker
+											ItemsSource="{Binding PeriodTypeOptions}"
+											Label=""
+											MinimumWidthRequest="130"
+											SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" />
 									</HorizontalStackLayout>
 
 									<HorizontalStackLayout
@@ -285,15 +287,7 @@
 											Style="{StaticResource SparkTabTitleLabelStyle}"
 											Text="ОД"
 											VerticalOptions="Center" />
-										<Border Style="{StaticResource EditFieldBoxStyle}">
-											<DatePicker
-												BackgroundColor="Transparent"
-												Date="{Binding StartDate}"
-												FontSize="13"
-												Format="dd.MM.yyyy"
-												TextColor="{StaticResource SparkAccentTeal}"
-												VerticalOptions="Center" />
-										</Border>
+										<sc:FFDatePicker HasLabel="False" SelectedDate="{Binding StartDate, Mode=TwoWay}" />
 									</HorizontalStackLayout>
 
 									<HorizontalStackLayout
@@ -304,15 +298,7 @@
 											Style="{StaticResource SparkTabTitleLabelStyle}"
 											Text="ДО"
 											VerticalOptions="Center" />
-										<Border Style="{StaticResource EditFieldBoxStyle}">
-											<DatePicker
-												BackgroundColor="Transparent"
-												Date="{Binding EndDate}"
-												FontSize="13"
-												Format="dd.MM.yyyy"
-												TextColor="{StaticResource SparkAccentTeal}"
-												VerticalOptions="Center" />
-										</Border>
+										<sc:FFDatePicker HasLabel="False" SelectedDate="{Binding EndDate, Mode=TwoWay}" />
 									</HorizontalStackLayout>
 
 									<sc:FFButton
@@ -333,22 +319,22 @@
 										HeightRequestEx="45"
 										IsVisible="{Binding CanCreate}"
 										Text="🔄 Генерирај"
-										TextColorEx="{StaticResource SidebarActiveText}" />
+										TextColorEx="White" />
 								</Grid>
-							</Border>
+							</sc:FFSectionCard>
 
 							<!--  Explorer header: tabs + search + pickers  -->
-							<Border Style="{StaticResource PageHeaderCardStyle}">
+							<sc:FFSectionCard Margin="0">
 								<sc:SparkExplorerHeaderView
 									Buttons="{Binding Buttons}"
 									Pickers="{Binding Pickers}"
 									SearchPlaceholder="Филтрирај редови..."
 									SearchText="{Binding SearchText, Mode=TwoWay}"
 									Tabs="{Binding Tabs}" />
-							</Border>
+							</sc:FFSectionCard>
 
 							<!--  Data grid  -->
-							<Border Padding="0" Style="{StaticResource PageHeaderCardStyle}">
+							<sc:FFSectionCard Margin="0" ContentPadding="0">
 								<Grid RowDefinitions="Auto,*">
 									<ActivityIndicator
 										Grid.Row="0"
@@ -369,21 +355,19 @@
 										Rows="{Binding GridRows}"
 										TotalPages="{Binding TotalPages}" />
 								</Grid>
-							</Border>
+							</sc:FFSectionCard>
 
 						</VerticalStackLayout>
 
 						<!--  RIGHT SIDEBAR — analytics + export  -->
 						<ScrollView Grid.Column="1" VerticalScrollBarVisibility="Never">
-							<VerticalStackLayout Spacing="8">
+							<VerticalStackLayout Spacing="16">
 
 								<!--  Analytics card  -->
-								<Border Style="{StaticResource PageHeaderCardStyle}">
+								<sc:FFSectionCard Margin="0">
 									<VerticalStackLayout Spacing="6">
 
-										<Border Style="{StaticResource SectionPillBorderStyle}">
-											<Label Style="{StaticResource SectionPillLabelStyle}" Text="АНАЛИТИКА" />
-										</Border>
+										<sc:CrudSectionHeader Title="АНАЛИТИКА" />
 
 										<!--  Metric 1  -->
 										<Border
@@ -485,15 +469,13 @@
 										</Border>
 
 									</VerticalStackLayout>
-								</Border>
+								</sc:FFSectionCard>
 
 								<!--  Export card  -->
-								<Border Style="{StaticResource PageHeaderCardStyle}">
+								<sc:FFSectionCard Margin="0">
 									<VerticalStackLayout Spacing="10">
 
-										<Border Style="{StaticResource SectionPillBorderStyle}">
-											<Label Style="{StaticResource SectionPillLabelStyle}" Text="ОПЦИИ ЗА ИЗВОЗ" />
-										</Border>
+										<sc:CrudSectionHeader Title="ОПЦИИ ЗА ИЗВОЗ" />
 
 										<sc:FFButton
 											ButtonKind="Danger"
@@ -509,10 +491,10 @@
 											ContentPadding="16,0"
 											HeightRequestEx="45"
 											Text="📊 Извези во Excel"
-											TextColorEx="{StaticResource SidebarActiveText}" />
+											TextColorEx="White" />
 
 									</VerticalStackLayout>
-								</Border>
+								</sc:FFSectionCard>
 
 							</VerticalStackLayout>
 						</ScrollView>

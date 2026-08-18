@@ -8,9 +8,8 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Appointments"
 	x:Name="PageRoot"
 	x:DataType="viewModels:AppointmentListViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
-
-	<Grid ColumnDefinitions="290,*">
+	BackgroundColor="{StaticResource PageBackground}">
+	<Grid ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
 		<Border Grid.Column="0" StrokeThickness="0">
@@ -20,12 +19,12 @@
 		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
-            Margin="12,0,12,12"
+			Margin="0"
 			RowDefinitions="Auto,*"
-			RowSpacing="8">
+			RowSpacing="16">
 
 			<!--  HEADER  -->
-			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader
 					Title="Термини"
 					PrimaryButtonCommand="{Binding NewCommand}"
@@ -37,74 +36,78 @@
 			</Border>
 
 			<!--  MAIN CONTENT / GRID  -->
-			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-				<VerticalStackLayout Spacing="8">
+			<Border
+				Grid.Row="1"
+				BackgroundColor="{StaticResource PageBackground}"
+				StrokeThickness="0">
+				<ScrollView VerticalScrollBarVisibility="Never">
+					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
+						<controls:FFSectionCard>
+							<controls:SparkExplorerHeaderView
+								Buttons="{Binding Buttons}"
+								SearchCommand="{Binding SearchCommand}"
+								SearchPlaceholder="Пациент или реуматолог..."
+								SearchText="{Binding SearchText}"
+								SelectedSuggestion="{Binding SelectedSuggestion, Mode=TwoWay}"
+								ShowCyrillicToggle="False"
+								ShowSuggestions="{Binding ShowSuggestions}"
+								Suggestions="{Binding Suggestions}"
+								Tabs="{Binding Tabs}">
+								<controls:SparkExplorerHeaderView.SuggestionTemplate>
+									<DataTemplate x:DataType="search:SearchSuggestionDto">
+										<Border
+											Margin="2"
+											Padding="12,9"
+											BackgroundColor="White"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											StrokeShape="RoundRectangle 8"
+											StrokeThickness="1">
+											<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+												<Label
+													FontFamily="FASolid"
+													FontSize="13"
+													Text="&#xf007;"
+													TextColor="{StaticResource SparkAccentTeal}"
+													VerticalOptions="Center" />
+												<Label
+													Grid.Column="1"
+													FontAttributes="Bold"
+													FontSize="12.5"
+													Text="{Binding DisplayText}"
+													TextColor="{StaticResource SparkTextPrimary}"
+													VerticalOptions="Center" />
+												<Label
+													Grid.Column="2"
+													FontSize="11"
+													Text="{Binding Group}"
+													TextColor="{StaticResource SparkTextSecondary}"
+													VerticalOptions="Center" />
+											</Grid>
+										</Border>
+									</DataTemplate>
+								</controls:SparkExplorerHeaderView.SuggestionTemplate>
+							</controls:SparkExplorerHeaderView>
 
-					<Border Style="{StaticResource PageHeaderCardStyle}">
-						<Grid ColumnSpacing="5" RowSpacing="20">
-							<VerticalStackLayout Spacing="10">
-
-								<!--  SEARCH & FILTERS  -->
-								<controls:SparkExplorerHeaderView
-									Buttons="{Binding Buttons}"
-									Pickers="{Binding Pickers}"
-									SearchPlaceholder="Пациент или реуматолог..."
-									SearchText="{Binding SearchText}"
-									SelectedSuggestion="{Binding SelectedSuggestion, Mode=TwoWay}"
-									ShowSuggestions="{Binding ShowSuggestions}"
-									Suggestions="{Binding Suggestions}"
-									Tabs="{Binding Tabs}">
-									<controls:SparkExplorerHeaderView.SuggestionTemplate>
-										<DataTemplate x:DataType="search:SearchSuggestionDto">
-											<Border Margin="2" Padding="12,9" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
-												<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-													<Label FontFamily="FASolid" FontSize="13" Text="&#xf007;" TextColor="{StaticResource SparkAccentTeal}" VerticalOptions="Center" />
-													<Label Grid.Column="1" FontAttributes="Bold" FontSize="12.5" Text="{Binding DisplayText}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
-													<Label Grid.Column="2" FontSize="11" Text="{Binding Group}" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
-												</Grid>
-											</Border>
-										</DataTemplate>
-									</controls:SparkExplorerHeaderView.SuggestionTemplate>
-								</controls:SparkExplorerHeaderView>
-
-								<!--  History drill-down banner  -->
-								<Border
-									Padding="12,8"
-									BackgroundColor="{StaticResource MedicalBlue}"
-									IsVisible="{Binding IsViewingPersonHistory}"
-									StrokeShape="RoundRectangle 8"
-									StrokeThickness="0">
-									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="{Binding ActiveHistoryLabel, StringFormat='Целосна историја за: {0}'}"
-										TextColor="White" />
-								</Border>
-
-								<!--  DATA GRID  -->
-								<Border Padding="0">
-									<controls:SparkDataGridView
-										x:Name="AppointmentGrid"
-										AutoSelectFirstRow="False"
-										Columns="{Binding GridColumns}"
-										CurrentPage="{Binding CurrentPage}"
-										EditRowCommand="{Binding EditCommand}"
-										NextPageCommand="{Binding NextPageCommand}"
-										PageChangedCommand="{Binding PageChangedCommand}"
-										PreviousPageCommand="{Binding PreviousPageCommand}"
-										RowTappedCommand="{Binding SelectCommand}"
-										Rows="{Binding GridRows}"
-										ShowPagination="True"
-										ShowRowNumbers="True"
-										TotalPages="{Binding TotalPages}" />
-								</Border>
-
-							</VerticalStackLayout>
-						</Grid>
-					</Border>
-
-				</VerticalStackLayout>
-			</ScrollView>
+						</controls:FFSectionCard>
+						<controls:FFSectionCard>
+							<controls:SparkDataGridView
+								x:Name="AppointmentGrid"
+								AutoSelectFirstRow="False"
+								Columns="{Binding GridColumns}"
+								CurrentPage="{Binding CurrentPage}"
+								EditRowCommand="{Binding EditCommand}"
+								NextPageCommand="{Binding NextPageCommand}"
+								PageChangedCommand="{Binding PageChangedCommand}"
+								PreviousPageCommand="{Binding PreviousPageCommand}"
+								RowTappedCommand="{Binding SelectCommand}"
+								Rows="{Binding GridRows}"
+								ShowPagination="True"
+								ShowRowNumbers="True"
+								TotalPages="{Binding TotalPages}" />
+						</controls:FFSectionCard>
+					</VerticalStackLayout>
+				</ScrollView>
+			</Border>
 
 		</Grid>
 

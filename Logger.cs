@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace EHMR
@@ -63,10 +63,15 @@ namespace EHMR
 
         public static void LogException(string context, Exception ex)
         {
-            Log($"EXCEPTION in {context}: {ex.GetType().Name}: {ex.Message}");
-            Log($"StackTrace: {ex.StackTrace}");
-            if(ex.InnerException!=null)
-                Log($"InnerException: {ex.InnerException.GetType().Name}: {ex.InnerException.Message}");
+            Log($"EXCEPTION in {context}: {ex}");
+            var inner=ex.InnerException;
+            var depth=1;
+            while(inner!=null)
+            {
+                Log($"INNER[{depth}]: {inner}");
+                inner=inner.InnerException;
+                depth++;
+            }
         }
 
         public static string GetLogFilePath() => _logPath;

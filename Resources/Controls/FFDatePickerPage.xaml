@@ -5,16 +5,16 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	x:Name="Root">
 
-	<Grid RowDefinitions="Auto, *" RowSpacing="6">
+	<Grid RowDefinitions="Auto, *" RowSpacing="4">
 
 		<Label
 			Grid.Row="0"
-			Margin="4,0,0,0"
+			Margin="2,0,0,0"
 			FontAttributes="Bold"
-			FontSize="13"
+			FontSize="11"
 			IsVisible="{Binding HasLabel, Source={x:Reference Root}}"
 			Text="{Binding Label, Source={x:Reference Root}}"
-			TextColor="{StaticResource Gray700}" />
+			TextColor="{StaticResource SparkTextSecondary}" />
 
 		<Border
 			x:Name="PickerBorder"
@@ -26,16 +26,8 @@
 			StrokeThickness="1">
 
 			<Border.StrokeShape>
-				<RoundRectangle CornerRadius="10" />
+				<RoundRectangle CornerRadius="4" />
 			</Border.StrokeShape>
-
-			<Border.Shadow>
-				<Shadow
-					Brush="{StaticResource Transparent}"
-					Opacity="0.20"
-					Radius="5"
-					Offset="0,3" />
-			</Border.Shadow>
 
 			<Border.GestureRecognizers>
 				<TapGestureRecognizer Tapped="OnBorderTapped" />
@@ -50,6 +42,7 @@
 					Grid.Column="0"
 					Margin="0,0,8,0"
 					IsChecked="{Binding IsFilterActive, Source={x:Reference Root}, Mode=TwoWay}"
+					IsVisible="{Binding IsOptionalFilter, Source={x:Reference Root}}"
 					VerticalOptions="Center"
 					Color="{StaticResource Gray800}" />
 
@@ -71,14 +64,14 @@
 					Date="{Binding SelectedDate, Source={x:Reference Root}, Mode=TwoWay}"
 					DateSelected="InnerDatePicker_DateSelected"
 					HorizontalOptions="Fill"
-					IsEnabled="{Binding IsFilterActive, Source={x:Reference Root}}"
+					IsEnabled="{Binding IsPickerEnabled, Source={x:Reference Root}}"
 					Opacity="0"
 					VerticalOptions="Fill" />
 
 				<Label
 					Grid.Column="2"
 					FontFamily="FASolid"
-					FontSize="13"
+					FontSize="11"
 					HorizontalOptions="Center"
 					InputTransparent="True"
 					Text="&#xf133;"
@@ -89,7 +82,7 @@
 
 			<Border.Triggers>
 				<DataTrigger
-					Binding="{Binding IsFilterActive, Source={x:Reference Root}}"
+					Binding="{Binding IsPickerEnabled, Source={x:Reference Root}}"
 					TargetType="Border"
 					Value="False">
 					<Setter Property="BackgroundColor" Value="{StaticResource Gray100}" />

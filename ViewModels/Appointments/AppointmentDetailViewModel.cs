@@ -3,15 +3,14 @@ using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
+using EHMR.Helpers;
 using EHMR.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-
 
 namespace EHMR.ViewModels.Appointments;
 
@@ -21,6 +20,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     private readonly ISelectedItemService<Appointment> _selectedItemService;
 
     private CancellationTokenSource _cts = new();
+    private CancellationTokenSource _medicineCts = new();
 
     private Appointment? _originalAppointment;
     private bool _isNewAppointmentMode;
@@ -33,7 +33,8 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
     public bool IsNewAppointment => _isNewAppointmentMode;
     public bool CanSaveAppointment => IsNewAppointment ? CanCreate : CanUpdate;
-    public bool CanEditAppointment => !_isNewAppointmentMode&&CanUpdate&&
+    public bool CanEditAppointment =>
+        !_isNewAppointmentMode&&CanUpdate&&
         Appointment.Status is (AppointmentStatus.Scheduled or AppointmentStatus.CheckedIn)&&
         Appointment.ScheduledStart.Date>=DateTime.Today;
     public bool ShowStatusEditor => IsEditMode&&!IsNewAppointment;
@@ -53,31 +54,64 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         IAppointmentDetailService service,
         INavigationService navigation,
         ISelectedItemService<Appointment> selected,
-        IUserDialogService userDialogService, ISelectedItemService<Appointment> selectedItemService,
+        IUserDialogService userDialogService,
+        ISelectedItemService<Appointment> selectedItemService,
         IMenuService menuService)
-        : base(navigation, userDialogService, menuService, authorizationService,selectedItemService)
+        : base(navigation, userDialogService, menuService, authorizationService, selectedItemService)
     {
         _service=service;
         _selectedItemService=selected;
-        EvaluatePermissions(); // now sets base's CanCreate/CanUpdate/CanDelete
+        InitMkbAlphabet();
+        EvaluatePermissions();
     }
 
     // =========================
-    // MAIN DATA
+    // APPOINTMENT
     // =========================
 
     [ObservableProperty] private Appointment appointment = new();
 
-    [ObservableProperty] private ObservableCollection<Diagnosis> selectedDiagnoses = new();
-    [ObservableProperty] private ObservableCollection<TherapyCycle> visibleTherapies = new();
+    // =========================
+    // PATIENT SEARCH
+    // =========================
 
+    [ObservableProperty] private string patientSearchText = string.Empty;
+    [ObservableProperty] private bool useCyrillicPatientSearch = true;
+    [ObservableProperty] private ObservableCollection<Patient> patientSuggestions = new();
+    [ObservableProperty] private Patient? patientSuggestionSelection;
+    [ObservableProperty] private bool showPatientSuggestions;
+
+    // =========================
+    // DIAGNOSIS SEARCH
+    // =========================
+
+    [ObservableProperty] private string diagnosisSearchText = string.Empty;
+    [ObservableProperty] private string diagnosisDescriptionSearchText = string.Empty;
+    [ObservableProperty] private bool showDiagnosisDropdown;
+    [ObservableProperty] private ObservableCollection<Mkb10Code> availableDiagnoses = new();
+    [ObservableProperty] private ObservableCollection<MkbAlphabetSection> mkbAlphabetSections = new();
+    [ObservableProperty] private string selectedMkbSection = "A";
+
+    // =========================
+    // MEDICINE SEARCH
+    // =========================
+
+    [ObservableProperty] private string medicineSearchText = string.Empty;
+    [ObservableProperty] private bool showMedicineDropdown;
+    [ObservableProperty] private ObservableCollection<Medicine> medicineResults = new();
+
+    // =========================
+    // COLLECTIONS
+    // =========================
+
+    [ObservableProperty] private ObservableCollection<Diagnosis> selectedDiagnoses = new();
+    [ObservableProperty] private ObservableCollection<PatientMedicine> selectedMedicines = new();
+    [ObservableProperty] private ObservableCollection<TherapyCycle> visibleTherapies = new();
     [ObservableProperty] private ObservableCollection<Patient> patientsList = new();
     [ObservableProperty] private ObservableCollection<Doctor> doctorsList = new();
-
     [ObservableProperty] private ObservableCollection<Appointment> appointmentHistory = new();
     [ObservableProperty] private ObservableCollection<Diagnosis> patientDiagnosisHistory = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> patientMedicinesHistory = new();
-    [ObservableProperty] private ObservableCollection<Mkb10Code> availableDiagnoses = new();
 
     // =========================
     // UI STATE
@@ -85,11 +119,8 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
     [ObservableProperty] private string pageTitle = "Детали за термин";
 
-    [ObservableProperty] private bool showDiagnosisDropdown;
-    [ObservableProperty] private string diagnosisSearchText = string.Empty;
-
     // =========================
-    // TIME
+    // TIME / SCHEDULING
     // =========================
 
     [ObservableProperty] private TimeSpan selectedStartTime;
@@ -97,7 +128,10 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [ObservableProperty] private DateTime preferredAppointmentDate = DateTime.Today;
     [ObservableProperty] private string selectedSchedulingHorizon = "Следен слободен термин";
 
-    public IReadOnlyList<string> SchedulingHorizonOptions { get; } =
+    public IReadOnlyList<string> SchedulingHorizonOptions
+    {
+        get;
+    } =
         ["Следен слободен термин", "За 1 недела", "За 2 недели", "За 3 недели", "За 1 месец"];
 
     public string AutomaticSlotText => SelectedPatientForAppointment is null
@@ -114,15 +148,18 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [ObservableProperty] private Doctor? selectedDoctorForAppointment;
     [ObservableProperty] private TherapyCycle? selectedTherapyCycle;
 
-    public IReadOnlyList<AppointmentStatusChoice> StatusOptions { get; } =
+    public IReadOnlyList<AppointmentStatusChoice> StatusOptions
+    {
+        get;
+    } =
     [
-        new(AppointmentStatus.Scheduled, "Закажан"),
-        new(AppointmentStatus.CheckedIn, "Пријавен"),
-        new(AppointmentStatus.InProgress, "Во тек"),
-        new(AppointmentStatus.Completed, "Завршен"),
-        new(AppointmentStatus.Cancelled, "Откажан"),
-        new(AppointmentStatus.Missed, "Пропуштен"),
-        new(AppointmentStatus.ReScheduled, "Презакажан")
+        new(AppointmentStatus.Scheduled,    "Закажан"),
+        new(AppointmentStatus.CheckedIn,    "Пријавен"),
+        new(AppointmentStatus.InProgress,   "Во тек"),
+        new(AppointmentStatus.Completed,    "Завршен"),
+        new(AppointmentStatus.Cancelled,    "Откажан"),
+        new(AppointmentStatus.Missed,       "Пропуштен"),
+        new(AppointmentStatus.ReScheduled,  "Презакажан"),
     ];
 
     public AppointmentStatusChoice? SelectedStatusOption
@@ -138,7 +175,11 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         }
     }
 
-partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
+    // =========================
+    // PROPERTY CALLBACKS
+    // =========================
+
+    partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
     {
         if(value!=null&&IsNewAppointment)
             _=AssignNextAvailableSlotAsync();
@@ -149,9 +190,50 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
     {
         if(!_suppressPatientSelection&&value!=null&&IsNewAppointment)
             _=OnPatientChangedAsync(value);
-
         OnPropertyChanged(nameof(AutomaticSlotText));
     }
+
+    partial void OnPatientSuggestionSelectionChanged(Patient? value)
+    {
+        if(value is not null)
+            SelectPatientSuggestionCommand.Execute(value);
+    }
+
+    partial void OnPatientSearchTextChanged(string value)
+    {
+        var query = value?.Trim()??string.Empty;
+        if(query.Length<1||!IsNewAppointment)
+        {
+            PatientSuggestions.Clear();
+            ShowPatientSuggestions=false;
+            return;
+        }
+
+        var cyrillicQuery = UseCyrillicPatientSearch
+            ? MacedonianTransliterator.ToCyrillic(query)
+            : query;
+
+        PatientSuggestions=new ObservableCollection<Patient>(PatientsList
+            .Where(p =>
+                p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)||
+                p.FullName.Contains(cyrillicQuery, StringComparison.OrdinalIgnoreCase)||
+                p.PatientNumber.Contains(query, StringComparison.OrdinalIgnoreCase)||
+                p.NationalId.Contains(query, StringComparison.OrdinalIgnoreCase)||
+                p.SzboNumber.Contains(query, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(p => p.FullName)
+            .Take(8));
+
+        ShowPatientSuggestions=PatientSuggestions.Count>0;
+    }
+
+    partial void OnUseCyrillicPatientSearchChanged(bool value) =>
+        OnPatientSearchTextChanged(PatientSearchText);
+
+    partial void OnDiagnosisSearchTextChanged(string value) =>
+        _=SearchDiagnosesAsync(value, DiagnosisDescriptionSearchText);
+
+    partial void OnDiagnosisDescriptionSearchTextChanged(string value) =>
+        _=SearchDiagnosesAsync(DiagnosisSearchText, value);
 
     partial void OnPreferredAppointmentDateChanged(DateTime value)
     {
@@ -161,10 +243,9 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
 
     partial void OnSelectedSchedulingHorizonChanged(string value)
     {
-        if(!IsNewAppointment)
-            return;
+        if(!IsNewAppointment) return;
 
-        var date=value switch
+        var date = value switch
         {
             "За 1 недела" => DateTime.Today.AddDays(7),
             "За 2 недели" => DateTime.Today.AddDays(14),
@@ -178,22 +259,64 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
             _=AssignNextAvailableSlotAsync();
     }
 
+    // NOTE: no minimum length here (matches Encounter's MKB search, which has none).
+    // A single typed letter now triggers a search instead of silently doing nothing.
+    partial void OnMedicineSearchTextChanged(string value)
+    {
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            MedicineResults.Clear();
+            ShowMedicineDropdown=false;
+            return;
+        }
+        _=SearchMedicinesAsync(value);
+    }
+
+    // =========================
+    // MKB ALPHABET
+    // =========================
+
+    private void InitMkbAlphabet()
+    {
+        MkbAlphabetSections=new ObservableCollection<MkbAlphabetSection>(
+            Enumerable.Range('A', 26)
+                      .Select(c => new MkbAlphabetSection((char)c, c=='A')));
+    }
+
+    [RelayCommand]
+    private async Task SelectMkbSection(MkbAlphabetSection section)
+    {
+        if(section is null) return;
+
+        SelectedMkbSection=section.Letter.ToString();
+
+        foreach(var s in MkbAlphabetSections)
+            s.IsSelected=s.Letter==section.Letter;
+
+        await SearchDiagnosesAsync(DiagnosisSearchText, DiagnosisDescriptionSearchText);
+    }
+
+    // =========================
+    // SLOT ASSIGNMENT
+    // =========================
+
     private async Task AssignNextAvailableSlotAsync()
     {
         if(SelectedPatientForAppointment is null||SelectedDoctorForAppointment is null)
             return;
 
-        var requestVersion=++_slotRequestVersion;
-        var from=PreferredAppointmentDate.Date==DateTime.Today
+        var requestVersion = ++_slotRequestVersion;
+        var from = PreferredAppointmentDate.Date==DateTime.Today
             ? DateTime.Now
             : PreferredAppointmentDate.Date.AddHours(8).AddMinutes(30);
-        var slot=await _service.GetNextAvailableSlot(
+
+        var slot = await _service.GetNextAvailableSlot(
             SelectedDoctorForAppointment.Id,
             SelectedPatientForAppointment.Id,
             from,
             30);
-        if(requestVersion!=_slotRequestVersion)
-            return;
+
+        if(requestVersion!=_slotRequestVersion) return;
 
         _isApplyingAutomaticSlot=true;
         try
@@ -213,7 +336,7 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
     }
 
     // =========================
-    // LOAD  (unchanged logic, only IsReadOnly comes from base now)
+    // LOAD
     // =========================
 
     public async Task LoadAsync()
@@ -247,13 +370,13 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
 
         SelectedDiagnoses=new ObservableCollection<Diagnosis>(dto.Diagnoses);
         VisibleTherapies=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
-
         PatientsList=new ObservableCollection<Patient>(dto.Patients);
         DoctorsList=new ObservableCollection<Doctor>(dto.Doctors);
 
         AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
         PatientDiagnosisHistory=new ObservableCollection<Diagnosis>(ctx.Diagnoses);
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
+        SelectedMedicines=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
 
         SelectedPatientForAppointment=PatientsList.FirstOrDefault(x => x.Id==Appointment.PatientId);
         SelectedDoctorForAppointment=DoctorsList.FirstOrDefault(x => x.Id==Appointment.DoctorId);
@@ -276,7 +399,6 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
     {
         _isNewAppointmentMode=true;
         _originalAppointment=null;
-
         Appointment=CreateBlankAppointment();
 
         var lookups = await _service.GetAppointmentContext();
@@ -294,6 +416,7 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
         AppointmentHistory=new ObservableCollection<Appointment>();
         PatientDiagnosisHistory=new ObservableCollection<Diagnosis>();
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>();
+        SelectedMedicines=new ObservableCollection<PatientMedicine>();
         VisibleTherapies=new ObservableCollection<TherapyCycle>();
         SelectedTherapyCycle=null;
         SelectedDiagnoses=new ObservableCollection<Diagnosis>();
@@ -344,8 +467,8 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
         AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
         PatientDiagnosisHistory=new ObservableCollection<Diagnosis>(ctx.Diagnoses);
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
+        SelectedMedicines=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
         VisibleTherapies=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
-
         SelectedTherapyCycle=VisibleTherapies.FirstOrDefault();
 
         OnPropertyChanged(nameof(HeaderTitle));
@@ -354,33 +477,93 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
     }
 
     [RelayCommand]
+    private void SelectPatientSuggestion(Patient? patient)
+    {
+        if(patient is null) return;
+        PatientSearchText=patient.FullName;
+        ShowPatientSuggestions=false;
+        PatientSuggestions.Clear();
+        SelectedPatientForAppointment=patient;
+    }
+
+    [RelayCommand]
     private Task PatientChanged(Patient patient) => OnPatientChangedAsync(patient);
 
     // =========================
-    // DIAGNOSIS SEARCH  (unchanged)
+    // DIAGNOSIS SEARCH (mirrors EncounterBaseViewModel.SearchMkbAsync)
+    // Not a [RelayCommand]: it takes two parameters, which MVVM Toolkit's
+    // source generator doesn't support (MVVMTK0007). It's only ever called
+    // internally (from the On...Changed partials and SelectMkbSection),
+    // never bound in XAML, so a plain method is correct.
     // =========================
 
-    partial void OnDiagnosisSearchTextChanged(string value) =>
-        _=SearchDiagnosesAsync(value);
-
-    [RelayCommand]
-    private async Task SearchDiagnosesAsync(string query)
+    private async Task SearchDiagnosesAsync(string codeQuery, string descriptionQuery)
     {
-        if(string.IsNullOrWhiteSpace(query))
+        var hasCode = !string.IsNullOrWhiteSpace(codeQuery);
+        var hasDesc = !string.IsNullOrWhiteSpace(descriptionQuery);
+        var hasSection = !string.IsNullOrWhiteSpace(SelectedMkbSection);
+
+        if(!hasCode&&!hasDesc&&!hasSection)
         {
             AvailableDiagnoses.Clear();
             ShowDiagnosisDropdown=false;
             return;
         }
 
+        _cts.Cancel();
+        _cts.Dispose();
+        _cts=new CancellationTokenSource();
+        var token = _cts.Token;
+
         try
         {
-            _cts.Cancel();
-            _cts=new CancellationTokenSource();
+            await Task.Delay(300, token); // debounce
+        }
+        catch(TaskCanceledException)
+        {
+            return;
+        }
 
-            var result = await _service.SearchDiagnoses(query, _cts.Token);
+        try
+        {
+            List<Mkb10Code> result = [];
 
-            AvailableDiagnoses=new ObservableCollection<Mkb10Code>(result);
+            if(hasCode)
+            {
+                var byCode = await _service.SearchDiagnoses(codeQuery.Trim(), token);
+                result=result.UnionBy(byCode, x => x.Id).ToList();
+            }
+
+            if(hasDesc)
+            {
+                var term = MacedonianTransliterator.ToCyrillic(descriptionQuery.Trim());
+                var byDesc = await _service.SearchDiagnoses(term, token);
+                result=result.UnionBy(byDesc, x => x.Id).ToList();
+
+                if(!string.Equals(term, descriptionQuery.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    var byRaw = await _service.SearchDiagnoses(descriptionQuery.Trim(), token);
+                    result=result.UnionBy(byRaw, x => x.Id).ToList();
+                }
+            }
+
+            if(!hasCode&&!hasDesc&&hasSection)
+            {
+                var bySection = await _service.SearchDiagnoses(SelectedMkbSection, token);
+                result=result.UnionBy(bySection, x => x.Id).ToList();
+            }
+
+            if(hasSection)
+            {
+                result=result
+                    .Where(x => !string.IsNullOrEmpty(x.Code)&&
+                                x.Code.StartsWith(SelectedMkbSection, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            if(token.IsCancellationRequested) return;
+
+            AvailableDiagnoses=new ObservableCollection<Mkb10Code>(result.Take(30));
             ShowDiagnosisDropdown=AvailableDiagnoses.Count>0;
         }
         catch(TaskCanceledException) { }
@@ -401,8 +584,12 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
         });
 
         DiagnosisSearchText=string.Empty;
+        DiagnosisDescriptionSearchText=string.Empty;
         AvailableDiagnoses.Clear();
         ShowDiagnosisDropdown=false;
+
+        foreach(var s in MkbAlphabetSections)
+            s.IsSelected=false;
     }
 
     [RelayCommand]
@@ -412,8 +599,91 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
     }
 
     // =========================
-    // COMMANDS  (toggle edit now overrides base hook)
+    // MEDICINE SEARCH
     // =========================
+
+    [RelayCommand]
+    private async Task SearchMedicinesAsync(string query)
+    {
+        if(string.IsNullOrWhiteSpace(query))
+        {
+            MedicineResults.Clear();
+            ShowMedicineDropdown=false;
+            return;
+        }
+
+        _medicineCts.Cancel();
+        _medicineCts.Dispose();
+        _medicineCts=new CancellationTokenSource();
+        var token = _medicineCts.Token;
+
+        try
+        {
+            await Task.Delay(250, token); // debounce
+        }
+        catch(TaskCanceledException)
+        {
+            return;
+        }
+
+        try
+        {
+            var searchTerm = MacedonianTransliterator.ToCyrillic(query);
+            var byTerm = await _service.SearchMedicines(searchTerm, token);
+            var result = byTerm;
+
+            if(!string.Equals(searchTerm, query, StringComparison.OrdinalIgnoreCase))
+            {
+                var byRaw = await _service.SearchMedicines(query, token);
+                result=byTerm.UnionBy(byRaw, x => x.Id).ToList();
+            }
+
+            if(token.IsCancellationRequested) return;
+
+            MedicineResults=new ObservableCollection<Medicine>(result.Take(30));
+            ShowMedicineDropdown=MedicineResults.Count>0;
+        }
+        catch(TaskCanceledException) { }
+    }
+
+    [RelayCommand]
+    private void AddMedicine(Medicine medicine)
+    {
+        if(medicine==null) return;
+        if(SelectedMedicines.Any(x => x.MedicineId==medicine.Id)) return;
+
+        SelectedMedicines.Add(new PatientMedicine
+        {
+            MedicineId=medicine.Id,
+            Medicine=medicine,
+            PatientId=SelectedPatientForAppointment?.Id??Guid.Empty,
+            Dosage="1", // Дозата се користи како количина, иста конвенција како во Encounter
+            DosesFrequency=DosesFrequency.Other,
+            StartDate=DateTime.Now,
+            IsActive=true
+        });
+
+        MedicineSearchText=string.Empty;
+        MedicineResults.Clear();
+        ShowMedicineDropdown=false;
+    }
+
+    [RelayCommand]
+    private void RemoveMedicine(PatientMedicine m)
+    {
+        if(m!=null) SelectedMedicines.Remove(m);
+    }
+
+    // =========================
+    // EDIT / SAVE / CANCEL
+    // =========================
+
+    [RelayCommand]
+    private void ToggleEditMode()
+    {
+        ToggleEdit();
+        OnPropertyChanged(nameof(ShowStatusEditor));
+    }
 
     [RelayCommand]
     private async Task NewAppointmentForPatient(Patient patient)
@@ -424,23 +694,10 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
             await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за додавање термини.", "OK");
             return;
         }
-
         _selectedItemService.SelectedItem=new Appointment { Id=Guid.Empty, PatientId=patient.Id };
         await NavigationService.GoToAsync(AppRoutes.Appointments.Detail);
     }
 
-    [RelayCommand]
-    private void ToggleEditMode()
-    {
-        ToggleEdit();
-        OnPropertyChanged(nameof(ShowStatusEditor));
-    }
-
-   
-
-    // =========================
-    // SAVE  (unchanged)
-    // =========================
     [RelayCommand]
     private async Task SaveAsync()
     {
@@ -449,7 +706,6 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
             await UserDialogService.ShowAlertAsync("Валидација", "Изберете пациент.", "OK");
             return;
         }
-
         if(SelectedDoctorForAppointment==null)
         {
             await UserDialogService.ShowAlertAsync("Валидација", "Избраниот пациент нема доделен матичен реуматолог.", "OK");
@@ -471,13 +727,12 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
             Appointment.DoctorId=SelectedDoctorForAppointment.Id;
             Appointment.TherapyCycleId=SelectedTherapyCycle?.Id;
 
-            //if(_isNewAppointmentMode)
-            //{
-            //    Appointment.Id=Guid.NewGuid();
-            //    Appointment.CreatedAt=DateTime.UtcNow;
-            //}
+            await _service.SaveAppointment(
+                Appointment,
+                SelectedDiagnoses.ToList(),
+                SelectedTherapyCycle,
+                SelectedMedicines.ToList());
 
-            await _service.SaveAppointment(Appointment, SelectedDiagnoses.ToList(), SelectedTherapyCycle);
             await UserDialogService.ShowAlertAsync("Успешно", "Терминот е успешно зачуван.", "OK");
 
             if(_isModalReturnMode)
@@ -509,13 +764,11 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
                 await NavigationService.GoToAsync("..");
                 return;
             }
-
             if(_isNewAppointmentMode)
             {
                 await NavigationService.GoToAsync(AppRoutes.Appointments.List);
                 return;
             }
-
             if(_originalAppointment!=null)
             {
                 Appointment=_originalAppointment.Clone();
@@ -525,7 +778,6 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
                 SelectedStartTime=Appointment.ScheduledStart.TimeOfDay;
                 SelectedEndTime=Appointment.ScheduledEnd.TimeOfDay;
             }
-
             IsReadOnly=true;
             await Task.CompletedTask;
         }, "Грешка при откажување");
@@ -544,6 +796,26 @@ partial void OnSelectedDoctorForAppointmentChanged(Doctor? value)
     {
         await _service.GenerateNextTherapyCycle(Appointment);
         await LoadAsync();
+    }
+}
+
+// =========================
+// SUPPORTING TYPES
+// =========================
+
+public partial class MkbAlphabetSection : ObservableObject
+{
+    public char Letter
+    {
+        get;
+    }
+
+    [ObservableProperty] private bool isSelected;
+
+    public MkbAlphabetSection(char letter, bool isSelected = false)
+    {
+        Letter=letter;
+        this.isSelected=isSelected;
     }
 }
 
@@ -571,6 +843,7 @@ public static class AppointmentExtensions
         };
     }
 }
+
 public sealed record AppointmentStatusChoice(AppointmentStatus Value, string Label)
 {
     public override string ToString() => Label;

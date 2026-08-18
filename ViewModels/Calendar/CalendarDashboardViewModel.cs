@@ -62,10 +62,10 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
     private bool ShowsAppointments => ContentMode==CalendarContentMode.Appointments;
 
     // Натписите низ страната се менуваат заедно со режимот.
-    public string PageTitle => ShowsAppointments ? "Календар на Термини" : "Календар на Прегледи";
+    public string PageTitle => ShowsAppointments ? "Календар на термини" : "Календар на регледи";
     public string ContentTotalTitle => ShowsAppointments ? "Вкупно термини" : "Вкупно прегледи";
-    public string ContentNewButtonText => ShowsAppointments ? "Додај термин" : "Додај преглед";
-    public string WaitlistTitle => ShowsAppointments ? "Термини" : "Листа на чекање";
+    public string ContentNewButtonText => ShowsAppointments ? "Нов термин" : "Нов преглед";
+    public string WaitlistTitle => ShowsAppointments ? "Термини" : "Прегледи";
 
     partial void OnContentModeChanged(CalendarContentMode value)
     {

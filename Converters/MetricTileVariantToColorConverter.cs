@@ -1,4 +1,4 @@
-﻿using EHMR.Resources.Controls;
+using EHMR.Resources.Controls;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,6 +17,7 @@ namespace EHMR.Converters
 
             var key = variant switch
             {
+                MetricTileVariant.Primary => "InfoColor",
                 MetricTileVariant.Success => "SparkAccentGreen",
                 MetricTileVariant.Warning => "SparkAccentAmber",
                 MetricTileVariant.Danger => "SparkAccentRed",
@@ -30,6 +31,7 @@ namespace EHMR.Converters
             // Fallback if the resource key doesn't exist yet in the Spark palette
             return variant switch
             {
+                MetricTileVariant.Primary => Color.FromArgb("#2563EB"),
                 MetricTileVariant.Success => Colors.LimeGreen,
                 MetricTileVariant.Warning => Colors.Orange,
                 MetricTileVariant.Danger => Colors.Crimson,

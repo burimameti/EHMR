@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+	<!--  Единствен влез за CRUD/detail визуелниот систем.  -->
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="SparkForms.xaml" />
+		<ResourceDictionary Source="CrudFormStyles.xaml" />
+		<ResourceDictionary Source="../Controls/FFCardStyles.xaml" />
+		<ResourceDictionary Source="../Controls/FFHeaderStyles.xaml" />
+		<ResourceDictionary Source="../Controls/FFSearchBoxStyles.xaml" />
+		<ResourceDictionary Source="../Controls/FFInputStyles.xaml" />
+		<ResourceDictionary Source="../Controls/FFIconButtonStyles.xaml" />
+		<ResourceDictionary Source="../Controls/FFPickerStyles.xaml" />
+		<ResourceDictionary Source="../Controls/FFSwitchStyles.xaml" />
+		<ResourceDictionary Source="../Controls/FFMetricTileStyles.xaml" />
+		<ResourceDictionary Source="../Controls/FFStatusChipStyles.xaml" />
+		<ResourceDictionary Source="../Controls/ShadowFieldContainerStyles.xaml" />
+	</ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

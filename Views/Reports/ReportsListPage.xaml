@@ -26,8 +26,8 @@
 
 		<Grid
 			Grid.Column="1"
-			Padding="24"
-			BackgroundColor="{StaticResource Gray200}"
+			Padding="0"
+			BackgroundColor="{StaticResource PageBackground}"
 			RowDefinitions="Auto,Auto,Auto,*"
 			RowSpacing="16">
 
@@ -35,7 +35,7 @@
 
 			<!--  HEADER  -->
 
-			<Border Padding="20" Style="{StaticResource PageHeaderCardStyle}">
+			<Border Style="{StaticResource PageCardStyleDashboard}">
 
 				<Grid ColumnDefinitions="*,Auto">
 
@@ -62,11 +62,17 @@
 
 			<Grid
 				Grid.Row="1"
+				Margin="16,0"
 				ColumnDefinitions="*,*,*"
 				ColumnSpacing="16">
 
 
-				<Border Padding="20" Style="{StaticResource SurfaceCard}">
+				<Border
+					Padding="20"
+					BackgroundColor="White"
+					Stroke="{StaticResource BorderColor}"
+					StrokeShape="RoundRectangle 12"
+					StrokeThickness="1">
 
 					<VerticalStackLayout>
 
@@ -91,7 +97,10 @@
 				<Border
 					Grid.Column="1"
 					Padding="20"
-					Style="{StaticResource SurfaceCard}">
+					BackgroundColor="White"
+					Stroke="{StaticResource BorderColor}"
+					StrokeShape="RoundRectangle 12"
+					StrokeThickness="1">
 
 					<VerticalStackLayout>
 
@@ -116,7 +125,10 @@
 				<Border
 					Grid.Column="2"
 					Padding="20"
-					Style="{StaticResource SurfaceCard}">
+					BackgroundColor="White"
+					Stroke="{StaticResource BorderColor}"
+					StrokeShape="RoundRectangle 12"
+					StrokeThickness="1">
 
 					<VerticalStackLayout>
 
@@ -145,10 +157,7 @@
 
 			<!--  FILTERS  -->
 
-			<Border
-				Grid.Row="2"
-				Padding="0"
-				Style="{StaticResource SurfaceCard}">
+			<controls:FFSectionCard Grid.Row="2">
 
 
 				<controls:SparkExplorerHeaderView
@@ -160,7 +169,7 @@
 					Tabs="{Binding Tabs}" />
 
 
-			</Border>
+			</controls:FFSectionCard>
 
 
 
@@ -169,7 +178,7 @@
 
 			<!--  GRID  -->
 
-			<Border Grid.Row="3" Style="{StaticResource SurfaceCard}">
+			<controls:FFSectionCard Grid.Row="3">
 
 
 				<controls:SparkDataGridView
@@ -182,7 +191,7 @@
 					TotalPages="{Binding TotalPages}" />
 
 
-			</Border>
+			</controls:FFSectionCard>
 
 
 

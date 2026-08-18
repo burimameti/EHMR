@@ -14,7 +14,7 @@
 		BackgroundColor="{StaticResource SidebarBg}"
 		StrokeThickness="0">
 
-		<Grid RowDefinitions="Auto,Auto,*,Auto" WidthRequest="290">
+		<Grid RowDefinitions="Auto,Auto,*,Auto" WidthRequest="285">
 
 			<!--  ================= HEADER / LOGO =================  -->
 			<Grid
@@ -48,6 +48,7 @@
 			<CollectionView
 				Grid.Row="2"
 				Margin="12,8,12,14"
+				ItemSizingStrategy="MeasureAllItems"
 				ItemsSource="{Binding Items}"
 				SelectionMode="None"
 				VerticalScrollBarVisibility="Never">
@@ -57,11 +58,12 @@
 
 							<!--  ================= GROUP HEADER =================  -->
 							<Border
-								Padding="14,0"
-								HeightRequest="42"
+								Margin="0,0,0,6"
+								Padding="10,0"
+								HeightRequest="50"
 								StrokeThickness="0">
 								<Border.StrokeShape>
-									<RoundRectangle CornerRadius="1" />
+									<RoundRectangle CornerRadius="12" />
 								</Border.StrokeShape>
 
 								<Border.Triggers>
@@ -75,7 +77,7 @@
 										Binding="{Binding IsActive}"
 										TargetType="Border"
 										Value="False">
-										<Setter Property="BackgroundColor" Value="Transparent" />
+										<Setter Property="BackgroundColor" Value="#4A5863" />
 									</DataTrigger>
 								</Border.Triggers>
 
@@ -83,29 +85,50 @@
 									<TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.ToggleGroupCommand}" CommandParameter="{Binding .}" />
 								</Border.GestureRecognizers>
 
-								<Grid ColumnDefinitions="20,*,16" ColumnSpacing="12">
-									<Label
+								<Grid ColumnDefinitions="34,*,16" ColumnSpacing="10">
+									<Border
 										Grid.Column="0"
-										FontFamily="FASolid"
-										FontSize="14"
-										HorizontalOptions="Center"
-										Text="{Binding Icon.Glyph}"
-										VerticalOptions="Center">
-										<Label.Triggers>
+										HeightRequest="32"
+										StrokeShape="Ellipse"
+										StrokeThickness="0"
+										VerticalOptions="Center"
+										WidthRequest="32">
+										<Border.Triggers>
 											<DataTrigger
 												Binding="{Binding IsActive}"
-												TargetType="Label"
+												TargetType="Border"
 												Value="True">
-												<Setter Property="TextColor" Value="{StaticResource SidebarActiveBg}" />
+												<Setter Property="BackgroundColor" Value="#4A5863" />
 											</DataTrigger>
 											<DataTrigger
 												Binding="{Binding IsActive}"
-												TargetType="Label"
+												TargetType="Border"
 												Value="False">
-												<Setter Property="TextColor" Value="{StaticResource SidebarText}" />
+												<Setter Property="BackgroundColor" Value="{StaticResource SidebarActiveBg}" />
 											</DataTrigger>
-										</Label.Triggers>
-									</Label>
+										</Border.Triggers>
+										<Label
+											FontFamily="FASolid"
+											FontSize="16"
+											HorizontalOptions="Center"
+											Text="{Binding Icon.Glyph}"
+											VerticalOptions="Center">
+											<Label.Triggers>
+												<DataTrigger
+													Binding="{Binding IsActive}"
+													TargetType="Label"
+													Value="True">
+													<Setter Property="TextColor" Value="{StaticResource SidebarActiveBg}" />
+												</DataTrigger>
+												<DataTrigger
+													Binding="{Binding IsActive}"
+													TargetType="Label"
+													Value="False">
+													<Setter Property="TextColor" Value="#4A5863" />
+												</DataTrigger>
+											</Label.Triggers>
+										</Label>
+									</Border>
 
 									<Label
 										Grid.Column="1"
@@ -118,7 +141,7 @@
 												Binding="{Binding IsActive}"
 												TargetType="Label"
 												Value="True">
-												<Setter Property="TextColor" Value="{StaticResource White}" />
+												<Setter Property="TextColor" Value="#4A5863" />
 												<Setter Property="FontAttributes" Value="Bold" />
 											</DataTrigger>
 											<DataTrigger
@@ -155,7 +178,7 @@
 												Binding="{Binding IsActive}"
 												TargetType="Label"
 												Value="True">
-												<Setter Property="TextColor" Value="{StaticResource SidebarActiveText}" />
+												<Setter Property="TextColor" Value="#4A5863" />
 											</DataTrigger>
 											<DataTrigger
 												Binding="{Binding IsActive}"
@@ -187,10 +210,21 @@
 								<BindableLayout.ItemTemplate>
 									<DataTemplate>
 										<Grid
+											Margin="0,1"
 											Padding="22,0,10,0"
+											BackgroundColor="Transparent"
 											ColumnDefinitions="16,*"
 											ColumnSpacing="10"
 											HeightRequest="32">
+
+											<Grid.Triggers>
+												<DataTrigger
+													Binding="{Binding IsActive}"
+													TargetType="Grid"
+													Value="True">
+													<Setter Property="BackgroundColor" Value="#26323D" />
+												</DataTrigger>
+											</Grid.Triggers>
 
 											<Grid.GestureRecognizers>
 												<TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.NavigateCommand}" CommandParameter="{Binding .}" />
@@ -208,7 +242,7 @@
 											<Border
 												Grid.Column="0"
 												Padding="0"
-												BackgroundColor="{StaticResource CardSelected}"
+												BackgroundColor="{StaticResource SidebarBg}"
 												HeightRequest="9"
 												HorizontalOptions="Center"
 												StrokeThickness="1.4"
@@ -228,7 +262,7 @@
 														Binding="{Binding IsActive}"
 														TargetType="Border"
 														Value="False">
-														<Setter Property="Stroke" Value="{StaticResource CardSelected}" />
+														<Setter Property="Stroke" Value="{StaticResource SidebarBg}" />
 													</DataTrigger>
 												</Border.Triggers>
 											</Border>
@@ -270,7 +304,7 @@
 				Grid.Row="3"
 				Margin="12,8,12,16"
 				Padding="12,10"
-				BackgroundColor="#2F3944"
+				BackgroundColor="#4A5863"
 				StrokeShape="RoundRectangle 12"
 				StrokeThickness="0">
 
@@ -323,3 +357,4 @@
 		</Grid>
 	</Border>
 </ContentView>
+

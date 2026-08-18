@@ -182,7 +182,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
                 {
                     IsPrimary=true,
                     IconGlyph="👁",
-                    Label="Детали",
+                    Label="Повеќе",
                     Command=SelectCommand,
                     CommandParameter=e
                 }

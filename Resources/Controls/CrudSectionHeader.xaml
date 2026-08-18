@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+	x:Class="EHMR.Resources.Controls.CrudSectionHeader"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	x:Name="Root"
+	x:DataType="controls:CrudSectionHeader">
+	<Grid ColumnDefinitions="24,*" ColumnSpacing="8">
+		<BoxView
+			Grid.Column="0"
+			Margin="0,22,0,-16"
+			BackgroundColor="{StaticResource SidebarActiveBg}"
+			HorizontalOptions="Center"
+			VerticalOptions="Fill"
+			WidthRequest="1"
+			ZIndex="2" />
+		<Border
+			Grid.Column="0"
+			BackgroundColor="{StaticResource SidebarActiveBg}"
+			HeightRequest="14"
+			HorizontalOptions="Center"
+			Stroke="{StaticResource SidebarActiveBg}"
+			StrokeShape="Ellipse"
+			StrokeThickness="2"
+			VerticalOptions="Center"
+			WidthRequest="14"
+			ZIndex="3" />
+		<Border
+			Grid.Column="0"
+			Grid.ColumnSpan="2"
+			Padding="40,10,14,10"
+			Style="{StaticResource SectionPillBorderStyle}"
+			ZIndex="1">
+			<Label Style="{StaticResource SectionPillLabelStyle}" Text="{Binding Title, Source={x:Reference Root}}" />
+		</Border>
+	</Grid>
+</ContentView>

@@ -18,12 +18,12 @@
 			<Shadow
 				Brush="#000000"
 				Opacity="0.05"
-				Radius="8"
+				Radius="12"
 				Offset="0,2" />
 		</Border.Shadow>
 
 		<Grid RowDefinitions="Auto,Auto" RowSpacing="8">
-			<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="9">
+			<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4">
 				<Border
 					BackgroundColor="{Binding IconBackground, Source={x:Reference Root}}"
 					HeightRequest="32"
@@ -32,19 +32,19 @@
 					VerticalOptions="Center"
 					WidthRequest="32">
 					<Border.StrokeShape>
-						<RoundRectangle CornerRadius="9" />
+						<RoundRectangle CornerRadius="12" />
 					</Border.StrokeShape>
 					<Label
 						FontFamily="FASolid"
 						FontSize="12"
 						HorizontalOptions="Center"
 						Text="{Binding Icon, Source={x:Reference Root}}"
-						TextColor="White"
+						TextColor="#FFFFFF"
 						VerticalOptions="Center" />
 				</Border>
 				<Label
 					Grid.Column="1"
-					CharacterSpacing="0.2"
+					CharacterSpacing="0.9"
 					FontAttributes="Bold"
 					FontSize="9"
 					LineBreakMode="TailTruncation"
@@ -69,7 +69,7 @@
 				IsVisible="{Binding Command, Source={x:Reference Root}, Converter={StaticResource SparkNotNullConverter}}"
 				StrokeThickness="0">
 				<Border.StrokeShape>
-					<RoundRectangle CornerRadius="7" />
+					<RoundRectangle CornerRadius="12" />
 				</Border.StrokeShape>
 				<Border.GestureRecognizers>
 					<TapGestureRecognizer Command="{Binding Command, Source={x:Reference Root}}" CommandParameter="{Binding CommandParameter, Source={x:Reference Root}}" />

@@ -8,60 +8,84 @@
 	xmlns:vm="clr-namespace:EHMR.ViewModels.Appointments"
 	x:Name="PageRoot"
 	x:DataType="vm:AppointmentDetailViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
+	BackgroundColor="{StaticResource PageBackground}">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
 
-			<!--  ═══ ШАБЛОНИ ЗА ИСТОРИЈА ═══  -->
-
-			<DataTemplate x:Key="AppointmentDiagnosisHistoryRowTemplate">
-				<Grid
-					Padding="8,6"
-					ColumnDefinitions="Auto,*,Auto"
-					ColumnSpacing="10">
-					<Label
-						Grid.Column="0"
-						FontAttributes="Bold"
-						FontFamily="Consolas"
-						FontSize="12"
-						Text="{Binding Mkb10Code}"
-						TextColor="{StaticResource SparkAccentTealDark}"
-						VerticalOptions="Center" />
-					<Label
-						Grid.Column="1"
-						FontSize="12"
-						LineBreakMode="TailTruncation"
-						Text="{Binding Description}"
-						TextColor="{StaticResource SparkTextPrimary}"
-						VerticalOptions="Center" />
-					<Label
-						Grid.Column="2"
-						FontSize="11"
-						Text="{Binding DiagnosedOn, StringFormat='{0:dd.MM.yyyy}'}"
-						TextColor="{StaticResource SparkTextSecondary}"
-						VerticalOptions="Center" />
-				</Grid>
-			</DataTemplate>
-
-			<DataTemplate x:Key="Mkb10SearchResultRowTemplate" x:DataType="entities:Mkb10Code">
-				<Grid Padding="10,8">
-					<Grid.GestureRecognizers>
-						<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddDiagnosisCommand}" CommandParameter="{Binding .}" />
-					</Grid.GestureRecognizers>
-					<HorizontalStackLayout Spacing="8">
+			<DataTemplate x:Key="AppointmentDiagnosisHistoryRowTemplate" x:DataType="entities:Diagnosis">
+				<Border
+					Margin="0,2"
+					Padding="10,8"
+					BackgroundColor="White"
+					Stroke="#E2E8F0"
+					StrokeShape="RoundRectangle 8"
+					StrokeThickness="1">
+					<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
 						<Label
 							FontAttributes="Bold"
-							FontFamily="Consolas"
 							FontSize="12"
-							Text="{Binding Code}"
-							TextColor="{StaticResource SparkAccentTealDark}" />
+							Text="{Binding Mkb10Code.Code, TargetNullValue='—'}"
+							TextColor="{StaticResource SparkAccentTealDark}"
+							VerticalOptions="Center" />
 						<Label
-							FontSize="12"
-							Text="{Binding Description}"
-							TextColor="{StaticResource SparkTextPrimary}" />
-					</HorizontalStackLayout>
-				</Grid>
+							Grid.Column="1"
+							FontSize="11.5"
+							LineBreakMode="TailTruncation"
+							Text="{Binding Mkb10Code.Description, TargetNullValue='Без опис'}"
+							TextColor="{StaticResource SparkTextPrimary}"
+							VerticalOptions="Center" />
+						<Label
+							Grid.Column="2"
+							FontSize="10.5"
+							Text="{Binding DiagnosedAt, StringFormat='{0:dd.MM.yyyy}'}"
+							TextColor="{StaticResource SparkTextSecondary}"
+							VerticalOptions="Center" />
+					</Grid>
+				</Border>
+			</DataTemplate>
+
+			<DataTemplate x:Key="AppointmentHistoryRowTemplate" x:DataType="entities:Appointment">
+				<Border
+					Margin="0,2"
+					Padding="10,8"
+					BackgroundColor="White"
+					Stroke="#E2E8F0"
+					StrokeShape="RoundRectangle 8"
+					StrokeThickness="1">
+					<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+						<BoxView
+							CornerRadius="2"
+							HeightRequest="30"
+							WidthRequest="4"
+							Color="{Binding Status, Converter={StaticResource AppointmentStatusToColorConverter}}" />
+						<VerticalStackLayout Grid.Column="1" Spacing="2">
+							<Label
+								FontAttributes="Bold"
+								FontSize="12"
+								Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+								TextColor="{StaticResource SparkTextPrimary}" />
+							<Label
+								FontSize="11"
+								LineBreakMode="TailTruncation"
+								Text="{Binding ClinicalNotes, TargetNullValue='Без забелешка'}"
+								TextColor="{StaticResource SparkTextSecondary}" />
+						</VerticalStackLayout>
+						<Border
+							Grid.Column="2"
+							Padding="7,3"
+							BackgroundColor="{StaticResource SparkAccentTealBg}"
+							StrokeShape="RoundRectangle 7"
+							StrokeThickness="0"
+							VerticalOptions="Center">
+							<Label
+								FontAttributes="Bold"
+								FontSize="9.5"
+								Text="{Binding Status, Converter={StaticResource AppointmentStatusToLabelConverter}}"
+								TextColor="{Binding Status, Converter={StaticResource AppointmentStatusToColorConverter}}" />
+						</Border>
+					</Grid>
+				</Border>
 			</DataTemplate>
 
 		</ResourceDictionary>
@@ -77,269 +101,352 @@
 		<!--  ДЕСЕН ГЛАВЕН КОНТЕЈНЕР  -->
 		<Grid
 			Grid.Column="1"
-			Padding="16,12,16,16"
+			Padding="0"
 			RowDefinitions="Auto,*"
-			RowSpacing="0">
+			RowSpacing="16">
 
-			<!--  =========================================================  -->
 			<!--  PAGE HEADER  -->
-			<!--  =========================================================  -->
-			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
-				<Grid
-					ColumnDefinitions="Auto,*,Auto"
-					ColumnSpacing="16"
-					VerticalOptions="Center">
-
-					<!--  Avatar circle  -->
-					<Border
-						BackgroundColor="{StaticResource SparkTabActiveBg}"
-						HeightRequest="48"
-						StrokeShape="RoundRectangle 24"
-						StrokeThickness="0"
-						WidthRequest="48">
-						<Label
-							FontFamily="FASolid"
-							FontSize="18"
-							HorizontalOptions="Center"
-							Text="&#xf073;"
-							TextColor="{StaticResource SparkAccentTeal}"
-							VerticalOptions="Center" />
-					</Border>
-
-					<!--  Title + subtitle + status chip  -->
-					<VerticalStackLayout
-						Grid.Column="1"
-						Spacing="6"
-						VerticalOptions="Center">
-						<Label Style="{StaticResource PageTitleStyle}" Text="{Binding HeaderTitle}" />
-						<Label
-							FontFamily="Segoe UI"
-							FontSize="12"
-							Text="{Binding HeaderSubtitle}"
-							TextColor="{StaticResource SparkTextSecondary}" />
-						<!--
-							FIX: was bound to StatusOptions (the whole list) instead of the
-							current Appointment.Status - the converter received a List<string>,
-							failed its `is AppointmentStatus` check, and fell through to
-							value?.ToString(), which prints the collection's type name instead
-							of a status label. Now bound to the single current status value.
-						-->
-						<controls:FFStatusChip
-							BackgroundColor="{Binding Appointment.Status, Converter={StaticResource AppointmentStatusToColorConverter}}"
-							HorizontalOptions="Start"
-							Text="{Binding Appointment.Status, Converter={StaticResource AppointmentStatusDisplayConverter}}"
-							TextColor="White"
-							VerticalOptions="Start" />
-					</VerticalStackLayout>
-
-					<!--  Action buttons  -->
-					<HorizontalStackLayout
-						Grid.Column="2"
-						Spacing="12"
-						VerticalOptions="Center">
-						<controls:FFButton
-							ButtonKind="Secondary"
-							Command="{Binding ToggleEditModeCommand}"
-							ContentPadding="24,0"
-							HeightRequestEx="42"
-							IsEnabled="{Binding CanEditAppointment}"
-							IsVisible="{Binding CanEditAppointment}"
-							Text="Уреди" />
-						<controls:FFButton
-							ButtonKind="Secondary"
-							Command="{Binding CancelCommand}"
-							ContentPadding="24,0"
-							HeightRequestEx="42"
-							IsVisible="{Binding IsEditMode}"
-							Text="Откажи" />
-						<!--
-							FIX: was gated on CanCreateAppointments only, which disabled Save
-							for a user with update-but-not-create rights editing an EXISTING
-							appointment. CanSaveAppointment picks the right permission based
-							on whether this is a new appointment or an edit.
-						-->
-						<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
-							ButtonKind="Primary"
-							Command="{Binding SaveCommand}"
-							ContentPadding="24,0"
-							HeightRequestEx="42"
-							IsEnabled="{Binding CanSaveAppointment}"
-							IsVisible="{Binding IsEditMode}"
-							Text="Зачувај" />
-					</HorizontalStackLayout>
-				</Grid>
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+				<controls:FFPageHeader
+					Title="{Binding HeaderTitle}"
+					Grid.Row="0"
+					Margin="0,0,0,12"
+					Subtitle="{Binding HeaderSubtitle}">
+					<controls:FFPageHeader.HeaderContent>
+						<HorizontalStackLayout Spacing="10">
+							<controls:FFStatusChip
+								BackgroundColor="{Binding Appointment.Status, Converter={StaticResource AppointmentStatusToColorConverter}}"
+								IsVisible="{Binding IsReadOnly}"
+								Text="{Binding Appointment.Status, Converter={StaticResource AppointmentStatusDisplayConverter}}"
+								TextColor="White" />
+							<controls:FFButton
+								ButtonKind="Secondary"
+								Command="{Binding ToggleEditModeCommand}"
+								ContentPadding="22,0"
+								HeightRequestEx="40"
+								IsEnabled="{Binding CanEditAppointment}"
+								IsVisible="{Binding CanEditAppointment}"
+								Text="Уреди" />
+						</HorizontalStackLayout>
+					</controls:FFPageHeader.HeaderContent>
+				</controls:FFPageHeader>
 			</Border>
 
-			<!--  =====================================================  -->
 			<!--  MAIN PANEL  -->
-			<!--  =====================================================  -->
 			<Grid
 				Grid.Row="1"
-				ColumnDefinitions="*"
-				ColumnSpacing="0">
+				Margin="16,0,16,0"
+				ColumnDefinitions="2.15*,1*"
+				ColumnSpacing="16">
 
-				<!--  ═══════════════════════════════════════════════════════  -->
-				<!--  ЛЕВА КОЛОНА — ФОРМУЛАРИ  -->
-				<!--  ═══════════════════════════════════════════════════════  -->
-				<Border Grid.Column="0" Style="{StaticResource PageHeaderCardStyle}">
+				<!--  ═══════════════════════════════════════════════════  -->
+				<!--  ЛЕВА КОЛОНА  -->
+				<!--  ═══════════════════════════════════════════════════  -->
+				<controls:FFSectionCard
+					Grid.Column="0"
+					Margin="0"
+					ContentPadding="18">
 					<ScrollView VerticalScrollBarVisibility="Never">
-						<VerticalStackLayout Padding="16" Spacing="28">
+						<VerticalStackLayout Padding="0" Spacing="16">
 
-							<!--  ================================================  -->
-							<!--  СЕКЦИЈА — ПАЦИЕНТ / РЕУМАТОЛОГ  -->
-							<!--  ================================================  -->
-							<VerticalStackLayout Spacing="16">
+							<!--  ══════════════════════════════════════════  -->
+							<!--  1. ПАЦИЕНТ И РЕУМАТОЛОГ  -->
+							<!--  ══════════════════════════════════════════  -->
+							<VerticalStackLayout Spacing="12">
+
 								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label Style="{StaticResource SectionPillLabelStyle}" Text="ПОДАТОЦИ ЗА ПАЦИЕНТ / РЕУМАТОЛОГ" />
+									<Label
+										CharacterSpacing="0.5"
+										FontAttributes="Bold"
+										FontSize="12"
+										Style="{StaticResource SectionPillLabelStyle}"
+										Text="ПАЦИЕНТ И РЕУМАТОЛОГ" />
 								</Border>
 
+								<!--  Locked panels — existing appointment (view + edit mode)  -->
 								<Grid
-									Padding="12,0"
-									ColumnDefinitions="*,1,*"
-									ColumnSpacing="24">
-
-									<BoxView Grid.Column="1" Style="{StaticResource ColumnDividerStyle}" />
-
-									<!--  Пациент  -->
-									<VerticalStackLayout Grid.Column="0" Spacing="8">
-										<Grid
-											ColumnDefinitions="130,*"
-											ColumnSpacing="{StaticResource FormRowSpacing}"
-											IsVisible="{Binding IsEditMode}">
-											<Label
-												Grid.Column="0"
-												Style="{StaticResource EditFieldLabelStyle}"
-												Text="Пациент *" />
-											<!--
-												NOTE: this SelectedItem binding only sets
-												SelectedPatientForAppointment - it does NOT run
-												OnPatientChangedAsync/PatientChangedCommand (which reloads
-												history, diagnoses, and therapy cycles for the newly picked
-												patient). For a brand-new appointment this is usually fine
-												since IsEnabled only allows changing it when IsNewAppointment
-												is true anyway, but if you want history/therapy context to
-												refresh live as the user changes the patient before saving,
-												wire this picker's selection-changed event (in code-behind
-												or a Behavior) to invoke PatientChangedCommand explicitly.
-											-->
-											<controls:FFPicker
+									ColumnDefinitions="*,*"
+									ColumnSpacing="12"
+									IsVisible="{Binding IsNewAppointment, Converter={StaticResource InverseBoolConverter}}">
+									<Border
+										Padding="14,12"
+										BackgroundColor="{StaticResource SparkTabActiveBg}"
+										StrokeShape="RoundRectangle 10"
+										StrokeThickness="0">
+										<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+											<Border
+												BackgroundColor="{StaticResource SparkAccentTealBg}"
+												HeightRequest="36"
+												StrokeShape="RoundRectangle 10"
+												StrokeThickness="0"
+												WidthRequest="36">
+												<Label
+													FontFamily="FASolid"
+													FontSize="13"
+													HorizontalOptions="Center"
+													Text="&#xf007;"
+													TextColor="{StaticResource SparkAccentTealDark}"
+													VerticalOptions="Center" />
+											</Border>
+											<VerticalStackLayout
 												Grid.Column="1"
-												IsEnabled="{Binding IsNewAppointment}"
-												ItemsSource="{Binding PatientsList}"
-												Placeholder="Изберете пациент *"
-												SelectedItem="{Binding SelectedPatientForAppointment}" />
+												Spacing="1"
+												VerticalOptions="Center">
+												<Label
+													FontSize="10"
+													Text="Избран пациент"
+													TextColor="{StaticResource SparkTextSecondary}" />
+												<Label
+													FontAttributes="Bold"
+													FontSize="15"
+													LineBreakMode="TailTruncation"
+													Text="{Binding SelectedPatientForAppointment.FullName, TargetNullValue='—'}"
+													TextColor="{StaticResource SparkTextPrimary}" />
+											</VerticalStackLayout>
 										</Grid>
-										<Grid
-											ColumnDefinitions="130,*"
-											ColumnSpacing="{StaticResource FormRowSpacing}"
-											IsVisible="{Binding IsReadOnly}">
-											<Label
-												Grid.Column="0"
-												Style="{StaticResource ReadRowLabelStyle}"
-												Text="Пациент:" />
-											<Border Grid.Column="1" Style="{StaticResource InfoPillBorderStyle}">
-												<HorizontalStackLayout Spacing="8">
-													<Label Style="{StaticResource InfoPillIconStyle}" Text="&#xf007;" />
-													<Label
-														Style="{StaticResource InfoPillTextStyle}"
-														Text="{Binding SelectedPatientForAppointment.FullName, FallbackValue='—'}"
-														TextColor="{StaticResource SparkAccentTealDark}" />
-												</HorizontalStackLayout>
+									</Border>
+									<Border
+										Grid.Column="1"
+										Padding="14,12"
+										BackgroundColor="{StaticResource SparkTabActiveBg}"
+										StrokeShape="RoundRectangle 10"
+										StrokeThickness="0">
+										<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+											<Border
+												BackgroundColor="{StaticResource SparkAccentTealBg}"
+												HeightRequest="36"
+												StrokeShape="RoundRectangle 18"
+												StrokeThickness="0"
+												WidthRequest="36">
+												<Label
+													FontFamily="FASolid"
+													FontSize="13"
+													HorizontalOptions="Center"
+													Text="&#xf0f0;"
+													TextColor="{StaticResource SparkAccentTealDark}"
+													VerticalOptions="Center" />
 											</Border>
+											<VerticalStackLayout
+												Grid.Column="1"
+												Spacing="1"
+												VerticalOptions="Center">
+												<Label
+													FontSize="10"
+													Text="Матичен реуматолог"
+													TextColor="{StaticResource SparkTextSecondary}" />
+												<Label
+													FontAttributes="Bold"
+													FontSize="15"
+													LineBreakMode="TailTruncation"
+													Text="{Binding SelectedDoctorForAppointment.FullName, TargetNullValue='—'}"
+													TextColor="{StaticResource SparkAccentTealDark}" />
+											</VerticalStackLayout>
 										</Grid>
-									</VerticalStackLayout>
-									<!--  Реуматологот е доделен на пациентот  -->
-									<VerticalStackLayout Grid.Column="2" Spacing="8">
-										<Grid ColumnDefinitions="130,*" ColumnSpacing="{StaticResource FormRowSpacing}">
-											<Label
-												Grid.Column="0"
-												Style="{StaticResource ReadRowLabelStyle}"
-												Text="Матичен реуматолог:" />
-											<Border Grid.Column="1" Style="{StaticResource InfoPillBorderStyle}">
-												<HorizontalStackLayout Spacing="8">
-													<Label
-														Style="{StaticResource InfoPillIconStyle}"
-														Text="&#xf0f0;"
-														TextColor="{StaticResource SparkAccentTealDark}" />
-													<Label
-														Style="{StaticResource InfoPillTextStyle}"
-														Text="{Binding SelectedDoctorForAppointment.FullName, TargetNullValue='Се зема од пациентот'}"
-														TextColor="{StaticResource SparkAccentTealDark}" />
-												</HorizontalStackLayout>
-											</Border>
-										</Grid>
-									</VerticalStackLayout>
+									</Border>
 								</Grid>
+
+								<!--  Search block — new appointment only  -->
+								<VerticalStackLayout IsVisible="{Binding IsNewAppointment}" Spacing="8">
+
+									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+										<controls:FFSearchBox Placeholder="Пребарај по име, ЕМБГ или СЗБО..." Text="{Binding PatientSearchText, Mode=TwoWay}" />
+										<HorizontalStackLayout
+											Grid.Column="1"
+											Spacing="4"
+											VerticalOptions="Center">
+											<CheckBox IsChecked="{Binding UseCyrillicPatientSearch, Mode=TwoWay}" />
+											<Label
+												FontSize="12"
+												Text="Кирилица"
+												TextColor="{StaticResource SparkTextPrimary}"
+												VerticalOptions="Center" />
+										</HorizontalStackLayout>
+									</Grid>
+
+									<!--  Autocomplete dropdown  -->
+									<Border
+										Padding="4"
+										BackgroundColor="White"
+										IsVisible="{Binding ShowPatientSuggestions}"
+										Stroke="{StaticResource SparkBorderSubtle}"
+										StrokeShape="RoundRectangle 8"
+										StrokeThickness="1">
+										<CollectionView
+											HeightRequest="164"
+											ItemsSource="{Binding PatientSuggestions}"
+											SelectedItem="{Binding PatientSuggestionSelection, Mode=TwoWay}"
+											SelectionMode="Single">
+											<CollectionView.ItemTemplate>
+												<DataTemplate x:DataType="entities:Patient">
+													<Border
+														Margin="1"
+														Padding="10,7"
+														BackgroundColor="#F8FAFC"
+														Stroke="{StaticResource SparkBorderSubtle}"
+														StrokeShape="RoundRectangle 7"
+														StrokeThickness="1">
+														<Grid ColumnDefinitions="2*,1.2*" ColumnSpacing="12">
+															<Label
+																FontAttributes="Bold"
+																FontSize="12"
+																Text="{Binding FullName}"
+																TextColor="{StaticResource SparkTextPrimary}" />
+															<VerticalStackLayout Grid.Column="1" Spacing="1">
+																<Label
+																	FontSize="9.5"
+																	Text="СЗБО број"
+																	TextColor="{StaticResource SparkTextSecondary}" />
+																<Label
+																	FontAttributes="Bold"
+																	FontSize="11.5"
+																	Text="{Binding SzboNumber}"
+																	TextColor="{StaticResource SparkAccentTealDark}" />
+															</VerticalStackLayout>
+														</Grid>
+													</Border>
+												</DataTemplate>
+											</CollectionView.ItemTemplate>
+										</CollectionView>
+									</Border>
+
+									<!--  Context panels shown after patient selected  -->
+									<Grid
+										ColumnDefinitions="*,*"
+										ColumnSpacing="12"
+										IsVisible="{Binding SelectedPatientForAppointment, Converter={StaticResource SparkNotNullConverter}}">
+										<Border
+											Padding="14,12"
+											BackgroundColor="{StaticResource SparkTabActiveBg}"
+											StrokeShape="RoundRectangle 10"
+											StrokeThickness="0">
+											<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+												<Border
+													BackgroundColor="{StaticResource SparkAccentTealBg}"
+													HeightRequest="36"
+													StrokeShape="RoundRectangle 10"
+													StrokeThickness="0"
+													WidthRequest="36">
+													<Label
+														FontFamily="FASolid"
+														FontSize="13"
+														HorizontalOptions="Center"
+														Text="&#xf007;"
+														TextColor="{StaticResource SparkAccentTealDark}"
+														VerticalOptions="Center" />
+												</Border>
+												<VerticalStackLayout
+													Grid.Column="1"
+													Spacing="1"
+													VerticalOptions="Center">
+													<Label
+														FontSize="10"
+														Text="Избран пациент"
+														TextColor="{StaticResource SparkTextSecondary}" />
+													<Label
+														FontAttributes="Bold"
+														FontSize="15"
+														LineBreakMode="TailTruncation"
+														Text="{Binding SelectedPatientForAppointment.FullName, TargetNullValue='—'}"
+														TextColor="{StaticResource SparkTextPrimary}" />
+												</VerticalStackLayout>
+											</Grid>
+										</Border>
+										<Border
+											Grid.Column="1"
+											Padding="14,12"
+											BackgroundColor="{StaticResource SparkTabActiveBg}"
+											StrokeShape="RoundRectangle 10"
+											StrokeThickness="0">
+											<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+												<Border
+													BackgroundColor="{StaticResource SparkAccentTealBg}"
+													HeightRequest="36"
+													StrokeShape="RoundRectangle 18"
+													StrokeThickness="0"
+													WidthRequest="36">
+													<Label
+														FontFamily="FASolid"
+														FontSize="13"
+														HorizontalOptions="Center"
+														Text="&#xf0f0;"
+														TextColor="{StaticResource SparkAccentTealDark}"
+														VerticalOptions="Center" />
+												</Border>
+												<VerticalStackLayout
+													Grid.Column="1"
+													Spacing="1"
+													VerticalOptions="Center">
+													<Label
+														FontSize="10"
+														Text="Матичен реуматолог"
+														TextColor="{StaticResource SparkTextSecondary}" />
+													<Label
+														FontAttributes="Bold"
+														FontSize="15"
+														LineBreakMode="TailTruncation"
+														Text="{Binding SelectedDoctorForAppointment.FullName, TargetNullValue='—'}"
+														TextColor="{StaticResource SparkAccentTealDark}" />
+												</VerticalStackLayout>
+											</Grid>
+										</Border>
+									</Grid>
+
+								</VerticalStackLayout>
+
 							</VerticalStackLayout>
 
-							<!--  ================================================  -->
-							<!--  СЕКЦИЈА — ТЕРМИН  -->
-							<!--  ================================================  -->
-							<VerticalStackLayout Spacing="16">
+							<!--  ══════════════════════════════════════════  -->
+							<!--  2. ТЕРМИН  -->
+							<!--  ══════════════════════════════════════════  -->
+							<VerticalStackLayout Spacing="12">
+
 								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label Style="{StaticResource SectionPillLabelStyle}" Text="ТЕРМИН" />
+									<Label
+										CharacterSpacing="0.5"
+										FontAttributes="Bold"
+										FontSize="12"
+										Style="{StaticResource SectionPillLabelStyle}"
+										Text="ТЕРМИН" />
 								</Border>
 
-								<Grid
-									Padding="12,0"
-									RowDefinitions="Auto,Auto,Auto"
-									RowSpacing="16">
+								<Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="14">
 
+									<!--  Scheduling horizon + auto slot (new only)  -->
 									<Grid
 										Grid.Row="0"
-										ColumnDefinitions="*,*"
-										ColumnSpacing="24">
+										ColumnDefinitions="*,1.4*"
+										ColumnSpacing="20"
+										IsVisible="{Binding IsNewAppointment}">
 										<VerticalStackLayout Spacing="6">
 											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Период за закажување" />
 											<controls:FFPicker ItemsSource="{Binding SchedulingHorizonOptions}" SelectedItem="{Binding SelectedSchedulingHorizon, Mode=TwoWay}" />
 										</VerticalStackLayout>
 										<VerticalStackLayout Grid.Column="1" Spacing="6">
 											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Автоматски слободен термин" />
-											<Border Style="{StaticResource InfoPillBorderStyle}">
+											<Border Style="{StaticResource DetailValueSurfaceStyle}">
 												<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding AutomaticSlotText}" />
 											</Border>
 										</VerticalStackLayout>
 									</Grid>
-									<!--  Датумот и времето ги пресметува системот  -->
-									<Grid
-										Grid.Row="1"
-										ColumnDefinitions="*,*,*"
-										ColumnSpacing="24">
-										<VerticalStackLayout Grid.Column="0" Spacing="6">
+
+									<!--  Date  -->
+									<Grid Grid.Row="1" ColumnDefinitions="1.4*">
+										<VerticalStackLayout Spacing="6">
 											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Датум" />
-											<Border Style="{StaticResource InfoPillBorderStyle}">
-												<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding Appointment.ScheduledStart, StringFormat='{0:dd.MM.yyyy}'}" />
-											</Border>
-										</VerticalStackLayout>
-										<VerticalStackLayout Grid.Column="1" Spacing="6">
-											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Почеток" />
-											<Border Style="{StaticResource InfoPillBorderStyle}">
-												<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding Appointment.ScheduledStart, StringFormat='{0:HH:mm}'}" />
-											</Border>
-										</VerticalStackLayout>
-										<VerticalStackLayout Grid.Column="2" Spacing="6">
-											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Крај" />
-											<Border Style="{StaticResource InfoPillBorderStyle}">
-												<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding Appointment.ScheduledEnd, StringFormat='{0:HH:mm}'}" />
-											</Border>
+											<DatePicker
+												BackgroundColor="White"
+												Date="{Binding Appointment.ScheduledStart, StringFormat='{0:dd.MM.yyyy}'}"
+												IsVisible="{Binding IsEditMode}"
+												TextColor="{StaticResource SparkTextPrimary}" />
+											<Label
+												Padding="12,10"
+												IsVisible="{Binding IsReadOnly}"
+												Style="{StaticResource CrudFormValueSurfaceStyle}"
+												Text="{Binding Appointment.ScheduledStart, StringFormat='{0:dd.MM.yyyy}'}" />
 										</VerticalStackLayout>
 									</Grid>
 
-									<!--
-                                        FIX (status save bug): the picker now binds ItemsSource to the
-										typed StatusOptions (IReadOnlyList<AppointmentStatusOption>) and
-										SelectedItem to SelectedStatusOption - a plain object binding with
-										NO converter. Previously SelectedItem went through
-										AppointmentStatusConverter (a different resource key than the
-										AppointmentStatusDisplayConverter used everywhere else), and even
-										ignoring that mismatch, ConvertBack was being fed enum names
-										("Scheduled") from StatusOptions instead of the Macedonian labels
-										("Закажан") it looks up - so ConvertBack always returned
-										BindableProperty.UnsetValue and Appointment.Status was never
-										updated by picking a new status.
-									-->
+									<!--  Status (edit mode, existing only)  -->
 									<Grid
 										Grid.Row="2"
 										ColumnDefinitions="130,*"
@@ -355,93 +462,160 @@
 											Placeholder="Изберете статус"
 											SelectedItem="{Binding SelectedStatusOption}" />
 									</Grid>
+
 								</Grid>
 							</VerticalStackLayout>
-							<!--  ================================================  -->
-							<!--  СЕКЦИЈА — ЗАБЕЛЕШКА  -->
-							<!--  ================================================  -->
-							<VerticalStackLayout Spacing="16">
+
+							<!--  ══════════════════════════════════════════  -->
+							<!--  3. МКБ-10 ДИЈАГНОЗИ  -->
+							<!--  ══════════════════════════════════════════  -->
+							<VerticalStackLayout Spacing="12">
+
 								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label Style="{StaticResource SectionPillLabelStyle}" Text="ЗАБЕЛЕШКА" />
+									<Label
+										CharacterSpacing="0.5"
+										FontAttributes="Bold"
+										FontSize="12"
+										Style="{StaticResource SectionPillLabelStyle}"
+										Text="МКБ-10 ДИЈАГНОЗИ" />
 								</Border>
-								<Grid Padding="12,0">
-									<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
-										<Label Style="{StaticResource EditFieldLabelStyle}" Text="Забелешка (опционално)" />
-										<Border Style="{StaticResource TextAreaFieldBoxStyle}">
-											<Editor
-												AutoSize="TextChanges"
-												BackgroundColor="Transparent"
-												FontSize="13"
-												MinimumHeightRequest="64"
-												Placeholder="Внесете забелешка за терминот..."
-												PlaceholderColor="{StaticResource SparkTextSecondary}"
-												Text="{Binding Appointment.ClinicalNotes}"
-												TextColor="{StaticResource SparkTextPrimary}" />
+
+								<!--  Full search UI — edit mode only  -->
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="12">
+
+									<!--  Alphabet strip  -->
+									<VerticalStackLayout Spacing="5">
+										<Label
+											FontAttributes="Bold"
+											FontSize="11"
+											Text="МКБ СЕКЦИЈА · ЛАТИНИЦА A–Z"
+											TextColor="{StaticResource SparkTextSecondary}" />
+										<Border
+											Padding="6,5"
+											BackgroundColor="#F4F7FA"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											StrokeShape="RoundRectangle 9"
+											StrokeThickness="1">
+											<ScrollView HorizontalScrollBarVisibility="Never" Orientation="Horizontal">
+												<FlexLayout
+													BindableLayout.ItemsSource="{Binding MkbAlphabetSections}"
+													Direction="Row"
+													JustifyContent="Start"
+													Wrap="NoWrap">
+													<BindableLayout.ItemTemplate>
+														<DataTemplate x:DataType="vm:MkbAlphabetSection">
+															<Border
+																Margin="1"
+																Padding="2"
+																HeightRequest="30"
+																StrokeShape="RoundRectangle 6"
+																StrokeThickness="1"
+																WidthRequest="28">
+																<Border.Triggers>
+																	<DataTrigger
+																		Binding="{Binding IsSelected}"
+																		TargetType="Border"
+																		Value="True">
+																		<Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTeal}" />
+																		<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
+																	</DataTrigger>
+																	<DataTrigger
+																		Binding="{Binding IsSelected}"
+																		TargetType="Border"
+																		Value="False">
+																		<Setter Property="BackgroundColor" Value="White" />
+																		<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
+																	</DataTrigger>
+																</Border.Triggers>
+																<Border.GestureRecognizers>
+																	<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectMkbSectionCommand}" CommandParameter="{Binding .}" />
+																</Border.GestureRecognizers>
+																<Label
+																	FontAttributes="Bold"
+																	FontSize="10.5"
+																	HorizontalOptions="Center"
+																	Text="{Binding Letter}"
+																	VerticalOptions="Center">
+																	<Label.Triggers>
+																		<DataTrigger
+																			Binding="{Binding IsSelected}"
+																			TargetType="Label"
+																			Value="True">
+																			<Setter Property="TextColor" Value="White" />
+																		</DataTrigger>
+																		<DataTrigger
+																			Binding="{Binding IsSelected}"
+																			TargetType="Label"
+																			Value="False">
+																			<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+																		</DataTrigger>
+																	</Label.Triggers>
+																</Label>
+															</Border>
+														</DataTemplate>
+													</BindableLayout.ItemTemplate>
+												</FlexLayout>
+											</ScrollView>
 										</Border>
 									</VerticalStackLayout>
-									<Grid
-										ColumnDefinitions="130,*"
-										ColumnSpacing="{StaticResource FormRowSpacing}"
-										IsVisible="{Binding IsReadOnly}">
-										<Label
-											Grid.Column="0"
-											Style="{StaticResource ReadRowLabelStyle}"
-											Text="Забелешка:" />
-										<Label
-											Grid.Column="1"
-											Style="{StaticResource ReadRowValueStyle}"
-											Text="{Binding Appointment.ClinicalNotes, TargetNullValue='Нема евидентирано.'}" />
+
+									<!--  Dual search: code + description  -->
+									<Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+										<VerticalStackLayout Spacing="5">
+											<Label
+												FontAttributes="Bold"
+												FontSize="11.5"
+												Text="Пребарување по МКБ код (латиница)"
+												TextColor="{StaticResource SparkTextSecondary}" />
+											<controls:FFSearchBox Placeholder="Пример: M06.9" Text="{Binding DiagnosisSearchText, Mode=TwoWay}" />
+										</VerticalStackLayout>
+										<VerticalStackLayout Grid.Column="1" Spacing="5">
+											<Label
+												FontAttributes="Bold"
+												FontSize="11.5"
+												Text="Пребарување по опис (кирилица)"
+												TextColor="{StaticResource SparkTextSecondary}" />
+											<controls:FFSearchBox Placeholder="Пример: ревматоиден артритис" Text="{Binding DiagnosisDescriptionSearchText, Mode=TwoWay}" />
+										</VerticalStackLayout>
 									</Grid>
-								</Grid>
-							</VerticalStackLayout>
 
-							<!--  ================================================  -->
-							<!--  СЕКЦИЈА — МКБ-10 ДИЈАГНОЗИ  -->
-							<!--  ================================================  -->
-							<VerticalStackLayout Spacing="16">
-								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label Style="{StaticResource SectionPillLabelStyle}" Text="ТЕРАПЕВТСКИ ЦИКЛУС" />
-								</Border>
-								<Grid
-									Padding="12,0"
-									ColumnDefinitions="180,*"
-									ColumnSpacing="{StaticResource FormRowSpacing}">
-									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Циклус за пациентот" />
-									<controls:FFPicker
-										Grid.Column="1"
-										IsEnabled="{Binding IsEditMode}"
-										ItemsSource="{Binding VisibleTherapies}"
-										Placeholder="Изберете терапевтски циклус"
-										SelectedItem="{Binding SelectedTherapyCycle}" />
-								</Grid>
-							</VerticalStackLayout>
-							<VerticalStackLayout Spacing="16">
-								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label Style="{StaticResource SectionPillLabelStyle}" Text="МКБ-10 ДИЈАГНОЗИ" />
-								</Border>
+									<!--  Results dropdown  -->
+									<CollectionView
+										HeightRequest="180"
+										IsVisible="{Binding ShowDiagnosisDropdown}"
+										ItemsSource="{Binding AvailableDiagnoses}"
+										SelectionMode="None">
+										<CollectionView.ItemTemplate>
+											<DataTemplate x:DataType="entities:Mkb10Code">
+												<Border
+													Margin="0,4"
+													Padding="12"
+													BackgroundColor="{StaticResource SparkTabActiveBg}"
+													StrokeShape="RoundRectangle 10"
+													StrokeThickness="0">
+													<Border.GestureRecognizers>
+														<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddDiagnosisCommand}" CommandParameter="{Binding .}" />
+													</Border.GestureRecognizers>
+													<VerticalStackLayout Spacing="2">
+														<Label
+															FontAttributes="Bold"
+															FontSize="13"
+															Text="{Binding Code}"
+															TextColor="{StaticResource SparkAccentTealDark}" />
+														<Label
+															FontSize="12"
+															Text="{Binding Description}"
+															TextColor="{StaticResource SparkTextSecondary}" />
+													</VerticalStackLayout>
+												</Border>
+											</DataTemplate>
+										</CollectionView.ItemTemplate>
+									</CollectionView>
 
-								<Grid Margin="12,0" IsVisible="{Binding IsEditMode}">
-									<Border Style="{StaticResource EditFieldBoxStyle}">
-										<Entry
-											BackgroundColor="Transparent"
-											FontSize="13"
-											Placeholder="Внесете шифра или назив на МКБ-10..."
-											PlaceholderColor="{StaticResource SparkTextSecondary}"
-											Text="{Binding DiagnosisSearchText, Mode=TwoWay}"
-											TextColor="{StaticResource SparkTextPrimary}"
-											VerticalOptions="Center" />
-									</Border>
-								</Grid>
+								</VerticalStackLayout>
 
-								<Border
-									Margin="12,0"
-									IsVisible="{Binding ShowDiagnosisDropdown}"
-									Style="{StaticResource SearchDropdownBorderStyle}">
-									<CollectionView ItemTemplate="{StaticResource Mkb10SearchResultRowTemplate}" ItemsSource="{Binding AvailableDiagnoses}" />
-								</Border>
-
+								<!--  Selected diagnoses chips (always visible)  -->
 								<FlexLayout
-									Margin="12,4,12,0"
 									BindableLayout.ItemsSource="{Binding SelectedDiagnoses}"
 									Direction="Row"
 									JustifyContent="Start"
@@ -478,221 +652,285 @@
 										</DataTemplate>
 									</BindableLayout.ItemTemplate>
 								</FlexLayout>
+
 							</VerticalStackLayout>
 
-							<!--  ═══════════════════════════════════════════════════  -->
-							<!--  ИСТОРИЈА НА ТЕРМИНИ  -->
-							<!--  ═══════════════════════════════════════════════════  -->
-							<VerticalStackLayout IsVisible="{Binding IsNewAppointment, Converter={StaticResource AppointmentInvertedBoolConverter}}" Spacing="14">
+							<!--  ══════════════════════════════════════════  -->
+							<!--  4. ЛЕКОВИ  -->
+							<!--  ══════════════════════════════════════════  -->
+							<VerticalStackLayout Spacing="12">
+
 								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label Style="{StaticResource SectionPillLabelStyle}" Text="ИСТОРИЈА НА ТЕРМИНИ" />
+									<Label
+										CharacterSpacing="0.5"
+										FontAttributes="Bold"
+										FontSize="12"
+										Style="{StaticResource SectionPillLabelStyle}"
+										Text="ЛЕКОВИ" />
 								</Border>
 
-								<!--
-									Prefer SelectionChangedCommand over the raw TapGestureRecognizer
-									previously on each row Border - gives built-in accessibility support
-									and a selected-state visual for free, and matches how CollectionView
-									is meant to report user selection.
-								-->
-								<CollectionView
-									Margin="12,0"
-									ItemsSource="{Binding AppointmentHistory}"
-									MaximumHeightRequest="260"
-									SelectionChangedCommand="{Binding SelectAppointmentCommand}"
-									SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}"
-									SelectionMode="Single">
-									<CollectionView.EmptyView>
+								<Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+
+									<!--  Search + dropdown (edit mode only)  -->
+									<VerticalStackLayout Grid.Column="0" Spacing="8">
+										<controls:FFSearchBox
+											IsVisible="{Binding IsEditMode}"
+											Placeholder="Пребарај лек..."
+											Text="{Binding MedicineSearchText, Mode=TwoWay}" />
+
+										<Border
+											Padding="4"
+											BackgroundColor="White"
+											IsVisible="{Binding ShowMedicineDropdown}"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											StrokeShape="RoundRectangle 8"
+											StrokeThickness="1">
+											<CollectionView
+												HeightRequest="200"
+												ItemsSource="{Binding MedicineResults}"
+												SelectionMode="None">
+												<CollectionView.ItemTemplate>
+													<DataTemplate x:DataType="entities:Medicine">
+														<Border
+															Margin="2,2,2,0"
+															Padding="10,8"
+															BackgroundColor="Transparent"
+															StrokeThickness="0">
+															<Border.GestureRecognizers>
+																<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMedicineCommand}" CommandParameter="{Binding .}" />
+															</Border.GestureRecognizers>
+															<VerticalStackLayout Spacing="2">
+																<Label
+																	FontAttributes="Bold"
+																	FontSize="13"
+																	Text="{Binding Name}"
+																	TextColor="{StaticResource SparkAccentTealDark}" />
+																<Label
+																	FontSize="11"
+																	Text="{Binding GenericName}"
+																	TextColor="{StaticResource SparkTextSecondary}" />
+															</VerticalStackLayout>
+														</Border>
+													</DataTemplate>
+												</CollectionView.ItemTemplate>
+											</CollectionView>
+										</Border>
+									</VerticalStackLayout>
+
+									<!--  Selected medicines table (mirrors Encounter's table 1:1 — name + quantity)  -->
+									<VerticalStackLayout Grid.Column="1" Spacing="0">
+
 										<Label
-											FontSize="13"
-											Text="Нема претходни термини."
+											Margin="0,0,0,8"
+											FontAttributes="Bold"
+											FontSize="11"
+											Text="Доделени лекови"
 											TextColor="{StaticResource SparkTextSecondary}" />
-									</CollectionView.EmptyView>
-									<CollectionView.ItemTemplate>
-										<DataTemplate x:DataType="entities:Appointment">
+
+										<!--  Table header — only when rows exist  -->
+										<Grid
+											ColumnDefinitions="2*,1*,32"
+											ColumnSpacing="0"
+											IsVisible="{Binding SelectedMedicines.Count, Converter={StaticResource IntToBoolConverter}}">
 											<Border
-												Margin="0,4"
-												Padding="12"
-												BackgroundColor="{StaticResource SparkTabActiveBg}"
-												StrokeShape="RoundRectangle 10"
-												StrokeThickness="0">
-												<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="0">
-													<BoxView
-														Grid.Column="0"
-														CornerRadius="2"
-														HeightRequest="32"
-														WidthRequest="4"
-														Color="{Binding Status, Converter={StaticResource AppointmentStatusToColorConverter}}" />
-													<VerticalStackLayout Grid.Column="1" Spacing="1">
-														<Label
-															FontAttributes="Bold"
-															FontSize="13"
-															Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
-														<Label
-															FontSize="12"
-															LineBreakMode="TailTruncation"
-															Text="{Binding ClinicalNotes, TargetNullValue='Без забелешка'}"
-															TextColor="{StaticResource SparkTextSecondary}" />
-													</VerticalStackLayout>
-													<Label
-														Grid.Column="2"
-														FontSize="11"
-														Text="{Binding Status, Converter={StaticResource AppointmentStatusToLabelConverter}}"
-														TextColor="{Binding Status, Converter={StaticResource AppointmentStatusToColorConverter}}"
-														VerticalOptions="Center" />
-												</Grid>
+												Grid.Column="0"
+												Padding="10,7"
+												BackgroundColor="{StaticResource SparkBackgroundAlt}"
+												Stroke="{StaticResource SparkBorderSubtle}"
+												StrokeShape="Rectangle"
+												StrokeThickness="1">
+												<Label
+													FontAttributes="Bold"
+													FontSize="10"
+													Text="ИМЕ НА ЛЕКОТ"
+													TextColor="{StaticResource SparkTextSecondary}" />
 											</Border>
-										</DataTemplate>
-									</CollectionView.ItemTemplate>
-								</CollectionView>
+											<Border
+												Grid.Column="1"
+												Padding="10,7"
+												BackgroundColor="{StaticResource SparkBackgroundAlt}"
+												Stroke="{StaticResource SparkBorderSubtle}"
+												StrokeShape="Rectangle"
+												StrokeThickness="1">
+												<Label
+													FontAttributes="Bold"
+													FontSize="10"
+													Text="КОЛИЧИНА"
+													TextColor="{StaticResource SparkTextSecondary}" />
+											</Border>
+											<Border
+												Grid.Column="2"
+												BackgroundColor="{StaticResource SparkBackgroundAlt}"
+												Stroke="{StaticResource SparkBorderSubtle}"
+												StrokeShape="Rectangle"
+												StrokeThickness="1" />
+										</Grid>
+
+										<!--  Table rows  -->
+										<VerticalStackLayout BindableLayout.ItemsSource="{Binding SelectedMedicines}" Spacing="6">
+											<BindableLayout.EmptyView>
+												<Label
+													Padding="0,6"
+													FontSize="12"
+													Text="Нема доделени лекови."
+													TextColor="{StaticResource SparkTextSecondary}" />
+											</BindableLayout.EmptyView>
+											<BindableLayout.ItemTemplate>
+												<DataTemplate x:DataType="entities:PatientMedicine">
+													<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+														<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+														<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
+															<Grid ColumnDefinitions="2*,1*,28" ColumnSpacing="8">
+																<Label
+																	LineBreakMode="TailTruncation"
+																	Style="{StaticResource CrudCollectionTitleStyle}"
+																	Text="{Binding Medicine.Name, TargetNullValue='Непознат лек'}" />
+																<controls:FFInput
+																	Grid.Column="1"
+																	IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
+																	Keyboard="Numeric"
+																	Placeholder="Количина"
+																	Text="{Binding Dosage, Mode=TwoWay}" />
+																<Button
+																	Grid.Column="2"
+																	Padding="0"
+																	BackgroundColor="Transparent"
+																	Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}"
+																	CommandParameter="{Binding .}"
+																	FontSize="11"
+																	HeightRequest="26"
+																	IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
+																	Text="✕"
+																	TextColor="#DC2626"
+																	WidthRequest="26" />
+															</Grid>
+														</Border>
+													</Grid>
+												</DataTemplate>
+											</BindableLayout.ItemTemplate>
+										</VerticalStackLayout>
+
+									</VerticalStackLayout>
+								</Grid>
+
 							</VerticalStackLayout>
 
-							<!--  ═══════════════════════════════════════════════════  -->
-							<!--  ИСТОРИЈА НА ДИЈАГНОЗИ  -->
-							<!--  ═══════════════════════════════════════════════════  -->
-							<VerticalStackLayout Spacing="14">
+							<!--  ══════════════════════════════════════════  -->
+							<!--  5. ЗАБЕЛЕШКА  -->
+							<!--  ══════════════════════════════════════════  -->
+							<VerticalStackLayout Spacing="12">
+
 								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label Style="{StaticResource SectionPillLabelStyle}" Text="ИСТОРИЈА НА ДИЈАГНОЗИ" />
+									<Label
+										CharacterSpacing="0.5"
+										FontAttributes="Bold"
+										FontSize="12"
+										Style="{StaticResource SectionPillLabelStyle}"
+										Text="ЗАБЕЛЕШКА" />
 								</Border>
 
-								<controls:SparkExpandableCard
-									Title="Дијагнози"
-									Margin="12,0"
-									EmptyViewText="Нема историја на дијагнози."
-									ItemTemplate="{StaticResource AppointmentDiagnosisHistoryRowTemplate}"
-									ItemsSource="{Binding PatientDiagnosisHistory}"
-									Subtitle="Пациент"
-									Variant="Diagnosis" />
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
+									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Забелешка (опционално)" />
+									<Border Style="{StaticResource TextAreaFieldBoxStyle}">
+										<Editor
+											AutoSize="TextChanges"
+											BackgroundColor="Transparent"
+											FontSize="13"
+											MinimumHeightRequest="64"
+											Placeholder="Внесете забелешка за терминот..."
+											PlaceholderColor="{StaticResource SparkTextSecondary}"
+											Text="{Binding Appointment.ClinicalNotes}"
+											TextColor="{StaticResource SparkTextPrimary}" />
+									</Border>
+								</VerticalStackLayout>
+
+								<Grid
+									ColumnDefinitions="130,*"
+									ColumnSpacing="{StaticResource FormRowSpacing}"
+									IsVisible="{Binding IsReadOnly}">
+									<Label
+										Grid.Column="0"
+										Style="{StaticResource ReadRowLabelStyle}"
+										Text="Забелешка:" />
+									<Label
+										Grid.Column="1"
+										Style="{StaticResource ReadRowValueStyle}"
+										Text="{Binding Appointment.ClinicalNotes, TargetNullValue='Нема евидентирано.'}" />
+								</Grid>
+
 							</VerticalStackLayout>
+
+							<!--  ══════════════════════════════════════════  -->
+							<!--  АКЦИИ — исто позиционирање како во Encounter  -->
+							<!--  ══════════════════════════════════════════  -->
+							<Grid
+								Padding="0,8,0,8"
+								ColumnDefinitions="*,*"
+								ColumnSpacing="16"
+								IsVisible="{Binding IsEditMode}">
+								<controls:FFButton
+									Grid.Column="0"
+									ButtonKind="Secondary"
+									Command="{Binding CancelCommand}"
+									HeightRequestEx="46"
+									Text="Откажи" />
+								<controls:FFButton
+									Grid.Column="1"
+									BackgroundColorEx="{StaticResource SidebarActiveBg}"
+									ButtonKind="Primary"
+									Command="{Binding SaveCommand}"
+									HeightRequestEx="46"
+									IsEnabled="{Binding CanSaveAppointment}"
+									Text="Зачувај"
+									TextColorEx="White" />
+							</Grid>
 
 						</VerticalStackLayout>
 					</ScrollView>
-				</Border>
+				</controls:FFSectionCard>
 
-				<!--  ═══════════════════════════════════════════════════════  -->
-				<!--  ДЕСНА КОЛОНА — АКЦИИ + ПАЦИЕНТ КОНТЕКСТ  -->
-				<!--  ═══════════════════════════════════════════════════════  -->
+				<!--  ═══════════════════════════════════════════════════  -->
+				<!--  ДЕСНА КОЛОНА — ИСТОРИЈА НА ПАЦИЕНТОТ  -->
+				<!--  ═══════════════════════════════════════════════════  -->
 				<Grid
-					Grid.Column="0"
-					IsVisible="False"
+					Grid.Column="1"
 					RowDefinitions="Auto,*"
 					RowSpacing="12">
 
-					<!--  Брзи акции  -->
-					<Border Style="{StaticResource PageHeaderCardStyle}">
-						<VerticalStackLayout Padding="16" Spacing="14">
+					<controls:FFSectionCard Margin="0" ContentPadding="18">
+						<VerticalStackLayout Padding="14" Spacing="12">
+
 							<Border Style="{StaticResource SectionPillBorderStyle}">
-								<Label Style="{StaticResource SectionPillLabelStyle}" Text="АКЦИИ" />
+								<Label
+									CharacterSpacing="0.5"
+									FontAttributes="Bold"
+									FontSize="11"
+									Style="{StaticResource SectionPillLabelStyle}"
+									Text="ИСТОРИЈА НА ПАЦИЕНТОТ" />
 							</Border>
 
-							<controls:FFButton
-								ButtonKind="Secondary"
-								Command="{Binding NewAppointmentForPatientCommand}"
-								CommandParameter="{Binding SelectedPatientForAppointment}"
-								ContentPadding="8,0"
-								HeightRequestEx="38"
-								IsVisible="{Binding IsReadOnly}"
-								Text="Нов термин" />
-							<controls:FFButton
-								ButtonKind="Secondary"
-								Command="{Binding GenerateNextCycleCommand}"
-								ContentPadding="8,0"
-								HeightRequestEx="38"
-								IsVisible="{Binding IsReadOnly}"
-								Text="Генерирај нареден циклус" />
+							<controls:SparkExpandableCard
+								Title="Термини"
+								CardBackgroundColor="White"
+								EmptyViewText="Нема претходни термини."
+								HeaderTextColor="{StaticResource SparkTextPrimary}"
+								ItemTemplate="{StaticResource AppointmentHistoryRowTemplate}"
+								ItemsSource="{Binding AppointmentHistory}"
+								Subtitle=""
+								Variant="Appointment" />
 
-							<Grid IsVisible="{Binding IsEditMode}">
-								<Label Style="{StaticResource EditFieldLabelStyle}" Text="Терапевтски циклус" />
-							</Grid>
-							<controls:FFPicker
-								IsVisible="{Binding IsEditMode}"
-								ItemsSource="{Binding VisibleTherapies}"
-								Placeholder="Изберете циклус"
-								SelectedItem="{Binding SelectedTherapyCycle}" />
+							<controls:SparkExpandableCard
+								Title="Дијагнози"
+								CardBackgroundColor="White"
+								EmptyViewText="Нема историја на дијагнози."
+								HeaderTextColor="{StaticResource SparkTextPrimary}"
+								ItemTemplate="{StaticResource AppointmentDiagnosisHistoryRowTemplate}"
+								ItemsSource="{Binding PatientDiagnosisHistory}"
+								Subtitle=""
+								Variant="Diagnosis" />
+
 						</VerticalStackLayout>
-					</Border>
-
-					<!--  Пациент контекст  -->
-					<Border Grid.Row="1" Style="{StaticResource PageHeaderCardStyle}">
-						<ScrollView VerticalScrollBarVisibility="Never">
-							<VerticalStackLayout Padding="16" Spacing="16">
-
-								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label Style="{StaticResource SectionPillLabelStyle}" Text="ПОДАТОЦИ ЗА ТЕРМИНОТ" />
-								</Border>
-
-								<!--  Избран пациент  -->
-								<Grid ColumnDefinitions="130,*" ColumnSpacing="{StaticResource FormRowSpacing}">
-									<Label
-										Grid.Column="0"
-										Style="{StaticResource ReadRowLabelStyle}"
-										Text="Пациент:" />
-									<Border Grid.Column="1" Style="{StaticResource InfoPillBorderStyle}">
-										<HorizontalStackLayout Spacing="8">
-											<Label Style="{StaticResource InfoPillIconStyle}" Text="&#xf007;" />
-											<Label
-												Style="{StaticResource InfoPillTextStyle}"
-												Text="{Binding SelectedPatientForAppointment.FullName, TargetNullValue='—'}"
-												TextColor="{StaticResource SparkAccentTealDark}" />
-										</HorizontalStackLayout>
-									</Border>
-								</Grid>
-
-								<!--  Реуматолог  -->
-								<Grid
-									ColumnDefinitions="130,*"
-									ColumnSpacing="{StaticResource FormRowSpacing}"
-									IsVisible="{Binding SelectedDoctorForAppointment}">
-									<Label
-										Grid.Column="0"
-										Style="{StaticResource ReadRowLabelStyle}"
-										Text="Реуматолог:" />
-									<Border Grid.Column="1" Style="{StaticResource InfoPillBorderStyle}">
-										<HorizontalStackLayout Spacing="8">
-											<Label
-												Style="{StaticResource InfoPillIconStyle}"
-												Text="&#xf0f0;"
-												TextColor="{StaticResource SparkAccentTealDark}" />
-											<Label
-												Style="{StaticResource InfoPillTextStyle}"
-												Text="{Binding SelectedDoctorForAppointment.FullName}"
-												TextColor="{StaticResource SparkAccentTealDark}" />
-										</HorizontalStackLayout>
-									</Border>
-								</Grid>
-
-								<!--  Активен циклус  -->
-								<Grid
-									ColumnDefinitions="130,*"
-									ColumnSpacing="{StaticResource FormRowSpacing}"
-									IsVisible="{Binding SelectedTherapyCycle}">
-									<Label
-										Grid.Column="0"
-										Style="{StaticResource ReadRowLabelStyle}"
-										Text="Циклус:" />
-									<Border Grid.Column="1" Style="{StaticResource InfoPillBorderStyle}">
-										<HorizontalStackLayout Spacing="8">
-											<Label
-												Style="{StaticResource InfoPillIconStyle}"
-												Text="&#xf0da;"
-												TextColor="{StaticResource SparkAccentTealDark}" />
-											<Label
-												Style="{StaticResource InfoPillTextStyle}"
-												Text="{Binding SelectedTherapyCycle.Notes}"
-												TextColor="{StaticResource SparkAccentTealDark}" />
-										</HorizontalStackLayout>
-									</Border>
-								</Grid>
-
-								<ActivityIndicator
-									Margin="0,12"
-									HorizontalOptions="Center"
-									IsRunning="{Binding IsPatientLoading}"
-									IsVisible="{Binding IsPatientLoading}"
-									Color="{StaticResource SparkAccentTeal}" />
-
-							</VerticalStackLayout>
-						</ScrollView>
-					</Border>
+					</controls:FFSectionCard>
 
 				</Grid>
 			</Grid>

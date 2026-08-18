@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
@@ -11,6 +12,7 @@ using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Xml.Linq;
 using static EHMR.Services.PatientService;
 
@@ -160,6 +162,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             AttachedMedicines=new ObservableCollection<AttachedMedicineRow>(
                 full.Medicines.Select(m => new AttachedMedicineRow(m)));
             Documents=new ObservableCollection<PatientDocumentDto>(full.Documents);
+            SelectedDocumentPreview=null;
 
             SelectedDoctorDisplay=full.DoctorDisplay;
             DoctorSearchText=SelectedDoctorDisplay;
@@ -299,7 +302,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void ToggleEditMode() => IsReadOnly=!IsReadOnly;
 
-   private bool _isSaving;
+    private bool _isSaving;
 
     public bool IsSaving
     {
@@ -793,11 +796,18 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     }
 
     // =====================================================
-    // DOCUMENT UPLOAD
+    // DOCUMENT UPLOAD / PREVIEW / DOWNLOAD
     // =====================================================
 
     [ObservableProperty] private ObservableCollection<PatientDocumentDto> documents = new();
     [ObservableProperty] private bool isUploadingDocument;
+    [ObservableProperty] private bool isDownloadingDocument;
+    [ObservableProperty] private PatientDocumentDto? selectedDocumentPreview;
+
+    public bool HasDocumentPreview => SelectedDocumentPreview is not null;
+
+    partial void OnSelectedDocumentPreviewChanged(PatientDocumentDto? value)
+        => OnPropertyChanged(nameof(HasDocumentPreview));
 
     [RelayCommand]
     private async Task UploadDocumentAsync()
@@ -823,7 +833,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                 await source.CopyToAsync(dest);
             }
 
-            Documents.Add(new PatientDocumentDto
+            var newDoc = new PatientDocumentDto
             {
                 Id=Guid.Empty,
                 PatientId=Patient.Id,
@@ -831,7 +841,10 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                 StoredPath=storedPath,
                 ContentType=file.ContentType,
                 UploadedAt=DateTime.UtcNow
-            });
+            };
+
+            Documents.Add(newDoc);
+            SelectedDocumentPreview=newDoc; // веднаш го покажуваме во преглед-панелот
         }
         catch(Exception ex)
         {
@@ -848,7 +861,75 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     {
         if(document==null) return;
         if(document.Id!=Guid.Empty) _deletedDocumentIds.Add(document.Id);
+        if(SelectedDocumentPreview==document) SelectedDocumentPreview=null;
         Documents.Remove(document);
+    }
+
+    [RelayCommand]
+    private async Task PreviewDocument(PatientDocumentDto? document)
+    {
+        if(document is null||string.IsNullOrWhiteSpace(document.StoredPath)) return;
+
+        SelectedDocumentPreview=document;
+
+        if(!File.Exists(document.StoredPath))
+        {
+            await _userDialogService.ShowAlertAsync("Документ", "Документот не е пронајден на дискот.", "Во ред");
+            return;
+        }
+
+        // За не-слики (PDF, DOCX...) нема inline преглед — се отвора со стандардна апликација.
+        if(!IsImageDocument(document))
+        {
+            await Launcher.Default.OpenAsync(new OpenFileRequest(
+                document.FileName,
+                new ReadOnlyFile(document.StoredPath)));
+        }
+    }
+
+    [RelayCommand]
+    private void ClosePreview() => SelectedDocumentPreview=null;
+
+    [RelayCommand]
+    private async Task DownloadDocumentAsync(PatientDocumentDto? document)
+    {
+        document??=SelectedDocumentPreview;
+
+        if(document is null||string.IsNullOrWhiteSpace(document.StoredPath)||!File.Exists(document.StoredPath))
+        {
+            await _userDialogService.ShowAlertAsync("Документ", "Документот не е пронајден на дискот.", "Во ред");
+            return;
+        }
+
+        if(IsDownloadingDocument) return;
+
+        try
+        {
+            IsDownloadingDocument=true;
+
+            await using var stream = File.OpenRead(document.StoredPath);
+            var result = await FileSaver.Default.SaveAsync(document.FileName, stream, CancellationToken.None);
+
+            if(!result.IsSuccessful&&result.Exception is not null)
+                await _userDialogService.ShowAlertAsync("Грешка", $"Преземањето не успеа: {result.Exception.Message}", "OK");
+        }
+        catch(Exception ex)
+        {
+            await _userDialogService.ShowAlertAsync("Грешка", $"Преземањето не успеа: {ex.Message}", "OK");
+        }
+        finally
+        {
+            IsDownloadingDocument=false;
+        }
+    }
+
+    public static bool IsImageDocument(PatientDocumentDto document)
+    {
+        if(!string.IsNullOrWhiteSpace(document.ContentType))
+            return document.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase);
+
+        var ext = Path.GetExtension(document.FileName)?.ToLowerInvariant();
+        return ext is ".png" or ".jpg" or ".jpeg" or ".gif" or ".webp" or ".bmp";
     }
 
     public void Dispose()

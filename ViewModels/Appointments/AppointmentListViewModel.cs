@@ -350,6 +350,7 @@ public partial class AppointmentListViewModel
         }
 
         SelectedItemService.SelectedItem=item;
+        SelectedItemService.OpenInEditMode=true;  // ← ДОДАЈ ОВО
         await NavigationService.GoToAsync(DetailRoute);
     }
 
@@ -626,13 +627,13 @@ public partial class AppointmentListViewModel
             row["Status"]=new SparkBadgeValue(StatusLabel(a.Status), StatusToTone(a.Status));
 
             // Select + (условен) Edit — сега преку base helper, RBAC + бизнис-правило заедно
-            AddDefaultActions(a, row, detailLabel: "Детали", editLabel: "Промени", canEditPredicate: CanEdit);
+            AddDefaultActions(a, row, detailLabel: "Повеќе", editLabel: "Промени", canEditPredicate: CanEdit);
 
             if(CanDelete&&CanCancel(a))
             {
                 ((List<SparkButtonItem>)row["Actions"]).Add(new SparkButtonItem
                 {
-                    Label="Откажи Термин",
+                    Label="Откажи термин",
                     Command=CancelAppointmentCommand,
                     CommandParameter=a
                 });

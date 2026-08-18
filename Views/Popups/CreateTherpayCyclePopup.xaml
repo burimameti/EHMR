@@ -39,20 +39,7 @@
 						FontSize="13"
 						Text="Почеток"
 						TextColor="{StaticResource SparkTextSecondary}" />
-					<Border
-						Grid.Row="1"
-						Padding="10,0"
-						BackgroundColor="{StaticResource SparkBackground}"
-						HeightRequest="46"
-						Stroke="{StaticResource SparkBorder}"
-						StrokeShape="RoundRectangle 6"
-						StrokeThickness="1">
-						<DatePicker
-							BackgroundColor="Transparent"
-							Date="{Binding StartDate}"
-							FontSize="13"
-							TextColor="{StaticResource SparkTextPrimary}" />
-					</Border>
+					<controls:FFDatePicker Grid.Row="1" SelectedDate="{Binding StartDate}" />
 				</Grid>
 
 				<Grid
@@ -64,20 +51,7 @@
 						FontSize="13"
 						Text="Крај (опционално)"
 						TextColor="{StaticResource SparkTextSecondary}" />
-					<Border
-						Grid.Row="1"
-						Padding="10,0"
-						BackgroundColor="{StaticResource SparkBackground}"
-						HeightRequest="46"
-						Stroke="{StaticResource SparkBorder}"
-						StrokeShape="RoundRectangle 6"
-						StrokeThickness="1">
-						<DatePicker
-							BackgroundColor="Transparent"
-							Date="{Binding EndDate}"
-							FontSize="13"
-							TextColor="{StaticResource SparkTextPrimary}" />
-					</Border>
+					<controls:FFDatePicker Grid.Row="1" SelectedDate="{Binding EndDate}" />
 				</Grid>
 			</Grid>
 
@@ -119,7 +93,7 @@
 					Text="Откажи" />
 				<controls:FFButton
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
+						TextColorEx="White"
 					ButtonKind="Primary"
 					Command="{Binding SaveCommand}"
 					ContentPadding="20,0"

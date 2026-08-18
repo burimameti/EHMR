@@ -4,17 +4,16 @@ using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Maui;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Diagnostics;
+
 
 namespace EHMR.Domain.Entities.Reports
 {
     public sealed class MissedTherapiesReportProvider : IReportProvider
     {
         private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
+        private bool _refreshingPickers; // ✅ Guard for picker refresh - prevents cascading events
+
         private string _selectedReasonFilter = "Сите";
         private string _selectedPatientFilter = "Сите";
         private string _selectedDoctorFilter = "Сите";
@@ -34,11 +33,8 @@ namespace EHMR.Domain.Entities.Reports
         private SparkPickerItem? _cityPicker;
         private SparkPickerItem? _genderPicker;
         private SparkPickerItem? _reasonPicker;
-        // единствен извор на вистина за reason филтерот
-
 
         private SparkTabItem? _allTab, _withReasonTab, _withoutReasonTab;
-
 
         public event Action? FiltersChanged;
 
@@ -122,10 +118,11 @@ namespace EHMR.Domain.Entities.Reports
         _diagnosisPicker, _medicinePicker
             ];
         }
+
         private SparkPickerItem CreatePicker(
-    string placeholder,
-    string selected,
-    Action<string> setter)
+            string placeholder,
+            string selected,
+            Action<string> setter)
         {
             var picker = new SparkPickerItem
             {
@@ -137,12 +134,17 @@ namespace EHMR.Domain.Entities.Reports
 
             picker.PropertyChanged+=(_, e) =>
             {
+                // ✅ Skip if we're currently refreshing pickers
+                if(_refreshingPickers)
+                    return;
+
                 if(e.PropertyName!=nameof(SparkPickerItem.SelectedItem))
                     return;
 
                 if(picker.SelectedItem is not string value)
                     return;
 
+                Debug.WriteLine($"[MissedTherapies] Picker '{placeholder}' changed -> {value}");
                 setter(value);
                 FiltersChanged?.Invoke();
             };
@@ -150,51 +152,45 @@ namespace EHMR.Domain.Entities.Reports
             return picker;
         }
 
-        private static void RefreshPicker(
+        private void RefreshPicker(
             SparkPickerItem? picker,
             IEnumerable<string?> values)
         {
             if(picker==null)
                 return;
 
-            var selected = picker.SelectedItem as string??"Сите";
+            // ✅ Set guard to prevent PropertyChanged events during refresh
+            _refreshingPickers=true;
 
-            picker.Items.Clear();
-            picker.Items.Add("Сите");
-
-            foreach(var item in values
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Distinct()
-                .OrderBy(x => x))
+            try
             {
-                picker.Items.Add(item!);
+                var selected = picker.SelectedItem as string??"Сите";
+
+                picker.Items.Clear();
+                picker.Items.Add("Сите");
+
+                foreach(var item in values
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct()
+                    .OrderBy(x => x))
+                {
+                    picker.Items.Add(item!);
+                }
+
+                picker.SelectedItem=
+                    picker.Items.Contains(selected)
+                        ? selected
+                        : "Сите";
             }
-
-            picker.SelectedItem=
-                picker.Items.Contains(selected)
-                    ? selected
-                    : "Сите";
-        }
-        private void SyncTabsFromPicker(string reason)
-        {
-            if(_allTab==null) return;
-
-            var mappedTab = reason switch
+            finally
             {
-                "Сите" => _allTab,
-                "Со причина" => _withReasonTab,
-                "Без причина" => _withoutReasonTab,
-                _ => _allTab
-            };
-
-            foreach(var t in new[] { _allTab, _withReasonTab, _withoutReasonTab })
-                if(t!=null) t.IsSelected=false;
-
-            mappedTab!.IsSelected=true;
+                // ✅ Always reset guard
+                _refreshingPickers=false;
+            }
         }
 
         // =====================================================
-        // BUTTON — тргнато дупликат "Експорт", заменето со "Освежи"
+        // BUTTON
         // =====================================================
         public IEnumerable<SparkButtonItem> BuildButtons()
         {
@@ -210,159 +206,189 @@ namespace EHMR.Domain.Entities.Reports
         }
 
         // =====================================================
-        // GENERATE
+        // GENERATE — WITHOUT AGGRESSIVE TIMEOUT
         // =====================================================
         public async Task<List<DynamicReportRow>> GenerateAsync(DateTime from, DateTime to)
         {
-            await using var db = await _dbFactory.CreateDbContextAsync();
-            var data = await db.TherapyCycles
-                .Include(x => x.Patient)
-                    .ThenInclude(p => p.Doctor).ThenInclude(d => d.User)
-                .Include(x => x.Patient)
-                    .ThenInclude(p => p.Diagnoses)
-                        .ThenInclude(d => d.Mkb10Code)
-                .AsNoTracking()
-                .Where(x => x.Status==TherapyStatus.Missed
-                    &&x.StartDate>=from
-                    &&(x.EndDate==null||x.EndDate<=to))
-                .OrderByDescending(x => x.EndDate)
-                .ToListAsync();
-            RefreshPicker(_patientPicker,
-                data.Select(x => x.Patient?.FullName));
-
-            RefreshPicker(_doctorPicker,
-                data.Select(x => x.Patient?.Doctor?.FullName));
-
-            RefreshPicker(_cityPicker,
-                data.Select(x => x.Patient?.City));
-
-            RefreshPicker(_diagnosisPicker,
-                data.SelectMany(x => x.Patient!.Diagnoses)
-                    .Select(x => x.Mkb10Code!.Code));
-
-            RefreshPicker(_medicinePicker,
-                data.SelectMany(x => x.Patient!.PatientMedicines)
-                    .Select(x => x.Medicine!.Name));
-
-            //RefreshPicker(_protocolPicker,
-            //    data.Select(x => x.Protocol!.Name));
-
-            RefreshPicker(_cyclePicker,
-                data.Select(x => $"Цикл #{x.TherapyCyleNumber}"));
-
-            RefreshPicker(_genderPicker,
-                Enum.GetValues<Gender>()
-                    .Select(x => x.ToString()));
-            RefreshTabCounts(data);
-
-            var filtered = data.AsEnumerable();
-
-            switch(_selectedReasonFilter)
+            try
             {
-                case "Со причина":
-                    filtered=filtered.Where(x => !string.IsNullOrWhiteSpace(x.Notes));
-                    break;
+                Debug.WriteLine($"\n[MissedTherapies] ========== START GENERATE ==========");
+                Debug.WriteLine($"[MissedTherapies] Period: {from:dd.MM.yyyy} to {to:dd.MM.yyyy}");
 
-                case "Без причина":
-                    filtered=filtered.Where(x => string.IsNullOrWhiteSpace(x.Notes));
-                    break;
-            }
+                Debug.WriteLine($"[MissedTherapies] [1] Creating DbContext...");
+                await using var db = await _dbFactory.CreateDbContextAsync();
+                Debug.WriteLine($"[MissedTherapies] [2] DbContext created ✓");
 
-            if(_selectedPatientFilter!="Сите")
-                filtered=filtered.Where(x =>
-                    x.Patient?.FullName==_selectedPatientFilter);
+                Debug.WriteLine($"[MissedTherapies] [3] Starting DB query...");
+                var stopwatch = Stopwatch.StartNew();
 
-            if(_selectedDoctorFilter!="Сите")
-                filtered=filtered.Where(x =>
-                    x.Patient?.Doctor?.FullName==_selectedDoctorFilter);
+                var data = await db.TherapyCycles
+                    .Include(x => x.Patient)
+                        .ThenInclude(p => p.Doctor).ThenInclude(d => d.User)
+                    .Include(x => x.Patient)
+                        .ThenInclude(p => p.Diagnoses)
+                            .ThenInclude(d => d.Mkb10Code)
+                    .AsNoTracking()
+                    .Where(x => x.Status==TherapyStatus.Missed
+                        &&x.StartDate>=from
+                        &&(x.EndDate==null||x.EndDate<=to))
+                    .OrderByDescending(x => x.EndDate)
+                    .ToListAsync();
 
-            if(_selectedCityFilter!="Сите")
-                filtered=filtered.Where(x =>
-                    x.Patient?.City==_selectedCityFilter);
+                stopwatch.Stop();
+                Debug.WriteLine($"[MissedTherapies] [4] Query completed in {stopwatch.ElapsedMilliseconds}ms ✓");
+                Debug.WriteLine($"[MissedTherapies] [5] Records loaded: {data.Count}");
 
-            if(_selectedCycleFilter!="Сите")
-                filtered=filtered.Where(x =>
-                    $"Цикл #{x.TherapyCyleNumber}"==_selectedCycleFilter);
-
-            if(_selectedGenderFilter!="Сите"&&
-                Enum.TryParse<Gender>(_selectedGenderFilter, out var gender))
-            {
-                filtered=filtered.Where(x =>
-                    x.Patient!.Gender==gender);
-            }
-            if(_selectedDiagnosisFilter!="Сите")
-                filtered=filtered.Where(x =>
-                    x.Patient!.Diagnoses.Any(d => d.Mkb10Code!.Code==_selectedDiagnosisFilter));
-
-            if(_selectedMedicineFilter!="Сите")
-                filtered=filtered.Where(x =>
-                    x.Patient!.PatientMedicines.Any(pm => pm.Medicine!.Name==_selectedMedicineFilter));
-            return filtered.Select(x =>
-            {
-                var noReason = string.IsNullOrWhiteSpace(x.Notes);
-
-                var diagnosis = x.Patient?.Diagnoses?
-                    .Select(d => d.Mkb10Code?.Code)
-                    .FirstOrDefault(c => !string.IsNullOrWhiteSpace(c))
-                    ??"-";
-
-                var doctor = x.Patient?.Doctor?.FullName??"-";
-
-                var cycle = x.TherapyCyleNumber !=null
-                    ? $"Цикл #{x.TherapyCyleNumber}"
-                    : "-";
-
-                var missedDate = x.EndDate.HasValue
-                    ? x.EndDate.Value.ToString("dd.MM.yyyy")
-                    : "-";
-
-                var startDate = x.StartDate.HasValue
-                    ? x.StartDate.Value.ToString("dd.MM.yyyy")
-                    : "-";
-
-                return new DynamicReportRow
+                if(data.Count==0)
                 {
-                    Cells=
+                    Debug.WriteLine($"[MissedTherapies] ⚠️  NO DATA FOUND");
+                    return new List<DynamicReportRow>();
+                }
+
+                Debug.WriteLine($"[MissedTherapies] [6] Refreshing pickers...");
+
+                Debug.WriteLine($"[MissedTherapies]   - Patient picker...");
+                RefreshPicker(_patientPicker, data.Select(x => x.Patient?.FullName));
+
+                Debug.WriteLine($"[MissedTherapies]   - Doctor picker...");
+                RefreshPicker(_doctorPicker, data.Select(x => x.Patient?.Doctor?.FullName));
+
+                Debug.WriteLine($"[MissedTherapies]   - City picker...");
+                RefreshPicker(_cityPicker, data.Select(x => x.Patient?.City));
+
+                Debug.WriteLine($"[MissedTherapies]   - Diagnosis picker...");
+                RefreshPicker(_diagnosisPicker,
+                    data.SelectMany(x => x.Patient!.Diagnoses)
+                        .Select(x => x.Mkb10Code!.Code));
+
+                Debug.WriteLine($"[MissedTherapies]   - Medicine picker...");
+                RefreshPicker(_medicinePicker,
+                    data.SelectMany(x => x.Patient!.PatientMedicines)
+                        .Select(x => x.Medicine!.Name));
+
+                Debug.WriteLine($"[MissedTherapies]   - Cycle picker...");
+                RefreshPicker(_cyclePicker, data.Select(x => $"Цикл #{x.TherapyCyleNumber}"));
+
+                Debug.WriteLine($"[MissedTherapies]   - Gender picker...");
+                RefreshPicker(_genderPicker,
+                    Enum.GetValues<Gender>()
+                        .Select(x => x.ToString()));
+
+                Debug.WriteLine($"[MissedTherapies] [7] Updating tab counts...");
+                RefreshTabCounts(data);
+
+                Debug.WriteLine($"[MissedTherapies] [8] Applying filters...");
+                var filtered = data.AsEnumerable();
+
+                switch(_selectedReasonFilter)
+                {
+                    case "Со причина":
+                        filtered=filtered.Where(x => !string.IsNullOrWhiteSpace(x.Notes));
+                        break;
+
+                    case "Без причина":
+                        filtered=filtered.Where(x => string.IsNullOrWhiteSpace(x.Notes));
+                        break;
+                }
+
+                if(_selectedPatientFilter!="Сите")
+                    filtered=filtered.Where(x =>
+                        x.Patient?.FullName==_selectedPatientFilter);
+
+                if(_selectedDoctorFilter!="Сите")
+                    filtered=filtered.Where(x =>
+                        x.Patient?.Doctor?.FullName==_selectedDoctorFilter);
+
+                if(_selectedCityFilter!="Сите")
+                    filtered=filtered.Where(x =>
+                        x.Patient?.City==_selectedCityFilter);
+
+                if(_selectedCycleFilter!="Сите")
+                    filtered=filtered.Where(x =>
+                        $"Цикл #{x.TherapyCyleNumber}"==_selectedCycleFilter);
+
+                if(_selectedGenderFilter!="Сите"&&
+                    Enum.TryParse<Gender>(_selectedGenderFilter, out var gender))
+                {
+                    filtered=filtered.Where(x =>
+                        x.Patient!.Gender==gender);
+                }
+                if(_selectedDiagnosisFilter!="Сите")
+                    filtered=filtered.Where(x =>
+                        x.Patient!.Diagnoses.Any(d => d.Mkb10Code!.Code==_selectedDiagnosisFilter));
+
+                if(_selectedMedicineFilter!="Сите")
+                    filtered=filtered.Where(x =>
+                        x.Patient!.PatientMedicines.Any(pm => pm.Medicine!.Name==_selectedMedicineFilter));
+
+                Debug.WriteLine($"[MissedTherapies] [9] Building report rows...");
+                var filtered_list = filtered.ToList();
+                Debug.WriteLine($"[MissedTherapies]   - Rows after filtering: {filtered_list.Count}");
+
+                var result = filtered_list.Select(x =>
+                {
+                    var noReason = string.IsNullOrWhiteSpace(x.Notes);
+
+                    var diagnosis = x.Patient?.Diagnoses?
+                        .Select(d => d.Mkb10Code?.Code)
+                        .FirstOrDefault(c => !string.IsNullOrWhiteSpace(c))
+                        ??"-";
+
+                    var doctor = x.Patient?.Doctor?.FullName??"-";
+
+                    var cycle = x.TherapyCyleNumber!=null
+                        ? $"Цикл #{x.TherapyCyleNumber}"
+                        : "-";
+
+                    var missedDate = x.EndDate.HasValue
+                        ? x.EndDate.Value.ToString("dd.MM.yyyy")
+                        : "-";
+
+                    var startDate = x.StartDate.HasValue
+                        ? x.StartDate.Value.ToString("dd.MM.yyyy")
+                        : "-";
+
+                    return new DynamicReportRow
+                    {
+                        Cells=
      [
-         // 1 ПАЦИЕНТ
          x.Patient?.FullName ?? "-",
-
-        // 2 МАТИЧЕН БРОЈ
         PrivacyMaskHelper.MaskNationalId(x.Patient?.NationalId) ?? "-",
-
-        // 3 ДОКТОР
         doctor,
-
-        // 4 ДИЈАГНОЗА
         diagnosis,
-
-        // 5 ЦИКЛУС
         cycle,
-
-        // 6 СТАРТ
         startDate,
-
-        // 7 КРАЈ
         x.EndDate.HasValue
             ? x.EndDate.Value.ToString("dd.MM.yyyy")
             : "-",
-
-        // 8 ПРОПУШТЕНА
         missedDate,
-
-        // 9 ПРИЧИНА
         string.IsNullOrWhiteSpace(x.Notes)
             ? "Без причина"
             : "Со причина",
-
-        // 10 ЗАБЕЛЕШКА
         x.Notes ?? "-"
      ],
 
-                    IsAlertSeverity=noReason
-                };
-            })
+                        IsAlertSeverity=noReason
+                    };
+                })
   .ToList();
+
+                Debug.WriteLine($"[MissedTherapies] [10] Report generation complete ✓");
+                Debug.WriteLine($"[MissedTherapies] Final row count: {result.Count}");
+                Debug.WriteLine($"[MissedTherapies] ========== END GENERATE ==========\n");
+
+                return result;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"\n❌ [MissedTherapies] EXCEPTION!");
+                Debug.WriteLine($"❌ Type: {ex.GetType().Name}");
+                Debug.WriteLine($"❌ Message: {ex.Message}");
+                Debug.WriteLine($"❌ StackTrace: {ex.StackTrace}");
+                Debug.WriteLine($"[MissedTherapies] ========== END GENERATE (FAILED) ==========\n");
+
+                throw;
+            }
         }
 
         private void RefreshTabCounts(List<TherapyCycle> data)

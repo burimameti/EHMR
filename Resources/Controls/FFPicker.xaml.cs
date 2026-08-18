@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using Microsoft.Maui.Controls;
 
 namespace EHMR.Resources.Controls;
@@ -8,6 +8,19 @@ public partial class FFPicker : ContentView
     public FFPicker()
     {
         InitializeComponent();
+    }
+
+    private void OnArrowTapped(object? sender, TappedEventArgs e)
+    {
+#if WINDOWS
+        if(InnerPicker.Handler?.PlatformView is Microsoft.UI.Xaml.Controls.ComboBox comboBox)
+        {
+            comboBox.Focus(Microsoft.UI.Xaml.FocusState.Programmatic);
+            comboBox.IsDropDownOpen=true;
+            return;
+        }
+#endif
+        InnerPicker.Focus();
     }
 
     // 1. Наслов (Label) кој го користи вашата custom архитектура

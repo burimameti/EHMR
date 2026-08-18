@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Application
 	x:Class="EHMR.App"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -10,6 +10,7 @@
 			<!--<converters:NotificationLevelToColorConverter x:Key="NotificationLevelToColorConverter" />-->
 			<converters:DoctorStatusToBackgroundConverter x:Key="DoctorStatusToBackgroundConverter" />
 			<converters:DashboardStateToTone x:Key="DashboardStateToTone" />
+			<converters:DocumentIsImageConverter x:Key="DocumentIsImageConverter" />
 			<converters:DoctorStatusToTextColorConverter x:Key="DoctorStatusToTextColorConverter" />
 			<converters:DoctorStatusToLabelConverter x:Key="DoctorStatusToLabelConverter" />
 			<converters:SparkStringNotEmptyConverter x:Key="SparkStringNotEmptyConverter" />
@@ -85,30 +86,20 @@
 				<ResourceDictionary Source="Resources/Styles/Typography.xaml" />
 				<ResourceDictionary Source="Resources/Styles/Controls.xaml" />
 				<ResourceDictionary Source="Resources/Styles/Layouts.xaml" />
+				<ResourceDictionary Source="Resources/Styles/CrudDesignSystem.xaml" />
 
-				<ResourceDictionary Source="Resources/Styles/SparkForms.xaml" />
 				<!--<ResourceDictionary Source="Resources/Styles/Colors2.xaml" />-->
 				<!--<ResourceDictionary Source="Resources/Styles/Styles2.xaml" />-->
 
 
-				<ResourceDictionary Source="Resources/Controls/FFCardStyles.xaml" />
 
 
 
-				<ResourceDictionary Source="Resources/Controls/FFHeaderStyles.xaml" />
 
-				<ResourceDictionary Source="Resources/Controls/FFSearchBoxStyles.xaml" />
-				<ResourceDictionary Source="Resources/Controls/FFInputStyles.xaml" />
 				<!--<ResourceDictionary Source="Resources/Controls/FFPaginationStyles.xaml" />-->
-				<ResourceDictionary Source="Resources/Controls/FFIconButtonStyles.xaml" />
-				<ResourceDictionary Source="Resources/Controls/FFPickerStyles.xaml" />
 				<ResourceDictionary Source="Resources/Controls/FFShellStyles.xaml" />
 
-				<ResourceDictionary Source="Resources/Controls/FFSwitchStyles.xaml" />
-				<ResourceDictionary Source="Resources/Controls/FFMetricTileStyles.xaml" />
-				<ResourceDictionary Source="Resources/Controls/FFStatusChipStyles.xaml" />
 
-				<ResourceDictionary Source="Resources/Controls/ShadowFieldContainerStyles.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>

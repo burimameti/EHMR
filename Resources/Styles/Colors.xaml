@@ -35,6 +35,12 @@
 	<Color x:Key="EpicPrimaryDark">#32B9AA</Color>
 	<Color x:Key="EpicPrimaryLight">#82E7DB</Color>
 
+	<!--  Canonical CRUD accent tokens; Colors.xaml is merged first.  -->
+	<Color x:Key="SparkAccentTeal">#4DD9C7</Color>
+	<Color x:Key="SparkAccentTealDark">#32B9AA</Color>
+	<Color x:Key="SparkAccentTealBg">#F0F7F5</Color>
+	<Color x:Key="SidebarActiveBg">#4DD9C7</Color>
+
 	<!--  Secondary  -->
 	<Color x:Key="EpicSecondary">#1E40AF</Color>
 	<Color x:Key="EpicSecondaryDark">#1E3A8A</Color>

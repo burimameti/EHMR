@@ -14,7 +14,6 @@
 	<Color x:Key="Teal100">#CCFBF1</Color>
 
 	<Color x:Key="SidebarBg">#3B4754</Color>
-	<Color x:Key="SidebarActiveBg">#4DD9C7</Color>
 	<Color x:Key="SidebarActiveText">#0F2E2A</Color>
 	<Color x:Key="SidebarText">#CBD5E1</Color>
 	<Color x:Key="SidebarTextMuted">#8B98A5</Color>
@@ -55,8 +54,6 @@
 
 
 	<!--  Accent  -->
-	<Color x:Key="SparkAccentTeal">#009688</Color>
-	<Color x:Key="SparkAccentTealDark">#00695C</Color>
 
 
 	<!--  =====================================================  -->

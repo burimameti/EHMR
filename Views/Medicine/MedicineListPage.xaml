@@ -7,9 +7,8 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="PageRoot"
 	x:DataType="viewModels:MedicineListViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
-
-	<Grid ColumnDefinitions="290,*">
+	BackgroundColor="{StaticResource PageBackground}">
+<Grid ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
 		<Border Grid.Column="0" StrokeThickness="0">
@@ -19,12 +18,12 @@
 		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
-            Margin="12,0,12,12"
+			Margin="0"
 			RowDefinitions="Auto,*"
-			RowSpacing="8">
+			RowSpacing="16">
 
 			<!--  HEADER  -->
-			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 					<controls:FFPageHeader
 						Title="Регистар на лекови"
@@ -33,7 +32,7 @@
 
 					<controls:FFButton
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
+						TextColorEx="White"
 						Grid.Column="1"
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
@@ -45,13 +44,10 @@
 			</Border>
 
 			<!--  MAIN CONTENT / GRID  -->
-			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-				<VerticalStackLayout Spacing="8">
-
-					<Border Style="{StaticResource PageHeaderCardStyle}">
-						<VerticalStackLayout Spacing="1">
-
-							<!--  SEARCH & FILTERS  -->
+			<Border Grid.Row="1" BackgroundColor="{StaticResource PageBackground}" StrokeThickness="0">
+				<ScrollView VerticalScrollBarVisibility="Never">
+					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
+						<controls:FFSectionCard>
 							<controls:SparkExplorerHeaderView
 								Buttons="{Binding Buttons}"
 								Pickers="{Binding Pickers}"
@@ -59,10 +55,9 @@
 								SearchPlaceholder="Пребарување по назив, генеричко име или форма..."
 								SearchText="{Binding SearchText}"
 								Tabs="{Binding Tabs}" />
-
-							<!--  DATA GRID  -->
-							<Border Padding="0">
-								<controls:SparkDataGridView
+						</controls:FFSectionCard>
+						<controls:FFSectionCard>
+							<controls:SparkDataGridView
 									x:Name="MedicineGrid"
 									Columns="{Binding GridColumns}"
 									CurrentPage="{Binding CurrentPage}"
@@ -75,13 +70,10 @@
 									ShowPagination="True"
 									ShowRowNumbers="True"
 									TotalPages="{Binding TotalPages}" />
-							</Border>
-
-						</VerticalStackLayout>
-					</Border>
-
-				</VerticalStackLayout>
-			</ScrollView>
+						</controls:FFSectionCard>
+					</VerticalStackLayout>
+				</ScrollView>
+			</Border>
 
 		</Grid>
 

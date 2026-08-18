@@ -5,28 +5,13 @@
 	<!--  PAGE  -->
 	<!--  =========================================================  -->
 
-	<Style x:Key="PageTitleLabel" TargetType="Label">
-		<Setter Property="FontFamily" Value="{StaticResource FontFamilyBold}" />
-		<Setter Property="FontSize" Value="{StaticResource PageTitleSize}" />
-		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-		<Setter Property="LineHeight" Value="{StaticResource LineHeightCompact}" />
-	</Style>
 
-	<Style x:Key="PageSubtitleLabel" TargetType="Label">
-		<Setter Property="FontFamily" Value="{StaticResource FontFamilyDefault}" />
-		<Setter Property="FontSize" Value="{StaticResource PageSubtitleSize}" />
-		<Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
-	</Style>
+
 
 	<!--  =========================================================  -->
 	<!--  SECTION  -->
 	<!--  =========================================================  -->
 
-	<Style x:Key="SectionTitleLabel" TargetType="Label">
-		<Setter Property="FontFamily" Value="{StaticResource FontFamilyBold}" />
-		<Setter Property="FontSize" Value="{StaticResource SectionTitleSize}" />
-		<Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-	</Style>
 
 	<Style x:Key="SectionSubtitleLabel" TargetType="Label">
 		<Setter Property="FontFamily" Value="{StaticResource FontFamilyDefault}" />
@@ -129,29 +114,15 @@
 	<!--  TIMELINE  -->
 	<!--  =========================================================  -->
 
-	<Style x:Key="TimelineTitleLabel" TargetType="Label">
-		<Setter Property="FontFamily" Value="{StaticResource FontFamilyMedium}" />
-		<Setter Property="FontSize" Value="{StaticResource TimelineTitleSize}" />
-	</Style>
 
-	<Style x:Key="TimelineDateLabel" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource TimelineDateSize}" />
-		<Setter Property="TextColor" Value="{StaticResource TextMuted}" />
-	</Style>
+
 
 	<!--  =========================================================  -->
 	<!--  DIALOG  -->
 	<!--  =========================================================  -->
 
-	<Style
-		x:Key="DialogTitleLabel"
-		BasedOn="{StaticResource SectionTitleLabel}"
-		TargetType="Label" />
 
-	<Style
-		x:Key="DialogSubtitleLabel"
-		BasedOn="{StaticResource SectionSubtitleLabel}"
-		TargetType="Label" />
+
 
 	<!--  =========================================================  -->
 	<!--  EMPTY  -->

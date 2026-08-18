@@ -238,7 +238,7 @@ public partial class AdminDashboardViewModel : ObservableObject
                 Title="Корисници",
                 Subtitle="Управување со корисници",
                 Icon="\uf0c0",
-                Variant=MetricTileVariant.Info,
+                Variant=MetricTileVariant.Success,
                 Value="—",
                 Command=GoToUsersCommand
             },
@@ -247,7 +247,7 @@ public partial class AdminDashboardViewModel : ObservableObject
                 Title="Реуматолози",
                 Subtitle="Регистрирани реуматолози",
                 Icon="\uf0f0",
-                Variant=MetricTileVariant.Primary,
+                Variant=MetricTileVariant.Success,
                 Value="—",
                 Command=GoToDoctorsCommand
             },
@@ -256,7 +256,7 @@ public partial class AdminDashboardViewModel : ObservableObject
                 Title="МКБ-10",
                 Subtitle="Шифрарник",
                 Icon="\uf15c",
-                Variant=MetricTileVariant.Warning,
+                Variant=MetricTileVariant.Danger,
                 Value="—",
                 Command=ImportMkbCommand
             },

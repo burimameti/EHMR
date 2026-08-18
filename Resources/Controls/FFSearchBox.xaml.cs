@@ -41,9 +41,22 @@ public partial class FFSearchBox : ContentView
         set => SetValue(HintProperty, value);
     }
 
+    public static readonly BindableProperty SearchCommandProperty =
+        BindableProperty.Create(nameof(SearchCommand), typeof(System.Windows.Input.ICommand), typeof(FFSearchBox));
+
+    public System.Windows.Input.ICommand? SearchCommand
+    {
+        get => (System.Windows.Input.ICommand?)GetValue(SearchCommandProperty);
+        set => SetValue(SearchCommandProperty, value);
+    }
     private void OnEntryTextChanged(object sender, TextChangedEventArgs e)
     {
-        // Го пренесуваме настанот нагоре до страницата која ја користи контролата
+        // Р“Рѕ РїСЂРѕСЃР»РµРґСѓРІР° РІРЅРµСЃРµРЅРёРѕС‚ С‚РµРєСЃС‚ Р±РµР· Р»РѕРєР°Р»РЅР° Р»РѕРіРёРєР° Р·Р° РїСЂРµР±Р°СЂСѓРІР°СљРµ.
         SearchTextChanged?.Invoke(this, e);
+    }
+    private void OnEntryCompleted(object sender, EventArgs e)
+    {
+        if(SearchCommand?.CanExecute(Text)==true)
+            SearchCommand.Execute(Text);
     }
 }

@@ -8,8 +8,8 @@
 	ZIndex="100">
 
 	<VerticalStackLayout
-		Margin="0,0,0,14"
-		BackgroundColor="Transparent"
+		Margin="0"
+		BackgroundColor="White"
 		Spacing="8">
 
 		<!--  ============ ROW 1: TABS + TRAILING ============  -->
@@ -60,7 +60,7 @@
 											TargetType="Border"
 											Value="True">
 											<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeNeutralBgSelected}" />
-											<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
+											<Setter Property="Stroke" Value="{StaticResource SidebarActiveBg}" />
 										</DataTrigger>
 										<DataTrigger
 											Binding="{Binding IsSelected}"
@@ -88,14 +88,14 @@
 												Binding="{Binding IsSelected}"
 												TargetType="Label"
 												Value="True">
-												<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+												<Setter Property="TextColor" Value="{StaticResource White}" />
 												<Setter Property="FontAttributes" Value="Bold" />
 											</DataTrigger>
 											<DataTrigger
 												Binding="{Binding IsSelected}"
 												TargetType="Label"
 												Value="False">
-												<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+												<Setter Property="TextColor" Value="{StaticResource White}" />
 												<Setter Property="FontAttributes" Value="None" />
 											</DataTrigger>
 										</Label.Triggers>
@@ -110,7 +110,7 @@
 				<BoxView
 					Grid.Column="1"
 					Margin="0,0"
-					BackgroundColor="{StaticResource SparkAccentTeal}"
+					BackgroundColor="{StaticResource SidebarActiveBg}"
 					WidthRequest="1" />
 
 
@@ -130,40 +130,11 @@
 
 				<!--  Search uses all remaining horizontal space.  -->
 				<VerticalStackLayout Grid.Column="0" Spacing="4">
-					<Label
-						FontSize="11"
-						Text="Пребарување"
-						TextColor="{StaticResource SparkTextSecondary}" />
-					<Border
-						Padding="12,0"
-						BackgroundColor="White"
-						HeightRequest="44"
-						HorizontalOptions="Fill"
-						Stroke="{StaticResource Gray400}"
-						StrokeShape="RoundRectangle 10"
-						StrokeThickness="1"
-						VerticalOptions="End">
-						<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-							<Path
-								Data="M9,2 A7,7 0 1 0 9,16 A7,7 0 1 0 9,2 Z M14,14 L20,20"
-								HeightRequest="20"
-								Stroke="{StaticResource SparkTextPrimary}"
-								StrokeThickness="1.8"
-								VerticalOptions="Center"
-								WidthRequest="20" />
-							<Entry
-								Grid.Column="1"
-								BackgroundColor="Transparent"
-								FontSize="14"
-								HeightRequest="44"
-								HorizontalOptions="Fill"
-								Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
-								PlaceholderColor="{StaticResource SparkTextSecondary}"
-								Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}"
-								TextColor="{StaticResource SparkTextPrimary}"
-								VerticalOptions="Center" />
-						</Grid>
-					</Border>
+					<sc:FFSearchBox
+						Label="Пребарување"
+						Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
+						SearchCommand="{Binding SearchCommand, Source={x:Reference Root}}"
+						Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}" />
 
 					<Border
 						Padding="4"
@@ -194,7 +165,7 @@
 								</Border.StrokeShape>
 								<Border
 									x:Name="SuggestionScrollThumb"
-									BackgroundColor="{StaticResource SparkAccentTeal}"
+									BackgroundColor="{StaticResource SidebarActiveBg}"
 									HeightRequest="38"
 									StrokeThickness="0"
 									VerticalOptions="Start">
@@ -232,7 +203,7 @@
 							IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
 							IsEnabled="True"
 							VerticalOptions="Center"
-							Color="{StaticResource SparkAccentTeal}" />
+							Color="{StaticResource SidebarActiveBg}" />
 					</Border>
 				</HorizontalStackLayout>
 				<HorizontalStackLayout
@@ -242,27 +213,11 @@
 					VerticalOptions="Start">
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkPickerItem">
-							<VerticalStackLayout MinimumWidthRequest="140" Spacing="4">
-								<Label
-									FontSize="11"
-									HorizontalOptions="Center"
-									Text="{Binding Placeholder}"
-									TextColor="{StaticResource SparkTextSecondary}" />
-								<Border
-									Padding="10,0"
-									BackgroundColor="White"
-									HeightRequest="44"
-									Stroke="{StaticResource Gray400}"
-									StrokeShape="RoundRectangle 10"
-									StrokeThickness="1">
-									<Picker
-										FontSize="13"
-										HeightRequest="42"
-										ItemsSource="{Binding Items}"
-										SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-										TextColor="{StaticResource SparkTextPrimary}" />
-								</Border>
-							</VerticalStackLayout>
+							<sc:FFPicker
+								ItemsSource="{Binding Items}"
+								Label="{Binding Placeholder}"
+								MinimumWidthRequest="140"
+								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
 				</HorizontalStackLayout>
@@ -280,24 +235,16 @@
 
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkButtonItem">
-								<Border
-									Padding="16,10"
-									BackgroundColor="{StaticResource SparkAccentTeal}"
-									HeightRequest="44"
-									Stroke="{StaticResource SparkAccentTeal}"
-									StrokeShape="RoundRectangle 6"
-									StrokeThickness="1">
-									<Border.GestureRecognizers>
-										<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
-									</Border.GestureRecognizers>
-									<Label
-										FontAttributes="Bold"
-										FontSize="14"
-										HorizontalOptions="Center"
-										Text="{Binding Label}"
-										TextColor="{StaticResource SparkTextPrimary}"
-										VerticalOptions="Center" />
-								</Border>
+								<sc:FFButton
+									BackgroundColorEx="{StaticResource SidebarActiveBg}"
+									Command="{Binding Command}"
+									CommandParameter="{Binding CommandParameter}"
+									ContentPadding="16,0"
+									CornerRadius="6"
+									HeightRequestEx="44"
+									Text="{Binding Label}"
+									TextColorEx="White"
+									WidthRequestEx="0" />
 							</DataTemplate>
 						</BindableLayout.ItemTemplate>
 

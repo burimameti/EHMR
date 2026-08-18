@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -6,6 +6,23 @@ namespace EHMR.Resources.Controls;
 
 public partial class SparkExpandableCard : ContentView
 {
+    public static readonly BindableProperty CardBackgroundColorProperty =
+        BindableProperty.Create(nameof(CardBackgroundColor), typeof(Color), typeof(SparkExpandableCard), Color.FromArgb("#FFFFFF"));
+
+    public Color CardBackgroundColor
+    {
+        get => (Color)GetValue(CardBackgroundColorProperty);
+        set => SetValue(CardBackgroundColorProperty, value);
+    }
+
+    public static readonly BindableProperty HeaderTextColorProperty =
+        BindableProperty.Create(nameof(HeaderTextColor), typeof(Color), typeof(SparkExpandableCard), Color.FromArgb("#1E2733"));
+
+    public Color HeaderTextColor
+    {
+        get => (Color)GetValue(HeaderTextColorProperty);
+        set => SetValue(HeaderTextColorProperty, value);
+    }
 
     private readonly ObservableCollection<object> _items = [];
 

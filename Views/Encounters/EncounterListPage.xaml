@@ -8,107 +8,124 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Encounters"
 	x:Name="PageRoot"
 	x:DataType="viewModels:EncountersListViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
-
-	<Grid ColumnDefinitions="290,*">
-
-		<!--  LEFT MENU  -->
+	BackgroundColor="{StaticResource PageBackground}">
+	<Grid ColumnDefinitions="285,*">
 		<Border Grid.Column="0" StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
-		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
-            Margin="12,0,12,12"
+			Margin="0"
 			RowDefinitions="Auto,*"
-			RowSpacing="8">
-
-			<!--  HEADER  -->
-			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+			RowSpacing="16">
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 					<controls:FFPageHeader
 						Title="Прегледи"
 						Grid.Column="0"
-						Subtitle="Управување со податоци за прегледи" />
-
+						Subtitle="Преглед, пребарување и управување со медицински прегледи" />
 					<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
 						Grid.Column="1"
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
-						ContentPadding="20,0"
+						ContentPadding="16,0"
 						HeightRequestEx="45"
 						IsVisible="{Binding CanCreate}"
-						Text="Нов преглед" />
+						Text="Нов преглед"
+						TextColorEx="{StaticResource White}" />
 				</Grid>
 			</Border>
 
-			<!--  MAIN CONTENT / GRID  -->
-			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-				<VerticalStackLayout Spacing="8">
+			<Border
+				Grid.Row="1"
+				BackgroundColor="{StaticResource PageBackground}"
+				StrokeThickness="0">
+				<ScrollView VerticalScrollBarVisibility="Never">
+					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
+						<controls:FFSectionCard>
+							<Grid ColumnSpacing="5" RowSpacing="16">
+								<VerticalStackLayout Spacing="20">
+									<controls:SparkExplorerHeaderView
+										Buttons="{Binding Buttons}"
+										Pickers="{Binding Pickers}"
+										SearchCommand="{Binding SearchCommand}"
+										SearchPlaceholder="Пребарување на прегледи..."
+										SearchText="{Binding SearchText}"
+										SelectedSuggestion="{Binding SelectedEncounterSuggestion, Mode=TwoWay}"
+										ShowSuggestions="{Binding ShowEncounterSuggestions}"
+										Suggestions="{Binding EncounterSuggestions}"
+										Tabs="{Binding Tabs}"
+										UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}">
+										<controls:SparkExplorerHeaderView.SuggestionTemplate>
+											<DataTemplate x:DataType="entities:Encounter">
+												<Border
+													Margin="2"
+													Padding="12,8"
+													BackgroundColor="{StaticResource SparkContentBackground}"
+													Stroke="{StaticResource SparkBorderSubtle}"
+													StrokeShape="RoundRectangle 4"
+													StrokeThickness="1">
+													<Grid ColumnDefinitions="1.1*,1.8*,1.2*,1.3*,1*" ColumnSpacing="12">
+														<Label
+															FontAttributes="Bold"
+															FontSize="12"
+															Text="{Binding EncounterNumber}"
+															TextColor="{StaticResource SparkTextPrimary}" />
+														<Label
+															Grid.Column="1"
+															FontSize="12"
+															Text="{Binding Patient.FullName}"
+															TextColor="{StaticResource SparkTextPrimary}" />
+														<Label
+															Grid.Column="2"
+															FontAttributes="Bold"
+															FontSize="11"
+															Text="{Binding Patient.SzboNumber}"
+															TextColor="{StaticResource SparkAccentTealDark}" />
+														<Label
+															Grid.Column="3"
+															FontSize="11"
+															Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+															TextColor="{StaticResource SparkTextSecondary}" />
+														<Label
+															Grid.Column="4"
+															FontAttributes="Bold"
+															FontSize="11"
+															Text="{Binding Status}"
+															TextColor="{StaticResource SparkAccentTealDark}" />
+													</Grid>
+												</Border>
+											</DataTemplate>
+										</controls:SparkExplorerHeaderView.SuggestionTemplate>
+									</controls:SparkExplorerHeaderView>
+								</VerticalStackLayout>
+							</Grid>
+						</controls:FFSectionCard>
 
-					<Border Style="{StaticResource PageHeaderCardStyle}">
-						<Grid ColumnSpacing="5">
-							<VerticalStackLayout Spacing="1">
-
-								<!--  SEARCH & FILTERS  -->
-								<controls:SparkExplorerHeaderView
-									Buttons="{Binding Buttons}"
-									Pickers="{Binding Pickers}"
-									SearchCommand="{Binding SearchCommand}"
-									SearchPlaceholder="Пребарување на прегледи..."
-									SearchText="{Binding SearchText}"
-									SelectedSuggestion="{Binding SelectedEncounterSuggestion, Mode=TwoWay}"
-									ShowSuggestions="{Binding ShowEncounterSuggestions}"
-									Suggestions="{Binding EncounterSuggestions}"
-									Tabs="{Binding Tabs}"
-                                    UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}">
-									<controls:SparkExplorerHeaderView.SuggestionTemplate>
-										<DataTemplate x:DataType="entities:Encounter">
-											<Border Margin="2" Padding="12,8" BackgroundColor="White" Stroke="#D8DEE8" StrokeShape="RoundRectangle 6" StrokeThickness="1">
-												<Grid ColumnDefinitions="1.1*,1.8*,1.2*,1.3*,1*" ColumnSpacing="12">
-                                                    <Label FontAttributes="Bold" FontSize="12" Text="{Binding EncounterNumber}" TextColor="{StaticResource SparkTextPrimary}" />
-                                                    <Label Grid.Column="1" FontSize="12" Text="{Binding Patient.FullName}" TextColor="{StaticResource SparkTextPrimary}" />
-                                                    <Label Grid.Column="2" FontAttributes="Bold" FontSize="11" Text="{Binding Patient.SzboNumber}" TextColor="{StaticResource SparkAccentTealDark}" />
-                                                    <Label Grid.Column="3" FontSize="11" Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}" TextColor="{StaticResource SparkTextSecondary}" />
-                                                    <Label Grid.Column="4" FontAttributes="Bold" FontSize="11" Text="{Binding Status}" TextColor="{StaticResource SparkAccentTealDark}" />
-                                                </Grid>
-											</Border>
-										</DataTemplate>
-									</controls:SparkExplorerHeaderView.SuggestionTemplate>
-								</controls:SparkExplorerHeaderView>
-
-								<!--  DATA GRID  -->
-								<Border Padding="0">
-									<controls:SparkDataGridView
-										x:Name="EncounterGrid"
-                                        AutoSelectFirstRow="False"
-										Columns="{Binding GridColumns}"
-										CurrentPage="{Binding CurrentPage}"
-										EditRowCommand="{Binding EditCommand}"
-										NextPageCommand="{Binding NextPageCommand}"
-										PageChangedCommand="{Binding PageChangedCommand}"
-										PageInfoText="{Binding PageInfoText}"
-										PreviousPageCommand="{Binding PreviousPageCommand}"
-										RowTappedCommand="{Binding SelectCommand}"
-										Rows="{Binding GridRows}"
-										ShowPagination="True"
-										ShowRowNumbers="True"
-										TotalPages="{Binding TotalPages}" />
-								</Border>
-
-							</VerticalStackLayout>
-						</Grid>
-					</Border>
-
-				</VerticalStackLayout>
-			</ScrollView>
-
+						<controls:FFSectionCard>
+							<controls:SparkDataGridView
+								x:Name="EncounterGrid"
+								AutoSelectFirstRow="False"
+								Columns="{Binding GridColumns}"
+								CurrentPage="{Binding CurrentPage}"
+								EditRowCommand="{Binding EditCommand}"
+								NextPageCommand="{Binding NextPageCommand}"
+								PageChangedCommand="{Binding PageChangedCommand}"
+								PageInfoText="{Binding PageInfoText}"
+								PreviousPageCommand="{Binding PreviousPageCommand}"
+								RowTappedCommand="{Binding SelectCommand}"
+								Rows="{Binding GridRows}"
+								ShowPagination="True"
+								ShowRowNumbers="True"
+								TotalPages="{Binding TotalPages}" />
+						</controls:FFSectionCard>
+					</VerticalStackLayout>
+				</ScrollView>
+			</Border>
 		</Grid>
 
-		<!--  LOADING OVERLAY  -->
 		<Grid
 			Grid.Column="1"
 			BackgroundColor="{StaticResource SparkOverlay}"
@@ -124,6 +141,5 @@
 					TextColor="{StaticResource SparkTextPrimary}" />
 			</VerticalStackLayout>
 		</Grid>
-
 	</Grid>
 </ContentPage>

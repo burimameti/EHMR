@@ -11,7 +11,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="ThisPage"
 	x:DataType="viewModels:DashboardViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
+	BackgroundColor="{StaticResource PageBackground}">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
@@ -20,7 +20,7 @@
 
 			<Style
 				x:Key="DashboardSummaryCard"
-				BasedOn="{StaticResource PageHeaderCardStyle}"
+				BasedOn="{StaticResource PageCardStyleDashboard}"
 				TargetType="Border">
 				<Setter Property="Padding" Value="20" />
 			</Style>
@@ -55,7 +55,6 @@
 				<Setter Property="StrokeThickness" Value="1" />
 				<Setter Property="StrokeShape" Value="RoundRectangle 12" />
 			</Style>
-
 			<Style x:Key="AppointmentCardStyle" TargetType="Border">
 				<Setter Property="Padding" Value="0" />
 				<Setter Property="BackgroundColor" Value="White" />
@@ -77,7 +76,7 @@
 					Margin="0,0,0,6"
 					Padding="10,8"
 					BackgroundColor="{StaticResource SparkContentBackground}"
-					Stroke="{StaticResource SparkBorder}"
+					Stroke="{StaticResource BorderColor}"
 					StrokeShape="RoundRectangle 10"
 					StrokeThickness="1">
 					<Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
@@ -141,7 +140,7 @@
 		</ResourceDictionary>
 	</ContentPage.Resources>
 
-	<Grid ColumnDefinitions="290,*">
+	<Grid ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
 		<Border Grid.Column="0" StrokeThickness="0">
@@ -152,14 +151,17 @@
 		<Grid
 			Grid.Column="1"
 			Margin="0,0,0,0"
-			RowDefinitions="88,*"
-			RowSpacing="6">
+			RowDefinitions="Auto,*"
+			RowSpacing="16">
 
 			<!--  ===================================================  -->
 			<!--  HEADER  -->
 			<!--  ===================================================  -->
-			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
-				<Grid ColumnDefinitions="*,Auto,Auto" VerticalOptions="Center">
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+				<Grid
+					BackgroundColor="{StaticResource White}"
+					ColumnDefinitions="*,Auto,Auto"
+					VerticalOptions="Center">
 
 					<!--  COL 0: TITLE — untouched  -->
 					<controls:FFPageHeader
@@ -183,6 +185,7 @@
 					-->
 					<HorizontalStackLayout
 						Grid.Column="1"
+						Margin="8"
 						BindableLayout.ItemsSource="{Binding State.AlertSummaries}"
 						Spacing="10"
 						VerticalOptions="Center">
@@ -234,7 +237,7 @@
 						VerticalOptions="Center">
 						<controls:FFButton
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
+						TextColorEx="White"
 							ButtonKind="Primary"
 							Command="{Binding NewEncounterCommand}"
 							ContentPadding="20,0"
@@ -249,13 +252,10 @@
 					</HorizontalStackLayout>-->
 				</Grid>
 			</Border>
-			<Border Grid.Row="1" Style="{StaticResource PageHeaderCardStyle}">
+			<Border Grid.Row="1" StrokeThickness="0">
 				<!--  MAIN SCROLL AREA  -->
-				<ScrollView
-					Grid.Row="1"
-					Style="{StaticResource BaseInputStyle}"
-					VerticalScrollBarVisibility="Never">
-					<VerticalStackLayout Spacing="22">
+				<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
 
 						<!--  ===================================================  -->
 						<!--
@@ -266,31 +266,75 @@
 							the admin dashboard's design system rather than hand-rolled cards.
 						-->
 						<!--  ===================================================  -->
-						<Border Style="{StaticResource PageHeaderCardStyle1}">
-							<FlexLayout
-								AlignItems="Center"
+						<controls:FFSectionCard>
+							<HorizontalStackLayout
 								BindableLayout.ItemsSource="{Binding Kpis}"
-								Direction="Row"
-								JustifyContent="SpaceBetween"
-								Wrap="Wrap">
+								HorizontalOptions="Center"
+								Spacing="10">
 								<BindableLayout.ItemTemplate>
 									<DataTemplate x:DataType="admin:FFMetricTileItem">
-										<controls:FFMetricTile
-											Title="{Binding Title}"
-											Margin="0,0,8,2"
-											Command="{Binding Command}"
-											CommandParameter="{Binding CommandParameter}"
-											DisplayMode="Metric"
-											Icon="{Binding Icon}"
-											MinimumHeightRequest="92"
+										<Border
+											Margin="3"
+											Padding="12,8"
+											BackgroundColor="White"
+											MinimumHeightRequest="72"
 											MinimumWidthRequest="240"
-											Subtitle="{Binding Subtitle}"
-											Variant="{Binding Variant}"
-											Value="{Binding Value}" />
+											Stroke="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+											StrokeShape="RoundRectangle 12"
+											StrokeThickness="1.5">
+											<Border.GestureRecognizers>
+												<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
+											</Border.GestureRecognizers>
+											<Grid
+												ColumnDefinitions="Auto,*,Auto"
+												ColumnSpacing="10"
+												RowDefinitions="Auto,Auto"
+												RowSpacing="2">
+												<Border
+													Grid.RowSpan="2"
+													BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+													HeightRequest="32"
+													StrokeShape="RoundRectangle 8"
+													StrokeThickness="0"
+													VerticalOptions="Start"
+													WidthRequest="32">
+													<Label
+														FontFamily="FASolid"
+														FontSize="13"
+														HorizontalOptions="Center"
+														Text="{Binding Icon}"
+														TextColor="White"
+														VerticalOptions="Center" />
+												</Border>
+												<Label
+													Grid.Column="1"
+													FontAttributes="Bold"
+													FontSize="9"
+													Text="{Binding Title}"
+													TextColor="{StaticResource SubtitleColor}"
+													VerticalOptions="Center" />
+												<Label
+													Grid.Column="2"
+													FontAttributes="Bold"
+													FontSize="20"
+													Text="{Binding Value}"
+													TextColor="{StaticResource TitleColor}"
+													VerticalOptions="Center" />
+												<Label
+													Grid.Row="1"
+													Grid.Column="1"
+													Grid.ColumnSpan="2"
+													FontAttributes="Bold"
+													FontSize="9"
+													HorizontalOptions="End"
+													Text="Повеќе  ›"
+													TextColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" />
+											</Grid>
+										</Border>
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
-							</FlexLayout>
-						</Border>
+							</HorizontalStackLayout>
+						</controls:FFSectionCard>
 
 						<!--  ===================================================  -->
 						<!--  ===================================================  -->
@@ -301,7 +345,7 @@
 
 						<Grid ColumnDefinitions="*" ColumnSpacing="6">
 
-							<Border Padding="10" Style="{StaticResource PageHeaderCardStyle1}">
+							<controls:FFSectionCard>
 								<VerticalStackLayout Spacing="22">
 
 									<controls:SparkExplorerHeaderView
@@ -380,9 +424,7 @@
 										ColumnDefinitions="*,Auto"
 										ColumnSpacing="12"
 										IsVisible="{Binding IsEncounterHistoryMode}">
-										<Border Style="{StaticResource SectionPillBorderStyle}">
-											<Label Style="{StaticResource SectionPillLabelStyle}" Text="ПРЕГЛЕДИ НА ИЗБРАН ПАЦИЕНТ" />
-										</Border>
+										<controls:CrudSectionHeader Title="ПРЕГЛЕДИ НА ИЗБРАН ПАЦИЕНТ" />
 										<HorizontalStackLayout
 											Grid.Column="1"
 											IsVisible="{Binding HasEncounterYearOptions}"
@@ -394,22 +436,11 @@
 												Text="Година"
 												TextColor="{StaticResource SparkTextSecondary}"
 												VerticalOptions="Center" />
-											<Border
-												Padding="8,0"
-												BackgroundColor="{StaticResource SparkContentBackground}"
-												HeightRequest="36"
-												Stroke="{StaticResource SparkBorderSubtle}"
-												StrokeShape="RoundRectangle 8"
-												StrokeThickness="1"
-												WidthRequest="105">
-												<Picker
-													BackgroundColor="Transparent"
-													FontSize="12"
-													ItemsSource="{Binding AvailableEncounterYears}"
-													SelectedItem="{Binding SelectedEncounterYear, Mode=TwoWay}"
-													TextColor="{StaticResource SparkTextPrimary}"
-													VerticalOptions="Center" />
-											</Border>
+											<controls:FFPicker
+												ItemsSource="{Binding AvailableEncounterYears}"
+												Label=""
+												MinimumWidthRequest="105"
+												SelectedItem="{Binding SelectedEncounterYear, Mode=TwoWay}" />
 										</HorizontalStackLayout>
 									</Grid>
 
@@ -428,7 +459,7 @@
 										ShowPagination="{Binding IsPatientGridMode}"
 										TotalPages="{Binding TotalPages}" />
 								</VerticalStackLayout>
-							</Border>
+							</controls:FFSectionCard>
 
 
 
@@ -439,19 +470,26 @@
 
 
 						<!--  ── Термини по датум ────────────────────────────  -->
-						<Border Style="{StaticResource PageCardStyle}">
+						<controls:FFSectionCard>
 							<VerticalStackLayout
-								Padding="16,14"
-								Spacing="8"
+								Padding="0"
+								Spacing="14"
 								Style="{StaticResource FFInputContainerStyle}">
 
-								<Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
-									<VerticalStackLayout Spacing="1">
-										<Label Style="{StaticResource PageHeaderSubtitleStyle}" Text="Термини по датум" />
+								<Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="10">
+									<VerticalStackLayout
+										Grid.Column="0"
+										Spacing="2"
+										VerticalOptions="Center">
+										<Label
+											FontAttributes="Bold"
+											FontSize="16"
+											Text="Термини по датум"
+											TextColor="{StaticResource TitleColor}" />
 										<Label
 											FontSize="11"
 											Text="{Binding SelectedDate, StringFormat='{0:dddd, dd MMMM yyyy}'}"
-											TextColor="{StaticResource SparkTextMuted}" />
+											TextColor="{StaticResource SubtitleColor}" />
 									</VerticalStackLayout>
 									<Border
 										Grid.Column="1"
@@ -472,7 +510,7 @@
 											FontSize="14"
 											HorizontalOptions="Center"
 											Text="&#xf133;"
-											TextColor="{StaticResource SparkAccentTeal}"
+											TextColor="{StaticResource LoginDark}"
 											VerticalOptions="Center" />
 									</Border>
 									<DatePicker
@@ -532,7 +570,7 @@
 									<Label
 										FontSize="12"
 										Text="Изберете од неделните датуми"
-										TextColor="{StaticResource SparkAccentTeal}" />
+										TextColor="{StaticResource LoginDark}" />
 
 									<!--
 										Day navigator — clean, no negative padding / oversized fonts (that overflow was
@@ -547,15 +585,15 @@
 										<Border
 											Grid.Column="0"
 											BackgroundColor="White"
-											HeightRequest="34"
+											HeightRequest="40"
 											SemanticProperties.Description="Претходна недела"
-											Stroke="{StaticResource Gray400}"
+											Stroke="{StaticResource BorderColor}"
 											StrokeThickness="1"
 											ToolTipProperties.Text="Претходна недела"
 											VerticalOptions="Center"
-											WidthRequest="34">
+											WidthRequest="40">
 											<Border.StrokeShape>
-												<RoundRectangle CornerRadius="6" />
+												<RoundRectangle CornerRadius="10" />
 											</Border.StrokeShape>
 											<Border.Shadow>
 												<Shadow
@@ -601,7 +639,7 @@
 															InputTransparent="False"
 															StrokeThickness="1"
 															VerticalOptions="Center"
-															WidthRequest="36">
+															WidthRequest="42">
 															<Border.StrokeShape>
 																<RoundRectangle CornerRadius="8" />
 															</Border.StrokeShape>
@@ -686,15 +724,15 @@
 										<Border
 											Grid.Column="2"
 											BackgroundColor="White"
-											HeightRequest="34"
+											HeightRequest="40"
 											SemanticProperties.Description="Следна недела"
-											Stroke="{StaticResource Gray400}"
+											Stroke="{StaticResource BorderColor}"
 											StrokeThickness="1"
 											ToolTipProperties.Text="Следна недела"
 											VerticalOptions="Center"
-											WidthRequest="34">
+											WidthRequest="40">
 											<Border.StrokeShape>
-												<RoundRectangle CornerRadius="6" />
+												<RoundRectangle CornerRadius="10" />
 											</Border.StrokeShape>
 											<Border.Shadow>
 												<Shadow
@@ -720,7 +758,7 @@
 
 									<!--  Appointments for selected date  -->
 									<CollectionView
-										HeightRequest="180"
+										HeightRequest="220"
 										ItemsSource="{Binding SelectedDateAppointments}"
 										SelectionMode="None">
 
@@ -742,7 +780,7 @@
 													</Border.GestureRecognizers>
 
 													<Grid
-														Padding="0,9,10,9"
+														Padding="0,12,12,12"
 														ColumnDefinitions="3,Auto,*,Auto"
 														ColumnSpacing="10">
 														<BoxView
@@ -791,7 +829,7 @@
 									</CollectionView>
 								</VerticalStackLayout>
 							</VerticalStackLayout>
-						</Border>
+						</controls:FFSectionCard>
 
 
 

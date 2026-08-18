@@ -8,7 +8,7 @@
 	x:Name="PageRoot"
 	x:DataType="viewModels:Mkb10CodeListViewModel">
 
-	<Grid ColumnDefinitions="290,*">
+	<Grid ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
 		<Border
@@ -25,10 +25,10 @@
 			StrokeThickness="0">
 			<Grid>
 
-				<Grid RowDefinitions="110,Auto,*" RowSpacing="0">
+				<Grid RowDefinitions="Auto,Auto,*" RowSpacing="1">
 
 					<!--  HEADER  -->
-					<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+					<controls:FFSectionCard>
 						<Grid ColumnDefinitions="*,*" VerticalOptions="Center">
 							<controls:FFPageHeader Title="МКБ-10 Каталог" Subtitle="Меѓународна класификација на болести и дијагностички шифри" />
 							<HorizontalStackLayout
@@ -46,14 +46,14 @@
 									WidthRequest="160" />
 							</HorizontalStackLayout>
 						</Grid>
-					</Border>
+					</controls:FFSectionCard>
 
 					<!--  SEARCH / GRID  -->
-					<Border Grid.Row="1" Padding="0">
+					<Border Grid.Row="1" Margin="16,0" Padding="0">
 						<Border Padding="0">
 							<VerticalStackLayout>
 
-								<Border Margin="10,8,0,20" Padding="0">
+								<Border Margin="0" Padding="0">
 									<controls:SparkExplorerHeaderView
 										Buttons="{Binding Buttons}"
 										Pickers="{Binding Pickers}"
@@ -84,7 +84,7 @@
 					<!--  FOOTER  -->
 					<Border
 						Grid.Row="2"
-						Margin="16,8,16,16"
+						Margin="16,0,16,2"
 						Padding="12"
 						BackgroundColor="{StaticResource SparkBackground}"
 						Stroke="{StaticResource SparkBorder}"

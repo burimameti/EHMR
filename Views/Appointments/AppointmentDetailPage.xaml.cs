@@ -19,11 +19,11 @@ public partial class AppointmentDetailPage : ContentPage
         BindingContext=_viewModel;
         MenuHost.Content=menu;
     }
-    private async void OnDiagnosisSearchTextChanged(object sender, TextChangedEventArgs e)
-    {
-        if(_viewModel.SearchDiagnosesCommand.CanExecute(e.NewTextValue))
-            await _viewModel.SearchDiagnosesCommand.ExecuteAsync(e.NewTextValue);
-    }
+    //private async void OnDiagnosisSearchTextChanged(object sender, TextChangedEventArgs e)
+    //{
+    //    if(_viewModel.SearchDiagnosesCommand.CanExecute(e.NewTextValue))
+    //        await _viewModel.SearchDiagnosesCommand.ExecuteAsync(e.NewTextValue);
+    //}
 
     private async void OnPatientPickerChanged(object sender, EventArgs e)
     {

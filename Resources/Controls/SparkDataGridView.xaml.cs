@@ -522,7 +522,7 @@ namespace EHMR.Resources.Controls
         {
             if(item==null) return new Label();
             return BuildActionIcon(item.Label??"", item.Command, item.CommandParameter,
-                item.IsPrimary ? "#0F766E" : "#94A3B8");   // was #21B6C4 / #69D3DD
+                ResolveActionColor(item));   // was #21B6C4 / #69D3DD
         }
 
         private View BuildActions(SparkGridRow row)
@@ -540,17 +540,35 @@ namespace EHMR.Resources.Controls
                 layout.Children.Add(BuildActionIcon(
                     action.Label??"", action.Command,
                     action.CommandParameter??row.Tag??row,
-                    action.IsPrimary ? "#0F766E" : "#94A3B8"));  // was #11A6C4 / #9AA2AB
+                    ResolveActionColor(action)));  // was #11A6C4 / #9AA2AB
 
             return layout;
         }
 
-        private static View BuildActionIcon(string text, ICommand command, object commandParameter, string color)
+        private static Color ResolveActionColor(SparkButtonItem action)
+        {
+            var label=action.Label?.Trim()??string.Empty;
+            if(label.Equals("Промени", StringComparison.OrdinalIgnoreCase))
+                return ResolveColorResource("SurfaceAlt", "#1A2436");
+            if(label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase)||
+               label.Equals("Исчисти", StringComparison.OrdinalIgnoreCase)||
+               action.IsPrimary)
+                return ResolveColorResource("SidebarActiveBg", "#4DD9C7");
+            return ResolveColorResource("TextMuted", "#64748B");
+        }
+        private static Color ResolveColorResource(string key, string fallback)
+        {
+            if(Application.Current?.Resources.TryGetValue(key, out var value)==true&&value is Color color)
+                return color;
+            return Color.FromArgb(fallback);
+        }
+
+        private static View BuildActionIcon(string text, ICommand command, object commandParameter, Color color)
         {
             return new Border
             {
                 Padding=new Thickness(4, 4),
-                BackgroundColor=Color.FromArgb(color),
+                BackgroundColor=color,
                 StrokeThickness=0,
                 StrokeShape=new RoundRectangle { CornerRadius=12 },
                 HorizontalOptions=LayoutOptions.Center,
@@ -571,7 +589,6 @@ namespace EHMR.Resources.Controls
                 }
             };
         }
-
         private void AttachRowTap(SparkGridRow row, int rowIndex, int localIndex)
         {
             for(int c = 0; c<Columns.Count; c++)
@@ -708,13 +725,13 @@ namespace EHMR.Resources.Controls
         // PAGER  (unchanged)
         // ─────────────────────────────────────────────────────────────
 
-        private static readonly Color PagerActiveBg = Color.FromArgb("#2eD4BF");     // was #21B6C4
+        private static readonly Color PagerActiveBg = Color.FromArgb("#4DD9C7");     // was #21B6C4
         private static readonly Color PagerActiveText = Colors.White;
         private static readonly Color PagerInactiveText = Color.FromArgb("#334155"); // was #2E3A4E
         public static Color PagerBackground => Color.FromArgb("#E2E8F0");
         public static Color PagerBorder => Color.FromArgb("#E2E8F0");                // was FFColors.Gray300
         public static Color PagerBorderColor => Color.FromArgb("#E2E8F0");
-        public static Color PagerActiveBackground => Color.FromArgb("#2eD4BF");
+        public static Color PagerActiveBackground => Color.FromArgb("#4DD9C7");
         public static Color PagerActiveForeground => Colors.White;
         public static Color PagerForeground => Color.FromArgb("#334155");
         public static Color PagerDisabledForeground => Color.FromArgb("#CBD5E1");

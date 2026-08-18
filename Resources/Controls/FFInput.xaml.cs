@@ -27,6 +27,11 @@ public partial class FFInput : ContentView
     public static readonly BindableProperty ReturnTypeProperty =
         BindableProperty.Create(nameof(ReturnType), typeof(ReturnType), typeof(FFInput), ReturnType.Done);
 
+    public static readonly BindableProperty MaxLengthProperty =
+        BindableProperty.Create(nameof(MaxLength), typeof(int), typeof(FFInput), int.MaxValue);
+
+    public static readonly BindableProperty IsPasswordProperty =
+        BindableProperty.Create(nameof(IsPassword), typeof(bool), typeof(FFInput), false);
     public static readonly BindableProperty IsReadOnlyProperty =
         BindableProperty.Create(nameof(IsReadOnly), typeof(bool), typeof(FFInput), false);
 
@@ -63,6 +68,17 @@ public partial class FFInput : ContentView
         set => SetValue(ReturnTypeProperty, value);
     }
 
+    public int MaxLength
+    {
+        get => (int)GetValue(MaxLengthProperty);
+        set => SetValue(MaxLengthProperty, value);
+    }
+
+    public bool IsPassword
+    {
+        get => (bool)GetValue(IsPasswordProperty);
+        set => SetValue(IsPasswordProperty, value);
+    }
     public bool IsReadOnly
     {
         get => (bool)GetValue(IsReadOnlyProperty);

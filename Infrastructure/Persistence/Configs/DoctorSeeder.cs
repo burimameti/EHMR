@@ -17,8 +17,8 @@ public sealed class DoctorSeeder : IEntitySeeder
     {
         if(await context.Doctors.AnyAsync(ct))
             return;
-
         var users = await context.Users
+            .Where(u => u.Role==UserRole.Doctor&&u.IsActive)  // ← only doctors
             .OrderBy(x => x.FirstName)
             .Take(15)
             .ToListAsync(ct);

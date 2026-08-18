@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 	<!--  =========================  -->
 	<!--  COLORS (existing, unchanged)  -->
@@ -64,20 +64,34 @@
 
 	<Shadow
 		x:Key="SoftShadow"
-		Brush="#1E293B"
-		Opacity="0.04"
-		Radius="10"
-		Offset="0,2" />
+		Brush="#1A293B"
+		Opacity="2.14"
+		Radius="80"
+		Offset="0,9" />
 
 	<!--  =========================  -->
 	<!--  PAGE CARD  -->
 	<!--  =========================  -->
 
+	<Style x:Key="PageCardStyleDashboard" TargetType="Border">
+
+		<Setter Property="BackgroundColor" Value="White" />
+
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="Margin" Value="16,16,16,0" />
+		<Setter Property="Shadow" Value="{x:Null}" />
+		<Setter Property="StrokeShape">
+			<Setter.Value>
+				<RoundRectangle CornerRadius="0" />
+			</Setter.Value>
+		</Setter>
+	</Style>
 	<Style x:Key="PageCardStyle" TargetType="Border">
 		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceColor}" />
 		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
 		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="Padding" Value="18" />
+		<Setter Property="Padding" Value="20" />
 		<Setter Property="Shadow" Value="{StaticResource CardShadow}" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
@@ -452,8 +466,8 @@
 
 	<Style x:Key="MoreButtonStyle" TargetType="Border">
 		<Setter Property="WidthRequest" Value="38" />
-		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceColor}" />
-		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="BackgroundColor" Value="{StaticResource SidebarActiveBg}" />
+		<Setter Property="Stroke" Value="{StaticResource SidebarActiveBg}" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>

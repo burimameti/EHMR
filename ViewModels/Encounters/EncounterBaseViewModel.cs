@@ -29,7 +29,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     // внатре во ApplyAppointmentContextAsync тригерира reset-cascade (OnSelectedPatientChanged
     // -> OnSelectedAppointmentChanged -> ClearEncounterContext) кој веднаш го брише истиот
     // AppointmentId/TherapyCycleId штотуку поставен неколку линии погоре.
-    private bool _isApplyingContext;
+    protected bool _isApplyingContext;
 
     // Guards against overlapping "no results -> offer to create" dialogs.
     // Without this, fast typing (or clicking "+ Нов ..." додека веќе имате отворено

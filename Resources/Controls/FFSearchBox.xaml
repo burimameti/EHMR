@@ -36,6 +36,7 @@
 					Grid.Column="1"
 					Margin="8,0,0,0"
 					BackgroundColor="Transparent"
+					Completed="OnEntryCompleted"
 					FontSize="12"
 					Placeholder="{Binding Placeholder, Source={x:Reference Root}}"
 					PlaceholderColor="{StaticResource Gray500}"

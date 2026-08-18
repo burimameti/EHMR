@@ -1,0 +1,15 @@
+namespace EHMR.Resources.Controls;
+
+public partial class CrudSectionHeader : ContentView
+{
+    public CrudSectionHeader() => InitializeComponent();
+
+    public static readonly BindableProperty TitleProperty=BindableProperty.Create(
+        nameof(Title), typeof(string), typeof(CrudSectionHeader), string.Empty);
+
+    public string Title
+    {
+        get => (string)GetValue(TitleProperty);
+        set => SetValue(TitleProperty, value);
+    }
+}

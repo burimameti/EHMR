@@ -7,7 +7,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Prescriptions"
 	x:Name="PageRoot"
 	x:DataType="viewModels:PrescriptionDetailFormViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
+	BackgroundColor="{StaticResource PageBackground}">
 
 	<Grid ColumnDefinitions="285,*">
 
@@ -19,85 +19,29 @@
 		<!--  ДЕСЕН ГЛАВЕН КОНТЕЈНЕР  -->
 		<Grid
 			Grid.Column="1"
+			Padding="0"
 			RowDefinitions="Auto,*"
-			RowSpacing="12">
+			RowSpacing="16">
 
 			<!--  =========================================================  -->
 			<!--  PAGE HEADER  -->
 			<!--  =========================================================  -->
-			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
-				<Grid
-					ColumnDefinitions="Auto,*,Auto"
-					ColumnSpacing="16"
-					VerticalOptions="Center">
-
-					<!--  Avatar circle  -->
-					<Border
-						BackgroundColor="{StaticResource SparkTabActiveBg}"
-						HeightRequest="48"
-						StrokeShape="RoundRectangle 24"
-						StrokeThickness="0"
-						WidthRequest="48">
-						<Label
-							FontFamily="FASolid"
-							FontSize="18"
-							HorizontalOptions="Center"
-							Text="&#xf15b;"
-							TextColor="{StaticResource SparkAccentTeal}"
-							VerticalOptions="Center" />
-					</Border>
-
-					<!--  Title + subtitle  -->
-					<VerticalStackLayout
-						Grid.Column="1"
-						Spacing="2"
-						VerticalOptions="Center">
-						<Label Style="{StaticResource PageTitleStyle}" Text="{Binding PageTitle}" />
-						<Label
-							FontFamily="Segoe UI"
-							FontSize="12"
-							Text="Управување со рецепти и терапија"
-							TextColor="{StaticResource SparkTextSecondary}" />
-					</VerticalStackLayout>
-
-					<!--  Action buttons  -->
-					<HorizontalStackLayout
-						Grid.Column="2"
-						Spacing="10"
-						VerticalOptions="Center">
-
-						<controls:FFButton
-							ButtonKind="Secondary"
-							Command="{Binding ToggleEditModeCommand}"
-							ContentPadding="20,0"
-							HeightRequestEx="40"
-							IsVisible="{Binding Id, Converter={StaticResource GuidToBoolConverter}}"
-							Text="Уреди" />
-
-						<controls:FFButton
-							ButtonKind="Secondary"
-							Command="{Binding BackCommand}"
-							ContentPadding="20,0"
-							HeightRequestEx="40"
-							Text="Назад" />
-
-						<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
-							ButtonKind="Primary"
-							Command="{Binding SaveCommand}"
-							ContentPadding="20,0"
-							HeightRequestEx="40"
-							IsVisible="{Binding IsReadOnly, Converter={StaticResource InverseBoolConverter}}"
-							Text="Зачувај" />
-					</HorizontalStackLayout>
-				</Grid>
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+				<controls:FFPageHeader Grid.Row="0" Title="{Binding PageTitle}" Subtitle="Управување со рецепти и терапија">
+	<controls:FFPageHeader.HeaderContent>
+		<HorizontalStackLayout Spacing="10">
+			<controls:FFButton ButtonKind="Secondary" Command="{Binding ToggleEditModeCommand}" HeightRequestEx="40" IsVisible="{Binding Id, Converter={StaticResource GuidToBoolConverter}}" Text="Уреди" />
+			<controls:FFButton ButtonKind="Secondary" Command="{Binding BackCommand}" HeightRequestEx="40" Text="Назад" />
+			<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" Command="{Binding SaveCommand}" HeightRequestEx="40" IsVisible="{Binding IsReadOnly, Converter={StaticResource InverseBoolConverter}}" Text="Зачувај" TextColorEx="White" />
+		</HorizontalStackLayout>
+	</controls:FFPageHeader.HeaderContent>
+</controls:FFPageHeader>
 			</Border>
 
 			<!--  =====================================================  -->
 			<!--  FORM CONTENT WORKSPACE  -->
 			<!--  =====================================================  -->
-			<Border Grid.Row="1" Style="{StaticResource PageHeaderCardStyle}">
+			<controls:FFSectionCard Grid.Row="1" Margin="0" ContentPadding="18">
 				<ScrollView VerticalScrollBarVisibility="Never">
 					<VerticalStackLayout Padding="16" Spacing="28">
 
@@ -105,11 +49,7 @@
 						<!--  СЕКЦИЈА — ПАЦИЕНТ  -->
 						<!--  ================================================  -->
 						<VerticalStackLayout Spacing="14">
-							<Border Style="{StaticResource SectionPillBorderStyle}">
-								<Label
-									Style="{StaticResource SectionPillLabelStyle}"
-									Text="ПАЦИЕНТ" />
-							</Border>
+							<controls:CrudSectionHeader Title="ПАЦИЕНТ" />
 
 							<Grid Padding="{StaticResource FormRowPadding}">
 								<Grid
@@ -120,16 +60,7 @@
 										Grid.Column="0"
 										Style="{StaticResource EditFieldLabelStyle}"
 										Text="Пациент *" />
-									<Border Grid.Column="1" Style="{StaticResource EditFieldBoxStyle}">
-										<Picker
-											Title="Избери пациент"
-											BackgroundColor="Transparent"
-											FontSize="13"
-											ItemDisplayBinding="{Binding FullName}"
-											ItemsSource="{Binding PatientsList}"
-											SelectedItem="{Binding SelectedPatient}"
-											TextColor="{StaticResource SparkTextPrimary}" />
-									</Border>
+									<controls:FFPicker Grid.Column="1" ItemDisplayBinding="{Binding FullName}" ItemsSource="{Binding PatientsList}" Label="" Placeholder="Избери пациент" SelectedItem="{Binding SelectedPatient, Mode=TwoWay}" />
 								</Grid>
 								<Grid
 									ColumnDefinitions="130,*"
@@ -158,11 +89,7 @@
 						<!--  СЕКЦИЈА — ДЕТАЛИ ЗА РЕЦЕПТОТ  -->
 						<!--  ================================================  -->
 						<VerticalStackLayout Spacing="14">
-							<Border Style="{StaticResource SectionPillBorderStyle}">
-								<Label
-									Style="{StaticResource SectionPillLabelStyle}"
-									Text="ДЕТАЛИ ЗА РЕЦЕПТОТ" />
-							</Border>
+							<controls:CrudSectionHeader Title="ДЕТАЛИ ЗА РЕЦЕПТОТ" />
 
 							<Grid
 								Padding="{StaticResource FormRowPadding}"
@@ -180,15 +107,7 @@
 											Grid.Column="0"
 											Style="{StaticResource EditFieldLabelStyle}"
 											Text="Лек *" />
-										<Border Grid.Column="1" Style="{StaticResource EditFieldBoxStyle}">
-											<Entry
-												BackgroundColor="Transparent"
-												FontSize="13"
-												Placeholder="Внесете име на лек..."
-												PlaceholderColor="{StaticResource SparkTextSecondary}"
-												Text="{Binding Medication}"
-												TextColor="{StaticResource SparkTextPrimary}" />
-										</Border>
+										<controls:FFInput Grid.Column="1" Placeholder="Внесете име на лек..." Text="{Binding Medication}" />
 									</Grid>
 									<Grid
 										ColumnDefinitions="130,*"
@@ -215,15 +134,7 @@
 											Grid.Column="0"
 											Style="{StaticResource EditFieldLabelStyle}"
 											Text="Дозирање *" />
-										<Border Grid.Column="1" Style="{StaticResource EditFieldBoxStyle}">
-											<Entry
-												BackgroundColor="Transparent"
-												FontSize="13"
-												Placeholder="Пр. 2 пати по 1 таблета на ден"
-												PlaceholderColor="{StaticResource SparkTextSecondary}"
-												Text="{Binding Dosage}"
-												TextColor="{StaticResource SparkTextPrimary}" />
-										</Border>
+										<controls:FFInput Grid.Column="1" Placeholder="Пр. 2 пати по 1 таблета на ден" Text="{Binding Dosage}" />
 									</Grid>
 									<Grid
 										ColumnDefinitions="130,*"
@@ -275,7 +186,7 @@
 
 					</VerticalStackLayout>
 				</ScrollView>
-			</Border>
+			</controls:FFSectionCard>
 
 		</Grid>
 	</Grid>

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace EHMR.Resources.Controls;
 
@@ -22,8 +22,11 @@ public partial class FFDatePicker : ContentView
     public static readonly BindableProperty SelectedDateProperty =
         BindableProperty.Create(nameof(SelectedDate), typeof(DateTime), typeof(FFDatePicker), DateTime.Today, BindingMode.TwoWay, propertyChanged: OnDateChanged);
 
+    public static readonly BindableProperty IsOptionalFilterProperty =
+        BindableProperty.Create(nameof(IsOptionalFilter), typeof(bool), typeof(FFDatePicker), false, propertyChanged: OnFilterModeChanged);
+
     public static readonly BindableProperty IsFilterActiveProperty =
-        BindableProperty.Create(nameof(IsFilterActive), typeof(bool), typeof(FFDatePicker), false, BindingMode.TwoWay);
+        BindableProperty.Create(nameof(IsFilterActive), typeof(bool), typeof(FFDatePicker), false, BindingMode.TwoWay, propertyChanged: OnFilterModeChanged);
 
     public string Label
     {
@@ -43,10 +46,24 @@ public partial class FFDatePicker : ContentView
         set => SetValue(SelectedDateProperty, value);
     }
 
+    public bool IsOptionalFilter
+    {
+        get => (bool)GetValue(IsOptionalFilterProperty);
+        set => SetValue(IsOptionalFilterProperty, value);
+    }
+
+    public bool IsPickerEnabled => !IsOptionalFilter||IsFilterActive;
+
     public bool IsFilterActive
     {
         get => (bool)GetValue(IsFilterActiveProperty);
         set => SetValue(IsFilterActiveProperty, value);
+    }
+
+    private static void OnFilterModeChanged(BindableObject bindable, object oldValue, object newValue)
+    {
+        var control=(FFDatePicker)bindable;
+        control.OnPropertyChanged(nameof(IsPickerEnabled));
     }
 
     // =====================================================
@@ -66,7 +83,7 @@ public partial class FFDatePicker : ContentView
 
     private void OnBorderTapped(object sender, TappedEventArgs e)
     {
-        if(IsFilterActive)
+        if(IsPickerEnabled)
         {
             InnerDatePicker.Focus();
         }

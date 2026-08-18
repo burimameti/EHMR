@@ -7,7 +7,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Mkb10"
 	x:DataType="viewModels:Mkb10CodeDetailViewModel">
 
-	<Grid ColumnDefinitions="285,*">
+	<Grid ColumnDefinitions="285,*" BackgroundColor="{StaticResource PageBackground}">
 
 		<!--  LEFT MENU  -->
 		<Border Grid.Column="0" StrokeThickness="0">
@@ -18,12 +18,24 @@
 		<Grid
 			Grid.Column="1"
 			Padding="24"
-			BackgroundColor="{StaticResource Gray200}"
+			BackgroundColor="{StaticResource PageBackground}"
 			RowDefinitions="Auto,*"
 			RowSpacing="20">
 
 			<!--  =========================================================  -->
 			<!--  HEADER  -->
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+				<controls:FFPageHeader Title="{Binding HeaderTitle}" Subtitle="{Binding HeaderSubtitle}">
+				<controls:FFPageHeader.HeaderContent>
+					<HorizontalStackLayout Spacing="10">
+						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" WidthRequest="160" />
+						<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" IsVisible="{Binding IsEditMode}" Text="Откажи" WidthRequest="160" />
+						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding ToggleEditModeCommand}" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="White" WidthRequest="160" />
+					</HorizontalStackLayout>
+				</controls:FFPageHeader.HeaderContent>
+			</controls:FFPageHeader>
+			</Border>
+
 			<!--  =========================================================  -->
 
 			<Border
@@ -53,7 +65,7 @@
 
 						<controls:FFButton
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
+						TextColorEx="White"
 							ButtonKind="Primary"
 							Command="{Binding SaveCommand}"
 							IsVisible="{Binding IsEditMode}"
@@ -69,7 +81,7 @@
 
 						<controls:FFButton
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
+						TextColorEx="White"
 							ButtonKind="Primary"
 							Command="{Binding ToggleEditModeCommand}"
 							IsVisible="{Binding IsReadOnly}"
@@ -95,11 +107,7 @@
 
 					<VerticalStackLayout Padding="30" Spacing="28">
 
-						<Border Style="{StaticResource SectionPillBorderStyle}">
-
-							<Label Style="{StaticResource SectionPillLabelStyle}" Text="ОПШТИ ИНФОРМАЦИИ" />
-
-						</Border>
+						<controls:CrudSectionHeader Title="ОПШТИ ИНФОРМАЦИИ" />
 
 						<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
 
@@ -111,18 +119,7 @@
 
 								<Label Text="Code" />
 
-								<Border
-									Padding="12,0"
-									HeightRequest="46"
-									Stroke="{StaticResource SparkBorder}"
-									StrokeShape="RoundRectangle 6">
-
-									<Entry
-										BackgroundColor="Transparent"
-										IsReadOnly="{Binding IsReadOnly}"
-										Text="{Binding Mkb10Code.Code}" />
-
-								</Border>
+								<controls:FFInput IsReadOnly="{Binding IsReadOnly}" Text="{Binding Mkb10Code.Code}" />
 
 							</VerticalStackLayout>
 
@@ -130,19 +127,7 @@
 
 								<Label Text="Chapter" />
 
-								<Border
-									Padding="10,0"
-									HeightRequest="46"
-									Stroke="{StaticResource SparkBorder}"
-									StrokeShape="RoundRectangle 6">
-
-									<Picker
-										BackgroundColor="Transparent"
-										IsEnabled="{Binding IsEditMode}"
-										ItemsSource="{Binding ChapterOptions}"
-										SelectedItem="{Binding Mkb10Code.Chapter}" />
-
-								</Border>
+								<controls:FFPicker IsEnabled="{Binding IsEditMode}" ItemsSource="{Binding ChapterOptions}" SelectedItem="{Binding Mkb10Code.Chapter}" />
 
 							</VerticalStackLayout>
 
@@ -183,11 +168,7 @@
 
 						</Grid>
 
-						<Border Margin="0,20,0,0" Style="{StaticResource SectionPillBorderStyle}">
-
-							<Label Style="{StaticResource SectionPillLabelStyle}" Text="СИСТЕМСКИ ИНФОРМАЦИИ" />
-
-						</Border>
+						<controls:CrudSectionHeader Title="СИСТЕМСКИ ИНФОРМАЦИИ" />
 
 						<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
 

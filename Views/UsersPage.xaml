@@ -7,9 +7,8 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="PageRoot"
 	x:DataType="viewModels:UsersViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
-
-	<Grid ColumnDefinitions="290,*">
+	BackgroundColor="{StaticResource PageBackground}">
+<Grid ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
 		<Border Grid.Column="0" StrokeThickness="0">
@@ -19,12 +18,12 @@
 		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
-            Margin="12,0,12,12"
+			Margin="0"
 			RowDefinitions="Auto,*"
-			RowSpacing="8">
+			RowSpacing="16">
 
 			<!--  HEADER  -->
-			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 					<controls:FFPageHeader
 						Title="Корисници"
@@ -32,58 +31,52 @@
 						Subtitle="Управување со кориснички сметки, безбедносни роли и системски пристап" />
 
 					<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
 						Grid.Column="1"
+						BackgroundColorEx="{StaticResource SidebarActiveBg}"
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
 						ContentPadding="20,0"
 						HeightRequestEx="45"
 						IsVisible="{Binding CanCreate}"
-						Text="Нов" />
+						Text="Нов"
+						TextColorEx="White" />
 				</Grid>
 			</Border>
 
 			<!--  MAIN CONTENT / GRID  -->
-			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-				<VerticalStackLayout Spacing="8">
-
-					<Border Style="{StaticResource PageHeaderCardStyle}">
-						<Grid ColumnSpacing="5" RowSpacing="20">
-							<VerticalStackLayout Spacing="10">
-
-								<!--  SEARCH & FILTERS  -->
-								<controls:SparkExplorerHeaderView
-									Buttons="{Binding Buttons}"
-									Pickers="{Binding Pickers}"
-									SearchCommand="{Binding SearchCommand}"
-									SearchPlaceholder="Пребарај по корисничко име, име или презиме..."
-									SearchText="{Binding SearchText}"
-									Tabs="{Binding Tabs}" />
-
-								<!--  DATA GRID  -->
-								<Border Padding="0">
-									<controls:SparkDataGridView
-										x:Name="UsersGrid"
-										Columns="{Binding GridColumns}"
-										CurrentPage="{Binding CurrentPage}"
-										EditRowCommand="{Binding EditCommand}"
-										NextPageCommand="{Binding NextPageCommand}"
-										PageChangedCommand="{Binding PageChangedCommand}"
-										PreviousPageCommand="{Binding PreviousPageCommand}"
-										RowTappedCommand="{Binding SelectCommand}"
-										Rows="{Binding GridRows}"
-										ShowPagination="True"
-										ShowRowNumbers="True"
-										TotalPages="{Binding TotalPages}" />
-								</Border>
-
-							</VerticalStackLayout>
-						</Grid>
-					</Border>
-
-				</VerticalStackLayout>
-			</ScrollView>
+			<Border
+				Grid.Row="1"
+				BackgroundColor="{StaticResource PageBackground}"
+				StrokeThickness="0">
+				<ScrollView VerticalScrollBarVisibility="Never">
+					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
+						<controls:FFSectionCard>
+							<controls:SparkExplorerHeaderView
+								Buttons="{Binding Buttons}"
+								Pickers="{Binding Pickers}"
+								SearchCommand="{Binding SearchCommand}"
+								SearchPlaceholder="Пребарај по корисничко име, име или презиме..."
+								SearchText="{Binding SearchText}"
+								Tabs="{Binding Tabs}" />
+						</controls:FFSectionCard>
+						<controls:FFSectionCard>
+							<controls:SparkDataGridView
+								x:Name="UsersGrid"
+								Columns="{Binding GridColumns}"
+								CurrentPage="{Binding CurrentPage}"
+								EditRowCommand="{Binding EditCommand}"
+								NextPageCommand="{Binding NextPageCommand}"
+								PageChangedCommand="{Binding PageChangedCommand}"
+								PreviousPageCommand="{Binding PreviousPageCommand}"
+								RowTappedCommand="{Binding SelectCommand}"
+								Rows="{Binding GridRows}"
+								ShowPagination="True"
+								ShowRowNumbers="True"
+								TotalPages="{Binding TotalPages}" />
+						</controls:FFSectionCard>
+					</VerticalStackLayout>
+				</ScrollView>
+			</Border>
 
 		</Grid>
 

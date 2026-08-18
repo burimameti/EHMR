@@ -188,9 +188,9 @@ public partial class FFButton : ContentView
         {
             // Main action: Save, Create, Confirm
             case FFButtonKind.Primary:
-                BackgroundColorEx=Color.FromArgb("#0F6B78");
+                BackgroundColorEx=ResolveColorResource("SidebarActiveBg", "#4DD9C7");
                 TextColorEx=Colors.White;
-                BorderColor=Color.FromArgb("#0F6B78");
+                BorderColor=ResolveColorResource("SidebarActiveBg", "#4DD9C7");
                 BorderThickness=0;
                 break;
 
@@ -231,6 +231,13 @@ public partial class FFButton : ContentView
     // ═══════════════════════════════════════════════════════════ //
     // TAP HANDLER                                                 //
     // ═══════════════════════════════════════════════════════════ //
+
+    private static Color ResolveColorResource(string key, string fallback)
+    {
+        if(Application.Current?.Resources.TryGetValue(key, out var value)==true&&value is Color color)
+            return color;
+        return Color.FromArgb(fallback);
+    }
 
     private async void OnTapped(object sender, TappedEventArgs e)
     {

@@ -40,10 +40,7 @@
 	<!--  ============================================================  -->
 	<!--  ACCENTS (Vibrant Dashboard Teal)  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkAccentTeal">#4DD9C7</Color>
-	<!--  was #21B6C4 — a touch deeper/more saturated, better text contrast on white  -->
-	<Color x:Key="SparkAccentTealDark">#32B9AA</Color>
-	<Color x:Key="SparkAccentTealBg">#F0F7F5</Color>
+	<!--  SparkAccentTeal tokens live in Colors.xaml so earlier dictionaries can use them.  -->
 
 	<!--  ============================================================  -->
 	<!--  BUTTONS & INTERACTIVE ELEMENTS  -->
@@ -419,54 +416,14 @@
 		</Style.Triggers>
 	</Style>
 
-	<Style x:Key="SparkTabBadgeLabelStyle" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource SparkFontSizeSmall}" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource SparkBadgeNeutralText}" />
-		<Style.Triggers>
-			<DataTrigger
-				Binding="{Binding IsSelected}"
-				TargetType="Label"
-				Value="True">
-				<Setter Property="TextColor" Value="{StaticResource SparkBadgeNeutralTextSelected}" />
-			</DataTrigger>
-		</Style.Triggers>
-	</Style>
 
-	<Style x:Key="SparkTabUnderlineStyle" TargetType="BoxView">
-		<Setter Property="HeightRequest" Value="2" />
-		<Setter Property="Color" Value="Transparent" />
-		<Style.Triggers>
-			<DataTrigger
-				Binding="{Binding IsSelected}"
-				TargetType="BoxView"
-				Value="True">
-				<Setter Property="Color" Value="{StaticResource SparkTabActiveBorder}" />
-			</DataTrigger>
-		</Style.Triggers>
-	</Style>
 
-	<Style x:Key="SparkBadgeDangerFrameStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeDangerBg}" />
-		<Setter Property="StrokeShape">
-			<Setter.Value>
-				<RoundRectangle CornerRadius="4" />
-			</Setter.Value>
-		</Setter>
-		<Setter Property="Stroke" Value="Transparent" />
-		<Setter Property="Padding" Value="8,3" />
-	</Style>
 
-	<Style x:Key="SparkBadgeSuccessFrameStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeSuccessBg}" />
-		<Setter Property="StrokeShape">
-			<Setter.Value>
-				<RoundRectangle CornerRadius="4" />
-			</Setter.Value>
-		</Setter>
-		<Setter Property="Stroke" Value="Transparent" />
-		<Setter Property="Padding" Value="8,3" />
-	</Style>
+
+
+
+
+
 
 	<Style x:Key="SparkBadgeWarningFrameStyle" TargetType="Border">
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeWarningBg}" />
@@ -479,16 +436,7 @@
 		<Setter Property="Padding" Value="8,3" />
 	</Style>
 
-	<Style x:Key="SparkBadgeNeutralFrameStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeNeutralBg}" />
-		<Setter Property="StrokeShape">
-			<Setter.Value>
-				<RoundRectangle CornerRadius="4" />
-			</Setter.Value>
-		</Setter>
-		<Setter Property="Stroke" Value="Transparent" />
-		<Setter Property="Padding" Value="8,3" />
-	</Style>
+
 
 	<Style x:Key="SparkEntryStyle" TargetType="Entry">
 		<Setter Property="FontSize" Value="13" />

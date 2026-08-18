@@ -138,7 +138,6 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
     // ============================================================
     // DATA LOAD — one real EF Core query per report type
-    // ============================================================
     [RelayCommand]
     public async Task GenerateReportAsync()
     {
@@ -148,41 +147,80 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             IsBusy=true;
             ClearError();
 
+            System.Diagnostics.Debug.WriteLine($"\n[ReportListViewModel] ========== GENERATE REPORT ==========");
+            System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Report type: {SelectedReportType.Type}");
+
             var startRange = StartDate.Date;
             var endRange = EndDate.Date.AddDays(1).AddTicks(-1);
+
+            System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Date range: {startRange:dd.MM.yyyy} to {endRange:dd.MM.yyyy}");
 
             await using var db = await _dbFactory.CreateDbContextAsync();
             List<GenericReportRow> rows;
 
-            switch(SelectedReportType.Type)
+            try
             {
-                case ReportType.MissedTherapies:
-                    rows=await LoadMissedTherapiesAsync(db, startRange, endRange);
-                    break;
+                switch(SelectedReportType.Type)
+                {
+                    case ReportType.MissedTherapies:
+                        System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loading missed therapies...");
+                        rows=await LoadMissedTherapiesAsync(db, startRange, endRange);
+                        System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loaded {rows.Count} missed therapies");
+                        break;
 
-                case ReportType.Auditing:
-                    rows=await LoadAuditingAsync(db, startRange, endRange);
-                    break;
+                    case ReportType.Auditing:
+                        System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loading audit logs...");
+                        rows=await LoadAuditingAsync(db, startRange, endRange);
+                        System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loaded {rows.Count} audit logs");
+                        break;
 
-                case ReportType.AppointmentStatuses:
-                    rows=await LoadAppointmentStatusesAsync(db, startRange, endRange);
-                    break;
+                    case ReportType.AppointmentStatuses:
+                        System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loading appointment statuses...");
+                        rows=await LoadAppointmentStatusesAsync(db, startRange, endRange);
+                        System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loaded {rows.Count} appointments");
+                        break;
 
-                case ReportType.Patients:
-                    rows=await LoadPatientsAsync(db, startRange, endRange);
-                    break;
+                    case ReportType.Patients:
+                        System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loading patients...");
+                        rows=await LoadPatientsAsync(db, startRange, endRange);
+                        System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loaded {rows.Count} patients");
+                        break;
 
-                default:
-                    rows= [];
-                    break;
+                    default:
+                        System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Unknown report type!");
+                        rows= [];
+                        break;
+                }
+            }
+            catch(Exception dbEx)
+            {
+                System.Diagnostics.Debug.WriteLine($"\n❌ [ReportListViewModel] Database query error!");
+                System.Diagnostics.Debug.WriteLine($"❌ Exception: {dbEx.GetType().Name}");
+                System.Diagnostics.Debug.WriteLine($"❌ Message: {dbEx.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ StackTrace: {dbEx.StackTrace}");
+                throw;
             }
 
+            // ✅ FIX: Set AllItems and let ApplyPipeline handle the conversion to SparkGridRow
+            // DO NOT directly assign to GridRows - it expects ObservableCollection<SparkGridRow>
+            System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Setting AllItems and applying pipeline...");
             AllItems=rows;
+
+            System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Applying pipeline...");
             ApplyPipeline();
+
+            System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Recomputing metrics...");
             RecomputeMetrics();
+
+            System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] ========== GENERATE REPORT COMPLETE ==========\n");
         }
         catch(Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine($"\n❌ [ReportListViewModel] EXCEPTION in GenerateReportAsync!");
+            System.Diagnostics.Debug.WriteLine($"❌ Type: {ex.GetType().Name}");
+            System.Diagnostics.Debug.WriteLine($"❌ Message: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"❌ StackTrace: {ex.StackTrace}");
+
             OnError($"Грешка при генерирање извештај: {ex.Message}");
         }
         finally
@@ -190,6 +228,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             IsBusy=false;
         }
     }
+
 
     private static async Task<List<GenericReportRow>> LoadMissedTherapiesAsync(
         DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
@@ -373,7 +412,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         Buttons.Clear();
         Buttons.Add(new SparkButtonItem
         {
-            Label="✕ Исчисти",
+            Label="Исчисти",
             IsPrimary=true,
             Command=ClearFiltersCommand
         });

@@ -348,7 +348,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         AddClearFiltersButton();
     }
     /// <summary>
-    /// Додава стандардно "✕ Исчисти" копче. Derived VM-ови можат да го повикаат
+    /// Додава стандардно "Исчисти" копче. Derived VM-ови можат да го повикаат
     /// овој helper во својот override на BuildSparkButtons() наместо да го
     /// рачно препишуваат SparkButtonItem-от секој пат.
     /// </summary>
@@ -356,7 +356,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     {
         Buttons.Add(new SparkButtonItem
         {
-            Label="✕ Исчисти",
+            Label="Исчисти",
             IsPrimary=true,
             Command=ClearFiltersCommand
         });
@@ -454,7 +454,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     {
         new SparkButtonItem
         {
-            IsPrimary=false,
+            IsPrimary=true,
             IconGlyph="👁",
             Label=detailLabel,
             Command=SelectCommand,

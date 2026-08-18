@@ -5,17 +5,11 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	x:Name="Root">
 	<Border
-		Background="{StaticResource SparkPageBackground}"
+		Background="White"
 		Stroke="#D8DEE8"
-		StrokeShape="RoundRectangle 8"
+		StrokeShape="RoundRectangle 0"
 		StrokeThickness="1">
-		<Border.Shadow>
-			<Shadow
-				Brush="#000000"
-				Opacity="0.05"
-				Radius="10"
-				Offset="0,3" />
-		</Border.Shadow>
+
 		<Grid RowDefinitions="*, Auto">
 			<ScrollView
 				x:Name="HostScroll"

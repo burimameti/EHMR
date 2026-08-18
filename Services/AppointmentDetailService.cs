@@ -7,13 +7,14 @@ namespace EHMR.Services
 {
     public interface IAppointmentDetailService
     {
+        Task<List<Medicine>> SearchMedicines(string query, CancellationToken token);
         Task<AppointmentDetailDto> GetAppointment(Guid id);
         Task<AppointmentDetailDto> GetAppointmentContext();
         Task<PatientContextDto> GetPatientContext(Guid patientId);
         Task UpdateAppointmentStatus(Guid appointmentId, AppointmentStatus newStatus);
         Task<List<Mkb10Code>> SearchDiagnoses(string query, CancellationToken token);
         Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30);
-        Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, TherapyCycle? cycle);
+        Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, TherapyCycle? cycle, List<PatientMedicine> medicines);
         Task GenerateNextTherapyCycle(Appointment appointment);
     }
 
@@ -187,7 +188,25 @@ namespace EHMR.Services
                 TherapyCycles=cycles
             };
         }
+        public async Task<List<Medicine>> SearchMedicines(string query, CancellationToken token)
+        {
+            await using var db = await _factory.CreateDbContextAsync();
 
+            if(string.IsNullOrWhiteSpace(query))
+                return new List<Medicine>();
+
+            query=query.Trim();
+
+            return await db.Medicines
+                .AsNoTracking()
+                .Where(x =>
+                    x.Name.StartsWith(query)||x.GenericName.StartsWith(query)||x.Code.StartsWith(query)||
+                    EF.Functions.Like(x.FullName
+                    , $"%{query}%"))
+                .OrderBy(x => x.Name)
+                .Take(30)
+                .ToListAsync(token);
+        }
         public async Task<List<Mkb10Code>> SearchDiagnoses(string query, CancellationToken token)
         {
             await using var db = await _factory.CreateDbContextAsync();
@@ -210,28 +229,25 @@ namespace EHMR.Services
         public Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30) =>
             _encounterService.GetNextAvailableSlot(doctorId, from, durationMinutes, patientId);
 
-        // ─── Commands ─────────────────────────────────────────────────────────
-        public async Task SaveAppointment(
-            Appointment appointment,
-            List<Diagnosis> diagnoses,
-            TherapyCycle? cycle)
+        // ─── Commands ─────────
+        public async Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, TherapyCycle? cycle, List<PatientMedicine> medicines)
         {
             await using var db = await _factory.CreateDbContextAsync();
             appointment.TherapyCycleId=cycle?.Id;
 
             if(appointment.Id==Guid.Empty)
             {
-                // ── Create ───────────────────────────────────────────────────
+                // ── Create 
                 appointment.Id=Guid.NewGuid();
 
                 if(string.IsNullOrWhiteSpace(appointment.AppointmentNumber))
                     appointment.AppointmentNumber=await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Appointment, "TER");
 
-                await _encounterService.BuildEncounterAsync(db,appointment, "");
+                await _encounterService.BuildEncounterAsync(db, appointment, "");
 
                 db.Appointments.Add(appointment);
-               
-                await db.SaveChangesAsync();      
+
+                await db.SaveChangesAsync();
 
                 foreach(var d in diagnoses)
                 {
@@ -314,10 +330,40 @@ namespace EHMR.Services
                 }
             }
 
+            // ── Sync patient medicines ──────────────────────────────────────
+            // PatientMedicine is patient-scoped, not appointment/encounter-scoped,
+            // so we only ADD newly-picked medicines that the patient doesn't already
+            // have. We never delete here — unassigning a medicine from a patient is
+            // a separate, explicit action outside this screen.
+            if(medicines is { Count:>0 })
+            {
+                var existingMedicineIds = await db.PatientMedicines
+                    .Where(x => x.PatientId==appointment.PatientId)
+                    .Select(x => x.MedicineId)
+                    .ToListAsync();
+
+                foreach(var m in medicines)
+                {
+                    if(existingMedicineIds.Contains(m.MedicineId))
+                        continue;
+
+                    db.PatientMedicines.Add(new PatientMedicine
+                    {
+                        Id=Guid.NewGuid(),
+                        PatientId=appointment.PatientId,
+                        MedicineId=m.MedicineId,
+                        Dosage=m.Dosage,
+                       // Frequency=m.Frequency,
+                        IsActive=true,
+                        StartDate=appointment.ScheduledStart,
+                    });
+                }
+            }
+
             await db.SaveChangesAsync();
         }
 
-       
+
         public async Task UpdateAppointmentStatus(Guid appointmentId, AppointmentStatus newStatus)
         {
             await _encounterService.UpdateAppointmentStatus(appointmentId, newStatus);

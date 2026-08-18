@@ -6,27 +6,13 @@
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="PageRoot"
-	x:DataType="viewModels:ProtocolRegistryViewModel">
-	<Grid ColumnDefinitions="285,*">
-		<!--  ================= LEFT MENU =================  -->
-		<Border Grid.Column="0" StrokeThickness="0">
-			<ContentView x:Name="MenuHost" />
-		</Border>
-		<!--  ================= MAIN =================  -->
-		<Grid
-			Grid.Column="1"
-			Padding="24"
-			BackgroundColor="{StaticResource Gray200}"
-			RowDefinitions="Auto,Auto,*"
-			RowSpacing="16">
-
-			<!--  HEADER  -->
-			<Border
-				Grid.Row="0"
-				Padding="20"
-				StrokeShape="RoundRectangle 0"
-				Style="{StaticResource SurfaceCard}">
-				<Grid ColumnDefinitions="*,Auto">
+	x:DataType="viewModels:ProtocolRegistryViewModel"
+	BackgroundColor="{StaticResource PageBackground}">
+<Grid ColumnDefinitions="285,*">
+		<Border Grid.Column="0" StrokeThickness="0"><ContentView x:Name="MenuHost" /></Border>
+		<Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="16">
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 					<controls:FFPageHeader Title="Регистар на протоколи" Subtitle="Преглед и управување со терапевтски протоколи по медицински гранки" />
 					<Button
 						Grid.Column="1"
@@ -40,37 +26,17 @@
 						WidthRequest="170" />
 				</Grid>
 			</Border>
-
-			<!--  SEARCH / FILTER  -->
-			<Border Grid.Row="1" Padding="0">
-				<Grid ColumnSpacing="5" RowSpacing="20">
-					<VerticalStackLayout>
-						<Border Margin="0,8,0,8" Padding="0">
-							<!--
-								Category filter now rides inside Pickers (built via
-								MakePicker in the ViewModel), same as Patients' Status/
-								Gender/BloodType/City/AgeGroup pickers — no separate
-								control needed here anymore.
-							-->
-							<controls:SparkExplorerHeaderView
+			<Border Grid.Row="1" BackgroundColor="{StaticResource PageBackground}" StrokeThickness="0">
+				<ScrollView VerticalScrollBarVisibility="Never">
+					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
+						<controls:FFSectionCard><controls:SparkExplorerHeaderView
 								Buttons="{Binding Buttons}"
 								Pickers="{Binding Pickers}"
 								SearchCommand="{Binding SearchCommand}"
 								SearchPlaceholder="Пребарување на протоколи..."
 								SearchText="{Binding SearchText}"
-								Tabs="{Binding Tabs}" />
-						</Border>
-
-						<!--
-							DeleteRowCommand is a guess at the property name — Patients'
-							Actions column only ever wired EditRowCommand since patients
-							aren't deleted from that grid. If SparkDataGridView doesn't
-							expose a delete slot under this name, point me at the right
-							one (or the row-actions mechanism it does support) and I'll
-							fix the binding.
-						-->
-						<Border>
-							<controls:SparkDataGridView
+								Tabs="{Binding Tabs}" /></controls:FFSectionCard>
+						<controls:FFSectionCard><controls:SparkDataGridView
 								x:Name="ProtocolGrid"
 								Columns="{Binding GridColumns}"
 								CurrentPage="{Binding CurrentPage}"
@@ -82,10 +48,9 @@
 								Rows="{Binding GridRows}"
 								ShowPagination="True"
 								ShowRowNumbers="True"
-								TotalPages="{Binding TotalPages}" />
-						</Border>
+								TotalPages="{Binding TotalPages}" /></controls:FFSectionCard>
 					</VerticalStackLayout>
-				</Grid>
+				</ScrollView>
 			</Border>
 		</Grid>
 	</Grid>

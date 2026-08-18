@@ -52,7 +52,8 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
             SelectedDoctor = SelectedPatient.Doctor;
             _selectedPatientService.SelectedItem=null;
         }
-    }    [RelayCommand]
+    }    
+    [RelayCommand]
     private async Task PreviewDocument(PatientDocument doc)
     {
         if(doc is null||string.IsNullOrWhiteSpace(doc.StoredPath)||!File.Exists(doc.StoredPath))
@@ -71,4 +72,13 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
         _selectedItemService.SelectedItem=Encounter;
         await NavigationService.GoToAsync(AppRoutes.Encounters.Edit);
     }
-}
+
+    [RelayCommand]
+    private async Task OpenEncounter(Encounter encounter)
+    {
+        if(encounter is null)
+            return;
+
+        _selectedItemService.SelectedItem=encounter;
+        await NavigationService.GoToAsync(AppRoutes.Encounters.Detail);
+    }}
