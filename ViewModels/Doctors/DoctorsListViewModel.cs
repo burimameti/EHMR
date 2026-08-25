@@ -7,29 +7,54 @@ using EHMR.Resources.Controls;
 using EHMR.ViewModels.Doctors.Extensions;
 
 using System.Collections.ObjectModel;
-
 using System.Windows.Input;
 
 namespace EHMR.ViewModels;
 
-public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttributable
+public partial class DoctorsListViewModel
+    : BaseViewModel<Doctor>, IQueryAttributable
 {
-    // ================= SERVICES =================
+    // ============================================================
+    // SERVICES
+    // ============================================================
+
     private readonly IDoctorService _doctorService;
 
-    // ================= FILTER STATE =================
-    [ObservableProperty] private string selectedStatus = "All";
-    [ObservableProperty] private string filteredDoctorsCount = "";
-    [ObservableProperty] private ObservableCollection<Doctor> filteredDoctors = new();
+    // ============================================================
+    // FILTER STATE
+    // ============================================================
 
-    // ================= QUERY STATE =================
+    [ObservableProperty]
+    private string selectedStatus = "All";
+
+    [ObservableProperty]
+    private string filteredDoctorsCount = string.Empty;
+
+    [ObservableProperty]
+    private ObservableCollection<Doctor> filteredDoctors = new();
+
+    // ============================================================
+    // QUERY STATE
+    // ============================================================
+
     private string? _pendingSearch;
     private string? _pendingStatus;
 
-    // ================= BASE OVERRIDES =================
+    // ============================================================
+    // BASE OVERRIDES
+    // ============================================================
+
     protected override string ModuleName => Modules.Doctors;
-    protected override string DetailRoute => AppRoutes.Doctors.Detail;
-    protected override string PermissionDeniedMessage => "Немате авторизација за додавање нов реуматолог.";
+
+    protected override string DetailRoute =>
+        AppRoutes.Doctors.Detail;
+
+    protected override string PermissionDeniedMessage =>
+        "Немате авторизација за додавање нов реуматолог.";
+
+    // ============================================================
+    // STATUS FILTER
+    // ============================================================
 
     public ObservableCollection<string> StatusFilters
     {
@@ -40,17 +65,27 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
     public string SelectedStatusDisplay
     {
         get => DoctorFilterLookups.Status.ToDisplay(SelectedStatus);
+
         set
         {
-            var internalValue = DoctorFilterLookups.Status.ToInternal(value);
-            if(SelectedStatus==internalValue) return;
+            var internalValue =
+                DoctorFilterLookups.Status.ToInternal(value);
+
+            if(SelectedStatus==internalValue)
+                return;
+
             SelectedStatus=internalValue;
+
             ApplyPipeline();
+
             OnPropertyChanged();
         }
     }
 
-    /// <summary>Alias kept for XAML compatibility.</summary>
+    // ============================================================
+    // SEARCH
+    // ============================================================
+
     public string DoctorSearchText
     {
         get => SearchText;
@@ -62,7 +97,10 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
         get;
     }
 
-    // ================= CTOR =================
+    // ============================================================
+    // CTOR
+    // ============================================================
+
     public DoctorsListViewModel(
         IDoctorService doctorService,
         ISelectedItemService<Doctor> selectedItemService,
@@ -70,127 +108,259 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
         IUserDialogService dialog,
         IMenuService menu,
         IAuthorizationService authorization)
-        : base(navigationService, dialog, menu, authorization, selectedItemService)
+        : base(
+            navigationService,
+            dialog,
+            menu,
+            authorization,
+            selectedItemService)
     {
         _doctorService=doctorService;
+
         PageSize=10;
 
-        SearchCommand=new Command<string>(query => SearchText=query);
+        SearchCommand=
+            new Command<string>(
+                query => SearchText=query??string.Empty);
 
         PropertyChanged+=(_, e) =>
         {
             if(e.PropertyName==nameof(SearchText))
-                OnPropertyChanged(nameof(DoctorSearchText));
+            {
+                OnPropertyChanged(
+                    nameof(DoctorSearchText));
+            }
         };
 
         EvaluatePermissions();
     }
 
-    // ================= LOAD =================
+    // ============================================================
+    // LOAD
+    // ============================================================
+
     [RelayCommand]
     public async Task LoadAsync()
     {
-        var data = await _doctorService.GetAllAsync();
-        AllItems=data.ToList();
+        var data =
+            await _doctorService.GetAllAsync();
+
+        AllItems=data
+            .Where(x => x is not null)
+            .ToList();
 
         InitializeSparkControls();
 
-        if(!string.IsNullOrWhiteSpace(_pendingSearch)) SearchText=_pendingSearch;
-        if(!string.IsNullOrWhiteSpace(_pendingStatus)) SelectedStatus=_pendingStatus;
+        if(!string.IsNullOrWhiteSpace(_pendingSearch))
+        {
+            SearchText=_pendingSearch;
+        }
+
+        if(!string.IsNullOrWhiteSpace(_pendingStatus))
+        {
+            SelectedStatus=_pendingStatus;
+        }
+
         _pendingSearch=null;
         _pendingStatus=null;
 
         ApplyPipeline();
+
+        RefreshSparkTabCounts();
     }
 
-    // ================= NAVIGATION (hyperlink) =================
+    // ============================================================
+    // NAVIGATION
+    // ============================================================
+
     [RelayCommand]
     private async Task OpenDetail(object tag)
     {
-        if(tag is not Doctor doctor) return;
+        if(tag is not Doctor doctor)
+            return;
+
         SelectedItemService.SelectedItem=doctor;
-        await NavigationService.GoToAsync(AppRoutes.Doctors.Detail);
+
+        await NavigationService.GoToAsync(
+            AppRoutes.Doctors.Detail);
     }
 
-    // ================= SEARCH =================
-    protected override IEnumerable<Doctor> ApplySearch(IEnumerable<Doctor> query, string search)
+    // ============================================================
+    // SEARCH
+    // ============================================================
+
+    protected override IEnumerable<Doctor> ApplySearch(
+        IEnumerable<Doctor> query,
+        string search)
     {
-        if(string.IsNullOrWhiteSpace(search)) return query;
+        if(string.IsNullOrWhiteSpace(search))
+            return query;
 
-        var s = search.Trim();
-        return query.Where(x =>
-            (!string.IsNullOrWhiteSpace(x.FullName)&&x.FullName.Contains(s, StringComparison.OrdinalIgnoreCase))||
-            (!string.IsNullOrWhiteSpace(x.ContactPhone)&&x.ContactPhone.Contains(s, StringComparison.OrdinalIgnoreCase))
-        );
+        var term = search.Trim();
+
+        return query.Where(d =>
+            (!string.IsNullOrWhiteSpace(d.FullName)&&
+             d.FullName.Contains(
+                 term,
+                 StringComparison.OrdinalIgnoreCase))
+            ||
+            (!string.IsNullOrWhiteSpace(d.DoctorNumber)&&
+             d.DoctorNumber.Contains(
+                 term,
+                 StringComparison.OrdinalIgnoreCase))
+            ||
+            (!string.IsNullOrWhiteSpace(d.ContactPhone)&&
+             d.ContactPhone.Contains(
+                 term,
+                 StringComparison.OrdinalIgnoreCase))
+            ||
+            (!string.IsNullOrWhiteSpace(d.Email)&&
+             d.Email.Contains(
+                 term,
+                 StringComparison.OrdinalIgnoreCase)));
     }
 
-    // ================= FILTER =================
-    protected override IEnumerable<Doctor> ApplyFilters(IEnumerable<Doctor> query)
+    // ============================================================
+    // FILTER
+    // ============================================================
+
+    protected override IEnumerable<Doctor> ApplyFilters(
+        IEnumerable<Doctor> query)
     {
-        if(SelectedStatus=="Active") query=query.Where(x => x.IsActive);
-        if(SelectedStatus=="Inactive") query=query.Where(x => !x.IsActive);
-        return query;
+        return SelectedStatus switch
+        {
+            "Active" =>
+                query.Where(
+                    x => x.Status==Status.Active),
+
+            "Inactive" =>
+                query.Where(
+                    x => x.Status==Status.Inactive),
+
+            _ => query
+        };
     }
 
-    // ================= SORT =================
-    protected override IEnumerable<Doctor> ApplySort(IEnumerable<Doctor> query)
-        => query.OrderBy(x => x.FullName);
+    // ============================================================
+    // SORT
+    // ============================================================
 
-    // ================= PAGE RESULT =================
-    protected override void OnPageProjected(ObservableCollection<Doctor> page)
+    protected override IEnumerable<Doctor> ApplySort(
+        IEnumerable<Doctor> query)
+    {
+        return query
+            .OrderBy(x => x.FullName)
+            .ThenBy(x => x.DoctorNumber);
+    }
+
+    // ============================================================
+    // PAGE RESULT
+    // ============================================================
+
+    protected override void OnPageProjected(
+        ObservableCollection<Doctor> page)
     {
         FilteredDoctors=page;
-        FilteredDoctorsCount=$"{TotalItems} резултати";
+
+        FilteredDoctorsCount=
+            $"{TotalItems} резултати";
     }
 
-    // ================= RESET =================
+    // ============================================================
+    // RESET
+    // ============================================================
+
     protected override void ResetFilters()
     {
         SelectedStatus="All";
-        SearchText="";
-        OnPropertyChanged(nameof(SelectedStatusDisplay));
+        SearchText=string.Empty;
+
+        OnPropertyChanged(
+            nameof(SelectedStatusDisplay));
     }
 
-    // ================= QUERY ATTRIBUTES =================
-    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    // ============================================================
+    // QUERY ATTRIBUTES
+    // ============================================================
+
+    public void ApplyQueryAttributes(
+        IDictionary<string, object> query)
     {
-        _pendingSearch=query.TryGetValue("search", out var s) ? s?.ToString() : null;
-        _pendingStatus=query.TryGetValue("statusFilter", out var f) ? f?.ToString() : null;
+        _pendingSearch=
+            query.TryGetValue(
+                "search",
+                out var search)
+                ? search?.ToString()
+                : null;
+
+        _pendingStatus=
+            query.TryGetValue(
+                "statusFilter",
+                out var status)
+                ? status?.ToString()
+                : null;
     }
 
-    // ================= PROPERTY CHANGES =================
-    partial void OnSelectedStatusChanged(string value)
+    // ============================================================
+    // PROPERTY CHANGES
+    // ============================================================
+
+    partial void OnSelectedStatusChanged(
+        string value)
     {
-        foreach(var (internalValue, tab) in _statusTabsByInternal)
-            tab.IsSelected=internalValue==value;
+        foreach(var (internalValue, tab)
+                in _statusTabsByInternal)
+        {
+            tab.IsSelected=
+                internalValue==value;
+        }
     }
 
-    partial void OnFilteredDoctorsChanged(ObservableCollection<Doctor> value)
-        => RefreshSparkGridRows();
+    partial void OnFilteredDoctorsChanged(
+        ObservableCollection<Doctor> value)
+    {
+        RefreshSparkGridRows();
+    }
 
     // ============================================================
     // TABS
     // ============================================================
-    private readonly Dictionary<string, SparkTabItem> _statusTabsByInternal = new();
+
+    private readonly Dictionary<string, SparkTabItem>
+        _statusTabsByInternal = new();
 
     private void BuildSparkTabs()
     {
         Tabs.Clear();
+
         _statusTabsByInternal.Clear();
 
         foreach(var display in StatusFilters)
         {
-            var internalValue = DoctorFilterLookups.Status.ToInternal(display);
+            var internalValue =
+                DoctorFilterLookups.Status
+                    .ToInternal(display);
 
             var tab = new SparkTabItem
             {
                 Title=display,
-                IsSelected=SelectedStatus==internalValue
+
+                IsSelected=
+                    SelectedStatus==internalValue
             };
-            tab.Command=new RelayCommand(() => SelectTab(tab, () => SelectedStatusDisplay=display));
+
+            tab.Command=
+                new RelayCommand(
+                    () => SelectTab(
+                        tab,
+                        () =>
+                            SelectedStatusDisplay=
+                                display));
 
             Tabs.Add(tab);
-            _statusTabsByInternal[internalValue]=tab;
+
+            _statusTabsByInternal[
+                internalValue]=tab;
         }
 
         RefreshSparkTabCounts();
@@ -198,21 +368,38 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
 
     private void RefreshSparkTabCounts()
     {
-        foreach(var (internalValue, tab) in _statusTabsByInternal)
+        foreach(var (internalValue, tab)
+                in _statusTabsByInternal)
         {
             tab.Value=internalValue switch
             {
-                "All" => AllItems.Count.ToString("N0"),
-                "Active" => AllItems.Count(d => d.IsActive).ToString("N0"),
-                "Inactive" => AllItems.Count(d => !d.IsActive).ToString("N0"),
+                "All" =>
+                    AllItems.Count
+                        .ToString("N0"),
+
+                "Active" =>
+                    AllItems.Count(
+                        d =>
+                            d.Status==
+                            Status.Active)
+                        .ToString("N0"),
+
+                "Inactive" =>
+                    AllItems.Count(
+                        d =>
+                            d.Status==
+                            Status.Inactive)
+                        .ToString("N0"),
+
                 _ => "0"
             };
         }
     }
 
     // ============================================================
-    // PICKERS  (specialty removed — no pickers for now)
+    // PICKERS
     // ============================================================
+
     private void BuildSparkPickers()
     {
         Pickers.Clear();
@@ -225,44 +412,140 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
     // ============================================================
     // GRID
     // ============================================================
-    [ObservableProperty] private ObservableCollection<SparkGridColumn> gridColumns = new();
-    [ObservableProperty] private ObservableCollection<SparkGridRow> gridRows = new();
+
+    [ObservableProperty]
+    private ObservableCollection<SparkGridColumn>
+        gridColumns = new();
+
+    [ObservableProperty]
+    private ObservableCollection<SparkGridRow>
+        gridRows = new();
 
     private void BuildSparkGridColumns()
     {
-        GridColumns=new ObservableCollection<SparkGridColumn>
-        {
-            new() { Header="БРОЈ",     Key="DoctorNumber", Width=new GridLength(1.3, GridUnitType.Star) },
+        GridColumns=
+            new ObservableCollection<SparkGridColumn>
+            {
+                new()
+                {
+                    Header = "БРОЈ",
+                    Key = "DoctorNumber",
+                    Width =
+                        new GridLength(
+                            1.3,
+                            GridUnitType.Star)
+                },
 
-            // Hyperlink → OpenDetailCommand(row.Tag)
-            new() { Header="РЕУМАТОЛОГ",   Key="FullName",     Width=new GridLength(2.2, GridUnitType.Star),
-                    CellType=SparkGridCellType.Hyperlink },
+                new()
+                {
+                    Header = "РЕУМАТОЛОГ",
+                    Key = "FullName",
+                    Width =
+                        new GridLength(
+                            2.2,
+                            GridUnitType.Star),
+                    CellType =
+                        SparkGridCellType.Hyperlink
+                },
 
-            new() { Header="Е-ПОШТА", Key="Email",        Width=new GridLength(2,   GridUnitType.Star) },
-            new() { Header="ТЕЛЕФОН", Key="ContactPhone",  Width=new GridLength(1.3, GridUnitType.Star) },
-            new() { Header="СТАТУС",  Key="Status",        Width=new GridLength(1,   GridUnitType.Star),
-                    CellType=SparkGridCellType.Badge },
-            new() { Header="ОПЦИИ",   Key="Actions",       Width=GridLength.Auto,
-                    CellType=SparkGridCellType.Actions }
-        };
+                new()
+                {
+                    Header = "Е-ПОШТА",
+                    Key = "Email",
+                    Width =
+                        new GridLength(
+                            2,
+                            GridUnitType.Star)
+                },
+
+                new()
+                {
+                    Header = "ТЕЛЕФОН",
+                    Key = "ContactPhone",
+                    Width =
+                        new GridLength(
+                            1.3,
+                            GridUnitType.Star)
+                },
+
+                new()
+                {
+                    Header = "СТАТУС",
+                    Key = "Status",
+                    Width =
+                        new GridLength(
+                            1,
+                            GridUnitType.Star),
+                    CellType =
+                        SparkGridCellType.Badge
+                },
+
+                new()
+                {
+                    Header = "ОПЦИИ",
+                    Key = "Actions",
+                    Width = GridLength.Auto,
+                    CellType =
+                        SparkGridCellType.Actions
+                }
+            };
     }
 
     private void RefreshSparkGridRows()
     {
-        var rows = new ObservableCollection<SparkGridRow>();
+        var rows =
+            new ObservableCollection<SparkGridRow>();
 
-        foreach(var d in FilteredDoctors)
+        foreach(var doctor in FilteredDoctors)
         {
-            var row = new SparkGridRow { Tag=d };
-            row["DoctorNumber"]=d.DoctorNumber;
-            row["FullName"]=d.FullName;
-            row["Email"]=d.Email??"—";
-            row["ContactPhone"]=d.ContactPhone;
-            row["Status"]=new SparkBadgeValue(
-                d.IsActive ? "Активен" : "Неактивен",
-                d.IsActive ? SparkBadgeTone.Success : SparkBadgeTone.Danger);
+            var isActive =
+                doctor.Status==Status.Active;
 
-            AddDefaultActions(d, row, detailLabel: "Детали", editLabel: "Промени");
+            var row =
+                new SparkGridRow
+                {
+                    Tag=doctor
+                };
+
+            row["DoctorNumber"]=
+                string.IsNullOrWhiteSpace(
+                    doctor.DoctorNumber)
+                    ? "—"
+                    : doctor.DoctorNumber;
+
+            row["FullName"]=
+                string.IsNullOrWhiteSpace(
+                    doctor.FullName)
+                    ? "—"
+                    : doctor.FullName;
+
+            row["Email"]=
+                string.IsNullOrWhiteSpace(
+                    doctor.Email)
+                    ? "—"
+                    : doctor.Email;
+
+            row["ContactPhone"]=
+                string.IsNullOrWhiteSpace(
+                    doctor.ContactPhone)
+                    ? "—"
+                    : doctor.ContactPhone;
+
+            row["Status"]=
+                new SparkBadgeValue(
+                    isActive
+                        ? "Активен"
+                        : "Неактивен",
+
+                    isActive
+                        ? SparkBadgeTone.Success
+                        : SparkBadgeTone.Danger);
+
+            AddDefaultActions(
+                doctor,
+                row,
+                detailLabel: "Детали",
+                editLabel: "Промени");
 
             rows.Add(row);
         }
@@ -273,6 +556,7 @@ public partial class DoctorsListViewModel : BaseViewModel<Doctor>, IQueryAttribu
     // ============================================================
     // WIRING
     // ============================================================
+
     private void InitializeSparkControls()
     {
         BuildSparkTabs();

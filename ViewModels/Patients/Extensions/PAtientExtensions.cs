@@ -130,6 +130,29 @@ namespace EHMR.ViewModels.Patients.Extensions
 
             return new FilterLookup(pairs);
         }
+
+        /// <summary>
+        /// Same as BuildCityLookup() but without the "Сите"/All entry — for the
+        /// PATIENT FORM city picker, where "All" isn't a valid city to save.
+        /// </summary>
+        public static FilterLookup BuildCityLookupForForm()
+        {
+            var pairs = new List<(string Display, string Internal)>();
+
+            foreach(var city in MacedoniaCityLookup.All)
+            {
+                var internalValue = city?.Key??city?.ToString();
+                var displayValue = city?.Display??city?.Key??city?.ToString();
+
+                if(string.IsNullOrWhiteSpace(internalValue)||string.IsNullOrWhiteSpace(displayValue))
+                    continue;
+
+                if(pairs.All(p => p.Display!=displayValue))
+                    pairs.Add((displayValue, internalValue));
+            }
+
+            return new FilterLookup(pairs);
+        }
     }
 
     public static class PatientDisplayExtensions

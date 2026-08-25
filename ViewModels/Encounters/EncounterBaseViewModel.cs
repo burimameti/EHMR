@@ -6,9 +6,7 @@ using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Helpers;
 using EHMR.Services;
-
 using EHMR.ViewModels.Constants;
-
 using System.Collections.ObjectModel;
 
 namespace EHMR.ViewModels.Encounters;
@@ -825,42 +823,26 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             .ToObservableCollection();
     public string EncounterTypeDisplay
     {
-        get =>
-            EncounterFormLookups
-                .EncounterType
-                .ToDisplay(
-                    Encounter.EncounterType);
+        get => EncounterFormLookups.EncounterType.ToDisplay(Encounter.EncounterType);
         set
         {
-            var val =
-                EncounterFormLookups
-                    .EncounterType
-                    .ToInternal(value);
+            var val = EncounterFormLookups.EncounterType.ToInternal(value);
             if(Encounter.EncounterType==val)
                 return;
-            Encounter.EncounterType=value;
-
+            Encounter.EncounterType=val;   // ← fixed: store the internal key
             OnPropertyChanged();
         }
     }
+
     public string PriorityDisplay
     {
-        get =>
-            EncounterFormLookups
-                .Priority
-                .ToDisplay(
-                    Encounter.Priority);
+        get => EncounterFormLookups.Priority.ToDisplay(Encounter.Priority);
         set
         {
-            var val =
-                EncounterFormLookups
-                    .Priority
-                    .ToInternal(value);
+            var val = EncounterFormLookups.Priority.ToInternal(value);
             if(Encounter.Priority==val)
                 return;
-
-            Encounter.Priority=value;
-
+            Encounter.Priority=val;   // ← fixed
             OnPropertyChanged();
         }
     }
@@ -966,7 +948,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
                             .ToInternal(dv)
                             .Equals(Encounter.EncounterType, StringComparison.OrdinalIgnoreCase));
                     if(!string.IsNullOrEmpty(display))
-                        EncounterTypeDisplay=display;
+                        EncounterTypeDisplay=display;   // ← re-invokes the buggy setter, re-corrupting the value
                 }
 
                 if(!string.IsNullOrEmpty(Encounter.Priority))

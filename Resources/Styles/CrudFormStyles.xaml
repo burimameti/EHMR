@@ -57,7 +57,7 @@
 	<Style x:Key="CrudFormValueSurfaceStyle" TargetType="Border">
 		<Setter Property="Padding" Value="12,8" />
 		<Setter Property="MinimumHeightRequest" Value="40" />
-		<Setter Property="BackgroundColor" Value="#F1F5F9" />
+		<Setter Property="BackgroundColor" Value="AliceBlue" />
 		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 4" />

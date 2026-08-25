@@ -46,30 +46,27 @@ public partial class UserEditViewModel : ObservableObject
     private bool _isSelfEdit;
 
     public bool IsEditMode => !IsReadOnly;
-
-    // Едит копчето се гледа само ако е read-only И актерот смее да управува со тој корисник
     public bool CanShowEditButton => IsReadOnly&&CanManageTargetUser;
-
-    // Delete копче: само за постоечки корисници, не за себе, и само ако актерот смее да управува
     public bool CanShowDeleteButton => !_isNewUserMode&&CanManageTargetUser&&!IsSelfEdit;
+    private List<UserRole> _roles = new();
+    public List<UserRole> Roles => _roles;
 
-    // Roles picker - само улогите што actor-от смее да ги додели
-    public List<UserRole> Roles
-    {
-        get
-        {
-            var actorRole = _authStateService.CurrentUser?.Role;
+    private List<UserPosition> _positions = Enum.GetValues<UserPosition>().ToList();
+    public List<UserPosition> Positions => _positions;
+    //public List<UserRole> Roles
+    //{
+    //    get
+    //    {
+    //        var actorRole = _authStateService.CurrentUser?.Role;
+    //        return actorRole is null
+    //            ? Enum.GetValues<UserRole>().ToList()
+    //            : RoleHierarchy.AssignableRolesFor(actorRole.Value).ToList();
+    //    }
+    //}
 
-            return actorRole is null
-                ? Enum.GetValues<UserRole>().ToList()
-                : RoleHierarchy.AssignableRolesFor(actorRole.Value).ToList();
-        }
-    }
-
-    public List<UserPosition> Positions => Enum.GetValues<UserPosition>().ToList();
+    //public List<UserPosition> Positions => Enum.GetValues<UserPosition>().ToList();
 
     private UserRole _selectedRole;
-
     public UserRole SelectedRole
     {
         get => _selectedRole;
@@ -78,11 +75,33 @@ public partial class UserEditViewModel : ObservableObject
             if(SetProperty(ref _selectedRole, value))
             {
                 if(User!=null)
-                {
                     User.Role=value;
-                }
                 ApplyDefaultPermissionsForRole();
             }
+        }
+    }
+
+    private UserPosition _selectedPosition;
+    public UserPosition SelectedPosition
+    {
+        get => _selectedPosition;
+        set
+        {
+            if(SetProperty(ref _selectedPosition, value))
+            {
+                if(User!=null)
+                    User.Position=value;
+            }
+        }
+    }
+
+    public int SelectedPositionIndex
+    {
+        get => Positions.IndexOf(_selectedPosition);
+        set
+        {
+            if(value>=0&&value<Positions.Count)
+                SelectedPosition=Positions[value];
         }
     }
 
@@ -147,11 +166,7 @@ public partial class UserEditViewModel : ObservableObject
             IsReadOnly=true;
 
             IsSelfEdit=actor!=null&&actor.Id==selectedUser.Id;
-
-            // Дозволата се проверува спрема ОРИГИНАЛНАТА улога на корисникот,
-            // не спрема таа што евентуално ќе се избере во picker-от
-            CanManageTargetUser=actor==null
-                ||RoleHierarchy.CanManage(actor.Role, selectedUser.Role);
+            CanManageTargetUser=actor==null||RoleHierarchy.CanManage(actor.Role, selectedUser.Role);
         }
 
         SystemPermissions.Clear();
@@ -162,23 +177,27 @@ public partial class UserEditViewModel : ObservableObject
         }
 
         _selectedRole=User.Role;
+        _selectedPosition=User.Position;
+        var actorRole = _authStateService.CurrentUser?.Role;
+        _roles=actorRole is null
+            ? Enum.GetValues<UserRole>().ToList()
+            : RoleHierarchy.AssignableRolesFor(actorRole.Value).ToList();
+        OnPropertyChanged(nameof(Roles));
         OnPropertyChanged(nameof(SelectedRole));
+        OnPropertyChanged(nameof(SelectedPosition));
+        OnPropertyChanged(nameof(SelectedPositionIndex));
         OnPropertyChanged(nameof(Roles));
         OnPropertyChanged(nameof(CanShowEditButton));
         OnPropertyChanged(nameof(CanShowDeleteButton));
 
         if(_isNewUserMode)
-        {
             ApplyDefaultPermissionsForRole();
-        }
     }
 
     [RelayCommand]
     public void ToggleEditMode()
     {
-        if(!CanManageTargetUser)
-            return;
-
+        if(!CanManageTargetUser) return;
         IsReadOnly=false;
         PageTitle=$"✎ Уреди: {User.Username}";
     }
@@ -194,13 +213,9 @@ public partial class UserEditViewModel : ObservableObject
     public void ApplyDefaultPermissionsForRole()
     {
         if(User==null) return;
-
         var defaultModules = Modules.GetDefaultsForRole(User.Role).ToHashSet(StringComparer.OrdinalIgnoreCase);
-
         foreach(var wrapper in SystemPermissions)
-        {
             wrapper.IsSelected=defaultModules.Contains(wrapper.PermissionValue);
-        }
     }
 
     [RelayCommand]
@@ -213,9 +228,7 @@ public partial class UserEditViewModel : ObservableObject
         }
 
         if(_originalUser!=null)
-        {
             User=CloneUser(_originalUser);
-        }
 
         IsReadOnly=true;
         await Shell.Current.GoToAsync("..");
@@ -230,7 +243,6 @@ public partial class UserEditViewModel : ObservableObject
             return;
         }
 
-        // --- Server/ViewModel-side RBAC проверки (не се потпираме само на UI binding-от) ---
         if(!CanManageTargetUser)
         {
             await _dialogService.ShowAlertAsync("Пристап одбиен", "Немате доволно овластувања за оваа промена.", "OK");
@@ -293,8 +305,7 @@ public partial class UserEditViewModel : ObservableObject
     [RelayCommand]
     public async Task DeleteAsync()
     {
-        if(_isNewUserMode||_originalUser==null)
-            return;
+        if(_isNewUserMode||_originalUser==null) return;
 
         if(!CanManageTargetUser)
         {
@@ -314,8 +325,7 @@ public partial class UserEditViewModel : ObservableObject
             "Избриши",
             "Откажи");
 
-        if(!confirmed)
-            return;
+        if(!confirmed) return;
 
         try
         {
@@ -329,18 +339,15 @@ public partial class UserEditViewModel : ObservableObject
         }
     }
 
-    private static UserAdminDto CloneUser(UserAdminDto source)
+    private static UserAdminDto CloneUser(UserAdminDto source) => new()
     {
-        return new UserAdminDto
-        {
-            Id=source.Id,
-            Username=source.Username,
-            FirstName=source.FirstName,
-            LastName=source.LastName,
-            Role=source.Role,
-            Position=source.Position,
-            IsActive=source.IsActive,
-            Modules=source.Modules!=null ? new List<string>(source.Modules) : new List<string>()
-        };
-    }
+        Id=source.Id,
+        Username=source.Username,
+        FirstName=source.FirstName,
+        LastName=source.LastName,
+        Role=source.Role,
+        Position=source.Position,
+        IsActive=source.IsActive,
+        Modules=source.Modules!=null ? new List<string>(source.Modules) : new List<string>()
+    };
 }

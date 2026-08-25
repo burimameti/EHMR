@@ -16,6 +16,7 @@ namespace EHMR.Services
         Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30);
         Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, TherapyCycle? cycle, List<PatientMedicine> medicines);
         Task GenerateNextTherapyCycle(Appointment appointment);
+        Task AutoCloseStaleAppointmentsAsync();
     }
 
     public class AppointmentDetailService : IAppointmentDetailService
@@ -30,7 +31,7 @@ namespace EHMR.Services
             _encounterService=encounterService;
         }
 
-      
+
 
         //private static Encounter BuildEncounter(Appointment appointment, string encounterNumber) => new()
         //{
@@ -51,7 +52,44 @@ namespace EHMR.Services
         //};
 
         // ─── Queries ──────────────────────────────────────────────────────────
+        public async Task AutoCloseStaleAppointmentsAsync()
+        {
+            await using var db = await _factory.CreateDbContextAsync();
 
+            var cutoff = DateTime.Now.AddDays(-3);
+
+            var stale = await db.Appointments
+                .Where(a => (a.Status==AppointmentStatus.Scheduled||a.Status==AppointmentStatus.CheckedIn)
+                            &&a.ScheduledStart<cutoff)
+                .ToListAsync();
+
+            if(stale.Count==0) return;
+
+            var staleIds = stale.Select(a => a.Id).ToList();
+
+            var encounters = await db.Encounters
+                .Where(e => staleIds.Contains(e.AppointmentId!.Value)&&!e.IsLocked)
+                .ToListAsync();
+
+            var encounterByAppointmentId = encounters.ToDictionary(e => e.AppointmentId!.Value);
+
+            foreach(var appt in stale)
+            {
+                appt.Status=AppointmentStatus.Missed;
+
+                if(encounterByAppointmentId.TryGetValue(appt.Id, out var encounter))
+                {
+                    encounter.Status=EncounterStatus.NoShow;
+                    encounter.IsLocked=true;
+                    encounter.EndTime=DateTime.Now;
+                    encounter.DurationMinutes=encounter.StartTime.HasValue
+                        ? (int)(DateTime.Now-encounter.StartTime.Value).TotalMinutes
+                        : null;
+                }
+            }
+
+            await db.SaveChangesAsync();
+        }
         public async Task<AppointmentDetailDto> GetAppointment(Guid id)
         {
             await using var db = await _factory.CreateDbContextAsync();
@@ -125,6 +163,8 @@ namespace EHMR.Services
 
         public async Task<AppointmentDetailDto> GetAppointmentContext()
         {
+            await AutoCloseStaleAppointmentsAsync();
+            await _encounterService.AutoCloseStaleVisitsAsync();
             await using var db = await _factory.CreateDbContextAsync();
 
             var patients = await db.Patients
@@ -160,6 +200,7 @@ namespace EHMR.Services
 
             var patientMedicines = await db.PatientMedicines
                 .AsNoTracking()
+                .Include(x=>x.Medicine)
                 .Where(x => x.PatientId==patientId)
                 .OrderByDescending(x => x.IsActive)
                 .ToListAsync();
@@ -200,9 +241,7 @@ namespace EHMR.Services
             return await db.Medicines
                 .AsNoTracking()
                 .Where(x =>
-                    x.Name.StartsWith(query)||x.GenericName.StartsWith(query)||x.Code.StartsWith(query)||
-                    EF.Functions.Like(x.FullName
-                    , $"%{query}%"))
+                    x.Name.StartsWith(query)||x.GenericName.StartsWith(query)||x.Code.StartsWith(query))
                 .OrderBy(x => x.Name)
                 .Take(30)
                 .ToListAsync(token);
@@ -235,19 +274,29 @@ namespace EHMR.Services
             await using var db = await _factory.CreateDbContextAsync();
             appointment.TherapyCycleId=cycle?.Id;
 
+            appointment.Patient=null;
+            appointment.Doctor=null;
+            appointment.TherapyCycle=null;
+
+            Encounter? encounterForMedicines = null;
+            bool medicinesEditable = true;
+
             if(appointment.Id==Guid.Empty)
             {
-                // ── Create 
                 appointment.Id=Guid.NewGuid();
 
                 if(string.IsNullOrWhiteSpace(appointment.AppointmentNumber))
                     appointment.AppointmentNumber=await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Appointment, "TER");
 
+                db.Appointments.Add(appointment);
                 await _encounterService.BuildEncounterAsync(db, appointment, "");
 
-                db.Appointments.Add(appointment);
-
                 await db.SaveChangesAsync();
+
+                var savedEncounter = await db.Encounters
+                    .FirstAsync(e => e.AppointmentId==appointment.Id);
+
+                encounterForMedicines=savedEncounter;
 
                 foreach(var d in diagnoses)
                 {
@@ -255,7 +304,7 @@ namespace EHMR.Services
                     {
                         Id=Guid.NewGuid(),
                         PatientId=appointment.PatientId,
-                        EncounterId=appointment.Encounter.Id,
+                        EncounterId=savedEncounter.Id,
                         Mkb10CodeId=d.Mkb10CodeId,
                         DiagnosedAt=appointment.ScheduledStart,
                         IsPrimary=d.IsPrimary,
@@ -267,29 +316,33 @@ namespace EHMR.Services
             }
             else
             {
-                // ── Edit ─────────────────────────────────────────────────────
                 db.Appointments.Update(appointment);
 
                 var encounter = await db.Encounters
                     .FirstOrDefaultAsync(e => e.AppointmentId==appointment.Id);
 
+                encounterForMedicines=encounter;
+
                 if(encounter is not null&&!encounter.IsLocked)
                 {
-                    // Sync scheduling fields
                     encounter.DoctorId=appointment.DoctorId;
                     encounter.ScheduledStart=appointment.ScheduledStart;
                     encounter.ScheduledEnd=appointment.ScheduledEnd;
                     encounter.Notes=appointment.ClinicalNotes;
                     encounter.ReasonForVisit=null;
 
-                    // ── Reconcile status — both sides converge ────────────────
                     var (resolvedEncounter, resolvedAppointment)=
                         ReconcileStatus(encounter.Status, appointment.Status);
 
                     encounter.Status=resolvedEncounter;
                     appointment.Status=resolvedAppointment;
 
-                    if(resolvedEncounter==EncounterStatus.Completed&&!encounter.IsLocked)
+                    // ── Lock on ANY terminal outcome, not just Completed ──
+                    var isTerminal = resolvedEncounter is EncounterStatus.Completed
+                                                        or EncounterStatus.Cancelled
+                                                        or EncounterStatus.NoShow;
+
+                    if(isTerminal&&!encounter.IsLocked)
                     {
                         encounter.IsLocked=true;
                         encounter.EndTime=DateTime.Now;
@@ -298,9 +351,10 @@ namespace EHMR.Services
                             : null;
                     }
 
+                    medicinesEditable=true; // this closing-out pass still saves
+
                     await db.SaveChangesAsync();
 
-                    // Re-sync diagnoses only if not locked
                     var existingDiag = await db.Diagnoses
                         .Where(x => x.EncounterId==encounter.Id)
                         .ToListAsync();
@@ -324,39 +378,59 @@ namespace EHMR.Services
                 }
                 else if(encounter is null)
                 {
-                    // Edge case: appointment exists but encounter was never created
-                    // (data from before this architecture) — create it now
                     await _encounterService.BuildEncounterAsync(db, appointment, "");
+                    await db.SaveChangesAsync();
+
+                    encounterForMedicines=await db.Encounters
+                        .FirstAsync(e => e.AppointmentId==appointment.Id);
+                }
+                else
+                {
+                    // encounter is not null AND encounter.IsLocked == true — visit already
+                    // closed (Completed/Cancelled/Missed). Diagnoses already skipped by the
+                    // guard above; freeze medicines for the same reason.
+                    medicinesEditable=false;
                 }
             }
 
-            // ── Sync patient medicines ──────────────────────────────────────
-            // PatientMedicine is patient-scoped, not appointment/encounter-scoped,
-            // so we only ADD newly-picked medicines that the patient doesn't already
-            // have. We never delete here — unassigning a medicine from a patient is
-            // a separate, explicit action outside this screen.
-            if(medicines is { Count:>0 })
+            // ── Sync patient medicines (only while the encounter isn't locked) ──
+            if(medicinesEditable&&medicines is { Count:>0 })
             {
-                var existingMedicineIds = await db.PatientMedicines
+                var existingEntities = await db.PatientMedicines
                     .Where(x => x.PatientId==appointment.PatientId)
-                    .Select(x => x.MedicineId)
                     .ToListAsync();
+
+                var existingByMedicineId = existingEntities
+                    .ToDictionary(x => x.MedicineId);
 
                 foreach(var m in medicines)
                 {
-                    if(existingMedicineIds.Contains(m.MedicineId))
-                        continue;
-
-                    db.PatientMedicines.Add(new PatientMedicine
+                    if(existingByMedicineId.TryGetValue(m.MedicineId, out var entity))
                     {
-                        Id=Guid.NewGuid(),
-                        PatientId=appointment.PatientId,
-                        MedicineId=m.MedicineId,
-                        Dosage=m.Dosage,
-                       // Frequency=m.Frequency,
-                        IsActive=true,
-                        StartDate=appointment.ScheduledStart,
-                    });
+                        entity.EncounterId=encounterForMedicines?.Id??entity.EncounterId;
+                        entity.Dosage=m.Dosage;
+                        entity.DosesFrequency=m.DosesFrequency;
+                        entity.StartDate=m.StartDate;
+                        entity.EndDate=m.EndDate;
+                        entity.Notes=m.Notes;
+                        entity.IsActive=m.IsActive;
+                    }
+                    else
+                    {
+                        db.PatientMedicines.Add(new PatientMedicine
+                        {
+                            Id=Guid.NewGuid(),
+                            PatientId=appointment.PatientId,
+                            EncounterId=encounterForMedicines?.Id,
+                            MedicineId=m.MedicineId,
+                            Dosage=m.Dosage,
+                            DosesFrequency=m.DosesFrequency,
+                            StartDate=m.StartDate,
+                            EndDate=m.EndDate,
+                            Notes=m.Notes,
+                            IsActive=m.IsActive,
+                        });
+                    }
                 }
             }
 

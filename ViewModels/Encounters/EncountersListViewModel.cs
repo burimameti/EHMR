@@ -483,15 +483,17 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         var cyrillicTerm=UseCyrillicSearch ? EHMR.Helpers.MacedonianTransliterator.ToCyrillic(term) : term;
         return query.Where(x =>
             (x.EncounterNumber??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
-            (x.Patient!=null&&((x.Patient.FirstName+" "+x.Patient.LastName).Contains(term, StringComparison.OrdinalIgnoreCase)||
-                                 (x.Patient.FirstName+" "+x.Patient.LastName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)||
-                                 x.Patient.SzboNumber.Contains(term, StringComparison.OrdinalIgnoreCase)))||
-            (x.Doctor!=null&&((x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(term, StringComparison.OrdinalIgnoreCase)||
-                                (x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)))||
-            (x.ChiefComplaint??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
-            (x.ChiefComplaint??"").Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)||
-            (x.ClinicalNotes??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
-            (x.ClinicalNotes??"").Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)
+            (x.Patient!=null&&((x.Patient.FirstName).Contains(term, StringComparison.OrdinalIgnoreCase)||
+                                 (x.Patient.LastName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)||
+                                     (x.Patient.FirstName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)||
+                                            (x.Patient.LastName).Contains(term, StringComparison.OrdinalIgnoreCase)||
+                                 x.Patient.SzboNumber.Contains(term, StringComparison.OrdinalIgnoreCase)))
+            //(x.Doctor!=null&&((x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(term, StringComparison.OrdinalIgnoreCase)||
+            //                    (x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)))||
+            //(x.ChiefComplaint??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
+            //(x.ChiefComplaint??"").Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)||
+            //(x.ClinicalNotes??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
+            //(x.ClinicalNotes??"").Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)
         );
     }
 

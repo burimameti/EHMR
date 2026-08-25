@@ -181,8 +181,8 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
             await LoadAsync();
             SelectedCycle=AllItems.FirstOrDefault(x => x.Id==saved.Id)??saved;
 
-            await UserDialogService.ShowAlertAsync("Зачувано", "Циклусот е успешно зачуван.", "OK");
-        }, "Грешка при зачувување на циклусот");
+            await UserDialogService.ShowAlertAsync("Успешно", "Податоците се зачувани.", "OK");
+        }, "Грешка при зачувување на податоци");
     }
 
     // ================= PIPELINE HOOKS =================

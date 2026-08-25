@@ -11,7 +11,7 @@ public class EncounterSeeder : IEntitySeeder
     {
 
         var exists = await context.Encounters
-            .AnyAsync(x => x.EncounterNumber=="ENC-20260627-0001", ct);
+            .AnyAsync(x => x.EncounterNumber=="PREG-20260627-0001", ct);
         if(exists)
             return;
         var visitDate = new DateTime(2026, 06, 27);
@@ -22,7 +22,7 @@ public class EncounterSeeder : IEntitySeeder
             AppointmentId=SeedIds.Appt1,
             PatientId=SeedIds.Patient1,
             DoctorId=SeedIds.Doctor1,
-            EncounterNumber="ENC-20260627-0001",
+            EncounterNumber="PREG-20260627-0001",
             EncounterType="Outpatient",
             Status=EncounterStatus.InProgress,
             Priority="Routine",

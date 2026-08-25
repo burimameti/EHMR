@@ -28,21 +28,24 @@
 			<!--  =========================================================  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader
-	Grid.Row="0"
-	Title="{Binding PageTitle}"
-	Subtitle="Дефинирање на стандардизирани чекори, времетраење и клинички таргети за третманот"
-	PrimaryButtonCommand="{Binding SaveCommand}"
-	PrimaryButtonText="Зачувај"
-	SecondaryButtonCommand="{Binding CancelCommand}"
-	SecondaryButtonText="Откажи"
-	ShowPrimaryButton="True"
-	ShowSecondaryButton="True" />
+					Title="{Binding PageTitle}"
+					Grid.Row="0"
+					PrimaryButtonCommand="{Binding SaveCommand}"
+					PrimaryButtonText="Зачувај"
+					SecondaryButtonCommand="{Binding CancelCommand}"
+					SecondaryButtonText="Откажи"
+					ShowPrimaryButton="True"
+					ShowSecondaryButton="True"
+					Subtitle="Дефинирање на стандардизирани чекори, времетраење и клинички таргети за третманот" />
 			</Border>
 
 			<!--  =====================================================  -->
 			<!--  FORM CONTENT WORKSPACE  -->
 			<!--  =====================================================  -->
-			<controls:FFSectionCard Grid.Row="1" Margin="0" ContentPadding="18">
+			<controls:FFSectionCard
+				Grid.Row="1"
+				Margin="0"
+				ContentPadding="18">
 				<ScrollView VerticalScrollBarVisibility="Never">
 					<Grid
 						Padding="16"
@@ -79,7 +82,10 @@
 
 									<VerticalStackLayout Grid.Column="2" Spacing="8">
 										<Label Style="{StaticResource EditFieldLabelStyle}" Text="Стандардно времетраење (денови)" />
-										<controls:FFInput Keyboard="Numeric" Placeholder="Пр. 30" Text="{Binding CurrentProtocol.DurationInDays, Mode=TwoWay}" />
+										<controls:FFInput
+											Keyboard="Numeric"
+											Placeholder="Пр. 30"
+											Text="{Binding CurrentProtocol.DurationInDays, Mode=TwoWay}" />
 									</VerticalStackLayout>
 								</Grid>
 
@@ -190,7 +196,7 @@
 											TextColor="{StaticResource SparkTextPrimary}" />
 										<Label
 											FontSize="11"
-											Text="Измените нема да ги променат активните планови."
+											Text="Промените нема да ги променат активните планови."
 											TextColor="{StaticResource SparkTextSecondary}" />
 									</VerticalStackLayout>
 								</Grid>

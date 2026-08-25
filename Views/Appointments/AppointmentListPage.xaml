@@ -25,14 +25,17 @@
 
 			<!--  HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<controls:FFPageHeader
-					Title="Термини"
-					PrimaryButtonCommand="{Binding NewCommand}"
-					PrimaryButtonText="Нов термин"
-					RefreshCommand="{Binding LoadCommand}"
-					ShowPrimaryButton="{Binding CanCreate}"
-					ShowRefreshButton="True"
-					Subtitle="Преглед и управување со закажани термини" />
+				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+					<controls:FFPageHeader
+						Title="Термини"
+						Grid.Column="0"
+						PrimaryButtonCommand="{Binding NewCommand}"
+						PrimaryButtonText="Нов термин"
+						RefreshCommand="{Binding LoadCommand}"
+						ShowPrimaryButton="{Binding CanCreate}"
+						ShowRefreshButton="True"
+						Subtitle="Преглед и управување со закажани термини" />
+				</Grid>
 			</Border>
 
 			<!--  MAIN CONTENT / GRID  -->
@@ -42,53 +45,80 @@
 				StrokeThickness="0">
 				<ScrollView VerticalScrollBarVisibility="Never">
 					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
-						<controls:FFSectionCard>
-							<controls:SparkExplorerHeaderView
-								Buttons="{Binding Buttons}"
-								SearchCommand="{Binding SearchCommand}"
-								SearchPlaceholder="Пациент или реуматолог..."
-								SearchText="{Binding SearchText}"
-								SelectedSuggestion="{Binding SelectedSuggestion, Mode=TwoWay}"
-								ShowCyrillicToggle="False"
-								ShowSuggestions="{Binding ShowSuggestions}"
-								Suggestions="{Binding Suggestions}"
-								Tabs="{Binding Tabs}">
-								<controls:SparkExplorerHeaderView.SuggestionTemplate>
-									<DataTemplate x:DataType="search:SearchSuggestionDto">
-										<Border
-											Margin="2"
-											Padding="12,9"
-											BackgroundColor="White"
-											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeShape="RoundRectangle 8"
-											StrokeThickness="1">
-											<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-												<Label
-													FontFamily="FASolid"
-													FontSize="13"
-													Text="&#xf007;"
-													TextColor="{StaticResource SparkAccentTeal}"
-													VerticalOptions="Center" />
-												<Label
-													Grid.Column="1"
-													FontAttributes="Bold"
-													FontSize="12.5"
-													Text="{Binding DisplayText}"
-													TextColor="{StaticResource SparkTextPrimary}"
-													VerticalOptions="Center" />
-												<Label
-													Grid.Column="2"
-													FontSize="11"
-													Text="{Binding Group}"
-													TextColor="{StaticResource SparkTextSecondary}"
-													VerticalOptions="Center" />
-											</Grid>
-										</Border>
-									</DataTemplate>
-								</controls:SparkExplorerHeaderView.SuggestionTemplate>
-							</controls:SparkExplorerHeaderView>
 
+						<!--  SEARCH & FILTERS SECTION  -->
+						<controls:FFSectionCard>
+							<VerticalStackLayout Spacing="16">
+
+								<!--  SEARCH WITH SUGGESTIONS  -->
+								<controls:SparkExplorerHeaderView
+									Buttons="{Binding Buttons}"
+									Pickers="{Binding Pickers}"
+									SearchCommand="{Binding SearchCommand}"
+									SearchPlaceholder="Пациент..."
+									SearchText="{Binding SearchText}"
+									SelectedSuggestion="{Binding SelectedSuggestion, Mode=TwoWay}"
+									ShowCyrillicToggle="True"
+									ShowSuggestions="{Binding ShowSuggestions}"
+									Suggestions="{Binding Suggestions}"
+									Tabs="{Binding Tabs}"
+									UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}">
+
+									<!--  CUSTOM SUGGESTION TEMPLATE  -->
+									<controls:SparkExplorerHeaderView.SuggestionTemplate>
+										<DataTemplate x:DataType="search:SearchSuggestionDto">
+											<Border
+												Margin="2"
+												Padding="12,9"
+												BackgroundColor="White"
+												Stroke="{StaticResource SparkBorderSubtle}"
+												StrokeShape="RoundRectangle 8"
+												StrokeThickness="1">
+												<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+													<Label
+														FontFamily="FASolid"
+														FontSize="13"
+														Text="&#xf007;"
+														TextColor="{StaticResource SparkAccentTeal}"
+														VerticalOptions="Center" />
+													<Label
+														Grid.Column="1"
+														FontAttributes="Bold"
+														FontSize="12.5"
+														Text="{Binding DisplayText}"
+														TextColor="{StaticResource SparkTextPrimary}"
+														VerticalOptions="Center" />
+													<Label
+														Grid.Column="2"
+														FontSize="11"
+														Text="{Binding Group}"
+														TextColor="{StaticResource SparkTextSecondary}"
+														VerticalOptions="Center" />
+												</Grid>
+											</Border>
+										</DataTemplate>
+									</controls:SparkExplorerHeaderView.SuggestionTemplate>
+
+								</controls:SparkExplorerHeaderView>
+
+								<!--  DRILL-DOWN BANNER (Shows when user selected a person)  -->
+								<Border
+									Padding="12,8"
+									BackgroundColor="{StaticResource SparkAccentTealLight}"
+									IsVisible="{Binding IsViewingPersonHistory}"
+									Stroke="{StaticResource SparkAccentTeal}"
+									StrokeShape="RoundRectangle 4"
+									StrokeThickness="1">
+									<Label
+										FontSize="12"
+										Text="{Binding ActiveHistoryLabel, StringFormat='Приказ на целокупна историја за: {0}'}"
+										TextColor="{StaticResource SparkTextPrimary}" />
+								</Border>
+
+							</VerticalStackLayout>
 						</controls:FFSectionCard>
+
+						<!--  DATA GRID SECTION  -->
 						<controls:FFSectionCard>
 							<controls:SparkDataGridView
 								x:Name="AppointmentGrid"
@@ -105,6 +135,7 @@
 								ShowRowNumbers="True"
 								TotalPages="{Binding TotalPages}" />
 						</controls:FFSectionCard>
+
 					</VerticalStackLayout>
 				</ScrollView>
 			</Border>

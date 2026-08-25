@@ -8,9 +8,7 @@ using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
 using EHMR.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Maui;
-using Microsoft.Maui.Controls;
-using System;
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -25,6 +23,7 @@ public partial class AppointmentListViewModel
 {
     private string? _pendingStatus;
     private bool _pendingToday;
+    [ObservableProperty] private bool useCyrillicSearch = true;
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
@@ -43,7 +42,9 @@ public partial class AppointmentListViewModel
     // doctor's "д-р " label or two same-named patients never break the match.
     private SearchEntityType? _activePersonType;
     private string? _activePersonId;
-    private bool _suppressSearchTextSideEffects;
+
+    // Flag to prevent side effects when we programmatically set SearchText
+    private bool _isSelectingSuggestion;
 
     public int SelectedIndex
     {
@@ -60,11 +61,6 @@ public partial class AppointmentListViewModel
     [ObservableProperty] private bool isViewingPersonHistory;
     [ObservableProperty] private string activeHistoryLabel = "";
 
-    partial void OnSelectedSuggestionChanged(SearchSuggestionDto? value)
-    {
-        if(value!=null)
-            _=SelectSuggestionAsync(value);
-    }
     protected override Func<Appointment, Guid?>? DoctorOwnerSelector => e => e.DoctorId;
 
     public static IEnumerable<TextSpan> BuildHighlighted(string text, string query)
@@ -101,79 +97,9 @@ public partial class AppointmentListViewModel
         new() { Filter = AppointmentStatusFilter.Missed,    Label = "Пропуштен" }
     ];
 
-    private async Task DebouncedSearchAsync(string text)
-    {
-        var result = await DebouncedSuggestionSearchAsync(text, async (q, token) =>
-        {
-            var request = new AppointmentSearchQuery(q,
-                new[] { SearchEntityType.Patient, SearchEntityType.Doctor },
-                8);
-            return await _autocomplete.Handle(request, token);
-        });
-
-        if(result is null) return; // cancelled од понова тестирка
-
-        Suggestions=result;
-        SelectedIndex=-1;
-        SelectedSuggestion=null;
-        ShowSuggestions=result.Count>0;
-    }
-
-    private AppointmentStatusOption _selectedStatus;
-
-    public AppointmentStatusOption SelectedStatus
-    {
-        get => _selectedStatus;
-        set
-        {
-            if(!SetProperty(ref _selectedStatus, value)) return;
-            SyncSparkPickersFromFilters();
-            SyncSparkTabsFromFilters();
-            RefreshSparkTabCounts();
-            ApplyPipeline();
-        }
-    }
-
-    private DateTime _filterDate = DateTime.Today;
-
-    public DateTime FilterDate
-    {
-        get => _filterDate;
-        set
-        {
-            if(!SetProperty(ref _filterDate, value)) return;
-            RefreshSparkTabCounts();
-            ApplyPipeline();
-        }
-    }
-
-    public enum DateFilterMode
-    {
-        All, Today, Tomorrow, ThisWeek, ThisMonth, Custom
-    }
-
-    private bool _filterByDate;
-
-    public bool FilterByDate
-    {
-        get => _filterByDate;
-        set
-        {
-            if(!SetProperty(ref _filterByDate, value)) return;
-            RefreshSparkTabCounts();
-            ApplyPipeline();
-        }
-    }
-
-    protected override string ModuleName => Modules.Appointments;
-    protected override string DetailRoute => AppRoutes.Appointments.Detail;
-    protected override string PermissionDeniedMessage => "Немате авторизација за додавање на нови термини.";
-
-    public ICommand SearchCommand
-    {
-        get;
-    }
-
+    // =========================================================================
+    // CONSTRUCTOR
+    // =========================================================================
     public AppointmentListViewModel(
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
         INavigationService navigationService,
@@ -189,21 +115,35 @@ public partial class AppointmentListViewModel
         _selectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.Active);
 
         PageSize=10;
-
         SearchCommand=CommitSearchCommand;
-
-        PropertyChanged+=OnViewModelPropertyChanged;
 
         EvaluatePermissions();
         InitializeSparkControls();
     }
 
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    // =========================================================================
+    // SEARCH & SUGGESTIONS - THE FIX
+    // =========================================================================
+
+    /// <summary>
+    /// When Cyrillic toggle is changed, re-search with current text using new setting.
+    /// </summary>
+    partial void OnUseCyrillicSearchChanged(bool value)
     {
-        if(e.PropertyName!=nameof(SearchText)) return;
+        // Re-trigger search with current text but using new Cyrillic mode
+        OnSearchTextChanged(SearchText);
+    }
 
-        if(_suppressSearchTextSideEffects) return;
+    /// <summary>
+    /// Override of base OnSearchTextChanged - called when SearchText property changes.
+    /// Handles showing/hiding suggestions WITHOUT calling ApplyPipeline.
+    /// </summary>
+    protected override void OnSearchTextChanged(string value)
+    {
+        // Skip if we're programmatically setting SearchText during suggestion selection
+        if(_isSelectingSuggestion) return;
 
+        // Clear person history when user types fresh search
         if(_activePersonId is not null)
         {
             _activePersonId=null;
@@ -212,9 +152,167 @@ public partial class AppointmentListViewModel
             ActiveHistoryLabel="";
         }
 
-        RefreshSparkTabCounts();
-        _=DebouncedSearchAsync(SearchText);
+        var term = value?.Trim()??string.Empty;
+        if(string.IsNullOrWhiteSpace(term))
+        {
+            Suggestions= [];
+            ShowSuggestions=false;
+            return;
+        }
+
+        // Trigger debounced search with Cyrillic support
+        _=DebouncedSearchAsync(term);
     }
+
+    /// <summary>
+    /// Called when user selects a suggestion from dropdown (via partial method).
+    /// </summary>
+    partial void OnSelectedSuggestionChanged(SearchSuggestionDto? value)
+    {
+        if(value!=null)
+            _=SelectSuggestionAsync(value);
+    }
+
+    /// <summary>
+    /// Fetches autocomplete suggestions, with Cyrillic search support.
+    /// </summary>
+ 
+      private async Task DebouncedSearchAsync(string text)
+    {
+        var cyrillicTerm = UseCyrillicSearch
+            ? Helpers.MacedonianTransliterator.ToCyrillic(text)
+            : text;
+
+        var result = await DebouncedSuggestionSearchAsync(text, async (q, token) =>
+        {
+            // Search with both the original term AND the Cyrillic transliteration
+            var request = new AppointmentSearchQuery(q,
+                new[] { SearchEntityType.Patient},
+                8);
+
+            var primary = await _autocomplete.Handle(request, token);
+
+            // If Cyrillic differs from original, also search with transliterated term
+            if(UseCyrillicSearch&&cyrillicTerm!=q)
+            {
+                var cyrillicRequest = new AppointmentSearchQuery(cyrillicTerm,
+                    new[] { SearchEntityType.Patient, SearchEntityType.Doctor },
+                    8);
+
+                var cyrillicResults = await _autocomplete.Handle(cyrillicRequest, token);
+
+                // Merge and deduplicate by Id
+                primary=primary
+                    .Concat(cyrillicResults)
+                    .GroupBy(s => s.Id)
+                    .Select(g => g.First())
+                    .Take(8)
+                    .ToList();
+            }
+
+            return primary;
+        });
+
+        if(result is null) return;
+
+        Suggestions=result;
+        SelectedIndex=-1;
+        SelectedSuggestion=null;
+        ShowSuggestions=result.Count>0;
+    }
+    
+
+    /// <summary>
+    /// User selected a suggestion from dropdown.
+    /// Sets up drill-down mode and filters grid accordingly.
+    /// </summary>
+    [RelayCommand]
+    private async Task SelectSuggestionAsync(SearchSuggestionDto suggestion)
+    {
+        if(suggestion is null)
+            return;
+
+        SelectedSuggestion=suggestion;
+        _activePersonType=suggestion.Type;
+        _activePersonId=suggestion.Id;
+        IsViewingPersonHistory=true;
+        ActiveHistoryLabel=suggestion.DisplayText;
+
+        // Set SearchText without triggering OnSearchTextChanged side effects
+        _isSelectingSuggestion=true;
+        SearchText=suggestion.DisplayText;
+        _isSelectingSuggestion=false;
+
+        // Clear suggestions BEFORE applying pipeline
+        Suggestions= [];
+        SelectedIndex=-1;
+        ShowSuggestions=false;
+
+        // Reset filters to "All" for the drill-down view
+        FilterByDate=false;
+        SelectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
+
+        // NOW apply pipeline (safe - suggestions are cleared)
+        RefreshSparkTabCounts();
+        ApplyPipeline();
+    }
+
+    /// <summary>
+    /// User pressed Enter or clicked "Search" button.
+    /// </summary>
+    [RelayCommand]
+    private void CommitSearch()
+    {
+        if(SelectedSuggestion!=null)
+        {
+            _=SelectSuggestionAsync(SelectedSuggestion);
+            return;
+        }
+
+        // Clear suggestions dropdown
+        ShowSuggestions=false;
+        Suggestions= [];
+
+        // Apply filters and refresh grid
+        RefreshSparkTabCounts();
+        ApplyPipeline();
+    }
+
+    /// <summary>
+    /// Keyboard navigation: move down in suggestions.
+    /// </summary>
+    [RelayCommand]
+    private void MoveNext()
+    {
+        if(Suggestions.Count==0) return;
+        SelectedIndex=Math.Min(SelectedIndex+1, Suggestions.Count-1);
+        SelectedSuggestion=Suggestions[SelectedIndex];
+    }
+
+    /// <summary>
+    /// Keyboard navigation: move up in suggestions.
+    /// </summary>
+    [RelayCommand]
+    private void MovePrevious()
+    {
+        if(Suggestions.Count==0) return;
+        SelectedIndex=Math.Max(SelectedIndex-1, 0);
+        SelectedSuggestion=Suggestions[SelectedIndex];
+    }
+
+    /// <summary>
+    /// Keyboard: user pressed Enter on selected suggestion.
+    /// </summary>
+    [RelayCommand]
+    private async Task CommitSelectionAsync()
+    {
+        if(SelectedIndex<0||SelectedIndex>=Suggestions.Count) return;
+        await SelectSuggestionAsync(Suggestions[SelectedIndex]);
+    }
+
+    // =========================================================================
+    // LOAD & PENDING QUERIES
+    // =========================================================================
 
     [RelayCommand]
     public async Task LoadAsync()
@@ -224,6 +322,7 @@ public partial class AppointmentListViewModel
         {
             IsBusy=true;
             ClearError();
+
             await using var db = await _dbFactory.CreateDbContextAsync();
             var items = await db.Appointments
                 .Include(x => x.Patient)
@@ -231,6 +330,7 @@ public partial class AppointmentListViewModel
                 .AsNoTracking()
                 .OrderBy(x => x.ScheduledStart)
                 .ToListAsync();
+
             AllItems=items;
 
             ApplyPendingQuery();
@@ -265,74 +365,58 @@ public partial class AppointmentListViewModel
         _pendingToday=false;
     }
 
-    [RelayCommand]
-    private void CommitSearch()
+    // =========================================================================
+    // STATUS & DATE FILTERS
+    // =========================================================================
+
+    private AppointmentStatusOption _selectedStatus;
+
+    public AppointmentStatusOption SelectedStatus
     {
-        if(SelectedSuggestion!=null)
+        get => _selectedStatus;
+        set
         {
-            _=SelectSuggestionAsync(SelectedSuggestion);
-            return;
+            if(!SetProperty(ref _selectedStatus, value)) return;
+            SyncSparkPickersFromFilters();
+            SyncSparkTabsFromFilters();
+            RefreshSparkTabCounts();
+            ApplyPipeline();
         }
+    }
 
-        ShowSuggestions=false;
-        RefreshSparkTabCounts();
-        ApplyPipeline();
+    private DateTime _filterDate = DateTime.Today;
+
+    public DateTime FilterDate
+    {
+        get => _filterDate;
+        set
+        {
+            if(!SetProperty(ref _filterDate, value)) return;
+            RefreshSparkTabCounts();
+            ApplyPipeline();
+        }
+    }
+
+    private bool _filterByDate;
+
+    public bool FilterByDate
+    {
+        get => _filterByDate;
+        set
+        {
+            if(!SetProperty(ref _filterByDate, value)) return;
+            RefreshSparkTabCounts();
+            ApplyPipeline();
+        }
     }
 
     [RelayCommand]
-    private Task SelectSuggestionAsync(SearchSuggestionDto suggestion)
-    {
-        if(suggestion is null)
-            return Task.CompletedTask;
+    private void ToggleToday() => FilterByDate=!FilterByDate;
 
-        SelectedSuggestion=suggestion;
-        _activePersonType=suggestion.Type;
-        _activePersonId=suggestion.Id;
-        IsViewingPersonHistory=true;
-        ActiveHistoryLabel=suggestion.DisplayText;
+    // =========================================================================
+    // EDIT / CANCEL / DELETE OPERATIONS
+    // =========================================================================
 
-        _suppressSearchTextSideEffects=true;
-        SearchText=suggestion.DisplayText;
-        _suppressSearchTextSideEffects=false;
-
-        Suggestions= [];
-        SelectedIndex=-1;
-        ShowSuggestions=false;
-
-        FilterByDate=false;
-        SelectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
-
-        RefreshSparkTabCounts();
-        ApplyPipeline();
-        return Task.CompletedTask;
-    }
-
-    [RelayCommand]
-    private void MoveNext()
-    {
-        if(Suggestions.Count==0) return;
-        SelectedIndex=Math.Min(SelectedIndex+1, Suggestions.Count-1);
-        SelectedSuggestion=Suggestions[SelectedIndex];
-    }
-
-    [RelayCommand]
-    private void MovePrevious()
-    {
-        if(Suggestions.Count==0) return;
-        SelectedIndex=Math.Max(SelectedIndex-1, 0);
-        SelectedSuggestion=Suggestions[SelectedIndex];
-    }
-
-    [RelayCommand]
-    private async Task CommitSelectionAsync()
-    {
-        if(SelectedIndex<0||SelectedIndex>=Suggestions.Count) return;
-        await SelectSuggestionAsync(Suggestions[SelectedIndex]);
-    }
-
-    // ================= SELECT / NEW / EDIT (override base for extra business rules) =================
-    // Base already does the permission check + navigation; here we ONLY add
-    // the appointment-specific "CanEdit" business rule (status + date) on top.
     protected override async Task Edit(Appointment item)
     {
         if(item is null) return;
@@ -350,7 +434,7 @@ public partial class AppointmentListViewModel
         }
 
         SelectedItemService.SelectedItem=item;
-        SelectedItemService.OpenInEditMode=true;  // ← ДОДАЈ ОВО
+        SelectedItemService.OpenInEditMode=true;
         await NavigationService.GoToAsync(DetailRoute);
     }
 
@@ -388,7 +472,7 @@ public partial class AppointmentListViewModel
                 await db.SaveChangesAsync();
             }
 
-            // Full reload also drives RefreshSparkTabCounts() + ApplyPipeline() again.
+            // Full reload triggers RefreshSparkTabCounts() + ApplyPipeline()
             await LoadAsync();
         }
         catch(Exception ex)
@@ -404,48 +488,38 @@ public partial class AppointmentListViewModel
     private static bool CanCancel(Appointment a) =>
         a.Status==AppointmentStatus.Scheduled&&a.ScheduledStart.Date>=DateTime.Today;
 
-    private static bool IsPast(Appointment a) => a.ScheduledStart<DateTime.Now;
+    // =========================================================================
+    // PIPELINE HOOKS - SEARCH, FILTER, SORT
+    // =========================================================================
 
-    [RelayCommand]
-    private void ToggleToday() => FilterByDate=!FilterByDate;
-
-    protected override void ResetFilters()
-    {
-        _activePersonId=null;
-        _activePersonType=null;
-        IsViewingPersonHistory=false;
-        ActiveHistoryLabel="";
-
-        _suppressSearchTextSideEffects=true;
-        SearchText=string.Empty;
-        _suppressSearchTextSideEffects=false;
-
-        SelectedSuggestion=null;
-        Suggestions= [];
-        ShowSuggestions=false;
-
-        FilterDate=DateTime.Today;
-        FilterByDate=false;
-        SelectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
-
-        RefreshSparkTabCounts();
-    }
-
-    // ================= PIPELINE HOOKS =================
     protected override IEnumerable<Appointment> ApplySearch(IEnumerable<Appointment> items, string search)
     {
+        // If drill-down mode, don't filter by text
         if(_activePersonId is not null||string.IsNullOrWhiteSpace(search))
             return items;
 
         var term = search.Trim();
+        var cyrillicTerm = UseCyrillicSearch ? Helpers.MacedonianTransliterator.ToCyrillic(term) : term;
+
         return items.Where(x =>
-            (x.Patient?.FullName?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
-            (x.Doctor?.FullName?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
-            (x.ClinicalNotes?.Contains(term, StringComparison.OrdinalIgnoreCase)??false));
+            // Patient search (latin + cyrillic)
+            (x.Patient!=null&&(
+                (x.Patient.FullName?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
+                (x.Patient.FullName?.Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)??false)
+            ))||
+            // Doctor search (latin + cyrillic)
+            (x.Doctor!=null&&(
+                (x.Doctor.FullName?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
+                (x.Doctor.FullName?.Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)??false)
+            ))||
+            // Clinical notes search (latin + cyrillic)
+            (x.ClinicalNotes?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
+            (x.ClinicalNotes?.Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)??false));
     }
 
     protected override IEnumerable<Appointment> ApplyFilters(IEnumerable<Appointment> items)
     {
+        // Drill-down by person (patient or doctor)
         if(_activePersonId is not null)
         {
             var history = _activePersonType==SearchEntityType.Doctor
@@ -457,15 +531,13 @@ public partial class AppointmentListViewModel
 
         var query = ApplyStatusFilter(items);
 
+        // Date filter
         if(FilterByDate)
             query=query.Where(x => x.ScheduledStart.Date==FilterDate.Date);
 
         return query;
     }
 
-    // Status filtering was duplicated in ApplyFilters (once for the person-history
-    // branch, once for the normal branch) and again in RefreshSparkTabCounts.
-    // Pulled out once so all three stay in sync by construction.
     private IEnumerable<Appointment> ApplyStatusFilter(IEnumerable<Appointment> items) =>
         SelectedStatus.Filter switch
         {
@@ -480,9 +552,32 @@ public partial class AppointmentListViewModel
             ? query.OrderByDescending(x => x.ScheduledStart)
             : query.OrderBy(x => x.ScheduledStart);
 
-    // ============================================================
-    // TABS
-    // ============================================================
+    protected override void ResetFilters()
+    {
+        _activePersonId=null;
+        _activePersonType=null;
+        IsViewingPersonHistory=false;
+        ActiveHistoryLabel="";
+
+        _isSelectingSuggestion=true;
+        SearchText=string.Empty;
+        _isSelectingSuggestion=false;
+
+        SelectedSuggestion=null;
+        Suggestions= [];
+        ShowSuggestions=false;
+
+        FilterDate=DateTime.Today;
+        FilterByDate=false;
+        SelectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
+
+        RefreshSparkTabCounts();
+    }
+
+    // =========================================================================
+    // TABS - STATUS FILTERING
+    // =========================================================================
+
     private readonly Dictionary<AppointmentStatusFilter, SparkTabItem> _statusTabsByFilter = new();
 
     private void BuildSparkTabs()
@@ -507,9 +602,6 @@ public partial class AppointmentListViewModel
         RefreshSparkTabCounts();
     }
 
-    // Mirrors ApplySearch + the date/person parts of ApplyFilters, but WITHOUT
-    // the status filter, so per-status counts can be computed against the same
-    // context (search term / date filter / drilled-down person) the grid uses.
     private IEnumerable<Appointment> GetItemsForTabCounts()
     {
         IEnumerable<Appointment> items = ApplySearch(AllItems, SearchText);
@@ -554,9 +646,10 @@ public partial class AppointmentListViewModel
             tab.IsSelected=filter==SelectedStatus.Filter;
     }
 
-    // ============================================================
-    // SPARK CONTROLS
-    // ============================================================
+    // =========================================================================
+    // SPARK CONTROLS - PICKERS, BUTTONS, GRID
+    // =========================================================================
+
     [ObservableProperty] private ObservableCollection<SparkGridColumn> gridColumns = new();
     [ObservableProperty] private ObservableCollection<SparkGridRow> gridRows = new();
 
@@ -589,10 +682,6 @@ public partial class AppointmentListViewModel
         _statusPicker.SelectedItem=SelectedStatus.Label;
     }
 
-    // "Денес" is now a plain bound Button directly in AppointmentListPage.xaml
-    // (Command="{Binding ToggleTodayCommand}", styled off FilterByDate via
-    // DataTrigger) instead of a SparkButtonItem, so it no longer needs to be
-    // built or synced here at all.
     protected override void BuildSparkButtons()
     {
         Buttons.Clear();
@@ -602,7 +691,8 @@ public partial class AppointmentListViewModel
     private void BuildSparkGridColumns()
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
-        {      new() { Header = "БРОЈ", Key = "AppointmentNumber", Width = new GridLength(1.3, GridUnitType.Star) },
+        {
+            new() { Header = "БРОЈ", Key = "AppointmentNumber", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
             new() { Header = "РЕУМАТОЛОГ", Key = "Doctor", Width = new GridLength(2, GridUnitType.Star) },
             new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1, GridUnitType.Star) },
@@ -626,7 +716,6 @@ public partial class AppointmentListViewModel
             row["Time"]=a.ScheduledStart.ToString("HH:mm");
             row["Status"]=new SparkBadgeValue(StatusLabel(a.Status), StatusToTone(a.Status));
 
-            // Select + (условен) Edit — сега преку base helper, RBAC + бизнис-правило заедно
             AddDefaultActions(a, row, detailLabel: "Повеќе", editLabel: "Промени", canEditPredicate: CanEdit);
 
             if(CanDelete&&CanCancel(a))
@@ -663,7 +752,20 @@ public partial class AppointmentListViewModel
         AppointmentStatus.Cancelled or AppointmentStatus.Missed => SparkBadgeTone.Danger,
         _ => SparkBadgeTone.Neutral
     };
+
+    protected override string ModuleName => Modules.Appointments;
+    protected override string DetailRoute => AppRoutes.Appointments.Detail;
+    protected override string PermissionDeniedMessage => "Немате авторизација за додавање на нови термини.";
+
+    public ICommand SearchCommand
+    {
+        get;
+    }
 }
+
+// =========================================================================
+// SUPPORTING TYPES
+// =========================================================================
 
 public enum AppointmentStatusFilter
 {

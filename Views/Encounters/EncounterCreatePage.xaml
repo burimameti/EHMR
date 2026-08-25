@@ -22,8 +22,11 @@
 			Grid.Column="1"
 			RowDefinitions="Auto,*"
 			Style="{StaticResource CrudFormPageGridStyle}">
-			<!--  ── HEADER ──────────────────────────────────────────────────  -->
-			<Border Grid.Row="0" Margin="16,16,16,0" Style="{StaticResource PageCardStyleDashboard}">
+
+			<Border
+				Grid.Row="0"
+				Margin="16,16,16,0"
+				Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader
 					Title="Внесување на нов преглед"
 					PrimaryButtonCommand="{Binding SaveEncounterCommand}"
@@ -35,18 +38,20 @@
 					Subtitle="Внесете ги основните и медицинските детали за тековниот преглед" />
 			</Border>
 
-			<!--  ── TWO-COLUMN BODY ──────────────────────────────────────────  -->
 			<Grid
 				Grid.Row="1"
+				Margin="16,0,16,0"
 				ColumnDefinitions="2*,1*"
 				ColumnSpacing="6"
-				Margin="16,0,16,0"
 				Style="{StaticResource CrudFormBodyGridStyle}">
 
 				<!--  ═══════════════════════════════════════════════════════  -->
 				<!--  ЛЕВА КОЛОНА — ФОРМИ  -->
 				<!--  ═══════════════════════════════════════════════════════  -->
-				<controls:FFSectionCard Margin="0" Grid.Column="0" Style="{StaticResource CrudFormCardStyle}">
+				<controls:FFSectionCard
+					Grid.Column="0"
+					Margin="0"
+					Style="{StaticResource CrudFormCardStyle}">
 					<ScrollView VerticalScrollBarVisibility="Never">
 						<VerticalStackLayout Style="{StaticResource CrudFormContentStackStyle}">
 
@@ -614,82 +619,103 @@
 											Text="Додадени за овој преглед"
 											TextColor="{StaticResource SparkTextSecondary}" />
 
-										<!--  Table header — only when there are rows  -->
+										<!--  Table header  -->
 										<Grid
 											ColumnDefinitions="2*,1*,32"
-											ColumnSpacing="0"
+											ColumnSpacing="1"
 											IsVisible="{Binding HasEncounterMedicines}">
 											<Border
 												Grid.Column="0"
-												Padding="10,7"
-												BackgroundColor="{StaticResource SparkBackgroundAlt}"
-												Stroke="{StaticResource SparkBorderSubtle}"
-												StrokeShape="Rectangle"
-												StrokeThickness="1">
+												Padding="10,8"
+												BackgroundColor="#475569"
+												StrokeShape="RoundRectangle 6,0,0,0"
+												StrokeThickness="0">
 												<Label
 													FontAttributes="Bold"
 													FontSize="10"
 													Text="ИМЕ НА ЛЕКОТ"
-													TextColor="{StaticResource SparkTextSecondary}" />
+													TextColor="White" />
 											</Border>
 											<Border
 												Grid.Column="1"
-												Padding="10,7"
-												BackgroundColor="{StaticResource SparkBackgroundAlt}"
-												Stroke="{StaticResource SparkBorderSubtle}"
-												StrokeShape="Rectangle"
-												StrokeThickness="1">
+												Padding="10,8"
+												BackgroundColor="#475569"
+												StrokeThickness="0">
 												<Label
 													FontAttributes="Bold"
 													FontSize="10"
 													Text="КОЛИЧИНА"
-													TextColor="{StaticResource SparkTextSecondary}" />
+													TextColor="White" />
 											</Border>
-											<!--  Delete column header — empty  -->
 											<Border
 												Grid.Column="2"
-												BackgroundColor="{StaticResource SparkBackgroundAlt}"
-												Stroke="{StaticResource SparkBorderSubtle}"
-												StrokeShape="Rectangle"
-												StrokeThickness="1" />
+												BackgroundColor="#475569"
+												StrokeShape="RoundRectangle 0,6,0,0"
+												StrokeThickness="0" />
 										</Grid>
 
 										<!--  Table rows  -->
-										<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="6">
+										<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="0">
 											<BindableLayout.EmptyView>
-												<Label
-													Padding="0,6"
-													FontSize="12"
-													Text="Нема додадени лекови за овој преглед."
-													TextColor="{StaticResource SparkTextSecondary}" />
+												<Border
+													Padding="12,14"
+													BackgroundColor="White"
+													Stroke="{StaticResource SparkBorderSubtle}"
+													StrokeThickness="1">
+													<Label
+														FontSize="12"
+														Text="Нема додадени лекови за овој преглед."
+														TextColor="{StaticResource SparkTextSecondary}" />
+												</Border>
 											</BindableLayout.EmptyView>
 											<BindableLayout.ItemTemplate>
 												<DataTemplate x:DataType="entities:PatientMedicine">
-													<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
-														<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
-														<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
-															<Grid ColumnDefinitions="2*,1*,28" ColumnSpacing="8">
-																<Label
-																	LineBreakMode="TailTruncation"
-																	Style="{StaticResource CrudCollectionTitleStyle}"
-																	Text="{Binding Medicine.Name}" />
-																<controls:FFInput
-																	Grid.Column="1"
-																	Keyboard="Numeric"
-																	Placeholder="Количина"
-																	Text="{Binding Dosage, Mode=TwoWay}" />
-																<Button
-																	Grid.Column="2"
-																	Padding="0"
-																	BackgroundColor="Transparent"
-																	Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}"
-																	CommandParameter="{Binding .}"
-																	FontSize="11"
-																	HeightRequest="26"
-																	Text="✕"
-																	TextColor="#DC2626"
-																	WidthRequest="26" />
-															</Grid>
+													<Grid ColumnDefinitions="2*,1*,32" ColumnSpacing="1">
+														<Border
+															Grid.Column="0"
+															Padding="10,0"
+															BackgroundColor="White"
+															HeightRequest="44"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															StrokeThickness="1">
+															<Label
+																FontSize="12"
+																LineBreakMode="TailTruncation"
+																Text="{Binding Medicine.Name}"
+																TextColor="{StaticResource SparkTextPrimary}"
+																VerticalOptions="Center" />
+														</Border>
+														<Border
+															Grid.Column="1"
+															Padding="4,0"
+															BackgroundColor="White"
+															HeightRequest="44"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															StrokeThickness="1">
+															<Entry
+																BackgroundColor="Transparent"
+																FontSize="12"
+																Keyboard="Numeric"
+																Text="{Binding Dosage, Mode=TwoWay}"
+																TextColor="{StaticResource SparkTextPrimary}"
+																VerticalOptions="Center"
+																VerticalTextAlignment="Center" />
+														</Border>
+														<Border
+															Grid.Column="2"
+															BackgroundColor="White"
+															HeightRequest="44"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															StrokeThickness="1">
+															<Button
+																Padding="0"
+																BackgroundColor="Transparent"
+																Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}"
+																CommandParameter="{Binding .}"
+																FontSize="12"
+																Text="✕"
+																TextColor="#DC2626"
+																WidthRequest="32" />
 														</Border>
 													</Grid>
 												</DataTemplate>
@@ -770,7 +796,10 @@
 				<!--  ═══════════════════════════════════════════════════════  -->
 				<!--  ДЕСНА КОЛОНА — ТЕРМИН/ЦИКЛУС + ПРЕГЛЕДИ + ДОКУМЕНТИ  -->
 				<!--  ═══════════════════════════════════════════════════════  -->
-				<controls:FFSectionCard Margin="0" Grid.Column="1" Style="{StaticResource CrudFormCardStyle}">
+				<controls:FFSectionCard
+					Grid.Column="1"
+					Margin="0"
+					Style="{StaticResource CrudFormCardStyle}">
 					<ScrollView VerticalScrollBarVisibility="Never">
 						<VerticalStackLayout Style="{StaticResource CrudFormSidebarStackStyle}">
 

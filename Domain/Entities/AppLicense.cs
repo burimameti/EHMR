@@ -61,5 +61,5 @@ public class AppLicense : BaseEntity
 public static class LicenseLimits
 {
     /// <summary>Најмногу пациенти без лиценца.</summary>
-    public const int FreePatients = 10;
+    public const int FreePatients = 25;
 }

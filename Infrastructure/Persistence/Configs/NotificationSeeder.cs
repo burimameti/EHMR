@@ -29,7 +29,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                     Id=Guid.NewGuid(),
                     UserId=admin.Id,
                     Title="System initialized",
-                    Message="EHMR platform successfully started",
+                    Message="ЕХМР Успешно стратуваше",
                     IsRead=false,
                     CreatedAt=DateTime.UtcNow
                 },

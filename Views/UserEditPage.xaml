@@ -3,8 +3,8 @@
 	x:Class="EHMR.Views.UserEditPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="Root"
 	x:DataType="viewModels:UserEditViewModel"
 	BackgroundColor="#F8FAFC">
@@ -18,22 +18,41 @@
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
-		<Grid Grid.Column="1" Padding="0" RowDefinitions="Auto,*" RowSpacing="16">
+		<Grid
+			Grid.Column="1"
+			Padding="0"
+			RowDefinitions="Auto,*"
+			RowSpacing="16">
 
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<controls:FFPageHeader
-				Grid.Row="0"
-				Title="{Binding PageTitle}"
-				Subtitle="Управување со кориснички улоги и системски дозволи">
-				<controls:FFPageHeader.HeaderContent>
-					<HorizontalStackLayout Spacing="10">
-						<controls:FFButton ButtonKind="Secondary" Command="{Binding ToggleEditModeCommand}" IsVisible="{Binding CanShowEditButton}" Text="Уреди" />
-						<controls:FFButton ButtonKind="Danger" Command="{Binding DeleteCommand}" IsVisible="{Binding CanShowDeleteButton}" Text="Избриши" />
-						<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" IsVisible="{Binding IsEditMode}" Text="Откажи" />
-						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" />
-					</HorizontalStackLayout>
-				</controls:FFPageHeader.HeaderContent>
-			</controls:FFPageHeader>
+				<controls:FFPageHeader Title="{Binding PageTitle}" Subtitle="Управување со кориснички улоги и системски дозволи">
+					<controls:FFPageHeader.HeaderContent>
+						<HorizontalStackLayout Spacing="10">
+							<controls:FFButton
+								ButtonKind="Secondary"
+								Command="{Binding ToggleEditModeCommand}"
+								IsVisible="{Binding CanShowEditButton}"
+								Text="Уреди" />
+							<controls:FFButton
+								ButtonKind="Danger"
+								Command="{Binding DeleteCommand}"
+								IsVisible="{Binding CanShowDeleteButton}"
+								Text="Избриши" />
+							<controls:FFButton
+								ButtonKind="Secondary"
+								Command="{Binding CancelCommand}"
+								IsVisible="{Binding IsEditMode}"
+								Text="Откажи" />
+							<controls:FFButton
+								BackgroundColorEx="{StaticResource SidebarActiveBg}"
+								ButtonKind="Primary"
+								Command="{Binding SaveCommand}"
+								IsVisible="{Binding IsEditMode}"
+								Text="Зачувај"
+								TextColorEx="White" />
+						</HorizontalStackLayout>
+					</controls:FFPageHeader.HeaderContent>
+				</controls:FFPageHeader>
 			</Border>
 
 			<ScrollView Grid.Row="1" Padding="0">
@@ -63,7 +82,10 @@
 											FontSize="11"
 											Text="КОРИСНИЧКО ИМЕ *"
 											TextColor="#475569" />
-										<controls:FFInput IsReadOnly="{Binding IsReadOnly}" Placeholder="Username" Text="{Binding User.Username, Mode=TwoWay}" />
+										<controls:FFInput
+											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="Username"
+											Text="{Binding User.Username, Mode=TwoWay}" />
 									</VerticalStackLayout>
 
 									<VerticalStackLayout Grid.Column="1" Spacing="6">
@@ -96,7 +118,10 @@
 											FontSize="11"
 											Text="ИМЕ *"
 											TextColor="#475569" />
-										<controls:FFInput IsReadOnly="{Binding IsReadOnly}" Placeholder="Внесете име" Text="{Binding User.FirstName, Mode=TwoWay}" />
+										<controls:FFInput
+											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="Внесете име"
+											Text="{Binding User.FirstName, Mode=TwoWay}" />
 									</VerticalStackLayout>
 
 									<VerticalStackLayout
@@ -109,7 +134,10 @@
 											FontSize="11"
 											Text="ПРЕЗИМЕ *"
 											TextColor="#475569" />
-										<controls:FFInput IsReadOnly="{Binding IsReadOnly}" Placeholder="Внесете презиме" Text="{Binding User.LastName, Mode=TwoWay}" />
+										<controls:FFInput
+											IsReadOnly="{Binding IsReadOnly}"
+											Placeholder="Внесете презиме"
+											Text="{Binding User.LastName, Mode=TwoWay}" />
 									</VerticalStackLayout>
 								</Grid>
 							</VerticalStackLayout>
@@ -182,68 +210,101 @@
 					<VerticalStackLayout Grid.Column="1" Spacing="16">
 
 						<controls:FFSectionCard Margin="0" ContentPadding="18">
-							<VerticalStackLayout Spacing="14">
-								<controls:CrudSectionHeader Title="СИСТЕМСКА УЛОГА (ROLE) *" />
-								<Grid>
-									<Border
-										Padding="12,6"
-										BackgroundColor="#EFF6FF"
-										HorizontalOptions="Start"
-										IsVisible="{Binding IsReadOnly}"
-										StrokeShape="RoundRectangle 8"
-										StrokeThickness="0">
-										<HorizontalStackLayout Spacing="6">
-											<BoxView
-												CornerRadius="4"
-												HeightRequest="8"
-												VerticalOptions="Center"
-												WidthRequest="8"
-												Color="#2563EB" />
-											<Label
-												FontAttributes="Bold"
-												FontSize="12"
-												Text="{Binding User.Role}"
-												TextColor="#2563EB"
-												VerticalOptions="Center" />
-										</HorizontalStackLayout>
-									</Border>
+							<VerticalStackLayout Spacing="10">
+								<HorizontalStackLayout Spacing="8">
+									<Label
+										FontSize="15"
+										Text="🎭"
+										VerticalOptions="Center" />
+									<controls:CrudSectionHeader Title="СИСТЕМСКА УЛОГА (ROLE) *" />
+								</HorizontalStackLayout>
 
-									<controls:FFPicker IsVisible="{Binding IsEditMode}" ItemsSource="{Binding Roles}" Label="" Placeholder="Изберете улога" SelectedItem="{Binding SelectedRole, Mode=TwoWay}" />
-								</Grid>
+								<Border
+									Padding="14,12"
+									BackgroundColor="#EFF6FF"
+									IsVisible="{Binding IsReadOnly}"
+									Stroke="#BFDBFE"
+									StrokeShape="RoundRectangle 8"
+									StrokeThickness="1">
+									<HorizontalStackLayout Spacing="10">
+										<Border
+											Padding="7,5"
+											BackgroundColor="#2563EB"
+											StrokeShape="RoundRectangle 4"
+											StrokeThickness="0"
+											VerticalOptions="Center">
+											<Label
+												FontFamily="FASolid"
+												FontSize="10"
+												Text="&#xf505;"
+												TextColor="White" />
+										</Border>
+										<Label
+											FontAttributes="Bold"
+											FontSize="13"
+											Text="{Binding User.Role}"
+											TextColor="#1E40AF"
+											VerticalOptions="Center" />
+									</HorizontalStackLayout>
+								</Border>
+
+								<controls:FFPicker
+									IsVisible="{Binding IsEditMode}"
+									ItemsSource="{Binding Roles}"
+									Label=""
+									Placeholder="Изберете улога"
+									SelectedItem="{Binding SelectedRole, Mode=TwoWay}" />
 							</VerticalStackLayout>
 						</controls:FFSectionCard>
 
 						<controls:FFSectionCard Margin="0" ContentPadding="18">
-							<VerticalStackLayout Spacing="14">
-								<controls:CrudSectionHeader Title="ПОЗИЦИЈА / ОДДЕЛ (POSITION) *" />
-								<Grid>
-									<Border
-										Padding="12,6"
-										BackgroundColor="#F1F5F9"
-										HorizontalOptions="Start"
-										IsVisible="{Binding IsReadOnly}"
-										StrokeShape="RoundRectangle 8"
-										StrokeThickness="0">
-										<HorizontalStackLayout Spacing="6">
-											<BoxView
-												CornerRadius="4"
-												HeightRequest="8"
-												VerticalOptions="Center"
-												WidthRequest="8"
-												Color="#475569" />
-											<Label
-												FontAttributes="Bold"
-												FontSize="12"
-												Text="{Binding User.Position}"
-												TextColor="#475569"
-												VerticalOptions="Center" />
-										</HorizontalStackLayout>
-									</Border>
+							<VerticalStackLayout Spacing="10">
+								<HorizontalStackLayout Spacing="8">
+									<Label
+										FontSize="15"
+										Text="🏢"
+										VerticalOptions="Center" />
+									<controls:CrudSectionHeader Title="ПОЗИЦИЈА / ОДДЕЛ (POSITION) *" />
+								</HorizontalStackLayout>
 
-									<controls:FFPicker IsVisible="{Binding IsEditMode}" ItemsSource="{Binding Positions}" Label="" Placeholder="Изберете позиција" SelectedItem="{Binding User.Position, Mode=TwoWay}" />
-								</Grid>
+								<Border
+									Padding="14,12"
+									BackgroundColor="#F1F5F9"
+									IsVisible="{Binding IsReadOnly}"
+									Stroke="#CBD5E1"
+									StrokeShape="RoundRectangle 8"
+									StrokeThickness="1">
+									<HorizontalStackLayout Spacing="10">
+										<Border
+											Padding="7,5"
+											BackgroundColor="#475569"
+											StrokeShape="RoundRectangle 4"
+											StrokeThickness="0"
+											VerticalOptions="Center">
+											<Label
+												FontFamily="FASolid"
+												FontSize="10"
+												Text="&#xf0b1;"
+												TextColor="White" />
+										</Border>
+										<Label
+											FontAttributes="Bold"
+											FontSize="13"
+											Text="{Binding User.Position}"
+											TextColor="#334155"
+											VerticalOptions="Center" />
+									</HorizontalStackLayout>
+								</Border>
+
+								<controls:FFPicker
+									IsVisible="{Binding IsEditMode}"
+									ItemsSource="{Binding Positions}"
+									Label=""
+									Placeholder="Изберете позиција"
+									SelectedItem="{Binding SelectedPosition, Mode=TwoWay}" />
 							</VerticalStackLayout>
 						</controls:FFSectionCard>
+
 					</VerticalStackLayout>
 				</Grid>
 			</ScrollView>

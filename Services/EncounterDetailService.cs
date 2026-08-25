@@ -225,7 +225,7 @@ public class EncounterDetailService : IEncounterDetailService
 
         // Encounter is always born with its appointment
         var encounterNumber =
-            await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Encounter, "ENC");
+            await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Encounter, "PREG");
 
         await BuildEncounterAsync(db,appointment, encounterNumber);
 
@@ -261,6 +261,7 @@ public class EncounterDetailService : IEncounterDetailService
 
     public async Task<PatientContextDto> GetPatientContext(Guid patientId)
     {
+        await AutoCloseStaleVisitsAsync();
         await using var db = await _factory.CreateDbContextAsync();
 
         var patient = await db.Patients
@@ -407,7 +408,11 @@ public class EncounterDetailService : IEncounterDetailService
             encounter.Status=resolvedEncounter;
             appointment.Status=resolvedAppointment;
 
-            if(resolvedEncounter==EncounterStatus.Completed&&!encounter.IsLocked)
+            var isTerminal = resolvedEncounter is EncounterStatus.Completed
+                                                or EncounterStatus.Cancelled
+                                                or EncounterStatus.NoShow;
+
+            if(isTerminal&&!encounter.IsLocked)
             {
                 encounter.IsLocked=true;
                 encounter.EndTime=DateTime.Now;
@@ -419,7 +424,6 @@ public class EncounterDetailService : IEncounterDetailService
 
         await db.SaveChangesAsync();
     }
-
     public async Task UpdateEncounterStatus(Guid encounterId, EncounterStatus newStatus)
     {
         await using var db = await _factory.CreateDbContextAsync();
@@ -440,7 +444,11 @@ public class EncounterDetailService : IEncounterDetailService
             appointment.Status=resolvedAppointment;
         }
 
-        if(encounter.Status==EncounterStatus.Completed&&!encounter.IsLocked)
+        var isTerminal = encounter.Status is EncounterStatus.Completed
+                                           or EncounterStatus.Cancelled
+                                           or EncounterStatus.NoShow;
+
+        if(isTerminal&&!encounter.IsLocked)
         {
             encounter.IsLocked=true;
             encounter.EndTime=DateTime.Now;
@@ -545,7 +553,7 @@ public class EncounterDetailService : IEncounterDetailService
 
                 if(string.IsNullOrWhiteSpace(encounter?.EncounterNumber))
                     encounter.EncounterNumber=
-                        await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Encounter, "ENC");
+                        await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Encounter, "PREG");
 
                 encounter.CreatedAt=DateTime.UtcNow;
 
@@ -660,8 +668,11 @@ public class EncounterDetailService : IEncounterDetailService
                     encounter.Status=resolvedEncounter;
                     appt.Status=resolvedAppointment;
 
-                    // Lock and timestamp when completing
-                    if(resolvedEncounter==EncounterStatus.Completed&&!encounter.IsLocked)
+                    var isTerminal = resolvedEncounter is EncounterStatus.Completed
+                                                        or EncounterStatus.Cancelled
+                                                        or EncounterStatus.NoShow;
+
+                    if(isTerminal&&!encounter.IsLocked)
                     {
                         encounter.IsLocked=true;
                         encounter.EndTime=DateTime.Now;
@@ -695,7 +706,74 @@ public class EncounterDetailService : IEncounterDetailService
             throw;
         }
     }
+    public async Task AutoCloseStaleVisitsAsync(int staleAfterDays = 3)
+    {
+        await using var db = await _factory.CreateDbContextAsync();
 
+        var cutoff = DateTime.Now.AddDays(-staleAfterDays);
+
+        // ── Appointments still open past the cutoff ──────────────────────
+        var staleAppointments = await db.Appointments
+            .Where(a => (a.Status==AppointmentStatus.Scheduled
+                         ||a.Status==AppointmentStatus.CheckedIn
+                         ||a.Status==AppointmentStatus.InProgress)
+                        &&a.ScheduledStart<cutoff)
+            .ToListAsync();
+
+        if(staleAppointments.Count>0)
+        {
+            var staleIds = staleAppointments.Select(a => a.Id).ToList();
+
+            var linkedEncounters = await db.Encounters
+                .Where(e => e.AppointmentId.HasValue
+                            &&staleIds.Contains(e.AppointmentId.Value)
+                            &&!e.IsLocked)
+                .ToListAsync();
+
+            var encounterByAppointmentId = linkedEncounters
+                .Where(e => e.AppointmentId.HasValue)
+                .ToDictionary(e => e.AppointmentId!.Value);
+
+            foreach(var appt in staleAppointments)
+            {
+                appt.Status=AppointmentStatus.Missed;
+
+                if(encounterByAppointmentId.TryGetValue(appt.Id, out var encounter))
+                {
+                    encounter.Status=EncounterStatus.NoShow;
+                    encounter.IsLocked=true;
+                    encounter.EndTime=DateTime.Now;
+                    encounter.DurationMinutes=encounter.StartTime.HasValue
+                        ? (int)(DateTime.Now-encounter.StartTime.Value).TotalMinutes
+                        : null;
+                }
+            }
+        }
+
+        // ── Standalone encounters (walk-ins, no appointment) past the cutoff ──
+        var staleEncounters = await db.Encounters
+            .Where(e => !e.AppointmentId.HasValue
+                        &&!e.IsLocked
+                        &&(e.Status==EncounterStatus.Scheduled
+                           ||e.Status==EncounterStatus.CheckedIn
+                           ||e.Status==EncounterStatus.InProgress)
+                        &&e.ScheduledStart.HasValue
+                        &&e.ScheduledStart<cutoff)
+            .ToListAsync();
+
+        foreach(var encounter in staleEncounters)
+        {
+            encounter.Status=EncounterStatus.NoShow;
+            encounter.IsLocked=true;
+            encounter.EndTime=DateTime.Now;
+            encounter.DurationMinutes=encounter.StartTime.HasValue
+                ? (int)(DateTime.Now-encounter.StartTime.Value).TotalMinutes
+                : null;
+        }
+
+        if(staleAppointments.Count>0||staleEncounters.Count>0)
+            await db.SaveChangesAsync();
+    }
     // ── Private Helpers ──────────────────────────────────────────────────────
 
     public async Task BuildEncounterAsync(DesktopTherapyDbContext db, Appointment appointment, string encounterNumber)
@@ -703,7 +781,7 @@ public class EncounterDetailService : IEncounterDetailService
        
 
         if(string.IsNullOrWhiteSpace(encounterNumber))
-            encounterNumber=await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Encounter, "ENC");
+            encounterNumber=await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Encounter, "PREG");
 
         db.Encounters.Add(new Encounter
         {
@@ -723,7 +801,7 @@ public class EncounterDetailService : IEncounterDetailService
             CreatedAt=DateTime.UtcNow,
         });
 
-        await db.SaveChangesAsync();
+      //  await db.SaveChangesAsync();
 
     }
 

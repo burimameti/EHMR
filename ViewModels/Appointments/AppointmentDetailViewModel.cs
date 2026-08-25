@@ -5,12 +5,8 @@ using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Helpers;
 using EHMR.Services;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Collections.Specialized;
 
 namespace EHMR.ViewModels.Appointments;
 
@@ -30,7 +26,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     private int _slotRequestVersion;
 
     protected override string ModuleName => Modules.Appointments;
-
+    private bool _isLoading;
     public bool IsNewAppointment => _isNewAppointmentMode;
     public bool CanSaveAppointment => IsNewAppointment ? CanCreate : CanUpdate;
     public bool CanEditAppointment =>
@@ -39,15 +35,21 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         Appointment.ScheduledStart.Date>=DateTime.Today;
     public bool ShowStatusEditor => IsEditMode&&!IsNewAppointment;
 
+    // Mirrors Encounter's HasEncounterMedicines — drives the medicine table header row.
+    public bool HasSelectedMedicines => SelectedMedicines.Count>0;
+
+    // Header now owns identity + timing only ("Термин #.. · dd.MM.yyyy HH:mm–HH:mm").
+    // Patient/doctor identity lives exclusively in the ПАЦИЕНТ И РЕУМАТОЛОГ card below —
+    // no more duplicating the same two names in both places.
     public string HeaderTitle =>
         _isNewAppointmentMode
             ? "Нов Термин"
-            : $"Термин: {SelectedPatientForAppointment?.FullName}";
+            : $"Термин {(Appointment.AppointmentNumber is { Length:>0 } num ? $"№{num}" : string.Empty)}".TrimEnd();
 
     public string HeaderSubtitle =>
         _isNewAppointmentMode
             ? "Закажување нов термин"
-            : $"Реуматолог: {SelectedDoctorForAppointment?.FullName} • {Appointment.ScheduledStart:dd.MM.yyyy HH:mm}";
+            : $"{Appointment.ScheduledStart:dd.MM.yyyy} • {Appointment.ScheduledStart:HH:mm}–{Appointment.ScheduledEnd:HH:mm}";
 
     public AppointmentDetailViewModel(
         IAuthorizationService authorizationService,
@@ -62,8 +64,12 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         _service=service;
         _selectedItemService=selected;
         InitMkbAlphabet();
+        SelectedMedicines.CollectionChanged+=OnSelectedMedicinesCollectionChanged;
         EvaluatePermissions();
     }
+
+    private void OnSelectedMedicinesCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+        OnPropertyChanged(nameof(HasSelectedMedicines));
 
     // =========================
     // APPOINTMENT
@@ -82,7 +88,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [ObservableProperty] private bool showPatientSuggestions;
 
     // =========================
-    // DIAGNOSIS SEARCH
+    // DIAGNOSIS / MKB SEARCH — property names match EncounterBaseViewModel 1:1
     // =========================
 
     [ObservableProperty] private string diagnosisSearchText = string.Empty;
@@ -90,7 +96,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [ObservableProperty] private bool showDiagnosisDropdown;
     [ObservableProperty] private ObservableCollection<Mkb10Code> availableDiagnoses = new();
     [ObservableProperty] private ObservableCollection<MkbAlphabetSection> mkbAlphabetSections = new();
-    [ObservableProperty] private string selectedMkbSection = "A";
+    [ObservableProperty] private string selectedMkbSection = string.Empty;
 
     // =========================
     // MEDICINE SEARCH
@@ -153,13 +159,13 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         get;
     } =
     [
-        new(AppointmentStatus.Scheduled,    "Закажан"),
-        new(AppointmentStatus.CheckedIn,    "Пријавен"),
-        new(AppointmentStatus.InProgress,   "Во тек"),
-        new(AppointmentStatus.Completed,    "Завршен"),
-        new(AppointmentStatus.Cancelled,    "Откажан"),
-        new(AppointmentStatus.Missed,       "Пропуштен"),
-        new(AppointmentStatus.ReScheduled,  "Презакажан"),
+        new(AppointmentStatus.Scheduled,   "Закажан"),
+        new(AppointmentStatus.CheckedIn,   "Пријавен"),
+        new(AppointmentStatus.InProgress,  "Во тек"),
+        new(AppointmentStatus.Completed,   "Завршен"),
+        new(AppointmentStatus.Cancelled,   "Откажан"),
+        new(AppointmentStatus.Missed,      "Пропуштен"),
+        new(AppointmentStatus.ReScheduled, "Презакажан"),
     ];
 
     public AppointmentStatusChoice? SelectedStatusOption
@@ -235,12 +241,35 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     partial void OnDiagnosisDescriptionSearchTextChanged(string value) =>
         _=SearchDiagnosesAsync(DiagnosisSearchText, value);
 
+
     partial void OnPreferredAppointmentDateChanged(DateTime value)
     {
+
         if(!_isApplyingAutomaticSlot&&SelectedDoctorForAppointment!=null&&IsNewAppointment)
             _=AssignNextAvailableSlotAsync();
+
+        if(!IsNewAppointment&&IsEditMode)
+            SyncAppointmentScheduleFromPickers();
     }
 
+    partial void OnSelectedStartTimeChanged(TimeSpan value)
+    {
+
+        if(!IsNewAppointment&&IsEditMode)
+            SyncAppointmentScheduleFromPickers();
+    }
+
+    private void SyncAppointmentScheduleFromPickers()
+    {
+        var duration = Appointment.ScheduledEnd-Appointment.ScheduledStart;
+        if(duration<=TimeSpan.Zero) duration=TimeSpan.FromMinutes(30);
+
+        var newStart = PreferredAppointmentDate.Date+SelectedStartTime;
+        Appointment.ScheduledStart=newStart;
+        Appointment.ScheduledEnd=newStart+duration;
+        OnPropertyChanged(nameof(Appointment));
+        OnPropertyChanged(nameof(HeaderSubtitle));
+    }
     partial void OnSelectedSchedulingHorizonChanged(string value)
     {
         if(!IsNewAppointment) return;
@@ -259,8 +288,6 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             _=AssignNextAvailableSlotAsync();
     }
 
-    // NOTE: no minimum length here (matches Encounter's MKB search, which has none).
-    // A single typed letter now triggers a search instead of silently doing nothing.
     partial void OnMedicineSearchTextChanged(string value)
     {
         if(string.IsNullOrWhiteSpace(value))
@@ -272,6 +299,18 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         _=SearchMedicinesAsync(value);
     }
 
+    partial void OnSelectedMedicinesChanging(ObservableCollection<PatientMedicine> value)
+    {
+        // Old collection is about to be replaced — detach so we don't leak the handler.
+        SelectedMedicines.CollectionChanged-=OnSelectedMedicinesCollectionChanged;
+    }
+
+    partial void OnSelectedMedicinesChanged(ObservableCollection<PatientMedicine> value)
+    {
+        value.CollectionChanged+=OnSelectedMedicinesCollectionChanged;
+        OnPropertyChanged(nameof(HasSelectedMedicines));
+    }
+
     // =========================
     // MKB ALPHABET
     // =========================
@@ -279,8 +318,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     private void InitMkbAlphabet()
     {
         MkbAlphabetSections=new ObservableCollection<MkbAlphabetSection>(
-            Enumerable.Range('A', 26)
-                      .Select(c => new MkbAlphabetSection((char)c, c=='A')));
+            Enumerable.Range('A', 26).Select(c => new MkbAlphabetSection((char)c)));
     }
 
     [RelayCommand]
@@ -288,10 +326,14 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     {
         if(section is null) return;
 
-        SelectedMkbSection=section.Letter.ToString();
-
+        // Toggle: tapping the already-active letter clears the filter
+        var wasSelected = section.IsSelected;
         foreach(var s in MkbAlphabetSections)
-            s.IsSelected=s.Letter==section.Letter;
+            s.IsSelected=false;
+
+        SelectedMkbSection=wasSelected ? string.Empty : section.Letter.ToString();
+        if(!wasSelected)
+            section.IsSelected=true;
 
         await SearchDiagnosesAsync(DiagnosisSearchText, DiagnosisDescriptionSearchText);
     }
@@ -313,8 +355,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         var slot = await _service.GetNextAvailableSlot(
             SelectedDoctorForAppointment.Id,
             SelectedPatientForAppointment.Id,
-            from,
-            30);
+            from, 30);
 
         if(requestVersion!=_slotRequestVersion) return;
 
@@ -328,11 +369,9 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             SelectedEndTime=slot.AddMinutes(30).TimeOfDay;
             OnPropertyChanged(nameof(Appointment));
             OnPropertyChanged(nameof(AutomaticSlotText));
+            OnPropertyChanged(nameof(HeaderSubtitle));
         }
-        finally
-        {
-            _isApplyingAutomaticSlot=false;
-        }
+        finally { _isApplyingAutomaticSlot=false; }
     }
 
     // =========================
@@ -341,6 +380,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
     public async Task LoadAsync()
     {
+
         var selected = _selectedItemService.SelectedItem;
 
         Guid? prefillPatientId = null;
@@ -372,7 +412,6 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         VisibleTherapies=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
         PatientsList=new ObservableCollection<Patient>(dto.Patients);
         DoctorsList=new ObservableCollection<Doctor>(dto.Doctors);
-
         AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
         PatientDiagnosisHistory=new ObservableCollection<Diagnosis>(ctx.Diagnoses);
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
@@ -391,10 +430,16 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         EvaluatePermissions();
 
         OnPropertyChanged(nameof(IsNewAppointment));
+        OnPropertyChanged(nameof(HasSelectedMedicines));
         OnPropertyChanged(nameof(HeaderTitle));
         OnPropertyChanged(nameof(HeaderSubtitle));
     }
 
+    // Rewritten so every property here is assigned exactly once, on exactly one path:
+    //  - no prefill patient  -> this method owns the "empty state" assignments
+    //  - prefill patient set -> OnPatientChangedAsync owns the real-data assignments
+    //    (including its own HeaderTitle/HeaderSubtitle/HasSelectedMedicines notifications),
+    //    so we don't pre-seed those collections here just to overwrite them a moment later.
     private async Task LoadNewAppointmentAsync(Guid? prefillPatientId)
     {
         _isNewAppointmentMode=true;
@@ -412,47 +457,40 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         _suppressPatientSelection=false;
 
         Appointment.PatientId=SelectedPatientForAppointment?.Id??Guid.Empty;
-
-        AppointmentHistory=new ObservableCollection<Appointment>();
-        PatientDiagnosisHistory=new ObservableCollection<Diagnosis>();
-        PatientMedicinesHistory=new ObservableCollection<PatientMedicine>();
-        SelectedMedicines=new ObservableCollection<PatientMedicine>();
-        VisibleTherapies=new ObservableCollection<TherapyCycle>();
-        SelectedTherapyCycle=null;
         SelectedDiagnoses=new ObservableCollection<Diagnosis>();
+
+        if(SelectedPatientForAppointment!=null)
+        {
+            await OnPatientChangedAsync(SelectedPatientForAppointment);
+        }
+        else
+        {
+            AppointmentHistory=new ObservableCollection<Appointment>();
+            PatientDiagnosisHistory=new ObservableCollection<Diagnosis>();
+            PatientMedicinesHistory=new ObservableCollection<PatientMedicine>();
+            SelectedMedicines=new ObservableCollection<PatientMedicine>();
+            VisibleTherapies=new ObservableCollection<TherapyCycle>();
+            SelectedTherapyCycle=null;
+            SelectedDoctorForAppointment=null;
+        }
 
         PreferredAppointmentDate=Appointment.ScheduledStart.Date;
         SelectedStartTime=Appointment.ScheduledStart.TimeOfDay;
         SelectedEndTime=Appointment.ScheduledEnd.TimeOfDay;
-
         PageTitle="Нов Термин";
         IsReadOnly=false;
 
-        if(SelectedPatientForAppointment!=null)
-            await OnPatientChangedAsync(SelectedPatientForAppointment);
-        else
-            SelectedDoctorForAppointment=null;
-
         OnPropertyChanged(nameof(IsNewAppointment));
-        OnPropertyChanged(nameof(HeaderTitle));
-        OnPropertyChanged(nameof(HeaderSubtitle));
-    }
 
-    private static Appointment CreateBlankAppointment()
-    {
-        var start = DateTime.Today.AddHours(9);
-        return new Appointment
+        // OnPatientChangedAsync already raised these three when it ran above — only raise
+        // them here on the empty-state path, so each notification fires exactly once.
+        if(SelectedPatientForAppointment is null)
         {
-            Id=Guid.Empty,
-            ScheduledStart=start,
-            ScheduledEnd=start.AddMinutes(30),
-            Status=AppointmentStatus.Scheduled
-        };
+            OnPropertyChanged(nameof(HasSelectedMedicines));
+            OnPropertyChanged(nameof(HeaderTitle));
+            OnPropertyChanged(nameof(HeaderSubtitle));
+        }
     }
-
-    // =========================
-    // PATIENT CHANGE
-    // =========================
 
     public async Task OnPatientChangedAsync(Patient patient)
     {
@@ -474,6 +512,19 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         OnPropertyChanged(nameof(HeaderTitle));
         OnPropertyChanged(nameof(HeaderSubtitle));
         OnPropertyChanged(nameof(AutomaticSlotText));
+        OnPropertyChanged(nameof(HasSelectedMedicines));
+    }
+
+    private static Appointment CreateBlankAppointment()
+    {
+        var start = DateTime.Today.AddHours(9);
+        return new Appointment
+        {
+            Id=Guid.Empty,
+            ScheduledStart=start,
+            ScheduledEnd=start.AddMinutes(30),
+            Status=AppointmentStatus.Scheduled
+        };
     }
 
     [RelayCommand]
@@ -490,11 +541,9 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     private Task PatientChanged(Patient patient) => OnPatientChangedAsync(patient);
 
     // =========================
-    // DIAGNOSIS SEARCH (mirrors EncounterBaseViewModel.SearchMkbAsync)
-    // Not a [RelayCommand]: it takes two parameters, which MVVM Toolkit's
-    // source generator doesn't support (MVVMTK0007). It's only ever called
-    // internally (from the On...Changed partials and SelectMkbSection),
-    // never bound in XAML, so a plain method is correct.
+    // DIAGNOSIS SEARCH — mirrors EncounterBaseViewModel.SearchMkbAsync exactly.
+    // Two parameters => can't be a [RelayCommand] (MVVMTK0007). Only ever called
+    // internally from the On...Changed partials and SelectMkbSection.
     // =========================
 
     private async Task SearchDiagnosesAsync(string codeQuery, string descriptionQuery)
@@ -515,14 +564,8 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         _cts=new CancellationTokenSource();
         var token = _cts.Token;
 
-        try
-        {
-            await Task.Delay(300, token); // debounce
-        }
-        catch(TaskCanceledException)
-        {
-            return;
-        }
+        try { await Task.Delay(300, token); }
+        catch(TaskCanceledException) { return; }
 
         try
         {
@@ -580,7 +623,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             Mkb10CodeId=code.Id,
             Id=code.Id,
             Mkb10Code=code,
-            IsPrimary=false
+            IsPrimary=SelectedDiagnoses.Count==0
         });
 
         DiagnosisSearchText=string.Empty;
@@ -590,6 +633,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
         foreach(var s in MkbAlphabetSections)
             s.IsSelected=false;
+        SelectedMkbSection=string.Empty;
     }
 
     [RelayCommand]
@@ -599,7 +643,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     }
 
     // =========================
-    // MEDICINE SEARCH
+    // MEDICINE SEARCH — mirrors EncounterBaseViewModel.SearchMedicinesAsync
     // =========================
 
     [RelayCommand]
@@ -617,14 +661,8 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         _medicineCts=new CancellationTokenSource();
         var token = _medicineCts.Token;
 
-        try
-        {
-            await Task.Delay(250, token); // debounce
-        }
-        catch(TaskCanceledException)
-        {
-            return;
-        }
+        try { await Task.Delay(250, token); }
+        catch(TaskCanceledException) { return; }
 
         try
         {
@@ -657,7 +695,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             MedicineId=medicine.Id,
             Medicine=medicine,
             PatientId=SelectedPatientForAppointment?.Id??Guid.Empty,
-            Dosage="1", // Дозата се користи како количина, иста конвенција како во Encounter
+            Dosage="1", // matches Encounter convention: Dosage doubles as quantity
             DosesFrequency=DosesFrequency.Other,
             StartDate=DateTime.Now,
             IsActive=true
@@ -750,7 +788,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
                 _originalAppointment=Appointment.Clone();
                 IsReadOnly=true;
             }
-        }, "Грешка при зачувување на терминот");
+        }, "Грешка при зачувување на податоци");
     }
 
     [RelayCommand]
@@ -799,9 +837,9 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     }
 }
 
-// =========================
+// =============================================================================
 // SUPPORTING TYPES
-// =========================
+// =============================================================================
 
 public partial class MkbAlphabetSection : ObservableObject
 {
@@ -809,14 +847,8 @@ public partial class MkbAlphabetSection : ObservableObject
     {
         get;
     }
-
     [ObservableProperty] private bool isSelected;
-
-    public MkbAlphabetSection(char letter, bool isSelected = false)
-    {
-        Letter=letter;
-        this.isSelected=isSelected;
-    }
+    public MkbAlphabetSection(char letter) => Letter=letter;
 }
 
 public static class AppointmentExtensions

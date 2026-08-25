@@ -343,11 +343,13 @@
 								</Grid>
 							</VerticalStackLayout>
 							<!--  ── 3. ЛЕКОВИ ──────────────────────────────  -->
+							<!--  ── 3. ЛЕКОВИ ──────────────────────────────  -->
 							<VerticalStackLayout Spacing="12">
 								<controls:CrudSectionHeader Title="ЛЕКОВИ" />
 								<Grid ColumnDefinitions="24,*" ColumnSpacing="8">
 									<controls:CrudTimelineMarker Grid.Column="0" />
 									<VerticalStackLayout Grid.Column="1" Spacing="12">
+
 										<Label
 											FontSize="13"
 											IsVisible="False"
@@ -362,78 +364,105 @@
 												</DataTrigger>
 											</Label.Triggers>
 										</Label>
+
 										<!--  Medicine read-only table  -->
-										<VerticalStackLayout
-											Padding="0"
-											BackgroundColor="Transparent"
-											Spacing="8">
-											<!--  Header — hidden when empty  -->
+										<VerticalStackLayout Spacing="0">
+
+											<!--  Table header  -->
 											<Grid
-												ColumnDefinitions="2*,1*"
-												ColumnSpacing="0"
-												IsVisible="False">
-												<Grid.Triggers>
-													<DataTrigger
-														Binding="{Binding HasEncounterMedicines}"
-														TargetType="Grid"
-														Value="True">
-														<Setter Property="IsVisible" Value="True" />
-													</DataTrigger>
-												</Grid.Triggers>
+												ColumnDefinitions="2*,1*,110"
+												ColumnSpacing="1"
+												IsVisible="{Binding HasEncounterMedicines}">
 												<Border
 													Grid.Column="0"
-													Padding="10,7"
-													BackgroundColor="{StaticResource SparkAccentTealBg}"
-													Stroke="{StaticResource SparkBorderSubtle}"
-													StrokeShape="RoundRectangle 8"
-													StrokeThickness="1">
+													Padding="10,8"
+													BackgroundColor="#475569"
+													StrokeShape="RoundRectangle 6,0,0,0"
+													StrokeThickness="0">
 													<Label
 														FontAttributes="Bold"
-														FontSize="11.5"
+														FontSize="10"
 														Text="ИМЕ НА ЛЕКОТ"
-														TextColor="{StaticResource SparkTextSecondary}" />
+														TextColor="White" />
 												</Border>
 												<Border
 													Grid.Column="1"
-													Padding="10,7"
-													BackgroundColor="{StaticResource SparkAccentTealBg}"
-													Stroke="{StaticResource SparkBorderSubtle}"
-													StrokeShape="RoundRectangle 8"
-													StrokeThickness="1">
+													Padding="10,8"
+													BackgroundColor="#475569"
+													StrokeThickness="0">
 													<Label
 														FontAttributes="Bold"
-														FontSize="11.5"
+														FontSize="10"
 														Text="КОЛИЧИНА"
-														TextColor="{StaticResource SparkTextSecondary}" />
+														TextColor="White" />
+												</Border>
+												<Border
+													Grid.Column="2"
+													Padding="10,8"
+													BackgroundColor="#475569"
+													StrokeShape="RoundRectangle 0,6,0,0"
+													StrokeThickness="0">
+													<Label
+														FontAttributes="Bold"
+														FontSize="10"
+														Text="ДАТУМ"
+														TextColor="White" />
 												</Border>
 											</Grid>
-											<!--  Rows — unified rounded value surface  -->
-											<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="8">
+
+											<!--  Table rows  -->
+											<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="0">
 												<BindableLayout.ItemTemplate>
 													<DataTemplate x:DataType="entities:PatientMedicine">
-														<Border Style="{StaticResource CrudFormValueSurfaceStyle}">
-															<Grid ColumnDefinitions="2*,1*" ColumnSpacing="16">
+														<Grid ColumnDefinitions="2*,1*,110" ColumnSpacing="1">
+															<Border
+																Grid.Column="0"
+																Padding="10,0"
+																BackgroundColor="White"
+																HeightRequest="44"
+																Stroke="{StaticResource SparkBorderSubtle}"
+																StrokeThickness="1">
 																<Label
-																	Grid.Column="0"
 																	FontAttributes="Bold"
-																	FontSize="13"
+																	FontSize="12.5"
 																	LineBreakMode="TailTruncation"
 																	Text="{Binding Medicine.Name}"
 																	TextColor="{StaticResource SparkTextPrimary}"
 																	VerticalOptions="Center" />
+															</Border>
+															<Border
+																Grid.Column="1"
+																Padding="10,0"
+																BackgroundColor="White"
+																HeightRequest="44"
+																Stroke="{StaticResource SparkBorderSubtle}"
+																StrokeThickness="1">
 																<Label
-																	Grid.Column="1"
 																	FontAttributes="Bold"
-																	FontSize="13"
+																	FontSize="12.5"
 																	Text="{Binding Dosage, TargetNullValue='—'}"
 																	TextColor="{StaticResource SparkAccentTealDark}"
 																	VerticalOptions="Center" />
-															</Grid>
-														</Border>
+															</Border>
+															<Border
+																Grid.Column="2"
+																Padding="10,0"
+																BackgroundColor="White"
+																HeightRequest="44"
+																Stroke="{StaticResource SparkBorderSubtle}"
+																StrokeThickness="1">
+																<Label
+																	FontSize="11.5"
+																	Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}"
+																	TextColor="{StaticResource SparkTextSecondary}"
+																	VerticalOptions="Center" />
+															</Border>
+														</Grid>
 													</DataTemplate>
 												</BindableLayout.ItemTemplate>
 											</VerticalStackLayout>
 										</VerticalStackLayout>
+
 									</VerticalStackLayout>
 								</Grid>
 							</VerticalStackLayout>

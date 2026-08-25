@@ -67,8 +67,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
     public ObservableCollection<string> GenderOptions { get; } = PatientEnumLookups.Gender.ToObservableCollection();
     public ObservableCollection<string> StatusOptions { get; } = PatientEnumLookups.Status.ToObservableCollection();
-    public ObservableCollection<string> CityOptions { get; } = new(PatientFilterLookups.BuildCityLookup().DisplayValues);
-
+    private readonly FilterLookup _cityLookup = PatientFilterLookups.BuildCityLookupForForm();
+    public ObservableCollection<string> CityOptions => _cityLookup.ToObservableCollection();
     public ObservableCollection<string> RelationOptions
     {
         get;
@@ -84,7 +84,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [ObservableProperty] private string selectedBloodTypeDisplay = string.Empty;
 
     partial void OnSelectedRelationDisplayChanged(string value) => Patient.EmergencyRelationship=value??string.Empty;
-    partial void OnSelectedCityDisplayChanged(string value) => Patient.City=value??string.Empty;
+    partial void OnSelectedCityDisplayChanged(string value) =>
+        Patient.City=_cityLookup.ToInternal(value??string.Empty);
     partial void OnSelectedBloodTypeDisplayChanged(string value) => Patient.BloodType=value??string.Empty;
 
     public PatientDetailFormViewModel(
@@ -483,7 +484,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         SelectedGenderDisplay=PatientEnumLookups.Gender.ToDisplay(Patient.Gender.ToString());
         SelectedStatusDisplay=PatientEnumLookups.Status.ToDisplay(Patient.Status.ToString());
         SelectedRelationDisplay=Patient.EmergencyRelationship;
-        SelectedCityDisplay=Patient.City;
+        SelectedCityDisplay=_cityLookup.ToDisplay(Patient.City);
         SelectedBloodTypeDisplay=Patient.BloodType;
     }
 
@@ -550,7 +551,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [ObservableProperty] private string doctorSearchText = string.Empty;
     [ObservableProperty] private bool showDoctorDropdown;
     [ObservableProperty] private string selectedDoctorDisplay = string.Empty;
-
+    // THIS WAS MISSING
+    [ObservableProperty]
+    private bool useCyrillicDoctorSearch = true;
     partial void OnDoctorSearchTextChanged(string value) => DebounceDoctorSearch(value);
 
     private async void DebounceDoctorSearch(string query)

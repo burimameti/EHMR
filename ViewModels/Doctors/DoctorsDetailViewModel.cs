@@ -3,15 +3,14 @@ using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
-
 using EHMR.ViewModels.Doctors.Extensions;
-
 
 namespace EHMR.ViewModels;
 
 public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
 {
     private readonly IDoctorService _doctorService;
+    private readonly IUserDialogService _dialog;
 
     protected override string ModuleName => Modules.Doctors;
 
@@ -22,173 +21,362 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
         IUserDialogService dialog,
         IMenuService menu,
         IAuthorizationService authorization)
-        : base(navigationService, dialog, menu, authorization, selectedItemService)
+        : base(
+            navigationService,
+            dialog,
+            menu,
+            authorization,
+            selectedItemService)
     {
         _doctorService=doctorService;
+        _dialog=dialog;
+
         EvaluatePermissions();
     }
 
+    // =====================================================
+    // CURRENT DOCTOR
+    // =====================================================
+
     [ObservableProperty]
-    private Doctor doctors = new();
+    private Doctor doctors = new()
+    {
+        User=new User()
+    };
 
     private bool _isExistingDoctor;
     private Doctor? _snapshot;
 
-    [ObservableProperty] private bool isEditMode;
-    [ObservableProperty] private bool isReadOnly;
-    [ObservableProperty] private string pageTitle = "Нов реуматолог";
+    // =====================================================
+    // PAGE STATE
+    // =====================================================
 
-    [ObservableProperty] private bool canShowDelete;
-    [ObservableProperty] private bool canShowSave;
-    [ObservableProperty] private bool canShowEditToggle;
+    [ObservableProperty]
+    private bool isEditMode;
+
+    [ObservableProperty]
+    private bool isReadOnly;
+
+    [ObservableProperty]
+    private string pageTitle = "Нов реуматолог";
+
+    [ObservableProperty]
+    private bool canShowDelete;
+
+    [ObservableProperty]
+    private bool canShowSave;
+
+    [ObservableProperty]
+    private bool canShowEditToggle;
 
     // =====================================================
-    // ПОЛ — Radio buttons: Машки / Женски
+    // GENDER
     // =====================================================
-    [ObservableProperty] private bool isMale = true;
-    [ObservableProperty] private bool isFemale;
+
+    [ObservableProperty]
+    private bool isMale = true;
+
+    [ObservableProperty]
+    private bool isFemale;
 
     partial void OnIsMaleChanged(bool value)
     {
-        if(value)
-        {
+        if(!value)
+            return;
+
+        if(IsFemale)
             IsFemale=false;
-            Doctors.Gender=Gender.Male;
-        }
+
+        Doctors.Gender=Gender.Male;
     }
 
     partial void OnIsFemaleChanged(bool value)
     {
-        if(value)
-        {
+        if(!value)
+            return;
+
+        if(IsMale)
             IsMale=false;
-            Doctors.Gender=Gender.Female;
-        }
+
+        Doctors.Gender=Gender.Female;
     }
 
     // =====================================================
-    // СТАТУС — Toggle (само во Edit Mode)
-    // Нов реуматолог: секогаш Active
-    // Edit: корисникот може да го направи Inactive
+    // STATUS
     // =====================================================
-    [ObservableProperty] private bool isActive = true;
+
+    [ObservableProperty]
+    private bool isActive = true;
 
     partial void OnIsActiveChanged(bool value)
     {
-        Doctors.Status=value ? Status.Active : Status.Inactive;
+        Doctors.IsActive=value;
     }
 
-    private void SyncDisplayFromDoctor()
-    {
-        IsMale=Doctors.Gender==Gender.Male;
-        IsFemale=Doctors.Gender==Gender.Female;
+    // =====================================================
+    // LOAD
+    // =====================================================
 
-        IsActive=Doctors.Status==Status.Active;
-    }
-
-    private void RefreshButtonVisibility()
-    {
-        CanShowDelete=IsReadOnly&&_isExistingDoctor&&CanDelete;
-        CanShowSave=IsEditMode&&CanUpdate;
-        CanShowEditToggle=IsReadOnly&&CanUpdate;
-    }
-
-    partial void OnIsEditModeChanged(bool value) => RefreshButtonVisibility();
-    partial void OnIsReadOnlyChanged(bool value) => RefreshButtonVisibility();
-
-    // ================= LOAD =================
     [RelayCommand]
     public async Task LoadAsync()
     {
-        if(SelectedItemService.SelectedItem is not null)
+        var selected = SelectedItemService.SelectedItem;
+
+        if(selected is not null)
         {
-            Doctors=SelectedItemService.SelectedItem.Clone();
+            Doctors=selected.Clone();
+
+            EnsureUserExists();
+
             _isExistingDoctor=true;
 
             IsEditMode=false;
             IsReadOnly=true;
+
             PageTitle="Детали за реуматолог";
         }
         else
         {
-            // Нов реуматолог — секогаш Active
-            Doctors=new Doctor
-            {
-                User=new User(),
-                Gender=Gender.Male,
-                Status=Status.Active
-            };
+            Doctors=CreateNewDoctor();
+
             _isExistingDoctor=false;
 
             IsEditMode=true;
             IsReadOnly=false;
+
             PageTitle="Нов реуматолог";
         }
 
         SyncDisplayFromDoctor();
+
         _snapshot=null;
+
         RefreshButtonVisibility();
     }
 
-    // ================= EDIT TOGGLE =================
+    // =====================================================
+    // NEW DOCTOR
+    // =====================================================
+
+    private static Doctor CreateNewDoctor()
+    {
+        return new Doctor
+        {
+            User=new User(),
+
+            ContactPhone=string.Empty,
+            Email=string.Empty,
+
+            Gender=Gender.Male,
+            Status=Status.Active
+        };
+    }
+
+    // =====================================================
+    // HELPERS
+    // =====================================================
+
+    private void EnsureUserExists()
+    {
+        Doctors.User??=new User();
+    }
+
+    private void SyncDisplayFromDoctor()
+    {
+        EnsureUserExists();
+
+        IsMale=Doctors.Gender==Gender.Male;
+        IsFemale=Doctors.Gender==Gender.Female;
+
+        IsActive=Doctors.IsActive;
+    }
+
+    private void RefreshButtonVisibility()
+    {
+        CanShowDelete=
+            IsReadOnly&&
+            _isExistingDoctor&&
+            CanDelete;
+
+        CanShowSave=
+            IsEditMode&&
+            CanUpdate;
+
+        CanShowEditToggle=
+            IsReadOnly&&
+            _isExistingDoctor&&
+            CanUpdate;
+    }
+
+    partial void OnIsEditModeChanged(bool value)
+        => RefreshButtonVisibility();
+
+    partial void OnIsReadOnlyChanged(bool value)
+        => RefreshButtonVisibility();
+
+    // =====================================================
+    // EDIT
+    // =====================================================
+
     [RelayCommand]
     private void ToggleEditMode()
     {
+        if(!_isExistingDoctor)
+            return;
+
         _snapshot=Doctors.Clone();
 
         IsEditMode=true;
         IsReadOnly=false;
-        PageTitle="Измени реуматолог";
+
+        PageTitle="Уреди реуматолог";
     }
 
-    // ================= SAVE =================
+    // =====================================================
+    // SAVE
+    // =====================================================
+
     [RelayCommand]
     private async Task Save()
     {
-        await ExecuteSafeAsync(async () =>
-        {
-            if(_isExistingDoctor)
-                await _doctorService.UpdateAsync(Doctors);
-            else
-                await _doctorService.AddAsync(Doctors);
+        await ExecuteSafeAsync(
+            async () =>
+            {
+                EnsureUserExists();
 
-            await NavigationService.GoBackAsync();
-        },
-        "Грешка при зачувување на реуматолог");
+                NormalizeBeforeSave();
+
+                if(!await ValidateDoctorAsync())
+                    return;
+
+                if(_isExistingDoctor)
+                {
+                    await _doctorService.UpdateAsync(Doctors);
+                }
+                else
+                {
+                    await _doctorService.AddAsync(Doctors);
+                }
+
+                SelectedItemService.SelectedItem=null;
+
+                await NavigationService.GoBackAsync();
+            },
+            "Грешка при зачувување на податоци");
     }
 
-    // ================= DELETE =================
+    private void NormalizeBeforeSave()
+    {
+        EnsureUserExists();
+
+        Doctors.User.FirstName=
+            Doctors.User.FirstName?.Trim()
+            ??string.Empty;
+
+        Doctors.User.LastName=
+            Doctors.User.LastName?.Trim()
+            ??string.Empty;
+
+        Doctors.ContactPhone=
+            Doctors.ContactPhone?.Trim()
+            ??string.Empty;
+
+        Doctors.Email=
+            string.IsNullOrWhiteSpace(Doctors.Email)
+                ? null
+                : Doctors.Email.Trim();
+
+        Doctors.Gender=
+            IsFemale
+                ? Gender.Female
+                : Gender.Male;
+
+        Doctors.IsActive=IsActive;
+    }
+
+    // =====================================================
+    // VALIDATION
+    // =====================================================
+
+    private async Task<bool> ValidateDoctorAsync()
+    {
+        if(string.IsNullOrWhiteSpace(
+               Doctors.User.FirstName))
+        {
+            await _dialog.ShowAlertAsync(
+                "Валидација",
+                "Името на реуматологот е задолжително.",
+                "Во ред");
+
+            return false;
+        }
+
+        if(string.IsNullOrWhiteSpace(
+               Doctors.User.LastName))
+        {
+            await _dialog.ShowAlertAsync(
+                "Валидација",
+                "Презимето на реуматологот е задолжително.",
+                "Во ред");
+
+            return false;
+        }
+
+        return true;
+    }
+
+    // =====================================================
+    // DELETE
+    // =====================================================
+
     [RelayCommand]
     private async Task Delete()
     {
-        if(!_isExistingDoctor) return;
+        if(!_isExistingDoctor)
+            return;
 
-        await ExecuteSafeAsync(async () =>
-        {
-            await _doctorService.DeleteAsync(Doctors.Id);
-            await NavigationService.GoBackAsync();
-        },
-        "Грешка при бришење");
+        await ExecuteSafeAsync(
+            async () =>
+            {
+                await _doctorService.DeleteAsync(
+                    Doctors.Id);
+
+                SelectedItemService.SelectedItem=null;
+
+                await NavigationService.GoBackAsync();
+            },
+            "Грешка при бришење");
     }
 
-    // ================= CANCEL / ОТКАЖИ =================
-    // Секогаш оди назад:
-    //   - Нов реуматолог → GoBack (без зачувување)
-    //   - Edit постоечки → врати snapshot, оди назад
+    // =====================================================
+    // CANCEL
+    // =====================================================
+
     [RelayCommand]
     private async Task Cancel()
     {
-        if(_isExistingDoctor&&_snapshot is not null)
+        if(_isExistingDoctor&&
+           _snapshot is not null)
         {
             Doctors=_snapshot;
             _snapshot=null;
+
             SyncDisplayFromDoctor();
         }
+
+        SelectedItemService.SelectedItem=null;
 
         await NavigationService.GoBackAsync();
     }
 
-    protected override IEnumerable<Doctor> ApplyFilters(IEnumerable<Doctor> query) => query;
+    // =====================================================
+    // BASE
+    // =====================================================
+
+    protected override IEnumerable<Doctor> ApplyFilters(
+        IEnumerable<Doctor> query)
+        => query;
+
     protected override void ResetFilters()
     {
     }

@@ -196,9 +196,9 @@ public partial class FFButton : ContentView
 
             // Supporting action: Edit, Preview, Back
             case FFButtonKind.Secondary:
-                BackgroundColorEx=Color.FromArgb("#475569");
+                BackgroundColorEx=Color.FromArgb("#4A5863");
                 TextColorEx=Colors.White;
-                BorderColor=Color.FromArgb("#475569");
+                BorderColor=Color.FromArgb("#5A5863");
                 BorderThickness=0;
                 break;
 

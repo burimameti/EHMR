@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+
 <ContentPage
 	x:Class="EHMR.Views.Doctors.DoctorsDetailPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -9,47 +10,100 @@
 	x:DataType="vm:DoctorsDetailViewModel"
 	BackgroundColor="{StaticResource PageBackground}">
 
-	<!--  =========================================================  -->
-	<!--  RESOURCES  -->
-	<!--  =========================================================  -->
-
-	<ContentPage.Resources>
-		<ResourceDictionary />
-	</ContentPage.Resources>
-
-	<!--  =========================================================  -->
-	<!--  ROOT LAYOUT: LEFT MENU + RIGHT CONTENT  -->
-	<!--  =========================================================  -->
-
 	<Grid ColumnDefinitions="285,*">
 
+		<!--  =====================================================  -->
 		<!--  LEFT MENU  -->
+		<!--  =====================================================  -->
+
 		<Border
 			Grid.Column="0"
 			BackgroundColor="#F3F6FA"
 			StrokeThickness="0">
+
 			<ContentView x:Name="MenuHost" />
+
 		</Border>
 
-		<!--  RIGHT SIDE  -->
+		<!--  =====================================================  -->
+		<!--  RIGHT CONTENT  -->
+		<!--  =====================================================  -->
+
 		<Grid
 			Grid.Column="1"
 			Padding="0"
 			RowDefinitions="Auto,*,Auto"
 			RowSpacing="16">
 
-			<!--  =====================================================  -->
+			<!--  =================================================  -->
 			<!--  HEADER  -->
+			<!--  =================================================  -->
+
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+
 				<controls:FFPageHeader Title="{Binding PageTitle}" Subtitle="Податоци и пристап за избраниот реуматолог">
-				<controls:FFPageHeader.HeaderContent>
-					<controls:FFStatusChip IsVisible="{Binding IsReadOnly}" Text="{Binding Doctors.Status}" />
-				</controls:FFPageHeader.HeaderContent>
-			</controls:FFPageHeader>
+
+					<controls:FFPageHeader.HeaderContent>
+
+						<Border
+							Padding="10,5"
+							IsVisible="{Binding IsReadOnly}"
+							StrokeShape="RoundRectangle 12"
+							StrokeThickness="0">
+
+							<Border.Triggers>
+
+								<DataTrigger
+									Binding="{Binding IsActive}"
+									TargetType="Border"
+									Value="True">
+									<Setter Property="BackgroundColor" Value="#DCFCE7" />
+								</DataTrigger>
+
+								<DataTrigger
+									Binding="{Binding IsActive}"
+									TargetType="Border"
+									Value="False">
+									<Setter Property="BackgroundColor" Value="#FEE2E2" />
+								</DataTrigger>
+
+							</Border.Triggers>
+
+							<Label FontAttributes="Bold" FontSize="11">
+
+								<Label.Triggers>
+
+									<DataTrigger
+										Binding="{Binding IsActive}"
+										TargetType="Label"
+										Value="True">
+										<Setter Property="Text" Value="Активен" />
+										<Setter Property="TextColor" Value="#15803D" />
+									</DataTrigger>
+
+									<DataTrigger
+										Binding="{Binding IsActive}"
+										TargetType="Label"
+										Value="False">
+										<Setter Property="Text" Value="Неактивен" />
+										<Setter Property="TextColor" Value="#B91C1C" />
+									</DataTrigger>
+
+								</Label.Triggers>
+
+							</Label>
+
+						</Border>
+
+					</controls:FFPageHeader.HeaderContent>
+
+				</controls:FFPageHeader>
+
 			</Border>
 
+			<!--  =================================================  -->
 			<!--  FORM  -->
-			<!--  =====================================================  -->
+			<!--  =================================================  -->
 
 			<Border
 				Grid.Row="1"
@@ -57,60 +111,89 @@
 				BackgroundColor="#F3F6FA"
 				Stroke="#DCE5EE"
 				StrokeThickness="1">
+
 				<Border.StrokeShape>
 					<RoundRectangle CornerRadius="0" />
 				</Border.StrokeShape>
 
 				<ScrollView>
+
 					<VerticalStackLayout MaximumWidthRequest="600" Spacing="28">
 
-						<!--  ============================  -->
-						<!--  СЕКЦИЈА: Основни информации  -->
-						<!--  ============================  -->
+						<!--  =====================================  -->
+						<!--  BASIC INFORMATION  -->
+						<!--  =====================================  -->
 
 						<controls:CrudSectionHeader Title="👤 Основни информации" />
 
-						<!--  ИМЕ  -->
+						<!--  NAME  -->
+
 						<Grid ColumnDefinitions="160,*" ColumnSpacing="{StaticResource FormRowSpacing}">
+
 							<Label
 								Grid.Column="0"
 								Style="{StaticResource EditFieldLabelStyle}"
 								Text="Име *"
 								VerticalOptions="Center" />
-							<controls:FFInput Grid.Column="1" IsVisible="{Binding IsEditMode}" Placeholder="Внесете име" Text="{Binding Doctors.User.FirstName}" />
+
+							<controls:FFInput
+								Grid.Column="1"
+								IsVisible="{Binding IsEditMode}"
+								Placeholder="Внесете име"
+								Text="{Binding Doctors.User.FirstName, Mode=TwoWay}" />
+
 							<Border
 								Grid.Column="1"
 								IsVisible="{Binding IsReadOnly}"
 								Style="{StaticResource InfoPillBorderStyle}">
-								<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding Doctors.User.FirstName}" />
+
+								<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding Doctors.User.FirstName, FallbackValue='—'}" />
+
 							</Border>
+
 						</Grid>
 
-						<!--  ПРЕЗИМЕ  -->
+						<!--  SURNAME  -->
+
 						<Grid ColumnDefinitions="160,*" ColumnSpacing="{StaticResource FormRowSpacing}">
+
 							<Label
 								Grid.Column="0"
 								Style="{StaticResource EditFieldLabelStyle}"
 								Text="Презиме *"
 								VerticalOptions="Center" />
-							<controls:FFInput Grid.Column="1" IsVisible="{Binding IsEditMode}" Placeholder="Внесете презиме" Text="{Binding Doctors.User.LastName}" />
+
+							<controls:FFInput
+								Grid.Column="1"
+								IsVisible="{Binding IsEditMode}"
+								Placeholder="Внесете презиме"
+								Text="{Binding Doctors.User.LastName, Mode=TwoWay}" />
+
 							<Border
 								Grid.Column="1"
 								IsVisible="{Binding IsReadOnly}"
 								Style="{StaticResource InfoPillBorderStyle}">
-								<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding Doctors.User.LastName}" />
+
+								<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding Doctors.User.LastName, FallbackValue='—'}" />
+
 							</Border>
+
 						</Grid>
 
-						<!--  ПОЛ  -->
+						<!--  =====================================  -->
+						<!--  GENDER  -->
+						<!--  =====================================  -->
+
 						<Grid ColumnDefinitions="160,*" ColumnSpacing="{StaticResource FormRowSpacing}">
+
 							<Label
 								Grid.Column="0"
 								Style="{StaticResource EditFieldLabelStyle}"
 								Text="Пол *"
 								VerticalOptions="Center" />
 
-							<!--  EDIT — Radio buttons  -->
+							<!--  EDIT  -->
+
 							<HorizontalStackLayout
 								Grid.Column="1"
 								IsVisible="{Binding IsEditMode}"
@@ -118,99 +201,143 @@
 								VerticalOptions="Center">
 
 								<HorizontalStackLayout Spacing="8">
+
 									<RadioButton
-										IsChecked="{Binding IsMale}"
+										GroupName="DoctorGender"
+										IsChecked="{Binding IsMale, Mode=TwoWay}"
 										VerticalOptions="Center"
 										Value="Male" />
+
 									<Label
 										FontSize="14"
 										Text="Машки"
 										TextColor="#111827"
 										VerticalOptions="Center" />
+
 								</HorizontalStackLayout>
 
 								<HorizontalStackLayout Spacing="8">
+
 									<RadioButton
-										IsChecked="{Binding IsFemale}"
+										GroupName="DoctorGender"
+										IsChecked="{Binding IsFemale, Mode=TwoWay}"
 										VerticalOptions="Center"
 										Value="Female" />
+
 									<Label
 										FontSize="14"
 										Text="Женски"
 										TextColor="#111827"
 										VerticalOptions="Center" />
+
 								</HorizontalStackLayout>
 
 							</HorizontalStackLayout>
 
 							<!--  READ  -->
+
 							<Border
 								Grid.Column="1"
 								IsVisible="{Binding IsReadOnly}"
 								Style="{StaticResource InfoPillBorderStyle}">
+
 								<HorizontalStackLayout Spacing="8">
+
 									<Label Style="{StaticResource InfoPillIconStyle}" Text="&#xf183;" />
+
 									<Label Style="{StaticResource InfoPillTextStyle}">
+
 										<Label.Triggers>
+
 											<DataTrigger
 												Binding="{Binding IsMale}"
 												TargetType="Label"
 												Value="True">
 												<Setter Property="Text" Value="Машки" />
 											</DataTrigger>
+
 											<DataTrigger
 												Binding="{Binding IsFemale}"
 												TargetType="Label"
 												Value="True">
 												<Setter Property="Text" Value="Женски" />
 											</DataTrigger>
+
 										</Label.Triggers>
+
 									</Label>
+
 								</HorizontalStackLayout>
+
 							</Border>
+
 						</Grid>
 
-						<!--  ============================  -->
-						<!--  СЕКЦИЈА: Контакт  -->
-						<!--  ============================  -->
+						<!--  =====================================  -->
+						<!--  CONTACT  -->
+						<!--  =====================================  -->
 
 						<controls:CrudSectionHeader Title="📞 Контакт информации" />
 
-						<!--  ТЕЛЕФОН  -->
+						<!--  PHONE  -->
+
 						<Grid ColumnDefinitions="160,*" ColumnSpacing="{StaticResource FormRowSpacing}">
+
 							<Label
 								Grid.Column="0"
 								Style="{StaticResource EditFieldLabelStyle}"
 								Text="Телефон *"
 								VerticalOptions="Center" />
-							<controls:FFInput Grid.Column="1" IsVisible="{Binding IsEditMode}" Keyboard="Telephone" Placeholder="Внесете телефон" Text="{Binding Doctors.ContactPhone}" />
+
+							<controls:FFInput
+								Grid.Column="1"
+								IsVisible="{Binding IsEditMode}"
+								Keyboard="Telephone"
+								Placeholder="Внесете телефон"
+								Text="{Binding Doctors.ContactPhone, Mode=TwoWay}" />
+
 							<Border
 								Grid.Column="1"
 								IsVisible="{Binding IsReadOnly}"
 								Style="{StaticResource InfoPillBorderStyle}">
-								<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding Doctors.ContactPhone}" />
+
+								<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding Doctors.ContactPhone, FallbackValue='—'}" />
+
 							</Border>
+
 						</Grid>
 
 						<!--  EMAIL  -->
+
 						<Grid ColumnDefinitions="160,*" ColumnSpacing="{StaticResource FormRowSpacing}">
+
 							<Label
 								Grid.Column="0"
 								Style="{StaticResource EditFieldLabelStyle}"
 								Text="Е-пошта *"
 								VerticalOptions="Center" />
-							<controls:FFInput Grid.Column="1" IsVisible="{Binding IsEditMode}" Keyboard="Email" Placeholder="doctor@hospital.mk" Text="{Binding Doctors.Email}" />
+
+							<controls:FFInput
+								Grid.Column="1"
+								IsVisible="{Binding IsEditMode}"
+								Keyboard="Email"
+								Placeholder="doctor@hospital.mk"
+								Text="{Binding Doctors.Email, Mode=TwoWay}" />
+
 							<Border
 								Grid.Column="1"
 								IsVisible="{Binding IsReadOnly}"
 								Style="{StaticResource InfoPillBorderStyle}">
-								<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding Doctors.Email}" />
+
+								<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding Doctors.Email, FallbackValue='—'}" />
+
 							</Border>
+
 						</Grid>
 
-						<!--  ============================  -->
-						<!--  СТАТУС TOGGLE (само Edit)  -->
-						<!--  ============================  -->
+						<!--  =====================================  -->
+						<!--  STATUS  -->
+						<!--  =====================================  -->
 
 						<Grid
 							ColumnDefinitions="160,*"
@@ -229,29 +356,42 @@
 								VerticalOptions="Center">
 
 								<Switch
-									IsToggled="{Binding IsActive}"
+									IsToggled="{Binding IsActive, Mode=TwoWay}"
 									OnColor="#10B981"
 									ThumbColor="White" />
 
 								<Label FontSize="14" VerticalOptions="Center">
+
 									<Label.Triggers>
+
 										<DataTrigger
 											Binding="{Binding IsActive}"
 											TargetType="Label"
 											Value="True">
+
 											<Setter Property="Text" Value="Активен" />
+
 											<Setter Property="TextColor" Value="#16A34A" />
+
 											<Setter Property="FontAttributes" Value="Bold" />
+
 										</DataTrigger>
+
 										<DataTrigger
 											Binding="{Binding IsActive}"
 											TargetType="Label"
 											Value="False">
+
 											<Setter Property="Text" Value="Неактивен" />
+
 											<Setter Property="TextColor" Value="#64748B" />
+
 											<Setter Property="FontAttributes" Value="None" />
+
 										</DataTrigger>
+
 									</Label.Triggers>
+
 								</Label>
 
 							</HorizontalStackLayout>
@@ -259,13 +399,14 @@
 						</Grid>
 
 					</VerticalStackLayout>
+
 				</ScrollView>
 
 			</Border>
 
-			<!--  =====================================================  -->
-			<!--  FOOTER — Зачувај / Откажи / Промени / Избриши  -->
-			<!--  =====================================================  -->
+			<!--  =================================================  -->
+			<!--  FOOTER  -->
+			<!--  =================================================  -->
 
 			<Border
 				Grid.Row="2"
@@ -273,13 +414,15 @@
 				BackgroundColor="#F3F6FA"
 				Stroke="#DCE5EE"
 				StrokeThickness="1">
+
 				<Border.StrokeShape>
 					<RoundRectangle CornerRadius="0" />
 				</Border.StrokeShape>
 
 				<Grid ColumnDefinitions="*,Auto">
 
-					<!--  DELETE (само Read + постоечки)  -->
+					<!--  DELETE  -->
+
 					<Button
 						Grid.Column="0"
 						Padding="24,0"
@@ -297,12 +440,12 @@
 						TextColor="#DC2626" />
 
 					<!--  RIGHT BUTTONS  -->
+
 					<HorizontalStackLayout
 						Grid.Column="1"
 						HorizontalOptions="End"
 						Spacing="14">
 
-						<!--  ОТКАЖИ — секогаш оди назад  -->
 						<Button
 							BackgroundColor="#F1F5F9"
 							BorderColor="#CBD5E1"
@@ -316,7 +459,6 @@
 							TextColor="#475569"
 							WidthRequest="120" />
 
-						<!--  ПРОМЕНИ (само Read)  -->
 						<Button
 							BackgroundColor="#ECFDF5"
 							BorderColor="#10B981"
@@ -331,7 +473,6 @@
 							TextColor="#059669"
 							WidthRequest="130" />
 
-						<!--  ЗАЧУВАЈ (само Edit)  -->
 						<Button
 							BackgroundColor="#10B981"
 							Command="{Binding SaveCommand}"

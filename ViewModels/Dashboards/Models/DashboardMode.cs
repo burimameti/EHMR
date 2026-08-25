@@ -63,7 +63,7 @@ public partial class DashboardViewModel
         {
             get; init;
         }
-
+   
         public List<Encounter> Encounters { get; init; } = [];
 
         public List<Appointment> Appointments { get; init; } = [];

@@ -1,10 +1,94 @@
-﻿using EHMR.Domain.Search;
+﻿using EHMR.Domain.Entities;
+using EHMR.Domain.Search;
 using EHMR.Services;
 using EHMR.ViewModels;
 using EHMR.ViewModels.Appointments;
 using System.Globalization;
 
 namespace EHMR.Converters;
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  BACKGROUND converter
+//  Scheduled / CheckedIn / InProgress  → teal-ish active pill
+//  Completed                           → muted green/slate (done, not urgent)
+//  Cancelled / NoShow                  → dark red/charcoal (dead state)
+// ─────────────────────────────────────────────────────────────────────────────
+public class EncounterStatusChipBackgroundConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var status = ToStatus(value);
+        return status switch
+        {
+            // Active / in-flight → vivid teal
+            EncounterStatus.Scheduled => Color.FromArgb("#0D9488"),   // teal-600
+            EncounterStatus.CheckedIn => Color.FromArgb("#0284C7"),   // sky-600
+            EncounterStatus.InProgress => Color.FromArgb("#2563EB"),   // blue-600
+
+            // Completed → calm slate-green
+            EncounterStatus.Completed => Color.FromArgb("#475569"),   // slate-600
+
+            // Terminal / bad → dark charcoal-red
+            EncounterStatus.Cancelled => Color.FromArgb("#7F1D1D"),   // red-900
+            EncounterStatus.NoShow => Color.FromArgb("#4B1C1C"),   // deeper red-900
+
+            _ => Color.FromArgb("#64748B")    // slate-500 fallback
+        };
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+
+    private static EncounterStatus? ToStatus(object? value) => value switch
+    {
+        EncounterStatus e => e,
+        string s when Enum.TryParse<EncounterStatus>(s, out var p) => p,
+        _ => null
+    };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  TEXT COLOR converter
+//  Always white — the backgrounds above are all dark enough.
+//  Kept as a separate converter so you can swap it independently.
+// ─────────────────────────────────────────────────────────────────────────────
+public class EncounterStatusChipTextConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => Colors.White;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  DISPLAY LABEL converter  (enum → Macedonian string)
+// ─────────────────────────────────────────────────────────────────────────────
+public class EncounterStatusChipLabelConverter : IValueConverter
+{
+    private static readonly Dictionary<EncounterStatus, string> Labels = new()
+    {
+        [EncounterStatus.Scheduled]="Закажан",
+        [EncounterStatus.CheckedIn]="Пријавен",
+        [EncounterStatus.InProgress]="Во тек",
+        [EncounterStatus.Completed]="Завршен",
+        [EncounterStatus.Cancelled]="Откажан",
+        [EncounterStatus.NoShow]="Не дојде",
+    };
+
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if(value is EncounterStatus s&&Labels.TryGetValue(s, out var label))
+            return label;
+        if(value is string str&&Enum.TryParse<EncounterStatus>(str, out var parsed)
+            &&Labels.TryGetValue(parsed, out var l))
+            return l;
+        return value?.ToString()??"—";
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
 public class StringNotEmptyConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

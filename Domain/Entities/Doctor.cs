@@ -1,50 +1,83 @@
 ﻿using EHMR.Domain.Entities.Rbac;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EHMR.Domain.Entities
+namespace EHMR.Domain.Entities;
+
+public class Doctor : BaseEntity
 {
-    public class Doctor : BaseEntity
+    // =========================================================
+    // Identification
+    // =========================================================
+
+    public string DoctorNumber { get; set; } = string.Empty;
+
+    // =========================================================
+    // User relationship
+    // =========================================================
+
+    public Guid UserId
     {
-        public string DoctorNumber { get; set; } = string.Empty;
-        public Guid UserId
-        {
-            get; set;
-        }
-        public string DoctorName{get;set; }
-        = string.Empty;
-        public string? DoctorSurname { get; set; } = string.Empty;
+        get; set;
+    }
 
-        public User User { get; set; } = null!;
+    public virtual User User { get; set; } = null!;
 
-        public string ContactPhone { get; set; } = string.Empty;
-        public string? Email { get; set; } = string.Empty;
+    // =========================================================
+    // Contact
+    // =========================================================
 
-        public bool IsActive
-        {
-            get; set;
-        }
-        public Gender Gender
-        {
-            get; set;
-        }
-        public Status Status
-        {
-            get; set;
-        }= Status.Active;
-        // optional convenience
-        public string FullName
-        {
-            get
+    public string ContactPhone { get; set; } = string.Empty;
+
+    public string? Email
+    {
+        get; set;
+    }
+
+    // =========================================================
+    // Doctor information
+    // =========================================================
+
+    public Gender Gender { get; set; } = Gender.Male;
+
+    public Status Status { get; set; } = Status.Active;
+
+    // =========================================================
+    // Computed / UI convenience properties
+    // =========================================================
+
+    [NotMapped]
+    public bool IsActive
+    {
+        get => Status==Status.Active;
+        set => Status=value
+            ? Status.Active
+            : Status.Inactive;
+    }
+
+    [NotMapped]
+    public string DoctorName =>
+        User?.FirstName?.Trim()
+        ??string.Empty;
+
+    [NotMapped]
+    public string DoctorSurname =>
+        User?.LastName?.Trim()
+        ??string.Empty;
+
+    [NotMapped]
+    public string FullName =>
+        string.Join(
+            " ",
+            new[]
             {
-               
-                return DoctorName + " " + DoctorSurname;
+                User?.FirstName?.Trim(),
+                User?.LastName?.Trim()
             }
-        }
+            .Where(x => !string.IsNullOrWhiteSpace(x)));
+}
 
-    }
-   
-    public enum Status
-    {
-        Active,
-        Inactive
-    }
+public enum Status
+{
+    Active = 0,
+    Inactive = 1
 }

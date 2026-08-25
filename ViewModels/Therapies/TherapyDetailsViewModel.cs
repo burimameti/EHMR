@@ -76,7 +76,7 @@ public partial class TherapyDetailsViewModel : ObservableObject
 
         Cycles.Add(cycle);
 
-        await _dialogService.ShowAlertAsync("Успех", "Циклус креиран", "OK");
+        await _dialogService.ShowAlertAsync("Успешно", "Податоците се зачувани.", "OK");
     }
 
     [RelayCommand]
@@ -86,7 +86,7 @@ public partial class TherapyDetailsViewModel : ObservableObject
 
         await _therapyService.UpdateCycleAsync(SelectedCycle);
 
-        await _dialogService.ShowAlertAsync("OK", "Зачувано", "OK");
+        await _dialogService.ShowAlertAsync("Успешно", "Податоците се зачувани.", "OK");
     }
 
     [RelayCommand]

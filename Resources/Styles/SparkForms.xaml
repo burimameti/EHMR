@@ -144,14 +144,14 @@
 		<Setter Property="Color" Value="#DDE6EC" />
 	</Style>
 
-	<!--  Clean section title with a calm teal underline.  -->
+	<!--  Clean section title, full-width filled rectangle bar.  -->
 	<Style x:Key="SectionPillBorderStyle" TargetType="Border">
 		<Setter Property="Padding" Value="12,9" />
 		<Setter Property="BackgroundColor" Value="#4A5863" />
 
 		<Setter Property="Stroke" Value="#5B6672" />
 		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 5" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="Shadow" Value="{x:Null}" />
 		<Setter Property="HorizontalOptions" Value="Fill" />
 	</Style>

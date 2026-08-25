@@ -7,23 +7,21 @@ using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
 using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
+
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Linq;
+
 
 namespace EHMR.ViewModels.Calendar;
 
-public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQueryAttributable
+public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
     private readonly ISelectedItemService<Appointment> _appointmentSelect;
-
+    private int _encounterNavigationVersion;
+    private bool _isEncounterNavigationInProgress;
     private DateTime _currentDate;
     private DateTime _currentWeekStart;
 
@@ -268,7 +266,15 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
         EvaluatePermissions();
         BuildSparkButtons();
     }
+    private int InvalidateEncounterNavigation()
+    {
+        return Interlocked.Increment(ref _encounterNavigationVersion);
+    }
 
+    private bool IsCurrentEncounterNavigation(int version)
+    {
+        return version==Volatile.Read(ref _encounterNavigationVersion);
+    }
     private static DateTime StartOfWeek(DateTime date)
     {
         int diff = (7+(date.DayOfWeek-DayOfWeek.Monday))%7;
@@ -439,39 +445,48 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
 
     [RelayCommand]
     private async Task PreviousWeekAsync() => await ShiftPeriodAsync(-1);
-
     [RelayCommand]
     private async Task CreateNewEncounterForSelectedDayAsync()
     {
-        var targetDate =
-            SelectedCalendarDay!=null
-                ? SelectedCalendarDay.Date
-                : DateTime.Today;
+        InvalidateEncounterNavigation();
 
-        // Во режим „Термини" копчето отвора нов термин, не нов преглед.
+        var targetDate =
+            SelectedCalendarDay?.Date
+            ??DateTime.Today;
+
         if(ShowsAppointments)
         {
             _appointmentSelect.SelectedItem=null;
-            await NavigationService.GoToAsync(AppRoutes.Appointments.Detail);
+
+            await NavigationService.GoToAsync(
+                AppRoutes.Appointments.Detail);
+
             return;
         }
 
         SelectedItemService.SelectedItem=null;
-        await NavigationService.GoToAsync($"{AppRoutes.Encounters.Create}?date={targetDate.Ticks}");
+
+        await NavigationService.GoToAsync(
+            $"{AppRoutes.Encounters.Create}?date={targetDate.Ticks}");
     }
 
     [RelayCommand]
-    private async Task CreateNewEncounterForSpecificHourAsync(HourlyTimelineSlotDto slot)
+    private async Task CreateNewEncounterForSpecificHourAsync(
+     HourlyTimelineSlotDto slot)
     {
         if(SelectedCalendarDay==null||slot==null)
             return;
+
+        InvalidateEncounterNavigation();
 
         var targetDateTime =
             SelectedCalendarDay.Date.Date
                 .AddHours(slot.HourValue);
 
         SelectedItemService.SelectedItem=null;
-        await NavigationService.GoToAsync($"{AppRoutes.Encounters.Create}?date={targetDateTime.Ticks}");
+
+        await NavigationService.GoToAsync(
+            $"{AppRoutes.Encounters.Create}?date={targetDateTime.Ticks}");
     }
 
     /// <summary>
@@ -481,35 +496,78 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
     [RelayCommand]
     public async Task ProcessEncounterSelectionAsync(Guid itemId)
     {
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        if(itemId==Guid.Empty)
+            return;
 
-        if(ShowsAppointments)
+        // Every selection gets its own version.
+        // Opening NEW later will increment this and invalidate this operation.
+        var navigationVersion =
+            Interlocked.Increment(ref _encounterNavigationVersion);
+
+        try
         {
-            var appointment = await db.Appointments
+            await using var db =
+                await _dbFactory.CreateDbContextAsync();
+
+            if(ShowsAppointments)
+            {
+                var appointment = await db.Appointments
+                    .AsNoTracking()
+                    .Include(x => x.Patient)
+                    .Include(x => x.Doctor)
+                        .ThenInclude(x => x.User)
+                    .FirstOrDefaultAsync(x => x.Id==itemId);
+
+                // Something else happened while DB was loading.
+                if(!IsCurrentEncounterNavigation(navigationVersion))
+                    return;
+
+                if(appointment==null)
+                    return;
+
+                _appointmentSelect.SelectedItem=appointment;
+
+                // Check once more immediately before navigation.
+                if(!IsCurrentEncounterNavigation(navigationVersion))
+                    return;
+
+                await NavigationService.GoToAsync(
+                    AppRoutes.Appointments.Detail);
+
+                return;
+            }
+
+            var encounter = await db.Encounters
+                .AsNoTracking()
                 .Include(x => x.Patient)
                 .Include(x => x.Doctor)
                     .ThenInclude(x => x.User)
                 .FirstOrDefaultAsync(x => x.Id==itemId);
 
-            if(appointment==null)
+            // User may have clicked "New Encounter" while this query ran.
+            if(!IsCurrentEncounterNavigation(navigationVersion))
                 return;
 
-            _appointmentSelect.SelectedItem=appointment;
-            await NavigationService.GoToAsync(AppRoutes.Appointments.Detail);
-            return;
+            if(encounter==null)
+                return;
+
+            SelectedItemService.SelectedItem=encounter;
+
+            // Prevent stale navigation as well as stale SelectedItem.
+            if(!IsCurrentEncounterNavigation(navigationVersion))
+            {
+                SelectedItemService.SelectedItem=null;
+                return;
+            }
+
+            await NavigationService.GoToAsync(
+                AppRoutes.Encounters.Detail);
         }
-
-        var encounter = await db.Encounters
-            .Include(x => x.Patient)
-            .Include(x => x.Doctor)
-                .ThenInclude(x => x.User)
-            .FirstOrDefaultAsync(x => x.Id==itemId);
-
-        if(encounter==null)
-            return;
-
-        SelectedItemService.SelectedItem=encounter;
-        await NavigationService.GoToAsync(AppRoutes.Encounters.Detail);
+        catch(Exception ex)
+        {
+            Debug.WriteLine(
+                $"Encounter navigation failed: {ex}");
+        }
     }
 
     [RelayCommand]
@@ -1443,12 +1501,9 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>, IQue
     protected override void OnPageProjected(ObservableCollection<Encounter> page)
     {
     }
-
+  
     protected override void ResetFilters() => SearchText=string.Empty;
 
-    public void ApplyQueryAttributes(IDictionary<string, object> query)
-    {
-    }
 }
 
 // ═══════════════════════════════════════════ DTOs ═══════════════════════════════════════════
@@ -1612,7 +1667,7 @@ public class CalendarEventDto
     public string TimeRangeText =>
         $"{ScheduledTime:HH:mm}-{ScheduledTime.Add(Duration):HH:mm}";
 
-    /// <summary>\u041d\u0430\u0441\u043b\u043e\u0432\u043e\u0442 \u043d\u0430 \u043a\u0430\u0440\u0442\u0438\u0447\u043a\u0430\u0442\u0430: \u043e\u043f\u0441\u0435\u0433 + \u043f\u0430\u0446\u0438\u0435\u043d\u0442 \u0432\u043e \u0435\u0434\u0435\u043d \u0440\u0435\u0434.</summary>
+    /// <summary>\u041d\u0430\u0441\u043b\u043e\u0432\u043e\u0442 \u043d\u0430 \u043a\u0430\u0440\u0442\u0438\u0446\u0430\u0442\u0430: \u043e\u043f\u0441\u0435\u0433 + \u043f\u0430\u0446\u0438\u0435\u043d\u0442 \u0432\u043e \u0435\u0434\u0435\u043d \u0440\u0435\u0434.</summary>
     public string CardTitle => $"{TimeRangeText} {PatientName}".Trim();
 }
 

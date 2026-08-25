@@ -4,6 +4,7 @@ public class Encounter
 {
     public const int DefaultDurationMinutes = 30;
 
+    // EF + normal empty construction
     public Encounter()
     {
         var start=RoundUpToHalfHour(DateTime.Now);
@@ -15,10 +16,6 @@ public class Encounter
     {
         get; set;
     }
-
-    // =========================================================
-    // Relationships
-    // =========================================================
 
     public Guid PatientId
     {
@@ -35,37 +32,17 @@ public class Encounter
         get; set;
     }
 
-  
-
-    // =========================================================
-    // Identification
-    // =========================================================
-
     public string EncounterNumber { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Outpatient, Inpatient, Emergency, Telehealth, FollowUp...
-    /// </summary>
-    public string EncounterType { get; set; } = "Амбулантски";
+    public string EncounterType { get; set; } = "Outpatient";
 
-    // =========================================================
-    // Workflow
-    // =========================================================
+    public EncounterStatus Status
+    {
+        get; set;
+    } =
+        EncounterStatus.Scheduled;
 
-    /// <summary>
-    /// Scheduled, CheckedIn, Waiting, InProgress,
-    /// Completed, Cancelled, NoShow
-    /// </summary>
-    public EncounterStatus Status { get; set; } = EncounterStatus.Scheduled;
-
-    /// <summary>
-    /// Routine, Urgent, Emergency, STAT
-    /// </summary>
     public string Priority { get; set; } = "Routine";
-
-    // =========================================================
-    // Schedule
-    // =========================================================
 
     public DateTime? ScheduledStart
     {
@@ -76,10 +53,6 @@ public class Encounter
     {
         get; set;
     }
-
-    // =========================================================
-    // Visit Timeline
-    // =========================================================
 
     public DateTime? CheckInTime
     {
@@ -105,10 +78,6 @@ public class Encounter
     {
         get; set;
     }
-
-    // =========================================================
-    // Clinical
-    // =========================================================
 
     public string? ChiefComplaint
     {
@@ -140,22 +109,10 @@ public class Encounter
         get; set;
     }
 
-    // =========================================================
-    // Administrative
-    // =========================================================
-
-    /// <summary>
-    /// Referral, WalkIn, Appointment, Transfer
-    /// </summary>
     public string? VisitSource
     {
         get; set;
     }
-
-    /// <summary>
-    /// Pending, ReadyForBilling, Billed, Paid
-    /// </summary>
-
 
     public bool IsLocked
     {
@@ -164,22 +121,10 @@ public class Encounter
 
     public bool IsActive { get; set; } = true;
 
-    // =========================================================
-    // Legacy Compatibility
-    // =========================================================
-
-    /// <summary>
-    /// Legacy field.
-    /// Can map to ScheduledStart or StartTime.
-    /// </summary>
     public DateTime EncounterDate
     {
         get; set;
     }
-
-    // =========================================================
-    // Audit
-    // =========================================================
 
     public DateTime CreatedAt
     {
@@ -200,17 +145,16 @@ public class Encounter
     {
         get; set;
     }
+
     public Guid? TherapyCycleId
     {
         get; set;
     }
+
     public virtual TherapyCycle? TherapyCycle
     {
         get; set;
     }
-    // =========================================================
-    // Navigation Properties
-    // =========================================================
 
     public virtual Patient? Patient
     {
@@ -226,56 +170,94 @@ public class Encounter
     {
         get; set;
     }
-    public virtual ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
 
-    public virtual ICollection<Diagnosis> Diagnoses { get; set; } = new List<Diagnosis>();
+    public virtual ICollection<Prescription> Prescriptions
+    {
+        get; set;
+    }
+        = new List<Prescription>();
 
-    public virtual ICollection<Medicine> MedicationOrders { get; set; } = new List<Medicine>();
+    public virtual ICollection<Diagnosis> Diagnoses
+    {
+        get; set;
+    }
+        = new List<Diagnosis>();
 
+    public virtual ICollection<Medicine> MedicationOrders
+    {
+        get; set;
+    }
+        = new List<Medicine>();
 
-    public string? ClinicalNotes { get; set; }
+    public string? ClinicalNotes
+    {
+        get; set;
+    }
 
-    public virtual ICollection<PatientDocument> Attachments { get; set; } = new List<PatientDocument>();
+    public virtual ICollection<PatientDocument> Attachments
+    {
+        get; set;
+    }
+        = new List<PatientDocument>();
 
-    public void Schedule(DateTime start, int durationMinutes = DefaultDurationMinutes)
+    public void Schedule(
+        DateTime start,
+        int durationMinutes = DefaultDurationMinutes)
     {
         if(durationMinutes<=0)
-            throw new ArgumentOutOfRangeException(nameof(durationMinutes), "Времетраењето мора да биде поголемо од нула.");
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(durationMinutes),
+                "Времетраењето мора да биде поголемо од нула.");
+        }
 
         Status=EncounterStatus.Scheduled;
+
         EncounterDate=start;
         ScheduledStart=start;
         ScheduledEnd=start.AddMinutes(durationMinutes);
         DurationMinutes=durationMinutes;
     }
 
+  
     public void Complete(DateTime completedAt)
     {
         Status=EncounterStatus.Completed;
         EndTime=completedAt;
         IsLocked=true;
 
-        var start=StartTime??ScheduledStart;
+        var start = StartTime??ScheduledStart;
+
         DurationMinutes=start.HasValue
-            ? Math.Max(0, (int)(completedAt-start.Value).TotalMinutes)
+            ? Math.Max(
+                0,
+                (int)(completedAt-start.Value).TotalMinutes)
             : DurationMinutes;
     }
 
     public void SetNotes(string? notes)
     {
-        var normalized=string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
+        var normalized =
+            string.IsNullOrWhiteSpace(notes)
+                ? null
+                : notes.Trim();
+
         Notes=normalized;
         ClinicalNotes=normalized;
     }
 
-    private static DateTime RoundUpToHalfHour(DateTime value)
+    private static DateTime RoundUpToHalfHour(
+        DateTime value)
     {
-        var rounded=value.Date.AddHours(value.Hour);
-        rounded=rounded.AddMinutes(value.Minute<30 ? 30 : 60);
-        return DateTime.SpecifyKind(rounded, value.Kind);
-    }
+        var rounded = value.Date.AddHours(value.Hour);
 
-  
+        rounded=rounded.AddMinutes(
+            value.Minute<30 ? 30 : 60);
+
+        return DateTime.SpecifyKind(
+            rounded,
+            value.Kind);
+    }
 }
 
 public enum EncounterStatus

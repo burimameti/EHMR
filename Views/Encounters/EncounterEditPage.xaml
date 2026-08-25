@@ -11,31 +11,58 @@
 	BackgroundColor="{StaticResource PageBackground}">
 	<ContentPage.Resources>
 		<DataTemplate x:Key="EditEncounterHistoryTemplate" x:DataType="entities:Encounter">
-	<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
-		<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
-		<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
-			<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-				<Label FontAttributes="Bold" FontSize="12.5" Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkAccentTealDark}" />
-				<VerticalStackLayout Grid.Column="1" Spacing="2">
-					<Label FontAttributes="Bold" FontSize="12.5" LineBreakMode="TailTruncation" Text="{Binding ClinicalNotes, TargetNullValue='Преглед'}" TextColor="{StaticResource SparkTextPrimary}" />
-					<Label FontSize="11.5" LineBreakMode="TailTruncation" Text="{Binding ClinicalNotes, TargetNullValue='Без клиничка белешка'}" TextColor="{StaticResource SparkTextSecondary}" />
-				</VerticalStackLayout>
-				<Label Grid.Column="2" FontSize="16" Text="›" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
+			<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+				<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+				<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
+					<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+						<Label
+							FontAttributes="Bold"
+							FontSize="12.5"
+							Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}"
+							TextColor="{StaticResource SparkAccentTealDark}" />
+						<VerticalStackLayout Grid.Column="1" Spacing="2">
+							<Label
+								FontAttributes="Bold"
+								FontSize="12.5"
+								LineBreakMode="TailTruncation"
+								Text="{Binding ClinicalNotes, TargetNullValue='Преглед'}"
+								TextColor="{StaticResource SparkTextPrimary}" />
+							<Label
+								FontSize="11.5"
+								LineBreakMode="TailTruncation"
+								Text="{Binding ClinicalNotes, TargetNullValue='Без клиничка белешка'}"
+								TextColor="{StaticResource SparkTextSecondary}" />
+						</VerticalStackLayout>
+						<Label
+							Grid.Column="2"
+							FontSize="16"
+							Text="›"
+							TextColor="{StaticResource SparkAccentTealDark}"
+							VerticalOptions="Center" />
+					</Grid>
+				</Border>
 			</Grid>
-		</Border>
-	</Grid>
-</DataTemplate>
+		</DataTemplate>
 		<DataTemplate x:Key="EditDiagnosisHistoryTemplate" x:DataType="entities:Diagnosis">
-	<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
-		<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
-		<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
-			<Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-				<Label FontAttributes="Bold" FontSize="12.5" Text="{Binding Mkb10Code.Code}" TextColor="{StaticResource SparkAccentTealDark}" />
-				<Label Grid.Column="1" FontSize="11.5" LineBreakMode="TailTruncation" Text="{Binding Mkb10Code.Description}" TextColor="{StaticResource SparkTextPrimary}" />
+			<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+				<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+				<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
+					<Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+						<Label
+							FontAttributes="Bold"
+							FontSize="12.5"
+							Text="{Binding Mkb10Code.Code}"
+							TextColor="{StaticResource SparkAccentTealDark}" />
+						<Label
+							Grid.Column="1"
+							FontSize="11.5"
+							LineBreakMode="TailTruncation"
+							Text="{Binding Mkb10Code.Description}"
+							TextColor="{StaticResource SparkTextPrimary}" />
+					</Grid>
+				</Border>
 			</Grid>
-		</Border>
-	</Grid>
-</DataTemplate>
+		</DataTemplate>
 		<DataTemplate x:Key="EditMedicineHistoryTemplate" x:DataType="entities:PatientMedicine">
 			<Border
 				Margin="0,0,0,8"
@@ -65,30 +92,41 @@
 			<ContentView x:Name="MenuHost" />
 		</Border>
 		<!--  ДЕСЕН ГЛАВЕН КОНТЕЈНЕР  -->
-		<Grid Grid.Column="1" RowDefinitions="Auto,*" Style="{StaticResource CrudFormPageGridStyle}">
+		<Grid
+			Grid.Column="1"
+			RowDefinitions="Auto,*"
+			Style="{StaticResource CrudFormPageGridStyle}">
 			<!--  HEADER  -->
-			<Border Grid.Row="0" Margin="16,16,16,0" Style="{StaticResource PageCardStyleDashboard}">
-				<controls:FFPageHeader
+			<Border
 				Grid.Row="0"
-				Title="Уреди преглед"
-				Subtitle="Додавање МКБ дијагнози, забелешки и лекови за пациентот"
-				PrimaryButtonCommand="{Binding SaveCommand}"
-				PrimaryButtonText="Зачувај"
-				SecondaryButtonCommand="{Binding CancelCommand}"
-				SecondaryButtonText="Откажи"
-				ShowPrimaryButton="True"
-				ShowSecondaryButton="True" />
+				Margin="16,16,16,0"
+				Style="{StaticResource PageCardStyleDashboard}">
+				<controls:FFPageHeader
+					Title="Уреди преглед"
+					Grid.Row="0"
+					PrimaryButtonCommand="{Binding SaveCommand}"
+					PrimaryButtonText="Зачувај"
+					SecondaryButtonCommand="{Binding CancelCommand}"
+					SecondaryButtonText="Откажи"
+					ShowPrimaryButton="True"
+					ShowSecondaryButton="True"
+					Subtitle="Додавање МКБ дијагнози, забелешки и лекови за пациентот" />
 			</Border>
 			<!--  MAIN PANEL  -->
-			
-				<Grid Grid.Row="1" ColumnDefinitions="2*,1*"
-				ColumnSpacing="6"
+
+			<Grid
+				Grid.Row="1"
 				Margin="16,0,16,0"
+				ColumnDefinitions="2*,1*"
+				ColumnSpacing="6"
 				Style="{StaticResource CrudFormBodyGridStyle}">
 				<!--  ═══════════════════════════════════════════════════════  -->
 				<!--  ЛЕВА КОЛОНА — ФОРМУЛАРИ  -->
 				<!--  ═══════════════════════════════════════════════════════  -->
-				<controls:FFSectionCard Margin="0" Grid.Column="0" Style="{StaticResource CrudFormCardStyle}">
+				<controls:FFSectionCard
+					Grid.Column="0"
+					Margin="0"
+					Style="{StaticResource CrudFormCardStyle}">
 					<ScrollView VerticalScrollBarVisibility="Never">
 						<VerticalStackLayout Style="{StaticResource CrudFormContentStackStyle}">
 							<!--  ── СЕКЦИЈА 1: ПАЦИЕНТ И РЕУМАТОЛОГ (заклучено — прегледот веќе постои) ──  -->
@@ -422,17 +460,31 @@
 											</BindableLayout.EmptyView>
 											<BindableLayout.ItemTemplate>
 												<DataTemplate x:DataType="entities:Diagnosis">
-	<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
-		<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
-		<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
-			<Grid ColumnDefinitions="Auto,*,28" ColumnSpacing="8">
-				<Label Style="{StaticResource CrudCollectionCodeStyle}" Text="{Binding Mkb10Code.Code}" />
-				<Label Grid.Column="1" Style="{StaticResource CrudCollectionMetaStyle}" LineBreakMode="TailTruncation" Text="{Binding Mkb10Code.Description}" />
-				<Button Grid.Column="2" Padding="0" BackgroundColor="Transparent" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMkbCommand}" CommandParameter="{Binding .}" FontSize="11" HeightRequest="26" Text="✕" TextColor="#DC2626" WidthRequest="26" />
-			</Grid>
-		</Border>
-	</Grid>
-</DataTemplate>
+													<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+														<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+														<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
+															<Grid ColumnDefinitions="Auto,*,28" ColumnSpacing="8">
+																<Label Style="{StaticResource CrudCollectionCodeStyle}" Text="{Binding Mkb10Code.Code}" />
+																<Label
+																	Grid.Column="1"
+																	LineBreakMode="TailTruncation"
+																	Style="{StaticResource CrudCollectionMetaStyle}"
+																	Text="{Binding Mkb10Code.Description}" />
+																<Button
+																	Grid.Column="2"
+																	Padding="0"
+																	BackgroundColor="Transparent"
+																	Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMkbCommand}"
+																	CommandParameter="{Binding .}"
+																	FontSize="11"
+																	HeightRequest="26"
+																	Text="✕"
+																	TextColor="#DC2626"
+																	WidthRequest="26" />
+															</Grid>
+														</Border>
+													</Grid>
+												</DataTemplate>
 											</BindableLayout.ItemTemplate>
 										</VerticalStackLayout>
 										<VerticalStackLayout Spacing="8">
@@ -460,6 +512,7 @@
 							<VerticalStackLayout Spacing="12">
 								<controls:CrudSectionHeader Title="ЛЕКОВИ" />
 								<Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+
 									<!--  Medicine search + dropdown  -->
 									<VerticalStackLayout Grid.Column="0" Spacing="8">
 										<controls:FFSearchBox Placeholder="Пребарување на лекот..." Text="{Binding MedicineSearchText, Mode=TwoWay}" />
@@ -498,6 +551,7 @@
 											</CollectionView>
 										</Border>
 									</VerticalStackLayout>
+
 									<!--  Medicine table (right column)  -->
 									<VerticalStackLayout Grid.Column="1" Spacing="0">
 										<Label
@@ -506,29 +560,105 @@
 											FontSize="11"
 											Text="Додадени за овој преглед"
 											TextColor="{StaticResource SparkTextSecondary}" />
-						<!--  Минимален header без позадина  -->
-										<Grid ColumnDefinitions="14,*,90,28" ColumnSpacing="8" IsVisible="{Binding HasEncounterMedicines}">
-											<Label Grid.Column="1" FontAttributes="Bold" FontSize="10" Text="ИМЕ НА ЛЕКОТ" TextColor="{StaticResource SparkAccentTealDark}" />
-											<Label Grid.Column="2" FontAttributes="Bold" FontSize="10" Text="КОЛИЧИНА" TextColor="{StaticResource SparkAccentTealDark}" />
-										</Grid>
-										<!--  Table rows  -->
-										<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="8">
-											<BindableLayout.EmptyView>
+
+										<Grid
+											ColumnDefinitions="2*,1*,32"
+											ColumnSpacing="1"
+											IsVisible="{Binding HasEncounterMedicines}">
+											<Border
+												Grid.Column="0"
+												Padding="10,8"
+												BackgroundColor="#475569"
+												StrokeShape="RoundRectangle 6,0,0,0"
+												StrokeThickness="0">
 												<Label
-													Padding="0,6"
-													FontSize="12"
-													Text="Нема додадени лекови за овој преглед."
-													TextColor="{StaticResource SparkTextSecondary}" />
+													FontAttributes="Bold"
+													FontSize="10"
+													Text="ИМЕ НА ЛЕКОТ"
+													TextColor="White" />
+											</Border>
+											<Border
+												Grid.Column="1"
+												Padding="10,8"
+												BackgroundColor="#475569"
+												StrokeThickness="0">
+												<Label
+													FontAttributes="Bold"
+													FontSize="10"
+													Text="КОЛИЧИНА"
+													TextColor="White" />
+											</Border>
+											<Border
+												Grid.Column="2"
+												BackgroundColor="#475569"
+												StrokeShape="RoundRectangle 0,6,0,0"
+												StrokeThickness="0" />
+										</Grid>
+
+										<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="0">
+											<BindableLayout.EmptyView>
+												<Border
+													Padding="12,14"
+													BackgroundColor="White"
+													Stroke="{StaticResource SparkBorderSubtle}"
+													StrokeThickness="1">
+													<Label
+														FontSize="12"
+														Text="Нема додадени лекови за овој преглед."
+														TextColor="{StaticResource SparkTextSecondary}" />
+												</Border>
 											</BindableLayout.EmptyView>
 											<BindableLayout.ItemTemplate>
 												<DataTemplate x:DataType="entities:PatientMedicine">
-	<Grid MinimumHeightRequest="32" ColumnDefinitions="14,*,90,28" ColumnSpacing="8">
-		<Border Grid.Column="0" BackgroundColor="{StaticResource SparkAccentTeal}" HeightRequest="8" HorizontalOptions="Center" StrokeThickness="0" StrokeShape="Ellipse" VerticalOptions="Center" WidthRequest="8" />
-		<Label Grid.Column="1" FontAttributes="Bold" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding Medicine.Name}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
-		<Entry Grid.Column="2" BackgroundColor="Transparent" FontSize="12" HeightRequest="28" HorizontalTextAlignment="Center" Keyboard="Numeric" Placeholder="Количина" Text="{Binding Dosage, Mode=TwoWay}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
-		<Button Grid.Column="3" Padding="0" BackgroundColor="Transparent" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" FontSize="11" HeightRequest="26" Text="✕" TextColor="#DC2626" VerticalOptions="Center" WidthRequest="26" />
-	</Grid>
-</DataTemplate>
+													<Grid ColumnDefinitions="2*,1*,32" ColumnSpacing="1">
+														<Border
+															Grid.Column="0"
+															Padding="10,0"
+															BackgroundColor="White"
+															HeightRequest="44"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															StrokeThickness="1">
+															<Label
+																FontSize="12"
+																LineBreakMode="TailTruncation"
+																Text="{Binding Medicine.Name}"
+																TextColor="{StaticResource SparkTextPrimary}"
+																VerticalOptions="Center" />
+														</Border>
+														<Border
+															Grid.Column="1"
+															Padding="4,0"
+															BackgroundColor="White"
+															HeightRequest="44"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															StrokeThickness="1">
+															<Entry
+																BackgroundColor="Transparent"
+																FontSize="12"
+																Keyboard="Numeric"
+																Text="{Binding Dosage, Mode=TwoWay}"
+																TextColor="{StaticResource SparkTextPrimary}"
+																VerticalOptions="Center"
+																VerticalTextAlignment="Center" />
+														</Border>
+														<Border
+															Grid.Column="2"
+															BackgroundColor="White"
+															HeightRequest="44"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															StrokeThickness="1">
+															<Button
+																Padding="0"
+																BackgroundColor="Transparent"
+																Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}"
+																CommandParameter="{Binding .}"
+																FontSize="12"
+																Text="✕"
+																TextColor="#DC2626"
+																WidthRequest="32" />
+														</Border>
+													</Grid>
+												</DataTemplate>
 											</BindableLayout.ItemTemplate>
 										</VerticalStackLayout>
 									</VerticalStackLayout>
@@ -664,11 +794,14 @@
 						</VerticalStackLayout>
 					</Border>
 					<!--  Пациент контекст  -->
-					<controls:FFSectionCard Margin="0" Grid.Column="0" Style="{StaticResource CrudFormCardStyle}">
+					<controls:FFSectionCard
+						Grid.Column="0"
+						Margin="0"
+						Style="{StaticResource CrudFormCardStyle}">
 						<ScrollView VerticalScrollBarVisibility="Never">
 							<VerticalStackLayout Style="{StaticResource CrudFormSidebarStackStyle}">
 								<controls:CrudSectionHeader Title="ИСТОРИЈА НА ПАЦИЕНТОТ" />
-							<ActivityIndicator
+								<ActivityIndicator
 									Margin="0,12"
 									HorizontalOptions="Center"
 									IsRunning="{Binding IsPatientLoading}"
@@ -677,32 +810,41 @@
 								<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="12">
 									<Grid ColumnDefinitions="24,*" ColumnSpacing="8">
 										<controls:CrudTimelineMarker Grid.Column="0" />
-										<controls:SparkExpandableCard Grid.Column="1" Style="{StaticResource CrudFormHistoryCardStyle}" Title="Дијагнози"
-										EmptyViewText="Нема претходни дијагнози."
-										ItemTemplate="{StaticResource EditDiagnosisHistoryTemplate}"
-										ItemsSource="{Binding PatientDiagnoses}"
-										Variant="Diagnosis" />
+										<controls:SparkExpandableCard
+											Title="Дијагнози"
+											Grid.Column="1"
+											EmptyViewText="Нема претходни дијагнози."
+											ItemTemplate="{StaticResource EditDiagnosisHistoryTemplate}"
+											ItemsSource="{Binding PatientDiagnoses}"
+											Style="{StaticResource CrudFormHistoryCardStyle}"
+											Variant="Diagnosis" />
 									</Grid>
 									<Grid ColumnDefinitions="24,*" ColumnSpacing="8">
 										<controls:CrudTimelineMarker Grid.Column="0" />
-										<controls:SparkExpandableCard Grid.Column="1" Style="{StaticResource CrudFormHistoryCardStyle}" Title="Прегледи"
-										EmptyViewText="Нема претходни прегледи."
-										IsExpanded="True"
-										ItemTemplate="{StaticResource EditEncounterHistoryTemplate}"
-										ItemsSource="{Binding FilteredEncounters}"
-										Variant="Encounter" />
+										<controls:SparkExpandableCard
+											Title="Прегледи"
+											Grid.Column="1"
+											EmptyViewText="Нема претходни прегледи."
+											IsExpanded="True"
+											ItemTemplate="{StaticResource EditEncounterHistoryTemplate}"
+											ItemsSource="{Binding FilteredEncounters}"
+											Style="{StaticResource CrudFormHistoryCardStyle}"
+											Variant="Encounter" />
 									</Grid>
 									<Grid ColumnDefinitions="24,*" ColumnSpacing="8">
 										<controls:CrudTimelineMarker Grid.Column="0" />
-										<controls:SparkExpandableCard Grid.Column="1" Style="{StaticResource CrudFormHistoryCardStyle}" Title="Лекови"
-										EmptyViewText="Нема претходно додадени лекови."
-										ItemTemplate="{StaticResource EditMedicineHistoryTemplate}"
-										ItemsSource="{Binding PatientMedicines}"
-										Variant="Medicine" />
+										<controls:SparkExpandableCard
+											Title="Лекови"
+											Grid.Column="1"
+											EmptyViewText="Нема претходно додадени лекови."
+											ItemTemplate="{StaticResource EditMedicineHistoryTemplate}"
+											ItemsSource="{Binding PatientMedicines}"
+											Style="{StaticResource CrudFormHistoryCardStyle}"
+											Variant="Medicine" />
 									</Grid>
 								</VerticalStackLayout>
-							<controls:CrudSectionHeader Title="ДОКУМЕНТИ" />
-							<FlexLayout
+								<controls:CrudSectionHeader Title="ДОКУМЕНТИ" />
+								<FlexLayout
 									BindableLayout.ItemsSource="{Binding PatientDocuments}"
 									Direction="Row"
 									Wrap="Wrap">
@@ -742,8 +884,8 @@
 						</ScrollView>
 					</controls:FFSectionCard>
 				</Grid>
-				</Grid>
-			
+			</Grid>
+
 		</Grid>
 	</Grid>
 </ContentPage>
