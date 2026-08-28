@@ -64,7 +64,7 @@
 			Margin="4,2,0,0"
 			FontAttributes="Bold"
 			FontSize="12"
-			IsVisible="{Binding SelectedItem, Source={x:Reference Root}, Converter={StaticResource IsNotNullConverter}}"
+			IsVisible="{Binding SelectedItem, Source={x:Reference Root}}"
 			Text="{Binding SelectedItem, Source={x:Reference Root}}"
 			TextColor="{StaticResource SparkAccentTealDark}" />
 
