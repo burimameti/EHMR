@@ -79,6 +79,11 @@ public class Patient : BaseEntity
 
     public PatientStatus Status { get; set; } = PatientStatus.Active;
 
+    /// <summary>
+    /// Mandatory clinical/administrative reason when the patient is marked inactive.
+    /// </summary>
+    public string InactiveReason { get; set; } = string.Empty;
+
     #endregion
 
     #region Audit
