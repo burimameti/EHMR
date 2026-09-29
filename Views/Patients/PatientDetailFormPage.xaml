@@ -605,7 +605,7 @@
 								<!--  ================================================  -->
 								<!--  COLUMN 1 — МЕДИЦИНСКИ ПОДАТОЦИ  -->
 								<VerticalStackLayout
-									Grid.Row="1"
+									Grid.Row="2"
 									Grid.Column="1"
 									Spacing="16">
 
@@ -858,7 +858,7 @@
 								<!--  COLUMN 2 — КОНТАКТ ИНФОРМАЦИИ  -->
 								<!--  ================================================  -->
 								<VerticalStackLayout
-									Grid.Row="2"
+									Grid.Row="1"
 									Grid.Column="1"
 									Spacing="16">
 									<controls:CrudSectionHeader Title="КОНТАКТ ИНФОРМАЦИИ" />
@@ -1000,31 +1000,7 @@
 										</Border>
 									</Grid>
 
-									<!--  ВТОРА СЕКЦИЈА: ИТЕН КОНТАКТ  -->
-									<controls:CrudSectionHeader Title="ИТЕН КОНТАКТ" />
-
-									<!--  РЕД 1: Контакт лице и Мобилен  -->
-									<Grid
-										Padding="{StaticResource FormRowPadding}"
-										ColumnDefinitions="*,*"
-										ColumnSpacing="16">
-										<!--  КОНТАКТ ЛИЦЕ  -->
-										<VerticalStackLayout
-											Grid.Column="0"
-											IsVisible="{Binding IsEditMode}"
-											Spacing="4">
-											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Име и презиме" />
-											<Border Style="{StaticResource EditFieldBoxStyle}">
-												<Entry
-													BackgroundColor="Transparent"
-													FontSize="13"
-													Placeholder="Пр. Ана Петровска"
-													PlaceholderColor="{StaticResource SparkTextSecondary}"
-													Text="{Binding Patient.EmergencyContactName}"
-													TextColor="{StaticResource SparkTextPrimary}"
-													VerticalOptions="Center" />
-											</Border>
-										</VerticalStackLayout>
+								</VerticalStackLayout>
 										<Border
 											Grid.Column="0"
 											IsVisible="{Binding IsReadOnly}"
