@@ -31,7 +31,7 @@ namespace EHMR.Services
         {
             if(string.IsNullOrWhiteSpace(route))
                 throw new ArgumentNullException(nameof(route));
-
+            string normalizedRoute = "";
             try
             {
                 var navParams = parameters??new Dictionary<string, object>();
@@ -48,7 +48,7 @@ namespace EHMR.Services
 
                 // Shell root pages must use absolute routes; registered detail/create/edit
                 // pages remain relative so they stay inside the current Shell stack.
-                normalizedRoute=route switch
+                 normalizedRoute=route switch
                 {
                     "dashboard" => "//dashboard",
                     "login" => "//login",
