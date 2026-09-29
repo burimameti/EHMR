@@ -223,6 +223,10 @@ namespace EHMR.Services.Dto
         {
             get; set;
         }
+        public Guid? TherapyCycleId
+        {
+            get; set;
+        }
 
         public PatientDocumentType DocumentType
         {
