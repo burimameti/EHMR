@@ -54,6 +54,20 @@ public partial class CreateTherapyCyclePopupViewModel : ObservableObject
     [ObservableProperty]
     private string notes = string.Empty;
 
+    [ObservableProperty]
+    private string decisionText = string.Empty;
+
+    [ObservableProperty]
+    private string selectedDocumentName = string.Empty;
+
+    [ObservableProperty]
+    private bool hasSelectedDocument;
+
+    [ObservableProperty]
+    private bool isUploadingDocument;
+
+    private FileResult? _selectedDocumentFile;
+
 
     [ObservableProperty]
     private DateTime startDate;
@@ -74,6 +88,41 @@ public partial class CreateTherapyCyclePopupViewModel : ObservableObject
     [ObservableProperty]
     private bool isBusy;
 
+
+    [RelayCommand]
+    private async Task PickDocumentAsync()
+    {
+        if(IsUploadingDocument)
+            return;
+
+        try
+        {
+            var file=await FilePicker.Default.PickAsync(new PickOptions
+            {
+                PickerTitle="Изберете решение или скениран документ"
+            });
+
+            if(file is null)
+                return;
+
+            _selectedDocumentFile=file;
+            SelectedDocumentName=file.FileName;
+            HasSelectedDocument=true;
+        }
+        catch(Exception ex)
+        {
+            HasError=true;
+            ErrorMessage=$"Грешка при избор на документ: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private void RemoveSelectedDocument()
+    {
+        _selectedDocumentFile=null;
+        SelectedDocumentName=string.Empty;
+        HasSelectedDocument=false;
+    }
 
     [RelayCommand]
     private async Task SaveAsync()
@@ -125,6 +174,7 @@ public partial class CreateTherapyCyclePopupViewModel : ObservableObject
         }
         finally
         {
+            IsUploadingDocument=false;
             IsBusy=false;
         }
     }
