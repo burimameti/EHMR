@@ -97,6 +97,13 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
     partial void OnInactiveReasonChanged(string value)
         => Patient.InactiveReason=value??string.Empty;
+
+    [RelayCommand]
+    private void SetInactive()
+    {
+        if(IsEditMode)
+            IsPatientActive=false;
+    }
     [ObservableProperty] private string selectedStatusDisplay = string.Empty;
     [ObservableProperty] private string selectedRelationDisplay = string.Empty;
     [ObservableProperty] private string selectedCityDisplay = string.Empty;
