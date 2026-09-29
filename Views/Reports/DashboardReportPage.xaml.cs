@@ -36,7 +36,7 @@ namespace EHMR.Views.Reports
 
             if(ReportControlGrid != null && ReportTitleBlock != null && PeriodControl != null && FromControl != null && ToControl != null && ApplyPeriodButton != null && GenerateButton != null)
             {
-                bool stackedControls = availableWidth < 1450;
+                bool stackedControls = availableWidth < 1650;
 
                 ReportControlGrid.ColumnDefinitions.Clear();
                 ReportControlGrid.RowDefinitions.Clear();
@@ -54,14 +54,17 @@ namespace EHMR.Views.Reports
 
                     Grid.SetColumn(PeriodControl, 0);
                     Grid.SetRow(PeriodControl, 1);
+                    PeriodControl.HorizontalOptions = LayoutOptions.Fill;
                     Grid.SetColumnSpan(PeriodControl, 2);
 
                     Grid.SetColumn(FromControl, 0);
                     Grid.SetRow(FromControl, 2);
+                    FromControl.HorizontalOptions = LayoutOptions.Fill;
                     Grid.SetColumnSpan(FromControl, 1);
 
                     Grid.SetColumn(ToControl, 1);
                     Grid.SetRow(ToControl, 2);
+                    ToControl.HorizontalOptions = LayoutOptions.Fill;
                     Grid.SetColumnSpan(ToControl, 1);
 
                     Grid.SetColumn(ApplyPeriodButton, 0);
@@ -87,7 +90,10 @@ namespace EHMR.Views.Reports
                     Grid.SetRow(ReportTitleBlock, 0);
                     Grid.SetColumn(PeriodControl, 1);
                     Grid.SetColumn(FromControl, 2);
+                    PeriodControl.HorizontalOptions = LayoutOptions.Start;
+                    FromControl.HorizontalOptions = LayoutOptions.Start;
                     Grid.SetColumn(ToControl, 3);
+                    ToControl.HorizontalOptions = LayoutOptions.Start;
                     Grid.SetColumn(ApplyPeriodButton, 4);
                     Grid.SetColumn(GenerateButton, 5);
                     Grid.SetRow(PeriodControl, 0);
