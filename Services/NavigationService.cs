@@ -1,4 +1,5 @@
-﻿using EHMR.Domain.Interfaces;
+﻿using EHMR.Domain.Entities.Rbac;
+using EHMR.Domain.Interfaces;
 using System.Diagnostics;
 
 namespace EHMR.Services
@@ -7,6 +8,26 @@ namespace EHMR.Services
     {
         private readonly INavigationEvents _navEvents;
 
+        private static readonly HashSet<string> RootRoutes =
+        [
+            AppRoutes.Dashboard,
+            AppRoutes.CalendarPage,
+            AppRoutes.Patients.List,
+            AppRoutes.Encounters.List,
+            AppRoutes.Appointments.List,
+            AppRoutes.Protocols.List,
+            AppRoutes.Medicines.List,
+            AppRoutes.Reports.List,
+            AppRoutes.Admin.AdminPanel,
+            AppRoutes.Users.List,
+            AppRoutes.Doctors.List,
+            AppRoutes.Therapy.List,
+            AppRoutes.Prescriptions.List,
+            AppRoutes.Backup.Dashboard,
+            AppRoutes.Backup.Backups,
+            AppRoutes.Mkb10Codes.List
+        ];
+
         public NavigationService(INavigationEvents navEvents)
         {
             _navEvents=navEvents;
@@ -14,7 +35,7 @@ namespace EHMR.Services
 
         private Page GetCurrentPage()
         {
-            var window = Application.Current?.Windows?.FirstOrDefault();
+            var window=Application.Current?.Windows?.FirstOrDefault();
             if(window==null||window.Page==null)
                 throw new InvalidOperationException("No active window or page found.");
 
@@ -23,7 +44,7 @@ namespace EHMR.Services
 
         public async Task NavigateToAsync<TViewModel>(IDictionary<string, object>? parameters = null)
         {
-            var route = typeof(TViewModel).Name.Replace("ViewModel", "Page");
+            var route=typeof(TViewModel).Name.Replace("ViewModel", "Page");
             await GoToAsync(route, parameters);
         }
 
@@ -34,38 +55,31 @@ namespace EHMR.Services
 
             try
             {
-                var navParams = parameters??new Dictionary<string, object>();
+                var navParams=parameters??new Dictionary<string, object>();
 
-                // 1. Прво земи безбедна референца за Shell (ако Current е null, пробај преку MainPage)
-                Shell? activeShell = Shell.Current??Application.Current?.MainPage as Shell;
+                Shell? activeShell=Shell.Current??Application.Current?.MainPage as Shell;
 
                 if(activeShell==null)
                 {
-                    // Ако сè уште нема вчитано Shell, логирај предупредување и почекај малку (асинхрон fallback)
-                    System.Diagnostics.Debug.WriteLine($"[Warning] Навигацијата за '{route}' е повикана прерано. Shell сè уште не е иницијализиран.");
+                    Debug.WriteLine($"[Warning] Navigation requested before Shell initialization: {route}");
                     return;
                 }
 
-                // 2. Изврши ја навигацијата преку пронајдениот Shell
-                if(route.StartsWith("//"))
-                {
-                    await activeShell.GoToAsync(route, true, navParams);
-                }
-                else
-                {
-                    // Поправка за релативни рути:
-                    // За да биде посигурно со детални страници регистрирани во C#, секогаш е подобро со чисто име:
-                    await activeShell.GoToAsync(route, navParams);
-                }
+                var normalized=route.Trim('/');
+                var target=RootRoutes.Contains(normalized)
+                    ? $"//{normalized}"
+                    : route;
+
+                await activeShell.GoToAsync(target, true, navParams);
+
+                _navEvents.NotifyRouteChanged(target);
+                Debug.WriteLine($"Route called - {target} - {DateTime.Now}");
             }
             catch(Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Navigation failed за рута [{route}]: {ex.Message}");
+                Debug.WriteLine($"Navigation failed for route [{route}]: {ex.Message}");
                 throw;
             }
-
-            _navEvents.NotifyRouteChanged(route);
-            Debug.WriteLine($"Route called - on navService{DateTime.Now}", route);
         }
 
         public async Task GoBackAsync()
@@ -89,7 +103,7 @@ namespace EHMR.Services
             if(page is not Page p)
                 throw new ArgumentException("Parameter must be of type Page", nameof(page));
 
-            var currentPage = GetCurrentPage();
+            var currentPage=GetCurrentPage();
             await currentPage.Navigation.PushModalAsync(p);
         }
 
