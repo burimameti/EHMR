@@ -606,6 +606,7 @@ public class PatientService : IPatientService
             BloodType=p.BloodType,
             Allergies=p.Allergies,
             Status=p.Status,
+            InactiveReason=p.InactiveReason,
             RegistrationDate=p.RegistrationDate,
             Age=age,
             LastVisitDate=p.Encounters?
@@ -685,6 +686,9 @@ public class PatientService : IPatientService
         target.City=source.City;
         target.PostalCode=source.PostalCode;
         target.Status=source.Status;
+        target.InactiveReason=source.Status==PatientStatus.Inactive
+            ? source.InactiveReason.Trim()
+            : string.Empty;
         target.BloodType=source.BloodType;
         target.Allergies=source.Allergies;
         target.EmergencyContactName=source.EmergencyContactName;
