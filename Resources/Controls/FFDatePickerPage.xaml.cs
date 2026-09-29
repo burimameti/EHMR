@@ -4,6 +4,24 @@ namespace EHMR.Resources.Controls;
 
 public partial class FFDatePicker : ContentView
 {
+    public static readonly BindableProperty ResponsiveScaleProperty =
+        BindableProperty.Create(nameof(ResponsiveScale), typeof(double), typeof(FFDatePicker), 1d,
+            propertyChanged: (b, _, n) => ((FFDatePicker)b).ApplyResponsiveScale((double)n));
+
+    public double ResponsiveScale
+    {
+        get => (double)GetValue(ResponsiveScaleProperty);
+        set => SetValue(ResponsiveScaleProperty, value);
+    }
+
+    private void ApplyResponsiveScale(double scale)
+    {
+        scale=Math.Clamp(scale, 0.72, 1.0);
+        PickerBorder.HeightRequest=48*scale;
+        DisplayLabel.FontSize=14*scale;
+        InnerDatePicker.FontSize=14*scale;
+    }
+
     public FFDatePicker()
     {
         InitializeComponent();
