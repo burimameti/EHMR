@@ -333,7 +333,13 @@ public class EncounterDetailService : IEncounterDetailService
             Documents=patient.Documents
                                 .Where(d => !d.IsDeleted)
                                 .OrderByDescending(d => d.UploadedAt)
-                                .ToList()
+                                .ToList(),
+
+            LatestScore=await db.PatientScores
+                .AsNoTracking()
+                .Where(s => s.PatientId==patientId)
+                .OrderByDescending(s => s.RecordedAt)
+                .FirstOrDefaultAsync()
         };
     }
 
