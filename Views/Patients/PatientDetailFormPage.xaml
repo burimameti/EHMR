@@ -142,10 +142,14 @@
 
 		<DataTemplate x:Key="PatientTherapyCycleHistoryRowTemplate" x:DataType="models:TherapyCycle">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
-					<Grid Padding="8,6" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-						<Label FontAttributes="Bold" FontSize="12" Text="{Binding Status}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
-						<Label Grid.Column="1" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding Notes, TargetNullValue='Без забелешка'}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+					<Grid Padding="8,6" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="3">
+						<Label Grid.RowSpan="2" FontAttributes="Bold" FontSize="12" Text="{Binding Status}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
+						<Label Grid.Column="1" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding DecisionText, TargetNullValue='Без внесено решение'}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
 						<Label Grid.Column="2" FontSize="11" Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
+						<HorizontalStackLayout Grid.Row="1" Grid.Column="1" Spacing="8">
+							<Label FontSize="11" LineBreakMode="TailTruncation" Text="{Binding Notes, TargetNullValue='Без забелешка'}" TextColor="{StaticResource SparkTextSecondary}" />
+							<Label FontSize="11" Text="{Binding Documents.Count, StringFormat='Документи: {0}'}" TextColor="{StaticResource SparkAccentTealDark}" />
+						</HorizontalStackLayout>
 					</Grid>
 				</Border>
 			</DataTemplate>
