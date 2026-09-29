@@ -231,7 +231,9 @@
 						Spacing="12"
 						Padding="0,0,4,0"
 						VerticalOptions="Start">
-						<BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}">
+						<BindableLayout.ItemsSource>
+							<Binding Path="Pickers" Source="{x:Reference Root}" />
+						</BindableLayout.ItemsSource><BindableLayout.ItemTemplate>
 							<BindableLayout.ItemTemplate>
 								<DataTemplate x:DataType="sc:SparkPickerItem">
 									<sc:FFPicker
@@ -241,7 +243,6 @@
 										SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
 								</DataTemplate>
 							</BindableLayout.ItemTemplate>
-						</BindableLayout.ItemsSource>
 					</HorizontalStackLayout>
 				</ScrollView>
 
