@@ -246,9 +246,65 @@ public class EncounterDetailService : IEncounterDetailService
     public async Task<TherapyCycle> CreateTherapyCycle(TherapyCycle cycle)
     {
         await using var db = await _factory.CreateDbContextAsync();
+
+        // Starting a replacement therapy closes the currently active/planned
+        // therapy as historical. We keep the old record for the patient history.
+        if(cycle.PatientId.HasValue && cycle.Status==TherapyStatus.Active)
+        {
+            var current = await db.TherapyCycles
+                .Where(x => x.PatientId==cycle.PatientId.Value
+                            &&(x.Status==TherapyStatus.Active||x.Status==TherapyStatus.Planned))
+                .ToListAsync();
+
+            foreach(var previous in current)
+            {
+                previous.Status=TherapyStatus.Completed;
+                previous.EndDate=cycle.StartDate==default
+                    ? DateTime.Today
+                    : cycle.StartDate;
+            }
+        }
+
+        cycle.Id=cycle.Id==Guid.Empty ? Guid.NewGuid() : cycle.Id;
         db.TherapyCycles.Add(cycle);
         await db.SaveChangesAsync();
         return cycle;
+    }
+
+    public async Task AttachTherapyCycleDocumentAsync(
+        Guid patientId,
+        Guid therapyCycleId,
+        string fileName,
+        string storedPath,
+        string contentType,
+        long fileSize,
+        PatientDocumentType documentType = PatientDocumentType.Resenie)
+    {
+        await using var db = await _factory.CreateDbContextAsync();
+
+        var cycleExists=await db.TherapyCycles
+            .AsNoTracking()
+            .AnyAsync(x => x.Id==therapyCycleId && x.PatientId==patientId);
+
+        if(!cycleExists)
+            throw new InvalidOperationException("Терапевтскиот циклус не постои за избраниот пациент.");
+
+        db.PatientDocuments.Add(new PatientDocument
+        {
+            Id=Guid.NewGuid(),
+            PatientId=patientId,
+            TherapyCycleId=therapyCycleId,
+            DocumentType=documentType,
+            Title=string.IsNullOrWhiteSpace(fileName) ? "Решение" : fileName,
+            Description="Документ приложен кон терапевтскиот циклус.",
+            FileName=fileName,
+            StoredPath=storedPath,
+            ContentType=contentType??string.Empty,
+            FileSize=fileSize,
+            UploadedAt=DateTime.UtcNow
+        });
+
+        await db.SaveChangesAsync();
     }
 
     public async Task<List<TherapyCycle>> GetTherapyCycles(Guid patientId)
