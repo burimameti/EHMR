@@ -306,7 +306,8 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                 Diagnoses.ToList(),
                 Prescriptions.ToList(),
                 EncounterMedicines.ToList(),
-                DeletedMedicineIds.ToList());
+                DeletedMedicineIds.ToList(),
+                ScoreText);
 
             await NavigationService.GoToAsync(AppRoutes.Encounters.List);
 
