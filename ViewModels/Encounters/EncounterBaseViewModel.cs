@@ -58,6 +58,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     [ObservableProperty]
     protected Encounter encounter = new();
+
+    [ObservableProperty]
+    private string scoreText = string.Empty;
     [ObservableProperty]
     private string pageTitle = string.Empty;
 
@@ -964,6 +967,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
                 Diagnoses=new ObservableCollection<Diagnosis>(dto.Diagnoses);
                 Prescriptions=new ObservableCollection<Prescription>(dto.Prescriptions);
                 EncounterDiagnosisNotes=Encounter.ClinicalNotes??string.Empty;
+                ScoreText=dto.Score?.ScoreText??string.Empty;
 
                 SelectedPatient=Patients.FirstOrDefault(x => x.Id==Encounter.PatientId);
                 SelectedDoctor=Doctors.FirstOrDefault(x => x.Id==Encounter.DoctorId);
