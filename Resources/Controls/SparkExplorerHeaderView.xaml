@@ -5,14 +5,15 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:sc="clr-namespace:EHMR.Resources.Controls"
 	x:Name="Root"
+	HorizontalOptions="Fill"
 	ZIndex="100">
 
 	<VerticalStackLayout
 		Margin="0"
-		BackgroundColor="White"
+		BackgroundColor="{StaticResource Transparent}"
 		Spacing="8">
 
-		<!--  ============ ROW 1: TABS + TRAILING ============  -->
+		<!--  ============ ROW 1: TABS (wrap instead of overflow) ============  -->
 		<Border
 			BackgroundColor="Transparent"
 			IsVisible="{Binding TabsVisible, Source={x:Reference Root}}"
@@ -21,115 +22,113 @@
 			<Grid
 				x:Name="ExplorerGrid"
 				Padding="0,0,6,1"
-				ColumnSpacing="0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<!--  0: tabs  -->
-					<ColumnDefinition Width="1" />
-					<!--  1: divider (once, after all tabs)  -->
-					<ColumnDefinition Width="*" />
-					<!--  2: spacer  -->
-					<ColumnDefinition Width="Auto" />
-					<!--  3: trailing  -->
-				</Grid.ColumnDefinitions>
+				RowDefinitions="Auto,1"
+				RowSpacing="6">
 
-				<!--  ============ 0: TABS ============  -->
-				<ScrollView
-					Grid.Column="0"
-					HorizontalScrollBarVisibility="Never"
-					Orientation="Both">
-					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Tabs, Source={x:Reference Root}}" Spacing="10">
-						<BindableLayout.ItemTemplate>
-							<DataTemplate x:DataType="sc:SparkTabItem">
+				<FlexLayout
+					Grid.Row="0"
+					AlignContent="Start"
+					AlignItems="Center"
+					BindableLayout.ItemsSource="{Binding Tabs, Source={x:Reference Root}}"
+					Direction="Row"
+					JustifyContent="Start"
+					Wrap="Wrap">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate x:DataType="sc:SparkTabItem">
+							<Border
+								Margin="0,0,10,8"
+								Padding="16,10"
+								HeightRequest="44"
+								StrokeThickness="1">
+								<Border.StrokeShape>
+									<RoundRectangle CornerRadius="6" />
+								</Border.StrokeShape>
+								<Border.GestureRecognizers>
+									<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
+								</Border.GestureRecognizers>
 
-								<Border
-									Padding="16,10"
-									HeightRequest="44"
-									StrokeThickness="1">
-									<Border.StrokeShape>
-										<RoundRectangle CornerRadius="6" />
-									</Border.StrokeShape>
-									<Border.GestureRecognizers>
-										<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
-									</Border.GestureRecognizers>
+								<!--  TAB STATE: background + border  -->
+								<Border.Triggers>
+									<DataTrigger
+										Binding="{Binding IsSelected}"
+										TargetType="Border"
+										Value="True">
+										<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeNeutralBgSelected}" />
+										<Setter Property="Stroke" Value="{StaticResource SidebarActiveBg}" />
+									</DataTrigger>
+									<DataTrigger
+										Binding="{Binding IsSelected}"
+										TargetType="Border"
+										Value="False">
+										<Setter Property="BackgroundColor" Value="{StaticResource PrimarySoft}" />
+										<Setter Property="Stroke" Value="{StaticResource White}" />
+									</DataTrigger>
+								</Border.Triggers>
 
-									<!--  TAB STATE: background + border  -->
-									<Border.Triggers>
+								<Label
+									FontSize="14"
+									HorizontalOptions="Center"
+									LineBreakMode="TailTruncation"
+									VerticalOptions="Center">
+									<Label.FormattedText>
+										<FormattedString>
+											<Span Text="{Binding Title}" />
+											<Span Text=" " />
+											<Span Text="{Binding Value, StringFormat='({0})'}" />
+										</FormattedString>
+									</Label.FormattedText>
+
+									<Label.Triggers>
 										<DataTrigger
 											Binding="{Binding IsSelected}"
-											TargetType="Border"
+											TargetType="Label"
 											Value="True">
-											<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeNeutralBgSelected}" />
-											<Setter Property="Stroke" Value="{StaticResource SidebarActiveBg}" />
+											<Setter Property="TextColor" Value="{StaticResource White}" />
+											<Setter Property="FontAttributes" Value="Bold" />
 										</DataTrigger>
 										<DataTrigger
 											Binding="{Binding IsSelected}"
-											TargetType="Border"
+											TargetType="Label"
 											Value="False">
-											<Setter Property="BackgroundColor" Value="{StaticResource PrimarySoft}" />
-											<Setter Property="Stroke" Value="{StaticResource White}" />
+											<Setter Property="TextColor" Value="{StaticResource White}" />
+											<Setter Property="FontAttributes" Value="None" />
 										</DataTrigger>
-									</Border.Triggers>
+									</Label.Triggers>
+								</Label>
+							</Border>
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
+				</FlexLayout>
 
-									<Label
-										FontSize="14"
-										HorizontalOptions="Center"
-										VerticalOptions="Center">
-										<Label.FormattedText>
-											<FormattedString>
-												<Span Text="{Binding Title}" />
-												<Span Text=" " />
-												<Span Text="{Binding Value, StringFormat='({0})'}" />
-											</FormattedString>
-										</Label.FormattedText>
-
-										<Label.Triggers>
-											<DataTrigger
-												Binding="{Binding IsSelected}"
-												TargetType="Label"
-												Value="True">
-												<Setter Property="TextColor" Value="{StaticResource White}" />
-												<Setter Property="FontAttributes" Value="Bold" />
-											</DataTrigger>
-											<DataTrigger
-												Binding="{Binding IsSelected}"
-												TargetType="Label"
-												Value="False">
-												<Setter Property="TextColor" Value="{StaticResource White}" />
-												<Setter Property="FontAttributes" Value="None" />
-											</DataTrigger>
-										</Label.Triggers>
-									</Label>
-								</Border>
-							</DataTemplate>
-						</BindableLayout.ItemTemplate>
-					</HorizontalStackLayout>
-				</ScrollView>
-
-				<!--  ============ 1: DIVIDER (appears once, at the end of the tabs) ============  -->
+				<!--  DIVIDER: now a full-width line under the tabs  -->
 				<BoxView
-					Grid.Column="1"
-					Margin="0,0"
+					Grid.Row="1"
 					BackgroundColor="{StaticResource SidebarActiveBg}"
-					WidthRequest="1" />
-
-
+					HeightRequest="1"
+					HorizontalOptions="Fill" />
 			</Grid>
-
-
 		</Border>
 
-		<!--  ============ ROW 2: SEARCH + FILTERS + BUTTONS ============  -->
+		<!--  ============ ROW 2: SEARCH + FILTERS + BUTTONS (wrap) ============  -->
 		<Grid BackgroundColor="Transparent" IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
-			<Grid
+
+			<FlexLayout
 				x:Name="SecondaryToolbarGrid"
 				Padding="10"
-				ColumnDefinitions="*,Auto,Auto,Auto"
-				ColumnSpacing="8"
-				MinimumHeightRequest="64">
+				AlignContent="Start"
+				AlignItems="Start"
+				Direction="Row"
+				JustifyContent="Start"
+				MinimumHeightRequest="64"
+				Wrap="Wrap">
 
-				<!--  Search uses all remaining horizontal space.  -->
-				<VerticalStackLayout Grid.Column="0" Spacing="4">
+				<!--  SEARCH: wants 280, grows to fill the row, wraps to its own line when narrow  -->
+				<VerticalStackLayout
+					Margin="0,0,10,8"
+					FlexLayout.Basis="280"
+					FlexLayout.Grow="1"
+					FlexLayout.Shrink="1"
+					Spacing="4">
 					<sc:FFSearchBox
 						Label="Пребарување"
 						Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
@@ -180,62 +179,57 @@
 						</Grid>
 					</Border>
 				</VerticalStackLayout>
+
+				<!--  CYRILLIC TOGGLE: no more negative-margin hacks  -->
 				<HorizontalStackLayout
-					Grid.Column="1"
+					Margin="0,22,10,8"
 					IsVisible="{Binding ShowCyrillicToggle, Source={x:Reference Root}}"
 					Spacing="4"
-					VerticalOptions="Start"
-					WidthRequest="100">
-					<Label
-						Margin="0,0,-18,0"
-						FontSize="12"
-						HorizontalOptions="Start"
-						Text="Кирилица"
-						TextColor="{StaticResource SparkTextSecondary}" />
-					<Border
-						Margin="-28,22,0,0"
-						Padding="0"
-						BackgroundColor="{StaticResource Transparent}"
-						Stroke="Transparent"
-						StrokeThickness="1">
-						<CheckBox
-							HorizontalOptions="Start"
-							IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
-							IsEnabled="True"
-							VerticalOptions="Center"
-							Color="{StaticResource SidebarActiveBg}" />
-					</Border>
-				</HorizontalStackLayout>
-				<HorizontalStackLayout
-					Grid.Column="2"
-					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
-					Spacing="8"
 					VerticalOptions="Start">
+					<CheckBox
+						IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
+						VerticalOptions="Center"
+						Color="{StaticResource SidebarActiveBg}" />
+					<Label
+						FontSize="12"
+						Text="Кирилица"
+						TextColor="{StaticResource SparkTextSecondary}"
+						VerticalOptions="Center" />
+				</HorizontalStackLayout>
+
+				<!--  PICKERS: each one wraps on its own instead of running off the right edge  -->
+				<FlexLayout
+					AlignItems="Start"
+					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
+					Direction="Row"
+					Wrap="Wrap">
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkPickerItem">
 							<sc:FFPicker
+								Margin="0,0,8,8"
 								ItemsSource="{Binding Items}"
 								Label="{Binding Placeholder}"
-								MinimumWidthRequest="140"
+								MinimumWidthRequest="88"
 								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
-				</HorizontalStackLayout>
+				</FlexLayout>
 
-				<VerticalStackLayout
-					Grid.Column="3"
-					Spacing="4"
-					VerticalOptions="Start">
+				<!--  ACTION BUTTONS  -->
+				<VerticalStackLayout Margin="0,0,0,8" Spacing="4">
 					<Label
 						FontSize="11"
-						HorizontalOptions="Center"
+						HorizontalOptions="Start"
 						Text="Акции"
 						TextColor="{StaticResource SparkTextSecondary}" />
-					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}" Spacing="8">
-
+					<FlexLayout
+						BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}"
+						Direction="Row"
+						Wrap="Wrap">
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkButtonItem">
 								<sc:FFButton
+									Margin="0,0,8,0"
 									BackgroundColorEx="{StaticResource SidebarActiveBg}"
 									Command="{Binding Command}"
 									CommandParameter="{Binding CommandParameter}"
@@ -244,13 +238,13 @@
 									HeightRequestEx="44"
 									Text="{Binding Label}"
 									TextColorEx="White"
-									WidthRequestEx="0" />
+									WidthRequestEx="88" />
 							</DataTemplate>
 						</BindableLayout.ItemTemplate>
-
-					</HorizontalStackLayout>
+					</FlexLayout>
 				</VerticalStackLayout>
-			</Grid>
+			</FlexLayout>
+
 			<BoxView
 				BackgroundColor="{StaticResource Transparent}"
 				HeightRequest="10"

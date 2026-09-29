@@ -16,9 +16,13 @@ public enum ModuleAction
 public static class Modules
 {
     public const string Dashboard = "Dashboard";
+   
     public const string Doctors = "Doctors";
+    
     public const string BackupDashboard = "BackupDashboard";
+    
     public const string Backups = "Backups";
+   
     public const string Patients = "Patients";
 
     public const string Appointments = "Appointments";
@@ -32,15 +36,15 @@ public static class Modules
     public const string Reports = "Reports";
 
     public const string Encounters = "Encounters";
+    
     public const string Calendar = "Calendar";
 
     public const string MKBCodes = "MKBCodes";
 
     public const string Administration = "Administration";
 
-    // --- НАПРЕДЕН ИНТЕЛИГЕНТЕН ПОГОН ---
-
     private static readonly List<string> _allModules;
+  
     private static readonly Dictionary<UserRole, HashSet<string>> _roleDefaults;
 
     static Modules()
@@ -48,7 +52,8 @@ public static class Modules
         _allModules=new List<string>();
         _roleDefaults=Enum.GetValues<UserRole>().ToDictionary(r => r, _ => new HashSet<string>());
 
-        // Со чист Reflection ги извлекуваме сите константи и нивните атрибути одеднаш
+       
+       
         var fields = typeof(Modules).GetFields(BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy)
                                     .Where(f => f.IsLiteral&&!f.IsInitOnly&&f.FieldType==typeof(string));
 

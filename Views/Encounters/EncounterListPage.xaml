@@ -27,7 +27,7 @@
 			Grid.Column="1"
 			Margin="0"
 			RowDefinitions="Auto,*"
-			RowSpacing="16">
+			RowSpacing="0">
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 					<controls:FFPageHeader
@@ -36,11 +36,12 @@
 						Subtitle="Преглед, пребарување и управување со медицински прегледи" />
 					<controls:FFButton
 						Grid.Column="1"
+						Margin="20"
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
 						ContentPadding="16,0"
-						HeightRequestEx="45"
+						HeightRequestEx="40"
 						IsVisible="{Binding CanCreate}"
 						Text="Нов преглед"
 						TextColorEx="{StaticResource White}" />

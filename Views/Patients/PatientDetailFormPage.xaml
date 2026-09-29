@@ -221,15 +221,13 @@
 		<Grid
 			Grid.Column="1"
 			RowDefinitions="Auto,*"
+			RowSpacing="0"
 			Style="{StaticResource CrudFormPageGridStyle}">
 
 			<!--  =========================================================  -->
 			<!--  PAGE HEADER  -->
 			<!--  =========================================================  -->
-			<Border
-				Grid.Row="0"
-				Margin="16,16,16,0"
-				Style="{StaticResource PageCardStyleDashboard}">
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader Title="{Binding HeaderTitle}" Subtitle="Преглед и управување со податоците за пациентот">
 					<controls:FFPageHeader.HeaderContent>
 						<controls:FFStatusChip
@@ -245,14 +243,9 @@
 			<!--  =====================================================  -->
 			<Grid
 				Grid.Row="1"
-				Margin="16,0,16,0"
 				ColumnDefinitions="2*,1*"
-				ColumnSpacing="6"
-				Style="{StaticResource CrudFormBodyGridStyle}">
-				<controls:FFSectionCard
-					Grid.Column="0"
-					Margin="0"
-					Style="{StaticResource CrudFormCardStyle}">
+				ColumnSpacing="0">
+				<controls:FFSectionCard Grid.Column="0" Margin="0">
 					<controls:CustomScrollView
 						x:Name="FormScrollView"
 						Margin="0"
@@ -1099,10 +1092,10 @@
 
 								</VerticalStackLayout>
 							</Grid>
-							<BoxView
+							<!--<BoxView
 								BackgroundColor="{StaticResource PageBackground}"
 								HeightRequest="1"
-								HorizontalOptions="Fill" />
+								HorizontalOptions="Fill" />-->
 							<HorizontalStackLayout
 								Grid.Column="2"
 								HorizontalOptions="End"
@@ -1141,10 +1134,7 @@
 				<!--  ═══════════════════════════════════════════════════════  -->
 				<!--  ДЕСНА КОЛОНА — ИСТОРИЈА + ДОКУМЕНТИ (со preview)  -->
 				<!--  ═══════════════════════════════════════════════════════  -->
-				<controls:FFSectionCard
-					Grid.Column="1"
-					Margin="0"
-					Style="{StaticResource CrudFormCardStyle}">
+				<controls:FFSectionCard Grid.Column="1" Margin="0">
 					<controls:CustomScrollView
 						Margin="0"
 						Padding="0"

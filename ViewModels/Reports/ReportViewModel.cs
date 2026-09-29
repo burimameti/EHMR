@@ -643,13 +643,13 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             width=170;
         }
 
-        GridColumns.Add(new SparkGridColumn
-        {
-            Header="Степен на Ризичност",
-            Key="Alert",
-            CellType=SparkGridCellType.Badge,
-            Width=new GridLength(width)
-        });
+        //GridColumns.Add(new SparkGridColumn
+        //{
+        //    Header="Степен на Ризичност",
+        //    Key="Alert",
+        //    CellType=SparkGridCellType.Badge,
+        //    Width=new GridLength(width)
+        //});
     }
 
     private void RefreshSparkGridRows()
@@ -671,9 +671,9 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                 };
             }
 
-            row["Alert"]=reportRow.IsAlertSeverity
-                ? new SparkBadgeValue("КРИТИЧНО", SparkBadgeTone.Danger)
-                : new SparkBadgeValue("OK", SparkBadgeTone.Success);
+            //row["Alert"]=reportRow.IsAlertSeverity
+            //    ? new SparkBadgeValue("КРИТИЧНО", SparkBadgeTone.Danger)
+            //    : new SparkBadgeValue("OK", SparkBadgeTone.Success);
 
             rows.Add(row);
         }

@@ -27,9 +27,8 @@
 		<Grid
 			Grid.Column="1"
 			Padding="0"
-			BackgroundColor="{StaticResource PageBackground}"
 			RowDefinitions="Auto,Auto,Auto,*"
-			RowSpacing="16">
+			RowSpacing="0">
 
 
 
@@ -62,9 +61,9 @@
 
 			<Grid
 				Grid.Row="1"
-				Margin="16,0"
+				Margin="0,0"
 				ColumnDefinitions="*,*,*"
-				ColumnSpacing="16">
+				ColumnSpacing="0">
 
 
 				<Border

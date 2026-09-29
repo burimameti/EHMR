@@ -77,7 +77,7 @@
 		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
-            Margin="0"
+			Margin="0"
 			RowDefinitions="Auto,*"
 			RowSpacing="16">
 
@@ -114,18 +114,16 @@
 					-->
 					<!--  ===================================================  -->
 					<Grid
-						Grid.Row="1"
 						Padding="0"
 						ColumnDefinitions="*,*,*,*"
-						ColumnSpacing="0"
-						HeightRequest="112">
+						ColumnSpacing="12"
+						HeightRequest="110">
 						<controls:FFMetricTile
 							Title="{Binding Cards[0].Title}"
 							Grid.Column="0"
 							Command="{Binding Cards[0].Command}"
 							DisplayMode="Metric"
 							Icon="{Binding Cards[0].Icon}"
-							MaximumHeightRequest="84"
 							Subtitle="{Binding Cards[0].Subtitle}"
 							Variant="{Binding Cards[0].Variant}"
 							Value="{Binding Cards[0].Value}" />
@@ -135,7 +133,6 @@
 							Command="{Binding Cards[1].Command}"
 							DisplayMode="Metric"
 							Icon="{Binding Cards[1].Icon}"
-							MaximumHeightRequest="84"
 							Subtitle="{Binding Cards[1].Subtitle}"
 							Variant="{Binding Cards[1].Variant}"
 							Value="{Binding Cards[1].Value}" />
@@ -145,7 +142,6 @@
 							Command="{Binding Cards[2].Command}"
 							DisplayMode="Metric"
 							Icon="{Binding Cards[2].Icon}"
-							MaximumHeightRequest="84"
 							Subtitle="{Binding Cards[2].Subtitle}"
 							Variant="{Binding Cards[2].Variant}"
 							Value="{Binding Cards[2].Value}" />
@@ -155,12 +151,10 @@
 							Command="{Binding Cards[3].Command}"
 							DisplayMode="Metric"
 							Icon="{Binding Cards[3].Icon}"
-							MaximumHeightRequest="84"
 							Subtitle="{Binding Cards[3].Subtitle}"
 							Variant="{Binding Cards[3].Variant}"
 							Value="{Binding Cards[3].Value}" />
 					</Grid>
-
 					<!--  ===================================================  -->
 					<!--  QUICK ACTIONS ROW  -->
 					<!--  ===================================================  -->

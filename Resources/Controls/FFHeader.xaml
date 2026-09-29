@@ -8,7 +8,8 @@
 	x:DataType="controls:FFPageHeader">
 
 	<Border
-		Padding="0"
+		Margin="0"
+		Padding="1"
 		StrokeShape="RoundRectangle 0"
 		StrokeThickness="0">
 		<Grid ColumnDefinitions="4,Auto,*,Auto" ColumnSpacing="16">
@@ -16,8 +17,7 @@
 
 			<Border
 				Grid.Column="1"
-				Margin="16,12,12,16"
-				BackgroundColor="{StaticResource SparkAccentTealBg}"
+				BackgroundColor="{StaticResource Transparent}"
 				HeightRequest="44"
 				Stroke="{StaticResource SparkAccentTeal}"
 				StrokeShape="RoundRectangle 10"

@@ -18,10 +18,10 @@
 		<Border
 			Grid.Row="1"
 			Padding="0"
-			BackgroundColor="{StaticResource SparkContentBackground}"
+			BackgroundColor="{StaticResource Transparent}"
 			HeightRequest="44"
 			Stroke="{StaticResource SparkAccentTealDark}"
-			StrokeShape="RoundRectangle 6"
+			StrokeShape="RoundRectangle 4"
 			StrokeThickness="1.5">
 			<Grid ColumnDefinitions="*,36">
 				<Picker
@@ -64,7 +64,7 @@
 			Margin="4,2,0,0"
 			FontAttributes="Bold"
 			FontSize="12"
-			IsVisible="{Binding SelectedItem, Source={x:Reference Root}}"
+			IsVisible="{Binding SelectedItem, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
 			Text="{Binding SelectedItem, Source={x:Reference Root}}"
 			TextColor="{StaticResource SparkAccentTealDark}" />
 

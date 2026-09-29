@@ -18,9 +18,10 @@ namespace EHMR.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.16")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:IdentityIncrement", 1)
+                .HasAnnotation("SqlServer:IdentitySeed", 1L)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("EHMR.Backups.Models.BackupDestination", b =>
                 {
@@ -45,7 +46,7 @@ namespace EHMR.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BackupDestinations");
+                    b.ToTable("BackupDestinations", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Backups.Models.BackupHistory", b =>
@@ -101,7 +102,7 @@ namespace EHMR.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BackupHistories");
+                    b.ToTable("BackupHistories", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Alert", b =>
@@ -145,7 +146,7 @@ namespace EHMR.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Alerts");
+                    b.ToTable("Alerts", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.AppLicense", b =>
@@ -192,7 +193,7 @@ namespace EHMR.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AppLicenses");
+                    b.ToTable("AppLicenses", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Appointment", b =>
@@ -252,7 +253,7 @@ namespace EHMR.Migrations
 
                     b.HasIndex("TherapyCycleId");
 
-                    b.ToTable("Appointments");
+                    b.ToTable("Appointments", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.AuditLog", b =>
@@ -307,7 +308,7 @@ namespace EHMR.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AuditLogs");
+                    b.ToTable("AuditLogs", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Diagnosis", b =>
@@ -364,7 +365,7 @@ namespace EHMR.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Diagnoses");
+                    b.ToTable("Diagnoses", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Doctor", b =>
@@ -408,7 +409,7 @@ namespace EHMR.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Doctors");
+                    b.ToTable("Doctors", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Encounter", b =>
@@ -522,7 +523,7 @@ namespace EHMR.Migrations
 
                     b.HasIndex("TherapyCycleId");
 
-                    b.ToTable("Encounters");
+                    b.ToTable("Encounters", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Inventory", b =>
@@ -566,7 +567,7 @@ namespace EHMR.Migrations
 
                     b.HasIndex("MedicineId");
 
-                    b.ToTable("Inventories");
+                    b.ToTable("Inventories", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Medicine", b =>
@@ -629,7 +630,7 @@ namespace EHMR.Migrations
 
                     b.HasIndex("Name");
 
-                    b.ToTable("Medicines");
+                    b.ToTable("Medicines", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Mkb10Code", b =>
@@ -663,7 +664,7 @@ namespace EHMR.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Mkb10Codes");
+                    b.ToTable("Mkb10Codes", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Notification", b =>
@@ -694,7 +695,7 @@ namespace EHMR.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Patient", b =>
@@ -825,7 +826,7 @@ namespace EHMR.Migrations
 
                     b.HasIndex("FirstName", "LastName");
 
-                    b.ToTable("Patients");
+                    b.ToTable("Patients", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.PatientDocument", b =>
@@ -904,7 +905,7 @@ namespace EHMR.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("PatientDocuments");
+                    b.ToTable("PatientDocuments", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.PatientMedicine", b =>
@@ -968,7 +969,7 @@ namespace EHMR.Migrations
 
                     b.HasIndex("PatientId", "MedicineId", "IsActive");
 
-                    b.ToTable("PatientMedicines");
+                    b.ToTable("PatientMedicines", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Prescription", b =>
@@ -1030,7 +1031,7 @@ namespace EHMR.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Prescriptions");
+                    b.ToTable("Prescriptions", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Rbac.Module", b =>
@@ -1063,7 +1064,7 @@ namespace EHMR.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserModules");
+                    b.ToTable("UserModules", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Rbac.User", b =>
@@ -1110,7 +1111,7 @@ namespace EHMR.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Rbac.UserScope", b =>
@@ -1145,7 +1146,7 @@ namespace EHMR.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserScopes");
+                    b.ToTable("UserScopes", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.ReportHistory", b =>
@@ -1214,7 +1215,7 @@ namespace EHMR.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ReportHistories");
+                    b.ToTable("ReportHistories", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Sequence", b =>
@@ -1244,7 +1245,7 @@ namespace EHMR.Migrations
 
                     b.HasKey("Name", "SequenceDate");
 
-                    b.ToTable("Sequences");
+                    b.ToTable("Sequences", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.TaskItem", b =>
@@ -1296,7 +1297,7 @@ namespace EHMR.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TaskItems");
+                    b.ToTable("TaskItems", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.TherapyCycle", b =>
@@ -1338,7 +1339,7 @@ namespace EHMR.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("TherapyCycles");
+                    b.ToTable("TherapyCycles", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.TherapyProtocol", b =>
@@ -1374,7 +1375,7 @@ namespace EHMR.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TherapyProtocols");
+                    b.ToTable("TherapyProtocols", (string)null);
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Alert", b =>

@@ -92,15 +92,9 @@
 			<ContentView x:Name="MenuHost" />
 		</Border>
 		<!--  ДЕСЕН ГЛАВЕН КОНТЕЈНЕР  -->
-		<Grid
-			Grid.Column="1"
-			RowDefinitions="Auto,*"
-			Style="{StaticResource CrudFormPageGridStyle}">
+		<Grid Grid.Column="1" RowDefinitions="Auto,*">
 			<!--  ── HEADER ──────────────────────────────────────────────────  -->
-			<Border
-				Grid.Row="0"
-				Margin="16,16,16,0"
-				Style="{StaticResource PageCardStyleDashboard}">
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader
 					Title="{Binding Encounter.EncounterNumber, StringFormat='Преглед Бр. {0}'}"
 					Grid.Row="0"
@@ -131,9 +125,8 @@
 			<!--  ── TWO-COLUMN BODY ──────────────────────────────────────────  -->
 			<Grid
 				Grid.Row="1"
-				Margin="16,0,16,0"
 				ColumnDefinitions="2*,1*"
-				ColumnSpacing="6"
+				ColumnSpacing="0"
 				Style="{StaticResource CrudFormBodyGridStyle}">
 				<!--  ═══════════════════════════════════════════════════════  -->
 				<!--  ЛЕВА КОЛОНА — ДЕТАЛИ  -->
@@ -141,6 +134,7 @@
 				<controls:FFSectionCard
 					Grid.Column="0"
 					Margin="0"
+					ContentPadding="18"
 					Style="{StaticResource CrudFormCardStyle}">
 					<ScrollView VerticalScrollBarVisibility="Never">
 						<VerticalStackLayout Style="{StaticResource CrudFormContentStackStyle}">

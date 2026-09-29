@@ -49,14 +49,15 @@ namespace EHMR.Domain.Entities.Reports
 
         public IEnumerable<SparkGridColumn> Columns =>
         [
-            new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(180) },
-            new() { Header = "СТАТУС", Key = "Status", Width = new GridLength(90) },
-            new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(90) },
-            new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(150) },
-            new() { Header = "МАТИЧЕН БРОЈ", Key = "NationalId", Width = new GridLength(150) },
+            new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(140) },
+            new() { Header = "СТАТУС", Key = "Status", Width = new GridLength(60) },
+            new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(60) },
+            new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(100) },
+            new() { Header = "МАТИЧЕН БРОЈ", Key = "NationalId", Width = new GridLength(100) },
             new() { Header = "АДРЕСА", Key = "Address", Width = new GridLength(180) },
-            new() { Header = "ГРАД", Key = "City", Width = new GridLength(90) },
-            new() { Header = "КРЕИРАН НА", Key = "Created", Width = new GridLength(110) },
+            new() { Header = "ГРАД", Key = "City", Width = new GridLength(60) },
+            //new() { Header = "КРЕИРАН НА", Key = "Created", Width = new GridLength(110) },
+            new() { Header = "КРЕИРАН НА", Key = "Created", Width = new GridLength(90) },
             new() { Header = "ЛЕКОВИ", Key = "Medicines", Width = new GridLength(150) },
             new() { Header = "ДИЈАГНОЗА / АЛЕРГИИ", Key = "Medical", Width = GridLength.Star }
         ];
