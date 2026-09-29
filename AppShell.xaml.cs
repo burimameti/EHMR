@@ -7,16 +7,13 @@ using EHMR.Views.Appointments;
 using EHMR.Views.Calendar;
 using EHMR.Views.Doctors;
 using EHMR.Views.Encounters;
+using EHMR.Views.Mkb10;
 using EHMR.Views.Patients;
 using EHMR.Views.Prescription;
-using EHMR.Views.Protocols;
+
 using EHMR.Views.Reports;
 using EHMR.Views.Therapies;
-using Microsoft.Maui.ApplicationModel;
-using Microsoft.Maui.Controls;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+
 
 namespace EHMR;
 

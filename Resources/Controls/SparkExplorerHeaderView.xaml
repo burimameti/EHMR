@@ -107,7 +107,6 @@
 				</ScrollView>
 				<HorizontalStackLayout
 					Grid.Row="3"
-					
 					Spacing="12"
 					VerticalOptions="Start">
 					<BindableLayout.ItemTemplate>
@@ -141,17 +140,20 @@
 
 		<!--  ============ ROW 2: ONE RESPONSIVE TOOLBAR ============  -->
 		<Grid
+			Padding="10,8,10,10"
 			BackgroundColor="Transparent"
-			IsVisible="{Binding SearchVisible, Source={x:Reference Root}}"
-			Padding="10,8,10,10">
+			IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
 
 			<Grid
 				ColumnDefinitions="2*,Auto,3*,Auto"
 				ColumnSpacing="12"
 				VerticalOptions="Start">
 
-				<!-- Search + suggestions occupy the first responsive column. -->
-				<VerticalStackLayout Grid.Column="0" Spacing="4" VerticalOptions="Start">
+				<!--  Search + suggestions occupy the first responsive column.  -->
+				<VerticalStackLayout
+					Grid.Column="0"
+					Spacing="4"
+					VerticalOptions="Start">
 					<sc:FFSearchBox
 						HorizontalOptions="Fill"
 						Label="Пребарување"
@@ -204,7 +206,7 @@
 					</Border>
 				</VerticalStackLayout>
 
-				<!-- Cyrillic stays on the same toolbar line. -->
+				<!--  Cyrillic stays on the same toolbar line.  -->
 				<HorizontalStackLayout
 					Grid.Column="1"
 					IsVisible="{Binding ShowCyrillicToggle, Source={x:Reference Root}}"
@@ -217,36 +219,34 @@
 						VerticalOptions="Center" />
 					<CheckBox
 						IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
-						Color="{StaticResource SidebarActiveBg}"
-						VerticalOptions="Center" />
+						VerticalOptions="Center"
+						Color="{StaticResource SidebarActiveBg}" />
 				</HorizontalStackLayout>
 
-				<!-- Pickers share the responsive middle area. -->
+				<!--  Pickers share the responsive middle area.  -->
 				<ScrollView
 					Grid.Column="2"
+					HorizontalOptions="Fill"
 					HorizontalScrollBarVisibility="Never"
-					Orientation="Horizontal"
-					HorizontalOptions="Fill">
+					Orientation="Horizontal">
 					<HorizontalStackLayout
-						Spacing="12"
 						Padding="0,0,4,0"
+						BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
+						Spacing="12"
 						VerticalOptions="Start">
-						<BindableLayout.ItemsSource>
-							<Binding Path="Pickers" Source="{x:Reference Root}" />
-						</BindableLayout.ItemsSource><BindableLayout.ItemTemplate>
-							<BindableLayout.ItemTemplate>
-								<DataTemplate x:DataType="sc:SparkPickerItem">
-									<sc:FFPicker
-										ItemsSource="{Binding Items}"
-										Label="{Binding Placeholder}"
-										MinimumWidthRequest="125"
-										SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
-								</DataTemplate>
-							</BindableLayout.ItemTemplate>
+						<BindableLayout.ItemTemplate>
+							<DataTemplate x:DataType="sc:SparkPickerItem">
+								<sc:FFPicker
+									ItemsSource="{Binding Items}"
+									Label="{Binding Placeholder}"
+									MinimumWidthRequest="125"
+									SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+							</DataTemplate>
+						</BindableLayout.ItemTemplate>
 					</HorizontalStackLayout>
 				</ScrollView>
 
-				<!-- Actions stay after the pickers, never underneath them. -->
+				<!--  Actions stay after the pickers, never underneath them.  -->
 				<HorizontalStackLayout
 					Grid.Column="3"
 					BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}"
@@ -265,7 +265,7 @@
 								Text="{Binding Label}"
 								TextColorEx="White"
 								WidthRequestEx="110" />
-					</DataTemplate>
+						</DataTemplate>
 					</BindableLayout.ItemTemplate>
 				</HorizontalStackLayout>
 			</Grid>

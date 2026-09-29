@@ -366,7 +366,7 @@
 	  <MauiXaml Update="Views\Calendar\CalendarDashboardPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Calendar\MainPage.xaml">
+	  <MauiXaml Update="Views\MainPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Dashboard\DashboardView.xaml">

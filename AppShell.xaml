@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:EHMR.Views"
     xmlns:calendar="clr-namespace:EHMR.Views.Calendar"
+	    xmlns:enc="clr-namespace:EHMR.Views.Encounters"
     xmlns:admin="clr-namespace:EHMR.Views.Admin"
     xmlns:protocols="clr-namespace:EHMR.Views.Protocols"
     xmlns:doctors="clr-namespace:EHMR.Views.Doctors"
@@ -30,7 +31,7 @@
                   ContentTemplate="{DataTemplate views:PatientListPage}" />
 
     <ShellContent Route="encounterslist"
-                  ContentTemplate="{DataTemplate views:EncounterListPage}" />
+                  ContentTemplate="{DataTemplate enc:EncounterListPage}" />
 
     <ShellContent Route="appointmentslist"
                   ContentTemplate="{DataTemplate views:AppointmentListPage}" />

@@ -1,8 +1,6 @@
 ﻿using EHMR.ViewModels;
 using EHMR.ViewModels.Appointments;
-using EHMR.ViewModels.Patients;
-using Microsoft.Maui.Controls;
-using System;
+
 namespace EHMR.Views
 {
     public partial class AppointmentListPage : ContentPage

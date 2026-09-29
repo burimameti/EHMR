@@ -43,10 +43,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System.Reflection;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+
 namespace EHMR
 {
     public static class EHMRServiceCollectionExtensions
