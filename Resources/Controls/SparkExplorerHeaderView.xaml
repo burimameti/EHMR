@@ -147,7 +147,6 @@
 				RowDefinitions="Auto,Auto,Auto,Auto"
 				RowSpacing="8">
 
-				<!--  Search uses all remaining horizontal space.  -->
 				<VerticalStackLayout Grid.Row="0" Spacing="4">
 					<sc:FFSearchBox
 						Label="Пребарување"
@@ -199,6 +198,7 @@
 						</Grid>
 					</Border>
 				</VerticalStackLayout>
+
 				<HorizontalStackLayout
 					Grid.Row="1"
 					IsVisible="{Binding ShowCyrillicToggle, Source={x:Reference Root}}"
@@ -206,13 +206,13 @@
 					VerticalOptions="Center">
 					<Label
 						FontSize="12"
-					Text="Кирилица"
-					TextColor="{StaticResource SparkTextSecondary}"
-					VerticalOptions="Center" />
+						Text="Кирилица"
+						TextColor="{StaticResource SparkTextSecondary}"
+						VerticalOptions="Center" />
 					<CheckBox
 						IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
 						Color="{StaticResource SidebarActiveBg}"
-					VerticalOptions="Center" />
+						VerticalOptions="Center" />
 				</HorizontalStackLayout>
 
 				<ScrollView
@@ -233,9 +233,31 @@
 										SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
 								</DataTemplate>
 							</BindableLayout.ItemTemplate>
-plate>
+						</BindableLayout.ItemsSource>
 					</HorizontalStackLayout>
-				</ScrollView>			</Grid>
+				</ScrollView>
+
+				<HorizontalStackLayout
+					Grid.Row="3"
+					BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}"
+					Spacing="12"
+					VerticalOptions="Start">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate x:DataType="sc:SparkButtonItem">
+							<sc:FFButton
+								BackgroundColorEx="{StaticResource SidebarActiveBg}"
+								Command="{Binding Command}"
+								CommandParameter="{Binding CommandParameter}"
+								ContentPadding="16,0"
+								CornerRadius="6"
+								HeightRequestEx="44"
+								Text="{Binding Label}"
+								TextColorEx="White"
+								WidthRequestEx="110" />
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
+				</HorizontalStackLayout>
+			</Grid>
 			<BoxView
 				BackgroundColor="{StaticResource Transparent}"
 				HeightRequest="10"
