@@ -241,6 +241,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             TherapyCycleHistory=new ObservableCollection<TherapyCycle>(
                 await db.TherapyCycles
                     .AsNoTracking()
+                    .Include(x => x.Documents)
                     .Where(x => x.PatientId==patientId)
                     .OrderByDescending(x => x.StartDate)
                     .ToListAsync());
