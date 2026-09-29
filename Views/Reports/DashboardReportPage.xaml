@@ -47,7 +47,7 @@
 	</ContentPage.Resources>
 
 	<!--  Same 290,* split as the Dashboard menu/content column  -->
-	<Grid ColumnDefinitions="285,*">
+	<Grid x:Name="PageLayout" ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
 		<Border Grid.Column="0" StrokeThickness="0">
@@ -106,7 +106,7 @@
 							</DataTrigger>
 						</Border.Triggers>
 
-						<CollectionView ItemsSource="{Binding AvailableReports}">
+						<CollectionView x:Name="ReportsCollection" ItemsSource="{Binding AvailableReports}">
 							<CollectionView.EmptyView>
 								<VerticalStackLayout
 									Padding="20"
@@ -118,7 +118,7 @@
 							</CollectionView.EmptyView>
 
 							<CollectionView.ItemsLayout>
-								<GridItemsLayout
+								<GridItemsLayout x:Name="ReportsItemsLayout"
 									HorizontalItemSpacing="12"
 									Orientation="Vertical"
 									Span="2"
@@ -207,13 +207,15 @@
 													Style="{StaticResource DashboardCardCountBadge}">
 													<Label Style="{StaticResource DashboardCardCountLabel}" Text="{Binding Category, Converter={StaticResource ReportCategoryConverter}, StringFormat='Категорија: {0}'}" />
 												</Border>
-												<Label
+												<sc:FFButton
 													Grid.Column="1"
-													FontAttributes="Bold"
-													FontSize="12"
-													Text="Отвори ➔"
-													TextColor="{StaticResource SparkAccentTeal}"
-													VerticalOptions="Center" />
+													ButtonKind="Primary"
+													Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ReportViewModel}}, Path=SelectReportCommand}"
+													CommandParameter="{Binding .}"
+													ContentPadding="12,0"
+													HeightRequestEx="38"
+													Text="Отвори"
+													TextColorEx="White" />
 											</Grid>
 										</Grid>
 									</Border>
@@ -247,12 +249,15 @@
 							<!--  Report controls bar  -->
 							<sc:FFSectionCard Margin="0">
 								<Grid
+									x:Name="ReportControlGrid"
 									ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto"
 									ColumnSpacing="10"
+									RowDefinitions="Auto"
 									VerticalOptions="Center">
 
 									<!--  Active report title + date — title uses same style as Dashboard card titles  -->
 									<VerticalStackLayout
+										x:Name="ReportTitleBlock"
 										Grid.Column="0"
 										Spacing="2"
 										VerticalOptions="Center">
@@ -267,6 +272,7 @@
 									</VerticalStackLayout>
 
 									<HorizontalStackLayout
+										x:Name="PeriodControl"
 										Grid.Column="1"
 										Spacing="8"
 										VerticalOptions="Center">
@@ -282,6 +288,7 @@
 									</HorizontalStackLayout>
 
 									<HorizontalStackLayout
+										x:Name="FromControl"
 										Grid.Column="2"
 										Spacing="8"
 										VerticalOptions="Center">
@@ -293,6 +300,7 @@
 									</HorizontalStackLayout>
 
 									<HorizontalStackLayout
+										x:Name="ToControl"
 										Grid.Column="3"
 										Spacing="8"
 										VerticalOptions="Center">
@@ -304,6 +312,7 @@
 									</HorizontalStackLayout>
 
 									<sc:FFButton
+										x:Name="ApplyPeriodButton"
 										Grid.Column="4"
 										ButtonKind="Secondary"
 										Command="{Binding ApplyPeriodAndRegenerateCommand}"
@@ -313,6 +322,7 @@
 										Text="Примени период" />
 
 									<sc:FFButton
+										x:Name="GenerateButton"
 										Grid.Column="5"
 										BackgroundColorEx="{StaticResource SidebarActiveBg}"
 										ButtonKind="Primary"
