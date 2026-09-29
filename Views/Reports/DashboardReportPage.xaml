@@ -58,7 +58,7 @@
 		<Grid
 			Grid.Column="1"
 			RowDefinitions="Auto,*"
-			RowSpacing="16"
+			RowSpacing="2"
 			Style="{StaticResource ListPageRootGridStyle}">
 
 			<!--  =========================================================  -->
