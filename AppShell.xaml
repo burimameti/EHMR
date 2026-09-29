@@ -4,6 +4,14 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:EHMR.Views"
+    xmlns:calendar="clr-namespace:EHMR.Views.Calendar"
+    xmlns:admin="clr-namespace:EHMR.Views.Admin"
+    xmlns:protocols="clr-namespace:EHMR.Views.Protocols"
+    xmlns:doctors="clr-namespace:EHMR.Views.Doctors"
+    xmlns:prescription="clr-namespace:EHMR.Views.Prescription"
+    xmlns:reports="clr-namespace:EHMR.Views.Reports"
+    xmlns:therapies="clr-namespace:EHMR.Views.Therapies"
+    xmlns:backups="clr-namespace:EHMR.Backups.Views"
     FlyoutBehavior="Disabled"
     NavBarIsVisible="False">
 
@@ -16,7 +24,7 @@
                   ContentTemplate="{DataTemplate views:DashboardView}" />
 
     <ShellContent Route="MainPage"
-                  ContentTemplate="{DataTemplate views:MainPage}" />
+                  ContentTemplate="{DataTemplate calendar:MainPage}" />
 
     <ShellContent Route="patientslist"
                   ContentTemplate="{DataTemplate views:PatientListPage}" />
@@ -28,34 +36,34 @@
                   ContentTemplate="{DataTemplate views:AppointmentListPage}" />
 
     <ShellContent Route="protocolslist"
-                  ContentTemplate="{DataTemplate views:ProtocolRegistryPage}" />
+                  ContentTemplate="{DataTemplate protocols:ProtocolRegistryPage}" />
 
     <ShellContent Route="medicineslist"
                   ContentTemplate="{DataTemplate views:MedicineListPage}" />
 
     <ShellContent Route="reportlist"
-                  ContentTemplate="{DataTemplate views:ReportHistoryPage}" />
+                  ContentTemplate="{DataTemplate reports:ReportHistoryPage}" />
 
     <ShellContent Route="AdminPage"
-                  ContentTemplate="{DataTemplate views:AdminPage}" />
+                  ContentTemplate="{DataTemplate admin:AdminPage}" />
 
     <ShellContent Route="userslist"
                   ContentTemplate="{DataTemplate views:UsersPage}" />
 
     <ShellContent Route="doctorslist"
-                  ContentTemplate="{DataTemplate views:DoctorsListPage}" />
+                  ContentTemplate="{DataTemplate doctors:DoctorsListPage}" />
 
     <ShellContent Route="therapylist"
-                  ContentTemplate="{DataTemplate views:TherapyCyclesPage}" />
+                  ContentTemplate="{DataTemplate therapies:TherapyCyclesPage}" />
 
     <ShellContent Route="prescriptionslist"
-                  ContentTemplate="{DataTemplate views:PrescriptionListPage}" />
+                  ContentTemplate="{DataTemplate prescription:PrescriptionListPage}" />
 
     <ShellContent Route="BackupDashboardPage"
-                  ContentTemplate="{DataTemplate views:BackupDashboardPage}" />
+                  ContentTemplate="{DataTemplate backups:BackupDashboardPage}" />
 
     <ShellContent Route="BackupPage"
-                  ContentTemplate="{DataTemplate views:BackupPage}" />
+                  ContentTemplate="{DataTemplate backups:BackupPage}" />
 
     <ShellContent Route="mkbcodes"
                   ContentTemplate="{DataTemplate views:MbkImportExportPage}" />
