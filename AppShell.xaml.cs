@@ -124,7 +124,6 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(AppRoutes.Dashboard, typeof(DashboardView));
 
         // Patients
-        Routing.RegisterRoute(AppRoutes.Patients.List, typeof(PatientListPage));
         Routing.RegisterRoute(AppRoutes.Patients.Detail, typeof(PatientDetailFormPage));
         Routing.RegisterRoute(AppRoutes.Doctors.List, typeof(DoctorsListPage));
         Routing.RegisterRoute(AppRoutes.Doctors.Detail, typeof(DoctorsDetailPage));
