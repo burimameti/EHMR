@@ -68,6 +68,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<ReportHistory> ReportHistories => Set<ReportHistory>();
     public DbSet<Mkb10Code> Mkb10Codes => Set<Mkb10Code>();
+    public DbSet<PatientScore> PatientScores => Set<PatientScore>();
 
     public DbSet<Sequence> Sequences => Set<Sequence>();
 
@@ -475,6 +476,27 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     .WithMany() // add a `public ICollection<Alert> Alerts` on Patient if you want the reverse nav; not required
     .HasForeignKey(a => a.PatientId)
     .OnDelete(DeleteBehavior.Restrict);
+        // PatientScore -> Patient / Encounter
+        modelBuilder.Entity<PatientScore>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.ScoreText).IsRequired().HasMaxLength(200);
+            entity.Property(x => x.RecordedAt).IsRequired();
+
+            entity.HasOne(x => x.Patient)
+                .WithMany()
+                .HasForeignKey(x => x.PatientId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.Encounter)
+                .WithMany()
+                .HasForeignKey(x => x.EncounterId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(x => new { x.PatientId, x.RecordedAt });
+            entity.HasIndex(x => x.EncounterId).IsUnique();
+        });
+
         // Diagnosis -> Encounter
         modelBuilder.Entity<Diagnosis>()
             .HasOne(x => x.Encounter)
