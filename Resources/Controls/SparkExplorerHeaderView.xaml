@@ -124,7 +124,7 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				Padding="10"
-				RowDefinitions="Auto,Auto,Auto"
+				RowDefinitions="Auto,Auto,Auto,Auto"
 				RowSpacing="8">
 
 				<!--  Search uses all remaining horizontal space.  -->
@@ -206,14 +206,12 @@
 					</Border>
 				</HorizontalStackLayout>
 				<FlexLayout
-					Grid.Row="1"
+					Grid.Row="2"
 					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
 					Direction="Row"
 					JustifyContent="Start"
 					Wrap="Wrap"
 					AlignItems="Start"
-					ColumnSpacing="8"
-					RowSpacing="8"
 					VerticalOptions="Start">
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkPickerItem">
@@ -241,8 +239,7 @@
 						JustifyContent="Start"
 						Wrap="Wrap"
 						AlignItems="Start"
-						ColumnSpacing="8"
-						RowSpacing="8">
+>
 
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkButtonItem">
