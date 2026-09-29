@@ -59,6 +59,66 @@
 				<Label
 					FontAttributes="Bold"
 					FontSize="13"
+					Text="Одлука / решение"
+					TextColor="{StaticResource SparkTextSecondary}" />
+				<Border
+					Grid.Row="1"
+					Padding="12,6"
+					BackgroundColor="{StaticResource SparkBackground}"
+					Stroke="{StaticResource SparkBorder}"
+					StrokeShape="RoundRectangle 6"
+					StrokeThickness="1">
+					<Editor
+						AutoSize="TextChanges"
+						BackgroundColor="Transparent"
+						FontSize="13"
+						Placeholder="Внесете текст од решението / одлуката..."
+						Text="{Binding DecisionText}"
+						TextColor="{StaticResource SparkTextPrimary}" />
+				</Border>
+			</Grid>
+
+			<Border
+				Padding="12,10"
+				BackgroundColor="{StaticResource SparkBackground}"
+				Stroke="{StaticResource SparkBorder}"
+				StrokeShape="RoundRectangle 6"
+				StrokeThickness="1">
+				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+					<VerticalStackLayout Spacing="2">
+						<Label
+							FontAttributes="Bold"
+							FontSize="13"
+							Text="Документ / скен"
+							TextColor="{StaticResource SparkTextSecondary}" />
+						<Label
+							FontSize="12"
+							LineBreakMode="TailTruncation"
+							Text="{Binding SelectedDocumentName}"
+							TextColor="{StaticResource SparkTextPrimary}" />
+					</VerticalStackLayout>
+					<HorizontalStackLayout Grid.Column="1" Spacing="6">
+						<controls:FFButton
+							ButtonKind="Secondary"
+							Command="{Binding PickDocumentCommand}"
+							ContentPadding="14,0"
+							HeightRequestEx="38"
+							Text="Прикачи" />
+						<controls:FFButton
+							ButtonKind="Secondary"
+							Command="{Binding RemoveSelectedDocumentCommand}"
+							ContentPadding="10,0"
+							HeightRequestEx="38"
+							IsVisible="{Binding HasSelectedDocument}"
+							Text="Отстрани" />
+					</HorizontalStackLayout>
+				</Grid>
+			</Border>
+
+			<Grid RowDefinitions="Auto,Auto" RowSpacing="8">
+				<Label
+					FontAttributes="Bold"
+					FontSize="13"
 					Text="Белешки"
 					TextColor="{StaticResource SparkTextSecondary}" />
 				<Border
