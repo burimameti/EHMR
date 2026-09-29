@@ -25,6 +25,7 @@
 		</Border.StrokeShape>
 		<Border.GestureRecognizers>
 			<TapGestureRecognizer Tapped="OnTapped" />
+					<PointerGestureRecognizer PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" />
 		</Border.GestureRecognizers>
 		<Grid
 			ColumnDefinitions="Auto,*"
