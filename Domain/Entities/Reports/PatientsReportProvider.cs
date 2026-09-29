@@ -314,7 +314,7 @@ namespace EHMR.Domain.Entities.Reports
         {
             Debug.WriteLine($"[Patients]   - Status picker...");
             RefreshPicker(_statusPicker,
-                new[] { "Active", "Inactive" });
+                new[] { "Активни", "Неактивни" });
 
             Debug.WriteLine($"[Patients]   - City picker...");
             RefreshPicker(_cityPicker,
@@ -344,7 +344,8 @@ namespace EHMR.Domain.Entities.Reports
             RefreshPicker(_therapyStatusPicker,
                 patients
                     .SelectMany(x => x.TherapyCycles)
-                    .Select(x => x.Status.ToString())
+                    .Where(x => x.Status.HasValue)
+                    .Select(x => x.Status!.Value.ToDisplay())
                     .Distinct());
 
             Debug.WriteLine($"[Patients]   - Gender picker...");
@@ -358,11 +359,24 @@ namespace EHMR.Domain.Entities.Reports
             var query = patients;
 
             // Patient Status filter
-            if(_selectedStatusFilter!="Сите"&&
-                Enum.TryParse<PatientStatus>(_selectedStatusFilter, out var status))
+            if(_selectedStatusFilter!="Сите")
             {
-                query=query.Where(x => x.Status==status);
-                Debug.WriteLine($"[Patients]   - Status filter: {_selectedStatusFilter}");
+                var status = _selectedStatusFilter switch
+                {
+                    "Активни" => PatientStatus.Active,
+                    "Неактивни" => PatientStatus.Inactive,
+                    _ => (PatientStatus?)null
+                };
+
+                if(status.HasValue)
+                {
+                    query=query.Where(x => x.Status==status.Value);
+                    Debug.WriteLine($"[Patients]   - Status filter: {_selectedStatusFilter}");
+                }
+            }
+
+            /*
+            {
             }
 
             // Allergy filter
