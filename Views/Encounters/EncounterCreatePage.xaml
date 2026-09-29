@@ -232,8 +232,8 @@
 									StrokeShape="RoundRectangle 10"
 									StrokeThickness="0">
 									<Grid
-										ColumnDefinitions="*,*,*"
-										ColumnSpacing="12"
+										ColumnDefinitions="*,*,*,*"
+										ColumnSpacing="10"
 										RowDefinitions="Auto,Auto,Auto,Auto,Auto"
 										RowSpacing="2">
 
@@ -302,6 +302,12 @@
 											TextColor="{StaticResource SparkTextSecondary}" />
 										<Label
 											Grid.Row="3"
+											Grid.Column="3"
+											FontSize="10"
+											Text="Моментален скор"
+											TextColor="{StaticResource SparkTextSecondary}" />
+										<Label
+											Grid.Row="3"
 											Grid.Column="1"
 											FontSize="10"
 											Text="Телефон"
@@ -320,6 +326,14 @@
 											FontSize="12"
 											Text="{Binding SelectedPatient.SzboNumber, TargetNullValue='—'}"
 											TextColor="{StaticResource SparkTextPrimary}" />
+										<Label
+											Grid.Row="4"
+											Grid.Column="3"
+											FontAttributes="Bold"
+											FontSize="12"
+											LineBreakMode="TailTruncation"
+											Text="{Binding CurrentPatientScore, TargetNullValue='—'}"
+											TextColor="{StaticResource SparkAccentTealDark}" />
 										<Label
 											Grid.Row="4"
 											Grid.Column="1"
