@@ -64,6 +64,13 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     [ObservableProperty]
     private PatientScore? score;
+
+    [ObservableProperty]
+    private string currentPatientScore = string.Empty;
+
+    [ObservableProperty]
+    private DateTime? currentPatientScoreDate;
+
     [ObservableProperty]
     private string pageTitle = string.Empty;
 
@@ -277,6 +284,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             PatientTherapyCyclesHistory=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
             PatientPrescriptions=new ObservableCollection<Prescription>(ctx.Prescriptions);
             PatientMedicines=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
+            CurrentPatientScore=ctx.LatestScore?.ScoreText??string.Empty;
+            CurrentPatientScoreDate=ctx.LatestScore?.RecordedAt;
             PatientDocuments=new ObservableCollection<PatientDocument>(ctx.Documents);
 
             OnPropertyChanged(nameof(FilteredAppointments));
