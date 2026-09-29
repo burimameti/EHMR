@@ -417,7 +417,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         {
                  new() { Header = "БРОЈ НА ПАЦИЕНТ", Key = "PatientNumber", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "ЕЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
-            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
+            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "FullName", Width = new GridLength(2.8, GridUnitType.Star) },
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "FullName", Width = new GridLength(2.8, GridUnitType.Star) },
             new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.8, GridUnitType.Star) },
             new() { Header = "ВОЗРАСТ", Key = "Age", CellType = SparkGridCellType.Number, Width = new GridLength(0.9, GridUnitType.Star) },
