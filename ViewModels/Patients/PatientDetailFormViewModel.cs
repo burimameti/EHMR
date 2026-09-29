@@ -337,13 +337,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
         }
 
-        if(string.IsNullOrWhiteSpace(Patient.SzboNumber))
-        {
-            await _userDialogService.ShowAlertAsync("Валидација", "СЗБО бројот е задолжителен.", "OK");
-            return;
-        }
-
-        Patient.SzboNumber=Patient.SzboNumber.Trim();
+        Patient.SzboNumber=Patient.SzboNumber?.Trim()??string.Empty;
 
         if(Patient.DoctorId==Guid.Empty)
         {
