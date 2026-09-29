@@ -487,7 +487,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             entity.HasOne(x => x.Patient)
                 .WithMany(x => x.Scores)
                 .HasForeignKey(x => x.PatientId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(x => x.Encounter)
                 .WithOne(x => x.PatientScore)
