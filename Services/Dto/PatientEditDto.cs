@@ -196,6 +196,7 @@ namespace EHMR.Services.Dto
             get; set;
         }
         public string Notes { get; set; } = "";
+        public string PharmaceuticalReference { get; set; } = "";
         public bool IsActive
         {
             get; set;
