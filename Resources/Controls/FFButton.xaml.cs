@@ -5,6 +5,9 @@ namespace EHMR.Resources.Controls;
 
 public partial class FFButton : ContentView
 {
+    private Color? _hoverRestoreBackground;
+    private Color? _hoverRestoreText;
+
     public FFButton()
     {
         InitializeComponent();
@@ -253,6 +256,31 @@ public partial class FFButton : ContentView
             Command.Execute(CommandParameter);
 
         Clicked?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnPointerEntered(object? sender, PointerEventArgs e)
+    {
+        if(!IsEnabled)
+            return;
+
+        _hoverRestoreBackground=BackgroundColorEx;
+        _hoverRestoreText=TextColorEx;
+
+        // Consistent Spark hover: dark sidebar/nav tone.
+        BackgroundColorEx=Color.FromArgb("#293441");
+        TextColorEx=Colors.White;
+    }
+
+    private void OnPointerExited(object? sender, PointerEventArgs e)
+    {
+        if(_hoverRestoreBackground is not null)
+            BackgroundColorEx=_hoverRestoreBackground;
+
+        if(_hoverRestoreText is not null)
+            TextColorEx=_hoverRestoreText;
+
+        _hoverRestoreBackground=null;
+        _hoverRestoreText=null;
     }
 
     // ═══════════════════════════════════════════════════════════ //
