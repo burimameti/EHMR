@@ -403,13 +403,13 @@
 											<Label
 												IsVisible="{Binding IsEditMode}"
 												Style="{StaticResource EditFieldLabelStyle}"
-												Text="СЗБО број *" />
+												Text="ЕЗБО број" />
 											<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
 												<Entry
 													BackgroundColor="Transparent"
 													FontSize="13"
 													MaxLength="64"
-													Placeholder="Внесете СЗБО број"
+													Placeholder="Внесете ЕЗБО број"
 													PlaceholderColor="{StaticResource SparkTextSecondary}"
 													Text="{Binding Patient.SzboNumber}"
 													TextColor="{StaticResource SparkTextPrimary}" />
@@ -418,7 +418,7 @@
 											<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
 												<Label
 													FontSize="11"
-													Text="СЗБО број:"
+													Text="ЕЗБО број:"
 													TextColor="{StaticResource SparkTextSecondary}" />
 												<Label
 													FontAttributes="Bold"
@@ -863,7 +863,29 @@
 								</VerticalStackLayout>
 
 
-																<!--  ================================================  -->
+																<!--  ==========================================
+									<controls:CrudSectionHeader Title="ДИЈАГНОЗИ / МКБ-10" />
+									<Border IsVisible="{Binding IsEditMode}" Padding="10" Style="{StaticResource EditFieldBoxStyle}">
+										<VerticalStackLayout Spacing="8">
+											<Entry Placeholder="Пребарај МКБ-10 код или дијагноза..." Text="{Binding MkbSearchText, Mode=TwoWay}" FontSize="13" />
+											<CollectionView HeightRequest="110" IsVisible="{Binding ShowMkbDropdown}" ItemsSource="{Binding MkbResults}" SelectionMode="None">
+												<CollectionView.ItemTemplate><DataTemplate x:DataType="dto:Mkb10CodeDto"><Grid Padding="8,5"><Grid.GestureRecognizers><TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMkbCommand}" CommandParameter="{Binding .}" /></Grid.GestureRecognizers><Label Text="{Binding Code}" FontAttributes="Bold" /></Grid></DataTemplate></CollectionView.ItemTemplate>
+											</CollectionView>
+											<CollectionView ItemsSource="{Binding Diagnoses}" SelectionMode="None">
+												<CollectionView.ItemTemplate><DataTemplate x:DataType="dto:DiagnosisDto"><Grid Padding="6,4" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8"><Label FontAttributes="Bold" Text="{Binding Mkb10Code}" TextColor="{StaticResource SparkAccentTealDark}" /><Label Grid.Column="1" Text="{Binding Mkb10Description}" LineBreakMode="TailTruncation" /><Label Grid.Column="2" FontFamily="FASolid" Text="&#xf1f8;" TextColor="#DC2626"><Label.GestureRecognizers><TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMkbCommand}" CommandParameter="{Binding .}" /></Label.GestureRecognizers></Label></Grid></DataTemplate></CollectionView.ItemTemplate>
+											</CollectionView>
+										</VerticalStackLayout>
+									</Border>
+
+									<controls:CrudSectionHeader Title="ЛЕКОВИ" />
+									<Border IsVisible="{Binding IsEditMode}" Padding="10" Style="{StaticResource EditFieldBoxStyle}">
+										<VerticalStackLayout Spacing="8">
+											<Entry Placeholder="Пребарај лек..." Text="{Binding MedicineSearchText, Mode=TwoWay}" FontSize="13" />
+											<CollectionView HeightRequest="120" IsVisible="{Binding ShowMedicineDropdown}" ItemsSource="{Binding MedicineResults}" SelectionMode="None"><CollectionView.ItemTemplate><DataTemplate x:DataType="dto:MedicineDto"><Grid Padding="8,5"><Grid.GestureRecognizers><TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMedicineCommand}" CommandParameter="{Binding .}" /></Grid.GestureRecognizers><Label Text="{Binding FullName}" /></Grid></DataTemplate></CollectionView.ItemTemplate></CollectionView>
+											<CollectionView ItemsSource="{Binding AttachedMedicines}" SelectionMode="None"><CollectionView.ItemTemplate><DataTemplate x:DataType="viewModels:AttachedMedicineRow"><Border Padding="8" Margin="0,0,0,6" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1" StrokeShape="RoundRectangle 6"><VerticalStackLayout Spacing="6"><Grid ColumnDefinitions="*,Auto"><Label FontAttributes="Bold" Text="{Binding MedicineName}" /><Label Grid.Column="1" FontFamily="FASolid" Text="&#xf1f8;" TextColor="#DC2626"><Label.GestureRecognizers><TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" /></Label.GestureRecognizers></Label></Grid><Entry Placeholder="Фармацевтска референца" Text="{Binding PatientMedicine.PharmaceuticalReference, Mode=TwoWay}" FontSize="12" /></VerticalStackLayout></Border></DataTemplate></CollectionView.ItemTemplate></CollectionView>
+						</VerticalStackLayout>
+					</Border>
+======  -->
 								<!--  COLUMN 2 — КОНТАКТ ИНФОРМАЦИИ  -->
 								<!--  ================================================  -->
 								<VerticalStackLayout
