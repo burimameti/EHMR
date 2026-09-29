@@ -278,7 +278,7 @@
 										ColumnSpacing="8"
 										VerticalOptions="Center">
 										<Label Grid.Column="0" Style="{StaticResource SparkTabTitleLabelStyle}" Text="Периодичен" VerticalOptions="Center" />
-										<sc:FFPicker Grid.Column="1" HorizontalOptions="Fill" ItemsSource="{Binding PeriodTypeOptions}" Label="" MinimumWidthRequest="150" SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" />
+										<sc:FFPicker Grid.Column="1" HorizontalOptions="Fill" ResponsiveScale="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ResponsiveScale}" ItemsSource="{Binding PeriodTypeOptions}" Label="" SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" />
 									</Grid>
 
 									<Grid
@@ -288,7 +288,7 @@
 										ColumnSpacing="8"
 										VerticalOptions="Center">
 										<Label Grid.Column="0" Style="{StaticResource SparkTabTitleLabelStyle}" Text="ОД" VerticalOptions="Center" />
-										<sc:FFDatePicker Grid.Column="1" HorizontalOptions="Fill" HasLabel="False" SelectedDate="{Binding StartDate, Mode=TwoWay}" />
+										<sc:FFDatePicker Grid.Column="1" HorizontalOptions="Fill" ResponsiveScale="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ResponsiveScale}" HasLabel="False" SelectedDate="{Binding StartDate, Mode=TwoWay}" />
 									</Grid>
 
 									<Grid
@@ -303,6 +303,7 @@
 
 									<sc:FFButton
 										x:Name="ApplyPeriodButton"
+										ResponsiveScale="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ResponsiveScale}"
 										Grid.Column="4"
 										ButtonKind="Secondary"
 										Command="{Binding ApplyPeriodAndRegenerateCommand}"
@@ -313,6 +314,7 @@
 
 									<sc:FFButton
 										x:Name="GenerateButton"
+										ResponsiveScale="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ResponsiveScale}"
 										Grid.Column="5"
 										BackgroundColorEx="{StaticResource SidebarActiveBg}"
 										ButtonKind="Primary"
@@ -349,6 +351,7 @@
 										Color="{StaticResource SparkAccentTeal}" />
 									<sc:SparkDataGridView
 										Grid.Row="1"
+										ResponsiveScale="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ResponsiveScale}"
 										AllowHorizontalScroll="True"
 										Columns="{Binding GridColumns}"
 										CurrentPage="{Binding CurrentPage}"
