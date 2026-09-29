@@ -900,6 +900,29 @@
 						</VerticalStackLayout>
 					</Border>
 ======  -->
+									<!-- СТАТУС НА ПАЦИЕНТ -->
+									<controls:CrudSectionHeader Title="СТАТУС НА ПАЦИЕНТ" />
+									<Border Padding="12" BackgroundColor="{StaticResource SparkBackground}" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
+										<VerticalStackLayout Spacing="8">
+											<HorizontalStackLayout Spacing="18">
+												<HorizontalStackLayout Spacing="6">
+													<CheckBox IsChecked="{Binding IsPatientActive, Mode=TwoWay}" IsEnabled="{Binding IsEditMode}" VerticalOptions="Center" />
+													<Label Text="Активен" VerticalOptions="Center" FontAttributes="Bold" />
+												</HorizontalStackLayout>
+												<HorizontalStackLayout Spacing="6">
+													<CheckBox IsChecked="{Binding IsPatientInactive, Mode=OneWay}" IsEnabled="{Binding IsEditMode}" VerticalOptions="Center" />
+													<Label Text="Неактивен" VerticalOptions="Center" FontAttributes="Bold" />
+												</HorizontalStackLayout>
+											</HorizontalStackLayout>
+											<VerticalStackLayout IsVisible="{Binding IsPatientInactive}" Spacing="4">
+												<Label Text="Причина за неактивност *" Style="{StaticResource EditFieldLabelStyle}" />
+												<Border IsEnabled="{Binding IsEditMode}" Style="{StaticResource TextAreaFieldBoxStyle}">
+													<Editor AutoSize="TextChanges" FontSize="13" Placeholder="Внесете причина..." Text="{Binding InactiveReason, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" />
+												</Border>
+											</VerticalStackLayout>
+										</VerticalStackLayout>
+									</Border>
+
 								<!--  COLUMN 2 — КОНТАКТ ИНФОРМАЦИИ  -->
 								<!--  ================================================  -->
 								<VerticalStackLayout
@@ -991,7 +1014,7 @@
 								<controls:FFButton
 									BackgroundColorEx="{StaticResource SidebarActiveBg}"
 									ButtonKind="Primary"
-									Command="{Binding ToggleEditModeCommand}"
+									Command="{Binding ToggleEditModeAsyncCommand}"
 									ContentPadding="24,0"
 									HeightRequestEx="42"
 									IsVisible="{Binding IsReadOnly}"
