@@ -20,6 +20,88 @@ namespace EHMR.Views.Reports
     }
         private void OnPageSizeChanged(object? sender, EventArgs e)
         {
+            if(PageLayout == null)
+                return;
+
+            // The report hub uses two cards on desktop and one card on compact widths.
+            // The main page/sidebar split also tightens before the analytics panel stacks.
+            double availableWidth = Width > 0 ? Width : 1680;
+            bool narrowShell = availableWidth < 1180;
+            PageLayout.ColumnDefinitions.Clear();
+            PageLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(narrowShell ? 230 : 285) });
+            PageLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+
+            if(ReportsItemsLayout != null)
+                ReportsItemsLayout.Span = availableWidth < 1320 ? 1 : 2;
+
+            if(ReportControlGrid != null && ReportTitleBlock != null && PeriodControl != null && FromControl != null && ToControl != null && ApplyPeriodButton != null && GenerateButton != null)
+            {
+                bool stackedControls = availableWidth < 1450;
+
+                ReportControlGrid.ColumnDefinitions.Clear();
+                ReportControlGrid.RowDefinitions.Clear();
+
+                if(stackedControls)
+                {
+                    ReportControlGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+                    ReportControlGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+                    for(int i = 0; i < 4; i++)
+                        ReportControlGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+                    Grid.SetColumn(ReportTitleBlock, 0);
+                    Grid.SetRow(ReportTitleBlock, 0);
+                    Grid.SetColumnSpan(ReportTitleBlock, 2);
+
+                    Grid.SetColumn(PeriodControl, 0);
+                    Grid.SetRow(PeriodControl, 1);
+                    Grid.SetColumnSpan(PeriodControl, 2);
+
+                    Grid.SetColumn(FromControl, 0);
+                    Grid.SetRow(FromControl, 2);
+                    Grid.SetColumnSpan(FromControl, 1);
+
+                    Grid.SetColumn(ToControl, 1);
+                    Grid.SetRow(ToControl, 2);
+                    Grid.SetColumnSpan(ToControl, 1);
+
+                    Grid.SetColumn(ApplyPeriodButton, 0);
+                    Grid.SetRow(ApplyPeriodButton, 3);
+                    Grid.SetColumnSpan(ApplyPeriodButton, 1);
+
+                    Grid.SetColumn(GenerateButton, 1);
+                    Grid.SetRow(GenerateButton, 3);
+                    Grid.SetColumnSpan(GenerateButton, 1);
+
+                    ApplyPeriodButton.HorizontalOptions = LayoutOptions.Fill;
+                    GenerateButton.HorizontalOptions = LayoutOptions.Fill;
+                }
+                else
+                {
+                    ReportControlGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+                    for(int i = 0; i < 5; i++)
+                        ReportControlGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                    ReportControlGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+                    Grid.SetColumn(ReportTitleBlock, 0);
+                    Grid.SetColumnSpan(ReportTitleBlock, 1);
+                    Grid.SetRow(ReportTitleBlock, 0);
+                    Grid.SetColumn(PeriodControl, 1);
+                    Grid.SetColumn(FromControl, 2);
+                    Grid.SetColumn(ToControl, 3);
+                    Grid.SetColumn(ApplyPeriodButton, 4);
+                    Grid.SetColumn(GenerateButton, 5);
+                    Grid.SetRow(PeriodControl, 0);
+                    Grid.SetRow(FromControl, 0);
+                    Grid.SetRow(ToControl, 0);
+                    Grid.SetRow(ApplyPeriodButton, 0);
+                    Grid.SetRow(GenerateButton, 0);
+
+                    ApplyPeriodButton.HorizontalOptions = LayoutOptions.End;
+                    GenerateButton.HorizontalOptions = LayoutOptions.End;
+                }
+            }
+
+
             if(DetailsGrid == null || AnalyticsSidebar == null)
                 return;
 
