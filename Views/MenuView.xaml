@@ -83,6 +83,7 @@
 
 								<Border.GestureRecognizers>
 									<TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.ToggleGroupCommand}" CommandParameter="{Binding .}" />
+									<PointerGestureRecognizer PointerEntered="OnMenuGroupPointerEntered" PointerExited="OnMenuGroupPointerExited" />
 								</Border.GestureRecognizers>
 
 								<Grid ColumnDefinitions="34,*,16" ColumnSpacing="10">
@@ -228,6 +229,7 @@
 
 											<Grid.GestureRecognizers>
 												<TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.NavigateCommand}" CommandParameter="{Binding .}" />
+											<PointerGestureRecognizer PointerEntered="OnMenuItemPointerEntered" PointerExited="OnMenuItemPointerExited" />
 											</Grid.GestureRecognizers>
 
 											<!--  connector line, contiguous across rows since Spacing="0"  -->
