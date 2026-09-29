@@ -99,6 +99,11 @@ namespace EHMR.Services.Dto
             get; init;
         }
 
+        public string? PharmaceuticalReference
+        {
+            get; init;
+        }
+
         public bool IsActive
         {
             get; init;
