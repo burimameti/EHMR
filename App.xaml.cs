@@ -93,10 +93,12 @@ namespace EHMR
             var loadingPage = new LoadingPage();
             var window = new Window(loadingPage);
 
-            window.Width=1800;
-            window.Height=1250;
-            window.MinimumWidth=1600;
-            window.MinimumHeight=1200;
+            // Let the desktop window resize freely. Page layouts must adapt to
+            // the available workspace instead of forcing a fixed large viewport.
+            window.Width=1440;
+            window.Height=900;
+            window.MinimumWidth=1024;
+            window.MinimumHeight=680;
 
             window.Created+=async (s, e) =>
             {
