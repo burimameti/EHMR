@@ -112,6 +112,7 @@ public class Patient : BaseEntity
     public ICollection<TherapyCycle> TherapyCycles { get; set; } = [];
     public ICollection<Prescription> Prescriptions { get; set; } = [];
     public ICollection<Encounter> Encounters { get; set; } = [];
+    public ICollection<PatientScore> Scores { get; set; } = [];
 
     #endregion
 
