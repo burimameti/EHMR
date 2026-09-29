@@ -9,9 +9,22 @@ namespace EHMR.Resources.Controls
 {
     public partial class SparkDataGridView : ContentView
     {
+        private bool _lastCompactLayout;
+
         public SparkDataGridView()
         {
             InitializeComponent();
+            SizeChanged += OnGridSizeChanged;
+        }
+
+        private void OnGridSizeChanged(object? sender, EventArgs e)
+        {
+            bool compact = Width > 0 && Width < 1200;
+            if(compact == _lastCompactLayout)
+                return;
+
+            _lastCompactLayout=compact;
+            BuildGrid();
         }
         protected override void OnHandlerChanged()
         {
@@ -214,37 +227,50 @@ namespace EHMR.Resources.Controls
                 GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=new GridLength(36) });
             if(ShowRowNumbers)
                 GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=new GridLength(40) });
-            foreach(var column in Columns)
-                GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=column.Width });
 
-            // Responsive grid sizing:
-            // - Normal mode fills the available viewport.
-            // - Horizontal-scroll mode keeps a readable minimum width for fixed/star columns
-            //   instead of squeezing star columns to zero or clipping fixed columns.
-            if(AllowHorizontalScroll)
+            bool compactLayout = AllowHorizontalScroll && Width > 0 && Width < 1200;
+            _lastCompactLayout=compactLayout;
+
+            if(compactLayout)
             {
-                double fixedWidth=36*(ShowCheckboxColumn ? 1 : 0)
+                // At narrow widths keep the declared preferred widths and let the
+                // surrounding ScrollView provide horizontal scrolling.
+                foreach(var column in Columns)
+                    GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=column.Width });
+
+                double preferredWidth=36*(ShowCheckboxColumn ? 1 : 0)
                     +40*(ShowRowNumbers ? 1 : 0);
-                int starColumns=0;
 
                 foreach(var column in Columns)
                 {
                     if(column.Width.IsAbsolute)
-                        fixedWidth+=column.Width.Value;
+                        preferredWidth+=column.Width.Value;
                     else if(column.Width.IsStar)
-                        starColumns++;
+                        preferredWidth+=220;
                 }
 
-                // A star column still needs enough room to display useful content.
-                // This is deliberately a minimum; wide screens continue to use all available space.
-                GridRoot.MinimumWidthRequest=fixedWidth+Math.Max(1, starColumns)*220;
-                GridRoot.HorizontalOptions=LayoutOptions.Fill;
+                GridRoot.MinimumWidthRequest=preferredWidth;
             }
             else
             {
+                // Desktop/tablet wide layout: convert declared absolute widths into
+                // proportional Star weights. The grid therefore fills the available
+                // width instead of being built from fixed pixels.
+                foreach(var column in Columns)
+                {
+                    var width = column.Width.IsAbsolute
+                        ? new GridLength(Math.Max(1, column.Width.Value), GridUnitType.Star)
+                        : column.Width.IsStar
+                            ? new GridLength(Math.Max(0.1, column.Width.Value), GridUnitType.Star)
+                            : GridLength.Star;
+
+                    GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=width });
+                }
+
                 GridRoot.MinimumWidthRequest=0;
-                GridRoot.HorizontalOptions=LayoutOptions.Fill;
             }
+
+            GridRoot.HorizontalOptions=LayoutOptions.Fill;
 
             // Header row
             GridRoot.RowDefinitions.Add(new RowDefinition { Height=new GridLength(44) });
