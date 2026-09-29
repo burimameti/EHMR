@@ -91,6 +91,16 @@
 				</Border>
 			</DataTemplate>
 
+			<DataTemplate x:Key="PatientScoreRowTemplate" x:DataType="models:PatientScore">
+				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
+					<Grid Padding="8,6" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+						<Label FontAttributes="Bold" FontSize="12" Text="{Binding RecordedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
+						<Label Grid.Column="1" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding ScoreText}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+						<Label Grid.Column="2" FontSize="10" Text="{Binding EncounterId}" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
+					</Grid>
+				</Border>
+			</DataTemplate>
+
 			<DataTemplate x:Key="PatientAppointmentRowTemplate" x:DataType="models:Appointment">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
@@ -986,6 +996,18 @@
 											EmptyViewText="Нема евидентирани прегледи."
 											ItemTemplate="{StaticResource PatientEncounterRowTemplate}"
 											ItemsSource="{Binding EncounterHistory}"
+											Style="{StaticResource CrudFormHistoryCardStyle}"
+											Variant="Encounter" />
+									</Grid>
+
+									<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+										<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+										<controls:SparkExpandableCard
+											Title="Оценки"
+											Grid.Column="1"
+											EmptyViewText="Нема евидентирани оценки."
+											ItemTemplate="{StaticResource PatientScoreRowTemplate}"
+											ItemsSource="{Binding ScoreHistory}"
 											Style="{StaticResource CrudFormHistoryCardStyle}"
 											Variant="Encounter" />
 									</Grid>
