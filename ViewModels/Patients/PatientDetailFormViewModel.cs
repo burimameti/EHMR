@@ -398,6 +398,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                 StartDate = x.PatientMedicine.StartDate,
                 EndDate = x.PatientMedicine.EndDate,
                 Notes = x.PatientMedicine.Notes,
+                PharmaceuticalReference = x.PatientMedicine.PharmaceuticalReference,
                 IsActive = x.PatientMedicine.IsActive
             })
             ],
@@ -788,6 +789,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             Dosage=medicine.DefaultDosage,
             DosesFrequency=DosesFrequency.Other,
             StartDate=DateTime.UtcNow,
+            PharmaceuticalReference=string.Empty,
             IsActive=true
         };
 
