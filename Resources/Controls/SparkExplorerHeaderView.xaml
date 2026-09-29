@@ -124,12 +124,11 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				Padding="10"
-				ColumnDefinitions="*,Auto,Auto,Auto"
-				ColumnSpacing="8"
-				MinimumHeightRequest="64">
+				RowDefinitions="Auto,Auto,Auto"
+				RowSpacing="8">
 
 				<!--  Search uses all remaining horizontal space.  -->
-				<VerticalStackLayout Grid.Column="0" Spacing="4">
+				<VerticalStackLayout Grid.Row="0" Spacing="4">
 					<sc:FFSearchBox
 						Label="Пребарување"
 						Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
@@ -181,7 +180,7 @@
 					</Border>
 				</VerticalStackLayout>
 				<HorizontalStackLayout
-					Grid.Column="1"
+					Grid.Row="1"
 					IsVisible="{Binding ShowCyrillicToggle, Source={x:Reference Root}}"
 					Spacing="4"
 					VerticalOptions="Start"
@@ -206,10 +205,15 @@
 							Color="{StaticResource SidebarActiveBg}" />
 					</Border>
 				</HorizontalStackLayout>
-				<HorizontalStackLayout
-					Grid.Column="2"
+				<FlexLayout
+					Grid.Row="1"
 					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
-					Spacing="8"
+					Direction="Row"
+					JustifyContent="Start"
+					Wrap="Wrap"
+					AlignItems="Start"
+					ColumnSpacing="8"
+					RowSpacing="8"
 					VerticalOptions="Start">
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkPickerItem">
@@ -220,10 +224,10 @@
 								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
-				</HorizontalStackLayout>
+				</FlexLayout>
 
 				<VerticalStackLayout
-					Grid.Column="3"
+					Grid.Row="2"
 					Spacing="4"
 					VerticalOptions="Start">
 					<Label
@@ -231,7 +235,14 @@
 						HorizontalOptions="Center"
 						Text="Акции"
 						TextColor="{StaticResource SparkTextSecondary}" />
-					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}" Spacing="8">
+					<FlexLayout
+						BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}"
+						Direction="Row"
+						JustifyContent="Start"
+						Wrap="Wrap"
+						AlignItems="Start"
+						ColumnSpacing="8"
+						RowSpacing="8">
 
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkButtonItem">
@@ -248,7 +259,7 @@
 							</DataTemplate>
 						</BindableLayout.ItemTemplate>
 
-					</HorizontalStackLayout>
+					</FlexLayout>
 				</VerticalStackLayout>
 			</Grid>
 			<BoxView
