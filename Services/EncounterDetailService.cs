@@ -160,6 +160,10 @@ public class EncounterDetailService : IEncounterDetailService
             .OrderBy(x => x.Medication)
             .ToListAsync();
 
+        var score = await db.PatientScores
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.EncounterId==id && x.PatientId==encounter.PatientId);
+
         var patients = await GetPatients();
         var doctors = await GetDoctors();
 
@@ -176,6 +180,7 @@ public class EncounterDetailService : IEncounterDetailService
             Encounter=encounter,
             Diagnoses=diagnoses,
             Prescriptions=prescriptions,
+            Score=score,
             Patients=patients,
             Doctors=doctors,
             PreviousEncounter=currentIndex>0 ? history[currentIndex-1] : null,
@@ -517,7 +522,8 @@ public class EncounterDetailService : IEncounterDetailService
         List<Diagnosis> diagnoses,
         List<Prescription> prescriptions,
         List<PatientMedicine> medicines,
-        List<Guid> deletedMedicineIds)
+        List<Guid> deletedMedicineIds,
+        string? scoreText = null)
     {
         await using var db = await _factory.CreateDbContextAsync();
         await using var tx = await db.Database.BeginTransactionAsync();
@@ -684,6 +690,34 @@ public class EncounterDetailService : IEncounterDetailService
                     await db.SaveChangesAsync();
                 }
             }
+            // One score belongs to one encounter and the patient. Blank score removes
+            // the previous score for this encounter.
+            var normalizedScore=scoreText?.Trim();
+            var existingScore=await db.PatientScores
+                .FirstOrDefaultAsync(x => x.EncounterId==encounter.Id && x.PatientId==encounter.PatientId);
+
+            if(string.IsNullOrWhiteSpace(normalizedScore))
+            {
+                if(existingScore is not null)
+                    db.PatientScores.Remove(existingScore);
+            }
+            else if(existingScore is null)
+            {
+                db.PatientScores.Add(new PatientScore
+                {
+                    Id=Guid.NewGuid(),
+                    PatientId=encounter.PatientId,
+                    EncounterId=encounter.Id,
+                    ScoreText=normalizedScore,
+                    RecordedAt=DateTime.UtcNow
+                });
+            }
+            else
+            {
+                existingScore.ScoreText=normalizedScore;
+                existingScore.RecordedAt=DateTime.UtcNow;
+            }
+
             await db.SaveChangesAsync();
             await tx.CommitAsync();
         }
