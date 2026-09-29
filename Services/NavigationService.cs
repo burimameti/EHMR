@@ -48,7 +48,7 @@ namespace EHMR.Services
 
                 // Shell root pages must use absolute routes; registered detail/create/edit
                 // pages remain relative so they stay inside the current Shell stack.
-                var normalizedRoute=route switch
+                normalizedRoute=route switch
                 {
                     "dashboard" => "//dashboard",
                     "login" => "//login",
