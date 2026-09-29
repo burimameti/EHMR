@@ -537,6 +537,14 @@ namespace EHMR.Resources.Controls
             Grid.SetRow(border, rowIndex);
             Grid.SetColumn(border, columnIndex);
             border.Content=content;
+
+            // Keep the grid compact, but expose the complete cell value on hover.
+            // Windows renders this as a native tooltip, which is especially useful
+            // for truncated text in narrow responsive columns.
+            var tooltipText = value?.ToString()?.Trim();
+            if(!string.IsNullOrWhiteSpace(tooltipText))
+                ToolTipProperties.SetText(border, tooltipText);
+
             GridRoot.Children.Add(border);
         }
 
