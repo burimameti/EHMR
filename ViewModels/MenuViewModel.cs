@@ -46,13 +46,14 @@ public partial class MenuViewModel : ObservableObject, IDisposable
 
     private void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
     {
-        var route = ResolveMenuRoute(e.Current?.Location);
+        var route=ResolveMenuRoute(e.Current?.Location);
         if(string.IsNullOrWhiteSpace(route))
             return;
 
         ActiveRoute=route;
 
-        if(e.Source==ShellNavigationSource.Pop)
+        if(e.Source==ShellNavigationSource.Pop||
+           (_focusedGroup!=null&&!BelongsToGroup(_focusedGroup, route)))
             ShowMainMenu();
     }
 
@@ -155,10 +156,6 @@ public partial class MenuViewModel : ObservableObject, IDisposable
             _selectedPatientService.OpenInEditMode=true;
         }
 
-        // ← ДОДАЈ ГО ОВА
-        _focusedGroup=_allItems.FirstOrDefault(g =>
-            g.Items.Any(i => i.Route.Equals(item.Route, StringComparison.OrdinalIgnoreCase)));
-
         try
         {
             ActiveRoute=item.Route;
@@ -166,9 +163,11 @@ public partial class MenuViewModel : ObservableObject, IDisposable
         }
         catch(Exception ex)
         {
+            // Roll back so the highlighted item matches what's actually
+            // on screen if navigation failed.
             ActiveRoute=previousRoute;
-            _focusedGroup=null;
-            System.Diagnostics.Debug.WriteLine($"Navigation to '{item.Route}' failed: {ex}");
+            System.Diagnostics.Debug.WriteLine(
+                $"Navigation to '{item.Route}' failed: {ex}");
         }
         finally
         {

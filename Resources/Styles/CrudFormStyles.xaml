@@ -12,7 +12,7 @@
 	<Style x:Key="CrudFormPageGridStyle" TargetType="Grid">
 		<Setter Property="Margin" Value="0" />
 		<Setter Property="Padding" Value="0" />
-		<Setter Property="RowSpacing" Value="0" />
+		<Setter Property="RowSpacing" Value="16" />
 	</Style>
 
 	<Style x:Key="CrudFormBodyGridStyle" TargetType="Grid">
@@ -20,17 +20,20 @@
 
 
 		<Setter Property="Padding" Value="0" />
-		<Setter Property="Margin" Value="0" />
+		<Setter Property="Margin" Value="16,0,16,0" />
 		<Setter Property="Shadow" Value="{x:Null}" />
 
 
 	</Style>
 
-	<Style x:Key="CrudFormCardStyle" TargetType="controls:FFSectionCard" />
+	<Style x:Key="CrudFormCardStyle" TargetType="controls:FFSectionCard">
+		<Setter Property="Margin" Value="0" />
+		<Setter Property="ContentPadding" Value="{StaticResource CrudFormCardPadding}" />
+	</Style>
 
 	<Style x:Key="CrudFormContentStackStyle" TargetType="VerticalStackLayout">
 		<Setter Property="Padding" Value="0" />
-		<Setter Property="Spacing" Value="0" />
+		<Setter Property="Spacing" Value="{StaticResource CrudFormSectionSpacing}" />
 	</Style>
 
 	<Style x:Key="CrudFormSidebarStackStyle" TargetType="VerticalStackLayout">

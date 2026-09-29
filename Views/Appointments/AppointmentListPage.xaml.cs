@@ -43,12 +43,12 @@ namespace EHMR.Views
             if(vm.SelectSuggestionCommand?.CanExecute(selected)==true)
                 vm.SelectSuggestionCommand.Execute(selected);
         }
-        //private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    if(BindingContext is AppointmentListViewModel vm)
-        //    {
-        //        vm.SearchText=e.NewTextValue;
-        //    }
-        //}
+        private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(BindingContext is AppointmentListViewModel vm)
+            {
+                vm.SearchText=e.NewTextValue;
+            }
+        }
     }
 }

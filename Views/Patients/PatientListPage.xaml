@@ -20,7 +20,7 @@
 			Grid.Column="1"
 			Margin="0"
 			RowDefinitions="Auto,*"
-			RowSpacing="0">
+			RowSpacing="16">
 
 			<!--  HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">

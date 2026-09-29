@@ -21,9 +21,12 @@
 		<Grid
 			Grid.Column="1"
 			RowDefinitions="Auto,*"
-			RowSpacing="0">
+			Style="{StaticResource CrudFormPageGridStyle}">
 
-			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+			<Border
+				Grid.Row="0"
+				Margin="16,16,16,0"
+				Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader
 					Title="Внесување на нов преглед"
 					PrimaryButtonCommand="{Binding SaveEncounterCommand}"
@@ -37,13 +40,18 @@
 
 			<Grid
 				Grid.Row="1"
+				Margin="16,0,16,0"
 				ColumnDefinitions="2*,1*"
-				RowSpacing="0">
+				ColumnSpacing="6"
+				Style="{StaticResource CrudFormBodyGridStyle}">
 
 				<!--  ═══════════════════════════════════════════════════════  -->
 				<!--  ЛЕВА КОЛОНА — ФОРМИ  -->
 				<!--  ═══════════════════════════════════════════════════════  -->
-				<controls:FFSectionCard Grid.Column="0">
+				<controls:FFSectionCard
+					Grid.Column="0"
+					Margin="0"
+					Style="{StaticResource CrudFormCardStyle}">
 					<ScrollView VerticalScrollBarVisibility="Never">
 						<VerticalStackLayout Style="{StaticResource CrudFormContentStackStyle}">
 
@@ -788,9 +796,12 @@
 				<!--  ═══════════════════════════════════════════════════════  -->
 				<!--  ДЕСНА КОЛОНА — ТЕРМИН/ЦИКЛУС + ПРЕГЛЕДИ + ДОКУМЕНТИ  -->
 				<!--  ═══════════════════════════════════════════════════════  -->
-				<controls:FFSectionCard Grid.Column="1" Margin="0">
+				<controls:FFSectionCard
+					Grid.Column="1"
+					Margin="0"
+					Style="{StaticResource CrudFormCardStyle}">
 					<ScrollView VerticalScrollBarVisibility="Never">
-						<VerticalStackLayout>
+						<VerticalStackLayout Style="{StaticResource CrudFormSidebarStackStyle}">
 
 							<!--  Section: Поврзување  -->
 							<Border Style="{StaticResource SectionPillBorderStyle}">
@@ -805,7 +816,6 @@
 							<Grid ColumnDefinitions="*,*" ColumnSpacing="10">
 								<controls:FFButton
 									Grid.Column="0"
-									Padding="10"
 									ButtonKind="Secondary"
 									Command="{Binding SelectAppointmentCommand}"
 									HeightRequestEx="44"
