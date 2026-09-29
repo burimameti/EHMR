@@ -5,6 +5,25 @@ namespace EHMR.Resources.Controls;
 
 public partial class FFButton : ContentView
 {
+    public static readonly BindableProperty ResponsiveScaleProperty =
+        BindableProperty.Create(nameof(ResponsiveScale), typeof(double), typeof(FFButton), 1d,
+            propertyChanged: (b, _, n) => ((FFButton)b).ApplyResponsiveScale((double)n));
+
+    public double ResponsiveScale
+    {
+        get => (double)GetValue(ResponsiveScaleProperty);
+        set => SetValue(ResponsiveScaleProperty, value);
+    }
+
+    private void ApplyResponsiveScale(double scale)
+    {
+        scale=Math.Clamp(scale, 0.72, 1.0);
+        Container.MinimumHeightRequest=42*scale;
+        Container.MinimumWidthRequest=180*scale;
+        Container.Padding=new Thickness(20*scale, 0);
+        FontSizeEx=13*scale;
+    }
+
     private Color? _hoverRestoreBackground;
     private Color? _hoverRestoreText;
 
