@@ -49,6 +49,7 @@ namespace EHMR.Services.Dto
         {
             get; set;
         }
+        public string InactiveReason { get; set; } = string.Empty;
 
         public DateTime RegistrationDate
         {
@@ -117,6 +118,7 @@ namespace EHMR.Services.Dto
         {
             get; set;
         }
+        public string InactiveReason { get; set; } = string.Empty;
     }
 
     // =====================================================
