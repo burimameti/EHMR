@@ -123,9 +123,11 @@
 		<Grid
 			BackgroundColor="Transparent"
 			IsVisible="{Binding SearchVisible, Source={x:Reference Root}}"
-			Padding="10,8,10,10">
+			Padding="10,8,10,10"
+			RowDefinitions="Auto,Auto">
 
 			<Grid
+				Grid.Row="0"
 				ColumnDefinitions="2*,Auto,3*,Auto"
 				ColumnSpacing="12"
 				VerticalOptions="Center">
@@ -204,15 +206,47 @@
 				</HorizontalStackLayout>
 			</Grid>
 
-			<!-- Suggestions float below the same search control without changing toolbar layout. -->
 			<Border
+				Grid.Row="1"
 				Grid.ColumnSpan="4"
-				IsVisible="False"
 				Padding="4"
 				BackgroundColor="White"
+				IsVisible="{Binding ShowSuggestions, Source={x:Reference Root}}"
 				Stroke="{StaticResource SparkBorderSubtle}"
 				StrokeShape="RoundRectangle 8"
-				StrokeThickness="1" />
+				StrokeThickness="1">
+				<Grid ColumnDefinitions="*,12" ColumnSpacing="4">
+					<CollectionView
+						x:Name="SuggestionList"
+						Grid.Column="0"
+						HeightRequest="164"
+						ItemTemplate="{Binding SuggestionTemplate, Source={x:Reference Root}}"
+						ItemsSource="{Binding Suggestions, Source={x:Reference Root}}"
+						Scrolled="OnSuggestionListScrolled"
+						SelectedItem="{Binding SelectedSuggestion, Source={x:Reference Root}, Mode=TwoWay}"
+						SelectionMode="Single"
+						VerticalScrollBarVisibility="Never" />
+					<Border
+						x:Name="SuggestionScrollRail"
+						Grid.Column="1"
+						Margin="2,4"
+						BackgroundColor="#E2E8F0"
+						StrokeThickness="0">
+						<Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+						<Border
+							x:Name="SuggestionScrollThumb"
+							BackgroundColor="{StaticResource SidebarActiveBg}"
+							HeightRequest="38"
+							StrokeThickness="0"
+							VerticalOptions="Start">
+							<Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+							<Border.GestureRecognizers>
+								<PanGestureRecognizer PanUpdated="OnSuggestionThumbPanUpdated" />
+							</Border.GestureRecognizers>
+						</Border>
+					</Border>
+				</Grid>
+			</Border>
 		</Grid>
 	</VerticalStackLayout>
 
