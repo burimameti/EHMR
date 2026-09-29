@@ -217,6 +217,35 @@ namespace EHMR.Resources.Controls
             foreach(var column in Columns)
                 GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=column.Width });
 
+            // Responsive grid sizing:
+            // - Normal mode fills the available viewport.
+            // - Horizontal-scroll mode keeps a readable minimum width for fixed/star columns
+            //   instead of squeezing star columns to zero or clipping fixed columns.
+            if(AllowHorizontalScroll)
+            {
+                double fixedWidth=36*(ShowCheckboxColumn ? 1 : 0)
+                    +40*(ShowRowNumbers ? 1 : 0);
+                int starColumns=0;
+
+                foreach(var column in Columns)
+                {
+                    if(column.Width.IsAbsolute)
+                        fixedWidth+=column.Width.Value;
+                    else if(column.Width.IsStar)
+                        starColumns++;
+                }
+
+                // A star column still needs enough room to display useful content.
+                // This is deliberately a minimum; wide screens continue to use all available space.
+                GridRoot.MinimumWidthRequest=fixedWidth+Math.Max(1, starColumns)*220;
+                GridRoot.HorizontalOptions=LayoutOptions.Fill;
+            }
+            else
+            {
+                GridRoot.MinimumWidthRequest=0;
+                GridRoot.HorizontalOptions=LayoutOptions.Fill;
+            }
+
             // Header row
             GridRoot.RowDefinitions.Add(new RowDefinition { Height=new GridLength(44) });
             if(ShowCheckboxColumn) AddCheckboxHeaderCell(checkboxColumnIndex);
