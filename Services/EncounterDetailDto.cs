@@ -17,6 +17,8 @@ public class EncounterDetailDto
 
     public List<Prescription> Prescriptions { get; set; } = [];
 
+    public PatientScore? Score { get; set; }
+
     public List<Patient> Patients { get; set; } = [];
 
     public List<Doctor> Doctors { get; set; } = [];
