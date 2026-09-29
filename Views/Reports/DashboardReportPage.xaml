@@ -8,6 +8,7 @@
 	xmlns:sc="clr-namespace:EHMR.Resources.Controls"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="PageRoot"
+	SizeChanged="OnPageSizeChanged"
 	x:DataType="viewModels:ReportViewModel"
 	BackgroundColor="{StaticResource SparkBorder}">
 
@@ -228,6 +229,7 @@
 						x:Name="DetailsGrid"
 						Margin="16,0,16,0"
 						ColumnDefinitions="*,320"
+						RowDefinitions="Auto,Auto"
 						ColumnSpacing="16"
 						IsVisible="False">
 						<Grid.Triggers>
@@ -347,6 +349,7 @@
 										Color="{StaticResource SparkAccentTeal}" />
 									<sc:SparkDataGridView
 										Grid.Row="1"
+										AllowHorizontalScroll="True"
 										Columns="{Binding GridColumns}"
 										CurrentPage="{Binding CurrentPage}"
 										NextPageCommand="{Binding NextPageCommand}"
@@ -360,7 +363,7 @@
 						</VerticalStackLayout>
 
 						<!--  RIGHT SIDEBAR — analytics + export  -->
-						<ScrollView Grid.Column="1" VerticalScrollBarVisibility="Never">
+						<ScrollView x:Name="AnalyticsSidebar" Grid.Column="1" Grid.Row="0" VerticalScrollBarVisibility="Never">
 							<VerticalStackLayout Spacing="16">
 
 								<!--  Analytics card  -->
