@@ -1,24 +1,62 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Shell
-	x:Class="EHMR.AppShell"
-	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:views="clr-namespace:EHMR.Views"
-	FlyoutBehavior="Flyout">
+    x:Class="EHMR.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:EHMR.Views"
+    FlyoutBehavior="Disabled"
+    NavBarIsVisible="False">
 
-	<FlyoutItem Route="dashboard">
-		<ShellContent ContentTemplate="{DataTemplate views:DashboardView}" />
-	</FlyoutItem>
+    <!-- Root workspace routes. Navigating to these replaces the current
+         workspace instead of pushing another page onto the Shell stack. -->
+    <ShellContent Route="login"
+                  ContentTemplate="{DataTemplate views:LoginView}" />
 
-	<FlyoutItem Route="patients">
-		<ShellContent ContentTemplate="{DataTemplate views:PatientListPage}" />
-	</FlyoutItem>
+    <ShellContent Route="dashboard"
+                  ContentTemplate="{DataTemplate views:DashboardView}" />
 
-	<!--<FlyoutItem Route="therapy" local:ShellVisibility.Route="therapy">
-		<ShellContent ContentTemplate="{DataTemplate views:TherapyPage}" />
-	</FlyoutItem>-->
+    <ShellContent Route="MainPage"
+                  ContentTemplate="{DataTemplate views:MainPage}" />
 
-	<FlyoutItem Route="login">
-		<ShellContent ContentTemplate="{DataTemplate views:LoginView}" />
-	</FlyoutItem>
+    <ShellContent Route="patientslist"
+                  ContentTemplate="{DataTemplate views:PatientListPage}" />
+
+    <ShellContent Route="encounterslist"
+                  ContentTemplate="{DataTemplate views:EncounterListPage}" />
+
+    <ShellContent Route="appointmentslist"
+                  ContentTemplate="{DataTemplate views:AppointmentListPage}" />
+
+    <ShellContent Route="protocolslist"
+                  ContentTemplate="{DataTemplate views:ProtocolRegistryPage}" />
+
+    <ShellContent Route="medicineslist"
+                  ContentTemplate="{DataTemplate views:MedicineListPage}" />
+
+    <ShellContent Route="reportlist"
+                  ContentTemplate="{DataTemplate views:ReportHistoryPage}" />
+
+    <ShellContent Route="AdminPage"
+                  ContentTemplate="{DataTemplate views:AdminPage}" />
+
+    <ShellContent Route="userslist"
+                  ContentTemplate="{DataTemplate views:UsersPage}" />
+
+    <ShellContent Route="doctorslist"
+                  ContentTemplate="{DataTemplate views:DoctorsListPage}" />
+
+    <ShellContent Route="therapylist"
+                  ContentTemplate="{DataTemplate views:TherapyCyclesPage}" />
+
+    <ShellContent Route="prescriptionslist"
+                  ContentTemplate="{DataTemplate views:PrescriptionListPage}" />
+
+    <ShellContent Route="BackupDashboardPage"
+                  ContentTemplate="{DataTemplate views:BackupDashboardPage}" />
+
+    <ShellContent Route="BackupPage"
+                  ContentTemplate="{DataTemplate views:BackupPage}" />
+
+    <ShellContent Route="mkbcodes"
+                  ContentTemplate="{DataTemplate views:MbkImportExportPage}" />
 </Shell>
