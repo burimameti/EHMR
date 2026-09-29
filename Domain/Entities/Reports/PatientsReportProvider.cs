@@ -375,10 +375,6 @@ namespace EHMR.Domain.Entities.Reports
                 }
             }
 
-            /*
-            {
-            }
-
             // Allergy filter
             if(_selectedAllergyFilter=="Со алергии")
             {
