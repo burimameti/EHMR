@@ -7,6 +7,7 @@ using EHMR.Domain.Interfaces;
 using EHMR.Helpers;
 using EHMR.Services;
 using EHMR.ViewModels.Constants;
+using EHMR.ViewModels.Patients.Extensions;
 using System.Collections.ObjectModel;
 
 namespace EHMR.ViewModels.Encounters;
