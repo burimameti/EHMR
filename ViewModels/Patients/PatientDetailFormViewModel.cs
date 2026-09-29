@@ -181,6 +181,10 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
             PageTitle=$"Досие: {Patient.FirstName} {Patient.LastName}";
 
+            // Inactive patient records are read-only regardless of the route that opened them.
+            if(Patient.Status==PatientStatus.Inactive)
+                IsReadOnly=true;
+
             SyncDisplayFromPatient();
 
             // DTOs aren't EF-tracked, so no cloning/detaching gymnastics required —
