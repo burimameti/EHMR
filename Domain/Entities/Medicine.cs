@@ -31,5 +31,11 @@ public class Medicine : BaseEntity
         ? Name
         : $"{Name} {Strength}{Unit}".Trim();
 
+    public string PharmaceuticalReference
+    {
+        get;
+        internal set;
+    }
+
     public override string ToString() => FullName;
 }
