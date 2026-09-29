@@ -46,17 +46,20 @@ namespace EHMR.Services
                     return;
                 }
 
-                // 2. Изврши ја навигацијата преку пронајдениот Shell
-                if(route.StartsWith("//"))
+                // Shell root pages must use absolute routes; registered detail/create/edit
+                // pages remain relative so they stay inside the current Shell stack.
+                var normalizedRoute=route switch
                 {
-                    await activeShell.GoToAsync(route, true, navParams);
-                }
+                    "dashboard" => "//dashboard",
+                    "login" => "//login",
+                    "patients" => "//patients",
+                    _ => route
+                };
+
+                if(normalizedRoute.StartsWith("//"))
+                    await activeShell.GoToAsync(normalizedRoute, true, navParams);
                 else
-                {
-                    // Поправка за релативни рути:
-                    // За да биде посигурно со детални страници регистрирани во C#, секогаш е подобро со чисто име:
-                    await activeShell.GoToAsync(route, navParams);
-                }
+                    await activeShell.GoToAsync(normalizedRoute, navParams);
             }
             catch(Exception ex)
             {
@@ -64,7 +67,7 @@ namespace EHMR.Services
                 throw;
             }
 
-            _navEvents.NotifyRouteChanged(route);
+            _navEvents.NotifyRouteChanged(normalizedRoute);
             Debug.WriteLine($"Route called - on navService{DateTime.Now}", route);
         }
 
