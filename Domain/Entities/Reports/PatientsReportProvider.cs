@@ -347,9 +347,11 @@ namespace EHMR.Domain.Entities.Reports
                     .Distinct());
 
             Debug.WriteLine($"[Patients]   - Gender picker...");
-            RefreshPicker(_genderPicker,
-                Enum.GetValues<Gender>()
-                    .Select(x => x.ToString()));
+            RefreshPicker(_genderPicker, new[]
+                {
+                    "Машко",
+                    "Женско"
+                });
         }
 
         private IEnumerable<Patient> ApplyFilters(IEnumerable<Patient> patients)
@@ -416,11 +418,18 @@ namespace EHMR.Domain.Entities.Reports
             }
 
             // Gender filter
-            if(_selectedGenderFilter!="Сите"&&
-                Enum.TryParse<Gender>(_selectedGenderFilter, out var gender))
+            if(_selectedGenderFilter!="Сите")
             {
-                query=query.Where(x =>
-                    x.Gender==gender);
+                var gender = _selectedGenderFilter switch
+                {
+                    "Машко" => Gender.Male,
+                    "Женско" => Gender.Female,
+                    _ => (Gender?)null
+                };
+
+                if(gender.HasValue)
+                    query=query.Where(x => x.Gender==gender.Value);
+
                 Debug.WriteLine($"[Patients]   - Gender filter: {_selectedGenderFilter}");
             }
 
