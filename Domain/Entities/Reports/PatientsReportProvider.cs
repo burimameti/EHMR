@@ -53,7 +53,7 @@ namespace EHMR.Domain.Entities.Reports
             new() { Header = "СТАТУС", Key = "Status", Width = new GridLength(90) },
             new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(90) },
             new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(150) },
-            new() { Header = "МАТИЧЕН БРОЈ", Key = "NationalId", Width = new GridLength(150) },
+            new() { Header = "СКОР", Key = "Score", Width = new GridLength(120) },
             new() { Header = "АДРЕСА", Key = "Address", Width = new GridLength(180) },
             new() { Header = "ГРАД", Key = "City", Width = new GridLength(90) },
             new() { Header = "КРЕИРАН НА", Key = "Created", Width = new GridLength(110) },
@@ -261,7 +261,8 @@ namespace EHMR.Domain.Entities.Reports
                         .ThenInclude(x => x.Medicine)
                     .Include(x => x.Diagnoses)
                         .ThenInclude(x => x.Mkb10Code)
-                    .Include(x => x.TherapyCycles)
+.Include(x => x.TherapyCycles)
+                    .Include(x => x.Scores)
                     .AsNoTracking()
                     .Where(x => x.RegistrationDate>=from&&
                                 x.RegistrationDate<=to)
@@ -312,8 +313,7 @@ namespace EHMR.Domain.Entities.Reports
         {
             Debug.WriteLine($"[Patients]   - Status picker...");
             RefreshPicker(_statusPicker,
-                Enum.GetValues<PatientStatus>()
-                    .Select(x => x.ToString()));
+                new[] { "Active", "Inactive" });
 
             Debug.WriteLine($"[Patients]   - City picker...");
             RefreshPicker(_cityPicker,
@@ -437,10 +437,13 @@ namespace EHMR.Domain.Entities.Reports
                 Cells=
                 [
                     patient.FullName ?? "-",
-                    patient.Status.ToString(),
-                    patient.Gender.ToString(),
+                    patient.Status.ToDisplay(),
+                    patient.Gender.ToDisplay(),
                     patient.Phone ?? "-",
-                    PrivacyMaskHelper.MaskNationalId(patient.NationalId) ?? "-",
+                    patient.Scores
+                        .OrderByDescending(x => x.RecordedAt)
+                        .Select(x => x.ScoreText)
+                        .FirstOrDefault() ?? "Нема скор",
                     patient.Address ?? "-",
                     patient.City ?? "-",
                     patient.CreatedAt.ToString("dd.MM.yyyy"),
