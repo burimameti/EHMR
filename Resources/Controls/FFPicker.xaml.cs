@@ -3,6 +3,26 @@ using Microsoft.Maui.Controls;
 namespace EHMR.Resources.Controls;
 public partial class FFPicker : ContentView
 {
+    public static readonly BindableProperty ResponsiveScaleProperty =
+        BindableProperty.Create(nameof(ResponsiveScale), typeof(double), typeof(FFPicker), 1d,
+            propertyChanged: (b, _, n) => ((FFPicker)b).ApplyResponsiveScale((double)n));
+
+    public double ResponsiveScale
+    {
+        get => (double)GetValue(ResponsiveScaleProperty);
+        set => SetValue(ResponsiveScaleProperty, value);
+    }
+
+    private void ApplyResponsiveScale(double scale)
+    {
+        scale=Math.Clamp(scale, 0.72, 1.0);
+        InnerPicker.FontSize=13*scale;
+        InnerPicker.Margin=new Thickness(10*scale, 0, 30*scale, 0);
+        ArrowButton.Margin=new Thickness(0, 5*scale, 5*scale, 5*scale);
+        ArrowButton.WidthRequest=31*scale;
+        ArrowButton.HeightRequest=32*scale;
+    }
+
     public FFPicker()
     {
         InitializeComponent();
