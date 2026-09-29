@@ -615,11 +615,7 @@ namespace EHMR.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("PharmaceuticalReference")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Strength")
+b.Property<decimal>("Strength")
                         .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
