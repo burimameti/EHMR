@@ -171,6 +171,8 @@ public class Encounter
         get; set;
     }
 
+    public virtual PatientScore? PatientScore { get; set; }
+
     public virtual ICollection<Prescription> Prescriptions
     {
         get; set;
