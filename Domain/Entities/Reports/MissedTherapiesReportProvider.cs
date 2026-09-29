@@ -270,9 +270,11 @@ namespace EHMR.Domain.Entities.Reports
                 RefreshPicker(_cyclePicker, data.Select(x => $"Цикл #{x.TherapyCyleNumber}"));
 
                 Debug.WriteLine($"[MissedTherapies]   - Gender picker...");
-                RefreshPicker(_genderPicker,
-                    Enum.GetValues<Gender>()
-                        .Select(x => x.ToString()));
+                RefreshPicker(_genderPicker, new[]
+                    {
+                        "Машко",
+                        "Женско"
+                    });
 
                 Debug.WriteLine($"[MissedTherapies] [7] Updating tab counts...");
                 RefreshTabCounts(data);
@@ -307,11 +309,18 @@ namespace EHMR.Domain.Entities.Reports
                     filtered=filtered.Where(x =>
                         $"Цикл #{x.TherapyCyleNumber}"==_selectedCycleFilter);
 
-                if(_selectedGenderFilter!="Сите"&&
-                    Enum.TryParse<Gender>(_selectedGenderFilter, out var gender))
+                if(_selectedGenderFilter!="Сите")
                 {
-                    filtered=filtered.Where(x =>
-                        x.Patient!.Gender==gender);
+                    var gender = _selectedGenderFilter switch
+                    {
+                        "Машко" => Gender.Male,
+                        "Женско" => Gender.Female,
+                        _ => (Gender?)null
+                    };
+
+                    if(gender.HasValue)
+                        filtered=filtered.Where(x =>
+                            x.Patient!.Gender==gender.Value);
                 }
                 if(_selectedDiagnosisFilter!="Сите")
                     filtered=filtered.Where(x =>
