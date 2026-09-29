@@ -10,6 +10,15 @@ namespace EHMR.Resources.Controls
     public partial class SparkDataGridView : ContentView
     {
         private bool _lastCompactLayout;
+        public static readonly BindableProperty ResponsiveScaleProperty =
+            BindableProperty.Create(nameof(ResponsiveScale), typeof(double), typeof(SparkDataGridView), 1d,
+                propertyChanged: (b, _, _) => ((SparkDataGridView)b).BuildGrid());
+        public double ResponsiveScale
+        {
+            get => (double)GetValue(ResponsiveScaleProperty);
+            set => SetValue(ResponsiveScaleProperty, value);
+        }
+        private double UiScale => Math.Clamp(ResponsiveScale, 0.72, 1.0);
 
         public SparkDataGridView()
         {
@@ -273,7 +282,7 @@ namespace EHMR.Resources.Controls
             GridRoot.HorizontalOptions=LayoutOptions.Fill;
 
             // Header row
-            GridRoot.RowDefinitions.Add(new RowDefinition { Height=new GridLength(44) });
+            GridRoot.RowDefinitions.Add(new RowDefinition { Height=new GridLength(44 * UiScale) });
             if(ShowCheckboxColumn) AddCheckboxHeaderCell(checkboxColumnIndex);
             if(ShowRowNumbers) AddRowNumberHeaderCell(rowNumberColumnIndex);
             for(int c = 0; c<Columns.Count; c++)
@@ -341,7 +350,7 @@ namespace EHMR.Resources.Controls
                 BackgroundColor=rowBg,
                 StrokeThickness=0,
                 Padding=new Thickness(4, 0),
-                HeightRequest=44
+                HeightRequest=44 * UiScale
             };
             var checkbox = new CheckBox
             {
@@ -374,7 +383,7 @@ namespace EHMR.Resources.Controls
             {
                 Text="#",
                 TextColor=HeaderTextColor,
-                FontSize=12,
+                FontSize=12 * UiScale,
                 HorizontalTextAlignment=TextAlignment.Center,
                 HorizontalOptions=LayoutOptions.Fill
             };
@@ -439,7 +448,7 @@ namespace EHMR.Resources.Controls
             {
                 Background=new SolidColorBrush(Color.FromArgb("#5B6B79")),
                 Stroke=Colors.Transparent,
-                Padding=new Thickness(12, 0),
+                Padding=new Thickness(10 * UiScale, 0),
                 HorizontalOptions=LayoutOptions.Fill
             };
             var row = new HorizontalStackLayout
@@ -465,7 +474,7 @@ namespace EHMR.Resources.Controls
                 {
                     Text="\u25BE",
                     TextColor=HeaderTextColor,
-                    FontSize=10,
+                    FontSize=10 * UiScale,
                     VerticalOptions=LayoutOptions.Center
                 });
 
@@ -559,7 +568,7 @@ namespace EHMR.Resources.Controls
                 Text=text??string.Empty,
                 TextColor=HyperlinkColor,
                 TextDecorations=TextDecorations.Underline,
-                FontSize=13,
+                FontSize=13 * UiScale,
                 HorizontalOptions=LayoutOptions.Start,
                 VerticalOptions=LayoutOptions.Center,
                 HorizontalTextAlignment=TextAlignment.Start,
@@ -636,12 +645,12 @@ namespace EHMR.Resources.Controls
                 StrokeShape=new RoundRectangle { CornerRadius=12 },
                 HorizontalOptions=LayoutOptions.Center,
                 VerticalOptions=LayoutOptions.Center,
-                MinimumWidthRequest=90,
-                MinimumHeightRequest=26,
+                MinimumWidthRequest=90 * UiScale,
+                MinimumHeightRequest=26 * UiScale,
                 Content=new Label
                 {
                     Text=text,
-                    FontSize=11,
+                    FontSize=11 * UiScale,
                     TextColor=Colors.White,
                     HorizontalTextAlignment=TextAlignment.Center,
                     VerticalTextAlignment=TextAlignment.Center
@@ -757,8 +766,8 @@ namespace EHMR.Resources.Controls
             {
                 BackgroundColor=Color.FromArgb("#E2E8F0"),   // was #E7F7FA (cyan) — neutral slate now
                 Stroke=Colors.Transparent,
-                WidthRequest=26,
-                HeightRequest=26,
+                WidthRequest=26 * UiScale,
+                HeightRequest=26 * UiScale,
                 Padding=0,
                 StrokeShape=new RoundRectangle { CornerRadius=13 },
                 HorizontalOptions=LayoutOptions.Start
@@ -820,8 +829,8 @@ namespace EHMR.Resources.Controls
         {
             return new Border
             {
-                WidthRequest=34,
-                HeightRequest=34,
+                WidthRequest=34 * UiScale,
+                HeightRequest=34 * UiScale,
                 Padding=0,
                 StrokeShape=new RoundRectangle { CornerRadius=8 },
                 Background=new SolidColorBrush(Colors.White),
