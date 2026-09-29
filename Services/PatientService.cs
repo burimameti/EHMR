@@ -524,6 +524,7 @@ public class PatientService : IPatientService
                     entity.StartDate=vm.StartDate;
                     entity.EndDate=vm.EndDate;
                     entity.Notes=vm.Notes;
+                    entity.PharmaceuticalReference=vm.PharmaceuticalReference;
                     entity.IsActive=vm.IsActive;
                 }
             }
