@@ -19,14 +19,7 @@ namespace EHMR.Migrations
                 nullable: false,
                 defaultValue: "");
 
-            migrationBuilder.AddColumn<string>(
-                name: "PharmaceuticalReference",
-                table: "Medicines",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.CreateTable(
+migrationBuilder.CreateTable(
                 name: "PatientScores",
                 columns: table => new
                 {
@@ -75,9 +68,6 @@ namespace EHMR.Migrations
                 name: "PharmaceuticalReference",
                 table: "PatientMedicines");
 
-            migrationBuilder.DropColumn(
-                name: "PharmaceuticalReference",
-                table: "Medicines");
-        }
+}
     }
 }
