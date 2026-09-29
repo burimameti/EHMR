@@ -683,6 +683,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             PatientId=Patient.Id,
             Mkb10CodeId=code.Id,
             Mkb10Code=code.Code,
+            Mkb10Description=code.Description,
             Severity="Не е дефиниран",
             DiagnosedAt=DateTime.UtcNow,
             IsPrimary=Diagnoses.Count==0,
