@@ -3,6 +3,7 @@ using EHMR.Domain.Interfaces;
 using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
+using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
