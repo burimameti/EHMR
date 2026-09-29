@@ -140,6 +140,16 @@
 				</Grid>
 			</DataTemplate>
 
+		<DataTemplate x:Key="PatientTherapyCycleHistoryRowTemplate" x:DataType="models:TherapyCycle">
+				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
+					<Grid Padding="8,6" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+						<Label FontAttributes="Bold" FontSize="12" Text="{Binding Status}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
+						<Label Grid.Column="1" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding Notes, TargetNullValue='Без забелешка'}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+						<Label Grid.Column="2" FontSize="11" Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
+					</Grid>
+				</Border>
+			</DataTemplate>
+
 			<DataTemplate x:Key="PatientPrescriptionRowTemplate" x:DataType="models:Prescription">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
@@ -1046,6 +1056,30 @@
 									</Grid>
 
 									<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+						<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+						<controls:SparkExpandableCard
+							Title="Активни терапии"
+							Grid.Column="1"
+							EmptyViewText="Нема активни терапии."
+							ItemTemplate="{StaticResource PatientTherapyCycleHistoryRowTemplate}"
+							ItemsSource="{Binding ActiveTherapies}"
+							Style="{StaticResource CrudFormHistoryCardStyle}"
+							Variant="Encounter" />
+					</Grid>
+
+					<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+						<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+						<controls:SparkExpandableCard
+							Title="Претходни терапии"
+							Grid.Column="1"
+							EmptyViewText="Нема претходни терапии."
+							ItemTemplate="{StaticResource PatientTherapyCycleHistoryRowTemplate}"
+							ItemsSource="{Binding PreviousTherapies}"
+							Style="{StaticResource CrudFormHistoryCardStyle}"
+							Variant="Encounter" />
+					</Grid>
+
+					<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
 										<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
 										<controls:SparkExpandableCard
 											Title="Дијагнози"
