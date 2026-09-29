@@ -62,7 +62,8 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
                 Diagnoses.ToList(),
                 Prescriptions.ToList(),
                 EncounterMedicines.ToList(),
-                DeletedMedicineIds.ToList());
+                DeletedMedicineIds.ToList(),
+                ScoreText);
 
             await UserDialogService.ShowMessageAsync("Податоци за преглед се успешно зачувани", "");
             await NavigationService.GoToAsync(AppRoutes.Encounters.List);
