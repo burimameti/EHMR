@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Backups.Interfaces;
 using EHMR.Domain.Entities.Rbac;
+using EHMR.Services;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 using System.Collections.Generic;
@@ -125,14 +126,14 @@ public partial class BackupDashboardViewModel : ObservableObject
     /// </summary>
     [RelayCommand]
     private async Task OpenDestinationsAsync()
-        => await Shell.Current.GoToAsync(AppRoutes.Backup.Destinations);
+        => await Shell.Current.GoToRouteAsync(AppRoutes.Backup.Destinations);
 
     [RelayCommand]
     private async Task RunBackupAsync()
     {
         // Navigation to BackupPage happens at the View layer (Shell.Current.GoToAsync),
         // this command is just the trigger the header button binds to.
-        await Shell.Current.GoToAsync("BackupHistoryPage");
+        await Shell.Current.GoToRouteAsync("BackupHistoryPage");
     }
 
     private static string FormatSize(long bytes)

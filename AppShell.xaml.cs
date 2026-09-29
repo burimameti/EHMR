@@ -137,8 +137,11 @@ public partial class AppShell : Shell
 
     private void RegisterRoutes()
     {
-        // Detail/create/edit routes deliberately remain relative so they
-        // can be opened from a root workspace and closed with Back.
+        // Dashboard
+        //Routing.RegisterRoute(AppRoutes.Dashboard, typeof(DashboardView));
+
+        // Patients
+        Routing.RegisterRoute(AppRoutes.Patients.List, typeof(PatientListPage));
         Routing.RegisterRoute(AppRoutes.Patients.Detail, typeof(PatientDetailFormPage));
 
         Routing.RegisterRoute(AppRoutes.Doctors.Detail, typeof(DoctorsDetailPage));
@@ -169,9 +172,10 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(AppRoutes.Mkb10.Detail, typeof(Mkb10CodeDetailPage));
     }
 
-    protected override void OnDisappearing()
-    {
-        base.OnDisappearing();
-        _auth.AuthStateChanged-=OnAuthStateChanged;
-    }
+    //protected override void OnDisappearing()
+    //{
+    //    base.OnDisappearing();
+
+    //    _auth.AuthStateChanged-=OnAuthStateChanged;
+    //}
 }

@@ -5,6 +5,7 @@ using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Helpers;
 using EHMR.Resources.Controls;
+using EHMR.Services;
 using EHMR.ViewModels.Patients.Extensions;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -265,7 +266,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         var query = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(SearchText)) query["search"]=SearchText;
         if(!string.IsNullOrWhiteSpace(statusFilter)) query["statusFilter"]=statusFilter;
-        await Shell.Current.GoToAsync(AppRoutes.Patients.List, query);
+        await Shell.Current.GoToRouteAsync(AppRoutes.Patients.List, query);
     }
 
     [RelayCommand]
@@ -273,7 +274,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     {
         var query = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(statusFilter)) query["statusFilter"]=statusFilter;
-        await Shell.Current.GoToAsync(AppRoutes.Appointments.List, query);
+        await Shell.Current.GoToRouteAsync(AppRoutes.Appointments.List, query);
     }
 
     [RelayCommand]
@@ -281,7 +282,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     {
         var query = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(statusFilter)) query["statusFilter"]=statusFilter;
-        await Shell.Current.GoToAsync(AppRoutes.Therapy.List, query);
+        await Shell.Current.GoToRouteAsync(AppRoutes.Therapy.List, query);
     }
 
     [RelayCommand]

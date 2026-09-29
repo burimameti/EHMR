@@ -17,6 +17,7 @@ using EHMR.ViewModels;
 using System.Collections.ObjectModel;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui;
+using EHMR.Services;
 
 namespace EHMR.Backups.ViewModels;
 
@@ -214,7 +215,7 @@ public partial class BackupHistoryViewModel : BaseViewModel<BackupHistory>
     private async Task RunBackupAsync()
     {
         // if(SelectedBackup==null) return;
-        await Shell.Current.GoToAsync("BackupPage");
+        await Shell.Current.GoToRouteAsync("BackupPage");
     }
 
     [ObservableProperty]

@@ -108,19 +108,19 @@ public partial class AdminDashboardViewModel : ObservableObject
 
         GoToDoctorsCommand=
             new AsyncRelayCommand(
-                () => Shell.Current.GoToAsync(AppRoutes.Doctors.List));
+                () => Shell.Current.GoToRouteAsync(AppRoutes.Doctors.List));
 
 
 
         GoToBackupsCommand=
             new AsyncRelayCommand(
-                () => Shell.Current.GoToAsync(AppRoutes.Backup.History));
+                () => Shell.Current.GoToRouteAsync(AppRoutes.Backup.History));
 
 
 
         ImportMkbCommand=
             new AsyncRelayCommand(
-                () => Shell.Current.GoToAsync(AppRoutes.Mkb10Codes.List));
+                () => Shell.Current.GoToRouteAsync(AppRoutes.Mkb10Codes.List));
 
 
 
@@ -221,12 +221,12 @@ public partial class AdminDashboardViewModel : ObservableObject
         if(row is not BackupHistory backup)
         {
             // Без препознатлив ред — барем отвори ја историјата.
-            await Shell.Current.GoToAsync(AppRoutes.Backup.History);
+            await Shell.Current.GoToRouteAsync(AppRoutes.Backup.History);
             return;
         }
 
         _selectedBackup.SelectedItem=backup;
-        await Shell.Current.GoToAsync(AppRoutes.Backup.BackupDetails);
+        await Shell.Current.GoToRouteAsync(AppRoutes.Backup.BackupDetails);
     }
 
     private void BuildCards()

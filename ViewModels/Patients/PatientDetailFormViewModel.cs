@@ -7,13 +7,12 @@ using EHMR.Domain.Interfaces;
 using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Services.Dto;
-using EHMR.ViewModels.Patients;
+
 using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
-using System.Xml.Linq;
+
 using static EHMR.Services.PatientService;
 
 namespace EHMR.ViewModels;

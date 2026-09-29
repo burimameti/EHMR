@@ -803,7 +803,7 @@ public partial class DashboardViewModel : ObservableObject
         var q = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(PatientSearchText)) q["search"]=PatientSearchText;
         if(!string.IsNullOrWhiteSpace(statusFilter)) q["statusFilter"]=statusFilter;
-        await Shell.Current.GoToAsync(AppRoutes.Patients.List, q);
+        await Shell.Current.GoToRouteAsync(AppRoutes.Patients.List, q);
     }
 
     [RelayCommand]
@@ -811,7 +811,7 @@ public partial class DashboardViewModel : ObservableObject
     {
         var q = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(statusFilter)) q["statusFilter"]=statusFilter;
-        await Shell.Current.GoToAsync(AppRoutes.Appointments.List, q);
+        await Shell.Current.GoToRouteAsync(AppRoutes.Appointments.List, q);
     }
 
     [RelayCommand]
@@ -819,16 +819,16 @@ public partial class DashboardViewModel : ObservableObject
     {
         var q = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(statusFilter)) q["statusFilter"]=statusFilter;
-        await Shell.Current.GoToAsync(AppRoutes.Encounters.List, q);
+        await Shell.Current.GoToRouteAsync(AppRoutes.Encounters.List, q);
     }
 
     [RelayCommand]
     private async Task NavigateToTherapies() =>
-        await Shell.Current.GoToAsync(AppRoutes.Therapy.List);
+        await Shell.Current.GoToRouteAsync(AppRoutes.Therapy.List);
 
     [RelayCommand]
     private async Task NavigateToAlerts() =>
-        await Shell.Current.GoToAsync("notifications?filter=critical");
+        await Shell.Current.GoToRouteAsync("notifications?filter=critical");
 
     // ─── HYPERLINK in the patient grid → navigate to patient detail ──────────
     // row.Tag = DashboardPatientAggregate, so we cast and reuse SelectCommand logic.

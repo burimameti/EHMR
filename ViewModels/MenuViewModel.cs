@@ -171,7 +171,7 @@ public partial class MenuViewModel : ObservableObject, IDisposable
         try
         {
             ActiveRoute=item.Route;
-            await _navigation.GoToAsync(ToNavigationRoute(item.Route));
+            await _navigation.NavigateToRootAsync(item.Route);
         }
         catch(Exception ex)
         {
@@ -207,7 +207,7 @@ public partial class MenuViewModel : ObservableObject, IDisposable
                 if(!string.IsNullOrWhiteSpace(group.Route))
                 {
                     ActiveRoute=group.Route;
-                    await _navigation.GoToAsync(ToNavigationRoute(group.Route));
+                    await _navigation.NavigateToRootAsync(group.Route);
                 }
             }
             catch(Exception ex)
@@ -232,10 +232,28 @@ public partial class MenuViewModel : ObservableObject, IDisposable
 
     private static string ToNavigationRoute(string route)
     {
-        var normalized=route.Trim('/');
-        return RootRoutes.Contains(normalized)
-            ? $"//{normalized}"
-            : route;
+        if(!await _navigationLock.WaitAsync(0))
+            return;
+
+        var previousRoute=ActiveRoute;
+        IsNavigating=true;
+        try
+        {
+            ActiveRoute=group.Route;
+            await _navigation.NavigateToRootAsync(group.Route);
+        }
+        catch(Exception ex)
+        {
+            ActiveRoute=previousRoute;
+            ShowMainMenu();
+            System.Diagnostics.Debug.WriteLine(
+                $"Navigation to '{group.Route}' failed: {ex}");
+        }
+        finally
+        {
+            IsNavigating=false;
+            _navigationLock.Release();
+        }
     }
 
     public async Task RefreshMenuAsync()

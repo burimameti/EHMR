@@ -11,6 +11,9 @@ namespace EHMR.Domain.Interfaces
 
         Task GoToAsync(string route, IDictionary<string, object>? parameters = null);
 
+        /// <summary>Навигација од менито: секогаш го празни стекот и ја отвора рутата врз dashboard.</summary>
+        Task NavigateToRootAsync(string route, IDictionary<string, object>? parameters = null);
+
         Task GoBackAsync();
     }
 }
