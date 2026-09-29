@@ -36,7 +36,7 @@
 	<!--  ============================================================  -->
 	<Style x:Key="PageHeaderCardStyle" TargetType="Border">
 		<Setter Property="Padding" Value="0" />
-		<Setter Property="Margin" Value="0,0,0,0" />
+		<Setter Property="Margin" Value="0,0,0,12" />
 		<Setter Property="BackgroundColor" Value="Transparent" />
 		<Setter Property="StrokeThickness" Value="0" />
 		<Setter Property="Shadow" Value="{x:Null}" />
@@ -80,11 +80,11 @@
 	<!--  Единствена геометрија за сите list/registry страници.  -->
 	<Style x:Key="ListPageRootGridStyle" TargetType="Grid">
 		<Setter Property="Margin" Value="0" />
-		<Setter Property="RowSpacing" Value="0" />
+		<Setter Property="RowSpacing" Value="16" />
 	</Style>
 	<Style x:Key="ListPageContentStackStyle" TargetType="VerticalStackLayout">
-		<Setter Property="Padding" Value="0,0,0,0" />
-		<Setter Property="Spacing" Value="0" />
+		<Setter Property="Padding" Value="0,0,0,16" />
+		<Setter Property="Spacing" Value="16" />
 	</Style>
 	<Style x:Key="PageHeaderCardStyle1" TargetType="Border">
 		<Setter Property="Padding" Value="16,18" />
@@ -149,7 +149,7 @@
 		<Setter Property="Padding" Value="12,9" />
 		<Setter Property="BackgroundColor" Value="#4A5863" />
 
-
+		<Setter Property="Stroke" Value="#5B6672" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="Shadow" Value="{x:Null}" />

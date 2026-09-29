@@ -57,7 +57,7 @@
 		<Grid
 			Grid.Column="1"
 			RowDefinitions="Auto,*"
-			RowSpacing="0"
+			RowSpacing="16"
 			Style="{StaticResource ListPageRootGridStyle}">
 
 			<!--  =========================================================  -->
@@ -118,10 +118,10 @@
 
 							<CollectionView.ItemsLayout>
 								<GridItemsLayout
-									HorizontalItemSpacing="0"
+									HorizontalItemSpacing="12"
 									Orientation="Vertical"
 									Span="2"
-									VerticalItemSpacing="0" />
+									VerticalItemSpacing="12" />
 							</CollectionView.ItemsLayout>
 							<CollectionView.ItemTemplate>
 								<DataTemplate x:DataType="models:ReportDefinition">
@@ -145,7 +145,7 @@
 											<TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ReportViewModel}}, Path=SelectReportCommand}" CommandParameter="{Binding .}" />
 										</Border.GestureRecognizers>
 
-										<Grid RowDefinitions="Auto,Auto,1,Auto" RowSpacing="0">
+										<Grid RowDefinitions="Auto,Auto,1,Auto" RowSpacing="14">
 
 											<!--  Icon + title  -->
 											<Grid Grid.Row="0" ColumnDefinitions="Auto,*">
@@ -226,9 +226,9 @@
 					<!--  =========================================================  -->
 					<Grid
 						x:Name="DetailsGrid"
-						Margin="0,0,0,0"
-						ColumnDefinitions="*,200"
-						ColumnSpacing="0"
+						Margin="16,0,16,0"
+						ColumnDefinitions="*,320"
+						ColumnSpacing="16"
 						IsVisible="False">
 						<Grid.Triggers>
 							<DataTrigger
@@ -240,73 +240,87 @@
 						</Grid.Triggers>
 
 						<!--  LEFT COLUMN  -->
-						<VerticalStackLayout Grid.Column="0" Spacing="0">
+						<VerticalStackLayout Grid.Column="0" Spacing="16">
 
+							<!--  Report controls bar  -->
 							<sc:FFSectionCard Margin="0">
-								<VerticalStackLayout Spacing="10">
+								<Grid
+									ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto"
+									ColumnSpacing="10"
+									VerticalOptions="Center">
 
-									<VerticalStackLayout Spacing="2">
+									<!--  Active report title + date — title uses same style as Dashboard card titles  -->
+									<VerticalStackLayout
+										Grid.Column="0"
+										Spacing="2"
+										VerticalOptions="Center">
 										<Label
 											FontSize="15"
 											Style="{StaticResource DashboardCardTitle}"
-											Text="{Binding ActiveReportTitle, StringFormat='Извештај зa  : {0}'}" />
+											Text="{Binding ActiveReportTitle}" />
 										<Label
 											FontSize="12"
 											Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}"
 											TextColor="{StaticResource SparkTextMuted}" />
 									</VerticalStackLayout>
 
-									<FlexLayout Style="{StaticResource ResponsiveWrapRow}">
+									<HorizontalStackLayout
+										Grid.Column="1"
+										Spacing="8"
+										VerticalOptions="Center">
+										<Label
+											Style="{StaticResource SparkTabTitleLabelStyle}"
+											Text="Периодичен"
+											VerticalOptions="Center" />
+										<sc:FFPicker
+											ItemsSource="{Binding PeriodTypeOptions}"
+											Label=""
+											MinimumWidthRequest="130"
+											SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" />
+									</HorizontalStackLayout>
 
-										<HorizontalStackLayout Spacing="8" StyleClass="FilterItem">
-											<Label
-												Style="{StaticResource SparkTabTitleLabelStyle}"
-												Text="Период"
-												VerticalOptions="Center" />
-											<sc:FFPicker
-												ItemsSource="{Binding PeriodTypeOptions}"
-												Label=""
-												MinimumWidthRequest="130"
-												SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" />
-										</HorizontalStackLayout>
+									<HorizontalStackLayout
+										Grid.Column="2"
+										Spacing="8"
+										VerticalOptions="Center">
+										<Label
+											Style="{StaticResource SparkTabTitleLabelStyle}"
+											Text="ОД"
+											VerticalOptions="Center" />
+										<sc:FFDatePicker HasLabel="False" SelectedDate="{Binding StartDate, Mode=TwoWay}" />
+									</HorizontalStackLayout>
 
-										<HorizontalStackLayout Spacing="8" StyleClass="FilterItem">
-											<Label
-												Style="{StaticResource SparkTabTitleLabelStyle}"
-												Text="ОД"
-												VerticalOptions="Center" />
-											<sc:FFDatePicker HasLabel="False" SelectedDate="{Binding StartDate, Mode=TwoWay}" />
-										</HorizontalStackLayout>
+									<HorizontalStackLayout
+										Grid.Column="3"
+										Spacing="8"
+										VerticalOptions="Center">
+										<Label
+											Style="{StaticResource SparkTabTitleLabelStyle}"
+											Text="ДО"
+											VerticalOptions="Center" />
+										<sc:FFDatePicker HasLabel="False" SelectedDate="{Binding EndDate, Mode=TwoWay}" />
+									</HorizontalStackLayout>
 
-										<HorizontalStackLayout Spacing="8" StyleClass="FilterItem">
-											<Label
-												Style="{StaticResource SparkTabTitleLabelStyle}"
-												Text="ДО"
-												VerticalOptions="Center" />
-											<sc:FFDatePicker HasLabel="False" SelectedDate="{Binding EndDate, Mode=TwoWay}" />
-										</HorizontalStackLayout>
+									<sc:FFButton
+										Grid.Column="4"
+										ButtonKind="Secondary"
+										Command="{Binding ApplyPeriodAndRegenerateCommand}"
+										ContentPadding="16,0"
+										HeightRequestEx="45"
+										IsVisible="{Binding CanCreate}"
+										Text="Примени период" />
 
-										<sc:FFButton
-											ButtonKind="Secondary"
-											Command="{Binding ApplyPeriodAndRegenerateCommand}"
-											ContentPadding="16,0"
-											HeightRequestEx="38"
-											IsVisible="{Binding CanCreate}"
-											StyleClass="FilterItem"
-											Text="Примени период" />
-
-										<sc:FFButton
-											BackgroundColorEx="{StaticResource SidebarActiveBg}"
-											ButtonKind="Primary"
-											Command="{Binding ExecuteReportGenerationCommand}"
-											ContentPadding="16,0"
-											HeightRequestEx="38"
-											IsVisible="{Binding CanCreate}"
-											StyleClass="FilterItem"
-											Text="🔄 Генерирај"
-											TextColorEx="White" />
-									</FlexLayout>
-								</VerticalStackLayout>
+									<sc:FFButton
+										Grid.Column="5"
+										BackgroundColorEx="{StaticResource SidebarActiveBg}"
+										ButtonKind="Primary"
+										Command="{Binding ExecuteReportGenerationCommand}"
+										ContentPadding="16,0"
+										HeightRequestEx="45"
+										IsVisible="{Binding CanCreate}"
+										Text="🔄 Генерирај"
+										TextColorEx="White" />
+								</Grid>
 							</sc:FFSectionCard>
 
 							<!--  Explorer header: tabs + search + pickers  -->
@@ -343,14 +357,11 @@
 								</Grid>
 							</sc:FFSectionCard>
 
-							<!--  Report controls bar  -->
-
-
 						</VerticalStackLayout>
 
 						<!--  RIGHT SIDEBAR — analytics + export  -->
 						<ScrollView Grid.Column="1" VerticalScrollBarVisibility="Never">
-							<VerticalStackLayout Spacing="0">
+							<VerticalStackLayout Spacing="16">
 
 								<!--  Analytics card  -->
 								<sc:FFSectionCard Margin="0">
@@ -425,7 +436,7 @@
 										</Border>
 
 										<!--  Metric 3  -->
-										<!--<Border
+										<Border
 											Padding="16"
 											BackgroundColor="{StaticResource SparkPageBackground}"
 											Stroke="{StaticResource SparkBorderSubtle}"
@@ -455,7 +466,7 @@
 														TextColor="{StaticResource SparkTextPrimary}" />
 												</VerticalStackLayout>
 											</Grid>
-										</Border>-->
+										</Border>
 
 									</VerticalStackLayout>
 								</sc:FFSectionCard>
@@ -464,23 +475,23 @@
 								<sc:FFSectionCard Margin="0">
 									<VerticalStackLayout Spacing="10">
 
-										<sc:CrudSectionHeader Title="ГЕНЕРИРАЈ" />
+										<sc:CrudSectionHeader Title="ОПЦИИ ЗА ИЗВОЗ" />
 
-										<Button
-											Padding="0,0"
-											BackgroundColor="{StaticResource SidebarActiveBg}"
+										<sc:FFButton
+											ButtonKind="Danger"
 											Command="{Binding ExportToPdfCommand}"
-											HeightRequest="38"
-											Text="📊 ГЕНЕРИРАЈ PDF"
-											TextColor="White" />
-										<Button
-											Padding="0,0"
-											BackgroundColor="{StaticResource SidebarActiveBg}"
+											ContentPadding="16,0"
+											HeightRequestEx="45"
+											Text="📄 Извези во PDF" />
+
+										<sc:FFButton
+											BackgroundColorEx="{StaticResource SidebarActiveBg}"
+											ButtonKind="Primary"
 											Command="{Binding ExportToExcelCommand}"
-											HeightRequest="38"
-											Text="📊 ГЕНЕРИРАЈ Excel"
-											TextColor="White" />
-										<!--<sc:FFButton />-->
+											ContentPadding="16,0"
+											HeightRequestEx="45"
+											Text="📊 Извези во Excel"
+											TextColorEx="White" />
 
 									</VerticalStackLayout>
 								</sc:FFSectionCard>

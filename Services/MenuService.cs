@@ -44,5 +44,10 @@ public class MenuService : IMenuService
 
         return Task.FromResult(groups);
     }
-   
+
+    private static bool visibleItemsExist(
+        NavigationGroup group)
+    {
+        return group.Items?.Count>0;
+    }
 }

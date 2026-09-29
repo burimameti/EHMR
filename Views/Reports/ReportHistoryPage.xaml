@@ -31,7 +31,7 @@
 			Padding="0"
 			BackgroundColor="{StaticResource PageBackground}"
 			RowDefinitions="Auto,Auto,*"
-			RowSpacing="12">
+			RowSpacing="16">
 
 			<!--  =====================================================  -->
 			<!--  PAGE HEADER  -->
@@ -54,14 +54,14 @@
 							WidthRequest="130" />
 
 						<Button
-							Margin="10"
+							BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
 							Command="{Binding NavigateToReportCommand}"
 							HeightRequest="45"
 							IsVisible="{Binding CanCreate}"
 							Style="{StaticResource TabButtonActiveStyle}"
 							Text="Нов извештај"
 							TextColor="White"
-							WidthRequest="120" />
+							WidthRequest="160" />
 
 					</HorizontalStackLayout>
 

@@ -40,7 +40,7 @@ public static class AppNavigation
         // ==========================
         new()
         {
-            GroupTitle="Регистар на пациенти",
+            GroupTitle="Пациенти",
             Route=AppRoutes.Patients.List,
             Module=Modules.Patients,
             Icon=AppGroupIcons.Patients,
@@ -48,7 +48,7 @@ public static class AppNavigation
             [
                 new()
                 {
-                    Title="Листа на пациенти",
+                    Title="Регистар на пациенти",
                     Route=AppRoutes.Patients.List,
                     Module=Modules.Patients,
                     RequiredAction=ModuleAction.View,
@@ -108,7 +108,7 @@ public static class AppNavigation
                     Title = "Листа на термини",
                     Route = AppRoutes.Appointments.List,
                     Module = Modules.Appointments,
-                  //  RequiredAction = ModuleAction.View,
+                    RequiredAction = ModuleAction.View,
                     Icon = new IconDefinition { Glyph = "\uf03a", Font = IconFontType.FontAwesomeSolid }
                 },
                 new()
@@ -116,7 +116,7 @@ public static class AppNavigation
                     Title = "Нов термин",
                     Route = AppRoutes.Appointments.Detail,
                     Module = Modules.Appointments,
-                   // RequiredAction = ModuleAction.Create,
+                    RequiredAction = ModuleAction.Create,
                     StartsNewRecord = true,
                     Icon = new IconDefinition { Glyph = "\uf067", Font = IconFontType.FontAwesomeSolid }
                 }

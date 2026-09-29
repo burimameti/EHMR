@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -141,8 +140,10 @@ public partial class AppointmentListViewModel
     /// </summary>
     protected override void OnSearchTextChanged(string value)
     {
+        // Skip if we're programmatically setting SearchText during suggestion selection
         if(_isSelectingSuggestion) return;
 
+        // Clear person history when user types fresh search
         if(_activePersonId is not null)
         {
             _activePersonId=null;
@@ -152,15 +153,14 @@ public partial class AppointmentListViewModel
         }
 
         var term = value?.Trim()??string.Empty;
-
         if(string.IsNullOrWhiteSpace(term))
         {
             Suggestions= [];
             ShowSuggestions=false;
-            ApplyPipeline(); // ← потребно кога се брише текст
             return;
         }
 
+        // Trigger debounced search with Cyrillic support
         _=DebouncedSearchAsync(term);
     }
 
@@ -176,53 +176,51 @@ public partial class AppointmentListViewModel
     /// <summary>
     /// Fetches autocomplete suggestions, with Cyrillic search support.
     /// </summary>
-
-    private async Task DebouncedSearchAsync(string text)
+ 
+      private async Task DebouncedSearchAsync(string text)
     {
-        try
-        {
-            var cyrillicTerm = UseCyrillicSearch
-                ? Helpers.MacedonianTransliterator.ToCyrillic(text)
-                : text;
+        var cyrillicTerm = UseCyrillicSearch
+            ? Helpers.MacedonianTransliterator.ToCyrillic(text)
+            : text;
 
-            var result = await DebouncedSuggestionSearchAsync(text, async (q, token) =>
+        var result = await DebouncedSuggestionSearchAsync(text, async (q, token) =>
+        {
+            // Search with both the original term AND the Cyrillic transliteration
+            var request = new AppointmentSearchQuery(q,
+                new[] { SearchEntityType.Patient},
+                8);
+
+            var primary = await _autocomplete.Handle(request, token);
+
+            // If Cyrillic differs from original, also search with transliterated term
+            if(UseCyrillicSearch&&cyrillicTerm!=q)
             {
-                var request = new AppointmentSearchQuery(q,
-                    new[] { SearchEntityType.Patient }, 8);
+                var cyrillicRequest = new AppointmentSearchQuery(cyrillicTerm,
+                    new[] { SearchEntityType.Patient, SearchEntityType.Doctor },
+                    8);
 
-                var primary = await _autocomplete.Handle(request, token);
+                var cyrillicResults = await _autocomplete.Handle(cyrillicRequest, token);
 
-                if(UseCyrillicSearch&&cyrillicTerm!=q)
-                {
-                    var cyrillicRequest = new AppointmentSearchQuery(cyrillicTerm,
-                        new[] { SearchEntityType.Patient, SearchEntityType.Doctor }, 8);
+                // Merge and deduplicate by Id
+                primary=primary
+                    .Concat(cyrillicResults)
+                    .GroupBy(s => s.Id)
+                    .Select(g => g.First())
+                    .Take(8)
+                    .ToList();
+            }
 
-                    var cyrillicResults = await _autocomplete.Handle(cyrillicRequest, token);
+            return primary;
+        });
 
-                    primary=primary
-                        .Concat(cyrillicResults)
-                        .GroupBy(s => s.Id)
-                        .Select(g => g.First())
-                        .Take(8)
-                        .ToList();
-                }
+        if(result is null) return;
 
-                return primary;
-            });
-
-            if(result is null) return;
-
-            Suggestions=result;
-            SelectedIndex=-1;
-            SelectedSuggestion=null;
-            ShowSuggestions=result.Count>0;
-        }
-        catch(Exception ex)
-        {
-            Debug.WriteLine($"DebouncedSearchAsync failed: {ex}"); // ← ова ќе го видиш во debug
-            OnError($"Грешка при пребарување: {ex.Message}");
-        }
+        Suggestions=result;
+        SelectedIndex=-1;
+        SelectedSuggestion=null;
+        ShowSuggestions=result.Count>0;
     }
+    
 
     /// <summary>
     /// User selected a suggestion from dropdown.

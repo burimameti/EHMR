@@ -101,8 +101,9 @@
 		<!--  ДЕСЕН ГЛАВЕН КОНТЕЈНЕР  -->
 		<Grid
 			Grid.Column="1"
+			Padding="0"
 			RowDefinitions="Auto,*"
-			RowSpacing="0">
+			RowSpacing="16">
 
 			<!--  PAGE HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
@@ -134,8 +135,9 @@
 			<!--  MAIN PANEL  -->
 			<Grid
 				Grid.Row="1"
+				Margin="16,0,16,0"
 				ColumnDefinitions="2.15*,1*"
-				ColumnSpacing="0">
+				ColumnSpacing="16">
 
 				<!--  ═══════════════════════════════════════════════════  -->
 				<!--  ЛЕВА КОЛОНА  -->

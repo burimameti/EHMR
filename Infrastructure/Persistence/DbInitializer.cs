@@ -1,6 +1,5 @@
 ﻿using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
-using Microsoft.Data.Sqlite;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,8 +10,6 @@ public class DatabaseMigrationService
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<DatabaseMigrationService>? _logger;
     private readonly IConfiguration _configuration;
-
-    private static readonly TimeSpan DemoResetInterval = TimeSpan.FromDays(2);
 
     public DatabaseMigrationService(
         IServiceProvider serviceProvider,
@@ -38,17 +35,13 @@ public class DatabaseMigrationService
         // директно од моделот.
         if(db.Database.IsSqlite())
         {
-            // Ако демо базата е постара од 2 дена, ја бришеме за да се
-            // прегенерира чиста (нови демо податоци при следното подигање).
-            TryResetDemoSqliteIfExpired(db);
-
             await db.Database.EnsureCreatedAsync();
         }
         else
         {
             var pending = await db.Database.GetPendingMigrationsAsync();
 
-            //  if(pending.Any())
+          //  if(pending.Any())
             {
                 //BackupDatabase(db);
                 await db.Database.MigrateAsync();
@@ -75,91 +68,7 @@ public class DatabaseMigrationService
 
         var runner = scope.ServiceProvider.GetRequiredService<SeederRunner>();
         await runner.RunAsync(includeDemo);
-
-        // Ако имаме демо податоци во SQLite, го „допираме" маркерот за да
-        // знаеме од кога да броиме до следното автоматско ресетирање.
-        if(db.Database.IsSqlite()&&includeDemo)
-        {
-            TouchDemoMarker(db);
-        }
     }
-
-    /// <summary>
-    /// Ако базата е SQLite и демо-маркерот е постар од 2 дена, ги брише
-    /// датотеката на базата (вкл. -wal/-shm) и маркерот, за да EnsureCreatedAsync
-    /// ја изгради базата од нула со свежи демо податоци.
-    /// </summary>
-    private void TryResetDemoSqliteIfExpired(DesktopTherapyDbContext db)
-    {
-        var dbPath = GetSqliteDbPath(db);
-        if(string.IsNullOrWhiteSpace(dbPath))
-            return;
-
-        var markerPath = GetDemoMarkerPath(dbPath);
-
-        if(!File.Exists(markerPath))
-            return;
-
-        var lastReset = File.GetLastWriteTimeUtc(markerPath);
-
-        if(DateTime.UtcNow-lastReset<DemoResetInterval)
-            return;
-
-        try
-        {
-            // Затвора се сите пулирани конекции пред бришење, инаку
-            // датотеката ќе биде заклучена.
-            SqliteConnection.ClearAllPools();
-
-            if(File.Exists(dbPath))
-                File.Delete(dbPath);
-
-            var wal = dbPath+"-wal";
-            var shm = dbPath+"-shm";
-            if(File.Exists(wal)) File.Delete(wal);
-            if(File.Exists(shm)) File.Delete(shm);
-
-            File.Delete(markerPath);
-
-            _logger?.LogInformation(
-                "Демо SQLite базата е ресетирана ({Path}). Последно ресетирање: {LastReset}.",
-                dbPath, lastReset);
-        }
-        catch(Exception ex)
-        {
-            _logger?.LogError(ex, "Неуспешно ресетирање на демо SQLite базата на {Path}", dbPath);
-        }
-    }
-
-    private void TouchDemoMarker(DesktopTherapyDbContext db)
-    {
-        var dbPath = GetSqliteDbPath(db);
-        if(string.IsNullOrWhiteSpace(dbPath))
-            return;
-
-        var markerPath = GetDemoMarkerPath(dbPath);
-
-        try
-        {
-            File.WriteAllText(markerPath, DateTime.UtcNow.ToString("O"));
-        }
-        catch(Exception ex)
-        {
-            _logger?.LogError(ex, "Неуспешно запишување на демо маркерот на {Path}", markerPath);
-        }
-    }
-
-    private static string? GetSqliteDbPath(DesktopTherapyDbContext db)
-    {
-        var conn = db.Database.GetConnectionString();
-        if(string.IsNullOrWhiteSpace(conn))
-            return null;
-
-        var builder = new SqliteConnectionStringBuilder(conn);
-        return string.IsNullOrWhiteSpace(builder.DataSource) ? null : builder.DataSource;
-    }
-
-    private static string GetDemoMarkerPath(string dbPath) => dbPath+".demoseed";
 
     /// <summary>
     /// Прашува дали да се внесат демо податоци. Дијалогот бара UI нишка —

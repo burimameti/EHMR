@@ -209,7 +209,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
             if(SetProperty(ref _searchText, value))
             {
                 CurrentPage=1;
-            //    ApplyPipeline();
+                ApplyPipeline();
                 OnSearchTextChanged(value);
             }
         }
