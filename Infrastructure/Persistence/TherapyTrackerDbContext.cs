@@ -484,13 +484,13 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             entity.Property(x => x.RecordedAt).IsRequired();
 
             entity.HasOne(x => x.Patient)
-                .WithMany()
+                .WithMany(x => x.Scores)
                 .HasForeignKey(x => x.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(x => x.Encounter)
-                .WithMany()
-                .HasForeignKey(x => x.EncounterId)
+                .WithOne(x => x.PatientScore)
+                .HasForeignKey<PatientScore>(x => x.EncounterId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasIndex(x => new { x.PatientId, x.RecordedAt });
