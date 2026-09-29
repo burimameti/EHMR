@@ -216,11 +216,11 @@ public class PatientService : IPatientService
 
         await using var db = await _factory.CreateDbContextAsync(ct);
 
-        // Filtered client-side because FullName is a computed property, not a mapped
-        // column; IsActive gates both the first-name and full-name match.
+        // IsActive is a [NotMapped] convenience property backed by Status,
+        // so EF must filter using the mapped Status column.
         var data = await db.Doctors
             .Include(d => d.User)
-            .Where(d => d.IsActive)
+            .Where(d => d.Status == Domain.Entities.Status.Active)
             .ToListAsync(ct);
 
         return data
