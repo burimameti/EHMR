@@ -508,6 +508,19 @@
 									</VerticalStackLayout>
 								</Grid>
 							</VerticalStackLayout>
+							<!--  ── ОЦЕНКА ─────────────────────────────────  -->
+							<VerticalStackLayout Spacing="8">
+								<controls:CrudSectionHeader Title="ОЦЕНКА" />
+								<Border Style="{StaticResource TextAreaFieldBoxStyle}">
+									<Entry
+										BackgroundColor="Transparent"
+										FontSize="13"
+										Placeholder="Внесете резултат или оценка..."
+										Text="{Binding ScoreText, Mode=TwoWay}"
+										TextColor="{StaticResource SparkTextPrimary}" />
+								</Border>
+							</VerticalStackLayout>
+
 							<!--  ── 3. ЛЕКОВИ ──────────────────────────────  -->
 							<VerticalStackLayout Spacing="12">
 								<controls:CrudSectionHeader Title="ЛЕКОВИ" />
