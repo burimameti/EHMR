@@ -105,6 +105,26 @@
 						</BindableLayout.ItemTemplate>
 					</HorizontalStackLayout>
 				</ScrollView>
+				<HorizontalStackLayout
+					Grid.Row="3"
+					BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}"
+					Spacing="12"
+					VerticalOptions="Start">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate x:DataType="sc:SparkButtonItem">
+							<sc:FFButton
+								BackgroundColorEx="{StaticResource SidebarActiveBg}"
+								Command="{Binding Command}"
+								CommandParameter="{Binding CommandParameter}"
+								ContentPadding="16,0"
+								CornerRadius="6"
+								HeightRequestEx="44"
+								Text="{Binding Label}"
+								TextColorEx="White"
+								WidthRequestEx="110" />
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
+				</HorizontalStackLayout>
 
 				<!--  ============ 1: DIVIDER (appears once, at the end of the tabs) ============  -->
 				<BoxView
@@ -182,83 +202,40 @@
 				<HorizontalStackLayout
 					Grid.Row="1"
 					IsVisible="{Binding ShowCyrillicToggle, Source={x:Reference Root}}"
-					Spacing="4"
-					VerticalOptions="Start"
-					WidthRequest="100">
+					Spacing="6"
+					VerticalOptions="Center">
 					<Label
-						Margin="0,0,-18,0"
 						FontSize="12"
-						HorizontalOptions="Start"
-						Text="Кирилица"
-						TextColor="{StaticResource SparkTextSecondary}" />
-					<Border
-						Margin="-28,22,0,0"
-						Padding="0"
-						BackgroundColor="{StaticResource Transparent}"
-						Stroke="Transparent"
-						StrokeThickness="1">
-						<CheckBox
-							HorizontalOptions="Start"
-							IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
-							IsEnabled="True"
-							VerticalOptions="Center"
-							Color="{StaticResource SidebarActiveBg}" />
-					</Border>
+					Text="Кирилица"
+					TextColor="{StaticResource SparkTextSecondary}"
+					VerticalOptions="Center" />
+					<CheckBox
+						IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
+						Color="{StaticResource SidebarActiveBg}"
+					VerticalOptions="Center" />
 				</HorizontalStackLayout>
-				<FlexLayout
+
+				<ScrollView
 					Grid.Row="2"
-					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
-					Direction="Row"
-					JustifyContent="Start"
-					Wrap="Wrap"
-					AlignItems="Start"
-					VerticalOptions="Start">
-					<BindableLayout.ItemTemplate>
-						<DataTemplate x:DataType="sc:SparkPickerItem">
-							<sc:FFPicker
-								ItemsSource="{Binding Items}"
-								Label="{Binding Placeholder}"
-								MinimumWidthRequest="140"
-								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
-						</DataTemplate>
-					</BindableLayout.ItemTemplate>
-				</FlexLayout>
-
-				<VerticalStackLayout
-					Grid.Row="2"
-					Spacing="4"
-					VerticalOptions="Start">
-					<Label
-						FontSize="11"
-						HorizontalOptions="Center"
-						Text="Акции"
-						TextColor="{StaticResource SparkTextSecondary}" />
-					<FlexLayout
-						BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}"
-						Direction="Row"
-						JustifyContent="Start"
-						Wrap="Wrap"
-						AlignItems="Start"
->
-
-						<BindableLayout.ItemTemplate>
-							<DataTemplate x:DataType="sc:SparkButtonItem">
-								<sc:FFButton
-									BackgroundColorEx="{StaticResource SidebarActiveBg}"
-									Command="{Binding Command}"
-									CommandParameter="{Binding CommandParameter}"
-									ContentPadding="16,0"
-									CornerRadius="6"
-									HeightRequestEx="44"
-									Text="{Binding Label}"
-									TextColorEx="White"
-									WidthRequestEx="0" />
-							</DataTemplate>
-						</BindableLayout.ItemTemplate>
-
-					</FlexLayout>
-				</VerticalStackLayout>
-			</Grid>
+					HorizontalScrollBarVisibility="Never"
+					Orientation="Horizontal">
+					<HorizontalStackLayout
+						Spacing="12"
+						Padding="0,0,10,0"
+						VerticalOptions="Start">
+						<BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}">
+							<BindableLayout.ItemTemplate>
+								<DataTemplate x:DataType="sc:SparkPickerItem">
+									<sc:FFPicker
+										ItemsSource="{Binding Items}"
+										Label="{Binding Placeholder}"
+										MinimumWidthRequest="145"
+										SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+								</DataTemplate>
+							</BindableLayout.ItemTemplate>
+plate>
+					</HorizontalStackLayout>
+				</ScrollView>			</Grid>
 			<BoxView
 				BackgroundColor="{StaticResource Transparent}"
 				HeightRequest="10"
