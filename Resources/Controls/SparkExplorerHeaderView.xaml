@@ -107,7 +107,7 @@
 				</ScrollView>
 				<HorizontalStackLayout
 					Grid.Row="3"
-					BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}"
+					
 					Spacing="12"
 					VerticalOptions="Start">
 					<BindableLayout.ItemTemplate>
