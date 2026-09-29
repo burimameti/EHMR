@@ -105,28 +105,8 @@
 						</BindableLayout.ItemTemplate>
 					</HorizontalStackLayout>
 				</ScrollView>
-				<HorizontalStackLayout
-					Grid.Row="3"
-					BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}"
-					Spacing="12"
-					VerticalOptions="Start">
-					<BindableLayout.ItemTemplate>
-						<DataTemplate x:DataType="sc:SparkButtonItem">
-							<sc:FFButton
-								BackgroundColorEx="{StaticResource SidebarActiveBg}"
-								Command="{Binding Command}"
-								CommandParameter="{Binding CommandParameter}"
-								ContentPadding="16,0"
-								CornerRadius="6"
-								HeightRequestEx="44"
-								Text="{Binding Label}"
-								TextColorEx="White"
-								WidthRequestEx="110" />
-						</DataTemplate>
-					</BindableLayout.ItemTemplate>
-				</HorizontalStackLayout>
 
-				<!--  ============ 1: DIVIDER (appears once, at the end of the tabs) ============  -->
+				<!--  ============ 1: DIVIDER/ (appears once, at the end of the tabs) ============  -->
 				<BoxView
 					Grid.Column="1"
 					Margin="0,0"
@@ -139,70 +119,31 @@
 
 		</Border>
 
-		<!--  ============ ROW 2: SEARCH + FILTERS + BUTTONS ============  -->
-		<Grid BackgroundColor="Transparent" IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
+		<!--  ============ ROW 2: RESPONSIVE SEARCH + FILTERS + ACTIONS ============  -->
+		<Grid
+			BackgroundColor="Transparent"
+			IsVisible="{Binding SearchVisible, Source={x:Reference Root}}"
+			Padding="10,8,10,10">
+
 			<Grid
-				x:Name="SecondaryToolbarGrid"
-				Padding="10"
-				RowDefinitions="Auto,Auto,Auto,Auto"
-				RowSpacing="8">
+				ColumnDefinitions="2*,Auto,3*,Auto"
+				ColumnSpacing="12"
+				VerticalOptions="Center">
 
-				<VerticalStackLayout Grid.Row="0" Spacing="4">
-					<sc:FFSearchBox
-						Label="Пребарување"
-						Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
-						SearchCommand="{Binding SearchCommand, Source={x:Reference Root}}"
-						Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}" />
+				<!-- Search always stays on the same toolbar line. -->
+				<sc:FFSearchBox
+					Grid.Column="0"
+					HorizontalOptions="Fill"
+					Label="Пребарување"
+					Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
+					SearchCommand="{Binding SearchCommand, Source={x:Reference Root}}"
+					Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}" />
 
-					<Border
-						Padding="4"
-						BackgroundColor="White"
-						IsVisible="{Binding ShowSuggestions, Source={x:Reference Root}}"
-						Stroke="{StaticResource SparkBorderSubtle}"
-						StrokeShape="RoundRectangle 8"
-						StrokeThickness="1">
-						<Grid ColumnDefinitions="*,12" ColumnSpacing="4">
-							<CollectionView
-								x:Name="SuggestionList"
-								Grid.Column="0"
-								HeightRequest="164"
-								ItemTemplate="{Binding SuggestionTemplate, Source={x:Reference Root}}"
-								ItemsSource="{Binding Suggestions, Source={x:Reference Root}}"
-								Scrolled="OnSuggestionListScrolled"
-								SelectedItem="{Binding SelectedSuggestion, Source={x:Reference Root}, Mode=TwoWay}"
-								SelectionMode="Single"
-								VerticalScrollBarVisibility="Never" />
-							<Border
-								x:Name="SuggestionScrollRail"
-								Grid.Column="1"
-								Margin="2,4"
-								BackgroundColor="#E2E8F0"
-								StrokeThickness="0">
-								<Border.StrokeShape>
-									<RoundRectangle CornerRadius="4" />
-								</Border.StrokeShape>
-								<Border
-									x:Name="SuggestionScrollThumb"
-									BackgroundColor="{StaticResource SidebarActiveBg}"
-									HeightRequest="38"
-									StrokeThickness="0"
-									VerticalOptions="Start">
-									<Border.StrokeShape>
-										<RoundRectangle CornerRadius="4" />
-									</Border.StrokeShape>
-									<Border.GestureRecognizers>
-										<PanGestureRecognizer PanUpdated="OnSuggestionThumbPanUpdated" />
-									</Border.GestureRecognizers>
-								</Border>
-							</Border>
-						</Grid>
-					</Border>
-				</VerticalStackLayout>
-
+				<!-- Cyrillic toggle stays beside search, never drops to another row. -->
 				<HorizontalStackLayout
-					Grid.Row="1"
+					Grid.Column="1"
 					IsVisible="{Binding ShowCyrillicToggle, Source={x:Reference Root}}"
-					Spacing="6"
+					Spacing="4"
 					VerticalOptions="Center">
 					<Label
 						FontSize="12"
@@ -211,17 +152,19 @@
 						VerticalOptions="Center" />
 					<CheckBox
 						IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
-						Color="{StaticResource SidebarActiveBg}"
+						Color="{StaticResource SparkAccentTeal}"
 						VerticalOptions="Center" />
 				</HorizontalStackLayout>
 
+				<!-- Pickers share the same row and use the available width. -->
 				<ScrollView
-					Grid.Row="2"
+					Grid.Column="2"
 					HorizontalScrollBarVisibility="Never"
-					Orientation="Horizontal">
+					Orientation="Horizontal"
+					HorizontalOptions="Fill">
 					<HorizontalStackLayout
 						Spacing="12"
-						Padding="0,0,10,0"
+						Padding="0,0,4,0"
 						VerticalOptions="Start">
 						<BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}">
 							<BindableLayout.ItemTemplate>
@@ -237,20 +180,22 @@
 					</HorizontalStackLayout>
 				</ScrollView>
 
+				<!-- Refresh / actions are fixed after the picker area and can never overlap it. -->
 				<HorizontalStackLayout
-					Grid.Row="3"
+					Grid.Column="3"
 					BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}"
-					Spacing="12"
-					VerticalOptions="Start">
+					Spacing="8"
+					VerticalOptions="Center">
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkButtonItem">
 							<sc:FFButton
 								BackgroundColorEx="{StaticResource SidebarActiveBg}"
 								Command="{Binding Command}"
 								CommandParameter="{Binding CommandParameter}"
-								ContentPadding="16,0"
+								ContentPadding="14,0"
 								CornerRadius="6"
 								HeightRequestEx="44"
+								HorizontalOptionsEx="End"
 								Text="{Binding Label}"
 								TextColorEx="White"
 								WidthRequestEx="110" />
@@ -258,10 +203,16 @@
 					</BindableLayout.ItemTemplate>
 				</HorizontalStackLayout>
 			</Grid>
-			<BoxView
-				BackgroundColor="{StaticResource Transparent}"
-				HeightRequest="10"
-				VerticalOptions="End" />
+
+			<!-- Suggestions float below the same search control without changing toolbar layout. -->
+			<Border
+				Grid.ColumnSpan="4"
+				IsVisible="False"
+				Padding="4"
+				BackgroundColor="White"
+				Stroke="{StaticResource SparkBorderSubtle}"
+				StrokeShape="RoundRectangle 8"
+				StrokeThickness="1" />
 		</Grid>
 	</VerticalStackLayout>
 
