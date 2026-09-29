@@ -466,6 +466,18 @@
 									</VerticalStackLayout>
 								</Grid>
 							</VerticalStackLayout>
+							<!--  ── ОЦЕНКА ─────────────────────────────────  -->
+							<VerticalStackLayout Spacing="8">
+								<controls:CrudSectionHeader Title="ОЦЕНКА" />
+								<Border Style="{StaticResource EncounterValueCardStyle}">
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="{Binding Score.ScoreText, TargetNullValue='—'}"
+										TextColor="{StaticResource SparkTextPrimary}" />
+								</Border>
+							</VerticalStackLayout>
+
 							<!--  ── 4. КЛИНИЧКИ НАОДИ И БЕЛЕШКИ ─────────────  -->
 							<VerticalStackLayout Spacing="12">
 								<controls:CrudSectionHeader Title="КЛИНИЧКИ НАОДИ И БЕЛЕШКИ" />
