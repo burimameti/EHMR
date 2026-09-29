@@ -289,7 +289,8 @@ public class PatientService : IPatientService
                 Unit=m.Unit,
                 DefaultDosage=m.DefaultDosage,
                 Manufacturer=m.Manufacturer,
-                IsActive=m.IsActive
+                IsActive=m.IsActive,
+                PharmaceuticalReference=m.PharmaceuticalReference
             })
             .ToListAsync(ct);
     }
@@ -372,6 +373,7 @@ public class PatientService : IPatientService
                         StartDate=vm.StartDate,
                         EndDate=vm.EndDate,
                         Notes=vm.Notes,
+                        PharmaceuticalReference=vm.PharmaceuticalReference,
                         IsActive=vm.IsActive
                     };
 
