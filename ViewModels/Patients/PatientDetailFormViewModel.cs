@@ -78,6 +78,25 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     };
 
     [ObservableProperty] private string selectedGenderDisplay = string.Empty;
+    [ObservableProperty] private bool isPatientActive = true;
+    [ObservableProperty] private string inactiveReason = string.Empty;
+
+    public bool IsPatientInactive => !IsPatientActive;
+
+    partial void OnIsPatientActiveChanged(bool value)
+    {
+        Patient.Status=value ? PatientStatus.Active : PatientStatus.Inactive;
+        if(value)
+        {
+            InactiveReason=string.Empty;
+            Patient.InactiveReason=string.Empty;
+        }
+        OnPropertyChanged(nameof(IsPatientInactive));
+        OnPropertyChanged(nameof(Patient));
+    }
+
+    partial void OnInactiveReasonChanged(string value)
+        => Patient.InactiveReason=value??string.Empty;
     [ObservableProperty] private string selectedStatusDisplay = string.Empty;
     [ObservableProperty] private string selectedRelationDisplay = string.Empty;
     [ObservableProperty] private string selectedCityDisplay = string.Empty;
@@ -320,7 +339,25 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     // ------------------------------------------------------------------ //
 
     [RelayCommand]
-    private void ToggleEditMode() => IsReadOnly=!IsReadOnly;
+    private async Task ToggleEditModeAsync()
+    {
+        if(!IsReadOnly)
+        {
+            IsReadOnly=true;
+            return;
+        }
+
+        if(!_isNewPatientMode&&Patient.Status==PatientStatus.Inactive)
+        {
+            await _userDialogService.ShowAlertAsync(
+                "Пациентот е неактивен",
+                "Податоците за неактивен пациент се заклучени и не може да се менуваат.",
+                "ОК");
+            return;
+        }
+
+        IsReadOnly=false;
+    }
 
     private bool _isSaving;
 
@@ -350,6 +387,12 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
         Patient.SzboNumber=Patient.SzboNumber?.Trim()??string.Empty;
 
+        if(Patient.Status==PatientStatus.Inactive&&string.IsNullOrWhiteSpace(Patient.InactiveReason))
+        {
+            await _userDialogService.ShowAlertAsync("Валидација", "Причината за неактивен пациент е задолжителна.", "ОК");
+            return;
+        }
+
         if(Patient.DoctorId==Guid.Empty)
         {
             await _userDialogService.ShowAlertAsync("Валидација", "Реуматолог не е доделен.", "OK");
@@ -371,6 +414,15 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                 return;
             }
         }
+
+        var confirmed=await _userDialogService.ShowConfirmationAsync(
+            "Потврда",
+            "Дали сте сигурни дека сакате да ги зачувате податоците?",
+            "Зачувај",
+            "Откажи");
+
+        if(!confirmed)
+            return;
 
         var saveModel = new PatientSaveModel
         {
@@ -497,6 +549,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     {
         SelectedGenderDisplay=PatientEnumLookups.Gender.ToDisplay(Patient.Gender.ToString());
         SelectedStatusDisplay=PatientEnumLookups.Status.ToDisplay(Patient.Status.ToString());
+        IsPatientActive=Patient.Status!=PatientStatus.Inactive;
+        InactiveReason=Patient.InactiveReason??string.Empty;
         SelectedRelationDisplay=Patient.EmergencyRelationship;
         SelectedCityDisplay=_cityLookup.ToDisplay(Patient.City);
         SelectedBloodTypeDisplay=Patient.BloodType;
