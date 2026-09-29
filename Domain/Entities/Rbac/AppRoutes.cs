@@ -8,7 +8,7 @@
         public const string CalendarPage = "MainPage";
         public static class Patients
         {
-            public const string List = "patientslist";
+            public const string List = "patients";
             public const string Detail = "patientsdetail";
         }
         public static class Admin
