@@ -230,7 +230,7 @@
 					<!--  =========================================================  -->
 					<Grid
 						x:Name="DetailsGrid"
-						Margin="16,0,16,0"
+						Margin="4,0,4,0"
 						ColumnDefinitions="*"
 						ColumnSpacing="0"
 						IsVisible="False">
