@@ -267,7 +267,7 @@ namespace EHMR
             //  services.AddSingleton<IAppointmentService, AppointmentService>();
             // services.AddSingleton<IDocumentService, DocumentService>();
             // services.AddSingleton<IPrescriptionService, PrescriptionService>();
-            services.AddSingleton<INavigationCoordinator, NavigationCoordinator>();
+
             services.AddSingleton<IReportHistoryService, ReportHistoryService>();
             services.AddSingleton<IUserDialogService, UserDialogService>();
             services.AddSingleton<IAppointmentDetailService, AppointmentDetailService>();
