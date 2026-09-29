@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EHMR.Migrations
 {
+    [Migration("20260929220000_AddPatientScores")]
     public partial class AddPatientScores : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
