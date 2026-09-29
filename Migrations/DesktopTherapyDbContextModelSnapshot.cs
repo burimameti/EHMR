@@ -907,6 +907,36 @@ namespace EHMR.Migrations
                     b.ToTable("PatientDocuments");
                 });
 
+            modelBuilder.Entity("EHMR.Domain.Entities.PatientScore", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EncounterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PatientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("RecordedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ScoreText")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EncounterId")
+                        .IsUnique();
+
+                    b.HasIndex("PatientId", "RecordedAt");
+
+                    b.ToTable("PatientScores");
+                });
+
             modelBuilder.Entity("EHMR.Domain.Entities.PatientMedicine", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1526,6 +1556,25 @@ namespace EHMR.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("EHMR.Domain.Entities.PatientScore", b =>
+                {
+                    b.HasOne("EHMR.Domain.Entities.Encounter", "Encounter")
+                        .WithOne("PatientScore")
+                        .HasForeignKey("EHMR.Domain.Entities.PatientScore", "EncounterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EHMR.Domain.Entities.Patient", "Patient")
+                        .WithMany("Scores")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Encounter");
+
+                    b.Navigation("Patient");
+                });
+
             modelBuilder.Entity("EHMR.Domain.Entities.PatientMedicine", b =>
                 {
                     b.HasOne("EHMR.Domain.Entities.Encounter", "Encounter")
@@ -1617,6 +1666,11 @@ namespace EHMR.Migrations
                     b.Navigation("Prescriptions");
                 });
 
+            modelBuilder.Entity("EHMR.Domain.Entities.Encounter", b =>
+                {
+                    b.Navigation("PatientScore");
+                });
+
             modelBuilder.Entity("EHMR.Domain.Entities.Patient", b =>
                 {
                     b.Navigation("Appointments");
@@ -1630,6 +1684,8 @@ namespace EHMR.Migrations
                     b.Navigation("PatientMedicines");
 
                     b.Navigation("Prescriptions");
+
+                    b.Navigation("Scores");
 
                     b.Navigation("TherapyCycles");
                 });
