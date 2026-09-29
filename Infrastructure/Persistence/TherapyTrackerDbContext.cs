@@ -441,6 +441,12 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
 
             entity.HasIndex(x => x.PatientId);
             entity.HasIndex(x => x.EncounterId);
+            entity.HasIndex(x => x.TherapyCycleId);
+
+            entity.HasOne(x => x.TherapyCycle)
+                .WithMany(x => x.Documents)
+                .HasForeignKey(x => x.TherapyCycleId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(x => x.Patient)
                 .WithMany(x => x.Documents)
