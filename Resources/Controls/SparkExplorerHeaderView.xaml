@@ -105,25 +105,6 @@
 						</BindableLayout.ItemTemplate>
 					</HorizontalStackLayout>
 				</ScrollView>
-				<HorizontalStackLayout
-					Grid.Row="3"
-					Spacing="12"
-					VerticalOptions="Start">
-					<BindableLayout.ItemTemplate>
-						<DataTemplate x:DataType="sc:SparkButtonItem">
-							<sc:FFButton
-								BackgroundColorEx="{StaticResource SidebarActiveBg}"
-								Command="{Binding Command}"
-								CommandParameter="{Binding CommandParameter}"
-								ContentPadding="16,0"
-								CornerRadius="6"
-								HeightRequestEx="44"
-								Text="{Binding Label}"
-								TextColorEx="White"
-								WidthRequestEx="110" />
-						</DataTemplate>
-					</BindableLayout.ItemTemplate>
-				</HorizontalStackLayout>
 
 				<!--  ============ 1: DIVIDER (appears once, at the end of the tabs) ============  -->
 				<BoxView
