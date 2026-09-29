@@ -18,7 +18,8 @@ public interface IEncounterDetailService
         List<Diagnosis> diagnoses,
         List<Prescription> prescriptions,
         List<PatientMedicine> medicines,
-        List<Guid> deletedMedicineIds); 
+        List<Guid> deletedMedicineIds,
+        string? scoreText = null); 
 
     Task UpdateEncounterClinicalData(
         Guid encounterId,
