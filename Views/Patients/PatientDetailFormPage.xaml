@@ -910,7 +910,10 @@
 													<Label Text="Активен" VerticalOptions="Center" FontAttributes="Bold" />
 												</HorizontalStackLayout>
 												<HorizontalStackLayout Spacing="6">
-													<CheckBox IsChecked="{Binding IsPatientInactive, Mode=OneWay}" IsEnabled="{Binding IsEditMode}" VerticalOptions="Center" />
+													<HorizontalStackLayout.GestureRecognizers>
+														<TapGestureRecognizer Command="{Binding SetInactiveCommand}" />
+													</HorizontalStackLayout.GestureRecognizers>
+													<CheckBox IsChecked="{Binding IsPatientInactive, Mode=OneWay}" IsEnabled="False" VerticalOptions="Center" />
 													<Label Text="Неактивен" VerticalOptions="Center" FontAttributes="Bold" />
 												</HorizontalStackLayout>
 											</HorizontalStackLayout>
