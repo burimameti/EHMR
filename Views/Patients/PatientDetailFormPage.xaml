@@ -854,7 +854,7 @@
 								</VerticalStackLayout>
 
 
-								<!--  ================================================  -->
+																<!--  ================================================  -->
 								<!--  COLUMN 2 — КОНТАКТ ИНФОРМАЦИИ  -->
 								<!--  ================================================  -->
 								<VerticalStackLayout
@@ -863,61 +863,26 @@
 									Spacing="16">
 									<controls:CrudSectionHeader Title="КОНТАКТ ИНФОРМАЦИИ" />
 
-									<!--  РЕД 1: Телефон и Е-пошта  -->
-									<Grid
-										Padding="{StaticResource FormRowPadding}"
-										ColumnDefinitions="*,*"
-										ColumnSpacing="16">
-										<!--  ТЕЛЕФОН  -->
-										<VerticalStackLayout
-											Grid.Column="0"
-											IsVisible="{Binding IsEditMode}"
-											Spacing="4">
-											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Телефон *" />
+									<Grid Padding="{StaticResource FormRowPadding}" ColumnDefinitions="*,*" ColumnSpacing="16">
+										<VerticalStackLayout Grid.Column="0" IsVisible="{Binding IsEditMode}" Spacing="4">
+											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Телефон" />
 											<Border Style="{StaticResource EditFieldBoxStyle}">
-												<Entry
-													BackgroundColor="Transparent"
-													FontSize="13"
-													Keyboard="Telephone"
-													Placeholder="+389 7X XXX XXX"
-													PlaceholderColor="{StaticResource SparkTextSecondary}"
-													Text="{Binding Patient.Phone}"
-													TextColor="{StaticResource SparkTextPrimary}"
-													VerticalOptions="Center" />
+												<Entry BackgroundColor="Transparent" FontSize="13" Keyboard="Telephone" Placeholder="+389 7X XXX XXX" Text="{Binding Patient.Phone}" TextColor="{StaticResource SparkTextPrimary}" />
 											</Border>
 										</VerticalStackLayout>
-										<Border
-											Grid.Column="0"
-											IsVisible="{Binding IsReadOnly}"
-											Style="{StaticResource CrudFormValueSurfaceStyle}">
+										<Border Grid.Column="0" IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}">
 											<VerticalStackLayout Spacing="4">
 												<Label Style="{StaticResource ReadRowLabelStyle}" Text="Телефон:" />
 												<Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.Phone}" />
 											</VerticalStackLayout>
 										</Border>
-
-										<!--  Е-ПОШТА  -->
-										<VerticalStackLayout
-											Grid.Column="1"
-											IsVisible="{Binding IsEditMode}"
-											Spacing="4">
-											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Е-пошта *" />
+										<VerticalStackLayout Grid.Column="1" IsVisible="{Binding IsEditMode}" Spacing="4">
+											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Е-пошта" />
 											<Border Style="{StaticResource EditFieldBoxStyle}">
-												<Entry
-													BackgroundColor="Transparent"
-													FontSize="13"
-													Keyboard="Email"
-													Placeholder="petko@gmail.com"
-													PlaceholderColor="{StaticResource SparkTextSecondary}"
-													Text="{Binding Patient.Email}"
-													TextColor="{StaticResource SparkTextPrimary}"
-													VerticalOptions="Center" />
+												<Entry BackgroundColor="Transparent" FontSize="13" Keyboard="Email" Placeholder="email@example.com" Text="{Binding Patient.Email}" TextColor="{StaticResource SparkTextPrimary}" />
 											</Border>
 										</VerticalStackLayout>
-										<Border
-											Grid.Column="1"
-											IsVisible="{Binding IsReadOnly}"
-											Style="{StaticResource CrudFormValueSurfaceStyle}">
+										<Border Grid.Column="1" IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}">
 											<VerticalStackLayout Spacing="4">
 												<Label Style="{StaticResource ReadRowLabelStyle}" Text="Е-пошта:" />
 												<Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.Email}" />
@@ -925,154 +890,32 @@
 										</Border>
 									</Grid>
 
-									<!--  РЕД 2: Град и Адреса  -->
-									<Grid
-										Padding="{StaticResource FormRowPadding}"
-										ColumnDefinitions="*,*"
-										ColumnSpacing="16">
-										<!--  ГРАД  -->
-										<VerticalStackLayout
-											Grid.Column="0"
-											IsVisible="{Binding IsEditMode}"
-											Spacing="4">
+									<Grid Padding="{StaticResource FormRowPadding}" ColumnDefinitions="*,*" ColumnSpacing="16">
+										<VerticalStackLayout Grid.Column="0" IsVisible="{Binding IsEditMode}" Spacing="4">
 											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Град" />
 											<Border Style="{StaticResource EditFieldBoxStyle}">
-												<Grid ColumnDefinitions="*,Auto">
-													<Label Style="{StaticResource FieldBoxValueStyle}" Text="{Binding SelectedCityDisplay, FallbackValue='Изберете град...'}" />
-													<Label Grid.Column="1" Style="{StaticResource FieldBoxChevronStyle}" />
-													<Picker
-														Grid.ColumnSpan="2"
-														BackgroundColor="Transparent"
-														ItemsSource="{Binding CityOptions}"
-														Opacity="0"
-														SelectedItem="{Binding SelectedCityDisplay}" />
-												</Grid>
-											</Border>
-											<Border
-												BackgroundColor="{StaticResource SparkTabActiveBg}"
-												IsVisible="{Binding SelectedCityDisplay, Converter={StaticResource StringNotEmptyConverter}}"
-												Stroke="{StaticResource SparkAccentTealBg}"
-												Style="{StaticResource InfoPillBorderStyle}">
-												<HorizontalStackLayout Spacing="8">
-													<Label Style="{StaticResource InfoPillIconStyle}" Text="&#xf3c5;" />
-													<Label
-														Style="{StaticResource InfoPillTextStyle}"
-														Text="{Binding SelectedCityDisplay}"
-														TextColor="{StaticResource SparkAccentTealDark}" />
-												</HorizontalStackLayout>
+												<Picker BackgroundColor="Transparent" ItemsSource="{Binding CityOptions}" SelectedItem="{Binding SelectedCityDisplay}" TextColor="{StaticResource SparkTextPrimary}" />
 											</Border>
 										</VerticalStackLayout>
-										<Border
-											Grid.Column="0"
-											IsVisible="{Binding IsReadOnly}"
-											Style="{StaticResource CrudFormValueSurfaceStyle}">
+										<Border Grid.Column="0" IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}">
 											<VerticalStackLayout Spacing="4">
 												<Label Style="{StaticResource ReadRowLabelStyle}" Text="Град:" />
-												<Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding SelectedCityDisplay, FallbackValue='—'}" />
+												<Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding SelectedCityDisplay}" />
 											</VerticalStackLayout>
 										</Border>
-
-										<!--  АДРЕСА  -->
-										<VerticalStackLayout
-											Grid.Column="1"
-											IsVisible="{Binding IsEditMode}"
-											Spacing="4">
+										<VerticalStackLayout Grid.Column="1" IsVisible="{Binding IsEditMode}" Spacing="4">
 											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Адреса" />
 											<Border Style="{StaticResource EditFieldBoxStyle}">
-												<Entry
-													BackgroundColor="Transparent"
-													FontSize="13"
-													Placeholder="Улица и број"
-													PlaceholderColor="{StaticResource SparkTextSecondary}"
-													Text="{Binding Patient.Address}"
-													TextColor="{StaticResource SparkTextPrimary}"
-													VerticalOptions="Center" />
+												<Entry BackgroundColor="Transparent" FontSize="13" Placeholder="Улица и број" Text="{Binding Patient.Address}" TextColor="{StaticResource SparkTextPrimary}" />
 											</Border>
 										</VerticalStackLayout>
-										<Border
-											Grid.Column="1"
-											IsVisible="{Binding IsReadOnly}"
-											Style="{StaticResource CrudFormValueSurfaceStyle}">
+										<Border Grid.Column="1" IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}">
 											<VerticalStackLayout Spacing="4">
 												<Label Style="{StaticResource ReadRowLabelStyle}" Text="Адреса:" />
 												<Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.Address}" />
 											</VerticalStackLayout>
 										</Border>
 									</Grid>
-
-								</VerticalStackLayout>
-										<Border
-											Grid.Column="0"
-											IsVisible="{Binding IsReadOnly}"
-											Style="{StaticResource CrudFormValueSurfaceStyle}">
-											<VerticalStackLayout Spacing="4">
-												<Label Style="{StaticResource ReadRowLabelStyle}" Text="Контакт лице:" />
-												<Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.EmergencyContactName}" />
-											</VerticalStackLayout>
-										</Border>
-
-										<!--  ТЕЛЕФОН / МОБИЛЕН  -->
-										<VerticalStackLayout
-											Grid.Column="1"
-											IsVisible="{Binding IsEditMode}"
-											Spacing="4">
-											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Тел / Моб." />
-											<Border Style="{StaticResource EditFieldBoxStyle}">
-												<Entry
-													BackgroundColor="Transparent"
-													FontSize="13"
-													Placeholder="Пример +38970000000"
-													PlaceholderColor="{StaticResource SparkTextSecondary}"
-													Text="{Binding Patient.EmergencyContactPhone}"
-													TextColor="{StaticResource SparkTextPrimary}"
-													VerticalOptions="Center" />
-											</Border>
-										</VerticalStackLayout>
-										<Border
-											Grid.Column="1"
-											IsVisible="{Binding IsReadOnly}"
-											Style="{StaticResource CrudFormValueSurfaceStyle}">
-											<VerticalStackLayout Spacing="4">
-												<Label Style="{StaticResource ReadRowLabelStyle}" Text="Тел / Моб.:" />
-												<Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.EmergencyContactPhone}" />
-											</VerticalStackLayout>
-										</Border>
-									</Grid>
-
-									<!--<Grid Padding="{StaticResource FormRowPadding}">
-										<Grid
-											ColumnDefinitions="130,*"
-											ColumnSpacing="{StaticResource FormRowSpacing}"
-											IsVisible="{Binding IsEditMode}">
-											<Label
-												Grid.Column="0"
-												Style="{StaticResource EditFieldLabelStyle}"
-												Text="Роднинска врска" />
-											<Border Grid.Column="1" Style="{StaticResource EditFieldBoxStyle}">
-												<Entry
-													BackgroundColor="Transparent"
-													FontSize="13"
-													Placeholder="Пример татко, сестра"
-													PlaceholderColor="{StaticResource SparkTextSecondary}"
-													Text="{Binding Patient.EmergencyRelationship}"
-													TextColor="{StaticResource SparkTextPrimary}"
-													VerticalOptions="Center" />
-											</Border>
-										</Grid>
-										<Border IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}">
-											<Grid ColumnDefinitions="130,*" ColumnSpacing="{StaticResource FormRowSpacing}">
-												<Label
-													Grid.Column="0"
-													Style="{StaticResource ReadRowLabelStyle}"
-													Text="Роднинска врска:" />
-												<Label
-													Grid.Column="1"
-													Style="{StaticResource ReadRowValueStyle}"
-													Text="{Binding Patient.EmergencyRelationship}" />
-											</Grid>
-										</Border>
-									</Grid>-->
-
 								</VerticalStackLayout>
 							</Grid>
 							<BoxView
