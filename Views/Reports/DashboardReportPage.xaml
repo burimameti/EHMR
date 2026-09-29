@@ -271,45 +271,35 @@
 											TextColor="{StaticResource SparkTextMuted}" />
 									</VerticalStackLayout>
 
-									<HorizontalStackLayout
+									<Grid
 										x:Name="PeriodControl"
 										Grid.Column="1"
-										Spacing="8"
+										ColumnDefinitions="Auto,*"
+										ColumnSpacing="8"
 										VerticalOptions="Center">
-										<Label
-											Style="{StaticResource SparkTabTitleLabelStyle}"
-											Text="Периодичен"
-											VerticalOptions="Center" />
-										<sc:FFPicker
-											ItemsSource="{Binding PeriodTypeOptions}"
-											Label=""
-											MinimumWidthRequest="130"
-											SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" />
-									</HorizontalStackLayout>
+										<Label Grid.Column="0" Style="{StaticResource SparkTabTitleLabelStyle}" Text="Периодичен" VerticalOptions="Center" />
+										<sc:FFPicker Grid.Column="1" HorizontalOptions="Fill" ItemsSource="{Binding PeriodTypeOptions}" Label="" MinimumWidthRequest="150" SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" />
+									</Grid>
 
-									<HorizontalStackLayout
+									<Grid
 										x:Name="FromControl"
 										Grid.Column="2"
-										Spacing="8"
+										ColumnDefinitions="Auto,*"
+										ColumnSpacing="8"
 										VerticalOptions="Center">
-										<Label
-											Style="{StaticResource SparkTabTitleLabelStyle}"
-											Text="ОД"
-											VerticalOptions="Center" />
-										<sc:FFDatePicker HasLabel="False" SelectedDate="{Binding StartDate, Mode=TwoWay}" />
-									</HorizontalStackLayout>
+										<Label Grid.Column="0" Style="{StaticResource SparkTabTitleLabelStyle}" Text="ОД" VerticalOptions="Center" />
+										<sc:FFDatePicker Grid.Column="1" HorizontalOptions="Fill" HasLabel="False" SelectedDate="{Binding StartDate, Mode=TwoWay}" />
+									</Grid>
 
-									<HorizontalStackLayout
+									<Grid
 										x:Name="ToControl"
 										Grid.Column="3"
-										Spacing="8"
+										ColumnDefinitions="Auto,*"
+										ColumnSpacing="8"
 										VerticalOptions="Center">
-										<Label
-											Style="{StaticResource SparkTabTitleLabelStyle}"
-											Text="ДО"
-											VerticalOptions="Center" />
-										<sc:FFDatePicker HasLabel="False" SelectedDate="{Binding EndDate, Mode=TwoWay}" />
-									</HorizontalStackLayout>
+										<Label Grid.Column="0" Style="{StaticResource SparkTabTitleLabelStyle}" Text="ДО" VerticalOptions="Center" />
+										<sc:FFDatePicker Grid.Column="1" HorizontalOptions="Fill" HasLabel="False" SelectedDate="{Binding EndDate, Mode=TwoWay}" />
+									</Grid>
 
 									<sc:FFButton
 										x:Name="ApplyPeriodButton"
