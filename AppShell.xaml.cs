@@ -1,5 +1,4 @@
 ﻿using EHMR.Backups.Views;
-using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Views;
@@ -16,6 +15,7 @@ using EHMR.Views.Therapies;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace EHMR;
@@ -27,33 +27,48 @@ public partial class AppShell : Shell
     private readonly IAuthorizationService _authorization;
     private bool _isNavigating;
 
+    private static readonly HashSet<string> RootRoutes =
+    [
+        AppRoutes.Dashboard,
+        AppRoutes.CalendarPage,
+        AppRoutes.Patients.List,
+        AppRoutes.Encounters.List,
+        AppRoutes.Appointments.List,
+        AppRoutes.Protocols.List,
+        AppRoutes.Medicines.List,
+        AppRoutes.Reports.List,
+        AppRoutes.Admin.AdminPanel,
+        AppRoutes.Users.List,
+        AppRoutes.Doctors.List,
+        AppRoutes.Therapy.List,
+        AppRoutes.Prescriptions.List,
+        AppRoutes.Backup.Dashboard,
+        AppRoutes.Backup.Backups,
+        AppRoutes.Mkb10Codes.List
+    ];
+
     public AppShell(
-        IAuthStateService auth, IAuthorizationService authorization,
+        IAuthStateService auth,
+        IAuthorizationService authorization,
         INavigationCoordinator coordinator)
     {
         InitializeComponent();
 
         _auth=auth;
         _coordinator=coordinator;
-
         _authorization=authorization;
+
         RegisterRoutes();
         SetupCoordinator();
 
         _auth.AuthStateChanged+=OnAuthStateChanged;
     }
 
-    // =========================
-    // INITIAL NAVIGATION
-    // =========================
     public async Task HandleInitialNavigationAsync()
     {
         await HandleAuthChangedAsync();
     }
 
-    // =========================
-    // AUTH CHANGED
-    // =========================
     private async void OnAuthStateChanged(object? sender, EventArgs e)
     {
         await MainThread.InvokeOnMainThreadAsync(async () =>
@@ -62,25 +77,23 @@ public partial class AppShell : Shell
         });
     }
 
-    // =========================
-    // CENTRAL NAVIGATION PIPE
-    // =========================
     private void SetupCoordinator()
     {
         _coordinator.RegisterHandler(async route =>
         {
             if(_isNavigating)
                 return;
+
             if(!_authorization.CanAccessRoute(route))
                 return;
+
             try
             {
                 _isNavigating=true;
 
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    await GoToAsync(route);
-
+                    await GoToRouteAsync(route);
                     FlyoutIsPresented=false;
                 });
             }
@@ -91,9 +104,6 @@ public partial class AppShell : Shell
         });
     }
 
-    // =========================
-    // LOGIN / LOGOUT FLOW
-    // =========================
     private async Task HandleAuthChangedAsync()
     {
         if(_isNavigating)
@@ -104,8 +114,8 @@ public partial class AppShell : Shell
             _isNavigating=true;
 
             var target = _auth.IsAuthenticated
-                ? "//dashboard"
-                : "//login";
+                ? $"//{AppRoutes.Dashboard}"
+                : $"//{AppRoutes.Login}";
 
             await GoToAsync(target);
         }
@@ -115,70 +125,56 @@ public partial class AppShell : Shell
         }
     }
 
-    // =========================
-    // ROUTE REGISTRATION
-    // =========================
+    private async Task GoToRouteAsync(string route)
+    {
+        if(string.IsNullOrWhiteSpace(route))
+            return;
+
+        var normalized=route.Trim('/');
+
+        if(RootRoutes.Contains(normalized))
+            await GoToAsync($"//{normalized}");
+        else
+            await GoToAsync(route);
+    }
+
     private void RegisterRoutes()
     {
-        // Dashboard
-        Routing.RegisterRoute(AppRoutes.Dashboard, typeof(DashboardView));
-
-        // Patients
-        Routing.RegisterRoute(AppRoutes.Patients.List, typeof(PatientListPage));
+        // Detail/create/edit routes deliberately remain relative so they
+        // can be opened from a root workspace and closed with Back.
         Routing.RegisterRoute(AppRoutes.Patients.Detail, typeof(PatientDetailFormPage));
-        Routing.RegisterRoute(AppRoutes.Doctors.List, typeof(DoctorsListPage));
+
         Routing.RegisterRoute(AppRoutes.Doctors.Detail, typeof(DoctorsDetailPage));
-        // Appointments
-        Routing.RegisterRoute(AppRoutes.Appointments.List, typeof(AppointmentListPage));
+
         Routing.RegisterRoute(AppRoutes.Appointments.Detail, typeof(AppointmentDetailPage));
 
-        // Medicines
-        Routing.RegisterRoute(AppRoutes.Medicines.List, typeof(MedicineListPage));
         Routing.RegisterRoute(AppRoutes.Medicines.Detail, typeof(MedicineDetailFormPage));
 
-        // Prescriptions
-        Routing.RegisterRoute(AppRoutes.Prescriptions.List, typeof(PrescriptionListPage));
         Routing.RegisterRoute(AppRoutes.Prescriptions.Detail, typeof(PrescriptionDetailFormPage));
 
-        // Calendar
-        Routing.RegisterRoute(AppRoutes.Calendar, typeof(CalendarDashboardPage));
-
-        // Reports
-        Routing.RegisterRoute(AppRoutes.Reports.List, typeof(ReportHistoryPage));
         Routing.RegisterRoute(AppRoutes.Reports.Detail, typeof(DashboardReportPage));
-        // Users
-        Routing.RegisterRoute(AppRoutes.Users.List, typeof(UsersPage));
-        Routing.RegisterRoute(AppRoutes.Users.Detail, typeof(UserEditPage));
-        // Therapy
-        Routing.RegisterRoute(AppRoutes.Therapy.Detail, typeof(TherapyDetailsPage));
-        Routing.RegisterRoute(AppRoutes.Therapy.List, typeof(TherapyCyclesPage));
 
-        // Protocols
-        Routing.RegisterRoute(AppRoutes.Protocols.List, typeof(ProtocolRegistryPage));
+        Routing.RegisterRoute(AppRoutes.Users.Detail, typeof(UserEditPage));
+
+        Routing.RegisterRoute(AppRoutes.Therapy.Detail, typeof(TherapyDetailsPage));
+
         Routing.RegisterRoute(AppRoutes.Protocols.Detail, typeof(ProtocolDetailFormPage));
 
-        Routing.RegisterRoute(AppRoutes.Encounters.Edit, typeof(EncounterEditPage));
         Routing.RegisterRoute(AppRoutes.Encounters.Create, typeof(EncounterCreatePage));
-        Routing.RegisterRoute(AppRoutes.Encounters.List, typeof(EncounterListPage));
+        Routing.RegisterRoute(AppRoutes.Encounters.Edit, typeof(EncounterEditPage));
         Routing.RegisterRoute(AppRoutes.Encounters.Detail, typeof(EncounterDetailPage));
 
-        //Бекап
-        Routing.RegisterRoute(AppRoutes.Backup.Dashboard, typeof(BackupDashboardPage));
-        Routing.RegisterRoute(AppRoutes.Backup.Backups, typeof(BackupPage));
         Routing.RegisterRoute(AppRoutes.Backup.Restore, typeof(RestorePage));
         Routing.RegisterRoute(AppRoutes.Backup.History, typeof(BackupHistoryPage));
         Routing.RegisterRoute(AppRoutes.Backup.BackupDetails, typeof(BackupDetailPage));
         Routing.RegisterRoute(AppRoutes.Backup.Destinations, typeof(BackupDestinationsPage));
-        Routing.RegisterRoute(AppRoutes.Admin.AdminPanel, typeof(AdminPage));
-        // MKB
-        Routing.RegisterRoute(AppRoutes.Mkb10Codes.List, typeof(MbkImportExportPage));
-        Routing.RegisterRoute(AppRoutes.CalendarPage, typeof(MainPage));
+
+        Routing.RegisterRoute(AppRoutes.Mkb10.Detail, typeof(Mkb10CodeDetailPage));
     }
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-
         _auth.AuthStateChanged-=OnAuthStateChanged;
     }
 }
