@@ -95,8 +95,8 @@ namespace EHMR
 
             // Let the desktop window resize freely. Page layouts must adapt to
             // the available workspace instead of forcing a fixed large viewport.
-            window.Width=1920;
-            window.Height=1200;
+            window.Width=1440;
+            window.Height=900;
             window.MinimumWidth=1024;
             window.MinimumHeight=680;
 
