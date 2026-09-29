@@ -71,8 +71,7 @@ namespace EHMR.ViewModels.Patients.Extensions
         {
         ("Сите", "All"),
         ("Активни", "Active"),
-        ("Неактивни", "Inactive"),
-        ("Хронични", "Chronic")
+        ("Неактивни", "Inactive")
     
     });
 
@@ -191,9 +190,7 @@ namespace EHMR.ViewModels.Patients.Extensions
         } = new(new[]
         {
         ("Активни", "Active"),
-        ("Неактивни", "Inactive"),
-        ("Хронични", "Chronic"),
-        ("Друго", "Deceased")
+        ("Неактивни", "Inactive")
     });
 
         // Matches DosesFrequency exactly - used both on the old single-patient
@@ -281,6 +278,7 @@ namespace EHMR.ViewModels.Patients.Extensions
                 BloodType=source.BloodType,
 
                 Status=source.Status,
+                InactiveReason=source.InactiveReason,
 
                 RegistrationDate=source.RegistrationDate,
 
