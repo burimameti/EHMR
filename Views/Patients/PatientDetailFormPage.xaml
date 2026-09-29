@@ -96,7 +96,6 @@
 					<Grid Padding="8,6" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
 						<Label FontAttributes="Bold" FontSize="12" Text="{Binding RecordedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
 						<Label Grid.Column="1" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding ScoreText}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
-						<Label Grid.Column="2" FontSize="10" Text="{Binding EncounterId}" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
 					</Grid>
 				</Border>
 			</DataTemplate>
