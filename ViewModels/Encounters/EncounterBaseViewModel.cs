@@ -145,8 +145,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         SelectedTherapyCycle?.Notes
         ??"Без терапевтски циклус";
     public string TherapyCycleStatus =>
-        SelectedTherapyCycle?.Status.ToString()
-        ??string.Empty;
+        SelectedTherapyCycle is null
+            ? string.Empty
+            : SelectedTherapyCycle.Status.ToDisplay();
 
     // Mirrors TherapyCycleDisplay - drives the "selected appointment" label
     // under the appointment search box in the UI.
