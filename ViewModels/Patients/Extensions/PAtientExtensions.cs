@@ -164,6 +164,18 @@ namespace EHMR.ViewModels.Patients.Extensions
 
         public static string ToDisplay(this DosesFrequency frequency) =>
             PatientEnumLookups.DosesFrequency.ToDisplay(frequency.ToString());
+
+        public static string ToDisplay(this TherapyStatus status) => status switch
+        {
+            TherapyStatus.Planned => "Планирана",
+            TherapyStatus.Active => "Активна",
+            TherapyStatus.Scheduled => "Закажана",
+            TherapyStatus.Completed => "Завршена",
+            TherapyStatus.Suspended => "Суспендирана",
+            TherapyStatus.Canceled => "Откажана",
+            TherapyStatus.Missed => "Пропуштена",
+            _ => status.ToString()
+        };
     }
 
     /// <summary>
