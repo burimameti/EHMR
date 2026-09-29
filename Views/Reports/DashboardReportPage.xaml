@@ -380,7 +380,16 @@
 								<sc:FFSectionCard Margin="0">
 									<VerticalStackLayout Spacing="6">
 
-										<sc:CrudSectionHeader Title="АНАЛИТИКА" />
+										<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+											<sc:CrudSectionHeader Title="АНАЛИТИКА" />
+											<sc:FFButton
+												ButtonKind="Secondary"
+												Command="{Binding ExecuteReportGenerationCommand}"
+												ContentPadding="12,0"
+												HeightRequestEx="38"
+												Text="Освежи"
+												WidthRequestEx="90" />
+										</Grid>
 
 										<!--  Metric 1  -->
 										<Border
