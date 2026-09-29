@@ -183,22 +183,39 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     {
         if(string.IsNullOrWhiteSpace(search)) return query;
 
-        var s=search.Trim();
+        var tokens=s.Split(' ', StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries);
         var cyrillicSearch=UseCyrillicSearch
             ? MacedonianTransliterator.ToCyrillic(s)
             : s;
+        var cyrTokens=UseCyrillicSearch
+            ? tokens.Select(MacedonianTransliterator.ToCyrillic).ToArray()
+            : tokens;
 
         return query.Where(x =>
-            (!string.IsNullOrWhiteSpace(x.FullName)&&(
-                x.FullName.Contains(s, StringComparison.OrdinalIgnoreCase)||
-                x.FullName.Contains(cyrillicSearch, StringComparison.OrdinalIgnoreCase)))||
-            (!string.IsNullOrWhiteSpace(x.NationalId)&&x.NationalId.Contains(s, StringComparison.OrdinalIgnoreCase))||
-            (!string.IsNullOrWhiteSpace(x.SzboNumber)&&x.SzboNumber.Contains(s, StringComparison.OrdinalIgnoreCase))||
-            (!string.IsNullOrWhiteSpace(x.Phone)&&x.Phone.Contains(s, StringComparison.OrdinalIgnoreCase))||
-            (!string.IsNullOrWhiteSpace(x.City)&&(
-                x.City.Contains(s, StringComparison.OrdinalIgnoreCase)||
-                x.City.Contains(cyrillicSearch, StringComparison.OrdinalIgnoreCase)))
-        );
+        {
+            var first=x.FirstName??string.Empty;
+            var last=x.LastName??string.Empty;
+            var full=$"{first} {last}".Trim();
+
+            if(tokens.Length>1)
+            {
+                return StartsWith(first,tokens[0],cyrTokens[0])
+                    &&StartsWith(last,tokens[1],cyrTokens[1]);
+            }
+
+            return StartsWith(first,s,cyrillicSearch)
+                ||StartsWith(last,s,cyrillicSearch)
+                ||StartsWith(full,s,cyrillicSearch)
+                ||StartsWith(x.NationalId,s,cyrillicSearch)
+                ||StartsWith(x.SzboNumber,s,cyrillicSearch)
+                ||StartsWith(x.Phone,s,cyrillicSearch)
+                ||StartsWith(x.City,s,cyrillicSearch);
+        });
+
+        static bool StartsWith(string? value,string latin,string alternate)
+            => !string.IsNullOrWhiteSpace(value)
+                &&(value.StartsWith(latin,StringComparison.OrdinalIgnoreCase)
+                   ||value.StartsWith(alternate,StringComparison.OrdinalIgnoreCase));
     }
 
     partial void OnUseCyrillicSearchChanged(bool value) => ApplyPipeline();
@@ -290,6 +307,12 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         if(patient is null)
         {
             await UserDialogService.ShowAlertAsync("Внимание", "Одберете пациент прво.");
+            return;
+        }
+
+        if(patient.Status==PatientStatus.Inactive)
+        {
+            await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "За неактивен пациент не може да се креира нов преглед.", "ОК");
             return;
         }
 
@@ -393,8 +416,8 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
                  new() { Header = "БРОЈ НА ПАЦИЕНТ", Key = "PatientNumber", Width = new GridLength(1.3, GridUnitType.Star) },
-            new() { Header = "ЕМБГ", Key = "NationalId", Width = new GridLength(1.3, GridUnitType.Star) },
-            new() { Header = "СЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
+            new() { Header = "ЕЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
+            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "FullName", Width = new GridLength(2.8, GridUnitType.Star) },
             new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.8, GridUnitType.Star) },
             new() { Header = "ВОЗРАСТ", Key = "Age", CellType = SparkGridCellType.Number, Width = new GridLength(0.9, GridUnitType.Star) },
@@ -413,7 +436,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         {
             var row = new SparkGridRow { Tag=p };
             row["PatientNumber"]=p.PatientNumber;
-            row["NationalId"]=PrivacyMaskHelper.MaskNationalId(p.NationalId);
             row["SzboNumber"]=p.SzboNumber;
             row["FullName"]=p.FullName;
             row["Gender"]=p.Gender.ToDisplay();
@@ -422,16 +444,28 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             row["Phone"]=p.Phone;
             row["Status"]=new SparkBadgeValue(p.Status.ToDisplay(), StatusToTone(p.Status));
 
-            AddDefaultActions(p, row, detailLabel: "Повеќе", editLabel: "Промени");
+            AddDefaultActions(p, row, detailLabel: "Повеќе", editLabel: "Промени", canEditPredicate: x => x.Status==PatientStatus.Active);
 
-            row["Pregled"]=new SparkButtonItem
+            if(p.Status==PatientStatus.Active)
             {
-                IconGlyph="\uD83D\uDCC5",
-                Label="Нов преглед",
-                IsPrimary=true,
-                Command=NewEncounterForSelectedCommand,
-                CommandParameter=p
-            };
+                row["Pregled"]=new SparkButtonItem
+                {
+                    IconGlyph="\uD83D\uDCC5",
+                    Label="Нов преглед",
+                    IsPrimary=true,
+                    Command=NewEncounterForSelectedCommand,
+                    CommandParameter=p
+                };
+            }
+            else
+            {
+                row["Pregled"]=new SparkButtonItem
+                {
+                    IconGlyph="\ud83d\udd12",
+                    Label="Заклучено",
+                    IsPrimary=false
+                };
+            }
 
             rows.Add(row);
         }
