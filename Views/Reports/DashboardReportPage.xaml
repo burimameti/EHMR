@@ -221,14 +221,18 @@
 						</CollectionView>
 					</sc:FFSectionCard>
 
+					<Border Padding="10,6" BackgroundColor="{StaticResource SparkBadgeNeutralBg}" StrokeThickness="0" HorizontalOptions="End">
+						<Label FontAttributes="Bold" FontSize="12" Text="{Binding HubTotalTemplates, StringFormat='Вкупно извештаи: {0}'}" TextColor="{StaticResource SparkTextSecondary}" />
+					</Border>
+
 					<!--  =========================================================  -->
 					<!--  DETAIL VIEW — table + analytics sidebar  -->
 					<!--  =========================================================  -->
 					<Grid
 						x:Name="DetailsGrid"
-						Margin="16,0,16,0"
-						ColumnDefinitions="*,320"
-						ColumnSpacing="16"
+						Margin="4,0,4,0"
+						ColumnDefinitions="*"
+						ColumnSpacing="0"
 						IsVisible="False">
 						<Grid.Triggers>
 							<DataTrigger
@@ -240,7 +244,7 @@
 						</Grid.Triggers>
 
 						<!--  LEFT COLUMN  -->
-						<VerticalStackLayout Grid.Column="0" Spacing="16">
+						<VerticalStackLayout Grid.Column="0" Spacing="10">
 
 							<!--  Report controls bar  -->
 							<sc:FFSectionCard Margin="0">
@@ -359,144 +363,8 @@
 
 						</VerticalStackLayout>
 
-						<!--  RIGHT SIDEBAR — analytics + export  -->
-						<ScrollView Grid.Column="1" VerticalScrollBarVisibility="Never">
-							<VerticalStackLayout Spacing="16">
+						<!--  Analytics and PDF export removed.  -->
 
-								<!--  Analytics card  -->
-								<sc:FFSectionCard Margin="0">
-									<VerticalStackLayout Spacing="6">
-
-										<sc:CrudSectionHeader Title="АНАЛИТИКА" />
-
-										<!--  Metric 1  -->
-										<Border
-											Padding="16"
-											BackgroundColor="{StaticResource SparkPageBackground}"
-											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeThickness="1">
-											<Border.StrokeShape>
-												<RoundRectangle CornerRadius="12" />
-											</Border.StrokeShape>
-											<Grid ColumnDefinitions="4,*">
-												<BoxView
-													Grid.Column="0"
-													BackgroundColor="{StaticResource SparkAccentTeal}"
-													HorizontalOptions="Start"
-													WidthRequest="4" />
-												<VerticalStackLayout
-													Grid.Column="1"
-													Padding="12,0,0,0"
-													Spacing="4">
-													<Label
-														FontAttributes="Bold"
-														FontSize="11"
-														Text="{Binding Metric1Title}"
-														TextColor="{StaticResource SparkTextMuted}" />
-													<Label
-														FontAttributes="Bold"
-														FontSize="26"
-														Text="{Binding Metric1Value}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</VerticalStackLayout>
-											</Grid>
-										</Border>
-
-										<!--  Metric 2  -->
-										<Border
-											Padding="16"
-											BackgroundColor="{StaticResource SparkPageBackground}"
-											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeThickness="1">
-											<Border.StrokeShape>
-												<RoundRectangle CornerRadius="12" />
-											</Border.StrokeShape>
-											<Grid ColumnDefinitions="4,*">
-												<BoxView
-													Grid.Column="0"
-													BackgroundColor="{StaticResource SparkAccentTeal}"
-													HorizontalOptions="Start"
-													WidthRequest="4" />
-												<VerticalStackLayout
-													Grid.Column="1"
-													Padding="12,0,0,0"
-													Spacing="4">
-													<Label
-														FontAttributes="Bold"
-														FontSize="11"
-														Text="{Binding Metric2Title}"
-														TextColor="{StaticResource SparkTextMuted}" />
-													<Label
-														FontAttributes="Bold"
-														FontSize="26"
-														Text="{Binding Metric2Value}"
-														TextColor="{StaticResource SparkAccentTeal}" />
-												</VerticalStackLayout>
-											</Grid>
-										</Border>
-
-										<!--  Metric 3  -->
-										<Border
-											Padding="16"
-											BackgroundColor="{StaticResource SparkPageBackground}"
-											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeThickness="1">
-											<Border.StrokeShape>
-												<RoundRectangle CornerRadius="12" />
-											</Border.StrokeShape>
-											<Grid ColumnDefinitions="4,*">
-												<BoxView
-													Grid.Column="0"
-													BackgroundColor="{StaticResource SparkAccentTeal}"
-													HorizontalOptions="Start"
-													WidthRequest="4" />
-												<VerticalStackLayout
-													Grid.Column="1"
-													Padding="12,0,0,0"
-													Spacing="4">
-													<Label
-														FontAttributes="Bold"
-														FontSize="11"
-														Text="{Binding Metric3Title}"
-														TextColor="{StaticResource SparkTextMuted}" />
-													<Label
-														FontAttributes="Bold"
-														FontSize="26"
-														Text="{Binding Metric3Value}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</VerticalStackLayout>
-											</Grid>
-										</Border>
-
-									</VerticalStackLayout>
-								</sc:FFSectionCard>
-
-								<!--  Export card  -->
-								<sc:FFSectionCard Margin="0">
-									<VerticalStackLayout Spacing="10">
-
-										<sc:CrudSectionHeader Title="ОПЦИИ ЗА ИЗВОЗ" />
-
-										<sc:FFButton
-											ButtonKind="Danger"
-											Command="{Binding ExportToPdfCommand}"
-											ContentPadding="16,0"
-											HeightRequestEx="45"
-											Text="📄 Извези во PDF" />
-
-										<sc:FFButton
-											BackgroundColorEx="{StaticResource SidebarActiveBg}"
-											ButtonKind="Primary"
-											Command="{Binding ExportToExcelCommand}"
-											ContentPadding="16,0"
-											HeightRequestEx="45"
-											Text="📊 Извези во Excel"
-											TextColorEx="White" />
-
-									</VerticalStackLayout>
-								</sc:FFSectionCard>
-
-							</VerticalStackLayout>
 						</ScrollView>
 
 					</Grid>

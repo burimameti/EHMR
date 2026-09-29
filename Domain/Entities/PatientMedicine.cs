@@ -44,6 +44,8 @@ public class PatientMedicine : BaseEntity
 
     public string Notes { get; set; } = string.Empty;
 
+    public string PharmaceuticalReference { get; set; } = string.Empty;
+
     /// <summary>False once discontinued/completed — kept instead of deleting so prescription history survives.</summary>
     public bool IsActive { get; set; } = true;
 

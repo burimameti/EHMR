@@ -289,7 +289,8 @@ public class PatientService : IPatientService
                 Unit=m.Unit,
                 DefaultDosage=m.DefaultDosage,
                 Manufacturer=m.Manufacturer,
-                IsActive=m.IsActive
+                IsActive=m.IsActive,
+                PharmaceuticalReference=m.PharmaceuticalReference
             })
             .ToListAsync(ct);
     }
@@ -306,14 +307,15 @@ public class PatientService : IPatientService
 
         await using var db = await _factory.CreateDbContextAsync(ct);
 
-        patientDto.SzboNumber=patientDto.SzboNumber.Trim();
-        if(string.IsNullOrWhiteSpace(patientDto.SzboNumber))
-            throw new InvalidOperationException("СЗБО бројот е задолжителен.");
+        patientDto.SzboNumber=patientDto.SzboNumber?.Trim()??string.Empty;
 
-        var szboExists=await db.Patients
-            .AnyAsync(x => x.SzboNumber==patientDto.SzboNumber&&x.Id!=patientDto.Id, ct);
-        if(szboExists)
-            throw new InvalidOperationException("Веќе постои пациент со овој СЗБО број.");
+        if(!string.IsNullOrWhiteSpace(patientDto.SzboNumber))
+        {
+            var szboExists=await db.Patients
+                .AnyAsync(x => x.SzboNumber==patientDto.SzboNumber&&x.Id!=patientDto.Id, ct);
+            if(szboExists)
+                throw new InvalidOperationException("Веќе постои пациент со овој ЕЗБО број.");
+        }
 
         try
         {
@@ -372,6 +374,7 @@ public class PatientService : IPatientService
                         StartDate=vm.StartDate,
                         EndDate=vm.EndDate,
                         Notes=vm.Notes,
+                        PharmaceuticalReference=vm.PharmaceuticalReference,
                         IsActive=vm.IsActive
                     };
 
