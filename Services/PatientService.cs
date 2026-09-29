@@ -654,6 +654,7 @@ public class PatientService : IPatientService
         Id=doc.Id,
         PatientId=doc.PatientId,
         EncounterId=doc.EncounterId,
+        TherapyCycleId=doc.TherapyCycleId,
         DocumentType=doc.DocumentType,
         Title=doc.Title,
         Description=doc.Description,
