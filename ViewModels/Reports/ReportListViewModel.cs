@@ -291,7 +291,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             HighlightValue=StatusLabel(a.Status),
             DateValue=a.ScheduledStart.ToString("dd.MM.yyyy HH:mm"),
             InformationalText=a.ReasonForVisit??"",
-            IsAlertSeverity=a.Status is AppointmentStatus.Cancelled or AppointmentStatus.Missed
+            IsAlertSeverity=a.Status==AppointmentStatus.Cancelled
         }).ToList();
     }
 
@@ -330,7 +330,6 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         AppointmentStatus.InProgress => "Во тек",
         AppointmentStatus.Completed => "Завршен",
         AppointmentStatus.Cancelled => "Откажан",
-        AppointmentStatus.Missed => "Не се пријавил",
         _ => status.ToString()
     };
 
