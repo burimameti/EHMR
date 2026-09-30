@@ -429,7 +429,7 @@ public partial class DashboardViewModel : ObservableObject
             var encounters = await encountersQuery.OrderBy(x => x.ScheduledStart).ToListAsync();
 
             State.CompletedToday=encounters.Count(x => x.Status==EncounterStatus.Completed);
-            State.WaitingToday=encounters.Count(x => x.Status==EncounterStatus.Scheduled||x.Status==EncounterStatus.CheckedIn);
+            State.WaitingToday=encounters.Count(x => x.Status==EncounterStatus.Scheduled||x.Status==EncounterStatus.InProgress);
             State.NoShowToday=encounters.Count(x => x.Status==EncounterStatus.NoShow);
             State.Encounters=new ObservableCollection<Encounter>(encounters);
 
@@ -1359,7 +1359,7 @@ public partial class DashboardViewModel : ObservableObject
     private static readonly Dictionary<EncounterStatus, string> EncounterStatusDisplay = new()
     {
         [EncounterStatus.Scheduled]="Закажан",
-        [EncounterStatus.CheckedIn]="Пријавен",
+        [EncounterStatus.InProgress]="Пријавен",
         [EncounterStatus.InProgress]="Во тек",
         [EncounterStatus.Completed]="Завршен",
         [EncounterStatus.Cancelled]="Откажан",
@@ -1370,7 +1370,6 @@ public partial class DashboardViewModel : ObservableObject
     {
         EncounterStatus.Completed => Color.FromArgb("#16A34A"),
         EncounterStatus.InProgress => Color.FromArgb("#2563EB"),
-        EncounterStatus.CheckedIn => Color.FromArgb("#0EA5E9"),
         EncounterStatus.Scheduled => Color.FromArgb("#64748B"),
         EncounterStatus.NoShow => Color.FromArgb("#DC2626"),
         EncounterStatus.Cancelled => Color.FromArgb("#DC2626"),
