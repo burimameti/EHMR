@@ -430,7 +430,6 @@ public partial class DashboardViewModel : ObservableObject
 
             State.CompletedToday=encounters.Count(x => x.Status==EncounterStatus.Completed);
             State.WaitingToday=encounters.Count(x => x.Status==EncounterStatus.Scheduled||x.Status==EncounterStatus.InProgress);
-            State.NoShowToday=encounters.Count(x => x.Status==EncounterStatus.NoShow);
             State.Encounters=new ObservableCollection<Encounter>(encounters);
 
             // ── UPCOMING APPOINTMENTS (future, for KPI only) ──────────────────────
@@ -620,7 +619,6 @@ public partial class DashboardViewModel : ObservableObject
         [AppointmentStatus.Completed]="Завршен",
         [AppointmentStatus.InProgress]="Во тек",
         [AppointmentStatus.Cancelled]="Откажан",
-        [AppointmentStatus.Missed]="Не се пријавил",
     };
 
     // =========================================================
@@ -1021,7 +1019,6 @@ public partial class DashboardViewModel : ObservableObject
         _allPatientsTab.Command=new RelayCommand(() => SelectTab(_allPatientsTab, () => SelectedStatusDisplay=PatientFilterLookups.Status.ToDisplay("All")));
         upcomingTab.Command=new RelayCommand(() => SelectTab(upcomingTab, () => NavigateToEncountersCommand.Execute("Scheduled")));
         inprogressTab.Command=new RelayCommand(() => SelectTab(inprogressTab, () => NavigateToEncountersCommand.Execute("InProgress")));
-        neDojadeTab.Command=new RelayCommand(() => SelectTab(neDojadeTab, () => NavigateToEncountersCommand.Execute("NoShow")));
         _warning.Command=new RelayCommand(() => SelectTab(_warning, () => NavigateToAlertsCommand.Execute("Active")));
         _churnedTab.Command=new RelayCommand(() => SelectTab(_churnedTab, () => SelectedStatusDisplay=PatientFilterLookups.Status.ToDisplay(ChurnedStatusName)));
 
@@ -1239,7 +1236,6 @@ public partial class DashboardViewModel : ObservableObject
         [DashboardPatientState.InProgress]="Во тек",
         [DashboardPatientState.Completed]="Завршен",
         [DashboardPatientState.Cancelled]="Откажан",
-        [DashboardPatientState.NoShow]="Не дојде",
         [DashboardPatientState.Critical]="Критично"
     };
 
@@ -1248,7 +1244,6 @@ public partial class DashboardViewModel : ObservableObject
         DashboardPatientState.Completed => SparkBadgeTone.Success,
         DashboardPatientState.InProgress => SparkBadgeTone.Success,
         DashboardPatientState.Scheduled => SparkBadgeTone.Neutral,
-        DashboardPatientState.NoShow => SparkBadgeTone.Danger,
         DashboardPatientState.Cancelled => SparkBadgeTone.Danger,
         DashboardPatientState.Critical => SparkBadgeTone.Danger,
         _ => SparkBadgeTone.Neutral
@@ -1358,7 +1353,6 @@ public partial class DashboardViewModel : ObservableObject
         [EncounterStatus.InProgress]="Во тек",
         [EncounterStatus.Completed]="Завршен",
         [EncounterStatus.Cancelled]="Откажан",
-        [EncounterStatus.NoShow]="Не се пријавил"
     };
 
     private static Color EncounterStatusToColor(EncounterStatus status) => status switch
@@ -1366,7 +1360,6 @@ public partial class DashboardViewModel : ObservableObject
         EncounterStatus.Completed => Color.FromArgb("#16A34A"),
         EncounterStatus.InProgress => Color.FromArgb("#2563EB"),
         EncounterStatus.Scheduled => Color.FromArgb("#64748B"),
-        EncounterStatus.NoShow => Color.FromArgb("#DC2626"),
         EncounterStatus.Cancelled => Color.FromArgb("#DC2626"),
         _ => Color.FromArgb("#94A3B8")
     };
@@ -1375,7 +1368,6 @@ public partial class DashboardViewModel : ObservableObject
     {
         EncounterStatus.Completed => SparkBadgeTone.Success,
         EncounterStatus.Cancelled => SparkBadgeTone.Danger,
-        EncounterStatus.NoShow => SparkBadgeTone.Danger,
         _ => SparkBadgeTone.Neutral
     };
     // =========================================================
