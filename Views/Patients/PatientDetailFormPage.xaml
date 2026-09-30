@@ -91,28 +91,7 @@
 				</Border>
 			</DataTemplate>
 
-			<DataTemplate x:Key="PatientScoreRowTemplate" x:DataType="models:PatientScore">
-				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
-					<Grid
-						Padding="8,6"
-						ColumnDefinitions="Auto,*,Auto"
-						ColumnSpacing="10">
-						<Label
-							FontAttributes="Bold"
-							FontSize="12"
-							Text="{Binding RecordedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
-							TextColor="{StaticResource SparkAccentTealDark}"
-							VerticalOptions="Center" />
-						<Label
-							Grid.Column="1"
-							FontSize="12"
-							LineBreakMode="TailTruncation"
-							Text="{Binding ScoreText}"
-							TextColor="{StaticResource SparkTextPrimary}"
-							VerticalOptions="Center" />
-					</Grid>
-				</Border>
-			</DataTemplate>
+
 
 			<DataTemplate x:Key="PatientAppointmentRowTemplate" x:DataType="models:Appointment">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
@@ -318,7 +297,7 @@
 								<Grid
 									Padding="0"
 									RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
-									RowSpacing="14">
+									RowSpacing="6">
 									<!--  РЕД 1 — ЛИЧНИ ПОДАТОЦИ (статус скроз десно на иста линија)  -->
 									<VerticalStackLayout Grid.Row="0" Spacing="10">
 
@@ -494,7 +473,7 @@
 												<Label
 													IsVisible="{Binding IsEditMode}"
 													Style="{StaticResource EditFieldLabelStyle}"
-													Text="ЗБО *" />
+													Text="ЕЗБО" />
 												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
 													<Entry
 														BackgroundColor="Transparent"
@@ -507,7 +486,7 @@
 												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
 													<Label
 														FontSize="11"
-														Text="ЗБО:"
+														Text="ЕЗБО:"
 														TextColor="{StaticResource SparkTextSecondary}" />
 													<Label
 														FontAttributes="Bold"
@@ -811,6 +790,14 @@
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
 							</FlexLayout>
+											<controls:CrudSectionHeader Title="ПРЕТХОДНИ ТЕРАПИИ" />
+											<controls:SparkExpandableCard
+												Title="Претходни терапии"
+												EmptyViewText="Нема евидентирани претходни терапии."
+												ItemTemplate="{StaticResource PatientTherapyCycleHistoryRowTemplate}"
+												ItemsSource="{Binding PreviousTherapies}"
+												Style="{StaticResource CrudFormHistoryCardStyle}"
+												Variant="TherapyCycle" />
 							</VerticalStackLayout>
 
 							<!--  ЛЕК — на истата линија со МКБ  -->
@@ -866,7 +853,7 @@
 <!--  РЕД 5 — ЗАБЕЛЕШКА  -->
 					<VerticalStackLayout Grid.Row="4" Spacing="10">
 						<controls:CrudSectionHeader Title="ЗАБЕЛЕШКА" />
-						<Border IsEnabled="{Binding IsEditMode}" MinimumHeightRequest="64" Style="{StaticResource TextAreaFieldBoxStyle}">
+						<Border IsEnabled="{Binding IsEditMode}" MinimumHeightRequest="56" Style="{StaticResource TextAreaFieldBoxStyle}">
 							<Editor AutoSize="TextChanges" BackgroundColor="Transparent" FontSize="13" Placeholder="Забелешка за пациентот..." PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.Allergies}" TextColor="{StaticResource SparkTextPrimary}" />
 						</Border>
 					</VerticalStackLayout>
@@ -988,21 +975,21 @@
 					<controls:FFButton ButtonKind="Secondary" Command="{Binding UploadDocumentCommand}" HeightRequestEx="36" IsVisible="{Binding IsEditMode}" Text="📎 Прикачи решение за неактивност" />
 				</VerticalStackLayout>
 
-				<VerticalStackLayout IsVisible="{Binding IsEditMode}" Margin="0,8,0,0" Spacing="8">
+				<VerticalStackLayout IsVisible="{Binding IsEditMode}" Margin="0,6,0,0" Spacing="6">
 									<controls:CrudSectionHeader Title="СТАТУС НА ПАЦИЕНТ" />
-									<HorizontalStackLayout Spacing="24">
-										<VerticalStackLayout Spacing="3">
-											<Label FontAttributes="Bold" FontSize="11" Text="Активен" TextColor="{StaticResource SparkAccentTealDark}" />
-											<HorizontalStackLayout Spacing="4">
+									<HorizontalStackLayout HorizontalOptions="Center" Spacing="36">
+										<VerticalStackLayout HorizontalOptions="Center" Spacing="2">
+											<Label FontAttributes="Bold" FontSize="11" HorizontalOptions="Center" Text="Активен" TextColor="{StaticResource SparkAccentTealDark}" />
+											<HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
 												<HorizontalStackLayout.GestureRecognizers>
 													<TapGestureRecognizer Command="{Binding SetActiveCommand}" />
 												</HorizontalStackLayout.GestureRecognizers>
 												<CheckBox IsChecked="{Binding IsPatientActive, Mode=OneWay}" IsEnabled="False" Color="{StaticResource SparkAccentTeal}" />
 											</HorizontalStackLayout>
 										</VerticalStackLayout>
-										<VerticalStackLayout Spacing="3">
-											<Label FontAttributes="Bold" FontSize="11" Text="Неактивен" TextColor="#DC2626" />
-											<HorizontalStackLayout Spacing="4">
+										<VerticalStackLayout HorizontalOptions="Center" Spacing="2">
+											<Label FontAttributes="Bold" FontSize="11" HorizontalOptions="Center" Text="Неактивен" TextColor="#DC2626" />
+											<HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
 												<HorizontalStackLayout.GestureRecognizers>
 													<TapGestureRecognizer Command="{Binding SetInactiveCommand}" />
 												</HorizontalStackLayout.GestureRecognizers>
@@ -1010,26 +997,29 @@
 											</HorizontalStackLayout>
 										</VerticalStackLayout>
 									</HorizontalStackLayout>
+									<Border BackgroundColor="{StaticResource SparkAccentTeal}" HeightRequest="2" HorizontalOptions="Center" Margin="0,2,0,4" StrokeThickness="0" WidthRequest="260" />
 								</VerticalStackLayout>
 
 								<!--  АКЦИИ  -->
 								<HorizontalStackLayout
-									HorizontalOptions="End"
-									Spacing="6"
+									HorizontalOptions="Center"
+									Spacing="12"
 									VerticalOptions="Center">
 									<controls:FFButton
 										ButtonKind="Secondary"
 										Command="{Binding CancelCommand}"
-										ContentPadding="24,0"
-										HeightRequestEx="42"
+										ContentPadding="20,0"
+										HeightRequestEx="46"
+										WidthRequest="120"
 										IsVisible="{Binding IsEditMode}"
 										Text="Откажи" />
 									<controls:FFButton
 										BackgroundColorEx="{StaticResource SidebarActiveBg}"
 										ButtonKind="Primary"
 										Command="{Binding SaveCommand}"
-										ContentPadding="24,0"
-										HeightRequestEx="42"
+										ContentPadding="20,0"
+										HeightRequestEx="46"
+										WidthRequest="120"
 										IsVisible="{Binding IsEditMode}"
 										Text="Зачувај"
 										TextColorEx="{StaticResource SidebarActiveText}" />
@@ -1037,8 +1027,9 @@
 										BackgroundColorEx="{StaticResource SidebarActiveBg}"
 										ButtonKind="Primary"
 										Command="{Binding ToggleEditModeAsyncCommand}"
-										ContentPadding="24,0"
-										HeightRequestEx="42"
+										ContentPadding="20,0"
+										HeightRequestEx="46"
+										WidthRequest="120"
 										IsVisible="{Binding IsReadOnly}"
 										Text="Уреди"
 										TextColorEx="{StaticResource SidebarActiveText}" />
@@ -1067,16 +1058,7 @@
 										ItemsSource="{Binding EncounterHistory}"
 										Style="{StaticResource CrudFormHistoryCardStyle}"
 										Variant="Encounter" />
-									<controls:SparkExpandableCard
-										Title="Оценки"
-										Margin="0,0,10,10"
-										EmptyViewText="Нема евидентирани оценки."
-										FlexLayout.Basis="280"
-										FlexLayout.Grow="1"
-										ItemTemplate="{StaticResource PatientScoreRowTemplate}"
-										ItemsSource="{Binding ScoreHistory}"
-										Style="{StaticResource CrudFormHistoryCardStyle}"
-										Variant="Encounter" />
+									
 									<controls:SparkExpandableCard
 										Title="Термини"
 										Margin="0,0,10,10"
@@ -1099,164 +1081,7 @@
 										Variant="Diagnosis" />
 								</FlexLayout>
 
-								<!--  ДОКУМЕНТИ НА ПАЦИЕНТ  -->
-								<controls:CrudSectionHeader Title="ДОКУМЕНТИ НА ПАЦИЕНТ" />
-
-								<Border
-									Padding="10"
-									BackgroundColor="{StaticResource SparkContentBackground}"
-									IsVisible="{Binding HasDocumentPreview}"
-									Stroke="{StaticResource SparkBorder}"
-									StrokeShape="RoundRectangle 12"
-									StrokeThickness="1">
-									<VerticalStackLayout Spacing="8">
-										<Grid ColumnDefinitions="*,Auto">
-											<Label
-												FontAttributes="Bold"
-												FontSize="12"
-												LineBreakMode="TailTruncation"
-												Text="{Binding SelectedDocumentPreview.FileName}"
-												TextColor="{StaticResource SparkTextPrimary}" />
-											<Label
-												Grid.Column="1"
-												FontFamily="FASolid"
-												FontSize="13"
-												Text="&#xf00d;"
-												TextColor="{StaticResource SparkTextSecondary}">
-												<Label.GestureRecognizers>
-													<TapGestureRecognizer Command="{Binding ClosePreviewCommand}" />
-												</Label.GestureRecognizers>
-											</Label>
-										</Grid>
-
-										<Border
-											HeightRequest="180"
-											IsVisible="{Binding SelectedDocumentPreview, Converter={StaticResource DocumentIsImageConverter}}"
-											StrokeShape="RoundRectangle 10"
-											StrokeThickness="0">
-											<Image Aspect="AspectFill" Source="{Binding SelectedDocumentPreview.StoredPath}" />
-										</Border>
-
-										<Border
-											BackgroundColor="{StaticResource SparkAccentTealBg}"
-											HeightRequest="120"
-											IsVisible="{Binding SelectedDocumentPreview, Converter={StaticResource DocumentIsImageConverter}, ConverterParameter=Invert}"
-											StrokeShape="RoundRectangle 10"
-											StrokeThickness="0">
-											<VerticalStackLayout
-												HorizontalOptions="Center"
-												Spacing="4"
-												VerticalOptions="Center">
-												<Label
-													FontFamily="FASolid"
-													FontSize="30"
-													HorizontalOptions="Center"
-													Text="&#xf15b;"
-													TextColor="{StaticResource SparkAccentTealDark}" />
-												<Label
-													FontSize="10"
-													HorizontalOptions="Center"
-													Text="Нема достапен преглед за овој тип на документ"
-													TextColor="{StaticResource SparkTextSecondary}" />
-											</VerticalStackLayout>
-										</Border>
-
-										<controls:FFButton
-											BackgroundColorEx="{StaticResource SidebarActiveBg}"
-											ButtonKind="Primary"
-											Command="{Binding DownloadDocumentCommand}"
-											CommandParameter="{Binding SelectedDocumentPreview}"
-											HeightRequestEx="36"
-											IsEnabled="{Binding IsDownloadingDocument, Converter={StaticResource InvertedBoolConverter}}"
-											Text="⬇ Преземи"
-											TextColorEx="{StaticResource SidebarActiveText}" />
-									</VerticalStackLayout>
-								</Border>
-
-								<FlexLayout
-									Padding="12"
-									BackgroundColor="{StaticResource SparkContentBackground}"
-									BindableLayout.ItemsSource="{Binding Documents}"
-									Direction="Row"
-									JustifyContent="Start"
-									Wrap="Wrap">
-									<BindableLayout.EmptyView>
-										<Label
-											FontSize="13"
-											Text="Нема прикачени документи."
-											TextColor="{StaticResource SparkTextSecondary}" />
-									</BindableLayout.EmptyView>
-									<BindableLayout.ItemTemplate>
-										<DataTemplate x:DataType="dto:PatientDocumentDto">
-											<Border
-												Margin="0,0,8,8"
-												Padding="0"
-												BackgroundColor="{StaticResource SparkTabActiveBg}"
-												HeightRequest="120"
-												Stroke="{StaticResource SparkBorderSubtle}"
-												StrokeShape="RoundRectangle 12"
-												StrokeThickness="1"
-												WidthRequest="120">
-												<Border.GestureRecognizers>
-													<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding .}" />
-												</Border.GestureRecognizers>
-												<Grid RowDefinitions="*,Auto" RowSpacing="0">
-													<Grid Grid.Row="0">
-														<Image
-															Aspect="AspectFill"
-															IsVisible="{Binding ., Converter={StaticResource DocumentIsImageConverter}}"
-															Source="{Binding StoredPath}" />
-														<Border
-															BackgroundColor="{StaticResource SparkAccentTealBg}"
-															IsVisible="{Binding ., Converter={StaticResource DocumentIsImageConverter}, ConverterParameter=Invert}"
-															StrokeThickness="0">
-															<Label
-																FontFamily="FASolid"
-																FontSize="26"
-																HorizontalOptions="Center"
-																Text="&#xf15b;"
-																TextColor="{StaticResource SparkAccentTealDark}"
-																VerticalOptions="Center" />
-														</Border>
-														<Border
-															Margin="4"
-															Padding="4,3"
-															BackgroundColor="#99000000"
-															HorizontalOptions="End"
-															StrokeShape="RoundRectangle 6"
-															StrokeThickness="0"
-															VerticalOptions="Start">
-															<Label
-																FontFamily="FASolid"
-																FontSize="9"
-																Text="&#xf00e;"
-																TextColor="White" />
-														</Border>
-													</Grid>
-													<Border
-														Grid.Row="1"
-														Padding="6,4"
-														BackgroundColor="{StaticResource SparkTabActiveBg}"
-														StrokeThickness="0">
-														<VerticalStackLayout Spacing="1">
-															<Label
-																FontAttributes="Bold"
-																FontSize="9"
-																LineBreakMode="TailTruncation"
-																Text="{Binding FileName}"
-																TextColor="{StaticResource SparkTextPrimary}" />
-															<Label
-																FontSize="8"
-																Text="{Binding UploadedAt, StringFormat='{0:dd.MM.yyyy}'}"
-																TextColor="{StaticResource SparkTextSecondary}" />
-														</VerticalStackLayout>
-													</Border>
-												</Grid>
-											</Border>
-										</DataTemplate>
-									</BindableLayout.ItemTemplate>
-								</FlexLayout>
-
+								
 							</VerticalStackLayout>
 						</controls:FFSectionCard>
 
