@@ -38,8 +38,11 @@ public partial class FFButton : ContentView
         BindableProperty.Create(nameof(HeightRequestEx), typeof(double), typeof(FFButton), 42d,
             propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumHeightRequest=(double)v);
 
+    // Do not impose a 180px minimum on every button. Header/action areas can be
+    // narrow, and the button should size from its content unless a page explicitly
+    // supplies WidthRequestEx.
     public static readonly BindableProperty WidthRequestExProperty =
-        BindableProperty.Create(nameof(WidthRequestEx), typeof(double), typeof(FFButton), 180d,
+        BindableProperty.Create(nameof(WidthRequestEx), typeof(double), typeof(FFButton), -1d,
             propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumWidthRequest=(double)v);
 
     public static readonly BindableProperty ContentPaddingProperty =
@@ -79,149 +82,52 @@ public partial class FFButton : ContentView
     // CLR PROPERTIES                                              //
     // ═══════════════════════════════════════════════════════════ //
 
-    public string Text
-    {
-        get => (string)GetValue(TextProperty);
-        set => SetValue(TextProperty, value);
-    }
-
-    public FFButtonKind ButtonKind
-    {
-        get => (FFButtonKind)GetValue(ButtonKindProperty);
-        set => SetValue(ButtonKindProperty, value);
-    }
-
-    public ICommand Command
-    {
-        get => (ICommand)GetValue(CommandProperty);
-        set => SetValue(CommandProperty, value);
-    }
-
-    public object CommandParameter
-    {
-        get => GetValue(CommandParameterProperty);
-        set => SetValue(CommandParameterProperty, value);
-    }
-
-    public bool IsLoading
-    {
-        get => (bool)GetValue(IsLoadingProperty);
-        set => SetValue(IsLoadingProperty, value);
-    }
-
-    public double HeightRequestEx
-    {
-        get => (double)GetValue(HeightRequestExProperty);
-        set => SetValue(HeightRequestExProperty, value);
-    }
-
-    public double WidthRequestEx
-    {
-        get => (double)GetValue(WidthRequestExProperty);
-        set => SetValue(WidthRequestExProperty, value);
-    }
-
-    public Thickness ContentPadding
-    {
-        get => (Thickness)GetValue(ContentPaddingProperty);
-        set => SetValue(ContentPaddingProperty, value);
-    }
-
-    public float CornerRadius
-    {
-        get => (float)GetValue(CornerRadiusProperty);
-        set => SetValue(CornerRadiusProperty, value);
-    }
-
-    public double FontSizeEx
-    {
-        get => (double)GetValue(FontSizeExProperty);
-        set => SetValue(FontSizeExProperty, value);
-    }
-
-    public string FontFamily
-    {
-        get => (string)GetValue(FontFamilyProperty);
-        set => SetValue(FontFamilyProperty, value);
-    }
-
-    public FontAttributes FontAttributesEx
-    {
-        get => (FontAttributes)GetValue(FontAttributesExProperty);
-        set => SetValue(FontAttributesExProperty, value);
-    }
-
-    public LayoutOptions HorizontalOptionsEx
-    {
-        get => (LayoutOptions)GetValue(HorizontalOptionsExProperty);
-        set => SetValue(HorizontalOptionsExProperty, value);
-    }
-
-    public Color BackgroundColorEx
-    {
-        get => (Color)GetValue(BackgroundColorExProperty);
-        set => SetValue(BackgroundColorExProperty, value);
-    }
-
-    public Color TextColorEx
-    {
-        get => (Color)GetValue(TextColorExProperty);
-        set => SetValue(TextColorExProperty, value);
-    }
-
-    public Color BorderColor
-    {
-        get => (Color)GetValue(BorderColorProperty);
-        set => SetValue(BorderColorProperty, value);
-    }
-
-    public double BorderThickness
-    {
-        get => (double)GetValue(BorderThicknessProperty);
-        set => SetValue(BorderThicknessProperty, value);
-    }
-
-    // ═══════════════════════════════════════════════════════════ //
-    // KIND → VISUAL TOKENS                                        //
-    // ═══════════════════════════════════════════════════════════ //
+    public string Text { get => (string)GetValue(TextProperty); set => SetValue(TextProperty, value); }
+    public FFButtonKind ButtonKind { get => (FFButtonKind)GetValue(ButtonKindProperty); set => SetValue(ButtonKindProperty, value); }
+    public ICommand Command { get => (ICommand)GetValue(CommandProperty); set => SetValue(CommandProperty, value); }
+    public object CommandParameter { get => GetValue(CommandParameterProperty); set => SetValue(CommandParameterProperty, value); }
+    public bool IsLoading { get => (bool)GetValue(IsLoadingProperty); set => SetValue(IsLoadingProperty, value); }
+    public double HeightRequestEx { get => (double)GetValue(HeightRequestExProperty); set => SetValue(HeightRequestExProperty, value); }
+    public double WidthRequestEx { get => (double)GetValue(WidthRequestExProperty); set => SetValue(WidthRequestExProperty, value); }
+    public Thickness ContentPadding { get => (Thickness)GetValue(ContentPaddingProperty); set => SetValue(ContentPaddingProperty, value); }
+    public float CornerRadius { get => (float)GetValue(CornerRadiusProperty); set => SetValue(CornerRadiusProperty, value); }
+    public double FontSizeEx { get => (double)GetValue(FontSizeExProperty); set => SetValue(FontSizeExProperty, value); }
+    public string FontFamily { get => (string)GetValue(FontFamilyProperty); set => SetValue(FontFamilyProperty, value); }
+    public FontAttributes FontAttributesEx { get => (FontAttributes)GetValue(FontAttributesExProperty); set => SetValue(FontAttributesExProperty, value); }
+    public LayoutOptions HorizontalOptionsEx { get => (LayoutOptions)GetValue(HorizontalOptionsExProperty); set => SetValue(HorizontalOptionsExProperty, value); }
+    public Color BackgroundColorEx { get => (Color)GetValue(BackgroundColorExProperty); set => SetValue(BackgroundColorExProperty, value); }
+    public Color TextColorEx { get => (Color)GetValue(TextColorExProperty); set => SetValue(TextColorExProperty, value); }
+    public Color BorderColor { get => (Color)GetValue(BorderColorProperty); set => SetValue(BorderColorProperty, value); }
+    public double BorderThickness { get => (double)GetValue(BorderThicknessProperty); set => SetValue(BorderThicknessProperty, value); }
 
     private void ApplyKind()
     {
         switch(ButtonKind)
         {
-            // Main action: Save, Create, Confirm
             case FFButtonKind.Primary:
                 BackgroundColorEx=ResolveColorResource("SidebarActiveBg", "#4DD9C7");
                 TextColorEx=Colors.White;
                 BorderColor=ResolveColorResource("SidebarActiveBg", "#4DD9C7");
                 BorderThickness=0;
                 break;
-
-            // Supporting action: Edit, Preview, Back
             case FFButtonKind.Secondary:
                 BackgroundColorEx=Color.FromArgb("#4A5863");
                 TextColorEx=Colors.White;
                 BorderColor=Color.FromArgb("#5A5863");
                 BorderThickness=0;
                 break;
-
-            // Positive clinical action: Complete, Approve
             case FFButtonKind.Green:
                 BackgroundColorEx=Color.FromArgb("#15803D");
                 TextColorEx=Colors.White;
                 BorderColor=Color.FromArgb("#15803D");
                 BorderThickness=0;
                 break;
-
-            // Destructive action: Delete, Cancel therapy
             case FFButtonKind.Danger:
                 BackgroundColorEx=Color.FromArgb("#B42318");
                 TextColorEx=Colors.White;
                 BorderColor=Color.FromArgb("#B42318");
                 BorderThickness=0;
                 break;
-
-            // Quiet action: Close, Clear filters
             case FFButtonKind.Ghost:
                 BackgroundColorEx=Colors.Transparent;
                 TextColorEx=Color.FromArgb("#1F2933");
@@ -230,10 +136,6 @@ public partial class FFButton : ContentView
                 break;
         }
     }
-
-    // ═══════════════════════════════════════════════════════════ //
-    // TAP HANDLER                                                 //
-    // ═══════════════════════════════════════════════════════════ //
 
     private static Color ResolveColorResource(string key, string fallback)
     {
@@ -244,14 +146,11 @@ public partial class FFButton : ContentView
 
     private async void OnTapped(object sender, TappedEventArgs e)
     {
-        if(IsLoading) return;
-        if(!IsEnabled) return;
+        if(IsLoading||!IsEnabled) return;
 
-        // Press animation
         await Container.ScaleTo(0.96, 80, Easing.CubicOut);
         await Container.ScaleTo(1.00, 80, Easing.CubicIn);
 
-        // Execute command
         if(Command?.CanExecute(CommandParameter)==true)
             Command.Execute(CommandParameter);
 
@@ -260,13 +159,10 @@ public partial class FFButton : ContentView
 
     private void OnPointerEntered(object? sender, PointerEventArgs e)
     {
-        if(!IsEnabled)
-            return;
+        if(!IsEnabled) return;
 
         _hoverRestoreBackground=BackgroundColorEx;
         _hoverRestoreText=TextColorEx;
-
-        // Consistent Spark hover: dark sidebar/nav tone.
         BackgroundColorEx=Color.FromArgb("#293441");
         TextColorEx=Colors.White;
     }
@@ -283,16 +179,8 @@ public partial class FFButton : ContentView
         _hoverRestoreText=null;
     }
 
-    // ═══════════════════════════════════════════════════════════ //
-    // PUBLIC EVENTS                                               //
-    // ═══════════════════════════════════════════════════════════ //
-
     public event EventHandler? Clicked;
 }
-
-// ═══════════════════════════════════════════════════════════ //
-// ENUM                                                        //
-// ═══════════════════════════════════════════════════════════ //
 
 public enum FFButtonKind
 {
