@@ -700,6 +700,18 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
+    private void ClearDoctor()
+    {
+        if(!IsEditMode) return;
+
+        Patient.DoctorId=Guid.Empty;
+        SelectedDoctorDisplay=string.Empty;
+        DoctorSearchText=string.Empty;
+        DoctorSearchResults.Clear();
+        ShowDoctorDropdown=false;
+    }
+
+    [RelayCommand]
     private void SelectDoctor(DoctorDto doctor)
     {
         if(doctor==null) return;
