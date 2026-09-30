@@ -973,6 +973,7 @@ public class EncounterDetailService : IEncounterDetailService
     private static int LifecycleOrder(AppointmentStatus s) => s switch
     {
         AppointmentStatus.Scheduled => 0,
+        AppointmentStatus.InProgress => 1,
         AppointmentStatus.Completed => 4,
         AppointmentStatus.Cancelled => 5,
         _ => 0
