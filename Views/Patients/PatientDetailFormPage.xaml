@@ -793,6 +793,7 @@
 						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" ContentPadding="24,0" HeightRequestEx="46" WidthRequest="155" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="{StaticResource SidebarActiveText}" />
 						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding ToggleEditModeAsyncCommand}" ContentPadding="24,0" HeightRequestEx="46" WidthRequest="155" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="{StaticResource SidebarActiveText}" />
 					</HorizontalStackLayout>
+					</Grid>
 						</VerticalStackLayout>
 					</controls:FFSectionCard>
 
