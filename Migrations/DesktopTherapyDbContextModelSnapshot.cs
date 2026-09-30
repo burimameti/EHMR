@@ -989,7 +989,8 @@ namespace EHMR.Migrations
 
                     b.Property<string>("PharmaceuticalReference")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid>("MedicineId")
                         .HasColumnType("uniqueidentifier");
