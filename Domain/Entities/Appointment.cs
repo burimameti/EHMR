@@ -68,5 +68,5 @@ public class Appointment : BaseEntity
 
 public enum AppointmentStatus
 {
-    Scheduled, CheckedIn, Completed, Cancelled, Missed, InProgress, ReScheduled,
+    Scheduled, InProgress, Completed, Cancelled, Missed,
 }
