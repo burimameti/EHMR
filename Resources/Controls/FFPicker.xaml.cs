@@ -1,25 +1,76 @@
 using System.Collections;
 using Microsoft.Maui.Controls;
+
 namespace EHMR.Resources.Controls;
+
 public partial class FFPicker : ContentView
 {
     public FFPicker()
     {
         InitializeComponent();
-        InnerPicker.SelectedIndexChanged+=(s, e) =>
+
+        InnerPicker.SelectedIndexChanged += (_, _) =>
         {
-            if(InnerPicker.SelectedIndex!=SelectedIndex)
-                SelectedIndex=InnerPicker.SelectedIndex;
+            if (InnerPicker.SelectedIndex != SelectedIndex)
+                SelectedIndex = InnerPicker.SelectedIndex;
         };
+
+        SizeChanged += OnPickerSizeChanged;
+        ApplyResponsiveLayout();
+    }
+
+    private void OnPickerSizeChanged(object? sender, EventArgs e)
+        => ApplyResponsiveLayout();
+
+    private void ApplyResponsiveLayout()
+    {
+        // Desktop-first sizing. Keep the normal 1920px layout unchanged,
+        // then progressively tighten the control when the available width
+        // becomes constrained instead of changing the surrounding layout.
+        var width = Width;
+
+        if (width <= 0)
+            return;
+
+        if (width < 220)
+        {
+            PickerBorder.HeightRequest = 36;
+            InnerPicker.FontSize = 11.5;
+            InnerPicker.Margin = new Thickness(7, 0, 1, 0);
+            ArrowButton.WidthRequest = 28;
+            ArrowButton.Margin = new Thickness(2, 4, 4, 4);
+            ArrowIcon.FontSize = 8;
+            FieldLabel.FontSize = 10;
+        }
+        else if (width < 300)
+        {
+            PickerBorder.HeightRequest = 39;
+            InnerPicker.FontSize = 12;
+            InnerPicker.Margin = new Thickness(8, 0, 1, 0);
+            ArrowButton.WidthRequest = 31;
+            ArrowButton.Margin = new Thickness(2, 5, 5, 5);
+            ArrowIcon.FontSize = 8.5;
+            FieldLabel.FontSize = 10.5;
+        }
+        else
+        {
+            PickerBorder.HeightRequest = 42;
+            InnerPicker.FontSize = 13;
+            InnerPicker.Margin = new Thickness(10, 0, 2, 0);
+            ArrowButton.WidthRequest = 34;
+            ArrowButton.Margin = new Thickness(2, 5, 5, 5);
+            ArrowIcon.FontSize = 9;
+            FieldLabel.FontSize = 11;
+        }
     }
 
     private void OnArrowTapped(object? sender, TappedEventArgs e)
     {
 #if WINDOWS
-        if(InnerPicker.Handler?.PlatformView is Microsoft.UI.Xaml.Controls.ComboBox comboBox)
+        if (InnerPicker.Handler?.PlatformView is Microsoft.UI.Xaml.Controls.ComboBox comboBox)
         {
             comboBox.Focus(Microsoft.UI.Xaml.FocusState.Programmatic);
-            comboBox.IsDropDownOpen=true;
+            comboBox.IsDropDownOpen = true;
             return;
         }
 #endif
@@ -28,6 +79,7 @@ public partial class FFPicker : ContentView
 
     public static readonly BindableProperty LabelProperty =
         BindableProperty.Create(nameof(Label), typeof(string), typeof(FFPicker), string.Empty);
+
     public string Label
     {
         get => (string)GetValue(LabelProperty);
@@ -36,6 +88,7 @@ public partial class FFPicker : ContentView
 
     public static readonly BindableProperty PlaceholderProperty =
         BindableProperty.Create(nameof(Placeholder), typeof(string), typeof(FFPicker), string.Empty);
+
     public string Placeholder
     {
         get => (string)GetValue(PlaceholderProperty);
@@ -43,12 +96,17 @@ public partial class FFPicker : ContentView
     }
 
     public static readonly BindableProperty ItemsSourceProperty =
-        BindableProperty.Create(nameof(ItemsSource), typeof(IList), typeof(FFPicker), null,
+        BindableProperty.Create(
+            nameof(ItemsSource),
+            typeof(IList),
+            typeof(FFPicker),
+            null,
             propertyChanged: (b, _, n) =>
             {
-                if(b is FFPicker p)
-                    p.InnerPicker.ItemsSource=(IList)n;
+                if (b is FFPicker picker)
+                    picker.InnerPicker.ItemsSource = n as IList;
             });
+
     public IList ItemsSource
     {
         get => (IList)GetValue(ItemsSourceProperty);
@@ -56,12 +114,17 @@ public partial class FFPicker : ContentView
     }
 
     public static readonly BindableProperty ItemDisplayBindingProperty =
-        BindableProperty.Create(nameof(ItemDisplayBinding), typeof(BindingBase), typeof(FFPicker), null,
+        BindableProperty.Create(
+            nameof(ItemDisplayBinding),
+            typeof(BindingBase),
+            typeof(FFPicker),
+            null,
             propertyChanged: (b, _, n) =>
             {
-                if(b is FFPicker p)
-                    p.InnerPicker.ItemDisplayBinding=(BindingBase)n;
+                if (b is FFPicker picker)
+                    picker.InnerPicker.ItemDisplayBinding = n as BindingBase;
             });
+
     public BindingBase ItemDisplayBinding
     {
         get => (BindingBase)GetValue(ItemDisplayBindingProperty);
@@ -69,7 +132,13 @@ public partial class FFPicker : ContentView
     }
 
     public static readonly BindableProperty SelectedItemProperty =
-        BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(FFPicker), null, BindingMode.TwoWay);
+        BindableProperty.Create(
+            nameof(SelectedItem),
+            typeof(object),
+            typeof(FFPicker),
+            null,
+            BindingMode.TwoWay);
+
     public object SelectedItem
     {
         get => GetValue(SelectedItemProperty);
@@ -77,12 +146,21 @@ public partial class FFPicker : ContentView
     }
 
     public static readonly BindableProperty SelectedIndexProperty =
-        BindableProperty.Create(nameof(SelectedIndex), typeof(int), typeof(FFPicker), -1, BindingMode.TwoWay,
+        BindableProperty.Create(
+            nameof(SelectedIndex),
+            typeof(int),
+            typeof(FFPicker),
+            -1,
+            BindingMode.TwoWay,
             propertyChanged: (b, _, n) =>
             {
-                if(b is FFPicker p&&p.InnerPicker.SelectedIndex!=(int)n)
-                    p.InnerPicker.SelectedIndex=(int)n;
+                if (b is FFPicker picker &&
+                    picker.InnerPicker.SelectedIndex != (int)n)
+                {
+                    picker.InnerPicker.SelectedIndex = (int)n;
+                }
             });
+
     public int SelectedIndex
     {
         get => (int)GetValue(SelectedIndexProperty);
