@@ -61,7 +61,9 @@ namespace EHMR.Resources.Controls
             SecondaryToolbarGrid.ColumnSpacing = 8 * s;
             SecondaryToolbarGrid.MinimumHeightRequest = 64 * s;
 
-            HeaderSearchBox.HeightRequest = 42 * s;
+            // FFSearchBox contains its own label + field and must keep its natural height.
+            // Setting the ContentView height to 42 clips the control vertically in the header.
+            HeaderSearchBox.HeightRequest = -1;
             HeaderSearchBox.HorizontalOptions = LayoutOptions.Fill;
             HeaderSearchBox.MinimumWidthRequest = 0;
             HeaderSearchBox.Margin = new Thickness(0);
@@ -76,7 +78,9 @@ namespace EHMR.Resources.Controls
             foreach (var child in PickerLayout.Children.OfType<FFPicker>())
             {
                 child.MinimumWidthRequest = Math.Max(100, 110 * s);
-                child.HeightRequest = 42 * s;
+                // FFPicker contains a label + picker field; do not constrain the outer control
+                // to the field height or its contents will be clipped vertically.
+                child.HeightRequest = -1;
             }
 
             foreach (var child in ActionLayout.Children.SelectMany(v => v is HorizontalStackLayout h ? h.Children : Array.Empty<IView>()))
