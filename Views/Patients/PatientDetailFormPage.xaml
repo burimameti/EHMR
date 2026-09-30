@@ -910,6 +910,7 @@
 												<HorizontalStackLayout Grid.Column="1" Spacing="6">
 													<Entry WidthRequest="180" Placeholder="Нов режим на апликација" Text="{Binding NewApplicationRegimeText, Mode=TwoWay}" FontSize="12" />
 													<controls:FFButton Text="Нов режим" Command="{Binding AddApplicationRegimeCommand}" ButtonKind="Secondary" HeightRequestEx="40" ContentPadding="14,0" />
+															<controls:FFButton Text="Режими" Command="{Binding OpenApplicationRegimesCommand}" ButtonKind="Secondary" HeightRequestEx="40" ContentPadding="14,0" />
 												</HorizontalStackLayout>
 											</Grid>
 
