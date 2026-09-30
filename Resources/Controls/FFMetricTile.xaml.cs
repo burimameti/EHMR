@@ -1,5 +1,6 @@
 ﻿using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Controls.Shapes;
 using System.Drawing;
 using System.Windows.Input;
 using Color = Microsoft.Maui.Graphics.Color;
