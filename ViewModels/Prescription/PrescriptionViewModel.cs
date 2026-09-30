@@ -164,8 +164,6 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>, IQ
             labelSelector: display => display,
             isSelectedSelector: display => (display=="Сите" ? "All" : display)==SelectedStatus,
             onSelect: display => SelectedStatusDisplay=display);
-
-        RefreshSparkTabCounts();
     }
 
     private void RefreshSparkTabCounts()
@@ -255,7 +253,6 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>, IQ
     // ============================================================
     private void InitializeSparkControls()
     {
-        BuildSparkTabs();
         BuildSparkPickers();
         BuildSparkButtons();
         BuildSparkGridColumns();
