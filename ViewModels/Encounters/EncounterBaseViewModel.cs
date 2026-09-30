@@ -148,7 +148,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     public string TherapyCycleStatus =>
         SelectedTherapyCycle is null
             ? string.Empty
-            : SelectedTherapyCycle.Status.ToDisplay();
+            : SelectedTherapyCycle.Status?.ToDisplay() ?? string.Empty;
 
     // Mirrors TherapyCycleDisplay - drives the "selected appointment" label
     // under the appointment search box in the UI.
@@ -439,6 +439,12 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected async Task AddNewAppointmentAsync()
     {
+        if(SelectedPatient?.Status==PatientStatus.Inactive)
+        {
+            await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "За неактивен пациент не може да се креира или менува термин.", "ОК");
+            return;
+        }
+
         if(SelectedPatient==null)
         {
             OnError("Изберете пациент пред да додадете термин");
@@ -541,6 +547,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     protected async Task OfferToCreateAppointmentAsync(string searchedTerm)
     {
+        if(SelectedPatient?.Status==PatientStatus.Inactive)
+            return;
+
         if(SelectedPatient==null)
             return;
 
@@ -652,6 +661,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     }
     protected async Task OfferToCreateTherapyCycleAsync(string searchedTerm)
     {
+        if(SelectedPatient?.Status==PatientStatus.Inactive)
+            return;
+
         if(SelectedPatient==null)
             return;
 
@@ -701,6 +713,12 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected async Task AddNewTherapyCycleAsync()
     {
+        if(SelectedPatient?.Status==PatientStatus.Inactive)
+        {
+            await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "За неактивен пациент не може да се креира или менува терапија.", "ОК");
+            return;
+        }
+
         if(SelectedPatient==null)
         {
             OnError("Изберете пациент пред да додадете циклус");
@@ -1312,8 +1330,14 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     // =====================================================
 
     [RelayCommand]
-    public void ToggleEditMode()
+    public async void ToggleEditMode()
     {
+        if(!IsEditMode&&SelectedPatient?.Status==PatientStatus.Inactive)
+        {
+            await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "Податоците за неактивен пациент се заклучени и не може да се менуваат.", "ОК");
+            return;
+        }
+
         IsEditMode=!IsEditMode;
 
         IsReadOnly=!IsEditMode;
