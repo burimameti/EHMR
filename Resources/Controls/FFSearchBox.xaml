@@ -4,7 +4,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	x:Name="Root">
 
-	<Grid RowDefinitions="18,40" RowSpacing="4">
+	<Grid RowDefinitions="Auto,40" RowSpacing="4" HorizontalOptions="Fill">
 
 		<Label
 			CharacterSpacing=".5"
@@ -12,17 +12,19 @@
 			FontSize="11"
 			IsVisible="{Binding Label, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
 			Text="{Binding Label, Source={x:Reference Root}}"
-			TextColor="{StaticResource Gray600}" />
+			TextColor="{StaticResource Gray600}" HorizontalOptions="Start" />
 
 		<Border
 			Grid.Row="1"
 			BackgroundColor="White"
 			HeightRequest="40"
+			HorizontalOptions="Fill"
+			MinimumWidthRequest="0"
 			Stroke="{StaticResource Gray300}"
 			StrokeShape="RoundRectangle 6"
 			StrokeThickness="1">
 
-			<Grid Padding="10,0" ColumnDefinitions="18,*,Auto">
+			<Grid Padding="10,0" ColumnDefinitions="18,*,Auto" ColumnSpacing="0" HorizontalOptions="Fill">
 
 				<Label
 					Grid.Column="0"
@@ -30,12 +32,14 @@
 					FontSize="12"
 					Text="&#xf002;"
 					TextColor="{StaticResource Gray500}"
-					VerticalOptions="Center" />
+					VerticalOptions="Center"
+					HorizontalOptions="Start" />
 
 				<Entry
 					Grid.Column="1"
 					Margin="8,0,0,0"
 					BackgroundColor="Transparent"
+					HorizontalOptions="Fill"
 					Completed="OnEntryCompleted"
 					FontSize="12"
 					Placeholder="{Binding Placeholder, Source={x:Reference Root}}"
@@ -43,7 +47,8 @@
 					Text="{Binding Text, Source={x:Reference Root}, Mode=TwoWay}"
 					TextChanged="OnEntryTextChanged"
 					TextColor="{StaticResource Gray900}"
-					VerticalOptions="Center" />
+					VerticalOptions="Center"
+					HorizontalOptions="Fill"
 
 				<Label
 					Grid.Column="2"
@@ -52,7 +57,9 @@
 					IsVisible="{Binding Hint, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
 					Text="{Binding Hint, Source={x:Reference Root}}"
 					TextColor="{StaticResource Gray500}"
-					VerticalOptions="Center" />
+					VerticalOptions="Center"
+					HorizontalOptions="End"
+					LineBreakMode="TailTruncation" />
 
 			</Grid>
 
