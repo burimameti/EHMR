@@ -238,17 +238,35 @@ public class PatientService : IPatientService
             .ToList();
     }
 
-    public async Task<List<Mkb10CodeDto>> SearchMkb10CodesAsync(string term, CancellationToken ct = default)
+    public async Task<List<Mkb10CodeDto>> SearchMkb10CodesAsync(
+        string codeTerm,
+        CancellationToken ct = default,
+        string? section = null,
+        string? descriptionTerm = null)
     {
-        if(string.IsNullOrWhiteSpace(term))
-            return [];
+        codeTerm=(codeTerm ?? string.Empty).Trim();
+        descriptionTerm=(descriptionTerm ?? string.Empty).Trim();
 
-        term=term.Trim();
+        if(string.IsNullOrWhiteSpace(codeTerm)&&string.IsNullOrWhiteSpace(descriptionTerm))
+            return [];
 
         await using var db = await _factory.CreateDbContextAsync(ct);
 
-        return await db.Mkb10Codes
-            .Where(x => x.Code.Contains(term)||x.Description.Contains(term))
+        var query=db.Mkb10Codes.AsQueryable();
+
+        if(!string.IsNullOrWhiteSpace(section))
+        {
+            var prefix=section.Trim().ToUpperInvariant();
+            query=query.Where(x => x.Code.StartsWith(prefix));
+        }
+
+        if(!string.IsNullOrWhiteSpace(codeTerm))
+            query=query.Where(x => x.Code.Contains(codeTerm));
+
+        if(!string.IsNullOrWhiteSpace(descriptionTerm))
+            query=query.Where(x => x.Description.Contains(descriptionTerm));
+
+        return await query
             .OrderBy(x => x.Code)
             .Take(20)
             .Select(x => new Mkb10CodeDto
