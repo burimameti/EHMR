@@ -4,15 +4,19 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	x:Name="Root">
 
-	<Grid RowDefinitions="Auto,40" RowSpacing="4" HorizontalOptions="Fill">
+	<Grid
+		HorizontalOptions="Fill"
+		RowDefinitions="Auto,40"
+		RowSpacing="4">
 
 		<Label
 			CharacterSpacing=".5"
 			FontAttributes="Bold"
 			FontSize="11"
+			HorizontalOptions="Start"
 			IsVisible="{Binding Label, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
 			Text="{Binding Label, Source={x:Reference Root}}"
-			TextColor="{StaticResource Gray600}" HorizontalOptions="Start" />
+			TextColor="{StaticResource Gray600}" />
 
 		<Border
 			Grid.Row="1"
@@ -24,42 +28,45 @@
 			StrokeShape="RoundRectangle 6"
 			StrokeThickness="1">
 
-			<Grid Padding="10,0" ColumnDefinitions="18,*,Auto" ColumnSpacing="0" HorizontalOptions="Fill">
+			<Grid
+				Padding="10,0"
+				ColumnDefinitions="18,*,Auto"
+				ColumnSpacing="0"
+				HorizontalOptions="Fill">
 
 				<Label
 					Grid.Column="0"
 					FontFamily="FASolid"
 					FontSize="12"
+					HorizontalOptions="Start"
 					Text="&#xf002;"
 					TextColor="{StaticResource Gray500}"
-					VerticalOptions="Center"
-					HorizontalOptions="Start" />
+					VerticalOptions="Center" />
 
 				<Entry
 					Grid.Column="1"
 					Margin="8,0,0,0"
 					BackgroundColor="Transparent"
-					HorizontalOptions="Fill"
 					Completed="OnEntryCompleted"
 					FontSize="12"
+					HorizontalOptions="Fill"
 					Placeholder="{Binding Placeholder, Source={x:Reference Root}}"
 					PlaceholderColor="{StaticResource Gray500}"
 					Text="{Binding Text, Source={x:Reference Root}, Mode=TwoWay}"
 					TextChanged="OnEntryTextChanged"
 					TextColor="{StaticResource Gray900}"
-					VerticalOptions="Center"
-					HorizontalOptions="Fill" />
+					VerticalOptions="Center" />
 
 				<Label
 					Grid.Column="2"
 					FontAttributes="Bold"
 					FontSize="11"
+					HorizontalOptions="End"
 					IsVisible="{Binding Hint, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
+					LineBreakMode="TailTruncation"
 					Text="{Binding Hint, Source={x:Reference Root}}"
 					TextColor="{StaticResource Gray500}"
-					VerticalOptions="Center"
-					HorizontalOptions="End"
-					LineBreakMode="TailTruncation" />
+					VerticalOptions="Center" />
 
 			</Grid>
 
