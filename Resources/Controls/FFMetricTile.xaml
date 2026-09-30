@@ -6,7 +6,7 @@
 	x:Name="Root">
 
 	<Border
-		x:Name="Container"
+		AutomationId="MetricContainer"
 		Margin="4"
 		Padding="14,10"
 		BackgroundColor="{Binding TileBackground, Source={x:Reference Root}}"
@@ -23,10 +23,10 @@
 				Offset="0,2" />
 		</Border.Shadow>
 
-		<Grid x:Name="MetricGrid" RowDefinitions="Auto,Auto" RowSpacing="8">
-			<Grid x:Name="MetricHeaderGrid" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4">
+		<Grid AutomationId="MetricGrid" RowDefinitions="Auto,Auto" RowSpacing="8">
+			<Grid AutomationId="MetricHeaderGrid" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4">
 				<Border
-					x:Name="MetricIcon"
+					AutomationId="MetricIcon"
 					BackgroundColor="{Binding IconBackground, Source={x:Reference Root}}"
 					HeightRequest="32"
 					IsVisible="{Binding ShowIcon, Source={x:Reference Root}}"
@@ -37,7 +37,7 @@
 						<RoundRectangle CornerRadius="12" />
 					</Border.StrokeShape>
 					<Label
-						x:Name="MetricIconLabel"
+						AutomationId="MetricIconLabel"
 						FontFamily="FASolid"
 						FontSize="12"
 						HorizontalOptions="Center"
@@ -46,7 +46,7 @@
 						VerticalOptions="Center" />
 				</Border>
 				<Label
-					x:Name="MetricTitle"
+					AutomationId="MetricTitle"
 					Grid.Column="1"
 					CharacterSpacing="0.9"
 					FontAttributes="Bold"
@@ -57,7 +57,7 @@
 					TextColor="{Binding TitleColor, Source={x:Reference Root}}"
 					VerticalOptions="Center" />
 				<Label
-					x:Name="MetricValue"
+					AutomationId="MetricValue"
 					Grid.Column="2"
 					FontAttributes="Bold"
 					FontSize="22"
@@ -67,7 +67,7 @@
 			</Grid>
 
 			<Border
-				x:Name="MoreBorder"
+				AutomationId="MoreBorder"
 				Grid.Row="1"
 				Padding="10,5"
 				BackgroundColor="{Binding AccentColor, Source={x:Reference Root}}"
@@ -80,16 +80,16 @@
 				<Border.GestureRecognizers>
 					<TapGestureRecognizer Command="{Binding Command, Source={x:Reference Root}}" CommandParameter="{Binding CommandParameter, Source={x:Reference Root}}" />
 				</Border.GestureRecognizers>
-				<HorizontalStackLayout x:Name="MoreLayout" Spacing="5">
+				<HorizontalStackLayout AutomationId="MoreLayout" Spacing="5">
 					<Label
-						x:Name="MoreLabel"
+						AutomationId="MoreLabel"
 						FontAttributes="Bold"
 						FontSize="11"
 						Text="Повеќе"
 						TextColor="White"
 						VerticalOptions="Center" />
 					<Label
-						x:Name="MoreArrow"
+						AutomationId="MoreArrow"
 						FontAttributes="Bold"
 						FontSize="12"
 						Text="›"
