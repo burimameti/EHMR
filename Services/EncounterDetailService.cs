@@ -596,7 +596,8 @@ public class EncounterDetailService : IEncounterDetailService
         List<Prescription> prescriptions,
         List<PatientMedicine> medicines,
         List<Guid> deletedMedicineIds,
-        string? scoreText = null)
+        string? scoreText = null,
+        DateTime? nextFollowUpDate = null)
     {
         await using var db = await _factory.CreateDbContextAsync();
         await using var tx = await db.Database.BeginTransactionAsync();
@@ -699,7 +700,10 @@ public class EncounterDetailService : IEncounterDetailService
             {
                 var entity = await db.PatientMedicines.FirstOrDefaultAsync(x => x.Id==id);
                 if(entity is not null)
-                    db.PatientMedicines.Remove(entity);
+                {
+                    entity.IsActive=false;
+                    entity.EndDate=DateTime.UtcNow;
+                }
             }
 
             foreach(var vm in medicines.Where(x => !deletedMedicineIds.Contains(x.Id)))
@@ -793,6 +797,32 @@ public class EncounterDetailService : IEncounterDetailService
             {
                 existingScore.ScoreText=normalizedScore;
                 existingScore.RecordedAt=DateTime.UtcNow;
+            }
+
+            // Optional follow-up appointment. The appointment and its future encounter
+            // are created in the same transaction so the next control is immediately
+            // visible in the patient's schedule and the old therapy history remains intact.
+            if(nextFollowUpDate is { } followUp && followUp.Date>=DateTime.Today)
+            {
+                var followUpAppointment=new Appointment
+                {
+                    Id=Guid.NewGuid(),
+                    PatientId=encounter.PatientId,
+                    DoctorId=encounter.DoctorId,
+                    TherapyCycleId=encounter.TherapyCycleId,
+                    ScheduledStart=followUp,
+                    ScheduledEnd=followUp.AddMinutes(30),
+                    ReasonForVisit="Следен контрол",
+                    ClinicalNotes="Следен термин за контрола од прегледот.",
+                    Status=AppointmentStatus.Scheduled
+                };
+
+                followUpAppointment.AppointmentNumber=await SequenceHelper.GenerateNumberAsync(
+                    db, SequenceNames.Appointment, "TER");
+                var followUpEncounterNumber=await SequenceHelper.GenerateNumberAsync(
+                    db, SequenceNames.Encounter, "PREG");
+                await BuildEncounterAsync(db, followUpAppointment, followUpEncounterNumber);
+                db.Appointments.Add(followUpAppointment);
             }
 
             await db.SaveChangesAsync();
