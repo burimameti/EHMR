@@ -228,14 +228,14 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         if(SelectedGender!="All")
             query=query.Where(x => x.Gender.ToString().Equals(SelectedGender, StringComparison.OrdinalIgnoreCase));
 
-        if(SelectedBloodType!="All")
-            query=query.Where(x => x.BloodType.Equals(SelectedBloodType, StringComparison.OrdinalIgnoreCase));
+        //if(SelectedBloodType!="All")
+        //    query=query.Where(x => x.BloodType.Equals(SelectedBloodType, StringComparison.OrdinalIgnoreCase));
 
         if(SelectedCity!="All")
             query=query.Where(x => x.City.Equals(SelectedCity, StringComparison.OrdinalIgnoreCase));
 
-        if(SelectedAgeGroup!="All")
-            query=query.Where(x => x.Age.IsInAgeGroup(SelectedAgeGroup));
+        //if(SelectedAgeGroup!="All")
+        //    query=query.Where(x => x.Age.IsInAgeGroup(SelectedAgeGroup));
 
         return query;
     }
@@ -260,9 +260,9 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
 
         OnPropertyChanged(nameof(SelectedStatusDisplay));
         OnPropertyChanged(nameof(SelectedGenderDisplay));
-        OnPropertyChanged(nameof(SelectedBloodTypeDisplay));
+
         OnPropertyChanged(nameof(SelectedCityDisplay));
-        OnPropertyChanged(nameof(SelectedAgeGroupDisplay));
+
     }
 
     // =========================================================
@@ -380,13 +380,13 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         Pickers.Clear();
         _statusPicker=MakePicker("Статус", StatusFilters, SelectedStatusDisplay, s => SelectedStatusDisplay=s);
         _genderPicker=MakePicker("Пол", GenderFilters, SelectedGenderDisplay, s => SelectedGenderDisplay=s);
-        _bloodTypePicker=MakePicker("Крвна група", BloodTypeFilters, SelectedBloodTypeDisplay, s => SelectedBloodTypeDisplay=s);
+        //_bloodTypePicker=MakePicker("Крвна група", BloodTypeFilters, SelectedBloodTypeDisplay, s => SelectedBloodTypeDisplay=s);
         _cityPicker=MakePicker("Град", CityFilterNames, SelectedCityDisplay, s => SelectedCityDisplay=s);
         //_ageGroupPicker=MakePicker("Возрасна група", AgeGroups, SelectedAgeGroupDisplay, s => SelectedAgeGroupDisplay=s);
 
         Pickers.Add(_statusPicker);
         Pickers.Add(_genderPicker);
-        Pickers.Add(_bloodTypePicker);
+        //Pickers.Add(_bloodTypePicker);
         Pickers.Add(_cityPicker);
         //Pickers.Add(_ageGroupPicker);
     }
@@ -416,7 +416,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         {
                  new() { Header = "БРОЈ НА ПАЦИЕНТ", Key = "PatientNumber", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "ЕЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
-            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "FullName", Width = new GridLength(2.8, GridUnitType.Star) },
+
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "FullName", Width = new GridLength(2.8, GridUnitType.Star) },
             new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.8, GridUnitType.Star) },
             new() { Header = "ВОЗРАСТ", Key = "Age", CellType = SparkGridCellType.Number, Width = new GridLength(0.9, GridUnitType.Star) },

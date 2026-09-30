@@ -19,8 +19,7 @@
 		<Grid
 			Grid.Column="1"
 			Margin="0"
-			RowDefinitions="Auto,*"
-			RowSpacing="16">
+			RowDefinitions="Auto,*">
 
 			<!--  HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
@@ -46,8 +45,8 @@
 			<!--  MAIN CONTENT / GRID  -->
 			<Border
 				Grid.Row="1"
-				BackgroundColor="{StaticResource PageBackground}"
-				StrokeThickness="0">
+				Padding="0"
+				StrokeThickness="-1">
 				<ScrollView VerticalScrollBarVisibility="Never">
 					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
 

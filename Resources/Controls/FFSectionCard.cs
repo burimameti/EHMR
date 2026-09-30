@@ -31,7 +31,7 @@ public sealed class FFSectionCard : Border
     public FFSectionCard()
     {
         Padding=0;
-        Margin=new Thickness(16, 0, 16, 0);
+        Margin=new Thickness(0, 0, 0, 0);
         StrokeThickness=1;
         StrokeShape=new RoundRectangle { CornerRadius=0 };
         Shadow=null;

@@ -7,9 +7,11 @@ using EHMR.Domain.Interfaces;
 using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Services.Dto;
+using EHMR.ViewModels.Encounters; // MkbAlphabetSection
 using EHMR.ViewModels.Patients;
 using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -128,6 +130,11 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         _navigationService=navigationService;
         _userDialogService=userDialogService;
         _dbFactory=dbFactory;
+
+        // MKB10 A-Z sections, исто као во EncounterBaseViewModel.
+        for(var letter = 'A'; letter<='Z'; letter++)
+            MkbAlphabetSections.Add(new MkbAlphabetSection(letter.ToString(), letter=='A'));
+
         InitializeForm();
     }
 
@@ -229,12 +236,12 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [ObservableProperty] private ObservableCollection<TherapyCycle> therapyCycleHistory = new();
 
     public IEnumerable<TherapyCycle> ActiveTherapies => TherapyCycleHistory
-        .Where(x => x.Status==TherapyStatus.Active || x.Status==TherapyStatus.Planned)
+        .Where(x => x.Status==TherapyStatus.Active||x.Status==TherapyStatus.Planned)
         .OrderByDescending(x => x.StartDate);
 
     public IEnumerable<TherapyCycle> PreviousTherapies => TherapyCycleHistory
-        .Where(x => x.Status!=TherapyStatus.Active && x.Status!=TherapyStatus.Planned)
-        .OrderByDescending(x => x.EndDate ?? x.StartDate);
+        .Where(x => x.Status!=TherapyStatus.Active&&x.Status!=TherapyStatus.Planned)
+        .OrderByDescending(x => x.EndDate??x.StartDate);
     [ObservableProperty] private ObservableCollection<Prescription> prescriptionHistory = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> medicineHistory = new();
 
@@ -411,7 +418,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
         }
 
-        if(Patient.Status==PatientStatus.Inactive && !Documents.Any(x => x.DocumentType==PatientDocumentType.Resenie))
+        if(Patient.Status==PatientStatus.Inactive&&!Documents.Any(x => x.DocumentType==PatientDocumentType.Resenie))
         {
             await _userDialogService.ShowAlertAsync("Валидација", "За неактивен пациент мора да се прикачи решение за неактивност.", "ОК");
             return;
@@ -439,7 +446,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             }
         }
 
-        var confirmed=await _userDialogService.ShowConfirmationAsync(
+        var confirmed = await _userDialogService.ShowConfirmationAsync(
             "Потврда",
             "Дали сте сигурни дека сакате да ги зачувате податоците?",
             "Зачувај",
@@ -708,7 +715,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     }
 
     // =====================================================
-    // MKB10 DIAGNOSIS SEARCH + ATTACH
+    // MKB10 DIAGNOSIS SEARCH + ATTACH (усогласено со EncounterBaseViewModel: A-Z секции)
     // =====================================================
 
     private CancellationTokenSource _mkbSearchCts = new();
@@ -719,6 +726,10 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [ObservableProperty] private bool showMkbDropdown;
     [ObservableProperty] private string selectedMkb10Display = string.Empty;
 
+    public ObservableCollection<MkbAlphabetSection> MkbAlphabetSections { get; } = new();
+
+    [ObservableProperty] private string selectedMkbSection = "A";
+
     partial void OnMkbSearchTextChanged(string value) => DebounceSearchMkb10(value);
 
     private async void DebounceSearchMkb10(string query)
@@ -727,13 +738,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         _mkbSearchCts?.Dispose();
         _mkbSearchCts=new CancellationTokenSource();
         var token = _mkbSearchCts.Token;
-
-        if(string.IsNullOrWhiteSpace(query))
-        {
-            MkbResults.Clear();
-            ShowMkbDropdown=false;
-            return;
-        }
 
         try
         {
@@ -745,9 +749,22 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
+    private async Task SelectMkbSectionAsync(MkbAlphabetSection section)
+    {
+        if(section==null)
+            return;
+
+        SelectedMkbSection=section.Letter;
+        foreach(var item in MkbAlphabetSections)
+            item.IsSelected=item.Letter==SelectedMkbSection;
+
+        await SearchMkbAsync(MkbSearchText, CancellationToken.None);
+    }
+
+    [RelayCommand]
     private async Task SearchMkbAsync(string query, CancellationToken token = default)
     {
-        if(string.IsNullOrWhiteSpace(query))
+        if(string.IsNullOrWhiteSpace(SelectedMkbSection))
         {
             MkbResults.Clear();
             ShowMkbDropdown=false;
@@ -756,7 +773,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
         try
         {
-            var results = await _patientService.SearchMkb10CodesAsync(query);
+            var results = await _patientService.SearchMkb10CodesAsync(query ?? string.Empty, CancellationToken.None);
             if(token.IsCancellationRequested) return;
 
             MkbResults=new ObservableCollection<Mkb10CodeDto>(results);
@@ -845,7 +862,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     {
         try
         {
-            var regimes=await _patientService.GetApplicationRegimesAsync();
+            var regimes = await _patientService.GetApplicationRegimesAsync();
             _applicationRegimes=regimes;
             ApplicationRegimeOptions=new ObservableCollection<string>(
                 regimes.Select(x => x.Regime));
@@ -883,7 +900,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task AddApplicationRegimeAsync()
     {
-        var value=(NewApplicationRegimeText??string.Empty).Trim();
+        var value = (NewApplicationRegimeText??string.Empty).Trim();
         if(string.IsNullOrWhiteSpace(value))
         {
             await _userDialogService.ShowAlertAsync("Режим на апликација", "Внесете режим на апликација.", "ОК");
@@ -892,7 +909,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
         try
         {
-            var regime=await _patientService.AddApplicationRegimeAsync(value);
+            var regime = await _patientService.AddApplicationRegimeAsync(value);
             if(!_applicationRegimes.Any(x => x.Id==regime.Id))
                 _applicationRegimes.Add(regime);
             if(!ApplicationRegimeOptions.Contains(regime.Regime))
