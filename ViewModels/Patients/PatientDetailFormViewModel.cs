@@ -224,6 +224,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [ObservableProperty] private ObservableCollection<Diagnosis> diagnosisHistory = new();
     [ObservableProperty] private ObservableCollection<Encounter> encounterHistory = new();
     [ObservableProperty] private ObservableCollection<PatientScore> scoreHistory = new();
+    [ObservableProperty] private string currentPatientScore = string.Empty;
     [ObservableProperty] private ObservableCollection<Appointment> appointmentHistory = new();
     [ObservableProperty] private ObservableCollection<TherapyCycle> therapyCycleHistory = new();
 
@@ -262,6 +263,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                     .Where(x => x.PatientId==patientId)
                     .OrderByDescending(x => x.RecordedAt)
                     .ToListAsync());
+            CurrentPatientScore=ScoreHistory.FirstOrDefault()?.ScoreText??string.Empty;
 
             AppointmentHistory=new ObservableCollection<Appointment>(
                 await db.Appointments
