@@ -961,8 +961,8 @@
 																	<Label Grid.Column="6" Padding="8,8" Text="{Binding Manufacturer}" LineBreakMode="TailTruncation" />
 																	<Label Grid.Column="7" Padding="8,8" Text="{Binding DefaultDosage}" LineBreakMode="TailTruncation" />
 																																					<Picker Grid.Column="8" Margin="3,2" ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}" SelectedItem="{Binding PatientMedicine.ApplicationRegime, Mode=TwoWay}" FontSize="11" />
-																	<Entry Grid.Column="8" Margin="3,2" Keyboard="Numeric" Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" FontSize="12" />
-																	<Button Grid.Column="9" Padding="0" BackgroundColor="Transparent" Text="✕" TextColor="#DC2626" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" />
+																	<Entry Grid.Column="9" Margin="3,2" Keyboard="Numeric" Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" FontSize="12" />
+																	<Button Grid.Column="10" Padding="0" BackgroundColor="Transparent" Text="✕" TextColor="#DC2626" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" />
 																</Grid>
 															</DataTemplate>
 														</BindableLayout.ItemTemplate>
