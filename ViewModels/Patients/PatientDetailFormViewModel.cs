@@ -846,6 +846,10 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
+    private async Task OpenApplicationRegimesAsync()
+        => await _navigationService.GoToAsync(AppRoutes.ApplicationRegimes.List);
+
+    [RelayCommand]
     private async Task AddApplicationRegimeAsync()
     {
         var value=(NewApplicationRegimeText??string.Empty).Trim();
