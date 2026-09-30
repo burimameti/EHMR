@@ -741,6 +741,13 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         _mkbSearchCts=new CancellationTokenSource();
         var token = _mkbSearchCts.Token;
 
+        if(string.IsNullOrWhiteSpace(MkbCodeSearchText)&&string.IsNullOrWhiteSpace(MkbDescriptionSearchText))
+        {
+            MkbResults.Clear();
+            ShowMkbDropdown=false;
+            return;
+        }
+
         try
         {
             await Task.Delay(300, token);
