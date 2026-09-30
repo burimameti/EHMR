@@ -131,9 +131,10 @@
 				MinimumHeightRequest="64">
 
 				<!--  Search uses all remaining horizontal space.  -->
-				<VerticalStackLayout Grid.Column="0" Spacing="4">
+				<VerticalStackLayout Grid.Column="0" Spacing="4" HorizontalOptions="Fill" MinimumWidthRequest="220">
 					<sc:FFSearchBox
 						x:Name="HeaderSearchBox"
+						HorizontalOptions="Fill"
 						Label="Пребарување"
 						Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
 						SearchCommand="{Binding SearchCommand, Source={x:Reference Root}}"
@@ -222,7 +223,7 @@
 								x:Name="HeaderPicker"
 								ItemsSource="{Binding Items}"
 								Label="{Binding Placeholder}"
-								MinimumWidthRequest="140"
+								MinimumWidthRequest="110"
 								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
