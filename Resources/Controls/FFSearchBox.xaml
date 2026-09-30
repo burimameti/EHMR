@@ -2,9 +2,15 @@
 	x:Class="EHMR.Resources.Controls.FFSearchBox"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	x:Name="Root">
+	x:Name="Root"
+	HorizontalOptions="Fill"
+	VerticalOptions="Center">
 
-	<Grid RowDefinitions="Auto,40" RowSpacing="4" HorizontalOptions="Fill" VerticalOptions="Fill">
+	<Grid
+		RowDefinitions="Auto,Auto"
+		RowSpacing="4"
+		HorizontalOptions="Fill"
+		VerticalOptions="Center">
 
 		<Label
 			CharacterSpacing=".5"
@@ -17,13 +23,19 @@
 		<Border
 			Grid.Row="1"
 			BackgroundColor="White"
-			HeightRequest="40"
+			MinimumHeightRequest="40"
 			HorizontalOptions="Fill"
+			VerticalOptions="Center"
 			Stroke="{StaticResource Gray300}"
 			StrokeShape="RoundRectangle 6"
 			StrokeThickness="1">
 
-			<Grid Padding="10,0" ColumnDefinitions="22,*,Auto" ColumnSpacing="0" HorizontalOptions="Fill" VerticalOptions="Fill">
+			<Grid
+				Padding="10,0"
+				ColumnDefinitions="22,*,Auto"
+				ColumnSpacing="0"
+				HorizontalOptions="Fill"
+				VerticalOptions="Center">
 
 				<Label
 					Grid.Column="0"
