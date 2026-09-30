@@ -732,7 +732,7 @@
 									</VerticalStackLayout>
 
 									<!--  РЕД 4 — БИОЛОШКА ТЕРАПИЈА  -->
-					<VerticalStackLayout Grid.Row="2" Spacing="10">
+					<VerticalStackLayout Grid.Row="3" Spacing="10">
 						<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" />
 						<Grid ColumnDefinitions="0.67*,0.33*" ColumnSpacing="14">
 
@@ -864,7 +864,7 @@
 					</VerticalStackLayout>
 
 <!--  РЕД 5 — ЗАБЕЛЕШКА  -->
-					<VerticalStackLayout Grid.Row="3" Spacing="10">
+					<VerticalStackLayout Grid.Row="4" Spacing="10">
 						<controls:CrudSectionHeader Title="ЗАБЕЛЕШКА" />
 						<Border IsEnabled="{Binding IsEditMode}" MinimumHeightRequest="70" Style="{StaticResource TextAreaFieldBoxStyle}">
 							<Editor AutoSize="TextChanges" BackgroundColor="Transparent" FontSize="13" Placeholder="Забелешка за пациентот..." PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.Allergies}" TextColor="{StaticResource SparkTextPrimary}" />
@@ -872,7 +872,7 @@
 					</VerticalStackLayout>
 
 <!--  РЕД 6 — ДОСИЕ (документи)  -->
-									<VerticalStackLayout Grid.Row="4" Spacing="10">
+									<VerticalStackLayout Grid.Row="5" Spacing="10">
 
 										<controls:CrudSectionHeader Title="ДОСИЕ" />
 
