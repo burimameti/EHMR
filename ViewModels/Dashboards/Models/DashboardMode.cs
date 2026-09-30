@@ -48,7 +48,6 @@ public partial class DashboardViewModel
 
         Cancelled,
 
-        NoShow,
 
         Critical
     }
@@ -88,7 +87,6 @@ public partial class DashboardViewModel
             EncounterStatus.InProgress => "Во тек",
             EncounterStatus.Completed => "Завршен",
             EncounterStatus.Cancelled => "Откажан",
-            EncounterStatus.NoShow => "Не се пријавил",
             _ => "Нема прегледи"
         };
 
@@ -112,7 +110,6 @@ public partial class DashboardViewModel
                         EncounterStatus.Scheduled => DashboardPatientState.Scheduled,
                         EncounterStatus.Completed => DashboardPatientState.Completed,
                         EncounterStatus.Cancelled => DashboardPatientState.Cancelled,
-                        EncounterStatus.NoShow => DashboardPatientState.NoShow,
                         _ => DashboardPatientState.None
                     };
                 }
