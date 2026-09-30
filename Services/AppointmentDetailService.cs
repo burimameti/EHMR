@@ -59,7 +59,7 @@ namespace EHMR.Services
             var cutoff = DateTime.Now.AddDays(-3);
 
             var stale = await db.Appointments
-                .Where(a => (a.Status==AppointmentStatus.Scheduled||a.Status==AppointmentStatus.CheckedIn)
+                .Where(a => (a.Status==AppointmentStatus.Scheduled||a.Status==AppointmentStatus.InProgress)
                             &&a.ScheduledStart<cutoff)
                 .ToListAsync();
 
@@ -489,12 +489,10 @@ namespace EHMR.Services
         private static EncounterStatus MapToEncounterStatus(AppointmentStatus status) => status switch
         {
             AppointmentStatus.Scheduled => EncounterStatus.Scheduled,
-            AppointmentStatus.CheckedIn => EncounterStatus.InProgress,
             AppointmentStatus.InProgress => EncounterStatus.InProgress,
             AppointmentStatus.Completed => EncounterStatus.Completed,
             AppointmentStatus.Cancelled => EncounterStatus.Cancelled,
             AppointmentStatus.Missed => EncounterStatus.NoShow,
-            AppointmentStatus.ReScheduled => EncounterStatus.Cancelled,
             _ => EncounterStatus.Scheduled
         };
 
@@ -512,8 +510,7 @@ namespace EHMR.Services
         private static int LifecycleOrder(EncounterStatus s) => s switch
         {
             EncounterStatus.Scheduled => 0,
-            EncounterStatus.CheckedIn => 1,
-            EncounterStatus.InProgress => 2,
+            EncounterStatus.InProgress => 1,
             EncounterStatus.Completed => 4,
             EncounterStatus.Cancelled => 5,
             EncounterStatus.NoShow => 5,
@@ -523,12 +520,9 @@ namespace EHMR.Services
         private static int LifecycleOrder(AppointmentStatus s) => s switch
         {
             AppointmentStatus.Scheduled => 0,
-            AppointmentStatus.CheckedIn => 1,
-            AppointmentStatus.InProgress => 2,
             AppointmentStatus.Completed => 4,
             AppointmentStatus.Cancelled => 5,
             AppointmentStatus.Missed => 5,
-            AppointmentStatus.ReScheduled => 5,
             _ => 0
         };
 
@@ -541,7 +535,7 @@ namespace EHMR.Services
 
             // Terminal states on appointment side — map and win
             if(a is AppointmentStatus.Completed or AppointmentStatus.Cancelled
-                   or AppointmentStatus.Missed or AppointmentStatus.ReScheduled)
+                   or AppointmentStatus.Missed)
                 return MapToEncounterStatus(a);
 
             // Non-terminal — whichever is further ahead wins
@@ -554,8 +548,6 @@ namespace EHMR.Services
         private static AppointmentStatus MapToAppointmentStatus(EncounterStatus s) => s switch
         {
             EncounterStatus.Scheduled => AppointmentStatus.Scheduled,
-            EncounterStatus.CheckedIn => AppointmentStatus.CheckedIn,
-            EncounterStatus.InProgress => AppointmentStatus.InProgress,
             EncounterStatus.Completed => AppointmentStatus.Completed,
             EncounterStatus.Cancelled => AppointmentStatus.Cancelled,
             EncounterStatus.NoShow => AppointmentStatus.Missed,
