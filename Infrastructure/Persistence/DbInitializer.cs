@@ -40,13 +40,17 @@ public class DatabaseMigrationService
         }
         else
         {
-            var pending = await db.Database.GetPendingMigrationsAsync();
+            var pending = (await db.Database.GetPendingMigrationsAsync()).ToList();
 
-          //  if(pending.Any())
-            {
-                //BackupDatabase(db);
-                await db.Database.MigrateAsync();
-            }
+            if(pending.Count > 0)
+                _logger?.LogInformation("Applying {Count} pending database migrations: {Migrations}", pending.Count, string.Join(", ", pending));
+
+            await db.Database.MigrateAsync();
+
+            // Older local databases may have been created before the migration was
+            // compiled into the application. Make the PatientMedicine schema safe
+            // before any EF query can touch PharmaceuticalReference.
+            await EnsurePatientMedicineSchemaAsync(db);
         }
 
         await NormalizeLegacyStatusesAsync(db);
@@ -71,6 +75,28 @@ public class DatabaseMigrationService
 
         var runner = scope.ServiceProvider.GetRequiredService<SeederRunner>();
         await runner.RunAsync(includeDemo);
+    }
+
+    private static async Task EnsurePatientMedicineSchemaAsync(DesktopTherapyDbContext db)
+    {
+        if(!db.Database.IsSqlServer())
+            return;
+
+        var connection=db.Database.GetDbConnection();
+        await using var command=connection.CreateCommand();
+        command.CommandText="""
+            IF COL_LENGTH('dbo.PatientMedicines', 'PharmaceuticalReference') IS NULL
+            BEGIN
+                ALTER TABLE dbo.PatientMedicines
+                ADD PharmaceuticalReference nvarchar(200) NOT NULL CONSTRAINT DF_PatientMedicines_PharmaceuticalReference DEFAULT '';
+            END
+            """;
+
+        if(connection.State != System.Data.ConnectionState.Open)
+            await connection.OpenAsync();
+
+        await command.ExecuteNonQueryAsync();
+        _logger?.LogInformation("Verified PatientMedicines.PharmaceuticalReference schema.");
     }
 
     private static async Task NormalizeLegacyStatusesAsync(DesktopTherapyDbContext db)
