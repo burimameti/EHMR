@@ -771,7 +771,7 @@ public enum AppointmentStatusFilter
     All,
     Active,
     Scheduled,
-    CheckedIn,
+    InProgress,
     Completed,
     Cancelled,
     Missed
