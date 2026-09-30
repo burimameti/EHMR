@@ -30,7 +30,6 @@ namespace EHMR.Converters
                 AppointmentStatus.Completed => false,
                 AppointmentStatus.Cancelled => false,
 
-                AppointmentStatus.Missed => false,
                 _ => false,
             };
         }
