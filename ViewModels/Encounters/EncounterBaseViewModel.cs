@@ -264,7 +264,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     {
         EncounterTabFilter.InProgress => PatientEncounters.Where(e => e.Status==EncounterStatus.InProgress),
         EncounterTabFilter.Completed => PatientEncounters.Where(e => e.Status==EncounterStatus.Completed),
-        EncounterTabFilter.Cancelled => PatientEncounters.Where(e => e.Status is EncounterStatus.Cancelled or EncounterStatus.NoShow),
+        EncounterTabFilter.Cancelled => PatientEncounters.Where(e => e.Status==EncounterStatus.Cancelled),
         _ => PatientEncounters
     };
 
