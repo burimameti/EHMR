@@ -616,6 +616,13 @@
 											</Border>
 											<Border
 												Grid.Column="2"
+												Padding="10,8"
+												BackgroundColor="#475569"
+												StrokeThickness="0">
+												<Label FontAttributes="Bold" FontSize="10" Text="РЕЖИМ НА АПЛИКАЦИЈА" TextColor="White" />
+											</Border>
+											<Border
+												Grid.Column="3"
 												BackgroundColor="#475569"
 												StrokeShape="RoundRectangle 0,6,0,0"
 												StrokeThickness="0" />
@@ -669,6 +676,20 @@
 														</Border>
 														<Border
 															Grid.Column="2"
+															Padding="3,0"
+															BackgroundColor="White"
+															HeightRequest="44"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															StrokeThickness="1">
+															<Picker
+																ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
+																SelectedItem="{Binding ApplicationRegime, Mode=TwoWay}"
+																FontSize="11"
+																Title="Избери режим"
+																VerticalOptions="Center" />
+														</Border>
+														<Border
+															Grid.Column="3"
 															BackgroundColor="White"
 															HeightRequest="44"
 															Stroke="{StaticResource SparkBorderSubtle}"
