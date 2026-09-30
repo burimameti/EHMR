@@ -265,9 +265,8 @@ public class Encounter
 public enum EncounterStatus
 {
     Scheduled = 0,
-    CheckedIn = 1,
-    InProgress = 2,
-    Completed = 3,
-    Cancelled = 4,
-    NoShow = 5
+    InProgress = 1,
+    Completed = 2,
+    Cancelled = 3,
+    NoShow = 4,
 }
