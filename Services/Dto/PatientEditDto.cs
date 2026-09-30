@@ -322,4 +322,12 @@ namespace EHMR.Services.Dto
         public string LastName { get; set; } = "";
         public string DisplayName => $"Д-р {FirstName} {LastName}";
     }
+    public class ApplicationRegimeDto
+    {
+        public Guid Id { get; set; }
+        public string Regime { get; set; } = "";
+        public bool IsActive { get; set; }
+        public string Display => Regime;
+    }
+
 }
