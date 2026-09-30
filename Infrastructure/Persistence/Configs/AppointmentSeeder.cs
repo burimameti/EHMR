@@ -64,7 +64,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                     ScheduledEnd = now.AddHours(-0.5),
                     ReasonForVisit = "Физикална терапија - рамото",
                     ClinicalNotes = "Пациентот е пристигнат и е во тек преглед.",
-                    Status = AppointmentStatus.CheckedIn
+                    Status = AppointmentStatus.InProgress
                 },
                 new Appointment
                 {
@@ -74,7 +74,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                     ScheduledEnd = now.AddHours(-1.5),
                     ReasonForVisit = "Контрола на повреда",
                     ClinicalNotes = "Чека на терапија.",
-                    Status = AppointmentStatus.CheckedIn
+                    Status = AppointmentStatus.InProgress
                 },
 
                 // ===================== COMPLETED =====================
@@ -182,7 +182,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                     ScheduledEnd = now.AddHours(-4.5),
                     ReasonForVisit = "Физикална терапија",
                     ClinicalNotes = "Пациентот во процес на терапија.",
-                    Status = AppointmentStatus.CheckedIn
+                    Status = AppointmentStatus.InProgress
                 },
 
                 new Appointment
