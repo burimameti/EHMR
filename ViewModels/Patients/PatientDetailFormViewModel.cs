@@ -849,6 +849,26 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             _applicationRegimes=regimes;
             ApplicationRegimeOptions=new ObservableCollection<string>(
                 regimes.Select(x => x.Regime));
+
+            // Стандардни режими за терапијата на пациентот.
+            // Ако веќе постојат во базата, не се додаваат повторно.
+            foreach(var regime in new[]
+            {
+                "Неделно",
+                "На две недели",
+                "На три недели",
+                "Месечно",
+                "На 3 месеци",
+                "На 6 месеци",
+                "Годишно"
+            })
+            {
+                if(!ApplicationRegimeOptions.Any(x =>
+                    string.Equals(x, regime, StringComparison.OrdinalIgnoreCase)))
+                {
+                    ApplicationRegimeOptions.Add(regime);
+                }
+            }
         }
         catch(Exception ex)
         {
