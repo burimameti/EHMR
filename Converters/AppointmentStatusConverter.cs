@@ -64,7 +64,6 @@ namespace EHMR.Converters
                 AppointmentStatus.InProgress => "#8B5CF6",   // Violet
                 AppointmentStatus.Completed => "#10B981",   // Success green
                 AppointmentStatus.Cancelled => "#EF4444",   // Danger red
-                AppointmentStatus.Missed => "#94A3B8",      // Muted gray
                 _ => "#94A3B8"
             };
 
