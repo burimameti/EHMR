@@ -76,7 +76,7 @@ namespace EHMR.Domain.Entities.Reports
         {
             _statusPicker=new SparkPickerItem { Placeholder="Статус" };
 
-            foreach(var item in new[] { "Сите", "Закажан", "Пријавен", "Завршен", "Откажан", "Пропуштен" })
+            foreach(var item in new[] { "Сите", "Закажан", "Во тек", "Завршен", "Откажан", "Не се пријавил" })
                 _statusPicker.Items.Add(item);
 
             _statusPicker.SelectedItem=_selectedStatusFilter;
@@ -152,9 +152,9 @@ namespace EHMR.Domain.Entities.Reports
                 "Завршени" or "Завршен" => appointments.Where(x => x.Status==AppointmentStatus.Completed),
                 "Проблематични" => appointments.Where(x => x.Status is AppointmentStatus.Cancelled or AppointmentStatus.Missed),
                 "Закажан" => appointments.Where(x => x.Status==AppointmentStatus.Scheduled),
-                "Пријавен" => appointments.Where(x => x.Status==AppointmentStatus.InProgress),
+                "Во тек" => appointments.Where(x => x.Status==AppointmentStatus.InProgress),
                 "Откажан" => appointments.Where(x => x.Status==AppointmentStatus.Cancelled),
-                "Пропуштен" => appointments.Where(x => x.Status==AppointmentStatus.Missed),
+                "Не се пријавил" => appointments.Where(x => x.Status==AppointmentStatus.Missed),
                 _ => appointments
             };
 
@@ -205,10 +205,10 @@ namespace EHMR.Domain.Entities.Reports
         private static string StatusLabel(AppointmentStatus status) => status switch
         {
             AppointmentStatus.Scheduled => "Закажан",
-            AppointmentStatus.InProgress => "Пријавен",
+            AppointmentStatus.InProgress => "Во тек",
             AppointmentStatus.Completed => "Завршен",
             AppointmentStatus.Cancelled => "Откажан",
-            AppointmentStatus.Missed => "Пропуштен",
+            AppointmentStatus.Missed => "Не се пријавил",
             AppointmentStatus.InProgress => "Во тек",
             _ => status.ToString()
         };
