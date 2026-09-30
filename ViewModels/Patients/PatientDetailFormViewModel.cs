@@ -928,20 +928,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         ShowMedicineDropdown=false;
     }
 
-    private void SyncApplicationRegimeIds()
-    {
-        foreach(var row in AttachedMedicines)
-        {
-            var name=row.PatientMedicine.ApplicationRegime?.Trim()??string.Empty;
-            row.PatientMedicine.ApplicationRegimeId=null;
-            if(name.Length>0)
-            {
-                // The selected text is unique in the lookup table.
-                _=name;
-            }
-        }
-    }
-
     [RelayCommand]
     private void RemoveMedicine(AttachedMedicineRow row)
     {
