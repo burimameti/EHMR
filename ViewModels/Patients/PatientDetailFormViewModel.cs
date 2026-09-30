@@ -704,7 +704,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     {
         if(!IsEditMode) return;
 
-        Patient.DoctorId=null;
+        Patient.DoctorId=Guid.Empty;
         SelectedDoctorDisplay=string.Empty;
         DoctorSearchText=string.Empty;
         DoctorSearchResults.Clear();
