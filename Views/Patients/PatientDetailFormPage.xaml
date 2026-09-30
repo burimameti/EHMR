@@ -292,18 +292,6 @@
 								ColumnSpacing="8"
 								RowDefinitions="Auto,Auto,Auto"
 								RowSpacing="18">
-								<controls:CrudTimelineMarker
-									Grid.Row="0"
-									Grid.Column="0"
-									WidthRequest="24" />
-								<controls:CrudTimelineMarker
-									Grid.Row="1"
-									Grid.Column="0"
-									WidthRequest="24" />
-								<controls:CrudTimelineMarker
-									Grid.Row="2"
-									Grid.Column="0"
-									WidthRequest="24" />
 								<!--  COLUMN 0 — ЛИЧНИ ПОДАТОЦИ  -->
 								<!--  ================================================  -->
 								<VerticalStackLayout
@@ -311,7 +299,7 @@
 									Grid.Column="1"
 									Spacing="16">
 
-									<controls:CrudSectionHeader Title="ЛИЧНИ ПОДАТОЦИ" />
+									<controls:CrudSectionHeader Title="ЛИЧНИ ИНФОРМАЦИИ" />
 
 									<!--  ── РЕД 1: Име | Презиме ────────────────────────  -->
 									<Grid
@@ -450,7 +438,7 @@
 									</Grid>
 
 									<!--  ДОКУМЕНТИ / РЕШЕНИЕ  -->
-									<controls:CrudSectionHeader Title="ДОКУМЕНТИ / РЕШЕНИЕ" />
+									<controls:CrudSectionHeader Title="ДОКУМЕНТИ НА ПАЦИЕНТ" />
 
 									<Border
 										Padding="14"
@@ -913,39 +901,13 @@
 										</Grid>
 									</Border>
 
-<!-- СТАТУС НА ПАЦИЕНТ -->
-									<controls:CrudSectionHeader Title="СТАТУС НА ПАЦИЕНТ" />
-									<Border Padding="12" BackgroundColor="{StaticResource SparkBackground}" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
-										<VerticalStackLayout Spacing="8">
-											<HorizontalStackLayout Spacing="18">
-												<HorizontalStackLayout Spacing="6">
-													<CheckBox IsChecked="{Binding IsPatientActive, Mode=TwoWay}" IsEnabled="{Binding IsEditMode}" VerticalOptions="Center" />
-													<Label Text="Активен" VerticalOptions="Center" FontAttributes="Bold" />
-												</HorizontalStackLayout>
-												<HorizontalStackLayout Spacing="6">
-													<HorizontalStackLayout.GestureRecognizers>
-														<TapGestureRecognizer Command="{Binding SetInactiveCommand}" />
-													</HorizontalStackLayout.GestureRecognizers>
-													<CheckBox IsChecked="{Binding IsPatientInactive, Mode=OneWay}" IsEnabled="False" VerticalOptions="Center" />
-													<Label Text="Неактивен" VerticalOptions="Center" FontAttributes="Bold" />
-												</HorizontalStackLayout>
-											</HorizontalStackLayout>
-											<VerticalStackLayout IsVisible="{Binding IsPatientInactive}" Spacing="4">
-												<Label Text="Причина за неактивност *" Style="{StaticResource EditFieldLabelStyle}" />
-												<Border IsEnabled="{Binding IsEditMode}" Style="{StaticResource TextAreaFieldBoxStyle}">
-													<Editor AutoSize="TextChanges" FontSize="13" Placeholder="Внесете причина..." Text="{Binding InactiveReason, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" />
-												</Border>
-											</VerticalStackLayout>
-										</VerticalStackLayout>
-									</Border>
-
-								<!--  COLUMN 2 — КОНТАКТ ИНФОРМАЦИИ  -->
+<!--  COLUMN 2 — КОНТАКТ ИНФОРМАЦИИ  -->
 								<!--  ================================================  -->
 								<VerticalStackLayout
 									Grid.Row="1"
 									Grid.Column="1"
 									Spacing="16">
-									<controls:CrudSectionHeader Title="КОНТАКТ ИНФОРМАЦИИ" />
+									<controls:CrudSectionHeader Title="КОНТАКТ И ИТЕН КОНТАКТ" />
 
 									<Grid Padding="{StaticResource FormRowPadding}" ColumnDefinitions="*,*" ColumnSpacing="16">
 										<VerticalStackLayout Grid.Column="0" IsVisible="{Binding IsEditMode}" Spacing="4">
