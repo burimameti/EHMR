@@ -6,7 +6,6 @@
 	x:Name="Root"
 	SizeChanged="OnGridSizeChanged">
 	<Border
-		Margin="-15,-14,-15,-22"
 		Background="White"
 		Stroke="#D8DEE8"
 		StrokeShape="RoundRectangle 0"

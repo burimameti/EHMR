@@ -7,8 +7,7 @@ using EHMR.Domain.Interfaces;
 using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Services.Dto;
-using EHMR.ViewModels.Encounters; // MkbAlphabetSection
-using EHMR.ViewModels.Patients;
+
 using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -1150,5 +1149,22 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         _medicineSearchCts.Cancel();
         _medicineSearchCts.Dispose();
         GC.SuppressFinalize(this);
+    }
+
+    public partial class MkbAlphabetSection : ObservableObject
+    {
+        public MkbAlphabetSection(string letter, bool isSelected)
+        {
+            Letter=letter;
+            IsSelected=isSelected;
+        }
+
+        public string Letter
+        {
+            get;
+        }
+
+        [ObservableProperty]
+        private bool isSelected;
     }
 }

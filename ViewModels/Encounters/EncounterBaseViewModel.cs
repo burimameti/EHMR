@@ -1094,7 +1094,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             selectedId.Value);
         IsEditMode=false;
         IsReadOnly=true;
-    }    // =====================================================
+    }    
+    // =====================================================
     // DIAGNOSIS / MKB10
     // =====================================================
 

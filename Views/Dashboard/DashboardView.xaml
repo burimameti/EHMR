@@ -269,9 +269,7 @@
 						-->
 						<!--  ===================================================  -->
 						<controls:FFSectionCard>
-							<CollectionView
-								ItemsSource="{Binding Kpis}"
-								SelectionMode="None">
+							<CollectionView ItemsSource="{Binding Kpis}" SelectionMode="None">
 								<CollectionView.ItemsLayout>
 									<GridItemsLayout
 										HorizontalItemSpacing="10"
@@ -284,12 +282,16 @@
 										<Border
 											Padding="12,8"
 											BackgroundColor="White"
-											MinimumHeightRequest="72"
 											HorizontalOptions="Fill"
+											MinimumHeightRequest="72"
 											Stroke="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
 											StrokeShape="RoundRectangle 12"
 											StrokeThickness="1.5">
-											<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
+											<Grid
+												ColumnDefinitions="Auto,*,Auto"
+												ColumnSpacing="8"
+												RowDefinitions="Auto,Auto"
+												RowSpacing="3">
 												<Border
 													Grid.RowSpan="2"
 													BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
@@ -298,10 +300,30 @@
 													StrokeThickness="0"
 													VerticalOptions="Start"
 													WidthRequest="30">
-													<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="{Binding Icon}" TextColor="White" VerticalOptions="Center" />
+													<Label
+														FontFamily="FASolid"
+														FontSize="12"
+														HorizontalOptions="Center"
+														Text="{Binding Icon}"
+														TextColor="White"
+														VerticalOptions="Center" />
 												</Border>
-												<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="{Binding Title}" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
-												<Label Grid.Column="2" FontAttributes="Bold" FontSize="19" Text="{Binding Value}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
+												<Label
+													Grid.Column="1"
+													FontAttributes="Bold"
+													FontSize="9"
+													LineBreakMode="TailTruncation"
+													MaxLines="1"
+													Text="{Binding Title}"
+													TextColor="{StaticResource SubtitleColor}"
+													VerticalOptions="Center" />
+												<Label
+													Grid.Column="2"
+													FontAttributes="Bold"
+													FontSize="19"
+													Text="{Binding Value}"
+													TextColor="{StaticResource TitleColor}"
+													VerticalOptions="Center" />
 												<Border
 													Grid.Row="1"
 													Grid.Column="1"
@@ -312,9 +334,18 @@
 													MinimumHeightRequest="28"
 													MinimumWidthRequest="82"
 													StrokeThickness="0">
-													<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-													<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" /></Border.GestureRecognizers>
-													<Label FontAttributes="Bold" FontSize="10" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
+													<Border.StrokeShape>
+														<RoundRectangle CornerRadius="8" />
+													</Border.StrokeShape>
+													<Border.GestureRecognizers>
+														<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
+													</Border.GestureRecognizers>
+													<Label
+														FontAttributes="Bold"
+														FontSize="10"
+														HorizontalTextAlignment="Center"
+														Text="Повеќе  ›"
+														TextColor="White" />
 												</Border>
 											</Grid>
 										</Border>
