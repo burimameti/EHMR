@@ -104,6 +104,9 @@ namespace EHMR.Services.Dto
             get; init;
         }
 
+        public Guid? ApplicationRegimeId { get; init; }
+        public decimal Quantity { get; init; } = 1;
+
         public bool IsActive
         {
             get; init;
