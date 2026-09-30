@@ -614,7 +614,7 @@ public class EncounterDetailService : IEncounterDetailService
                 var duplicateActive = await db.Encounters.AsNoTracking().AnyAsync(e =>
                     e.AppointmentId==apptId&&
                     e.Id!=encounter.Id&&
-                    e.Status!=EncounterStatus.Cancelled&&
+                    e.Status!=EncounterStatus.Cancelled);
 
                 if(duplicateActive)
                     throw new InvalidOperationException(
@@ -752,8 +752,7 @@ public class EncounterDetailService : IEncounterDetailService
                     appt.Status=resolvedAppointment;
 
                     var isTerminal = resolvedEncounter is EncounterStatus.Completed
-                                                        or EncounterStatus.Cancelled
-       ;
+                                                        or EncounterStatus.Cancelled;
 
                     if(isTerminal&&!encounter.IsLocked)
                     {
