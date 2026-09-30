@@ -52,7 +52,6 @@ namespace EHMR.Domain.Entities.Reports
         public IEnumerable<SparkGridColumn> Columns =>
   [
       new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(220) },
-    new() { Header = "МАТИЧЕН БРОЈ", Key = "NationalId", Width = new GridLength(150) },
     new() { Header = "ДОКТОР", Key = "Doctor", Width = new GridLength(220) },
     new() { Header = "ДИЈАГНОЗА", Key = "Diagnosis", Width = new GridLength(170) },
     new() { Header = "ЦИКЛУС", Key = "Cycle", Width = new GridLength(100) },
