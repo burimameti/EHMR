@@ -31,7 +31,6 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
         {
             if(!SetProperty(ref _selectedStatus, value)) return;
             SyncSparkPickersFromFilters();
-            SyncSparkTabsFromFilters();
             ApplyPipeline();
         }
     }
@@ -74,9 +73,6 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
             ClearError();
             var items = await _therapyService.GetCyclesAsync();
             AllItems=items;
-
-            RefreshSparkTabCounts();
-
             ApplyPipeline();
         }
         catch(Exception ex)
@@ -220,8 +216,6 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
             labelSelector: o => o.Label,
             isSelectedSelector: o => SelectedStatus.Filter==o.Filter,
             onSelect: o => SelectedStatus=o);
-
-        RefreshSparkTabCounts();
     }
     private void RefreshSparkTabCounts()
     {
@@ -257,7 +251,6 @@ public partial class TherapyCycleListViewModel : BaseViewModel<TherapyCycle>
 
     private void InitializeSparkControls()
     {
-        BuildSparkTabs();
         BuildSparkPickers();
         BuildSparkButtons();
         BuildSparkGridColumns();
