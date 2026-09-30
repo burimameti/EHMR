@@ -34,8 +34,8 @@
 	<Style x:Key="FormWorkspaceCardStyle" TargetType="Border">
 		<Setter Property="Padding" Value="18" />
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
-		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
-		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Stroke" Value="#CBD5E1" />
+		<Setter Property="StrokeThickness" Value="1.2" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
 		<Setter Property="Shadow" Value="{x:Null}" />
 	</Style>
