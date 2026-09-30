@@ -224,6 +224,13 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     partial void OnPrescriptionTabChanged(PrescriptionTabFilter value) => OnPropertyChanged(nameof(FilteredPrescriptions));
 
     // ===================== FILTERED (COMPUTED) VIEWS =====================
+    public ObservableCollection<string> ApplicationRegimeOptions => new(
+        PatientMedicines
+            .Where(x => !string.IsNullOrWhiteSpace(x.ApplicationRegime))
+            .Select(x => x.ApplicationRegime!)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(x => x));
+
     public string CurrentDiagnosesSummary => string.Join(", ", PatientDiagnoses
         .Where(x => x.Mkb10Code!=null)
         .Select(x => $"{x.Mkb10Code!.Code} - {x.Mkb10Code.Description}")
@@ -312,6 +319,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             OnPropertyChanged(nameof(CurrentDiagnosesSummary));
             OnPropertyChanged(nameof(ActiveMedicinesSummary));
             OnPropertyChanged(nameof(ActiveTherapySummary));
+            OnPropertyChanged(nameof(ApplicationRegimeOptions));
             OnPropertyChanged(nameof(HasPatientContext));
             OnPropertyChanged(nameof(HasEncounterContext));
         }
