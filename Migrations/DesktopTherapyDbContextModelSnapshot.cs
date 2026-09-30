@@ -195,6 +195,40 @@ namespace EHMR.Migrations
                     b.ToTable("AppLicenses");
                 });
 
+            modelBuilder.Entity("EHMR.Domain.Entities.ApplicationRegime", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Regime")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Regime")
+                        .IsUnique();
+
+                    b.ToTable("ApplicationRegimes");
+                });
+
             modelBuilder.Entity("EHMR.Domain.Entities.Appointment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -612,7 +646,7 @@ namespace EHMR.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-b.Property<decimal>("Strength")
+                    b.Property<decimal>("Strength")
                         .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
@@ -766,6 +800,10 @@ b.Property<decimal>("Strength")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("InactiveReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -887,6 +925,9 @@ b.Property<decimal>("Strength")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<Guid?>("TherapyCycleId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -904,6 +945,8 @@ b.Property<decimal>("Strength")
 
                     b.HasIndex("PatientId");
 
+                    b.HasIndex("TherapyCycleId");
+
                     b.ToTable("PatientDocuments");
                 });
 
@@ -911,6 +954,9 @@ b.Property<decimal>("Strength")
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ApplicationRegimeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -957,6 +1003,10 @@ b.Property<decimal>("Strength")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -964,6 +1014,8 @@ b.Property<decimal>("Strength")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationRegimeId");
 
                     b.HasIndex("EncounterId");
 
@@ -1347,6 +1399,9 @@ b.Property<decimal>("Strength")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DecisionText")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -1556,13 +1611,25 @@ b.Property<decimal>("Strength")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("EHMR.Domain.Entities.TherapyCycle", "TherapyCycle")
+                        .WithMany("Documents")
+                        .HasForeignKey("TherapyCycleId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Encounter");
 
                     b.Navigation("Patient");
+
+                    b.Navigation("TherapyCycle");
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.PatientMedicine", b =>
                 {
+                    b.HasOne("EHMR.Domain.Entities.ApplicationRegime", "ApplicationRegime")
+                        .WithMany("PatientMedicines")
+                        .HasForeignKey("ApplicationRegimeId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("EHMR.Domain.Entities.Encounter", "Encounter")
                         .WithMany()
                         .HasForeignKey("EncounterId")
@@ -1579,6 +1646,8 @@ b.Property<decimal>("Strength")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ApplicationRegime");
 
                     b.Navigation("Encounter");
 
@@ -1598,7 +1667,7 @@ b.Property<decimal>("Strength")
                     b.HasOne("EHMR.Domain.Entities.Patient", "Patient")
                         .WithMany("Scores")
                         .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Encounter");
@@ -1655,6 +1724,11 @@ b.Property<decimal>("Strength")
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("EHMR.Domain.Entities.ApplicationRegime", b =>
+                {
+                    b.Navigation("PatientMedicines");
+                });
+
             modelBuilder.Entity("EHMR.Domain.Entities.Appointment", b =>
                 {
                     b.Navigation("Encounter");
@@ -1704,6 +1778,8 @@ b.Property<decimal>("Strength")
             modelBuilder.Entity("EHMR.Domain.Entities.TherapyCycle", b =>
                 {
                     b.Navigation("Appointments");
+
+                    b.Navigation("Documents");
                 });
 #pragma warning restore 612, 618
         }
