@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ContentView
 	x:Class="EHMR.Resources.Controls.SparkExplorerHeaderView"
+	SizeChanged="OnHeaderSizeChanged"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:sc="clr-namespace:EHMR.Resources.Controls"
@@ -124,6 +125,7 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				Padding="10"
+				MinimumWidthRequest="0"
 				ColumnDefinitions="*,Auto,Auto,Auto"
 				ColumnSpacing="8"
 				MinimumHeightRequest="64">
@@ -131,6 +133,7 @@
 				<!--  Search uses all remaining horizontal space.  -->
 				<VerticalStackLayout Grid.Column="0" Spacing="4">
 					<sc:FFSearchBox
+						x:Name="HeaderSearchBox"
 						Label="Пребарување"
 						Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
 						SearchCommand="{Binding SearchCommand, Source={x:Reference Root}}"
@@ -181,6 +184,7 @@
 					</Border>
 				</VerticalStackLayout>
 				<HorizontalStackLayout
+					x:Name="CyrillicToggleLayout"
 					Grid.Column="1"
 					IsVisible="{Binding ShowCyrillicToggle, Source={x:Reference Root}}"
 					Spacing="4"
@@ -207,6 +211,7 @@
 					</Border>
 				</HorizontalStackLayout>
 				<HorizontalStackLayout
+					x:Name="PickerLayout"
 					Grid.Column="2"
 					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
 					Spacing="8"
@@ -214,6 +219,7 @@
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkPickerItem">
 							<sc:FFPicker
+								x:Name="HeaderPicker"
 								ItemsSource="{Binding Items}"
 								Label="{Binding Placeholder}"
 								MinimumWidthRequest="140"
@@ -223,6 +229,7 @@
 				</HorizontalStackLayout>
 
 				<VerticalStackLayout
+					x:Name="ActionLayout"
 					Grid.Column="3"
 					Spacing="4"
 					VerticalOptions="Start">
