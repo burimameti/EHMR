@@ -31,7 +31,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     public bool CanSaveAppointment => IsNewAppointment ? CanCreate : CanUpdate;
     public bool CanEditAppointment =>
         !_isNewAppointmentMode&&CanUpdate&&
-        Appointment.Status is (AppointmentStatus.Scheduled or AppointmentStatus.CheckedIn)&&
+        Appointment.Status is (AppointmentStatus.Scheduled or AppointmentStatus.InProgress)&&
         Appointment.ScheduledStart.Date>=DateTime.Today;
     public bool ShowStatusEditor => IsEditMode&&!IsNewAppointment;
 
@@ -160,12 +160,9 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     } =
     [
         new(AppointmentStatus.Scheduled,   "Закажан"),
-        new(AppointmentStatus.CheckedIn,   "Пријавен"),
         new(AppointmentStatus.InProgress,  "Во тек"),
         new(AppointmentStatus.Completed,   "Завршен"),
         new(AppointmentStatus.Cancelled,   "Откажан"),
-        new(AppointmentStatus.Missed,      "Пропуштен"),
-        new(AppointmentStatus.ReScheduled, "Презакажан"),
     ];
 
     public AppointmentStatusChoice? SelectedStatusOption
