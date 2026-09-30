@@ -157,6 +157,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
             SyncDisplayFromPatient();
             _=LoadApplicationRegimesAsync();
+            _=SearchMkbAsync(CancellationToken.None);
 
             OnPropertyChanged(nameof(IsNewPatient));
             OnPropertyChanged(nameof(HeaderTitle));
@@ -739,8 +740,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
         if(string.IsNullOrWhiteSpace(MkbCodeSearchText)&&string.IsNullOrWhiteSpace(MkbDescriptionSearchText))
         {
-            MkbResults.Clear();
-            ShowMkbDropdown=false;
+            // Empty search means "browse the selected A-Z section", not "hide MKB".
+            await SearchMkbAsync(token);
             return;
         }
 
