@@ -39,7 +39,45 @@ public partial class FFMetricTile : ContentView
     public FFMetricTile()
     {
         InitializeComponent();
-        Loaded+=(_, _) => UpdateVisualState();
+        Loaded += (_, _) =>
+        {
+            UpdateVisualState();
+            ApplyResponsiveLayout();
+        };
+        SizeChanged += (_, _) => ApplyResponsiveLayout();
+    }
+
+    private void ApplyResponsiveLayout()
+    {
+        var width = Width;
+        if (width <= 0)
+            return;
+
+        // Keep the desktop appearance at normal widths and progressively
+        // densify the tile when the available dashboard column becomes narrow.
+        var scale = width >= 260 ? 1d
+            : width >= 225 ? 0.94d
+            : width >= 200 ? 0.88d
+            : width >= 175 ? 0.82d
+            : 0.76d;
+
+        Container.Padding = new Thickness(14 * scale, 10 * scale);
+        MetricGrid.RowSpacing = 8 * scale;
+        MetricHeaderGrid.ColumnSpacing = 4 * scale;
+
+        MetricIcon.WidthRequest = 32 * scale;
+        MetricIcon.HeightRequest = 32 * scale;
+        MetricIcon.CornerRadius = 12 * scale;
+        MetricIconLabel.FontSize = 12 * scale;
+
+        MetricTitle.FontSize = Math.Max(8, 9 * scale);
+        MetricValue.FontSize = Math.Max(16, 22 * scale);
+
+        MoreBorder.Padding = new Thickness(10 * scale, 5 * scale);
+        MoreBorder.StrokeShape = new RoundRectangle { CornerRadius = 12 * scale };
+        MoreLayout.Spacing = 5 * scale;
+        MoreLabel.FontSize = Math.Max(9, 11 * scale);
+        MoreArrow.FontSize = Math.Max(10, 12 * scale);
     }
 
 
