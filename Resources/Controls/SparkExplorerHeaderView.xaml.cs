@@ -62,6 +62,8 @@ namespace EHMR.Resources.Controls
             SecondaryToolbarGrid.MinimumHeightRequest = 64 * s;
 
             HeaderSearchBox.HeightRequest = 42 * s;
+            HeaderSearchBox.HorizontalOptions = LayoutOptions.Fill;
+            HeaderSearchBox.MinimumWidthRequest = Math.Max(220, 260 * s);
             HeaderSearchBox.Margin = new Thickness(0);
 
             CyrillicToggleLayout.WidthRequest = 100 * s;
@@ -73,7 +75,7 @@ namespace EHMR.Resources.Controls
 
             foreach (var child in PickerLayout.Children.OfType<FFPicker>())
             {
-                child.MinimumWidthRequest = Math.Max(105, 140 * s);
+                child.MinimumWidthRequest = Math.Max(100, 110 * s);
                 child.HeightRequest = 42 * s;
             }
 
