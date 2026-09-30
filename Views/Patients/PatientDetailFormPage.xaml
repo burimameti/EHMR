@@ -317,7 +317,7 @@
 
 								<Grid
 									Padding="0"
-									RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+									RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
 									RowSpacing="14">
 									<!--  РЕД 1 — ЛИЧНИ ПОДАТОЦИ (статус скроз десно на иста линија)  -->
 									<VerticalStackLayout Grid.Row="0" Spacing="10">
@@ -693,7 +693,45 @@
 										</FlexLayout>
 									</VerticalStackLayout>
 
-									<!--  РЕД 3 — БИОЛОШКА ТЕРАПИЈА  -->
+									<!--  РЕД 3 — МАТИЧЕН РЕУМАТОЛОГ  -->
+									<VerticalStackLayout Grid.Row="2" Spacing="10">
+										<controls:CrudSectionHeader Title="МАТИЧЕН РЕУМАТОЛОГ" />
+										<Grid ColumnDefinitions="0.25*,0.75*" ColumnSpacing="14">
+											<VerticalStackLayout Grid.Column="0" Spacing="8">
+												<Label Style="{StaticResource EditFieldLabelStyle}" Text="Реуматолог" />
+												<controls:FFSearchBox IsVisible="{Binding IsEditMode}" Placeholder="Пребарај реуматолог..." Text="{Binding DoctorSearchText, Mode=TwoWay}" />
+												<Border Padding="4" BackgroundColor="White" IsVisible="{Binding ShowDoctorDropdown}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
+													<CollectionView HeightRequest="150" ItemsSource="{Binding DoctorSearchResults}" SelectionMode="None">
+														<CollectionView.ItemTemplate>
+															<DataTemplate x:DataType="dto:DoctorDto">
+																<Border Padding="8,6" BackgroundColor="#F8FAFC" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 7" StrokeThickness="1">
+																	<Border.GestureRecognizers>
+																		<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectDoctorCommand}" CommandParameter="{Binding .}" />
+																	</Border.GestureRecognizers>
+																	<VerticalStackLayout Spacing="1">
+																		<Label FontAttributes="Bold" FontSize="11.5" Text="{Binding DisplayName}" TextColor="{StaticResource SparkTextPrimary}" />
+																		<Label FontSize="10" Text="{Binding Specialty}" TextColor="{StaticResource SparkTextSecondary}" />
+																	</VerticalStackLayout>
+																</Border>
+															</DataTemplate>
+														</CollectionView.ItemTemplate>
+													</CollectionView>
+												</Border>
+												<Border BackgroundColor="{StaticResource SparkTabActiveBg}" IsVisible="{Binding SelectedDoctorDisplay, Converter={StaticResource StringNotEmptyConverter}}" Stroke="{StaticResource SparkAccentTealBg}" Style="{StaticResource InfoPillBorderStyle}">
+													<VerticalStackLayout Padding="10,7" Spacing="1">
+														<Label FontSize="9" Text="ИЗБРАН РЕУМАТОЛОГ" TextColor="{StaticResource SparkTextSecondary}" />
+														<Label FontAttributes="Bold" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding SelectedDoctorDisplay}" TextColor="{StaticResource SparkAccentTealDark}" />
+													</VerticalStackLayout>
+												</Border>
+												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
+													<Label FontSize="11" Text="Реуматолог:" TextColor="{StaticResource SparkTextSecondary}" />
+													<Label FontAttributes="Bold" FontSize="13" LineBreakMode="TailTruncation" Text="{Binding SelectedDoctorDisplay}" TextColor="{StaticResource SparkTextPrimary}" />
+												</VerticalStackLayout>
+											</VerticalStackLayout>
+										</Grid>
+									</VerticalStackLayout>
+
+									<!--  РЕД 4 — БИОЛОШКА ТЕРАПИЈА  -->
 					<VerticalStackLayout Grid.Row="2" Spacing="10">
 						<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" />
 						<Grid ColumnDefinitions="0.67*,0.33*" ColumnSpacing="14">
@@ -825,7 +863,7 @@
 						</Grid>
 					</VerticalStackLayout>
 
-<!--  РЕД 4 — ЗАБЕЛЕШКА  -->
+<!--  РЕД 5 — ЗАБЕЛЕШКА  -->
 					<VerticalStackLayout Grid.Row="3" Spacing="10">
 						<controls:CrudSectionHeader Title="ЗАБЕЛЕШКА" />
 						<Border IsEnabled="{Binding IsEditMode}" MinimumHeightRequest="70" Style="{StaticResource TextAreaFieldBoxStyle}">
@@ -833,7 +871,7 @@
 						</Border>
 					</VerticalStackLayout>
 
-<!--  РЕД 5 — ДОСИЕ (документи)  -->
+<!--  РЕД 6 — ДОСИЕ (документи)  -->
 									<VerticalStackLayout Grid.Row="4" Spacing="10">
 
 										<controls:CrudSectionHeader Title="ДОСИЕ" />
