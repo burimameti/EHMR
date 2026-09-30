@@ -13,11 +13,11 @@
 			FontSize="12"
 			CharacterSpacing="0.7"
 			Text="{Binding Title, Source={x:Reference Root}}"
-			TextColor="{StaticResource SparkTextPrimary}"
+			TextColor="{Binding TextColor, Source={x:Reference Root}}"
 			VerticalOptions="Center" />
 		<BoxView
 			Grid.Row="1"
-			BackgroundColor="{StaticResource SidebarActiveBg}"
+			BackgroundColor="{Binding LineColor, Source={x:Reference Root}}"
 			HeightRequest="1"
 			HorizontalOptions="Fill" />
 	</Grid>
