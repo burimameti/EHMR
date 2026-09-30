@@ -305,7 +305,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         Id=source.Id,
         FirstName=source.FirstName,
         LastName=source.LastName,
-        NationalId=PrivacyMaskHelper.MaskNationalId(source.NationalId),
+        NationalId=source.NationalId,
         SzboNumber=source.SzboNumber,
         BirthDate=source.BirthDate,
         Gender=source.Gender,
@@ -314,12 +314,14 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         Email=source.Email,
         Address=source.Address,
         City=source.City,
+        PostalCode=source.PostalCode,
+        EmergencyContactName=source.EmergencyContactName,
+        EmergencyContactPhone=source.EmergencyContactPhone,
+        EmergencyRelationship=source.EmergencyRelationship,
         BloodType=source.BloodType,
         Allergies=source.Allergies,
-        Status=source.Status
-        // NOTE: PatientDto has no PostalCode / EmergencyContact* fields.
-        // If GetByIdAsync doesn't surface those either, edits will silently
-        // drop them on save — see note at the end of my reply.
+        Status=source.Status,
+        InactiveReason=source.InactiveReason
     };
 
     private static PatientEditDto CloneEditDto(PatientEditDto p) => new()
@@ -342,7 +344,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         EmergencyRelationship=p.EmergencyRelationship,
         BloodType=p.BloodType,
         Allergies=p.Allergies,
-        Status=p.Status
+        Status=p.Status,
+        InactiveReason=p.InactiveReason
     };
 
     // ------------------------------------------------------------------ //
