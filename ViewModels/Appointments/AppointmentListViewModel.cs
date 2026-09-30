@@ -720,7 +720,6 @@ public partial class AppointmentListViewModel
     private static string StatusLabel(AppointmentStatus status) => status switch
     {
         AppointmentStatus.Scheduled => "Закажан",
-        AppointmentStatus.InProgress => "Пријавен",
         AppointmentStatus.Completed => "Завршен",
         AppointmentStatus.Cancelled => "Откажан",
         AppointmentStatus.Missed => "Не се пријавил",
