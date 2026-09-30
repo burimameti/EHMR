@@ -28,9 +28,10 @@
 					<PointerGestureRecognizer PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" />
 		</Border.GestureRecognizers>
 		<Grid
-			ColumnDefinitions="Auto,*"
+			ColumnDefinitions="Auto,Auto"
 			ColumnSpacing="8"
-			HorizontalOptions="Center">
+			HorizontalOptions="Center"
+			VerticalOptions="Center">
 			<ActivityIndicator
 				Grid.Column="0"
 				HeightRequest="16"
@@ -44,6 +45,7 @@
 				FontFamily="{Binding FontFamily, Source={x:Reference Root}}"
 				FontSize="{Binding FontSizeEx, Source={x:Reference Root}}"
 				HorizontalTextAlignment="Center"
+				LineBreakMode="NoWrap"
 				Text="{Binding Text, Source={x:Reference Root}}"
 				TextColor="{Binding TextColorEx, Source={x:Reference Root}}"
 				VerticalOptions="Center" />
