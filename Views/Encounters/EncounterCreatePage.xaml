@@ -352,7 +352,9 @@
 									</Grid>
 								</Border>
 
-							<VerticalStackLayout Spacing="10" IsVisible="{Binding HasPatientContext}">
+							</VerticalStackLayout>
+
+<VerticalStackLayout Spacing="10" IsVisible="{Binding HasPatientContext}">
 								<Border Style="{StaticResource SectionPillBorderStyle}">
 									<Label CharacterSpacing="0.5" FontAttributes="Bold" FontSize="12" Style="{StaticResource SectionPillLabelStyle}" Text="БИОЛОШКИ ПОДАТОЦИ" />
 								</Border>
