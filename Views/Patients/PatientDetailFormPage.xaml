@@ -334,37 +334,7 @@
 													BackgroundColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToColorConverter}}"
 													Text="{Binding Patient.Status, Converter={StaticResource PatientStatusToLabelConverter}}"
 													TextColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToTextColorConverter}}" />
-
-												<!--  ☑ Активен   ☐ Неактивен — „Неактивен“ е истото копче како досега  -->
-												<HorizontalStackLayout IsVisible="{Binding IsEditMode}" Spacing="16">
-													<HorizontalStackLayout Spacing="4">
-														<CheckBox
-															IsChecked="{Binding IsPatientInactive, Converter={StaticResource InvertedBoolConverter}, Mode=OneWay}"
-															IsEnabled="False"
-															VerticalOptions="Center"
-															Color="{StaticResource SparkAccentTeal}" />
-														<Label
-															FontAttributes="Bold"
-															Text="Активен"
-															VerticalOptions="Center" />
-													</HorizontalStackLayout>
-													<HorizontalStackLayout Spacing="4">
-														<HorizontalStackLayout.GestureRecognizers>
-															<TapGestureRecognizer Command="{Binding SetInactiveCommand}" />
-														</HorizontalStackLayout.GestureRecognizers>
-														<CheckBox
-															IsChecked="{Binding IsPatientInactive, Mode=OneWay}"
-															IsEnabled="False"
-															VerticalOptions="Center"
-															Color="#DC2626" />
-														<Label
-															FontAttributes="Bold"
-															Text="Неактивен"
-															VerticalOptions="Center" />
-													</HorizontalStackLayout>
-												</HorizontalStackLayout>
-											</HorizontalStackLayout>
-										</Grid>
+						</Grid>
 
 										<VerticalStackLayout IsVisible="{Binding IsPatientInactive}" Spacing="8">
 											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Причина за неактивност *" />
@@ -768,7 +738,7 @@
 								</VerticalStackLayout>
 
 									<!--  РЕД 3 — БИОЛОШКИ ПОДАТОЦИ  -->
-									<VerticalStackLayout Grid.Row="4" Spacing="10">
+									<VerticalStackLayout Grid.Row="3" Spacing="10">
 
 										<controls:CrudSectionHeader Title="БИОЛОШКИ ПОДАТОЦИ" />
 
@@ -1065,7 +1035,7 @@
 									</VerticalStackLayout>
 
 									<!--  РЕД 4 — ДРУГИ БИОЛОШКИ ПОДАТОЦИ  -->
-									<VerticalStackLayout Grid.Row="3" Spacing="10">
+									<VerticalStackLayout Grid.Row="4" Spacing="10">
 
 										<controls:CrudSectionHeader Title="ДРУГИ БИОЛОШКИ ПОДАТОЦИ" />
 
@@ -1148,7 +1118,7 @@
 									</VerticalStackLayout>
 
 									<!--  РЕД 5 — ДОСИЕ (документи)  -->
-									<VerticalStackLayout Grid.Row="4" Spacing="10">
+									<VerticalStackLayout Grid.Row="5" Spacing="10">
 
 										<controls:CrudSectionHeader Title="ДОСИЕ" />
 
