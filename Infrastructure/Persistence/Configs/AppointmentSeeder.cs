@@ -140,7 +140,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                     ScheduledEnd = now.AddDays(-3).AddHours(10).AddMinutes(30),
                     ReasonForVisit = "Контрола",
                     ClinicalNotes = "Терминот е откажан.",
-                    Status = AppointmentStatus.Missed
+                    Status = AppointmentStatus.Cancelled
                 },
 
                 // ===================== ДОПОЛНИТЕЛНИ СЛУЧАИ =====================
