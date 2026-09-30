@@ -17,7 +17,6 @@ internal static class AppointmentStatusColors
 
         AppointmentStatus.Cancelled => Color.FromArgb("#FEE2E2"), // Red
 
-        AppointmentStatus.Missed => Color.FromArgb("#FEE2E2"),    // Red
 
         null => Color.FromArgb("#FEE2E2"),
 
@@ -32,7 +31,6 @@ internal static class AppointmentStatusColors
 
         AppointmentStatus.Cancelled => Color.FromArgb("#DC2626"),
 
-        AppointmentStatus.Missed => Color.FromArgb("#B91C1C"),
 
         null => Color.FromArgb("#DC2626"),
 
