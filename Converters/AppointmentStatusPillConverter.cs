@@ -16,7 +16,7 @@ namespace EHMR.Converters
         private static readonly Dictionary<AppointmentStatus, Color> _colors = new()
         {
             { AppointmentStatus.Scheduled,   Color.FromArgb("#3B82F6") }, // blue
-            { AppointmentStatus.CheckedIn,   Color.FromArgb("#F59E0B") }, // amber
+            { AppointmentStatus.InProgress,   Color.FromArgb("#F59E0B") }, // amber
             { AppointmentStatus.InProgress,  Color.FromArgb("#2563EB") }, // deep blue
             { AppointmentStatus.Completed,   Color.FromArgb("#10B981") }, // green
             { AppointmentStatus.Cancelled,   Color.FromArgb("#EF4444") }, // red
