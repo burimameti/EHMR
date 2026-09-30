@@ -255,10 +255,6 @@
 				Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader Title="{Binding HeaderTitle}" Subtitle="Преглед и управување со податоците за пациентот">
 					<controls:FFPageHeader.HeaderContent>
-						<controls:FFStatusChip
-							BackgroundColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToColorConverter}}"
-							Text="{Binding Patient.Status, Converter={StaticResource PatientStatusToLabelConverter}}"
-							TextColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToTextColorConverter}}" />
 					</controls:FFPageHeader.HeaderContent>
 				</controls:FFPageHeader>
 			</Border>
@@ -300,6 +296,22 @@
 									Spacing="16">
 
 									<controls:CrudSectionHeader Title="ЛИЧНИ ИНФОРМАЦИИ" />
+
+									<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+										<controls:FFStatusChip BackgroundColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToColorConverter}}" Text="{Binding Patient.Status, Converter={StaticResource PatientStatusToLabelConverter}}" TextColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToTextColorConverter}}" />
+										<HorizontalStackLayout IsVisible="{Binding IsEditMode}" Spacing="6">
+											<CheckBox IsChecked="{Binding IsPatientInactive, Mode=OneWay}" IsEnabled="False" VerticalOptions="Center" />
+											<Label Text="Неактивен" FontAttributes="Bold" VerticalOptions="Center" />
+										</HorizontalStackLayout>
+									</HorizontalStackLayout>
+
+									<VerticalStackLayout IsVisible="{Binding IsPatientInactive}" Spacing="8">
+										<Label Text="Причина за неактивност *" Style="{StaticResource EditFieldLabelStyle}" />
+										<Border IsEnabled="{Binding IsEditMode}" Style="{StaticResource TextAreaFieldBoxStyle}">
+											<Editor AutoSize="TextChanges" FontSize="13" Placeholder="Внесете причина..." Text="{Binding InactiveReason, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" />
+										</Border>
+										<controls:FFButton ButtonKind="Secondary" Command="{Binding UploadDocumentCommand}" HeightRequestEx="36" IsVisible="{Binding IsEditMode}" Text="📎 Прикачи решение за неактивност" />
+									</VerticalStackLayout>
 
 									<!--  ── РЕД 1: Име | Презиме ────────────────────────  -->
 									<Grid
@@ -962,7 +974,28 @@
 											</VerticalStackLayout>
 										</Border>
 									</Grid>
-								</VerticalStackLayout>
+								
+
+									<Grid Padding="{StaticResource FormRowPadding}" ColumnDefinitions="*,*,*" ColumnSpacing="10">
+										<VerticalStackLayout Grid.Column="0" IsVisible="{Binding IsEditMode}" Spacing="4">
+											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Итен контакт" />
+											<Border Style="{StaticResource EditFieldBoxStyle}"><Entry BackgroundColor="Transparent" FontSize="13" Placeholder="Име и презиме" Text="{Binding Patient.EmergencyContactName}" TextColor="{StaticResource SparkTextPrimary}" /></Border>
+										</VerticalStackLayout>
+										<VerticalStackLayout Grid.Column="1" IsVisible="{Binding IsEditMode}" Spacing="4">
+											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Телефон" />
+											<Border Style="{StaticResource EditFieldBoxStyle}"><Entry BackgroundColor="Transparent" FontSize="13" Keyboard="Telephone" Placeholder="+389..." Text="{Binding Patient.EmergencyContactPhone}" TextColor="{StaticResource SparkTextPrimary}" /></Border>
+										</VerticalStackLayout>
+										<VerticalStackLayout Grid.Column="2" IsVisible="{Binding IsEditMode}" Spacing="4">
+											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Однос" />
+											<Border Style="{StaticResource EditFieldBoxStyle}"><Picker BackgroundColor="Transparent" ItemsSource="{Binding RelationOptions}" SelectedItem="{Binding SelectedRelationDisplay}" TextColor="{StaticResource SparkTextPrimary}" /></Border>
+										</VerticalStackLayout>
+										<VerticalStackLayout Grid.ColumnSpan="3" IsVisible="{Binding IsReadOnly}" Spacing="2">
+											<Label FontSize="10" Text="Итен контакт" TextColor="{StaticResource SparkTextSecondary}" />
+											<Label FontAttributes="Bold" FontSize="13" Text="{Binding Patient.EmergencyContactName}" TextColor="{StaticResource SparkTextPrimary}" />
+											<Label FontSize="12" Text="{Binding Patient.EmergencyContactPhone}" TextColor="{StaticResource SparkTextSecondary}" />
+											<Label FontSize="12" Text="{Binding Patient.EmergencyRelationship}" TextColor="{StaticResource SparkTextSecondary}" />
+										</VerticalStackLayout>
+									</Grid></VerticalStackLayout>
 							</Grid>
 							<BoxView
 								BackgroundColor="{StaticResource PageBackground}"
