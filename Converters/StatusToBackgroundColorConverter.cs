@@ -11,7 +11,7 @@ internal static class AppointmentStatusColors
     public static Color GetBackground(AppointmentStatus? status) => status switch
     {
         AppointmentStatus.Scheduled => Color.FromArgb("#FEF3C7"), // Amber
-        AppointmentStatus.CheckedIn => Color.FromArgb("#FFEDD5"), // Orange
+        AppointmentStatus.InProgress => Color.FromArgb("#FFEDD5"), // Orange
 
         AppointmentStatus.Completed => Color.FromArgb("#DCFCE7"), // Green
 
@@ -27,7 +27,6 @@ internal static class AppointmentStatusColors
     public static Color GetAccent(AppointmentStatus? status) => status switch
     {
         AppointmentStatus.Scheduled => Color.FromArgb("#D97706"),
-        AppointmentStatus.CheckedIn => Color.FromArgb("#EA580C"),
 
         AppointmentStatus.Completed => Color.FromArgb("#16A34A"),
 
