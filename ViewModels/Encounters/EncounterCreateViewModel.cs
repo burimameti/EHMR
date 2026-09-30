@@ -49,6 +49,45 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     [ObservableProperty]
     private bool showPatientSuggestions;
 
+    [ObservableProperty]
+    private bool scheduleNextFollowUp;
+
+    [ObservableProperty]
+    private DateTime nextFollowUpDate=DateTime.Today.AddDays(7);
+
+    [ObservableProperty]
+    private string? selectedFollowUpInterval;
+
+    public DateTime FollowUpMinimumDate => DateTime.Today;
+
+    public ObservableCollection<string> FollowUpIntervalOptions { get; } =
+        new()
+        {
+            "1 недела",
+            "2 недели",
+            "3 недели",
+            "1 месец",
+            "3 месеци",
+            "6 месеци",
+            "1 година"
+        };
+
+    partial void OnSelectedFollowUpIntervalChanged(string? value)
+    {
+        if(string.IsNullOrWhiteSpace(value)) return;
+        NextFollowUpDate=value switch
+        {
+            "1 недела" => DateTime.Today.AddDays(7),
+            "2 недели" => DateTime.Today.AddDays(14),
+            "3 недели" => DateTime.Today.AddDays(21),
+            "1 месец" => DateTime.Today.AddMonths(1),
+            "3 месеци" => DateTime.Today.AddMonths(3),
+            "6 месеци" => DateTime.Today.AddMonths(6),
+            "1 година" => DateTime.Today.AddYears(1),
+            _ => NextFollowUpDate
+        };
+    }
+
     // ── Medicine table visibility ─────────────────────────────────────────────
     public bool HasEncounterMedicines => EncounterMedicines.Count>0;
 
@@ -92,6 +131,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                 IsPatientLockedFromContext=true;
                 IsEditMode=true;
                 IsReadOnly=false;
+                LoadCurrentMedicinesForEncounter();
                 RefreshSidePanel();
                 _isLoaded=true;
                 return;
@@ -110,6 +150,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                     await LoadTherapyCyclesForPatientAsync(matchedPatient.Id);
                     await LoadAppointmentsForPatientAsync(matchedPatient.Id);
                     await LoadPatientContextAsync(matchedPatient.Id);
+                    LoadCurrentMedicinesForEncounter();
                 }
                 finally { _isApplyingContext=false; }
                 _patientContext.SelectedItem=null;
@@ -178,10 +219,22 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             await LoadTherapyCyclesForPatientAsync(patient.Id);
             await LoadAppointmentsForPatientAsync(patient.Id);
             await LoadPatientContextAsync(patient.Id);
+            LoadCurrentMedicinesForEncounter();
         }
         finally { _isApplyingContext=false; }
         RefreshSidePanel();
     }
+
+    private void LoadCurrentMedicinesForEncounter()
+    {
+        if(EncounterMedicines.Count>0) return;
+        foreach(var medicine in PatientMedicines.Where(x => x.IsActive).OrderBy(x => x.StartDate))
+        {
+            medicine.EncounterId=Encounter.Id==Guid.Empty ? null : Encounter.Id;
+            EncounterMedicines.Add(medicine);
+        }
+    }
+
     // ── Schedule display ──────────────────────────────────────────────────────
     public string AutomaticScheduleDisplay =>
         Encounter.ScheduledStart is { } start
@@ -323,7 +376,8 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                 Prescriptions.ToList(),
                 EncounterMedicines.ToList(),
                 DeletedMedicineIds.ToList(),
-                ScoreText);
+                ScoreText,
+                ScheduleNextFollowUp ? NextFollowUpDate.Date.AddHours(9) : null);
 
             await NavigationService.GoToAsync(AppRoutes.Encounters.List);
 
