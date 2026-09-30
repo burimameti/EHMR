@@ -620,7 +620,7 @@ public partial class DashboardViewModel : ObservableObject
         [AppointmentStatus.Completed]="Завршен",
         [AppointmentStatus.InProgress]="Во тек",
         [AppointmentStatus.Cancelled]="Откажан",
-        [AppointmentStatus.Missed]="Пропуштен",
+        [AppointmentStatus.Missed]="Не се пријавил",
     };
 
     // =========================================================
@@ -1236,8 +1236,6 @@ public partial class DashboardViewModel : ObservableObject
     {
         [DashboardPatientState.None]="—",
         [DashboardPatientState.Scheduled]="Закажан",
-        [DashboardPatientState.Waiting]="Чека",
-        [DashboardPatientState.CheckedIn]="Пријавен",
         [DashboardPatientState.InProgress]="Во тек",
         [DashboardPatientState.Completed]="Завршен",
         [DashboardPatientState.Cancelled]="Откажан",
@@ -1249,8 +1247,6 @@ public partial class DashboardViewModel : ObservableObject
     {
         DashboardPatientState.Completed => SparkBadgeTone.Success,
         DashboardPatientState.InProgress => SparkBadgeTone.Success,
-        DashboardPatientState.CheckedIn => SparkBadgeTone.Warning,
-        DashboardPatientState.Waiting => SparkBadgeTone.Warning,
         DashboardPatientState.Scheduled => SparkBadgeTone.Neutral,
         DashboardPatientState.NoShow => SparkBadgeTone.Danger,
         DashboardPatientState.Cancelled => SparkBadgeTone.Danger,
@@ -1359,11 +1355,10 @@ public partial class DashboardViewModel : ObservableObject
     private static readonly Dictionary<EncounterStatus, string> EncounterStatusDisplay = new()
     {
         [EncounterStatus.Scheduled]="Закажан",
-        [EncounterStatus.InProgress]="Пријавен",
         [EncounterStatus.InProgress]="Во тек",
         [EncounterStatus.Completed]="Завршен",
         [EncounterStatus.Cancelled]="Откажан",
-        [EncounterStatus.NoShow]="Не дојде"
+        [EncounterStatus.NoShow]="Не се пријавил"
     };
 
     private static Color EncounterStatusToColor(EncounterStatus status) => status switch
