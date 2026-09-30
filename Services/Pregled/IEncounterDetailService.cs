@@ -20,7 +20,8 @@ public interface IEncounterDetailService
         List<Prescription> prescriptions,
         List<PatientMedicine> medicines,
         List<Guid> deletedMedicineIds,
-        string? scoreText = null); 
+        string? scoreText = null,
+        DateTime? nextFollowUpDate = null); 
 
     Task UpdateEncounterClinicalData(
         Guid encounterId,
