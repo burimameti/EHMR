@@ -28,9 +28,74 @@ namespace EHMR.Resources.Controls
     /// </summary>
     public partial class SparkExplorerHeaderView : ContentView
     {
+        private double _responsiveScale = 1d;
+        private double _lastResponsiveWidth = -1;
+
         public SparkExplorerHeaderView()
         {
             InitializeComponent();
+        }
+
+        private void OnHeaderSizeChanged(object? sender, EventArgs e)
+        {
+            ApplyResponsiveLayout();
+        }
+
+        private void ApplyResponsiveLayout()
+        {
+            var width = Width;
+            if (width <= 0 || Math.Abs(width - _lastResponsiveWidth) < 2)
+                return;
+
+            _lastResponsiveWidth = width;
+            _responsiveScale = width >= 1500 ? 1d
+                : width >= 1250 ? 0.94d
+                : width >= 1050 ? 0.88d
+                : width >= 900 ? 0.82d
+                : 0.76d;
+
+            var s = _responsiveScale;
+
+            ExplorerGrid.Padding = new Thickness(0, 0, 6 * s, Math.Max(1, 1 * s));
+            SecondaryToolbarGrid.Padding = new Thickness(10 * s);
+            SecondaryToolbarGrid.ColumnSpacing = 8 * s;
+            SecondaryToolbarGrid.MinimumHeightRequest = 64 * s;
+
+            HeaderSearchBox.HeightRequest = 42 * s;
+            HeaderSearchBox.Margin = new Thickness(0);
+
+            CyrillicToggleLayout.WidthRequest = 100 * s;
+            CyrillicToggleLayout.Spacing = 4 * s;
+            CyrillicToggleLayout.IsVisible = ShowCyrillicToggle && width >= 900;
+
+            PickerLayout.Spacing = 8 * s;
+            ActionLayout.Spacing = 4 * s;
+
+            foreach (var child in PickerLayout.Children.OfType<FFPicker>())
+            {
+                child.MinimumWidthRequest = Math.Max(105, 140 * s);
+                child.HeightRequest = 42 * s;
+            }
+
+            foreach (var child in ActionLayout.Children.SelectMany(v => v is HorizontalStackLayout h ? h.Children : Array.Empty<IView>()))
+            {
+                if (child is FFButton button)
+                {
+                    button.HeightRequest = 44 * s;
+                    button.ContentPadding = new Thickness(16 * s, 0);
+                }
+            }
+
+            // Dense desktop widths: keep the toolbar on one line and let the
+            // search area absorb the available space rather than stacking controls.
+            SecondaryToolbarGrid.ColumnDefinitions.Clear();
+            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            if (CyrillicToggleLayout.IsVisible)
+                SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            else
+                SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0) });
+            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         }
 
         #region Search Visibility
