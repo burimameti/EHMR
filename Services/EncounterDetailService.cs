@@ -703,6 +703,8 @@ public class EncounterDetailService : IEncounterDetailService
                         PatientId=encounter.PatientId,
                         EncounterId=encounter.Id,
                         MedicineId=vm.MedicineId,
+                        ApplicationRegimeId=vm.ApplicationRegimeId,
+                        Quantity=vm.Quantity,
                         Dosage=vm.Dosage,
                         DosesFrequency=vm.DosesFrequency,
                         StartDate=vm.StartDate,
@@ -715,6 +717,8 @@ public class EncounterDetailService : IEncounterDetailService
                 {
                     entity.EncounterId=encounter.Id;
                     entity.MedicineId=vm.MedicineId;
+                    entity.ApplicationRegimeId=vm.ApplicationRegimeId;
+                    entity.Quantity=vm.Quantity;
                     entity.Dosage=vm.Dosage;
                     entity.DosesFrequency=vm.DosesFrequency;
                     entity.StartDate=vm.StartDate;
