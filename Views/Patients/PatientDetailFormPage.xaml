@@ -935,7 +935,7 @@
 
 											<ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Always">
 												<VerticalStackLayout WidthRequest="1180" Spacing="0">
-													<Grid ColumnDefinitions="180,180,110,110,90,90,180,180,100,42" ColumnSpacing="1" BackgroundColor="#475569">
+													<Grid ColumnDefinitions="180,180,110,110,90,90,180,180,180,100,42" ColumnSpacing="1" BackgroundColor="#475569">
 														<Label Padding="8,7" Text="НАЗИВ" FontAttributes="Bold" FontSize="10" TextColor="White" />
 														<Label Grid.Column="1" Padding="8,7" Text="ГЕНЕРИЧКО ИМЕ" FontAttributes="Bold" FontSize="10" TextColor="White" />
 														<Label Grid.Column="2" Padding="8,7" Text="ШИФРА" FontAttributes="Bold" FontSize="10" TextColor="White" />
@@ -943,9 +943,10 @@
 														<Label Grid.Column="4" Padding="8,7" Text="ЈАЧИНА" FontAttributes="Bold" FontSize="10" TextColor="White" />
 														<Label Grid.Column="5" Padding="8,7" Text="ЕДИНИЦА" FontAttributes="Bold" FontSize="10" TextColor="White" />
 														<Label Grid.Column="6" Padding="8,7" Text="ПРОИЗВОДИТЕЛ" FontAttributes="Bold" FontSize="10" TextColor="White" />
-														<Label Grid.Column="7" Padding="8,7" Text="РЕЖИМ НА АПЛИКАЦИЈА" FontAttributes="Bold" FontSize="10" TextColor="White" />
-														<Label Grid.Column="8" Padding="8,7" Text="КОЛИЧИНА" FontAttributes="Bold" FontSize="10" TextColor="White" />
-														<Label Grid.Column="9" Padding="8,7" Text="" />
+														<Label Grid.Column="7" Padding="8,7" Text="СТАНДАРДНА ДОЗА" FontAttributes="Bold" FontSize="10" TextColor="White" />
+														<Label Grid.Column="8" Padding="8,7" Text="РЕЖИМ НА АПЛИКАЦИЈА" FontAttributes="Bold" FontSize="10" TextColor="White" />
+														<Label Grid.Column="9" Padding="8,7" Text="КОЛИЧИНА" />
+																		<Label Grid.Column="10" Padding="8,7" Text="" />
 													</Grid>
 													<VerticalStackLayout BindableLayout.ItemsSource="{Binding AttachedMedicines}" Spacing="0">
 														<BindableLayout.ItemTemplate>
