@@ -68,6 +68,11 @@
             public const string Detail = "medicinesdetail";
         }
 
+        public static class ApplicationRegimes
+        {
+            public const string List = "applicationregimeslist";
+        }
+
         public static class Prescriptions
         {
             public const string List = "prescriptionslist";
