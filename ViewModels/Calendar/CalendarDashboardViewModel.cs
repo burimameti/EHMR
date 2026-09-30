@@ -170,7 +170,6 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
     {
         ("Сите", "All"),
         ("Закажан", "Scheduled"),
-        ("Пријавен"),
         ("Во тек", "InProgress"),
         ("Завршен", "Completed"),
         ("Откажан", "Cancelled"),
@@ -182,8 +181,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
         ("Закажан", "Scheduled"),
         ("Во тек", "InProgress"),
         ("Завршен", "Completed"),
-        ("Откажан", "Cancelled"),
-        ("Закажан", "Scheduled")
+        ("Откажан", "Cancelled")
     });
 
     private FilterLookup StatusLookup =>
