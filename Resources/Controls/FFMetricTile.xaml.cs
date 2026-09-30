@@ -536,19 +536,15 @@ public partial class FFMetricTile : ContentView
 
     private void ApplyMetricPalette(MetricTilePalette p)
     {
-        AccentColor=p.Accent;
-
-        TileBackground=p.Background;
-
-        TileBorder=p.Border;
-
-        IconBackground=p.IconBackground;
-
-        TitleColor=p.Title;
-
-        ValueColor=p.Value;
-
-        SubtitleColor=p.Subtitle;
+        // Keep metric tiles visually consistent with the Dashboard:
+        // white surface, variant-colored border/icon/action, dark value.
+        AccentColor = p.Accent;
+        TileBackground = Colors.White;
+        TileBorder = p.Border;
+        IconBackground = p.Accent;
+        TitleColor = p.Title;
+        ValueColor = p.Value;
+        SubtitleColor = p.Subtitle;
     }
 
 
