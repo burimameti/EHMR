@@ -54,6 +54,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     public DbSet<Encounter> Encounters => Set<Encounter>();
     public DbSet<Medicine> Medicines => Set<Medicine>();
     public DbSet<PatientMedicine> PatientMedicines => Set<PatientMedicine>();
+    public DbSet<ApplicationRegime> ApplicationRegimes => Set<ApplicationRegime>();
     public DbSet<Patient> Patients => Set<Patient>();
     public DbSet<TaskItem> TaskItems => Set<TaskItem>();
     public DbSet<TherapyCycle> TherapyCycles => Set<TherapyCycle>();
@@ -103,6 +104,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
         ConfigureMappings(modelBuilder);
         ConfigurePatient(modelBuilder);
         ConfigurePatientMedicine(modelBuilder);
+        ConfigureApplicationRegime(modelBuilder);
         ConfigurePatientDocument(modelBuilder);
         ConfigureRelationships(modelBuilder);
         ConfigureIndexes(modelBuilder);
@@ -389,6 +391,22 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             entity.Ignore(x => x.NextAppointmentDate);
         });
     }
+    private static void ConfigureApplicationRegime(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ApplicationRegime>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Regime).IsRequired().HasMaxLength(200);
+            entity.Property(x => x.IsActive).HasDefaultValue(true);
+            entity.HasIndex(x => x.Regime).IsUnique();
+
+            entity.HasMany(x => x.PatientMedicines)
+                .WithOne(x => x.ApplicationRegime)
+                .HasForeignKey(x => x.ApplicationRegimeId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+    }
+
     private static void ConfigurePatientMedicine(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<PatientMedicine>(entity =>
@@ -412,6 +430,11 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
                 .HasForeignKey(x => x.EncounterId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            entity.HasOne(x => x.ApplicationRegime)
+                .WithMany(x => x.PatientMedicines)
+                .HasForeignKey(x => x.ApplicationRegimeId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             entity.HasOne(x => x.Medicine)
                 .WithMany()
                 .HasForeignKey(x => x.MedicineId)
@@ -419,6 +442,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
 
             entity.HasIndex(x => x.PatientId);
             entity.HasIndex(x => x.MedicineId);
+            entity.HasIndex(x => x.ApplicationRegimeId);
             entity.HasIndex(x => x.EncounterId);
             entity.HasIndex(x => new { x.PatientId, x.MedicineId, x.IsActive });
         });
