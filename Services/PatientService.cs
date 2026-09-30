@@ -244,19 +244,24 @@ public class PatientService : IPatientService
         string? section = null,
         string? descriptionTerm = null)
     {
-        codeTerm=(codeTerm ?? string.Empty).Trim();
+        codeTerm=NormalizeMkbCodeTerm(codeTerm);
         descriptionTerm=(descriptionTerm ?? string.Empty).Trim();
 
-        if(string.IsNullOrWhiteSpace(codeTerm)&&string.IsNullOrWhiteSpace(descriptionTerm)&&string.IsNullOrWhiteSpace(section))
+        if(string.IsNullOrWhiteSpace(codeTerm)
+            && string.IsNullOrWhiteSpace(descriptionTerm)
+            && string.IsNullOrWhiteSpace(section))
             return [];
 
         await using var db = await _factory.CreateDbContextAsync(ct);
 
         var query=db.Mkb10Codes.AsQueryable();
 
-        if(!string.IsNullOrWhiteSpace(section))
+        // A-Z is a browse filter. Once the user types a code or description,
+        // search must work independently of the previously selected letter.
+        if(string.IsNullOrWhiteSpace(codeTerm)&&string.IsNullOrWhiteSpace(descriptionTerm)
+            && !string.IsNullOrWhiteSpace(section))
         {
-            var prefix=section.Trim().ToUpperInvariant();
+            var prefix=NormalizeMkbCodeTerm(section);
             query=query.Where(x => x.Code.StartsWith(prefix));
         }
 
@@ -264,7 +269,12 @@ public class PatientService : IPatientService
             query=query.Where(x => x.Code.Contains(codeTerm));
 
         if(!string.IsNullOrWhiteSpace(descriptionTerm))
-            query=query.Where(x => x.Description.Contains(descriptionTerm));
+        {
+            var cyrillicDescription=MacedonianTransliterator.ToCyrillic(descriptionTerm);
+            query=query.Where(x =>
+                x.Description.Contains(descriptionTerm)
+                || x.Description.Contains(cyrillicDescription));
+        }
 
         return await query
             .OrderBy(x => x.Code)
@@ -276,6 +286,30 @@ public class PatientService : IPatientService
                 Description=x.Description
             })
             .ToListAsync(ct);
+    }
+
+    private static string NormalizeMkbCodeTerm(string? value)
+    {
+        if(string.IsNullOrWhiteSpace(value))
+            return string.Empty;
+
+        var text=value.Trim().ToUpperInvariant();
+
+        // MKB-10 codes are Latin alphanumeric codes. Accept Macedonian
+        // Cyrillic input for the first letter as well, so M06.9 and м06.9
+        // behave identically.
+        var map=new Dictionary<char,char>
+        {
+            ['А']='A', ['Б']='B', ['В']='V', ['Г']='G', ['Д']='D',
+            ['Е']='E', ['Ж']='Z', ['З']='Z', ['Ѕ']='D', ['И']='I',
+            ['Ј']='J', ['К']='K', ['Л']='L', ['М']='M', ['Н']='N',
+            ['О']='O', ['П']='P', ['Р']='R', ['С']='S', ['Т']='T',
+            ['Ќ']='K', ['У']='U', ['Ф']='F', ['Х']='H', ['Ц']='C',
+            ['Ч']='C', ['Џ']='D', ['Ш']='S'
+        };
+
+        var chars=text.Select(c => map.TryGetValue(c, out var latin) ? latin : c).ToArray();
+        return new string(chars);
     }
 
     public async Task<List<MedicineDto>> SearchMedicinesAsync(string term, CancellationToken ct = default)
