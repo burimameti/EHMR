@@ -165,8 +165,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
     // ═══════════════════════════════════════════ STATUS FILTER ═══════════════════════════════════════════
 
     /// <summary>
-    /// Статусите се различни за прегледи и термини: EncounterStatus има NoShow,
-    /// AppointmentStatus и EncounterStatus користат заеднички основни статуси со одделни мапи за приказ.
+    /// AppointmentStatus и EncounterStatus користат исти четири статуси.
     /// </summary>
     public static FilterLookup EncounterStatusLookup { get; } = new(new[]
     {
@@ -176,7 +175,6 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
         ("Во тек", "InProgress"),
         ("Завршен", "Completed"),
         ("Откажан", "Cancelled"),
-        ("Не се јавил", "NoShow")
     });
 
     public static FilterLookup AppointmentStatusLookup { get; } = new(new[]
@@ -184,10 +182,8 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
         ("Сите", "All"),
         ("Закажан", "Scheduled"),
         ("Во тек", "InProgress"),
-        ("Во тек", "InProgress"),
         ("Завршен", "Completed"),
         ("Откажан", "Cancelled"),
-        ("Пропуштен", "Missed"),
         ("Закажан", "Scheduled")
     });
 
