@@ -23,7 +23,7 @@
 				Offset="0,2" />
 		</Border.Shadow>
 
-		<Grid AutomationId="MetricGrid" RowDefinitions="Auto,Auto" RowSpacing="8">
+		<Grid AutomationId="MetricGrid" RowDefinitions="Auto,Auto" RowSpacing="6">
 			<Grid AutomationId="MetricHeaderGrid" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4">
 				<Border
 					AutomationId="MetricIcon"
@@ -69,7 +69,9 @@
 			<Border
 				AutomationId="MoreBorder"
 				Grid.Row="1"
-				Padding="10,5"
+				Padding="10,4"
+				MinimumHeightRequest="30"
+				MinimumWidthRequest="82"
 				BackgroundColor="{Binding AccentColor, Source={x:Reference Root}}"
 				HorizontalOptions="End"
 				IsVisible="{Binding Command, Source={x:Reference Root}, Converter={StaticResource SparkNotNullConverter}}"
