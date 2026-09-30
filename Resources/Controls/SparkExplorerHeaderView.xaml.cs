@@ -58,7 +58,6 @@ namespace EHMR.Resources.Controls
 
             // FFSearchBox contains its own label + field and must keep its natural height.
             // Setting the ContentView height to 42 clips the control vertically in the header.
-            HeaderSearchBox.HeightRequest = -1;
             HeaderSearchBox.HorizontalOptions = LayoutOptions.Fill;
             HeaderSearchBox.MinimumWidthRequest = 0;
             HeaderSearchBox.Margin = new Thickness(0);
@@ -75,7 +74,6 @@ namespace EHMR.Resources.Controls
                 child.MinimumWidthRequest = Math.Max(100, 110 * s);
                 // FFPicker contains a label + picker field; do not constrain the outer control
                 // to the field height or its contents will be clipped vertically.
-                child.HeightRequest = -1;
             }
 
             foreach (var child in ActionLayout.Children.SelectMany(v => v is HorizontalStackLayout h ? h.Children : Array.Empty<IView>()))
