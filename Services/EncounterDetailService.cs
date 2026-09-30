@@ -138,7 +138,7 @@ public class EncounterDetailService : IEncounterDetailService
 
         var encounter = await db.Encounters
             .AsNoTracking()
-            .Include(x => x.Patient).ThenInclude(x => x.PatientMedicines)
+            .Include(x => x.Patient)
             .Include(x => x.Doctor).ThenInclude(x => x.User)
             .Include(x => x.Appointment)
             .Include(x => x.TherapyCycle)
