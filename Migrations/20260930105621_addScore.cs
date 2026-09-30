@@ -30,13 +30,6 @@ namespace EHMR.Migrations
                 type: "uniqueidentifier",
                 nullable: true);
 
-            migrationBuilder.AddColumn<string>(
-                name: "PharmaceuticalReference",
-                table: "PatientMedicines",
-                type: "nvarchar(200)",
-                maxLength: 200,
-                nullable: false,
-                defaultValue: "");
 
             migrationBuilder.AddColumn<decimal>(
                 name: "Quantity",
@@ -174,9 +167,7 @@ namespace EHMR.Migrations
                 name: "ApplicationRegimeId",
                 table: "PatientMedicines");
 
-            migrationBuilder.DropColumn(
-                name: "PharmaceuticalReference",
-                table: "PatientMedicines");
+          
 
             migrationBuilder.DropColumn(
                 name: "Quantity",
