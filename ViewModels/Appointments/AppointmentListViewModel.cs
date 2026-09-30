@@ -89,7 +89,6 @@ public partial class AppointmentListViewModel
     } =
     [
         new() { Filter = AppointmentStatusFilter.All,       Label = "Сите" },
-        new() { Filter = AppointmentStatusFilter.Active,    Label = "Активни" },
         new() { Filter = AppointmentStatusFilter.Scheduled, Label = "Закажан" },
         new() { Filter = AppointmentStatusFilter.Completed, Label = "Завршен" },
         new() { Filter = AppointmentStatusFilter.Cancelled, Label = "Откажан" },
@@ -111,7 +110,7 @@ public partial class AppointmentListViewModel
     {
         _dbFactory=dbFactory;
         _autocomplete=autocomplete;
-        _selectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.Active);
+        _selectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
 
         PageSize=10;
         SearchCommand=CommitSearchCommand;
@@ -541,8 +540,6 @@ public partial class AppointmentListViewModel
         SelectedStatus.Filter switch
         {
             AppointmentStatusFilter.All => items,
-            AppointmentStatusFilter.Active => items.Where(x =>
-                x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.InProgress),
             _ => items.Where(x => x.Status==Enum.Parse<AppointmentStatus>(SelectedStatus.Filter.ToString()))
         };
 
@@ -630,8 +627,6 @@ public partial class AppointmentListViewModel
             var count = filter switch
             {
                 AppointmentStatusFilter.All => baseItems.Count,
-                AppointmentStatusFilter.Active => baseItems.Count(x =>
-                    x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.InProgress),
                 _ => baseItems.Count(x => x.Status==Enum.Parse<AppointmentStatus>(filter.ToString()))
             };
 
@@ -739,7 +734,7 @@ public partial class AppointmentListViewModel
         AppointmentStatus.InProgress => "Пријавен",
         AppointmentStatus.Completed => "Завршен",
         AppointmentStatus.Cancelled => "Откажан",
-        AppointmentStatus.Missed => "Пропуштен",
+        AppointmentStatus.Missed => "Не се пријавил",
         AppointmentStatus.InProgress => "Во тек",
         _ => status.ToString()
     };
@@ -768,7 +763,6 @@ public partial class AppointmentListViewModel
 public enum AppointmentStatusFilter
 {
     All,
-    Active,
     Scheduled,
     InProgress,
     Completed,
