@@ -19,7 +19,6 @@ namespace EHMR.Converters
             { AppointmentStatus.InProgress,  Color.FromArgb("#2563EB") }, // deep blue
             { AppointmentStatus.Completed,   Color.FromArgb("#10B981") }, // green
             { AppointmentStatus.Cancelled,   Color.FromArgb("#EF4444") }, // red
-            { AppointmentStatus.Missed,      Color.FromArgb("#DC2626") }, // dark red
         };
 
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
