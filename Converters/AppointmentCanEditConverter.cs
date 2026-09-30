@@ -26,7 +26,7 @@ namespace EHMR.Converters
             return appointment.Status switch
             {
                 AppointmentStatus.Scheduled => true,
-                AppointmentStatus.CheckedIn => true,
+                AppointmentStatus.InProgress => true,
                 AppointmentStatus.Completed => false,
                 AppointmentStatus.Cancelled => false,
 
