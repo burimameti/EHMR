@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ContentView
 	x:Class="EHMR.Resources.Controls.SparkExplorerHeaderView"
-	SizeChanged="OnHeaderSizeChanged"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:sc="clr-namespace:EHMR.Resources.Controls"
 	x:Name="Root"
+	SizeChanged="OnHeaderSizeChanged"
 	ZIndex="100">
 
 	<VerticalStackLayout
 		Margin="0"
+		Padding="10"
 		BackgroundColor="White"
 		Spacing="8">
 
@@ -22,7 +23,7 @@
 			<Grid
 				x:Name="ExplorerGrid"
 				Padding="0,0,6,1"
-				ColumnSpacing="0">
+				ColumnSpacing="5">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
 					<!--  0: tabs  -->
@@ -108,11 +109,11 @@
 				</ScrollView>
 
 				<!--  ============ 1: DIVIDER (appears once, at the end of the tabs) ============  -->
-				<BoxView
+				<!--<BoxView
 					Grid.Column="1"
 					Margin="0,0"
 					BackgroundColor="{StaticResource SidebarActiveBg}"
-					WidthRequest="1" />
+					WidthRequest="1" />-->
 
 
 			</Grid>
@@ -124,21 +125,27 @@
 		<Grid BackgroundColor="Transparent" IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
 			<Grid
 				x:Name="SecondaryToolbarGrid"
-				Padding="10"
-				MinimumWidthRequest="0"
+				Padding="0"
 				ColumnDefinitions="*,Auto,Auto,Auto"
 				ColumnSpacing="8"
-				MinimumHeightRequest="64">
+				MinimumHeightRequest="64"
+				MinimumWidthRequest="0">
 
 				<!--  Search uses all remaining horizontal space.  -->
-				<VerticalStackLayout Grid.Column="0" Spacing="4" HorizontalOptions="Fill" MinimumWidthRequest="0">
+				<VerticalStackLayout
+					Grid.Column="0"
+					HorizontalOptions="Fill"
+					MinimumWidthRequest="0"
+					Spacing="4"
+					VerticalOptions="Fill">
 					<sc:FFSearchBox
 						x:Name="HeaderSearchBox"
 						HorizontalOptions="Fill"
 						Label="Пребарување"
 						Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
 						SearchCommand="{Binding SearchCommand, Source={x:Reference Root}}"
-						Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}" />
+						Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}"
+						VerticalOptions="Fill" />
 
 					<Border
 						Padding="4"
