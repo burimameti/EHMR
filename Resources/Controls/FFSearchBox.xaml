@@ -2,11 +2,14 @@
 	x:Class="EHMR.Resources.Controls.FFSearchBox"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	x:Name="Root">
+	x:Name="Root"
+	HorizontalOptions="Fill"
+	VerticalOptions="Center">
 
 	<Grid
 		HorizontalOptions="Fill"
-		RowDefinitions="Auto,40"
+		VerticalOptions="Center"
+		RowDefinitions="Auto,Auto"
 		RowSpacing="4">
 
 		<Label
@@ -21,31 +24,25 @@
 		<Border
 			Grid.Row="1"
 			BackgroundColor="White"
-			HeightRequest="40"
+			MinimumHeightRequest="40"
 			HorizontalOptions="Fill"
-			MinimumWidthRequest="0"
+			VerticalOptions="Center"
 			Stroke="{StaticResource Gray300}"
 			StrokeShape="RoundRectangle 6"
 			StrokeThickness="1">
 
 			<Grid
 				Padding="10,0"
-				ColumnDefinitions="18,*,Auto"
+				ColumnDefinitions="22,*,Auto"
 				ColumnSpacing="0"
-				HorizontalOptions="Fill">
+				HorizontalOptions="Fill"
+				VerticalOptions="Center">
 
-				<Label
-					Grid.Column="0"
-					FontFamily="FASolid"
-					FontSize="12"
-					HorizontalOptions="Start"
-					Text="&#xf002;"
-					TextColor="{StaticResource Gray500}"
+				<Label Grid.Column="0" FontFamily="FASolid" FontSize="12"
+					Text="&#xf002;" TextColor="{StaticResource Gray500}"
 					VerticalOptions="Center" />
 
-				<Entry
-					Grid.Column="1"
-					Margin="8,0,0,0"
+				<Entry Grid.Column="1" Margin="8,0,0,0"
 					BackgroundColor="Transparent"
 					Completed="OnEntryCompleted"
 					FontSize="12"
@@ -57,11 +54,8 @@
 					TextColor="{StaticResource Gray900}"
 					VerticalOptions="Center" />
 
-				<Label
-					Grid.Column="2"
-					FontAttributes="Bold"
-					FontSize="11"
-					HorizontalOptions="End"
+				<Label Grid.Column="2"
+					FontAttributes="Bold" FontSize="11"
 					IsVisible="{Binding Hint, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
 					LineBreakMode="TailTruncation"
 					Text="{Binding Hint, Source={x:Reference Root}}"
@@ -69,9 +63,6 @@
 					VerticalOptions="Center" />
 
 			</Grid>
-
 		</Border>
-
 	</Grid>
-
 </ContentView>
