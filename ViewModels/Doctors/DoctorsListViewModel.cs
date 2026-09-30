@@ -165,8 +165,6 @@ public partial class DoctorsListViewModel
         _pendingStatus=null;
 
         ApplyPipeline();
-
-        RefreshSparkTabCounts();
     }
 
     // ============================================================
@@ -362,8 +360,6 @@ public partial class DoctorsListViewModel
             _statusTabsByInternal[
                 internalValue]=tab;
         }
-
-        RefreshSparkTabCounts();
     }
 
     private void RefreshSparkTabCounts()
@@ -559,7 +555,6 @@ public partial class DoctorsListViewModel
 
     private void InitializeSparkControls()
     {
-        BuildSparkTabs();
         BuildSparkPickers();
         BuildSparkButtons();
         BuildSparkGridColumns();
