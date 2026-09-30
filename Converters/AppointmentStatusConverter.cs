@@ -61,12 +61,10 @@ namespace EHMR.Converters
             var color = value switch
             {
                 AppointmentStatus.Scheduled => "#3B82F6",   // Info blue
-                AppointmentStatus.CheckedIn => "#8B5CF6",   // Violet
-                AppointmentStatus.InProgress => "#F59E0B",  // Warning amber
+                AppointmentStatus.InProgress => "#8B5CF6",   // Violet
                 AppointmentStatus.Completed => "#10B981",   // Success green
                 AppointmentStatus.Cancelled => "#EF4444",   // Danger red
                 AppointmentStatus.Missed => "#94A3B8",      // Muted gray
-                AppointmentStatus.ReScheduled => "#0EA5E9", // Sky
                 _ => "#94A3B8"
             };
 
