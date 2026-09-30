@@ -472,6 +472,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                 EndDate = x.PatientMedicine.EndDate,
                 Notes = x.PatientMedicine.Notes,
                 PharmaceuticalReference = x.PatientMedicine.PharmaceuticalReference,
+                ApplicationRegimeId = _applicationRegimes.FirstOrDefault(r => string.Equals(r.Regime, x.PatientMedicine.ApplicationRegime, StringComparison.OrdinalIgnoreCase))?.Id,
+                Quantity = x.PatientMedicine.Quantity,
                 IsActive = x.PatientMedicine.IsActive
             })
             ],
@@ -793,6 +795,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     private CancellationTokenSource _medicineSearchCts = new();
 
     [ObservableProperty] private ObservableCollection<string> applicationRegimeOptions = new();
+    private List<ApplicationRegimeDto> _applicationRegimes = [];
     [ObservableProperty] private string newApplicationRegimeText = string.Empty;
 
     [ObservableProperty] private ObservableCollection<AttachedMedicineRow> attachedMedicines = new();
@@ -832,6 +835,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         try
         {
             var regimes=await _patientService.GetApplicationRegimesAsync();
+            _applicationRegimes=regimes;
             ApplicationRegimeOptions=new ObservableCollection<string>(
                 regimes.Select(x => x.Regime));
         }
