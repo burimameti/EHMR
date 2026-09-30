@@ -32,6 +32,8 @@ public interface IPatientService
     Task<List<Mkb10CodeDto>> SearchMkb10CodesAsync(string term, CancellationToken ct = default);
 
     Task<List<MedicineDto>> SearchMedicinesAsync(string term, CancellationToken ct = default);
+    Task<List<ApplicationRegimeDto>> GetApplicationRegimesAsync(CancellationToken ct = default);
+    Task<ApplicationRegimeDto> AddApplicationRegimeAsync(string regime, CancellationToken ct = default);
 
     Task SavePatientAsync(PatientService.PatientSaveModel model, CancellationToken ct = default);
 }
