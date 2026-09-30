@@ -339,8 +339,7 @@ namespace EHMR.Services
 
                     // ── Lock on ANY terminal outcome, not just Completed ──
                     var isTerminal = resolvedEncounter is EncounterStatus.Completed
-                                                        or EncounterStatus.Cancelled
-;
+                                                        or EncounterStatus.Cancelled;
 
                     if(isTerminal&&!encounter.IsLocked)
                     {
