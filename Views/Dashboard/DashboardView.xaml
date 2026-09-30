@@ -269,47 +269,73 @@
 						-->
 						<!--  ===================================================  -->
 						<controls:FFSectionCard>
-							<Grid
-								ColumnDefinitions="*,*,*,*"
-								ColumnSpacing="10"
-								HorizontalOptions="Fill">
-								<controls:FFMetricTile
-									Grid.Column="0"
-									Title="{Binding Kpis[0].Title}"
-									Command="{Binding Kpis[0].Command}"
-									DisplayMode="Metric"
-									Icon="{Binding Kpis[0].Icon}"
-									Subtitle="{Binding Kpis[0].Subtitle}"
-									Variant="{Binding Kpis[0].Variant}"
-									Value="{Binding Kpis[0].Value}" />
-								<controls:FFMetricTile
-									Grid.Column="1"
-									Title="{Binding Kpis[1].Title}"
-									Command="{Binding Kpis[1].Command}"
-									DisplayMode="Metric"
-									Icon="{Binding Kpis[1].Icon}"
-									Subtitle="{Binding Kpis[1].Subtitle}"
-									Variant="{Binding Kpis[1].Variant}"
-									Value="{Binding Kpis[1].Value}" />
-								<controls:FFMetricTile
-									Grid.Column="2"
-									Title="{Binding Kpis[2].Title}"
-									Command="{Binding Kpis[2].Command}"
-									DisplayMode="Metric"
-									Icon="{Binding Kpis[2].Icon}"
-									Subtitle="{Binding Kpis[2].Subtitle}"
-									Variant="{Binding Kpis[2].Variant}"
-									Value="{Binding Kpis[2].Value}" />
-								<controls:FFMetricTile
-									Grid.Column="3"
-									Title="{Binding Kpis[3].Title}"
-									Command="{Binding Kpis[3].Command}"
-									DisplayMode="Metric"
-									Icon="{Binding Kpis[3].Icon}"
-									Subtitle="{Binding Kpis[3].Subtitle}"
-									Variant="{Binding Kpis[3].Variant}"
-									Value="{Binding Kpis[3].Value}" />
-							</Grid>
+							<HorizontalStackLayout
+								BindableLayout.ItemsSource="{Binding Kpis}"
+								HorizontalOptions="Center"
+								Spacing="10">
+								<BindableLayout.ItemTemplate>
+									<DataTemplate x:DataType="admin:FFMetricTileItem">
+										<Border
+											Margin="3"
+											Padding="12,8"
+											BackgroundColor="White"
+											MinimumHeightRequest="72"
+											MinimumWidthRequest="240"
+											Stroke="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+											StrokeShape="RoundRectangle 12"
+											StrokeThickness="1.5">
+											<Border.GestureRecognizers>
+												<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
+											</Border.GestureRecognizers>
+											<Grid
+												ColumnDefinitions="Auto,*,Auto"
+												ColumnSpacing="10"
+												RowDefinitions="Auto,Auto"
+												RowSpacing="2">
+												<Border
+													Grid.RowSpan="2"
+													BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+													HeightRequest="32"
+													StrokeShape="RoundRectangle 8"
+													StrokeThickness="0"
+													VerticalOptions="Start"
+													WidthRequest="32">
+													<Label
+														FontFamily="FASolid"
+														FontSize="13"
+														HorizontalOptions="Center"
+														Text="{Binding Icon}"
+														TextColor="White"
+														VerticalOptions="Center" />
+												</Border>
+												<Label
+													Grid.Column="1"
+													FontAttributes="Bold"
+													FontSize="9"
+													Text="{Binding Title}"
+													TextColor="{StaticResource SubtitleColor}"
+													VerticalOptions="Center" />
+												<Label
+													Grid.Column="2"
+													FontAttributes="Bold"
+													FontSize="20"
+													Text="{Binding Value}"
+													TextColor="{StaticResource TitleColor}"
+													VerticalOptions="Center" />
+												<Label
+													Grid.Row="1"
+													Grid.Column="1"
+													Grid.ColumnSpan="2"
+													FontAttributes="Bold"
+													FontSize="9"
+													HorizontalOptions="End"
+													Text="Повеќе  ›"
+													TextColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" />
+											</Grid>
+										</Border>
+									</DataTemplate>
+								</BindableLayout.ItemTemplate>
+							</HorizontalStackLayout>
 						</controls:FFSectionCard>
 
 						<!--  ===================================================  -->
