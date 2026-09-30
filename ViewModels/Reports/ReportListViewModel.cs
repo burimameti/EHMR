@@ -327,10 +327,10 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     private static string StatusLabel(AppointmentStatus status) => status switch
     {
         AppointmentStatus.Scheduled => "Закажан",
-        AppointmentStatus.InProgress => "Пријавен",
+        AppointmentStatus.InProgress => "Во тек",
         AppointmentStatus.Completed => "Завршен",
         AppointmentStatus.Cancelled => "Откажан",
-        AppointmentStatus.Missed => "Пропуштен",
+        AppointmentStatus.Missed => "Не се пријавил",
         AppointmentStatus.InProgress => "Во тек",
         _ => status.ToString()
     };
