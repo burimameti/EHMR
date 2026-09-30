@@ -800,7 +800,7 @@ public partial class DashboardViewModel : ObservableObject
         var q = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(PatientSearchText)) q["search"]=PatientSearchText;
         if(!string.IsNullOrWhiteSpace(statusFilter)) q["statusFilter"]=statusFilter;
-        await Shell.Current.GoToAsync(AppRoutes.Patients.List, q);
+        await Shell.Current.GoToAsync($"///{AppRoutes.Patients.List}", q);
     }
 
     [RelayCommand]

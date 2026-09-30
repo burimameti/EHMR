@@ -77,7 +77,7 @@ public class DatabaseMigrationService
         await runner.RunAsync(includeDemo);
     }
 
-    private static async Task EnsurePatientMedicineSchemaAsync(DesktopTherapyDbContext db)
+    private async Task EnsurePatientMedicineSchemaAsync(DesktopTherapyDbContext db)
     {
         if(!db.Database.IsSqlServer())
             return;

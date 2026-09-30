@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EHMR.Migrations
 {
+
     [DbContext(typeof(DesktopTherapyDbContext))]
-    [Migration("20260929230000_AddPharmaceuticalReferenceToPatientMedicine")]
     partial class AddPharmaceuticalReferenceToPatientMedicine
     {
         /// <inheritdoc />

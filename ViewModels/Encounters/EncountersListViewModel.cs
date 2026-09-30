@@ -28,8 +28,8 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     private string _pendingStatus = string.Empty;
 
     [ObservableProperty] private string selectedStatus = "All";
-    [ObservableProperty] private string selectedPriority = "All";
-    [ObservableProperty] private string selectedEncounterType = "All";
+    //[ObservableProperty] private string selectedPriority = "All";
+    //[ObservableProperty] private string selectedEncounterType = "All";
     [ObservableProperty] private string selectedDoctor = "All";
     [ObservableProperty] private bool useCyrillicSearch = true;
 
@@ -48,17 +48,8 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         get;
     } =
         new(new[] { "Сите" }.Concat(EncounterStatusSchema.Display.Values.ToObservableCollection()));
-    public ObservableCollection<string> PriorityFilters
-    {
-        get;
-    } =
-        new(new[] { "Сите" }.Concat(EncounterPrioritySchema.Display.Values.ToObservableCollection()));
-    public ObservableCollection<string> EncounterTypeFilters
-    {
-        get;
-    } =
-        new(new[] { "Сите" }.Concat(EncounterTypeSchema.Display.Values));
 
+  
     // =====================================================
     // DATE FILTER
     // =====================================================
@@ -98,31 +89,9 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         }
     }
 
-    public string SelectedPriorityDisplay
-    {
-        get => EncounterPrioritySchema.ToDisplay(SelectedPriority);
-        set
-        {
-            var internalValue = EncounterPrioritySchema.ToKeyFromDisplay(value);
-            if(SelectedPriority==internalValue) return;
-            SelectedPriority=internalValue;
-            ApplyPipeline();
-            OnPropertyChanged();
-        }
-    }
+  
 
-    public string SelectedEncounterTypeDisplay
-    {
-        get => EncounterTypeSchema.ToDisplay(SelectedEncounterType);
-        set
-        {
-            var internalValue = EncounterTypeSchema.ToKeyFromDisplay(value);
-            if(SelectedEncounterType==internalValue) return;
-            SelectedEncounterType=internalValue;
-            ApplyPipeline();
-            OnPropertyChanged();
-        }
-    }
+   
 
     // =====================================================
     // SPARK GRID
@@ -146,8 +115,8 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "PatientName", Width = new GridLength(2, GridUnitType.Star) },
             new() { Header = "СЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.2, GridUnitType.Star) },
             new() { Header = "РЕУМАТОЛОГ", Key = "DoctorName", Width = new GridLength(1.8, GridUnitType.Star) },
-            new() { Header = "ТИП", Key = "EncounterType", Width = new GridLength(1.2, GridUnitType.Star) },
-            new() { Header = "ПРИОРИТЕТ", Key = "Priority", CellType = SparkGridCellType.Badge, Width = new GridLength(1, GridUnitType.Star) },
+   
+  
             new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1.2, GridUnitType.Star) },
             new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
@@ -164,10 +133,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
             row["PatientName"]=e.Patient!=null ? $"{e.Patient.FirstName} {e.Patient.LastName}" : "";
             row["SzboNumber"]=e.Patient?.SzboNumber??"—";
             row["DoctorName"]=e.Doctor?.User!=null ? $"{e.Doctor.User.FirstName} {e.Doctor.User.LastName}" : "";
-            row["EncounterType"]=EncounterTypeSchema.ToDisplay(e.EncounterType);
-            row["Priority"]=new SparkBadgeValue(
-                EncounterPrioritySchema.ToDisplay(e.Priority),
-                PriorityToTone(e.Priority));
+      
             row["Date"]=(e.ScheduledStart??e.EncounterDate).ToString("dd.MM.yyyy HH:mm");
             row["Status"]=new SparkBadgeValue(
                 EncounterStatusSchema.ToDisplay(e.Status.ToString()),
@@ -197,12 +163,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         GridRows=rows;
     }
 
-    private static SparkBadgeTone PriorityToTone(string priority) => priority?.ToLowerInvariant() switch
-    {
-        "stat" or "emergency" => SparkBadgeTone.Danger,
-        "urgent" => SparkBadgeTone.Warning,
-        _ => SparkBadgeTone.Neutral
-    };
+ 
 
     private static SparkBadgeTone StatusToTone(EncounterStatus status) => status switch
     {
@@ -223,11 +184,6 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         _statusPicker=MakePicker("Статус", StatusFilters, SelectedStatusDisplay,
             selected => SelectedStatusDisplay=selected);
 
-        _priorityPicker=MakePicker("Приоритет", PriorityFilters, SelectedPriorityDisplay,
-            selected => SelectedPriorityDisplay=selected);
-
-        _typePicker=MakePicker("Тип", EncounterTypeFilters, SelectedEncounterTypeDisplay,
-            selected => SelectedEncounterTypeDisplay=selected);
 
         Pickers.Add(_statusPicker);
         Pickers.Add(_priorityPicker);
@@ -238,8 +194,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     {
         if(_statusPicker==null) return;
         _statusPicker.SelectedItem=SelectedStatusDisplay;
-        _priorityPicker.SelectedItem=SelectedPriorityDisplay;
-        _typePicker.SelectedItem=SelectedEncounterTypeDisplay;
+      
     }
 
     // Buttons collection lives in BaseViewModel<T>; base default "✕ Исчисти" applies.
@@ -498,11 +453,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         if(SelectedStatus!="All")
             query=query.Where(x => string.Equals(x.Status.ToString(), SelectedStatus, StringComparison.OrdinalIgnoreCase));
 
-        if(SelectedPriority!="All")
-            query=query.Where(x => string.Equals(x.Priority, SelectedPriority, StringComparison.OrdinalIgnoreCase));
-
-        if(SelectedEncounterType!="All")
-            query=query.Where(x => string.Equals(x.EncounterType, SelectedEncounterType, StringComparison.OrdinalIgnoreCase));
+   
 
         if(SelectedDoctor!="All"&&!string.IsNullOrWhiteSpace(SelectedDoctor))
         {
@@ -584,8 +535,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         SearchText=string.Empty;
 
         SelectedStatus="All";
-        SelectedPriority="All";
-        SelectedEncounterType="All";
+  
         SelectedDoctor="All";
         _filterByDate=false;
         _filterDate=DateTime.Today;
@@ -593,7 +543,6 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         OnPropertyChanged(nameof(FilterByDate));
         OnPropertyChanged(nameof(FilterDate));
         OnPropertyChanged(nameof(SelectedStatusDisplay));
-        OnPropertyChanged(nameof(SelectedPriorityDisplay));
-        OnPropertyChanged(nameof(SelectedEncounterTypeDisplay));
+
     }
 }

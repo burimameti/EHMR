@@ -117,8 +117,7 @@
 			<Grid
 				Grid.Row="1"
 				Margin="16,0,16,0"
-				ColumnDefinitions="2*,1*"
-				ColumnSpacing="6"
+				ColumnSpacing="0"
 				Style="{StaticResource CrudFormBodyGridStyle}">
 				<!--  ═══════════════════════════════════════════════════════  -->
 				<!--  ЛЕВА КОЛОНА — ФОРМУЛАРИ  -->
@@ -277,9 +276,9 @@
 							</Border>
 							<!--  ── СЕКЦИЈА 2: ТИП И ПРИОРИТЕТ ────────────────────  -->
 							<VerticalStackLayout IsVisible="False" Spacing="14">
-								<controls:CrudSectionHeader Title="ТИП И ПРИОРИТЕТ" />
+
 								<Grid RowDefinitions="Auto,Auto" RowSpacing="16">
-									<Grid
+									<!--<Grid
 										Grid.Row="0"
 										ColumnDefinitions="*,*"
 										ColumnSpacing="24">
@@ -295,7 +294,7 @@
 											Label="Приоритет"
 											Placeholder="Изберете приоритет"
 											SelectedItem="{Binding PriorityDisplay}" />
-									</Grid>
+									</Grid>-->
 									<Grid
 										Grid.Row="1"
 										ColumnDefinitions="*,*"
@@ -619,7 +618,11 @@
 												Padding="10,8"
 												BackgroundColor="#475569"
 												StrokeThickness="0">
-												<Label FontAttributes="Bold" FontSize="10" Text="РЕЖИМ НА АПЛИКАЦИЈА" TextColor="White" />
+												<Label
+													FontAttributes="Bold"
+													FontSize="10"
+													Text="РЕЖИМ НА АПЛИКАЦИЈА"
+													TextColor="White" />
 											</Border>
 											<Border
 												Grid.Column="3"
@@ -682,11 +685,11 @@
 															Stroke="{StaticResource SparkBorderSubtle}"
 															StrokeThickness="1">
 															<Picker
-																ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
-																ItemDisplayBinding="{Binding Regime}"
-																	SelectedItem="{Binding ApplicationRegime, Mode=TwoWay}"
-																FontSize="11"
 																Title="Избери режим"
+																FontSize="11"
+																ItemDisplayBinding="{Binding Regime}"
+																ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
+																SelectedItem="{Binding ApplicationRegime, Mode=TwoWay}"
 																VerticalOptions="Center" />
 														</Border>
 														<Border
@@ -718,13 +721,14 @@
 				<!--  ═══════════════════════════════════════════════════════  -->
 				<!--  ДЕСНА КОЛОНА — ТЕРМИН + ЦИКЛУС + ПАЦИЕНТ КОНТЕКСТ  -->
 				<!--  ═══════════════════════════════════════════════════════  -->
-				<Grid
+				<!--<Grid
 					Grid.Column="1"
 					ColumnSpacing="1"
 					RowDefinitions="*"
 					RowSpacing="16">
-					<!--  Поврзување со термин и циклус  -->
-					<Border IsVisible="False" Style="{StaticResource PageHeaderCardStyle}">
+					-->
+				<!--  Поврзување со термин и циклус  -->
+				<!--<Border IsVisible="False" Style="{StaticResource PageHeaderCardStyle}">
 						<VerticalStackLayout>
 							<controls:CrudSectionHeader Title="ПОВРЗУВАЊЕ СО ТЕРМИН/ЦИКЛУС" />
 							<Grid ColumnDefinitions="*,Auto">
@@ -801,7 +805,9 @@
 										Text="Нов циклус" />
 								</VerticalStackLayout>
 							</Grid>
-							<!--  Избран термин — резиме  -->
+							-->
+				<!--  Избран термин — резиме  -->
+				<!--
 							<Border
 								Padding="12,10"
 								BackgroundColor="{StaticResource SparkTabActiveBg}"
@@ -820,7 +826,9 @@
 										TextColor="{StaticResource SparkAccentTealDark}" />
 								</VerticalStackLayout>
 							</Border>
-							<!--  Избран циклус — резиме  -->
+							-->
+				<!--  Избран циклус — резиме  -->
+				<!--
 							<Border
 								Padding="12,10"
 								BackgroundColor="{StaticResource SparkTabActiveBg}"
@@ -840,8 +848,9 @@
 								</VerticalStackLayout>
 							</Border>
 						</VerticalStackLayout>
-					</Border>
-					<!--  Пациент контекст  -->
+					</Border>-->
+				<!--  Пациент контекст  -->
+				<!--
 					<controls:FFSectionCard
 						Grid.Column="0"
 						Margin="0"
@@ -931,7 +940,7 @@
 							</VerticalStackLayout>
 						</ScrollView>
 					</controls:FFSectionCard>
-				</Grid>
+				</Grid>-->
 			</Grid>
 
 		</Grid>
