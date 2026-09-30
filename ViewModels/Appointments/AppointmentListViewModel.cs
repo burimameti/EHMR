@@ -721,7 +721,6 @@ public partial class AppointmentListViewModel
         AppointmentStatus.Scheduled => "Закажан",
         AppointmentStatus.Completed => "Завршен",
         AppointmentStatus.Cancelled => "Откажан",
-        AppointmentStatus.Missed => "Не се пријавил",
         AppointmentStatus.InProgress => "Во тек",
         _ => status.ToString()
     };
@@ -729,7 +728,7 @@ public partial class AppointmentListViewModel
     private static SparkBadgeTone StatusToTone(AppointmentStatus status) => status switch
     {
         AppointmentStatus.Completed => SparkBadgeTone.Success,
-        AppointmentStatus.Cancelled or AppointmentStatus.Missed => SparkBadgeTone.Danger,
+        AppointmentStatus.Cancelled => SparkBadgeTone.Danger,
         _ => SparkBadgeTone.Neutral
     };
 
