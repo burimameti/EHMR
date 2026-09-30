@@ -521,7 +521,7 @@ public class EncounterDetailService : IEncounterDetailService
         }
 
         var isTerminal = encounter.Status is EncounterStatus.Completed
-                                           or EncounterStatus.Cancelled
+                                           or EncounterStatus.Cancelled;
 
         if(isTerminal&&!encounter.IsLocked)
         {

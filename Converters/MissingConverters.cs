@@ -59,12 +59,12 @@ public class AppointmentStatusToLabelConverter : IValueConverter
         => value switch
         {
             AppointmentStatus.Scheduled => "Закажан",
-            AppointmentStatus.CheckedIn => "Пријавен",
+    
             AppointmentStatus.InProgress => "Во тек",
             AppointmentStatus.Completed => "Завршен",
             AppointmentStatus.Cancelled => "Откажан",
-            AppointmentStatus.Missed => "Пропуштен",
-            AppointmentStatus.ReScheduled => "Презакажан",
+           // AppointmentStatus.Missed => "Пропуштен",
+           // AppointmentStatus.ReScheduled => "Презакажан",
             _ => string.Empty
         };
 

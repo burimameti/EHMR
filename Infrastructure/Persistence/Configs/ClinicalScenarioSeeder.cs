@@ -90,8 +90,8 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         Appointment(2, SeedIds.Patient13, SeedIds.Doctor5, today.AddMonths(-2).AddHours(11), AppointmentStatus.Completed, "Редовна контрола", "Стабилна состојба, терапијата се продолжува."),
         Appointment(3, SeedIds.Patient13, SeedIds.Doctor5, today.AddDays(-14).AddHours(9).AddMinutes(30), AppointmentStatus.Completed, "Контрола на болка во зглобови", "Добар одговор на терапијата."),
         Appointment(4, SeedIds.Patient13, SeedIds.Doctor5, today.AddDays(3).AddHours(10), AppointmentStatus.Scheduled, "Следна контролна посета", "Закажана контрола со нови лабораториски резултати."),
-        Appointment(5, SeedIds.Patient2, SeedIds.Doctor2, today.AddHours(12), AppointmentStatus.CheckedIn, "Акутна болка и оток на колено", "Пациентот е пријавен и чека преглед."),
-        Appointment(6, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-1).AddHours(13), AppointmentStatus.Missed, "Контрола на хронична терапија", "Пациентот не се појави.")
+       // Appointment(5, SeedIds.Patient2, SeedIds.Doctor2, today.AddHours(12), AppointmentStatus.CheckedIn, "Акутна болка и оток на колено", "Пациентот е пријавен и чека преглед."),
+      //  Appointment(6, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-1).AddHours(13), AppointmentStatus.Missed, "Контрола на хронична терапија", "Пациентот не се појави.")
     ];
 
     private static Appointment Appointment(
@@ -122,8 +122,8 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         CompletedEncounter(2, SeedIds.Patient13, SeedIds.Doctor5, today.AddMonths(-2).AddHours(11), "Повремена болка при оптоварување", "Стабилна хронична состојба", "Продолжи со редовна терапија и умерена активност."),
         CompletedEncounter(3, SeedIds.Patient13, SeedIds.Doctor5, today.AddDays(-14).AddHours(9).AddMinutes(30), "Болка во зглобови со интензитет 3/10", "Добар одговор на терапија", "Контрола за три месеци со лабораториски резултати."),
         ScheduledEncounter(4, SeedIds.Patient13, SeedIds.Doctor5, today.AddDays(3).AddHours(10), EncounterStatus.Scheduled, "Следна контролна посета"),
-        ScheduledEncounter(5, SeedIds.Patient2, SeedIds.Doctor2, today.AddHours(12), EncounterStatus.CheckedIn, "Акутна болка и оток на колено"),
-        ScheduledEncounter(6, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-1).AddHours(13), EncounterStatus.NoShow, "Контрола на хронична терапија")
+       // ScheduledEncounter(5, SeedIds.Patient2, SeedIds.Doctor2, today.AddHours(12), EncounterStatus.CheckedIn, "Акутна болка и оток на колено"),
+       // ScheduledEncounter(6, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-1).AddHours(13), EncounterStatus.NoShow, "Контрола на хронична терапија")
     ];
 
     private static Encounter CompletedEncounter(
@@ -186,7 +186,7 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         EncounterDate=start,
         ScheduledStart=start,
         ScheduledEnd=start.AddMinutes(30),
-        CheckInTime=status==EncounterStatus.CheckedIn ? start.AddMinutes(-10) : null,
+        CheckInTime=status==EncounterStatus.Scheduled ? start.AddMinutes(-10) : null,
         DurationMinutes=30,
         ReasonForVisit=reason,
         VisitSource="Appointment",

@@ -22,7 +22,7 @@ public class EncounterStatusChipBackgroundConverter : IValueConverter
         {
             // Active / in-flight → vivid teal
             EncounterStatus.Scheduled => Color.FromArgb("#0D9488"),   // teal-600
-            EncounterStatus.CheckedIn => Color.FromArgb("#0284C7"),   // sky-600
+           // EncounterStatus.CheckedIn => Color.FromArgb("#0284C7"),   // sky-600
             EncounterStatus.InProgress => Color.FromArgb("#2563EB"),   // blue-600
 
             // Completed → calm slate-green
@@ -30,7 +30,7 @@ public class EncounterStatusChipBackgroundConverter : IValueConverter
 
             // Terminal / bad → dark charcoal-red
             EncounterStatus.Cancelled => Color.FromArgb("#7F1D1D"),   // red-900
-            EncounterStatus.NoShow => Color.FromArgb("#4B1C1C"),   // deeper red-900
+           // EncounterStatus.NoShow => Color.FromArgb("#4B1C1C"),   // deeper red-900
 
             _ => Color.FromArgb("#64748B")    // slate-500 fallback
         };
@@ -69,11 +69,11 @@ public class EncounterStatusChipLabelConverter : IValueConverter
     private static readonly Dictionary<EncounterStatus, string> Labels = new()
     {
         [EncounterStatus.Scheduled]="Закажан",
-        [EncounterStatus.CheckedIn]="Пријавен",
+       // [EncounterStatus.CheckedIn]="Пријавен",
         [EncounterStatus.InProgress]="Во тек",
         [EncounterStatus.Completed]="Завршен",
         [EncounterStatus.Cancelled]="Откажан",
-        [EncounterStatus.NoShow]="Не дојде",
+       // [EncounterStatus.NoShow]="Не дојде",
     };
 
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
