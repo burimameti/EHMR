@@ -153,7 +153,6 @@ public partial class Mkb10CodeListViewModel : BaseViewModel<Mkb10Code>, IQueryAt
             _pendingStatus=null;
 
             ApplyPipeline();
-            RefreshSparkTabCounts();
         }
         finally
         {
@@ -198,7 +197,6 @@ public partial class Mkb10CodeListViewModel : BaseViewModel<Mkb10Code>, IQueryAt
         FilteredCodesCount=$"{TotalItems:N0} резултати";
 
         RefreshSparkGridRows();
-        RefreshSparkTabCounts();
     }
 
     protected override void ResetFilters()
@@ -245,8 +243,6 @@ public partial class Mkb10CodeListViewModel : BaseViewModel<Mkb10Code>, IQueryAt
             Tabs.Add(tab);
             _statusTabsByInternal[internalValue]=tab;
         }
-
-        RefreshSparkTabCounts();
     }
 
     private void RefreshSparkTabCounts()
@@ -343,13 +339,10 @@ public partial class Mkb10CodeListViewModel : BaseViewModel<Mkb10Code>, IQueryAt
     {
         if(_sparkInitialized)
         {
-            RefreshSparkTabCounts();
             RefreshSparkGridRows();
             SyncSparkPickersFromFilters();
             return;
         }
-
-        BuildSparkTabs();
         BuildSparkPickers();
         BuildSparkButtons();
         BuildSparkGridColumns();
