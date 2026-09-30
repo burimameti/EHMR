@@ -224,6 +224,22 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     partial void OnPrescriptionTabChanged(PrescriptionTabFilter value) => OnPropertyChanged(nameof(FilteredPrescriptions));
 
     // ===================== FILTERED (COMPUTED) VIEWS =====================
+    public string CurrentDiagnosesSummary => string.Join(", ", PatientDiagnoses
+        .Where(x => x.Mkb10Code!=null)
+        .Select(x => $"{x.Mkb10Code!.Code} - {x.Mkb10Code.Description}")
+        .Take(3));
+
+    public string ActiveMedicinesSummary => string.Join(", ", PatientMedicines
+        .Where(x => x.IsActive)
+        .Select(x => x.Medicine?.Name ?? "Лек")
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .Take(4));
+
+    public string ActiveTherapySummary => string.Join(", ", PatientTherapyCyclesHistory
+        .Where(x => x.Status==TherapyStatus.Active || x.Status==TherapyStatus.Planned)
+        .Select(x => string.IsNullOrWhiteSpace(x.DecisionText) ? (x.Notes ?? "Терапија") : x.DecisionText)
+        .Take(2));
+
     public IEnumerable<Appointment> FilteredAppointments => AppointmentTab switch
     {
         AppointmentTabFilter.Upcoming => PatientAppointments
@@ -293,6 +309,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             OnPropertyChanged(nameof(FilteredAppointments));
             OnPropertyChanged(nameof(FilteredEncounters));
             OnPropertyChanged(nameof(FilteredPrescriptions));
+            OnPropertyChanged(nameof(CurrentDiagnosesSummary));
+            OnPropertyChanged(nameof(ActiveMedicinesSummary));
+            OnPropertyChanged(nameof(ActiveTherapySummary));
             OnPropertyChanged(nameof(HasPatientContext));
             OnPropertyChanged(nameof(HasEncounterContext));
         }
@@ -1283,7 +1302,16 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             EncounterId=Encounter.Id==Guid.Empty ? null : Encounter.Id,
             MedicineId=medicine.Id,
             Medicine=medicine,
-            Dosage="1", // Дозата се користи како количина (quantity) — пр. "1" таблета
+            Dosage="1",
+            ApplicationRegimeId=PatientMedicines
+                .FirstOrDefault(x => x.MedicineId==medicine.Id && x.IsActive)
+                ?.ApplicationRegimeId,
+            ApplicationRegime=PatientMedicines
+                .FirstOrDefault(x => x.MedicineId==medicine.Id && x.IsActive)
+                ?.ApplicationRegime,
+            Quantity=PatientMedicines
+                .FirstOrDefault(x => x.MedicineId==medicine.Id && x.IsActive)
+                ?.Quantity ?? 1,
             DosesFrequency=DosesFrequency.Other,
             StartDate=DateTime.Now,
             IsActive=true
