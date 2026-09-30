@@ -21,6 +21,34 @@ namespace EHMR.Resources.Controls
         }
 
         private int _columnOffset;
+        private double _responsiveScale = 1d;
+        private double _lastResponsiveWidth = -1;
+
+        private void OnGridSizeChanged(object? sender, EventArgs e)
+        {
+            var width = Width;
+            if (width <= 0 || Math.Abs(width - _lastResponsiveWidth) < 2)
+                return;
+
+            _lastResponsiveWidth = width;
+            _responsiveScale = width >= 1500 ? 1d
+                : width >= 1250 ? 0.94d
+                : width >= 1050 ? 0.88d
+                : width >= 900 ? 0.82d
+                : 0.76d;
+
+            BuildGrid();
+            BuildPager();
+        }
+
+        private double R(double value) => Math.Round(value * _responsiveScale, 1);
+
+        private GridLength ResponsiveColumnWidth(GridLength width)
+        {
+            return width.GridUnitType == GridUnitType.Absolute
+                ? new GridLength(R(width.Value), GridUnitType.Absolute)
+                : width;
+        }
 
         #region Bindable properties
 
@@ -211,14 +239,14 @@ namespace EHMR.Resources.Controls
             _columnOffset=(ShowCheckboxColumn ? 1 : 0)+(ShowRowNumbers ? 1 : 0);
 
             if(ShowCheckboxColumn)
-                GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=new GridLength(36) });
+                GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=new GridLength(R(36)) });
             if(ShowRowNumbers)
-                GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=new GridLength(40) });
+                GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=new GridLength(R(40)) });
             foreach(var column in Columns)
-                GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=column.Width });
+                GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=ResponsiveColumnWidth(column.Width) });
 
             // Header row
-            GridRoot.RowDefinitions.Add(new RowDefinition { Height=new GridLength(44) });
+            GridRoot.RowDefinitions.Add(new RowDefinition { Height=new GridLength(R(44)) });
             if(ShowCheckboxColumn) AddCheckboxHeaderCell(checkboxColumnIndex);
             if(ShowRowNumbers) AddRowNumberHeaderCell(rowNumberColumnIndex);
             for(int c = 0; c<Columns.Count; c++)
@@ -271,7 +299,7 @@ namespace EHMR.Resources.Controls
             {
                 Background=new SolidColorBrush(HeaderBg),
                 Stroke=Colors.Transparent,
-                Padding=new Thickness(4, 0)
+                Padding=new Thickness(R(4), 0)
             };
             border.Content=new Label { Text="", HorizontalOptions=LayoutOptions.Fill };
             Grid.SetRow(border, 0);
@@ -286,7 +314,7 @@ namespace EHMR.Resources.Controls
                 BackgroundColor=rowBg,
                 StrokeThickness=0,
                 Padding=new Thickness(4, 0),
-                HeightRequest=44
+                HeightRequest=R(44)
             };
             var checkbox = new CheckBox
             {
@@ -319,7 +347,7 @@ namespace EHMR.Resources.Controls
             {
                 Text="#",
                 TextColor=HeaderTextColor,
-                FontSize=12,
+                FontSize=R(12),
                 HorizontalTextAlignment=TextAlignment.Center,
                 HorizontalOptions=LayoutOptions.Fill
             };
@@ -341,7 +369,7 @@ namespace EHMR.Resources.Controls
             {
                 Text=(localRowIndex+1).ToString(),
                 TextColor=RowMutedTextColor,
-                FontSize=12,
+                FontSize=R(12),
                 HorizontalTextAlignment=TextAlignment.Center,
                 VerticalTextAlignment=TextAlignment.Center,
                 HorizontalOptions=LayoutOptions.Fill
@@ -384,12 +412,12 @@ namespace EHMR.Resources.Controls
             {
                 Background=new SolidColorBrush(Color.FromArgb("#5B6B79")),
                 Stroke=Colors.Transparent,
-                Padding=new Thickness(12, 0),
+                Padding=new Thickness(R(12), 0),
                 HorizontalOptions=LayoutOptions.Fill
             };
             var row = new HorizontalStackLayout
             {
-                Spacing=4,
+                Spacing=R(4),
                 VerticalOptions=LayoutOptions.Center,
                 HorizontalOptions=column.CellType switch
                 {
@@ -410,7 +438,7 @@ namespace EHMR.Resources.Controls
                 {
                     Text="\u25BE",
                     TextColor=HeaderTextColor,
-                    FontSize=10,
+                    FontSize=R(10),
                     VerticalOptions=LayoutOptions.Center
                 });
 
@@ -496,7 +524,7 @@ namespace EHMR.Resources.Controls
                 Text=text??string.Empty,
                 TextColor=HyperlinkColor,
                 TextDecorations=TextDecorations.Underline,
-                FontSize=13,
+                FontSize=R(13),
                 HorizontalOptions=LayoutOptions.Start,
                 VerticalOptions=LayoutOptions.Center,
                 HorizontalTextAlignment=TextAlignment.Start,
@@ -532,7 +560,7 @@ namespace EHMR.Resources.Controls
 
             var layout = new HorizontalStackLayout
             {
-                Spacing=8,
+                Spacing=R(8),
                 HorizontalOptions=LayoutOptions.Center,
                 VerticalOptions=LayoutOptions.Center
             };
@@ -567,18 +595,18 @@ namespace EHMR.Resources.Controls
         {
             return new Border
             {
-                Padding=new Thickness(4, 4),
+                Padding=new Thickness(R(4), R(4)),
                 BackgroundColor=color,
                 StrokeThickness=0,
                 StrokeShape=new RoundRectangle { CornerRadius=12 },
                 HorizontalOptions=LayoutOptions.Center,
                 VerticalOptions=LayoutOptions.Center,
-                MinimumWidthRequest=90,
-                MinimumHeightRequest=26,
+                MinimumWidthRequest=R(90),
+                MinimumHeightRequest=R(26),
                 Content=new Label
                 {
                     Text=text,
-                    FontSize=11,
+                    FontSize=R(11),
                     TextColor=Colors.White,
                     HorizontalTextAlignment=TextAlignment.Center,
                     VerticalTextAlignment=TextAlignment.Center
@@ -621,8 +649,8 @@ namespace EHMR.Resources.Controls
             {
                 Text=text,
                 TextColor=RowTextColor,   // was Colors.Black
-                FontSize=13,
-                Margin=new Thickness(4, 0, 0, 0),
+                FontSize=R(13),
+                Margin=new Thickness(R(4), 0, 0, 0),
                 HorizontalOptions=LayoutOptions.Fill,
                 VerticalOptions=LayoutOptions.Center,
                 HorizontalTextAlignment=TextAlignment.Start,
@@ -668,7 +696,7 @@ namespace EHMR.Resources.Controls
             {
                 BackgroundColor=bg,
                 Stroke=Colors.Transparent,
-                Padding=new Thickness(8, 3),
+                Padding=new Thickness(R(8), R(3)),
                 HorizontalOptions=LayoutOptions.Center,
                 StrokeShape=new RoundRectangle { CornerRadius=10 }
             };
@@ -694,17 +722,17 @@ namespace EHMR.Resources.Controls
             {
                 BackgroundColor=Color.FromArgb("#E2E8F0"),   // was #E7F7FA (cyan) — neutral slate now
                 Stroke=Colors.Transparent,
-                WidthRequest=26,
-                HeightRequest=26,
+                WidthRequest=R(26),
+                HeightRequest=R(26),
                 Padding=0,
-                StrokeShape=new RoundRectangle { CornerRadius=13 },
+                StrokeShape=new RoundRectangle { CornerRadius=R(13) },
                 HorizontalOptions=LayoutOptions.Start
             };
             circle.Content=new Label
             {
                 Text=initials,
                 TextColor=Color.FromArgb("#334155"),   // was #16374A
-                FontSize=11,
+                FontSize=R(11),
                 FontAttributes=FontAttributes.Bold,
                 HorizontalTextAlignment=TextAlignment.Center,
                 VerticalTextAlignment=TextAlignment.Center
@@ -757,8 +785,8 @@ namespace EHMR.Resources.Controls
         {
             return new Border
             {
-                WidthRequest=34,
-                HeightRequest=34,
+                WidthRequest=R(34),
+                HeightRequest=R(34),
                 Padding=0,
                 StrokeShape=new RoundRectangle { CornerRadius=8 },
                 Background=new SolidColorBrush(Colors.White),
@@ -768,7 +796,7 @@ namespace EHMR.Resources.Controls
                 Content=new Label
                 {
                     Text=glyph,
-                    FontSize=16,
+                    FontSize=R(16),
                     HorizontalTextAlignment=TextAlignment.Center,
                     VerticalTextAlignment=TextAlignment.Center,
                     TextColor=PagerInactiveText
@@ -831,7 +859,7 @@ namespace EHMR.Resources.Controls
             return new Label
             {
                 Text="…",
-                WidthRequest=24,
+                WidthRequest=R(24),
                 HorizontalTextAlignment=TextAlignment.Center,
                 VerticalTextAlignment=TextAlignment.Center,
                 VerticalOptions=LayoutOptions.Center,
