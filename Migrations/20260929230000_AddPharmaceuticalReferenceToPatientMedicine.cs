@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EHMR.Migrations;
 
+[Migration("20260929230000_AddPharmaceuticalReferenceToPatientMedicine")]
 public partial class AddPharmaceuticalReferenceToPatientMedicine : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
