@@ -546,7 +546,7 @@ namespace EHMR.Resources.Controls
             return label;
         }
 
-        private static View BuildSingleButton(SparkButtonItem item, SparkGridRow row)
+        private View BuildSingleButton(SparkButtonItem item, SparkGridRow row)
         {
             if(item==null) return new Label();
             return BuildActionIcon(item.Label??"", item.Command, item.CommandParameter,
@@ -591,7 +591,7 @@ namespace EHMR.Resources.Controls
             return Color.FromArgb(fallback);
         }
 
-        private static View BuildActionIcon(string text, ICommand command, object commandParameter, Color color)
+        private View BuildActionIcon(string text, ICommand command, object commandParameter, Color color)
         {
             return new Border
             {
@@ -683,7 +683,7 @@ namespace EHMR.Resources.Controls
 
         #endregion
 
-        private static View BuildBadge(SparkBadgeValue badge)
+        private View BuildBadge(SparkBadgeValue badge)
         {
             if(badge==null) return new Label();
             var (bg, fg)=badge.Tone switch
@@ -711,7 +711,7 @@ namespace EHMR.Resources.Controls
             return pill;
         }
 
-        private static View BuildAvatar(string name)
+        private View BuildAvatar(string name)
         {
             var initials = string.IsNullOrWhiteSpace(name)
                 ? "?"
@@ -854,7 +854,7 @@ namespace EHMR.Resources.Controls
             return border;
         }
 
-        private static View BuildEllipsis()
+        private View BuildEllipsis()
         {
             return new Label
             {
