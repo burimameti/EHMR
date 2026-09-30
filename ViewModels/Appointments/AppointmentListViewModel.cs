@@ -91,7 +91,6 @@ public partial class AppointmentListViewModel
         new() { Filter = AppointmentStatusFilter.All,       Label = "Сите" },
         new() { Filter = AppointmentStatusFilter.Active,    Label = "Активни" },
         new() { Filter = AppointmentStatusFilter.Scheduled, Label = "Закажан" },
-        new() { Filter = AppointmentStatusFilter.CheckedIn, Label = "Пријавен" },
         new() { Filter = AppointmentStatusFilter.Completed, Label = "Завршен" },
         new() { Filter = AppointmentStatusFilter.Cancelled, Label = "Откажан" },
         new() { Filter = AppointmentStatusFilter.Missed,    Label = "Пропуштен" }
