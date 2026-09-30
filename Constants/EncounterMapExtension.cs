@@ -8,8 +8,6 @@ public static class EncounterStatusSchema
     public static readonly Dictionary<string, string> Display = new()
     {
         ["Scheduled"]="Закажан",
-        ["CheckedIn"]="Пријавен",
-        ["Waiting"]="Чека",
         ["InProgress"]="Во тек",
         ["Completed"]="Завршен",
         ["Cancelled"]="Откажан",
@@ -19,8 +17,6 @@ public static class EncounterStatusSchema
     public static readonly Dictionary<string, string> Color = new()
     {
         ["Scheduled"]="#4F46E5",
-        ["CheckedIn"]="#0EA5E9",
-        ["Waiting"]="#F59E0B",
         ["InProgress"]="#22C55E",
         ["Completed"]="#16A34A",
         ["Cancelled"]="#EF4444",
@@ -30,8 +26,6 @@ public static class EncounterStatusSchema
     public static readonly Dictionary<string, string> Background = new()
     {
         ["Scheduled"]="#EEF2FF",
-        ["CheckedIn"]="#E0F2FE",
-        ["Waiting"]="#FFFBEB",
         ["InProgress"]="#DCFCE7",
         ["Completed"]="#F0FDF4",
         ["Cancelled"]="#FEF2F2",
