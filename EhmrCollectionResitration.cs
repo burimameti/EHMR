@@ -174,6 +174,7 @@ namespace EHMR
             services.AddSingleton<IReportProvider, MissedTherapiesReportProvider>();
 
            services.AddSingleton<IReportProvider, PatientsReportProvider>();
+           services.AddSingleton<IReportProvider, MedicineUsageReportProvider>();
 
             services.AddSingleton<IReportProvider, AppointmentStatusesReportProvider>();
 
