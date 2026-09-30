@@ -68,7 +68,7 @@ public partial class FFButton : ContentView
             propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumHeightRequest=(double)v);
 
     public static readonly BindableProperty WidthRequestExProperty =
-        BindableProperty.Create(nameof(WidthRequestEx), typeof(double), typeof(FFButton), 180d,
+        BindableProperty.Create(nameof(WidthRequestEx), typeof(double), typeof(FFButton), -1d,
             propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumWidthRequest=(double)v);
 
     public static readonly BindableProperty ContentPaddingProperty =
