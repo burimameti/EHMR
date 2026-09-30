@@ -12,4 +12,22 @@ public partial class CrudSectionHeader : ContentView
         get => (string)GetValue(TitleProperty);
         set => SetValue(TitleProperty, value);
     }
+
+    public static readonly BindableProperty TextColorProperty=BindableProperty.Create(
+        nameof(TextColor), typeof(Color), typeof(CrudSectionHeader), Colors.Black);
+
+    public Color TextColor
+    {
+        get => (Color)GetValue(TextColorProperty);
+        set => SetValue(TextColorProperty, value);
+    }
+
+    public static readonly BindableProperty LineColorProperty=BindableProperty.Create(
+        nameof(LineColor), typeof(Color), typeof(CrudSectionHeader), Colors.Black);
+
+    public Color LineColor
+    {
+        get => (Color)GetValue(LineColorProperty);
+        set => SetValue(LineColorProperty, value);
+    }
 }
