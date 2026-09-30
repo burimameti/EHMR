@@ -676,141 +676,123 @@
 						</Grid>
 					</VerticalStackLayout>
 
-<!--  РЕД 5 — ЗАБЕЛЕШКА  -->
-					<VerticalStackLayout Grid.Row="4" Spacing="10">
-						<controls:CrudSectionHeader Title="ЗАБЕЛЕШКА" />
-						<Border IsEnabled="{Binding IsEditMode}" Style="{StaticResource TextAreaFieldBoxStyle}">
-							<Editor AutoSize="TextChanges" BackgroundColor="Transparent" FontSize="13" Placeholder="Забелешка за пациентот..." PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.Allergies}" TextColor="{StaticResource SparkTextPrimary}" />
-						</Border>
-					</VerticalStackLayout>
+<!--  РЕД 5 — ДОСИЕ | СТАТУС НА ПАЦИЕНТ | ЗАБЕЛЕШКА  -->
+					<Grid Grid.Row="4" ColumnDefinitions="*,*,*" ColumnSpacing="14">
 
-<!--  РЕД 6 — ДОСИЕ (документи)  -->
-									<VerticalStackLayout Grid.Row="5" Spacing="10">
+						<!--  ДОСИЕ  -->
+						<VerticalStackLayout Grid.Column="0" Spacing="10">
+							<controls:CrudSectionHeader Title="ДОСИЕ" />
+							<Border
+								Padding="14"
+								BackgroundColor="{StaticResource SparkBackground}"
+								Stroke="{StaticResource SparkAccentTealBg}"
+								StrokeShape="RoundRectangle 12"
+								StrokeThickness="1">
+								<VerticalStackLayout Spacing="12">
+									<HorizontalStackLayout IsVisible="{Binding IsEditMode}" Spacing="10">
+										<controls:FFButton
+											ButtonKind="Secondary"
+											Command="{Binding UploadDocumentCommand}"
+											ContentPadding="16,0"
+											HeightRequestEx="36"
+											IsEnabled="{Binding IsUploadingDocument, Converter={StaticResource InvertedBoolConverter}}"
+											Text="📎 Прикачи документ" />
+										<ActivityIndicator
+											IsRunning="{Binding IsUploadingDocument}"
+											IsVisible="{Binding IsUploadingDocument}"
+											Color="{StaticResource SparkAccentTeal}" />
+									</HorizontalStackLayout>
+									<CollectionView ItemsSource="{Binding Documents}" SelectionMode="None">
+										<CollectionView.EmptyView>
+											<Label Padding="0,6" FontSize="12" Text="Нема прикачени документи." TextColor="{StaticResource SparkTextSecondary}" />
+										</CollectionView.EmptyView>
+										<CollectionView.ItemTemplate>
+											<DataTemplate x:DataType="dto:PatientDocumentDto">
+												<Border
+													Margin="0,0,0,8"
+													Padding="10,8"
+													BackgroundColor="{StaticResource SparkBackground}"
+													Stroke="{StaticResource SparkAccentTealBg}"
+													StrokeShape="RoundRectangle 8"
+													StrokeThickness="1">
+													<Border.GestureRecognizers>
+														<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding .}" />
+													</Border.GestureRecognizers>
+													<Grid ColumnDefinitions="36,*,Auto,Auto" ColumnSpacing="10">
+														<Border BackgroundColor="{StaticResource SparkAccentTealBg}" HeightRequest="36" StrokeShape="RoundRectangle 8" StrokeThickness="0" WidthRequest="36">
+															<Grid>
+																<Image Aspect="AspectFill" IsVisible="{Binding ., Converter={StaticResource DocumentIsImageConverter}}" Source="{Binding StoredPath}" />
+																<Label FontFamily="FASolid" FontSize="14" HorizontalOptions="Center" IsVisible="{Binding ., Converter={StaticResource DocumentIsImageConverter}, ConverterParameter=Invert}" Text="&#xf15b;" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
+															</Grid>
+														</Border>
+														<Label Grid.Column="1" FontSize="13" LineBreakMode="TailTruncation" Text="{Binding FileName}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+														<Label Grid.Column="2" FontFamily="FASolid" FontSize="14" Text="&#xf019;" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center">
+															<Label.GestureRecognizers>
+															<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DownloadDocumentCommand}" CommandParameter="{Binding .}" />
+															</Label.GestureRecognizers>
+														</Label>
+														<Label Grid.Column="3" FontFamily="FASolid" FontSize="14" IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" Text="&#xf1f8;" TextColor="#DC2626" VerticalOptions="Center">
+															<Label.GestureRecognizers>
+															<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveDocumentCommand}" CommandParameter="{Binding .}" />
+															</Label.GestureRecognizers>
+														</Label>
+													</Grid>
+												</Border>
+											</DataTemplate>
+										</CollectionView.ItemTemplate>
+									</CollectionView>
+								</VerticalStackLayout>
+							</Border>
+						</VerticalStackLayout>
 
-										<controls:CrudSectionHeader Title="ДОСИЕ" />
+						<!--  СТАТУС НА ПАЦИЕНТ  -->
+						<VerticalStackLayout Grid.Column="1" Spacing="10">
+							<controls:CrudSectionHeader Title="СТАТУС НА ПАЦИЕНТ" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" />
+							<HorizontalStackLayout HorizontalOptions="Start" Spacing="28">
+								<VerticalStackLayout Spacing="2">
+									<Label FontAttributes="Bold" FontSize="11" Text="Активен" TextColor="{StaticResource SparkAccentTealDark}" />
+									<HorizontalStackLayout Spacing="4">
+										<HorizontalStackLayout.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding SetActiveCommand}" />
+										</HorizontalStackLayout.GestureRecognizers>
+										<CheckBox IsChecked="{Binding IsPatientActive, Mode=OneWay}" IsEnabled="False" Color="{StaticResource SparkAccentTeal}" />
+									</HorizontalStackLayout>
+								</VerticalStackLayout>
+								<VerticalStackLayout Spacing="2">
+									<Label FontAttributes="Bold" FontSize="11" Text="Неактивен" TextColor="#DC2626" />
+									<HorizontalStackLayout Spacing="4">
+										<HorizontalStackLayout.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding SetInactiveCommand}" />
+										</HorizontalStackLayout.GestureRecognizers>
+										<CheckBox IsChecked="{Binding IsPatientInactive, Mode=OneWay}" IsEnabled="False" Color="#DC2626" />
+									</HorizontalStackLayout>
+								</VerticalStackLayout>
+							</HorizontalStackLayout>
+							<Border BackgroundColor="{StaticResource SparkAccentTeal}" HeightRequest="2" HorizontalOptions="Fill" Margin="0,2,0,4" StrokeThickness="0" />
+							<VerticalStackLayout IsVisible="{Binding IsPatientInactive}" Spacing="8">
+								<controls:CrudSectionHeader Title="НЕАКТИВЕН ПАЦИЕНТ" TextColor="#B91C1C" LineColor="#FCA5A5" />
+								<Label Style="{StaticResource EditFieldLabelStyle}" Text="Причина за неактивност *" />
+								<Border IsEnabled="{Binding IsEditMode}" Style="{StaticResource TextAreaFieldBoxStyle}">
+									<Editor AutoSize="TextChanges" FontSize="13" Placeholder="Внесете причина..." Text="{Binding InactiveReason, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" />
+								</Border>
+								<controls:FFButton ButtonKind="Secondary" Command="{Binding UploadDocumentCommand}" HeightRequestEx="36" IsVisible="{Binding IsEditMode}" Text="📎 Прикачи решение за неактивност" />
+							</VerticalStackLayout>
+						</VerticalStackLayout>
 
-										<Border
-											Padding="14"
-											BackgroundColor="{StaticResource SparkBackground}"
-											Stroke="{StaticResource SparkAccentTealBg}"
-											StrokeShape="RoundRectangle 12"
-											StrokeThickness="1">
-											<VerticalStackLayout Spacing="12">
-												<HorizontalStackLayout IsVisible="{Binding IsEditMode}" Spacing="10">
-													<controls:FFButton
-														ButtonKind="Secondary"
-														Command="{Binding UploadDocumentCommand}"
-														ContentPadding="16,0"
-														HeightRequestEx="36"
-														IsEnabled="{Binding IsUploadingDocument, Converter={StaticResource InvertedBoolConverter}}"
-														Text="📎 Прикачи документ" />
-													<ActivityIndicator
-														IsRunning="{Binding IsUploadingDocument}"
-														IsVisible="{Binding IsUploadingDocument}"
-														Color="{StaticResource SparkAccentTeal}" />
-												</HorizontalStackLayout>
+						<!--  ЗАБЕЛЕШКА  -->
+						<VerticalStackLayout Grid.Column="2" Spacing="10">
+							<controls:CrudSectionHeader Title="ЗАБЕЛЕШКА" />
+							<Border IsEnabled="{Binding IsEditMode}" Style="{StaticResource TextAreaFieldBoxStyle}">
+								<Editor AutoSize="TextChanges" BackgroundColor="Transparent" FontSize="13" Placeholder="Забелешка за пациентот..." PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.Allergies}" TextColor="{StaticResource SparkTextPrimary}" />
+							</Border>
+						</VerticalStackLayout>
+					</Grid>
 
-												<CollectionView ItemsSource="{Binding Documents}" SelectionMode="None">
-													<CollectionView.EmptyView>
-														<Label
-															Padding="0,6"
-															FontSize="12"
-															Text="Нема прикачени документи."
-															TextColor="{StaticResource SparkTextSecondary}" />
-													</CollectionView.EmptyView>
-													<CollectionView.ItemTemplate>
-														<DataTemplate x:DataType="dto:PatientDocumentDto">
-															<Border
-																Margin="0,0,0,8"
-																Padding="10,8"
-																BackgroundColor="{StaticResource SparkBackground}"
-																Stroke="{StaticResource SparkAccentTealBg}"
-																StrokeShape="RoundRectangle 8"
-																StrokeThickness="1">
-																<Border.GestureRecognizers>
-																	<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding .}" />
-																</Border.GestureRecognizers>
-																<Grid ColumnDefinitions="36,*,Auto,Auto" ColumnSpacing="10">
-																	<Border
-																		BackgroundColor="{StaticResource SparkAccentTealBg}"
-																		HeightRequest="36"
-																		StrokeShape="RoundRectangle 8"
-																		StrokeThickness="0"
-																		WidthRequest="36">
-																		<Grid>
-																			<Image
-																				Aspect="AspectFill"
-																				IsVisible="{Binding ., Converter={StaticResource DocumentIsImageConverter}}"
-																				Source="{Binding StoredPath}" />
-																			<Label
-																				FontFamily="FASolid"
-																				FontSize="14"
-																				HorizontalOptions="Center"
-																				IsVisible="{Binding ., Converter={StaticResource DocumentIsImageConverter}, ConverterParameter=Invert}"
-																				Text="&#xf15b;"
-																				TextColor="{StaticResource SparkAccentTealDark}"
-																				VerticalOptions="Center" />
-																		</Grid>
-																	</Border>
-																	<Label
-																		Grid.Column="1"
-																		FontSize="13"
-																		LineBreakMode="TailTruncation"
-																		Text="{Binding FileName}"
-																		TextColor="{StaticResource SparkTextPrimary}"
-																		VerticalOptions="Center" />
-																	<Label
-																		Grid.Column="2"
-																		FontFamily="FASolid"
-																		FontSize="14"
-																		Text="&#xf019;"
-																		TextColor="{StaticResource SparkAccentTealDark}"
-																		VerticalOptions="Center">
-																		<Label.GestureRecognizers>
-																			<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DownloadDocumentCommand}" CommandParameter="{Binding .}" />
-																		</Label.GestureRecognizers>
-																	</Label>
-																	<Label
-																		Grid.Column="3"
-																		FontFamily="FASolid"
-																		FontSize="14"
-																		IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
-																		Text="&#xf1f8;"
-																		TextColor="#DC2626"
-																		VerticalOptions="Center">
-																		<Label.GestureRecognizers>
-																			<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveDocumentCommand}" CommandParameter="{Binding .}" />
-																		</Label.GestureRecognizers>
-																	</Label>
-																</Grid>
-															</Border>
-														</DataTemplate>
-													</CollectionView.ItemTemplate>
-												</CollectionView>
-											</VerticalStackLayout>
-										</Border>
-									</VerticalStackLayout>
-								</Grid>
-
-								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Margin="0,6,0,0" Spacing="6">
-<controls:CrudSectionHeader Title="СТАТУС НА ПАЦИЕНТ" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" />
-<HorizontalStackLayout HorizontalOptions="Start" Spacing="28">
-<VerticalStackLayout Spacing="2"><Label FontAttributes="Bold" FontSize="11" Text="Активен" TextColor="{StaticResource SparkAccentTealDark}" /><HorizontalStackLayout Spacing="4"><HorizontalStackLayout.GestureRecognizers><TapGestureRecognizer Command="{Binding SetActiveCommand}" /></HorizontalStackLayout.GestureRecognizers><CheckBox IsChecked="{Binding IsPatientActive, Mode=OneWay}" IsEnabled="False" Color="{StaticResource SparkAccentTeal}" /></HorizontalStackLayout></VerticalStackLayout>
-<VerticalStackLayout Spacing="2"><Label FontAttributes="Bold" FontSize="11" Text="Неактивен" TextColor="#DC2626" /><HorizontalStackLayout Spacing="4"><HorizontalStackLayout.GestureRecognizers><TapGestureRecognizer Command="{Binding SetInactiveCommand}" /></HorizontalStackLayout.GestureRecognizers><CheckBox IsChecked="{Binding IsPatientInactive, Mode=OneWay}" IsEnabled="False" Color="#DC2626" /></HorizontalStackLayout></VerticalStackLayout>
-</HorizontalStackLayout>
-<Border BackgroundColor="{StaticResource SparkAccentTeal}" HeightRequest="2" HorizontalOptions="Fill" Margin="0,2,0,4" StrokeThickness="0" />
-</VerticalStackLayout>
-<VerticalStackLayout IsVisible="{Binding IsPatientInactive}" Spacing="8" Margin="0,0,0,8">
-<controls:CrudSectionHeader Title="НЕАКТИВЕН ПАЦИЕНТ" TextColor="#B91C1C" LineColor="#FCA5A5" />
-<Label Style="{StaticResource EditFieldLabelStyle}" Text="Причина за неактивност *" />
-<Border IsEnabled="{Binding IsEditMode}" Style="{StaticResource TextAreaFieldBoxStyle}"><Editor AutoSize="TextChanges" FontSize="13" Placeholder="Внесете причина..." Text="{Binding InactiveReason, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" /></Border>
-<controls:FFButton ButtonKind="Secondary" Command="{Binding UploadDocumentCommand}" HeightRequestEx="36" IsVisible="{Binding IsEditMode}" Text="📎 Прикачи решение за неактивност" />
-</VerticalStackLayout>
-<HorizontalStackLayout HorizontalOptions="Start" Spacing="12" VerticalOptions="Center">
-<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" ContentPadding="24,0" HeightRequestEx="46" WidthRequest="155" IsVisible="{Binding IsEditMode}" Text="Откажи" />
-<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" ContentPadding="24,0" HeightRequestEx="46" WidthRequest="155" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="{StaticResource SidebarActiveText}" />
-<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding ToggleEditModeAsyncCommand}" ContentPadding="24,0" HeightRequestEx="46" WidthRequest="155" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="{StaticResource SidebarActiveText}" />
-</HorizontalStackLayout>
+					<HorizontalStackLayout Grid.Row="5" HorizontalOptions="Start" Spacing="12" VerticalOptions="Center">
+						<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" ContentPadding="24,0" HeightRequestEx="46" WidthRequest="155" IsVisible="{Binding IsEditMode}" Text="Откажи" />
+						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" ContentPadding="24,0" HeightRequestEx="46" WidthRequest="155" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="{StaticResource SidebarActiveText}" />
+						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding ToggleEditModeAsyncCommand}" ContentPadding="24,0" HeightRequestEx="46" WidthRequest="155" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="{StaticResource SidebarActiveText}" />
+					</HorizontalStackLayout>
 						</VerticalStackLayout>
 
 						<!--  ╔══════════ ИСТОРИЈА НА ПАЦИЕНТОТ — втор грид под формата ══════════╗  -->
