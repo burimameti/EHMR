@@ -1229,16 +1229,14 @@
 								<HorizontalStackLayout HorizontalOptions="Start" IsVisible="{Binding IsEditMode}" Spacing="14" VerticalOptions="Center">
 									<Label FontAttributes="Bold" FontSize="12" Text="Статус:" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
 									<HorizontalStackLayout Spacing="4">
+										<HorizontalStackLayout.GestureRecognizers><TapGestureRecognizer Command="{Binding SetActiveCommand}" /></HorizontalStackLayout.GestureRecognizers>
 										<CheckBox IsChecked="{Binding IsPatientActive, Mode=OneWay}" IsEnabled="False" Color="{StaticResource SparkAccentTeal}" />
-										<Label FontAttributes="Bold" Text="Активен" VerticalOptions="Center">
-											<Label.GestureRecognizers><TapGestureRecognizer Command="{Binding SetActiveCommand}" /></Label.GestureRecognizers>
-										</Label>
+										<Label FontAttributes="Bold" Text="Активен" VerticalOptions="Center" />
 									</HorizontalStackLayout>
 									<HorizontalStackLayout Spacing="4">
+										<HorizontalStackLayout.GestureRecognizers><TapGestureRecognizer Command="{Binding SetInactiveCommand}" /></HorizontalStackLayout.GestureRecognizers>
 										<CheckBox IsChecked="{Binding IsPatientInactive, Mode=OneWay}" IsEnabled="False" Color="#DC2626" />
-										<Label FontAttributes="Bold" Text="Неактивен" VerticalOptions="Center">
-											<Label.GestureRecognizers><TapGestureRecognizer Command="{Binding SetInactiveCommand}" /></Label.GestureRecognizers>
-										</Label>
+										<Label FontAttributes="Bold" Text="Неактивен" VerticalOptions="Center" />
 									</HorizontalStackLayout>
 								</HorizontalStackLayout>
 
