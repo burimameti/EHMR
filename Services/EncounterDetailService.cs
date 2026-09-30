@@ -438,6 +438,16 @@ public class EncounterDetailService : IEncounterDetailService
             .ToListAsync(token);
     }
 
+    public async Task<List<ApplicationRegime>> GetApplicationRegimesAsync(CancellationToken ct = default)
+    {
+        await using var db = await _factory.CreateDbContextAsync(ct);
+        return await db.ApplicationRegimes
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.Regime)
+            .ToListAsync(ct);
+    }
+
     public async Task<List<Medicine>> SearchMedicines(string term, CancellationToken ct = default)
     {
         if(string.IsNullOrWhiteSpace(term)) return [];
