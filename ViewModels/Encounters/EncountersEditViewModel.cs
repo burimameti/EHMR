@@ -60,6 +60,15 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
             return;
         }
 
+        if(EncounterMedicines.Any(x => string.IsNullOrWhiteSpace(x.ApplicationRegime)))
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Валидација",
+                "За секој додаден лек мора да изберете режим на апликација.",
+                "Во ред");
+            return;
+        }
+
         await ExecuteSafeAsync(async () =>
         {
             Encounter.SetNotes(EncounterDiagnosisNotes);
