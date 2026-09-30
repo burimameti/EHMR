@@ -24,7 +24,6 @@ namespace EHMR.Converters
             { AppointmentStatus.InProgress,  "Во тек"    },
             { AppointmentStatus.Completed,   "Завршен"   },
             { AppointmentStatus.Cancelled,   "Откажан"   },
-            { AppointmentStatus.Missed,      "Не се пријавил" },
         };
 
         // Reverse lookup built once from _labels, so the two directions can
