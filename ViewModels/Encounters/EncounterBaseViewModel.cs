@@ -250,7 +250,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             .OrderBy(a => a.ScheduledStart),
 
         AppointmentTabFilter.Pending => PatientAppointments
-            .Where(a => a.Status==AppointmentStatus.CheckedIn||a.Status==AppointmentStatus.InProgress)
+            .Where(a => a.Status==AppointmentStatus.InProgress||a.Status==AppointmentStatus.InProgress)
             .OrderBy(a => a.ScheduledStart),
 
         AppointmentTabFilter.Past => PatientAppointments
@@ -453,7 +453,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
                 context
                     .Where(x =>
                         x.Status==AppointmentStatus.Scheduled||
-                        x.Status==AppointmentStatus.CheckedIn)
+                        x.Status==AppointmentStatus.InProgress)
             );
         SelectedAppointment=
             AvailableAppointments
