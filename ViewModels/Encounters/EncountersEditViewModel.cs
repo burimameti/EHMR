@@ -128,7 +128,6 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     private static AppointmentStatus MapToAppointmentStatus(EncounterStatus s) => s switch
     {
         EncounterStatus.Scheduled => AppointmentStatus.Scheduled,
-        EncounterStatus.CheckedIn => AppointmentStatus.CheckedIn,
         EncounterStatus.InProgress => AppointmentStatus.InProgress,
         EncounterStatus.Completed => AppointmentStatus.Completed,
         EncounterStatus.Cancelled => AppointmentStatus.Cancelled,
