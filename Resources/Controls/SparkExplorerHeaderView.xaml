@@ -131,7 +131,7 @@
 				MinimumHeightRequest="64">
 
 				<!--  Search uses all remaining horizontal space.  -->
-				<VerticalStackLayout Grid.Column="0" Spacing="4" HorizontalOptions="Fill" MinimumWidthRequest="220">
+				<VerticalStackLayout Grid.Column="0" Spacing="4" HorizontalOptions="Fill" MinimumWidthRequest="0">
 					<sc:FFSearchBox
 						x:Name="HeaderSearchBox"
 						HorizontalOptions="Fill"
