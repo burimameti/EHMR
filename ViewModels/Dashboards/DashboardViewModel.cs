@@ -1136,7 +1136,6 @@ public partial class DashboardViewModel : ObservableObject
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
-            new() { Header = "ЕМБГ",           Key = "NationalId", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "СЗБО БРОЈ",      Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
             // ─── FIX: Hyperlink fires OpenPatientFromGridCommand via HyperlinkCommand binding in XAML
             new() { Header = "ИМЕ И ПРЕЗИМЕ",        Key = "FullName",   Width = new GridLength(2.8, GridUnitType.Star), CellType = SparkGridCellType.Hyperlink },
@@ -1154,7 +1153,6 @@ public partial class DashboardViewModel : ObservableObject
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
             new() { Header="ИМЕ И ПРЕЗИМЕ", Key="PatientName", Width=new GridLength(2.4, GridUnitType.Star) },
-            new() { Header="МАТИЧЕН БРОЈ", Key="NationalId", Width=new GridLength(1.4, GridUnitType.Star) },
             new() { Header="СЗБО БРОЈ", Key="SzboNumber", Width=new GridLength(1.25, GridUnitType.Star) },
             new() { Header="ДАТУМ НА ПРЕГЛЕД", Key="Date", Width=new GridLength(1.5, GridUnitType.Star) },
             new() { Header="СТАТУС", Key="Status", Width=new GridLength(1.1, GridUnitType.Star), CellType=SparkGridCellType.Badge },
@@ -1165,7 +1163,6 @@ public partial class DashboardViewModel : ObservableObject
         {
             var row=new SparkGridRow { Tag=item };
             row["PatientName"]=item.PatientName;
-            row["NationalId"]=PrivacyMaskHelper.MaskNationalId(item.NationalId);
             row["SzboNumber"]=item.SzboNumber;
             row["Date"]=item.Source.ScheduledStart?.ToString("dd.MM.yyyy HH:mm")??"—";
             row["Status"]=new SparkBadgeValue(item.StatusText, EncounterStatusToTone(item.Source.Status));
@@ -1181,7 +1178,6 @@ public partial class DashboardViewModel : ObservableObject
     {
         RecentEncounterColumns=new ObservableCollection<SparkGridColumn>
         {
-            new() { Header = "ЕМБГ", Key = "NationalId", Width = new GridLength(1.4, GridUnitType.Star) },
             new() { Header = "СЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "Patient", Width = new GridLength(2.2, GridUnitType.Star), CellType = SparkGridCellType.Hyperlink },
             new() { Header = "ДАТУМ НА ПРЕГЛЕД", Key = "Date", Width = new GridLength(1.5, GridUnitType.Star) }
@@ -1193,7 +1189,6 @@ public partial class DashboardViewModel : ObservableObject
         RecentEncounterRows=new ObservableCollection<SparkGridRow>(encounters.Select(item =>
         {
             var row = new SparkGridRow { Tag=item };
-            row["NationalId"]=PrivacyMaskHelper.MaskNationalId(item.NationalId);
             row["SzboNumber"]=item.SzboNumber;
             row["Date"]=item.Time;
             row["Patient"]=item.PatientName;
@@ -1209,7 +1204,6 @@ public partial class DashboardViewModel : ObservableObject
             var patient = item.Patient;
             var row = new SparkGridRow { Tag=item };
 
-            row["NationalId"]=PrivacyMaskHelper.MaskNationalId(patient.NationalId);
             row["SzboNumber"]=patient.SzboNumber;
             row["FullName"]=patient.FullName;
             row["City"]=patient.City;
@@ -1348,7 +1342,6 @@ public partial class DashboardViewModel : ObservableObject
             {
                 Source=x.Encounter,
                 PatientName=x.Patient.FullName,
-                NationalId=x.Patient.NationalId,
                 SzboNumber=x.Patient.SzboNumber,
                 Time=x.Encounter.ScheduledStart!.Value.ToString("HH:mm"),
                 StatusText=EncounterStatusDisplay.TryGetValue(x.Encounter.Status, out var lbl) ? lbl : x.Encounter.Status.ToString(),
