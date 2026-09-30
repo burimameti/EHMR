@@ -126,13 +126,15 @@
 			IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
 
 			<Grid
-				ColumnDefinitions="2*,Auto,3*,Auto"
+				ColumnDefinitions="3*,Auto,2*,Auto"
 				ColumnSpacing="12"
+				HorizontalOptions="Fill"
 				VerticalOptions="Start">
 
 				<!--  Search + suggestions occupy the first responsive column.  -->
 				<VerticalStackLayout
 					Grid.Column="0"
+					HorizontalOptions="Fill"
 					Spacing="4"
 					VerticalOptions="Start">
 					<sc:FFSearchBox
@@ -245,7 +247,7 @@
 								HorizontalOptionsEx="End"
 								Text="{Binding Label}"
 								TextColorEx="White"
-								WidthRequestEx="110" />
+								WidthRequestEx="120" />
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
 				</HorizontalStackLayout>
