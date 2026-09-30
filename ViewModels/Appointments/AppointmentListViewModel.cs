@@ -481,7 +481,7 @@ public partial class AppointmentListViewModel
     }
 
     private static bool CanEdit(Appointment a) =>
-        a.Status is (AppointmentStatus.Scheduled or AppointmentStatus.CheckedIn)&&
+        a.Status is (AppointmentStatus.Scheduled or AppointmentStatus.InProgress)&&
         a.ScheduledStart.Date>=DateTime.Today;
 
     private static bool CanCancel(Appointment a) =>
@@ -542,7 +542,7 @@ public partial class AppointmentListViewModel
         {
             AppointmentStatusFilter.All => items,
             AppointmentStatusFilter.Active => items.Where(x =>
-                x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.CheckedIn),
+                x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.InProgress),
             _ => items.Where(x => x.Status==Enum.Parse<AppointmentStatus>(SelectedStatus.Filter.ToString()))
         };
 
@@ -631,7 +631,7 @@ public partial class AppointmentListViewModel
             {
                 AppointmentStatusFilter.All => baseItems.Count,
                 AppointmentStatusFilter.Active => baseItems.Count(x =>
-                    x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.CheckedIn),
+                    x.Status==AppointmentStatus.Scheduled||x.Status==AppointmentStatus.InProgress),
                 _ => baseItems.Count(x => x.Status==Enum.Parse<AppointmentStatus>(filter.ToString()))
             };
 
@@ -736,12 +736,11 @@ public partial class AppointmentListViewModel
     private static string StatusLabel(AppointmentStatus status) => status switch
     {
         AppointmentStatus.Scheduled => "Закажан",
-        AppointmentStatus.CheckedIn => "Пријавен",
+        AppointmentStatus.InProgress => "Пријавен",
         AppointmentStatus.Completed => "Завршен",
         AppointmentStatus.Cancelled => "Откажан",
         AppointmentStatus.Missed => "Пропуштен",
         AppointmentStatus.InProgress => "Во тек",
-        AppointmentStatus.ReScheduled => "Презакажан",
         _ => status.ToString()
     };
 
