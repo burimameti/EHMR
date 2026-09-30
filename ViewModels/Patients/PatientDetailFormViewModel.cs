@@ -652,10 +652,13 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [ObservableProperty] private string doctorSearchText = string.Empty;
     [ObservableProperty] private bool showDoctorDropdown;
     [ObservableProperty] private string selectedDoctorDisplay = string.Empty;
+    public bool CanClearDoctor => IsEditMode && !string.IsNullOrWhiteSpace(SelectedDoctorDisplay);
     // THIS WAS MISSING
     [ObservableProperty]
     private bool useCyrillicDoctorSearch = true;
     partial void OnDoctorSearchTextChanged(string value) => DebounceDoctorSearch(value);
+    partial void OnSelectedDoctorDisplayChanged(string value) => OnPropertyChanged(nameof(CanClearDoctor));
+    partial void OnIsReadOnlyChanged(bool value) => OnPropertyChanged(nameof(CanClearDoctor));
 
     private async void DebounceDoctorSearch(string query)
     {
@@ -752,8 +755,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
         if(string.IsNullOrWhiteSpace(MkbCodeSearchText)&&string.IsNullOrWhiteSpace(MkbDescriptionSearchText))
         {
-            // Empty search means "browse the selected A-Z section", not "hide MKB".
-            await SearchMkbAsync(token);
+            MkbResults.Clear();
+            ShowMkbDropdown=false;
             return;
         }
 
