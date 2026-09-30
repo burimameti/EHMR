@@ -12,6 +12,7 @@ public interface IEncounterDetailService
 {
 
     Task<List<Medicine>> SearchMedicines(string term, CancellationToken ct = default);
+    Task<List<ApplicationRegime>> GetApplicationRegimesAsync(CancellationToken ct = default);
     Task AutoCloseStaleVisitsAsync(int staleAfterDays = 3);
     Task SaveEncounter(
         Encounter encounter,
