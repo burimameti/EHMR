@@ -318,184 +318,13 @@
 
 										
 
-										<!--
-											5 полиња во еден ред: Име | Презиме | Датум на раѓање | Пол | ЗБО.
-											Датум и Пол имаат Grow=0 (остануваат тесни), Име/Презиме/ЗБО го делат остатокот.
-											На тесен прозорец полињата се префрлуваат во нов ред.
-										-->
-										<FlexLayout
-											AlignItems="Start"
-											Direction="Row"
-											Wrap="Wrap">
-
-											<!--  ИМЕ  -->
-											<VerticalStackLayout
-												Margin="0,0,10,6"
-												FlexLayout.Basis="150"
-												FlexLayout.Grow="1.3"
-												Spacing="4">
-												<Label
-													IsVisible="{Binding IsEditMode}"
-													Style="{StaticResource EditFieldLabelStyle}"
-													Text="Име *" />
-												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
-													<Entry
-														BackgroundColor="Transparent"
-														FontSize="13"
-														Placeholder="Пр. Марко"
-														PlaceholderColor="{StaticResource SparkTextSecondary}"
-														Text="{Binding Patient.FirstName}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</Border>
-												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
-													<Label
-														FontSize="11"
-														Text="Име:"
-														TextColor="{StaticResource SparkTextSecondary}" />
-													<Label
-														FontAttributes="Bold"
-														FontSize="13"
-														Text="{Binding Patient.FirstName}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</VerticalStackLayout>
-											</VerticalStackLayout>
-
-											<!--  ПРЕЗИМЕ  -->
-											<VerticalStackLayout
-												Margin="0,0,10,6"
-												FlexLayout.Basis="150"
-												FlexLayout.Grow="1.3"
-												Spacing="4">
-												<Label
-													IsVisible="{Binding IsEditMode}"
-													Style="{StaticResource EditFieldLabelStyle}"
-													Text="Презиме *" />
-												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
-													<Entry
-														BackgroundColor="Transparent"
-														FontSize="13"
-														Placeholder="Пр. Петровски"
-														PlaceholderColor="{StaticResource SparkTextSecondary}"
-														Text="{Binding Patient.LastName}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</Border>
-												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
-													<Label
-														FontSize="11"
-														Text="Презиме:"
-														TextColor="{StaticResource SparkTextSecondary}" />
-													<Label
-														FontAttributes="Bold"
-														FontSize="13"
-														Text="{Binding Patient.LastName}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</VerticalStackLayout>
-											</VerticalStackLayout>
-
-											<!--  ДАТУМ НА РАЃАЊЕ (тесно)  -->
-											<VerticalStackLayout
-												Margin="0,0,10,6"
-												FlexLayout.Basis="140"
-												FlexLayout.Grow="0"
-												Spacing="4">
-												<Label
-													IsVisible="{Binding IsEditMode}"
-													Style="{StaticResource EditFieldLabelStyle}"
-													Text="Датум на раѓање" />
-												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
-													<Grid ColumnDefinitions="*,Auto">
-														<Label Style="{StaticResource FieldBoxValueStyle}" Text="{Binding Patient.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" />
-														<Label Grid.Column="1" Style="{StaticResource FieldBoxCalendarIconStyle}" />
-														<DatePicker
-															Grid.ColumnSpan="2"
-															BackgroundColor="Transparent"
-															Date="{Binding Patient.BirthDate}"
-															Format="dd.MM.yyyy"
-															Opacity="0" />
-													</Grid>
-												</Border>
-												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
-													<Label
-														FontSize="11"
-														Text="Роден:"
-														TextColor="{StaticResource SparkTextSecondary}" />
-													<Border Style="{StaticResource InfoPillBorderStyle}">
-														<HorizontalStackLayout Spacing="6">
-															<Label Style="{StaticResource InfoPillIconStyle}" Text="&#xf073;" />
-															<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding Patient.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" />
-														</HorizontalStackLayout>
-													</Border>
-												</VerticalStackLayout>
-											</VerticalStackLayout>
-
-											<!--  ПОЛ (тесно)  -->
-											<VerticalStackLayout
-												Margin="0,0,10,6"
-												FlexLayout.Basis="110"
-												FlexLayout.Grow="0"
-												Spacing="4">
-												<Label
-													IsVisible="{Binding IsEditMode}"
-													Style="{StaticResource EditFieldLabelStyle}"
-													Text="Пол *" />
-												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
-													<Grid ColumnDefinitions="*,Auto">
-														<Label Style="{StaticResource FieldBoxValueStyle}" Text="{Binding SelectedGenderDisplay}" />
-														<Label Grid.Column="1" Style="{StaticResource FieldBoxChevronStyle}" />
-														<Picker
-															Grid.ColumnSpan="2"
-															BackgroundColor="Transparent"
-															ItemsSource="{Binding GenderOptions}"
-															Opacity="0"
-															SelectedItem="{Binding SelectedGenderDisplay}" />
-													</Grid>
-												</Border>
-												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
-													<Label
-														FontSize="11"
-														Text="Пол:"
-														TextColor="{StaticResource SparkTextSecondary}" />
-													<Border Style="{StaticResource InfoPillBorderStyle}">
-														<HorizontalStackLayout Spacing="6">
-															<Label Style="{StaticResource InfoPillIconStyle}" Text="&#xf183;" />
-															<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding SelectedGenderDisplay}" />
-														</HorizontalStackLayout>
-													</Border>
-												</VerticalStackLayout>
-											</VerticalStackLayout>
-
-											<!--  ЗБО  -->
-											<VerticalStackLayout
-												Margin="0,0,0,6"
-												FlexLayout.Basis="140"
-												FlexLayout.Grow="1"
-												Spacing="4">
-												<Label
-													IsVisible="{Binding IsEditMode}"
-													Style="{StaticResource EditFieldLabelStyle}"
-													Text="ЕЗБО" />
-												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
-													<Entry
-														BackgroundColor="Transparent"
-														FontSize="13"
-														Placeholder="Здравствен број"
-														PlaceholderColor="{StaticResource SparkTextSecondary}"
-														Text="{Binding Patient.SzboNumber}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</Border>
-												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
-													<Label
-														FontSize="11"
-														Text="ЕЗБО:"
-														TextColor="{StaticResource SparkTextSecondary}" />
-													<Label
-														FontAttributes="Bold"
-														FontSize="13"
-														Text="{Binding Patient.SzboNumber}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</VerticalStackLayout>
-											</VerticalStackLayout>
-										</FlexLayout>
+										<Grid ColumnDefinitions="1.3*,1.3*,125,90,1*" ColumnSpacing="10">
+											<VerticalStackLayout Grid.Column="0" Spacing="4"><Label IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldLabelStyle}" Text="Име *" /><Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}"><Entry BackgroundColor="Transparent" FontSize="13" Placeholder="Пр. Марко" PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.FirstName}" TextColor="{StaticResource SparkTextPrimary}" /></Border><VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2"><Label FontSize="11" Text="Име:" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="13" Text="{Binding Patient.FirstName}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout></VerticalStackLayout>
+											<VerticalStackLayout Grid.Column="1" Spacing="4"><Label IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldLabelStyle}" Text="Презиме *" /><Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}"><Entry BackgroundColor="Transparent" FontSize="13" Placeholder="Пр. Петровски" PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.LastName}" TextColor="{StaticResource SparkTextPrimary}" /></Border><VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2"><Label FontSize="11" Text="Презиме:" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="13" Text="{Binding Patient.LastName}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout></VerticalStackLayout>
+											<VerticalStackLayout Grid.Column="2" Spacing="4"><Label IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldLabelStyle}" Text="Датум на раѓање" /><Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}"><Grid ColumnDefinitions="*,Auto"><Label Style="{StaticResource FieldBoxValueStyle}" Text="{Binding Patient.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" /><Label Grid.Column="1" Style="{StaticResource FieldBoxCalendarIconStyle}" /><DatePicker Grid.ColumnSpan="2" BackgroundColor="Transparent" Date="{Binding Patient.BirthDate}" Format="dd.MM.yyyy" Opacity="0" /></Grid></Border><VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2"><Label FontSize="11" Text="Роден:" TextColor="{StaticResource SparkTextSecondary}" /><Border Style="{StaticResource InfoPillBorderStyle}"><HorizontalStackLayout Spacing="6"><Label Style="{StaticResource InfoPillIconStyle}" Text="&#xf073;" /><Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding Patient.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" /></HorizontalStackLayout></Border></VerticalStackLayout></VerticalStackLayout>
+											<VerticalStackLayout Grid.Column="3" Spacing="4"><Label IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldLabelStyle}" Text="Пол *" /><Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}"><Grid ColumnDefinitions="*,Auto"><Label Style="{StaticResource FieldBoxValueStyle}" Text="{Binding SelectedGenderDisplay}" /><Label Grid.Column="1" Style="{StaticResource FieldBoxChevronStyle}" /><Picker Grid.ColumnSpan="2" BackgroundColor="Transparent" ItemsSource="{Binding GenderOptions}" Opacity="0" SelectedItem="{Binding SelectedGenderDisplay}" /></Grid></Border><VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2"><Label FontSize="11" Text="Пол:" TextColor="{StaticResource SparkTextSecondary}" /><Border Style="{StaticResource InfoPillBorderStyle}"><HorizontalStackLayout Spacing="6"><Label Style="{StaticResource InfoPillIconStyle}" Text="&#xf183;" /><Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding SelectedGenderDisplay}" /></HorizontalStackLayout></Border></VerticalStackLayout></VerticalStackLayout>
+											<VerticalStackLayout Grid.Column="4" Spacing="4"><Label IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldLabelStyle}" Text="ЕЗБО" /><Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}"><Entry BackgroundColor="Transparent" FontSize="13" Placeholder="Здравствен број" PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.SzboNumber}" TextColor="{StaticResource SparkTextPrimary}" /></Border><VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2"><Label FontSize="11" Text="ЕЗБО:" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="13" Text="{Binding Patient.SzboNumber}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout></VerticalStackLayout>
+										</Grid>
 									</VerticalStackLayout>
 
 									<VerticalStackLayout Grid.Row="1" Spacing="10">
@@ -511,7 +340,7 @@
 </VerticalStackLayout>
 <!--  РЕД 3 — МАТИЧЕН РЕУМАТОЛОГ  -->
 									<VerticalStackLayout Grid.Row="2" Spacing="10">
-										<controls:CrudSectionHeader Title="МАТИЧЕН РЕУМАТОЛОГ" TextColor="#7C3AED" LineColor="#A78BFA" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
+										<controls:CrudSectionHeader Title="МАТИЧЕН РЕУМАТОЛОГ" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
 										<Grid ColumnDefinitions="0.25*,0.75*" ColumnSpacing="14">
 											<VerticalStackLayout Grid.Column="0" Spacing="8">
 												<Label Style="{StaticResource EditFieldLabelStyle}" Text="Реуматолог" />
@@ -539,7 +368,7 @@
 														<Label FontAttributes="Bold" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding SelectedDoctorDisplay}" TextColor="{StaticResource SparkAccentTealDark}" />
 													</VerticalStackLayout>
 												</Border>
-												<Button BackgroundColor="Transparent" Command="{Binding ClearDoctorCommand}" FontSize="11" HorizontalOptions="Start" IsVisible="{Binding IsEditMode}" Padding="0" Text="× Тргни реуматолог" TextColor="#DC2626" />
+												<Button BackgroundColor="Transparent" Command="{Binding ClearDoctorCommand}" FontSize="11" HorizontalOptions="Start" IsVisible="{Binding CanClearDoctor}" Padding="0" Text="× Тргни реуматолог" TextColor="#DC2626" />
 <VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
 													<Label FontSize="11" Text="Реуматолог:" TextColor="{StaticResource SparkTextSecondary}" />
 													<Label FontAttributes="Bold" FontSize="13" LineBreakMode="TailTruncation" Text="{Binding SelectedDoctorDisplay}" TextColor="{StaticResource SparkTextPrimary}" />
@@ -585,7 +414,7 @@
 														<Border.GestureRecognizers>
 															<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectMkbSectionCommand}" CommandParameter="{Binding .}" />
 														</Border.GestureRecognizers>
-														<Label FontAttributes="Bold" FontSize="10.5" HorizontalOptions="Center" Text="{Binding Letter}" VerticalOptions="Center" />
+														<Label FontAttributes="Bold" FontSize="10.5" HorizontalOptions="Center" Text="{Binding Letter}" VerticalOptions="Center"><Label.Triggers><DataTrigger Binding="{Binding IsSelected}" TargetType="Label" Value="True"><Setter Property="TextColor" Value="White" /></DataTrigger><DataTrigger Binding="{Binding IsSelected}" TargetType="Label" Value="False"><Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" /></DataTrigger></Label.Triggers></Label>
 													</Border>
 												</DataTemplate>
 											</BindableLayout.ItemTemplate>
