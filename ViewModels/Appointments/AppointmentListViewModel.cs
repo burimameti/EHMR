@@ -93,7 +93,6 @@ public partial class AppointmentListViewModel
         new() { Filter = AppointmentStatusFilter.InProgress, Label = "Во тек" },
         new() { Filter = AppointmentStatusFilter.Completed, Label = "Завршен" },
         new() { Filter = AppointmentStatusFilter.Cancelled, Label = "Откажан" },
-        new() { Filter = AppointmentStatusFilter.Missed,    Label = "Не се пријавил" }
     ];
 
     // =========================================================================
@@ -755,7 +754,6 @@ public enum AppointmentStatusFilter
     InProgress,
     Completed,
     Cancelled,
-    Missed
 }
 
 public class TextSpan
