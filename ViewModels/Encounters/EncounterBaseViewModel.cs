@@ -224,12 +224,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     partial void OnPrescriptionTabChanged(PrescriptionTabFilter value) => OnPropertyChanged(nameof(FilteredPrescriptions));
 
     // ===================== FILTERED (COMPUTED) VIEWS =====================
-    public ObservableCollection<string> ApplicationRegimeOptions => new(
-        PatientMedicines
-            .Where(x => !string.IsNullOrWhiteSpace(x.ApplicationRegime))
-            .Select(x => x.ApplicationRegime!)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(x => x));
+    [ObservableProperty]
+    private ObservableCollection<string> applicationRegimeOptions = new();
 
     public string CurrentDiagnosesSummary => string.Join(", ", PatientDiagnoses
         .Where(x => x.Mkb10Code!=null)
@@ -309,6 +305,10 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             PatientTherapyCyclesHistory=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
             PatientPrescriptions=new ObservableCollection<Prescription>(ctx.Prescriptions);
             PatientMedicines=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
+            ApplicationRegimeOptions=new ObservableCollection<string>(
+                (await EncounterService.GetApplicationRegimesAsync())
+                    .Select(x => x.Regime)
+                    .ToList());
             CurrentPatientScore=ctx.LatestScore?.ScoreText??string.Empty;
             CurrentPatientScoreDate=ctx.LatestScore?.RecordedAt;
             PatientDocuments=new ObservableCollection<PatientDocument>(ctx.Documents);
@@ -319,7 +319,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             OnPropertyChanged(nameof(CurrentDiagnosesSummary));
             OnPropertyChanged(nameof(ActiveMedicinesSummary));
             OnPropertyChanged(nameof(ActiveTherapySummary));
-            OnPropertyChanged(nameof(ApplicationRegimeOptions));
             OnPropertyChanged(nameof(HasPatientContext));
             OnPropertyChanged(nameof(HasEncounterContext));
         }
