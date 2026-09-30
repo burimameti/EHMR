@@ -152,7 +152,7 @@ namespace EHMR.Domain.Entities.Reports
                 "Завршени" or "Завршен" => appointments.Where(x => x.Status==AppointmentStatus.Completed),
                 "Проблематични" => appointments.Where(x => x.Status is AppointmentStatus.Cancelled or AppointmentStatus.Missed),
                 "Закажан" => appointments.Where(x => x.Status==AppointmentStatus.Scheduled),
-                "Пријавен" => appointments.Where(x => x.Status==AppointmentStatus.CheckedIn),
+                "Пријавен" => appointments.Where(x => x.Status==AppointmentStatus.InProgress),
                 "Откажан" => appointments.Where(x => x.Status==AppointmentStatus.Cancelled),
                 "Пропуштен" => appointments.Where(x => x.Status==AppointmentStatus.Missed),
                 _ => appointments
@@ -205,12 +205,11 @@ namespace EHMR.Domain.Entities.Reports
         private static string StatusLabel(AppointmentStatus status) => status switch
         {
             AppointmentStatus.Scheduled => "Закажан",
-            AppointmentStatus.CheckedIn => "Пријавен",
+            AppointmentStatus.InProgress => "Пријавен",
             AppointmentStatus.Completed => "Завршен",
             AppointmentStatus.Cancelled => "Откажан",
             AppointmentStatus.Missed => "Пропуштен",
             AppointmentStatus.InProgress => "Во тек",
-            AppointmentStatus.ReScheduled => "Презакажан",
             _ => status.ToString()
         };
 
