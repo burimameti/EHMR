@@ -16,12 +16,10 @@ namespace EHMR.Converters
         private static readonly Dictionary<AppointmentStatus, Color> _colors = new()
         {
             { AppointmentStatus.Scheduled,   Color.FromArgb("#3B82F6") }, // blue
-            { AppointmentStatus.InProgress,   Color.FromArgb("#F59E0B") }, // amber
             { AppointmentStatus.InProgress,  Color.FromArgb("#2563EB") }, // deep blue
             { AppointmentStatus.Completed,   Color.FromArgb("#10B981") }, // green
             { AppointmentStatus.Cancelled,   Color.FromArgb("#EF4444") }, // red
             { AppointmentStatus.Missed,      Color.FromArgb("#DC2626") }, // dark red
-            { AppointmentStatus.ReScheduled, Color.FromArgb("#6366F1") }, // indigo
         };
 
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
