@@ -850,11 +850,11 @@
 									<BindableLayout.ItemTemplate>
 										<DataTemplate x:DataType="viewModels:AttachedMedicineRow">
 											<Grid ColumnDefinitions="1.35*,0.8*,1.2*,0.7*,28" ColumnSpacing="1">
-												<Border Padding="5,0" BackgroundColor="White" HeightRequest="38" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="10" LineBreakMode="TailTruncation" Text="{Binding MedicineName}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
-												<Border Grid.Column="1" Padding="3,0" BackgroundColor="White" HeightRequest="38" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Entry BackgroundColor="Transparent" FontSize="10" Text="{Binding PatientMedicine.Dosage, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
-												<Border Grid.Column="2" Padding="5,0" BackgroundColor="White" HeightRequest="38" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="9.5" LineBreakMode="TailTruncation" Text="{Binding RegimeDisplay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
-												<Border Grid.Column="3" Padding="3,0" BackgroundColor="White" HeightRequest="38" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Entry BackgroundColor="Transparent" FontSize="10" Keyboard="Numeric" Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
-												<Border Grid.Column="4" BackgroundColor="White" HeightRequest="38" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Button Padding="0" BackgroundColor="Transparent" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" FontSize="10" IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" Text="✕" TextColor="#DC2626" WidthRequest="28" /></Border>
+												<Border Padding="5,0" BackgroundColor="White" HeightRequest="34" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="10" LineBreakMode="TailTruncation" Text="{Binding MedicineName}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
+												<Border Grid.Column="1" Padding="3,0" BackgroundColor="White" HeightRequest="34" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Entry BackgroundColor="Transparent" FontSize="10" Text="{Binding PatientMedicine.Dosage, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
+												<Border Grid.Column="2" Padding="5,0" BackgroundColor="White" HeightRequest="34" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="9.5" LineBreakMode="TailTruncation" Text="{Binding RegimeDisplay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
+												<Border Grid.Column="3" Padding="3,0" BackgroundColor="White" HeightRequest="34" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Entry BackgroundColor="Transparent" FontSize="10" Keyboard="Numeric" Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
+												<Border Grid.Column="4" BackgroundColor="White" HeightRequest="34" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Button Padding="0" BackgroundColor="Transparent" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" FontSize="10" IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" Text="✕" TextColor="#DC2626" WidthRequest="28" /></Border>
 											</Grid>
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
@@ -866,7 +866,7 @@
 <!--  РЕД 5 — ЗАБЕЛЕШКА  -->
 					<VerticalStackLayout Grid.Row="4" Spacing="10">
 						<controls:CrudSectionHeader Title="ЗАБЕЛЕШКА" />
-						<Border IsEnabled="{Binding IsEditMode}" MinimumHeightRequest="70" Style="{StaticResource TextAreaFieldBoxStyle}">
+						<Border IsEnabled="{Binding IsEditMode}" MinimumHeightRequest="64" Style="{StaticResource TextAreaFieldBoxStyle}">
 							<Editor AutoSize="TextChanges" BackgroundColor="Transparent" FontSize="13" Placeholder="Забелешка за пациентот..." PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.Allergies}" TextColor="{StaticResource SparkTextPrimary}" />
 						</Border>
 					</VerticalStackLayout>
