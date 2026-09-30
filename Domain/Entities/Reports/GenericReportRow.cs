@@ -9,7 +9,8 @@ namespace EHMR.Domain.Entities.Reports
         MissedTherapies,
         Auditing,
         AppointmentStatuses,
-        Patients
+        Patients,
+        MedicineUsage
     }
 
 
