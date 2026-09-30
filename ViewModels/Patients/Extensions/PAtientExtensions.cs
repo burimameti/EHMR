@@ -267,7 +267,7 @@ namespace EHMR.ViewModels.Patients.Extensions
                 FirstName=source.FirstName,
                 LastName=source.LastName,
 
-                NationalId=PrivacyMaskHelper.MaskNationalId(source.NationalId),
+                NationalId=source.NationalId,
                 SzboNumber=source.SzboNumber,
 
                 DoctorId=source.DoctorId,
