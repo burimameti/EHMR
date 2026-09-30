@@ -676,6 +676,13 @@
 											</Border>
 											<Border
 												Grid.Column="2"
+												Padding="10,8"
+												BackgroundColor="#475569"
+												StrokeThickness="0">
+												<Label FontAttributes="Bold" FontSize="10" Text="РЕЖИМ НА АПЛИКАЦИЈА" TextColor="White" />
+											</Border>
+											<Border
+												Grid.Column="3"
 												BackgroundColor="#475569"
 												StrokeShape="RoundRectangle 0,6,0,0"
 												StrokeThickness="0" />
@@ -730,6 +737,20 @@
 														</Border>
 														<Border
 															Grid.Column="2"
+															Padding="3,0"
+															BackgroundColor="White"
+															HeightRequest="44"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															StrokeThickness="1">
+															<Picker
+																ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
+																SelectedItem="{Binding ApplicationRegime, Mode=TwoWay}"
+																FontSize="11"
+																Title="Избери режим"
+																VerticalOptions="Center" />
+														</Border>
+														<Border
+															Grid.Column="3"
 															BackgroundColor="White"
 															HeightRequest="44"
 															Stroke="{StaticResource SparkBorderSubtle}"
@@ -853,6 +874,13 @@
 									Command="{Binding SelectTherapyCycleCommand}"
 									HeightRequestEx="44"
 									Text="+ Избери циклус" />
+								<controls:FFButton
+									Grid.ColumnSpan="2"
+									Margin="0,8,0,0"
+									ButtonKind="Secondary"
+									Command="{Binding AddNewAppointmentCommand}"
+									HeightRequestEx="40"
+									Text="+ Закажи следна контрола" />
 							</Grid>
 
 							<!--  Selected appointment  -->
