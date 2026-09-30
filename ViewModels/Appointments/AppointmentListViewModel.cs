@@ -252,7 +252,6 @@ public partial class AppointmentListViewModel
         SelectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
 
         // NOW apply pipeline (safe - suggestions are cleared)
-        RefreshSparkTabCounts();
         ApplyPipeline();
     }
 
@@ -273,7 +272,6 @@ public partial class AppointmentListViewModel
         Suggestions= [];
 
         // Apply filters and refresh grid
-        RefreshSparkTabCounts();
         ApplyPipeline();
     }
 
@@ -333,7 +331,6 @@ public partial class AppointmentListViewModel
             AllItems=items;
 
             ApplyPendingQuery();
-            RefreshSparkTabCounts();
             ApplyPipeline();
         }
         catch(Exception ex)
@@ -377,8 +374,6 @@ public partial class AppointmentListViewModel
         {
             if(!SetProperty(ref _selectedStatus, value)) return;
             SyncSparkPickersFromFilters();
-            SyncSparkTabsFromFilters();
-            RefreshSparkTabCounts();
             ApplyPipeline();
         }
     }
@@ -391,7 +386,6 @@ public partial class AppointmentListViewModel
         set
         {
             if(!SetProperty(ref _filterDate, value)) return;
-            RefreshSparkTabCounts();
             ApplyPipeline();
         }
     }
@@ -404,7 +398,6 @@ public partial class AppointmentListViewModel
         set
         {
             if(!SetProperty(ref _filterByDate, value)) return;
-            RefreshSparkTabCounts();
             ApplyPipeline();
         }
     }
@@ -567,8 +560,6 @@ public partial class AppointmentListViewModel
         FilterDate=DateTime.Today;
         FilterByDate=false;
         SelectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
-
-        RefreshSparkTabCounts();
     }
 
     // =========================================================================
@@ -595,8 +586,6 @@ public partial class AppointmentListViewModel
             Tabs.Add(tab);
             _statusTabsByFilter[option.Filter]=tab;
         }
-
-        RefreshSparkTabCounts();
     }
 
     private IEnumerable<Appointment> GetItemsForTabCounts()
@@ -652,7 +641,6 @@ public partial class AppointmentListViewModel
 
     private void InitializeSparkControls()
     {
-        BuildSparkTabs();
         BuildSparkPickers();
         BuildSparkButtons();
         BuildSparkGridColumns();
