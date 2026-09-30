@@ -864,6 +864,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         try
         {
             var regime=await _patientService.AddApplicationRegimeAsync(value);
+            if(!_applicationRegimes.Any(x => x.Id==regime.Id))
+                _applicationRegimes.Add(regime);
             if(!ApplicationRegimeOptions.Contains(regime.Regime))
                 ApplicationRegimeOptions.Add(regime.Regime);
 
