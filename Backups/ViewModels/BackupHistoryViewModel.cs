@@ -95,9 +95,6 @@ public partial class BackupHistoryViewModel : BaseViewModel<BackupHistory>
                 InitializeSparkControls();
                 _sparkInitialized=true;
             }
-
-            RefreshSparkTabCounts();
-
             ApplyPipeline();
 
             RecomputeMetrics();
@@ -313,9 +310,6 @@ public partial class BackupHistoryViewModel : BaseViewModel<BackupHistory>
 
             _statusTabs[status]=tab;
         }
-
-        RefreshSparkTabCounts();
-
       //  SyncSparkPickersFromFilters();
     }
     partial void OnSelectedStatusChanged(string value)
@@ -367,7 +361,6 @@ public partial class BackupHistoryViewModel : BaseViewModel<BackupHistory>
     }
     private void InitializeSparkControls()
     {
-        BuildSparkTabs();
         BuildSparkPickers();
         BuildSparkButtons();
         BuildSparkGridColumns();
