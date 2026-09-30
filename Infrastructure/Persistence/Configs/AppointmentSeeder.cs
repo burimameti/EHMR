@@ -121,7 +121,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                     Status = AppointmentStatus.Cancelled
                 },
 
-                // ===================== MISSED =====================
+                // ===================== CANCELLED =====================
                 new Appointment
                 {
                     PatientId = SeedIds.Patient10,
@@ -129,8 +129,8 @@ namespace EHMR.Infrastructure.Persistence.Configs
                     ScheduledStart = now.AddDays(-1).AddHours(11),
                     ScheduledEnd = now.AddDays(-1).AddHours(11).AddMinutes(30),
                     ReasonForVisit = "Терапија за грб",
-                    ClinicalNotes = "Пациентот не се појави.",
-                    Status = AppointmentStatus.Missed
+                    ClinicalNotes = "Терминот е откажан.",
+                    Status = AppointmentStatus.Cancelled
                 },
                 new Appointment
                 {
@@ -139,7 +139,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                     ScheduledStart = now.AddDays(-3).AddHours(10),
                     ScheduledEnd = now.AddDays(-3).AddHours(10).AddMinutes(30),
                     ReasonForVisit = "Контрола",
-                    ClinicalNotes = "Не дојде на закажаниот термин.",
+                    ClinicalNotes = "Терминот е откажан.",
                     Status = AppointmentStatus.Missed
                 },
 
