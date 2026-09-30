@@ -284,6 +284,12 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     [RelayCommand]
     private async Task SaveEncounter()
     {
+        if(SelectedPatient?.Status==PatientStatus.Inactive)
+        {
+            await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "За неактивен пациент не може да се креира или менува преглед.", "ОК");
+            return;
+        }
+
         if(SelectedPatient is null||SelectedDoctor is null)
         {
             await UserDialogService.ShowAlertAsync(
