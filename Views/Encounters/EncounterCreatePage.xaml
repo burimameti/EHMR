@@ -366,6 +366,12 @@
 								</Border>
 							</VerticalStackLayout>
 
+
+							</VerticalStackLayout>
+
+							<!--  ── 3. СКОР ─────────────────────────────────  -->
+							<VerticalStackLayout Spacing="8"><controls:CrudSectionHeader Title="СКОР" /><Border Style="{StaticResource TextAreaFieldBoxStyle}"><Entry BackgroundColor="Transparent" FontSize="13" Placeholder="Внесете резултат или оценка..." Text="{Binding ScoreText, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" /></Border></VerticalStackLayout>
+
 							<!--  ── ОЦЕНКА ─────────────────────────────────  -->
 							<VerticalStackLayout Spacing="8">
 								<controls:CrudSectionHeader Title="ОЦЕНКА" />
@@ -404,10 +410,6 @@
 										<Border Grid.Column="4" BackgroundColor="White" HeightRequest="42" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Button Padding="0" BackgroundColor="Transparent" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" FontSize="12" Text="✕" TextColor="#DC2626" WidthRequest="32" /></Border>
 									</Grid></DataTemplate></BindableLayout.ItemTemplate>
 								</VerticalStackLayout>
-							</VerticalStackLayout>
-
-							<!--  ── 3. СКОР ─────────────────────────────────  -->
-							<VerticalStackLayout Spacing="8"><controls:CrudSectionHeader Title="СКОР" /><Border Style="{StaticResource TextAreaFieldBoxStyle}"><Entry BackgroundColor="Transparent" FontSize="13" Placeholder="Внесете резултат или оценка..." Text="{Binding ScoreText, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" /></Border></VerticalStackLayout>
 
 							<!--  ── 4. ДЕТАЛИ ЗА ПРЕГЛЕДОТ ────────────────  -->
 							<VerticalStackLayout Spacing="12">
