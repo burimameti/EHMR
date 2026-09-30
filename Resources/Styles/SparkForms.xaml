@@ -163,7 +163,7 @@
 	<Style x:Key="EditFieldBoxStyle" TargetType="Border">
 		<Setter Property="Padding" Value="12,0" />
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
-		<Setter Property="HeightRequest" Value="36" />
+		<Setter Property="HeightRequest" Value="40" />
 		<Setter Property="Stroke" Value="#CBD5E1" />
 		<Setter Property="StrokeThickness" Value="1.2" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 4" />
@@ -174,7 +174,7 @@
 		BasedOn="{StaticResource EditFieldBoxStyle}"
 		TargetType="Border">
 		<Setter Property="Padding" Value="12,8" />
-		<Setter Property="HeightRequest" Value="56" />
+		<Setter Property="HeightRequest" Value="60" />
 	</Style>
 	<Style
 		x:Key="CompactFieldBoxStyle"
