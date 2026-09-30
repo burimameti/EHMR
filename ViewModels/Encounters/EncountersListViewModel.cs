@@ -207,7 +207,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     private static SparkBadgeTone StatusToTone(EncounterStatus status) => status switch
     {
         EncounterStatus.Completed => SparkBadgeTone.Success,
-        EncounterStatus.Cancelled or EncounterStatus.NoShow => SparkBadgeTone.Danger,
+        EncounterStatus.Cancelled => SparkBadgeTone.Danger,
         EncounterStatus.InProgress => SparkBadgeTone.Warning,
         _ => SparkBadgeTone.Neutral
     };
