@@ -24,7 +24,6 @@ public static class EncounterStatusLocalization
         EncounterStatus.InProgress => "Во тек",
         EncounterStatus.Completed => "Завршен",
         EncounterStatus.Cancelled => "Откажан",
-        EncounterStatus.NoShow => "Не се пријавил",
         _ => status.ToString()
     };
 }
