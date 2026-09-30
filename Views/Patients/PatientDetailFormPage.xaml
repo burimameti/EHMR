@@ -499,182 +499,19 @@
 									</VerticalStackLayout>
 
 									<VerticalStackLayout Grid.Row="1" Spacing="10">
-
-										<controls:CrudSectionHeader Title="КОНТАКТ ИНФОРМАЦИИ" />
-
-										<FlexLayout
-											AlignItems="Start"
-											Direction="Row"
-											Wrap="Wrap">
-
-											<!--  Телефон  -->
-											<VerticalStackLayout
-												Margin="0,0,10,6"
-												FlexLayout.Basis="140"
-												FlexLayout.Grow="1"
-												Spacing="4">
-												<Label
-													IsVisible="{Binding IsEditMode}"
-													Style="{StaticResource EditFieldLabelStyle}"
-													Text="Телефон" />
-												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
-													<Entry
-														BackgroundColor="Transparent"
-														FontSize="13"
-														Keyboard="Telephone"
-														Placeholder="+389 7X XXX XXX"
-														PlaceholderColor="{StaticResource SparkTextSecondary}"
-														Text="{Binding Patient.Phone}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</Border>
-												<Border IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}">
-													<VerticalStackLayout Spacing="4">
-														<Label Style="{StaticResource ReadRowLabelStyle}" Text="Телефон:" />
-														<Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.Phone}" />
-													</VerticalStackLayout>
-												</Border>
-											</VerticalStackLayout>
-
-											<!--  Е-пошта  -->
-											<VerticalStackLayout
-												Margin="0,0,10,6"
-												FlexLayout.Basis="140"
-												FlexLayout.Grow="1"
-												Spacing="4">
-												<Label
-													IsVisible="{Binding IsEditMode}"
-													Style="{StaticResource EditFieldLabelStyle}"
-													Text="Е-пошта" />
-												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
-													<Entry
-														BackgroundColor="Transparent"
-														FontSize="13"
-														Keyboard="Email"
-														Placeholder="email@example.com"
-														PlaceholderColor="{StaticResource SparkTextSecondary}"
-														Text="{Binding Patient.Email}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</Border>
-												<Border IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}">
-													<VerticalStackLayout Spacing="4">
-														<Label Style="{StaticResource ReadRowLabelStyle}" Text="Е-пошта:" />
-														<Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.Email}" />
-													</VerticalStackLayout>
-												</Border>
-											</VerticalStackLayout>
-
-											<!--  Град  -->
-											<VerticalStackLayout
-												Margin="0,0,10,6"
-												FlexLayout.Basis="130"
-												FlexLayout.Grow="0.8"
-												Spacing="4">
-												<Label
-													IsVisible="{Binding IsEditMode}"
-													Style="{StaticResource EditFieldLabelStyle}"
-													Text="Град" />
-												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
-													<Picker
-														BackgroundColor="Transparent"
-														ItemsSource="{Binding CityOptions}"
-														SelectedItem="{Binding SelectedCityDisplay}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</Border>
-												<Border IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}">
-													<VerticalStackLayout Spacing="4">
-														<Label Style="{StaticResource ReadRowLabelStyle}" Text="Град:" />
-														<Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding SelectedCityDisplay}" />
-													</VerticalStackLayout>
-												</Border>
-											</VerticalStackLayout>
-
-											<!--  Адреса  -->
-											<VerticalStackLayout
-												Margin="0,0,10,6"
-												FlexLayout.Basis="150"
-												FlexLayout.Grow="1.2"
-												Spacing="4">
-												<Label
-													IsVisible="{Binding IsEditMode}"
-													Style="{StaticResource EditFieldLabelStyle}"
-													Text="Адреса" />
-												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
-													<Entry
-														BackgroundColor="Transparent"
-														FontSize="13"
-														Placeholder="Улица и број"
-														PlaceholderColor="{StaticResource SparkTextSecondary}"
-														Text="{Binding Patient.Address}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</Border>
-												<Border IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}">
-													<VerticalStackLayout Spacing="4">
-														<Label Style="{StaticResource ReadRowLabelStyle}" Text="Адреса:" />
-														<Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.Address}" />
-													</VerticalStackLayout>
-												</Border>
-											</VerticalStackLayout>
-
-											<!--  Итен контакт  -->
-											<VerticalStackLayout
-												Margin="0,0,10,6"
-												FlexLayout.Basis="140"
-												FlexLayout.Grow="1"
-												Spacing="4">
-												<Label
-													IsVisible="{Binding IsEditMode}"
-													Style="{StaticResource EditFieldLabelStyle}"
-													Text="Итен контакт" />
-												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
-													<Entry
-														BackgroundColor="Transparent"
-														FontSize="13"
-														Placeholder="Име и презиме"
-														PlaceholderColor="{StaticResource SparkTextSecondary}"
-														Text="{Binding Patient.EmergencyContactName}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</Border>
-												<Border IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}">
-													<VerticalStackLayout Spacing="4">
-														<Label Style="{StaticResource ReadRowLabelStyle}" Text="Итен контакт:" />
-														<Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.EmergencyContactName}" />
-													</VerticalStackLayout>
-												</Border>
-											</VerticalStackLayout>
-
-											<!--  Телефон на итен контакт  -->
-											<VerticalStackLayout
-												Margin="0,0,0,6"
-												FlexLayout.Basis="140"
-												FlexLayout.Grow="1"
-												Spacing="4">
-												<Label
-													IsVisible="{Binding IsEditMode}"
-													Style="{StaticResource EditFieldLabelStyle}"
-													Text="Тел. на итен контакт" />
-												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
-													<Entry
-														BackgroundColor="Transparent"
-														FontSize="13"
-														Keyboard="Telephone"
-														Placeholder="+389..."
-														PlaceholderColor="{StaticResource SparkTextSecondary}"
-														Text="{Binding Patient.EmergencyContactPhone}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</Border>
-												<Border IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}">
-													<VerticalStackLayout Spacing="4">
-														<Label Style="{StaticResource ReadRowLabelStyle}" Text="Тел. (итен):" />
-														<Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.EmergencyContactPhone}" />
-													</VerticalStackLayout>
-												</Border>
-											</VerticalStackLayout>
-										</FlexLayout>
-									</VerticalStackLayout>
-
-									<!--  РЕД 3 — МАТИЧЕН РЕУМАТОЛОГ  -->
+<controls:CrudSectionHeader Title="КОНТАКТ ИНФОРМАЦИИ" TextColor="#0F766E" LineColor="{StaticResource SparkAccentTeal}" />
+<Grid ColumnDefinitions="1.1*,1.1*,1.1*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="8">
+<VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="4"><Label IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldLabelStyle}" Text="Телефон" /><Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}"><Entry BackgroundColor="Transparent" FontSize="13" Keyboard="Telephone" Placeholder="+389 7X XXX XXX" PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.Phone}" TextColor="{StaticResource SparkTextPrimary}" /></Border><Border IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}"><VerticalStackLayout Spacing="4"><Label Style="{StaticResource ReadRowLabelStyle}" Text="Телефон:" /><Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.Phone}" /></VerticalStackLayout></Border></VerticalStackLayout>
+<VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="4"><Label IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldLabelStyle}" Text="Е-пошта" /><Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}"><Entry BackgroundColor="Transparent" FontSize="13" Keyboard="Email" Placeholder="email@example.com" PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.Email}" TextColor="{StaticResource SparkTextPrimary}" /></Border><Border IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}"><VerticalStackLayout Spacing="4"><Label Style="{StaticResource ReadRowLabelStyle}" Text="Е-пошта:" /><Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.Email}" /></VerticalStackLayout></Border></VerticalStackLayout>
+<VerticalStackLayout Grid.Row="0" Grid.Column="2" Spacing="4"><Label IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldLabelStyle}" Text="Град" /><Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}"><Picker BackgroundColor="Transparent" ItemsSource="{Binding CityOptions}" SelectedItem="{Binding SelectedCityDisplay}" TextColor="{StaticResource SparkTextPrimary}" /></Border><Border IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}"><VerticalStackLayout Spacing="4"><Label Style="{StaticResource ReadRowLabelStyle}" Text="Град:" /><Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding SelectedCityDisplay}" /></VerticalStackLayout></Border></VerticalStackLayout>
+<VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="4"><Label IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldLabelStyle}" Text="Адреса" /><Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}"><Entry BackgroundColor="Transparent" FontSize="13" Placeholder="Улица и број" PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.Address}" TextColor="{StaticResource SparkTextPrimary}" /></Border><Border IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}"><VerticalStackLayout Spacing="4"><Label Style="{StaticResource ReadRowLabelStyle}" Text="Адреса:" /><Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.Address}" /></VerticalStackLayout></Border></VerticalStackLayout>
+<VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="4"><Label IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldLabelStyle}" Text="Итен контакт" /><Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}"><Entry BackgroundColor="Transparent" FontSize="13" Placeholder="Име и презиме" PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.EmergencyContactName}" TextColor="{StaticResource SparkTextPrimary}" /></Border><Border IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}"><VerticalStackLayout Spacing="4"><Label Style="{StaticResource ReadRowLabelStyle}" Text="Итен контакт:" /><Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.EmergencyContactName}" /></VerticalStackLayout></Border></VerticalStackLayout>
+<VerticalStackLayout Grid.Row="1" Grid.Column="2" Spacing="4"><Label IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldLabelStyle}" Text="Тел. на итен контакт" /><Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}"><Entry BackgroundColor="Transparent" FontSize="13" Keyboard="Telephone" Placeholder="+389..." PlaceholderColor="{StaticResource SparkTextSecondary}" Text="{Binding Patient.EmergencyContactPhone}" TextColor="{StaticResource SparkTextPrimary}" /></Border><Border IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}"><VerticalStackLayout Spacing="4"><Label Style="{StaticResource ReadRowLabelStyle}" Text="Тел. (итен):" /><Label Style="{StaticResource ReadRowValueStyle}" Text="{Binding Patient.EmergencyContactPhone}" /></VerticalStackLayout></Border></VerticalStackLayout>
+</Grid>
+</VerticalStackLayout>
+<!--  РЕД 3 — МАТИЧЕН РЕУМАТОЛОГ  -->
 									<VerticalStackLayout Grid.Row="2" Spacing="10">
-										<controls:CrudSectionHeader Title="МАТИЧЕН РЕУМАТОЛОГ" />
+										<controls:CrudSectionHeader Title="МАТИЧЕН РЕУМАТОЛОГ" TextColor="#7C3AED" LineColor="#A78BFA" />
 										<Grid ColumnDefinitions="0.25*,0.75*" ColumnSpacing="14">
 											<VerticalStackLayout Grid.Column="0" Spacing="8">
 												<Label Style="{StaticResource EditFieldLabelStyle}" Text="Реуматолог" />
@@ -696,13 +533,14 @@
 														</CollectionView.ItemTemplate>
 													</CollectionView>
 												</Border>
-												<Border BackgroundColor="{StaticResource SparkTabActiveBg}" IsVisible="{Binding SelectedDoctorDisplay, Converter={StaticResource StringNotEmptyConverter}}" Stroke="{StaticResource SparkAccentTealBg}" Style="{StaticResource InfoPillBorderStyle}">
+												<Border BackgroundColor="{StaticResource SparkAccentTealBg}" IsVisible="{Binding SelectedDoctorDisplay, Converter={StaticResource StringNotEmptyConverter}}" Stroke="{StaticResource SparkAccentTealBg}" Style="{StaticResource InfoPillBorderStyle}">
 													<VerticalStackLayout Padding="10,7" Spacing="1">
 														<Label FontSize="9" Text="ИЗБРАН РЕУМАТОЛОГ" TextColor="{StaticResource SparkTextSecondary}" />
 														<Label FontAttributes="Bold" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding SelectedDoctorDisplay}" TextColor="{StaticResource SparkAccentTealDark}" />
 													</VerticalStackLayout>
 												</Border>
-												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
+												<Button BackgroundColor="Transparent" Command="{Binding ClearDoctorCommand}" FontSize="11" HorizontalOptions="Start" IsVisible="{Binding IsEditMode}" Padding="0" Text="× Тргни реуматолог" TextColor="#DC2626" />
+<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
 													<Label FontSize="11" Text="Реуматолог:" TextColor="{StaticResource SparkTextSecondary}" />
 													<Label FontAttributes="Bold" FontSize="13" LineBreakMode="TailTruncation" Text="{Binding SelectedDoctorDisplay}" TextColor="{StaticResource SparkTextPrimary}" />
 												</VerticalStackLayout>
@@ -790,19 +628,7 @@
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
 							</FlexLayout>
-											<controls:CrudSectionHeader Title="ПРЕТХОДНИ ТЕРАПИИ" />
-											<controls:SparkExpandableCard
-												Title="Претходни терапии"
-												EmptyViewText="Нема евидентирани претходни терапии."
-												ItemTemplate="{StaticResource PatientTherapyCycleHistoryRowTemplate}"
-												ItemsSource="{Binding PreviousTherapies}"
-												Style="{StaticResource CrudFormHistoryCardStyle}"
-												Variant="TherapyCycle" />
-							</VerticalStackLayout>
-
-							<!--  ЛЕК — на истата линија со МКБ  -->
-							<VerticalStackLayout Grid.Column="1" Spacing="8">
-								<controls:CrudSectionHeader Title="ЛЕК" />
+											<VerticalStackLayout Spacing="4"><VerticalStackLayout BindableLayout.ItemsSource="{Binding PreviousTherapies}" Spacing="4"><BindableLayout.EmptyView><Label Padding="0,4" FontSize="11" Text="Нема евидентирани претходни терапии." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView><BindableLayout.ItemTemplate><DataTemplate x:DataType="models:TherapyCycle"><Border Style="{StaticResource CrudFormHistoryRowStyle}" Padding="8,6"><Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10"><Label FontAttributes="Bold" FontSize="12" Text="{Binding Status}" TextColor="{StaticResource SparkAccentTealDark}" /><Label Grid.Column="1" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding DecisionText, TargetNullValue='Без внесено решение'}" TextColor="{StaticResource SparkTextPrimary}" /><Label Grid.Column="2" FontSize="11" Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkTextSecondary}" /></Grid></Border></DataTemplate></BindableLayout.ItemTemplate></VerticalStackLayout></VerticalStackLayout><controls:CrudSectionHeader Title="ЛЕК" />
 								<controls:FFSearchBox
 									IsVisible="{Binding IsEditMode}"
 									Placeholder="Пребарување на лекот..."
@@ -966,78 +792,26 @@
 									</VerticalStackLayout>
 								</Grid>
 
-								<VerticalStackLayout IsVisible="{Binding IsPatientInactive}" Spacing="8" Margin="0,8,0,8">
-					<controls:CrudSectionHeader Title="НЕАКТИВЕН ПАЦИЕНТ" />
-					<Label Style="{StaticResource EditFieldLabelStyle}" Text="Причина за неактивност *" />
-					<Border IsEnabled="{Binding IsEditMode}" Style="{StaticResource TextAreaFieldBoxStyle}">
-						<Editor AutoSize="TextChanges" FontSize="13" Placeholder="Внесете причина..." Text="{Binding InactiveReason, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" />
-					</Border>
-					<controls:FFButton ButtonKind="Secondary" Command="{Binding UploadDocumentCommand}" HeightRequestEx="36" IsVisible="{Binding IsEditMode}" Text="📎 Прикачи решение за неактивност" />
-				</VerticalStackLayout>
-
-				<VerticalStackLayout IsVisible="{Binding IsEditMode}" Margin="0,6,0,0" Spacing="6">
-									<controls:CrudSectionHeader Title="СТАТУС НА ПАЦИЕНТ" />
-									<HorizontalStackLayout HorizontalOptions="Center" Spacing="36">
-										<VerticalStackLayout HorizontalOptions="Center" Spacing="2">
-											<Label FontAttributes="Bold" FontSize="11" HorizontalOptions="Center" Text="Активен" TextColor="{StaticResource SparkAccentTealDark}" />
-											<HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
-												<HorizontalStackLayout.GestureRecognizers>
-													<TapGestureRecognizer Command="{Binding SetActiveCommand}" />
-												</HorizontalStackLayout.GestureRecognizers>
-												<CheckBox IsChecked="{Binding IsPatientActive, Mode=OneWay}" IsEnabled="False" Color="{StaticResource SparkAccentTeal}" />
-											</HorizontalStackLayout>
-										</VerticalStackLayout>
-										<VerticalStackLayout HorizontalOptions="Center" Spacing="2">
-											<Label FontAttributes="Bold" FontSize="11" HorizontalOptions="Center" Text="Неактивен" TextColor="#DC2626" />
-											<HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
-												<HorizontalStackLayout.GestureRecognizers>
-													<TapGestureRecognizer Command="{Binding SetInactiveCommand}" />
-												</HorizontalStackLayout.GestureRecognizers>
-												<CheckBox IsChecked="{Binding IsPatientInactive, Mode=OneWay}" IsEnabled="False" Color="#DC2626" />
-											</HorizontalStackLayout>
-										</VerticalStackLayout>
-									</HorizontalStackLayout>
-									<Border BackgroundColor="{StaticResource SparkAccentTeal}" HeightRequest="2" HorizontalOptions="Center" Margin="0,2,0,4" StrokeThickness="0" WidthRequest="260" />
-								</VerticalStackLayout>
-
-								<!--  АКЦИИ  -->
-								<HorizontalStackLayout
-									HorizontalOptions="Center"
-									Spacing="12"
-									VerticalOptions="Center">
-									<controls:FFButton
-										ButtonKind="Secondary"
-										Command="{Binding CancelCommand}"
-										ContentPadding="20,0"
-										HeightRequestEx="46"
-										WidthRequest="120"
-										IsVisible="{Binding IsEditMode}"
-										Text="Откажи" />
-									<controls:FFButton
-										BackgroundColorEx="{StaticResource SidebarActiveBg}"
-										ButtonKind="Primary"
-										Command="{Binding SaveCommand}"
-										ContentPadding="20,0"
-										HeightRequestEx="46"
-										WidthRequest="120"
-										IsVisible="{Binding IsEditMode}"
-										Text="Зачувај"
-										TextColorEx="{StaticResource SidebarActiveText}" />
-									<controls:FFButton
-										BackgroundColorEx="{StaticResource SidebarActiveBg}"
-										ButtonKind="Primary"
-										Command="{Binding ToggleEditModeAsyncCommand}"
-										ContentPadding="20,0"
-										HeightRequestEx="46"
-										WidthRequest="120"
-										IsVisible="{Binding IsReadOnly}"
-										Text="Уреди"
-										TextColorEx="{StaticResource SidebarActiveText}" />
-								</HorizontalStackLayout>
-							</VerticalStackLayout>
-						</controls:FFSectionCard>
-
-						<!--  ╔══════════ ИСТОРИЈА НА ПАЦИЕНТОТ — втор грид под формата ══════════╗  -->
+								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Margin="0,6,0,0" Spacing="6">
+<controls:CrudSectionHeader Title="СТАТУС НА ПАЦИЕНТ" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" />
+<HorizontalStackLayout HorizontalOptions="Start" Spacing="28">
+<VerticalStackLayout Spacing="2"><Label FontAttributes="Bold" FontSize="11" Text="Активен" TextColor="{StaticResource SparkAccentTealDark}" /><HorizontalStackLayout Spacing="4"><HorizontalStackLayout.GestureRecognizers><TapGestureRecognizer Command="{Binding SetActiveCommand}" /></HorizontalStackLayout.GestureRecognizers><CheckBox IsChecked="{Binding IsPatientActive, Mode=OneWay}" IsEnabled="False" Color="{StaticResource SparkAccentTeal}" /></HorizontalStackLayout></VerticalStackLayout>
+<VerticalStackLayout Spacing="2"><Label FontAttributes="Bold" FontSize="11" Text="Неактивен" TextColor="#DC2626" /><HorizontalStackLayout Spacing="4"><HorizontalStackLayout.GestureRecognizers><TapGestureRecognizer Command="{Binding SetInactiveCommand}" /></HorizontalStackLayout.GestureRecognizers><CheckBox IsChecked="{Binding IsPatientInactive, Mode=OneWay}" IsEnabled="False" Color="#DC2626" /></HorizontalStackLayout></VerticalStackLayout>
+</HorizontalStackLayout>
+<Border BackgroundColor="{StaticResource SparkAccentTeal}" HeightRequest="2" HorizontalOptions="Fill" Margin="0,2,0,4" StrokeThickness="0" />
+</VerticalStackLayout>
+<VerticalStackLayout IsVisible="{Binding IsPatientInactive}" Spacing="8" Margin="0,0,0,8">
+<controls:CrudSectionHeader Title="НЕАКТИВЕН ПАЦИЕНТ" TextColor="#B91C1C" LineColor="#FCA5A5" />
+<Label Style="{StaticResource EditFieldLabelStyle}" Text="Причина за неактивност *" />
+<Border IsEnabled="{Binding IsEditMode}" Style="{StaticResource TextAreaFieldBoxStyle}"><Editor AutoSize="TextChanges" FontSize="13" Placeholder="Внесете причина..." Text="{Binding InactiveReason, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" /></Border>
+<controls:FFButton ButtonKind="Secondary" Command="{Binding UploadDocumentCommand}" HeightRequestEx="36" IsVisible="{Binding IsEditMode}" Text="📎 Прикачи решение за неактивност" />
+</VerticalStackLayout>
+<HorizontalStackLayout HorizontalOptions="Start" Spacing="12" VerticalOptions="Center">
+<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" ContentPadding="24,0" HeightRequestEx="46" WidthRequest="155" IsVisible="{Binding IsEditMode}" Text="Откажи" />
+<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" ContentPadding="24,0" HeightRequestEx="46" WidthRequest="155" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="{StaticResource SidebarActiveText}" />
+<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding ToggleEditModeAsyncCommand}" ContentPadding="24,0" HeightRequestEx="46" WidthRequest="155" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="{StaticResource SidebarActiveText}" />
+</HorizontalStackLayout>
+<!--  ╔══════════ ИСТОРИЈА НА ПАЦИЕНТОТ — втор грид под формата ══════════╗  -->
 						<controls:FFSectionCard Margin="0" Style="{StaticResource CrudFormCardStyle}">
 							<VerticalStackLayout Style="{StaticResource CrudFormSidebarStackStyle}">
 
