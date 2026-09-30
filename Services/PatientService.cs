@@ -125,6 +125,7 @@ public class PatientService : IPatientService
             .Include(p => p.Diagnoses).ThenInclude(d => d.Mkb10Code)
             .Include(p => p.Encounters)
             .Include(p => p.PatientMedicines).ThenInclude(pm => pm.Medicine)
+            .Include(p => p.PatientMedicines).ThenInclude(pm => pm.ApplicationRegime)
             .Include(p => p.Documents)
             .FirstOrDefaultAsync(p => p.Id==id, ct);
 
