@@ -411,6 +411,12 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
         }
 
+        if(Patient.Status==PatientStatus.Inactive && !Documents.Any(x => x.DocumentType==PatientDocumentType.Resenie))
+        {
+            await _userDialogService.ShowAlertAsync("Валидација", "За неактивен пациент мора да се прикачи решение за неактивност.", "ОК");
+            return;
+        }
+
         if(Patient.DoctorId==Guid.Empty)
         {
             await _userDialogService.ShowAlertAsync("Валидација", "Реуматолог не е доделен.", "OK");
@@ -485,6 +491,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                 .. Documents.Select(x => new PatientDocumentSaveModel
             {
                 Id = x.Id,
+                DocumentType = x.DocumentType,
+                Title = x.Title,
+                Description = x.Description,
                 FileName = x.FileName,
                 StoredPath = x.StoredPath,
                 ContentType = x.ContentType,
@@ -982,6 +991,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             {
                 Id=Guid.Empty,
                 PatientId=Patient.Id,
+                DocumentType=IsPatientInactive ? PatientDocumentType.Resenie : PatientDocumentType.Other,
+                Title=IsPatientInactive ? "Решение за неактивност" : file.FileName,
+                Description=IsPatientInactive ? InactiveReason : string.Empty,
                 FileName=file.FileName,
                 StoredPath=storedPath,
                 ContentType=file.ContentType,
