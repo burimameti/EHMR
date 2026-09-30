@@ -23,7 +23,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     protected override Func<Patient, Guid?>? DoctorOwnerSelector => p => p.DoctorId;
     [ObservableProperty] private string selectedStatus = "All";
     [ObservableProperty] private string selectedGender = "All";
-    [ObservableProperty] private string selectedBloodType = "All";
     [ObservableProperty] private string selectedCity = "All";
     [ObservableProperty] private string selectedAgeGroup = "All";
 
@@ -41,7 +40,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
 
     public ObservableCollection<string> StatusFilters { get; } = PatientFilterLookups.Status.ToObservableCollection();
     public ObservableCollection<string> GenderFilters { get; } = PatientFilterLookups.Gender.ToObservableCollection();
-    public ObservableCollection<string> BloodTypeFilters { get; } = PatientFilterLookups.BloodType.ToObservableCollection();
     public ObservableCollection<string> AgeGroups { get; } = PatientFilterLookups.AgeGroup.ToObservableCollection();
     public ObservableCollection<string> CityFilterNames
     {
@@ -69,19 +67,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             var internalValue = PatientFilterLookups.Gender.ToInternal(value);
             if(SelectedGender==internalValue) return;
             SelectedGender=internalValue;
-            ApplyPipeline();
-            OnPropertyChanged();
-        }
-    }
-
-    public string SelectedBloodTypeDisplay
-    {
-        get => PatientFilterLookups.BloodType.ToDisplay(SelectedBloodType);
-        set
-        {
-            var internalValue = PatientFilterLookups.BloodType.ToInternal(value);
-            if(SelectedBloodType==internalValue) return;
-            SelectedBloodType=internalValue;
             ApplyPipeline();
             OnPropertyChanged();
         }
@@ -253,14 +238,12 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     {
         SelectedStatus="All";
         SelectedGender="All";
-        SelectedBloodType="All";
         SelectedCity="All";
         SelectedAgeGroup="All";
         SearchText="";
 
         OnPropertyChanged(nameof(SelectedStatusDisplay));
         OnPropertyChanged(nameof(SelectedGenderDisplay));
-
         OnPropertyChanged(nameof(SelectedCityDisplay));
 
     }
@@ -373,7 +356,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     // ============================================================
     // PICKERS
     // ============================================================
-    private SparkPickerItem _statusPicker, _genderPicker, _bloodTypePicker, _cityPicker;
+    private SparkPickerItem _statusPicker, _genderPicker, _cityPicker;
 
     private void BuildSparkPickers()
     {
@@ -396,7 +379,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         if(_statusPicker==null) return;
         _statusPicker.SelectedItem=SelectedStatusDisplay;
         _genderPicker.SelectedItem=SelectedGenderDisplay;
-        _bloodTypePicker.SelectedItem=SelectedBloodTypeDisplay;
         _cityPicker.SelectedItem=SelectedCityDisplay;
         //_ageGroupPicker.SelectedItem=SelectedAgeGroupDisplay;
 
@@ -420,7 +402,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "FullName", Width = new GridLength(2.8, GridUnitType.Star) },
             new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.8, GridUnitType.Star) },
             new() { Header = "ВОЗРАСТ", Key = "Age", CellType = SparkGridCellType.Number, Width = new GridLength(0.9, GridUnitType.Star) },
-            new() { Header = "КРВ", Key = "BloodType", Width = new GridLength(0.8, GridUnitType.Star) },
             new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.5, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1.2, GridUnitType.Star) },
             new() { Header = "НОВ ПРЕГЛЕД", Key = "Pregled", CellType = SparkGridCellType.Button, Width = new GridLength(1.4, GridUnitType.Star) },
@@ -439,7 +420,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             row["FullName"]=p.FullName;
             row["Gender"]=p.Gender.ToDisplay();
             row["Age"]=p.Age;
-            row["BloodType"]=p.BloodType;
             row["Phone"]=p.Phone;
             row["Status"]=new SparkBadgeValue(p.Status.ToDisplay(), StatusToTone(p.Status));
 
@@ -461,7 +441,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
                 row["Pregled"]=new SparkButtonItem
                 {
                     IconGlyph="\ud83d\udd12",
-                    Label="Заклучено",
+                    Label="Неактивен",
                     IsPrimary=false
                 };
             }
