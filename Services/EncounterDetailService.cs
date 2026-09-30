@@ -67,7 +67,6 @@ public class EncounterDetailService : IEncounterDetailService
             .Where(x =>
                 (x.DoctorId==doctorId||(patientId.HasValue&&x.PatientId==patientId.Value))&&
                 x.Status!=AppointmentStatus.Cancelled&&
-                x.Status!=AppointmentStatus.Missed&&
                 x.ScheduledStart<searchUntil&&
                 x.ScheduledEnd>candidate)
             .Select(x => new { Start=(DateTime?)x.ScheduledStart, End=(DateTime?)x.ScheduledEnd })
@@ -78,7 +77,6 @@ public class EncounterDetailService : IEncounterDetailService
             .Where(x =>
                 (x.DoctorId==doctorId||(patientId.HasValue&&x.PatientId==patientId.Value))&&
                 x.Status!=EncounterStatus.Cancelled&&
-                x.Status!=EncounterStatus.NoShow&&
                 x.ScheduledStart.HasValue&&
                 x.ScheduledStart<searchUntil)
             .Select(x => new
@@ -524,7 +522,6 @@ public class EncounterDetailService : IEncounterDetailService
 
         var isTerminal = encounter.Status is EncounterStatus.Completed
                                            or EncounterStatus.Cancelled
-                                           or EncounterStatus.NoShow;
 
         if(isTerminal&&!encounter.IsLocked)
         {
@@ -618,7 +615,6 @@ public class EncounterDetailService : IEncounterDetailService
                     e.AppointmentId==apptId&&
                     e.Id!=encounter.Id&&
                     e.Status!=EncounterStatus.Cancelled&&
-                    e.Status!=EncounterStatus.NoShow);
 
                 if(duplicateActive)
                     throw new InvalidOperationException(
@@ -952,7 +948,6 @@ public class EncounterDetailService : IEncounterDetailService
         AppointmentStatus.InProgress => EncounterStatus.InProgress,
         AppointmentStatus.Completed => EncounterStatus.Completed,
         AppointmentStatus.Cancelled => EncounterStatus.Cancelled,
-        AppointmentStatus.Missed => EncounterStatus.NoShow,
         _ => EncounterStatus.Scheduled
     };
 
