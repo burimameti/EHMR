@@ -54,6 +54,12 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     [RelayCommand]
     public async Task SaveAsync()
     {
+        if(SelectedPatient?.Status==PatientStatus.Inactive)
+        {
+            await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "Податоците за неактивен пациент се заклучени и не може да се менуваат.", "ОК");
+            return;
+        }
+
         await ExecuteSafeAsync(async () =>
         {
             Encounter.SetNotes(EncounterDiagnosisNotes);
@@ -73,6 +79,12 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     [RelayCommand]
     public async Task ChangeStatusAsync(EncounterStatus newStatus)
     {
+        if(SelectedPatient?.Status==PatientStatus.Inactive)
+        {
+            await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "Податоците за неактивен пациент се заклучени и не може да се менуваат.", "ОК");
+            return;
+        }
+
         if(Encounter.IsLocked&&newStatus!=EncounterStatus.Completed)
         {
             await UserDialogService.ShowAlertAsync(
