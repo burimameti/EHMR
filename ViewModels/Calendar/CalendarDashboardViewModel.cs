@@ -36,7 +36,6 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
     [ObservableProperty] private int _upcomingEncountersCount;
 
     [ObservableProperty] private string _completedPercentageText = "0%";
-    [ObservableProperty] private string _noShowPercentageText = "0%";
 
     [ObservableProperty] private CalendarDayDto? _selectedCalendarDay;
 
@@ -896,14 +895,11 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
         UpcomingEncountersCount=scoped.Count(x => x.EffectiveDate.Date>today);
 
         var completedRate = RateOf(scoped, "Completed");
-        var noShowRate = RateOf(scoped, "NoShow");
 
         CompletedPercentageText=$"{completedRate:0}%";
-        NoShowPercentageText=$"{noShowRate:0}%";
 
         // ── споредба со претходниот период ──
         var previousCompletedRate = RateOf(previousEncounters, "Completed");
-        var previousNoShowRate = RateOf(previousEncounters, "NoShow");
 
         TotalDeltaText=FormatCountDelta(scoped.Count, previousEncounters.Count);
         TotalDeltaTone=ToneFor(scoped.Count-previousEncounters.Count, higherIsBetter: true);
@@ -911,8 +907,6 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
         CompletedDeltaText=FormatRateDelta(completedRate, previousCompletedRate);
         CompletedDeltaTone=ToneFor(completedRate-previousCompletedRate, higherIsBetter: true);
 
-        NoShowDeltaText=FormatRateDelta(noShowRate, previousNoShowRate);
-        NoShowDeltaTone=ToneFor(noShowRate-previousNoShowRate, higherIsBetter: false);
 
         (KpiPeriodText, KpiComparisonText)=CurrentMode switch
         {
@@ -1151,9 +1145,8 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
             .Select(ToWaitlistDto)
             .ToList();
 
-        // Missed е appointment-specific, додека NoShow е encounter-specific.
         var scheduled = todaysItems
-            .Where(x => x.StatusText is "Completed" or "Cancelled" or "NoShow" or "Missed" or "Scheduled")
+            .Where(x => x.StatusText is "Completed" or "Cancelled" or "Scheduled")
             .OrderBy(x => x.EffectiveDate)
             .Select(ToWaitlistDto)
             .ToList();
@@ -1206,11 +1199,9 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
     private static (Color Background, Color Text) GetStatusColors(string status) => status switch
     {
         "Scheduled" => (Color.FromArgb("#DBEAFE"), Color.FromArgb("#1D4ED8")),
-        "InProgress" => (Color.FromArgb("#EDE9FE"), Color.FromArgb("#6D28D9")),
         "InProgress" => (Color.FromArgb("#FEF3C7"), Color.FromArgb("#B45309")),
         "Completed" => (Color.FromArgb("#DCFCE7"), Color.FromArgb("#15803D")),
         "Cancelled" => (Color.FromArgb("#FEE2E2"), Color.FromArgb("#B91C1C")),
-        "NoShow" => (Color.FromArgb("#F3F4F6"), Color.FromArgb("#6B7280")),
         _ => (Colors.LightGreen, Colors.DarkGreen)
     };
 
