@@ -1,4 +1,5 @@
-﻿using EHMR.Domain.Interfaces;
+﻿using EHMR.Domain.Entities;
+using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
