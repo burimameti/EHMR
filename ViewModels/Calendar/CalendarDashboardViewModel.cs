@@ -166,7 +166,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
 
     /// <summary>
     /// Статусите се различни за прегледи и термини: EncounterStatus има NoShow,
-    /// AppointmentStatus има Missed и ReScheduled. Затоа две одделни мапи.
+    /// AppointmentStatus и EncounterStatus користат заеднички основни статуси со одделни мапи за приказ.
     /// </summary>
     public static FilterLookup EncounterStatusLookup { get; } = new(new[]
     {
@@ -183,12 +183,12 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
     {
         ("Сите", "All"),
         ("Закажан", "Scheduled"),
-        ("Пријавен", "CheckedIn"),
+        ("Во тек", "InProgress"),
         ("Во тек", "InProgress"),
         ("Завршен", "Completed"),
         ("Откажан", "Cancelled"),
         ("Пропуштен", "Missed"),
-        ("Презакажан", "ReScheduled")
+        ("Закажан", "Scheduled")
     });
 
     private FilterLookup StatusLookup =>
@@ -1155,9 +1155,9 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
             .Select(ToWaitlistDto)
             .ToList();
 
-        // Missed и ReScheduled постојат само кај термините, NoShow само кај прегледите.
+        // Missed е appointment-specific, додека NoShow е encounter-specific.
         var scheduled = todaysItems
-            .Where(x => x.StatusText is "Completed" or "Cancelled" or "NoShow" or "Missed" or "ReScheduled")
+            .Where(x => x.StatusText is "Completed" or "Cancelled" or "NoShow" or "Missed" or "Scheduled")
             .OrderBy(x => x.EffectiveDate)
             .Select(ToWaitlistDto)
             .ToList();
@@ -1210,7 +1210,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
     private static (Color Background, Color Text) GetStatusColors(string status) => status switch
     {
         "Scheduled" => (Color.FromArgb("#DBEAFE"), Color.FromArgb("#1D4ED8")),
-        "CheckedIn" => (Color.FromArgb("#EDE9FE"), Color.FromArgb("#6D28D9")),
+        "InProgress" => (Color.FromArgb("#EDE9FE"), Color.FromArgb("#6D28D9")),
         "InProgress" => (Color.FromArgb("#FEF3C7"), Color.FromArgb("#B45309")),
         "Completed" => (Color.FromArgb("#DCFCE7"), Color.FromArgb("#15803D")),
         "Cancelled" => (Color.FromArgb("#FEE2E2"), Color.FromArgb("#B91C1C")),
