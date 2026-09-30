@@ -987,6 +987,10 @@ namespace EHMR.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<string>("PharmaceuticalReference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("MedicineId")
                         .HasColumnType("uniqueidentifier");
 
