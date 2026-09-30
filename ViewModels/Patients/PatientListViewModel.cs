@@ -351,8 +351,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             Tabs.Add(tab);
             _statusTabsByInternal[internalValue]=tab;
         }
-
-        RefreshSparkTabCounts();
     }
 
     private void RefreshSparkTabCounts()
@@ -487,7 +485,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     // ============================================================
     private void InitializeSparkControls()
     {
-        BuildSparkTabs();
         BuildSparkPickers();
         BuildSparkButtons();
         BuildSparkGridColumns();
