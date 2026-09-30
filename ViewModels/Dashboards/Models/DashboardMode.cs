@@ -42,10 +42,6 @@ public partial class DashboardViewModel
 
         Scheduled,
 
-        Waiting,
-
-        CheckedIn,
-
         InProgress,
 
         Completed,
@@ -71,7 +67,6 @@ public partial class DashboardViewModel
         public Encounter? ActiveEncounter =>
             Encounters.FirstOrDefault(x =>
                 x.Status==EncounterStatus.Scheduled||
-                x.Status==EncounterStatus.InProgress||
                 x.Status==EncounterStatus.InProgress);
 
         public Appointment? ActiveAppointment =>
@@ -90,10 +85,10 @@ public partial class DashboardViewModel
         public string LatestEncounterStatus => EncounterHistory.FirstOrDefault()?.Status switch
         {
             EncounterStatus.Scheduled => "Закажан",
-            EncounterStatus.InProgress => "Пријавен",
+            EncounterStatus.InProgress => "Во тек",
             EncounterStatus.Completed => "Завршен",
             EncounterStatus.Cancelled => "Откажан",
-            EncounterStatus.NoShow => "Не дојде",
+            EncounterStatus.NoShow => "Не се пријавил",
             _ => "Нема прегледи"
         };
 
@@ -114,7 +109,7 @@ public partial class DashboardViewModel
                 {
                     return ActiveEncounter.Status switch
                     {
-                        EncounterStatus.Scheduled => DashboardPatientState.Waiting,
+                        EncounterStatus.Scheduled => DashboardPatientState.Scheduled,
                         EncounterStatus.Completed => DashboardPatientState.Completed,
                         EncounterStatus.Cancelled => DashboardPatientState.Cancelled,
                         EncounterStatus.NoShow => DashboardPatientState.NoShow,
