@@ -588,8 +588,6 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     {
         if(_activeProvider==null)
             return;
-
-        BuildSparkTabs();
         BuildSparkPickers();
         BuildSparkButtons();
         BuildSparkGridColumns();
