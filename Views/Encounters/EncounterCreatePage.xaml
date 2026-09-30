@@ -411,6 +411,16 @@
 									</Grid></DataTemplate></BindableLayout.ItemTemplate>
 								</VerticalStackLayout>
 
+							</VerticalStackLayout>
+
+							<!--  ── 3. СКОР ─────────────────────────────────  -->
+							<VerticalStackLayout Spacing="8">
+								<controls:CrudSectionHeader Title="СКОР" />
+								<Border Style="{StaticResource TextAreaFieldBoxStyle}">
+									<Entry BackgroundColor="Transparent" FontSize="13" Placeholder="Внесете резултат или оценка..." Text="{Binding ScoreText, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" />
+								</Border>
+							</VerticalStackLayout>
+
 							<!--  ── 4. ДЕТАЛИ ЗА ПРЕГЛЕДОТ ────────────────  -->
 							<VerticalStackLayout Spacing="12">
 
