@@ -183,7 +183,8 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     {
         if(string.IsNullOrWhiteSpace(search)) return query;
 
-        var tokens=s.Split(' ', StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries);
+        var tokens=search.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries);
+        var s=search.Trim();
         var cyrillicSearch=UseCyrillicSearch
             ? MacedonianTransliterator.ToCyrillic(s)
             : s;
