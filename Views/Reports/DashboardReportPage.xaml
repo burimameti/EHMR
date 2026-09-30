@@ -105,7 +105,7 @@
 							</DataTrigger>
 						</Border.Triggers>
 
-						<CollectionView ItemsSource="{Binding AvailableReports}">
+						<CollectionView HeightRequest="560" ItemsSource="{Binding AvailableReports}">
 							<CollectionView.EmptyView>
 								<VerticalStackLayout
 									Padding="20"
