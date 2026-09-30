@@ -172,7 +172,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
     {
         ("Сите", "All"),
         ("Закажан", "Scheduled"),
-        ("Пријавен", "CheckedIn"),
+        ("Пријавен"),
         ("Во тек", "InProgress"),
         ("Завршен", "Completed"),
         ("Откажан", "Cancelled"),
@@ -1144,7 +1144,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
         var todaysItems = allEvents.Where(x => x.EffectiveDate.Date==target).ToList();
 
         var pending = todaysItems
-            .Where(x => x.StatusText is "Scheduled" or "CheckedIn")
+            .Where(x => x.StatusText is "Scheduled" or "InProgress")
             .OrderBy(x => x.EffectiveDate)
             .Select(ToWaitlistDto)
             .ToList();
