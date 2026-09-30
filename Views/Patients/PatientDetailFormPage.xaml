@@ -795,7 +795,7 @@
 													<Label
 														FontAttributes="Bold"
 														FontSize="11"
-														Text="МКБ СЕКЦИЈА · ЛАТИНИЦА A–Z"
+														Text="МКБ СЕКЦИЈА · A–Z (латиница / кирилица)"
 														TextColor="{StaticResource SparkTextSecondary}" />
 													<Border
 														Padding="6,5"
@@ -870,7 +870,7 @@
 															<Label
 																FontAttributes="Bold"
 																FontSize="11.5"
-																Text="Пребарување по МКБ код (латиница)"
+																Text="Пребарување по МКБ код (латиница / кирилица)"
 																TextColor="{StaticResource SparkTextSecondary}" />
 															<controls:FFSearchBox Placeholder="Пример: M06.9" Text="{Binding MkbCodeSearchText, Mode=TwoWay}" />
 														</VerticalStackLayout>
