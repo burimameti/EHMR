@@ -334,6 +334,7 @@
 													BackgroundColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToColorConverter}}"
 													Text="{Binding Patient.Status, Converter={StaticResource PatientStatusToLabelConverter}}"
 													TextColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToTextColorConverter}}" />
+													</HorizontalStackLayout>
 						</Grid>
 
 										<VerticalStackLayout IsVisible="{Binding IsPatientInactive}" Spacing="8">
