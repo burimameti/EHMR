@@ -269,73 +269,55 @@
 						-->
 						<!--  ===================================================  -->
 						<controls:FFSectionCard>
-							<HorizontalStackLayout
-								BindableLayout.ItemsSource="{Binding Kpis}"
-								HorizontalOptions="Center"
-								Spacing="10">
-								<BindableLayout.ItemTemplate>
-									<DataTemplate x:DataType="admin:FFMetricTileItem">
-										<Border
-											Margin="3"
-											Padding="12,8"
-											BackgroundColor="White"
-											MinimumHeightRequest="72"
-											MinimumWidthRequest="240"
-											Stroke="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
-											StrokeShape="RoundRectangle 12"
-											StrokeThickness="1.5">
-											<Border.GestureRecognizers>
-												<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
-											</Border.GestureRecognizers>
-											<Grid
-												ColumnDefinitions="Auto,*,Auto"
-												ColumnSpacing="10"
-												RowDefinitions="Auto,Auto"
-												RowSpacing="2">
-												<Border
-													Grid.RowSpan="2"
-													BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
-													HeightRequest="32"
-													StrokeShape="RoundRectangle 8"
-													StrokeThickness="0"
-													VerticalOptions="Start"
-													WidthRequest="32">
-													<Label
-														FontFamily="FASolid"
-														FontSize="13"
-														HorizontalOptions="Center"
-														Text="{Binding Icon}"
-														TextColor="White"
-														VerticalOptions="Center" />
-												</Border>
-												<Label
-													Grid.Column="1"
-													FontAttributes="Bold"
-													FontSize="9"
-													Text="{Binding Title}"
-													TextColor="{StaticResource SubtitleColor}"
-													VerticalOptions="Center" />
-												<Label
-													Grid.Column="2"
-													FontAttributes="Bold"
-													FontSize="20"
-													Text="{Binding Value}"
-													TextColor="{StaticResource TitleColor}"
-													VerticalOptions="Center" />
-												<Label
-													Grid.Row="1"
-													Grid.Column="1"
-													Grid.ColumnSpan="2"
-													FontAttributes="Bold"
-													FontSize="9"
-													HorizontalOptions="End"
-													Text="Повеќе  ›"
-													TextColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" />
-											</Grid>
-										</Border>
-									</DataTemplate>
+							<Grid
+								ColumnDefinitions="*,*,*,*"
+								ColumnSpacing="10"
+								HorizontalOptions="Fill">
+								<BindableLayout.ItemsSource="{Binding Kpis}">
+									<BindableLayout.ItemTemplate>
+										<DataTemplate x:DataType="admin:FFMetricTileItem">
+											<Border
+												Margin="0"
+												Padding="12,8"
+												BackgroundColor="White"
+												MinimumHeightRequest="72"
+												HorizontalOptions="Fill"
+												Stroke="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+												StrokeShape="RoundRectangle 12"
+												StrokeThickness="1.5">
+												<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
+													<Border
+														Grid.RowSpan="2"
+														BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+														HeightRequest="30"
+														StrokeShape="RoundRectangle 8"
+														StrokeThickness="0"
+														VerticalOptions="Start"
+														WidthRequest="30">
+														<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="{Binding Icon}" TextColor="White" VerticalOptions="Center" />
+													</Border>
+													<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="{Binding Title}" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
+													<Label Grid.Column="2" FontAttributes="Bold" FontSize="19" Text="{Binding Value}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
+													<Border
+														Grid.Row="1"
+														Grid.Column="1"
+														Grid.ColumnSpan="2"
+														Padding="10,4"
+														BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+														HorizontalOptions="End"
+														MinimumHeightRequest="28"
+														MinimumWidthRequest="82"
+														StrokeThickness="0">
+														<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+														<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" /></Border.GestureRecognizers>
+														<Label FontAttributes="Bold" FontSize="10" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
+													</Border>
+												</Grid>
+											</Border>
+										</DataTemplate>
 								</BindableLayout.ItemTemplate>
-							</HorizontalStackLayout>
+								</BindableLayout>
+							</Grid>
 						</controls:FFSectionCard>
 
 						<!--  ===================================================  -->
