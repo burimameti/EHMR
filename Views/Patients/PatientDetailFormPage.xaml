@@ -300,6 +300,9 @@
 									<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
 										<controls:FFStatusChip BackgroundColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToColorConverter}}" Text="{Binding Patient.Status, Converter={StaticResource PatientStatusToLabelConverter}}" TextColor="{Binding Patient.Status, Converter={StaticResource PatientStatusToTextColorConverter}}" />
 										<HorizontalStackLayout IsVisible="{Binding IsEditMode}" Spacing="6">
+											<HorizontalStackLayout.GestureRecognizers>
+												<TapGestureRecognizer Command="{Binding SetInactiveCommand}" />
+											</HorizontalStackLayout.GestureRecognizers>
 											<CheckBox IsChecked="{Binding IsPatientInactive, Mode=OneWay}" IsEnabled="False" VerticalOptions="Center" />
 											<Label Text="Неактивен" FontAttributes="Bold" VerticalOptions="Center" />
 										</HorizontalStackLayout>
