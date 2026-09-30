@@ -67,7 +67,7 @@ public partial class FFMetricTile : ContentView
 
         MetricIcon.WidthRequest = 32 * scale;
         MetricIcon.HeightRequest = 32 * scale;
-        MetricIcon.CornerRadius = 12 * scale;
+        MetricIcon.StrokeShape = new RoundRectangle { CornerRadius = 12 * scale };
         MetricIconLabel.FontSize = 12 * scale;
 
         MetricTitle.FontSize = Math.Max(8, 9 * scale);
