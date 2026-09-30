@@ -1062,77 +1062,53 @@
 
 								<VerticalStackLayout Spacing="10">
 
-									<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
-										<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
-										<controls:SparkExpandableCard
-											Title="Прегледи"
-											Grid.Column="1"
-											EmptyViewText="Нема евидентирани прегледи."
-											ItemTemplate="{StaticResource PatientEncounterRowTemplate}"
-											ItemsSource="{Binding EncounterHistory}"
-											Style="{StaticResource CrudFormHistoryCardStyle}"
-											Variant="Encounter" />
-									</Grid>
+									<controls:SparkExpandableCard
+										Title="Прегледи"
+										EmptyViewText="Нема евидентирани прегледи."
+										ItemTemplate="{StaticResource PatientEncounterRowTemplate}"
+										ItemsSource="{Binding EncounterHistory}"
+										Style="{StaticResource CrudFormHistoryCardStyle}"
+										Variant="Encounter" />
 
-									<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
-										<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
-										<controls:SparkExpandableCard
-											Title="Оценки"
-											Grid.Column="1"
-											EmptyViewText="Нема евидентирани оценки."
-											ItemTemplate="{StaticResource PatientScoreRowTemplate}"
-											ItemsSource="{Binding ScoreHistory}"
-											Style="{StaticResource CrudFormHistoryCardStyle}"
-											Variant="Encounter" />
-									</Grid>
+									<controls:SparkExpandableCard
+										Title="Оценки"
+										EmptyViewText="Нема евидентирани оценки."
+										ItemTemplate="{StaticResource PatientScoreRowTemplate}"
+										ItemsSource="{Binding ScoreHistory}"
+										Style="{StaticResource CrudFormHistoryCardStyle}"
+										Variant="Encounter" />
 
-									<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
-										<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
-										<controls:SparkExpandableCard
-											Title="Термини"
-											Grid.Column="1"
-											EmptyViewText="Нема закажани термини."
-											ItemTemplate="{StaticResource PatientAppointmentRowTemplate}"
-											ItemsSource="{Binding AppointmentHistory}"
-											Style="{StaticResource CrudFormHistoryCardStyle}"
-											Variant="Appointment" />
-									</Grid>
+									<controls:SparkExpandableCard
+										Title="Термини"
+										EmptyViewText="Нема закажани термини."
+										ItemTemplate="{StaticResource PatientAppointmentRowTemplate}"
+										ItemsSource="{Binding AppointmentHistory}"
+										Style="{StaticResource CrudFormHistoryCardStyle}"
+										Variant="Appointment" />
 
-									<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
-						<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
-						<controls:SparkExpandableCard
-							Title="Активни терапии"
-							Grid.Column="1"
-							EmptyViewText="Нема активни терапии."
-							ItemTemplate="{StaticResource PatientTherapyCycleHistoryRowTemplate}"
-							ItemsSource="{Binding ActiveTherapies}"
-							Style="{StaticResource CrudFormHistoryCardStyle}"
-							Variant="Encounter" />
-					</Grid>
+									<controls:SparkExpandableCard
+										Title="Активни терапии"
+										EmptyViewText="Нема активни терапии."
+										ItemTemplate="{StaticResource PatientTherapyCycleHistoryRowTemplate}"
+										ItemsSource="{Binding ActiveTherapies}"
+										Style="{StaticResource CrudFormHistoryCardStyle}"
+										Variant="Encounter" />
 
-					<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
-						<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
-						<controls:SparkExpandableCard
-							Title="Претходни терапии"
-							Grid.Column="1"
-							EmptyViewText="Нема претходни терапии."
-							ItemTemplate="{StaticResource PatientTherapyCycleHistoryRowTemplate}"
-							ItemsSource="{Binding PreviousTherapies}"
-							Style="{StaticResource CrudFormHistoryCardStyle}"
-							Variant="Encounter" />
-					</Grid>
+									<controls:SparkExpandableCard
+										Title="Претходни терапии"
+										EmptyViewText="Нема претходни терапии."
+										ItemTemplate="{StaticResource PatientTherapyCycleHistoryRowTemplate}"
+										ItemsSource="{Binding PreviousTherapies}"
+										Style="{StaticResource CrudFormHistoryCardStyle}"
+										Variant="Encounter" />
 
-					<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
-										<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
-										<controls:SparkExpandableCard
-											Title="Дијагнози"
-											Grid.Column="1"
-											EmptyViewText="Нема евидентирани дијагнози."
-											ItemTemplate="{StaticResource PatientDiagnosisRowTemplate}"
-											ItemsSource="{Binding DiagnosisHistory}"
-											Style="{StaticResource CrudFormHistoryCardStyle}"
-											Variant="Diagnosis" />
-									</Grid>
+									<controls:SparkExpandableCard
+										Title="Дијагнози"
+										EmptyViewText="Нема евидентирани дијагнози."
+										ItemTemplate="{StaticResource PatientDiagnosisRowTemplate}"
+										ItemsSource="{Binding DiagnosisHistory}"
+										Style="{StaticResource CrudFormHistoryCardStyle}"
+										Variant="Diagnosis" />
 
 								</VerticalStackLayout>
 
@@ -1142,13 +1118,8 @@
 								<controls:CrudSectionHeader Title="ДОКУМЕНТИ НА ПАЦИЕНТ" />
 
 								<!--  Голем преглед на избраниот документ  -->
-								<Grid
-									ColumnDefinitions="24,*"
-									ColumnSpacing="8"
-									IsVisible="{Binding HasDocumentPreview}">
-									<controls:CrudTimelineMarker Grid.Column="0" />
-									<Border
-										Grid.Column="1"
+								<Border
+									IsVisible="{Binding HasDocumentPreview}"
 										Padding="10"
 										BackgroundColor="{StaticResource SparkContentBackground}"
 										Stroke="{StaticResource SparkBorder}"
@@ -1219,13 +1190,8 @@
 												TextColorEx="{StaticResource SidebarActiveText}" />
 										</VerticalStackLayout>
 									</Border>
-								</Grid>
-
 								<!--  Мрежа со сите документи  -->
-								<Grid ColumnDefinitions="24,*" ColumnSpacing="8">
-									<controls:CrudTimelineMarker Grid.Column="0" />
-									<FlexLayout
-										Grid.Column="1"
+								<FlexLayout
 										Padding="12"
 										BackgroundColor="{StaticResource SparkContentBackground}"
 										BindableLayout.ItemsSource="{Binding Documents}"
