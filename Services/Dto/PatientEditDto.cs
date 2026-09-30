@@ -182,6 +182,8 @@ namespace EHMR.Services.Dto
         {
             get; set;
         }
+        public Guid? ApplicationRegimeId { get; set; }
+        public string ApplicationRegime { get; set; } = "";
         public string MedicineName { get; set; } = "";
 
         public DosesFrequency DosesFrequency
@@ -199,6 +201,14 @@ namespace EHMR.Services.Dto
         }
         public string Notes { get; set; } = "";
         public string PharmaceuticalReference { get; set; } = "";
+        public decimal Quantity { get; set; } = 1;
+        public string GenericName { get; set; } = "";
+        public string Code { get; set; } = "";
+        public string DosageForm { get; set; } = "";
+        public decimal Strength { get; set; }
+        public string Unit { get; set; } = "";
+        public string DefaultDosage { get; set; } = "";
+        public string Manufacturer { get; set; } = "";
         public bool IsActive
         {
             get; set;
