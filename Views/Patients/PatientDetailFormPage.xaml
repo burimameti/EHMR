@@ -825,7 +825,7 @@
 					</VerticalStackLayout>
 
 <!--  РЕД 5 — ДОСИЕ (документи)  -->
-									<VerticalStackLayout Grid.Row="5" Spacing="10">
+									<VerticalStackLayout Grid.Row="4" Spacing="10">
 
 										<controls:CrudSectionHeader Title="ДОСИЕ" />
 
