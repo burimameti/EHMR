@@ -254,7 +254,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             .OrderBy(a => a.ScheduledStart),
 
         AppointmentTabFilter.Past => PatientAppointments
-            .Where(a => a.Status is AppointmentStatus.Completed or AppointmentStatus.Missed or AppointmentStatus.Cancelled)
             .OrderByDescending(a => a.ScheduledStart),
 
         _ => PatientAppointments
