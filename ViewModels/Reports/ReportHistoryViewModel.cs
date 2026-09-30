@@ -185,8 +185,6 @@ public partial class ReportHistoryViewModel
             labelSelector: f => FormatLabels.TryGetValue(f, out var lbl) ? lbl : f,
             isSelectedSelector: f => f==SelectedFormat,
             onSelect: f => SelectedFormat=f);
-
-        RefreshSparkTabCounts();
     }
 
     private void RefreshSparkTabCounts()
@@ -309,7 +307,6 @@ public partial class ReportHistoryViewModel
     // ============================================================
     private void InitializeSparkControls()
     {
-        BuildSparkTabs();
         BuildSparkPickers();
         BuildSparkButtons();
         BuildSparkGridColumns();
