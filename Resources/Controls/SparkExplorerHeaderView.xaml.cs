@@ -63,7 +63,7 @@ namespace EHMR.Resources.Controls
 
             HeaderSearchBox.HeightRequest = 42 * s;
             HeaderSearchBox.HorizontalOptions = LayoutOptions.Fill;
-            HeaderSearchBox.MinimumWidthRequest = Math.Max(220, 260 * s);
+            HeaderSearchBox.MinimumWidthRequest = 0;
             HeaderSearchBox.Margin = new Thickness(0);
 
             CyrillicToggleLayout.WidthRequest = 100 * s;
