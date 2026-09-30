@@ -488,7 +488,7 @@ public class EncounterDetailService : IEncounterDetailService
 
             var isTerminal = resolvedEncounter is EncounterStatus.Completed
                                                 or EncounterStatus.Cancelled
-                                                or EncounterStatus.NoShow;
+    ;
 
             if(isTerminal&&!encounter.IsLocked)
             {
@@ -757,7 +757,7 @@ public class EncounterDetailService : IEncounterDetailService
 
                     var isTerminal = resolvedEncounter is EncounterStatus.Completed
                                                         or EncounterStatus.Cancelled
-                                                        or EncounterStatus.NoShow;
+       ;
 
                     if(isTerminal&&!encounter.IsLocked)
                     {
@@ -877,11 +877,11 @@ public class EncounterDetailService : IEncounterDetailService
 
             foreach(var appt in staleAppointments)
             {
-                appt.Status=AppointmentStatus.Missed;
+                appt.Status=AppointmentStatus.Cancelled;
 
                 if(encounterByAppointmentId.TryGetValue(appt.Id, out var encounter))
                 {
-                    encounter.Status=EncounterStatus.NoShow;
+                    encounter.Status=EncounterStatus.Cancelled;
                     encounter.IsLocked=true;
                     encounter.EndTime=DateTime.Now;
                     encounter.DurationMinutes=encounter.StartTime.HasValue
@@ -904,7 +904,7 @@ public class EncounterDetailService : IEncounterDetailService
 
         foreach(var encounter in staleEncounters)
         {
-            encounter.Status=EncounterStatus.NoShow;
+            encounter.Status=EncounterStatus.Cancelled;
             encounter.IsLocked=true;
             encounter.EndTime=DateTime.Now;
             encounter.DurationMinutes=encounter.StartTime.HasValue
@@ -973,7 +973,6 @@ public class EncounterDetailService : IEncounterDetailService
         EncounterStatus.InProgress => 1,
         EncounterStatus.Completed => 4,
         EncounterStatus.Cancelled => 5,
-        EncounterStatus.NoShow => 5,
         _ => 0
     };
 
@@ -982,7 +981,6 @@ public class EncounterDetailService : IEncounterDetailService
         AppointmentStatus.Scheduled => 0,
         AppointmentStatus.Completed => 4,
         AppointmentStatus.Cancelled => 5,
-        AppointmentStatus.Missed => 5,
         _ => 0
     };
 
@@ -990,12 +988,11 @@ public class EncounterDetailService : IEncounterDetailService
       EncounterStatus e, AppointmentStatus a)
     {
         // Terminal states on encounter side always win
-        if(e is EncounterStatus.Completed or EncounterStatus.Cancelled or EncounterStatus.NoShow)
+        if(e is EncounterStatus.Completed or EncounterStatus.Cancelled)
             return e;
 
         // Terminal states on appointment side — map and win
-        if(a is AppointmentStatus.Completed or AppointmentStatus.Cancelled
-               or AppointmentStatus.Missed)
+        if(a is AppointmentStatus.Completed or AppointmentStatus.Cancelled)
             return MapToEncounterStatus(a);
 
         // Non-terminal — whichever is further ahead wins
@@ -1008,9 +1005,9 @@ public class EncounterDetailService : IEncounterDetailService
     private static AppointmentStatus MapToAppointmentStatus(EncounterStatus s) => s switch
     {
         EncounterStatus.Scheduled => AppointmentStatus.Scheduled,
+        EncounterStatus.InProgress => AppointmentStatus.InProgress,
         EncounterStatus.Completed => AppointmentStatus.Completed,
         EncounterStatus.Cancelled => AppointmentStatus.Cancelled,
-        EncounterStatus.NoShow => AppointmentStatus.Missed,
         _ => AppointmentStatus.Scheduled
     };
 }
