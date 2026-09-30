@@ -744,7 +744,8 @@
 															StrokeThickness="1">
 															<Picker
 																ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
-																SelectedItem="{Binding ApplicationRegime, Mode=TwoWay}"
+																ItemDisplayBinding="{Binding Regime}"
+																	SelectedItem="{Binding ApplicationRegime, Mode=TwoWay}"
 																FontSize="11"
 																Title="Избери режим"
 																VerticalOptions="Center" />
