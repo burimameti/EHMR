@@ -48,7 +48,7 @@
 					TextChanged="OnEntryTextChanged"
 					TextColor="{StaticResource Gray900}"
 					VerticalOptions="Center"
-					HorizontalOptions="Fill"
+					HorizontalOptions="Fill" />
 
 				<Label
 					Grid.Column="2"
