@@ -151,6 +151,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             IsReadOnly=false;
 
             SyncDisplayFromPatient();
+            _=LoadApplicationRegimesAsync();
 
             OnPropertyChanged(nameof(IsNewPatient));
             OnPropertyChanged(nameof(HeaderTitle));
@@ -198,6 +199,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             SelectedDoctorDisplay=full.DoctorDisplay;
             DoctorSearchText=SelectedDoctorDisplay;
 
+            await LoadApplicationRegimesAsync();
             await LoadHistoryAsync(patientId);
 
             _childrenLoaded=true;
@@ -790,6 +792,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
     private CancellationTokenSource _medicineSearchCts = new();
 
+    [ObservableProperty] private ObservableCollection<string> applicationRegimeOptions = new();
+    [ObservableProperty] private string newApplicationRegimeText = string.Empty;
+
     [ObservableProperty] private ObservableCollection<AttachedMedicineRow> attachedMedicines = new();
     [ObservableProperty] private ObservableCollection<MedicineDto> medicineResults = new();
     [ObservableProperty] private string medicineSearchText = string.Empty;
@@ -820,6 +825,44 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             await SearchMedicinesAsync(query, token);
         }
         catch(OperationCanceledException) { }
+    }
+
+    private async Task LoadApplicationRegimesAsync()
+    {
+        try
+        {
+            var regimes=await _patientService.GetApplicationRegimesAsync();
+            ApplicationRegimeOptions=new ObservableCollection<string>(
+                regimes.Select(x => x.Regime));
+        }
+        catch(Exception ex)
+        {
+            Debug.WriteLine(ex);
+        }
+    }
+
+    [RelayCommand]
+    private async Task AddApplicationRegimeAsync()
+    {
+        var value=(NewApplicationRegimeText??string.Empty).Trim();
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            await _userDialogService.ShowAlertAsync("Режим на апликација", "Внесете режим на апликација.", "ОК");
+            return;
+        }
+
+        try
+        {
+            var regime=await _patientService.AddApplicationRegimeAsync(value);
+            if(!ApplicationRegimeOptions.Contains(regime.Regime))
+                ApplicationRegimeOptions.Add(regime.Regime);
+
+            NewApplicationRegimeText=string.Empty;
+        }
+        catch(Exception ex)
+        {
+            await _userDialogService.ShowAlertAsync("Грешка", $"Режимот не може да се зачува: {ex.Message}", "ОК");
+        }
     }
 
     [RelayCommand]
@@ -864,6 +907,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             DosesFrequency=DosesFrequency.Other,
             StartDate=DateTime.UtcNow,
             PharmaceuticalReference=string.Empty,
+            ApplicationRegimeId=null,
+            ApplicationRegime=string.Empty,
+            Quantity=1,
             IsActive=true
         };
 
@@ -872,6 +918,20 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         MedicineSearchText=string.Empty;
         MedicineResults.Clear();
         ShowMedicineDropdown=false;
+    }
+
+    private void SyncApplicationRegimeIds()
+    {
+        foreach(var row in AttachedMedicines)
+        {
+            var name=row.PatientMedicine.ApplicationRegime?.Trim()??string.Empty;
+            row.PatientMedicine.ApplicationRegimeId=null;
+            if(name.Length>0)
+            {
+                // The selected text is unique in the lookup table.
+                _=name;
+            }
+        }
     }
 
     [RelayCommand]
