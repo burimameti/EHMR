@@ -464,7 +464,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                 .. Diagnoses.Select(x => new DiagnosisSaveModel
             {
                 Id = x.Id,
-                EncounterId = x.EncounterId,
+                // Diagnoses entered from the Patient form belong to the patient,
+                // not to a specific Encounter.
+                EncounterId = null,
                 Mkb10CodeId = x.Mkb10CodeId,
                 DiagnosedAt = x.DiagnosedAt,
                 IsPrimary = x.IsPrimary,
@@ -805,6 +807,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         {
             Id=Guid.Empty, // Empty -> SaveAsync treats it as INSERT
             PatientId=Patient.Id,
+            EncounterId=null,
             Mkb10CodeId=code.Id,
             Mkb10Code=code.Code,
             Mkb10Description=code.Description,
