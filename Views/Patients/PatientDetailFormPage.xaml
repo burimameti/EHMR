@@ -663,11 +663,11 @@
 									<BindableLayout.ItemTemplate>
 										<DataTemplate x:DataType="viewModels:AttachedMedicineRow">
 											<Grid ColumnDefinitions="1.35*,0.8*,1.2*,0.7*,28" ColumnSpacing="1">
-												<Border Padding="5,0" BackgroundColor="White" HeightRequest="36" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="10" LineBreakMode="TailTruncation" Text="{Binding MedicineName}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
-												<Border Grid.Column="1" Padding="3,0" BackgroundColor="White" HeightRequest="36" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Entry BackgroundColor="Transparent" FontSize="10" Text="{Binding PatientMedicine.Dosage, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
-												<Border Grid.Column="2" Padding="5,0" BackgroundColor="White" HeightRequest="36" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="9.5" LineBreakMode="TailTruncation" Text="{Binding RegimeDisplay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
-												<Border Grid.Column="3" Padding="3,0" BackgroundColor="White" HeightRequest="36" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Entry BackgroundColor="Transparent" FontSize="10" Keyboard="Numeric" Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
-												<Border Grid.Column="4" BackgroundColor="White" HeightRequest="36" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Button Padding="0" BackgroundColor="Transparent" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" FontSize="10" IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" Text="✕" TextColor="#DC2626" WidthRequest="28" /></Border>
+												<Border Padding="5,0" BackgroundColor="White" HeightRequest="40" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="10" LineBreakMode="TailTruncation" Text="{Binding MedicineName}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
+												<Border Grid.Column="1" Padding="3,0" BackgroundColor="White" HeightRequest="40" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Entry BackgroundColor="Transparent" FontSize="10" Text="{Binding PatientMedicine.Dosage, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
+												<Border Grid.Column="2" Padding="5,0" BackgroundColor="White" HeightRequest="40" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="9.5" LineBreakMode="TailTruncation" Text="{Binding RegimeDisplay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
+												<Border Grid.Column="3" Padding="3,0" BackgroundColor="White" HeightRequest="40" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Entry BackgroundColor="Transparent" FontSize="10" Keyboard="Numeric" Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
+												<Border Grid.Column="4" BackgroundColor="White" HeightRequest="40" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Button Padding="0" BackgroundColor="Transparent" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" FontSize="10" IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" Text="✕" TextColor="#DC2626" WidthRequest="28" /></Border>
 											</Grid>
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
@@ -719,7 +719,7 @@
 														<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding .}" />
 													</Border.GestureRecognizers>
 													<Grid ColumnDefinitions="36,*,Auto,Auto" ColumnSpacing="10">
-														<Border BackgroundColor="{StaticResource SparkAccentTealBg}" HeightRequest="36" StrokeShape="RoundRectangle 8" StrokeThickness="0" WidthRequest="36">
+														<Border BackgroundColor="{StaticResource SparkAccentTealBg}" HeightRequest="40" StrokeShape="RoundRectangle 8" StrokeThickness="0" WidthRequest="36">
 															<Grid>
 																<Image Aspect="AspectFill" IsVisible="{Binding ., Converter={StaticResource DocumentIsImageConverter}}" Source="{Binding StoredPath}" />
 																<Label FontFamily="FASolid" FontSize="14" HorizontalOptions="Center" IsVisible="{Binding ., Converter={StaticResource DocumentIsImageConverter}, ConverterParameter=Invert}" Text="&#xf15b;" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
