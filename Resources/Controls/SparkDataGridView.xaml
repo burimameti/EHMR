@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView
 	x:Class="EHMR.Resources.Controls.SparkDataGridView"
-	SizeChanged="OnGridSizeChanged"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	x:Name="Root">
+	x:Name="Root"
+	SizeChanged="OnGridSizeChanged">
 	<Border
+		Margin="-15,-14,-15,-22"
 		Background="White"
 		Stroke="#D8DEE8"
 		StrokeShape="RoundRectangle 0"
-		StrokeThickness="1">
+		StrokeThickness="3">
 
 		<Grid RowDefinitions="*, Auto">
 			<ScrollView

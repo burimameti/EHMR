@@ -12,7 +12,7 @@
 		Margin="0"
 		Padding="10"
 		BackgroundColor="White"
-		Spacing="8">
+		Spacing="0">
 
 		<!--  ============ SEARCH + FILTERS + BUTTONS ============  -->
 		<Grid BackgroundColor="Transparent" IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
@@ -148,7 +148,10 @@
 									Text="{Binding Label}"
 									WidthRequestEx="0">
 									<sc:FFButton.Triggers>
-										<DataTrigger Binding="{Binding IsPrimary}" TargetType="sc:FFButton" Value="True">
+										<DataTrigger
+											Binding="{Binding IsPrimary}"
+											TargetType="sc:FFButton"
+											Value="True">
 											<Setter Property="ButtonKind" Value="Primary" />
 										</DataTrigger>
 									</sc:FFButton.Triggers>

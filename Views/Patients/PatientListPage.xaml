@@ -45,7 +45,8 @@
 			<!--  MAIN CONTENT / GRID  -->
 			<Border
 				Grid.Row="1"
-				Padding="0"
+				Margin="1,0,1,0"
+				Padding="0,3"
 				StrokeThickness="-1">
 				<ScrollView VerticalScrollBarVisibility="Never">
 					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
