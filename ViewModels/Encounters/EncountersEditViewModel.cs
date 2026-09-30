@@ -131,7 +131,6 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         EncounterStatus.InProgress => AppointmentStatus.InProgress,
         EncounterStatus.Completed => AppointmentStatus.Completed,
         EncounterStatus.Cancelled => AppointmentStatus.Cancelled,
-        EncounterStatus.NoShow => AppointmentStatus.Missed,
         _ => AppointmentStatus.Scheduled
     };
 }
