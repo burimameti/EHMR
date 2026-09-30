@@ -1,6 +1,5 @@
 ﻿using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
-using Microsoft.Maui.Controls.Shapes;
 using System.Drawing;
 using System.Windows.Input;
 using Color = Microsoft.Maui.Graphics.Color;
@@ -54,31 +53,81 @@ public partial class FFMetricTile : ContentView
         if (width <= 0)
             return;
 
-        // Keep the desktop appearance at normal widths and progressively
-        // densify the tile when the available dashboard column becomes narrow.
         var scale = width >= 260 ? 1d
             : width >= 225 ? 0.94d
             : width >= 200 ? 0.88d
             : width >= 175 ? 0.82d
             : 0.76d;
 
-        Container.Padding = new Thickness(14 * scale, 10 * scale);
-        MetricGrid.RowSpacing = 8 * scale;
-        MetricHeaderGrid.ColumnSpacing = 4 * scale;
+        if (FindElement<Border>("MetricContainer") is Border container)
+            container.Padding = new Thickness(14 * scale, 10 * scale);
 
-        MetricIcon.WidthRequest = 32 * scale;
-        MetricIcon.HeightRequest = 32 * scale;
-        MetricIcon.StrokeShape = new RoundRectangle { CornerRadius = 12 * scale };
-        MetricIconLabel.FontSize = 12 * scale;
+        if (FindElement<Grid>("MetricGrid") is Grid metricGrid)
+            metricGrid.RowSpacing = 8 * scale;
 
-        MetricTitle.FontSize = Math.Max(8, 9 * scale);
-        MetricValue.FontSize = Math.Max(16, 22 * scale);
+        if (FindElement<Grid>("MetricHeaderGrid") is Grid headerGrid)
+            headerGrid.ColumnSpacing = 4 * scale;
 
-        MoreBorder.Padding = new Thickness(10 * scale, 5 * scale);
-        MoreBorder.StrokeShape = new RoundRectangle { CornerRadius = 12 * scale };
-        MoreLayout.Spacing = 5 * scale;
-        MoreLabel.FontSize = Math.Max(9, 11 * scale);
-        MoreArrow.FontSize = Math.Max(10, 12 * scale);
+        if (FindElement<Border>("MetricIcon") is Border icon)
+        {
+            icon.WidthRequest = 32 * scale;
+            icon.HeightRequest = 32 * scale;
+            icon.StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle
+            {
+                CornerRadius = 12 * scale
+            };
+        }
+
+        if (FindElement<Label>("MetricIconLabel") is Label iconLabel)
+            iconLabel.FontSize = 12 * scale;
+
+        if (FindElement<Label>("MetricTitle") is Label title)
+            title.FontSize = Math.Max(8, 9 * scale);
+
+        if (FindElement<Label>("MetricValue") is Label value)
+            value.FontSize = Math.Max(16, 22 * scale);
+
+        if (FindElement<Border>("MoreBorder") is Border moreBorder)
+        {
+            moreBorder.Padding = new Thickness(10 * scale, 5 * scale);
+            moreBorder.StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle
+            {
+                CornerRadius = 12 * scale
+            };
+        }
+
+        if (FindElement<HorizontalStackLayout>("MoreLayout") is HorizontalStackLayout moreLayout)
+            moreLayout.Spacing = 5 * scale;
+
+        if (FindElement<Label>("MoreLabel") is Label moreLabel)
+            moreLabel.FontSize = Math.Max(9, 11 * scale);
+
+        if (FindElement<Label>("MoreArrow") is Label moreArrow)
+            moreArrow.FontSize = Math.Max(10, 12 * scale);
+    }
+
+    private T? FindElement<T>(string automationId) where T : VisualElement
+    {
+        return FindElementRecursive<T>(this, automationId);
+    }
+
+    private static T? FindElementRecursive<T>(Element element, string automationId)
+        where T : VisualElement
+    {
+        if (element is T visual && visual.AutomationId == automationId)
+            return visual;
+
+        if (element is IElementController controller)
+        {
+            foreach (var child in controller.LogicalChildren)
+            {
+                var found = FindElementRecursive<T>(child, automationId);
+                if (found != null)
+                    return found;
+            }
+        }
+
+        return null;
     }
 
 
