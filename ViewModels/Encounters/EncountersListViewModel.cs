@@ -279,8 +279,6 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         Tabs.Add(_inProgressTab);
         Tabs.Add(_completedTab);
         Tabs.Add(_cancelledTab);
-
-        RefreshSparkTabCounts();
     }
 
     private void SelectTab(SparkTabItem tab, Action action)
@@ -311,7 +309,6 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
 
     private void InitializeSparkControls()
     {
-        BuildSparkTabs();
         BuildSparkPickers();
         BuildSparkButtons();
         BuildSparkGridColumns();
@@ -396,7 +393,6 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         MainThread.BeginInvokeOnMainThread(() =>
         {
             RefreshSparkGridRows();
-            RefreshSparkTabCounts();
         });
     }
 
@@ -583,8 +579,6 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
             AllItems.Count(x =>
                 x.Status==EncounterStatus.Cancelled||
                 x.Status==EncounterStatus.NoShow);
-
-        RefreshSparkTabCounts();
     }
     protected override void ResetFilters()
     {
