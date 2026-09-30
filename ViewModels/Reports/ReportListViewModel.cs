@@ -331,7 +331,6 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         AppointmentStatus.Completed => "Завршен",
         AppointmentStatus.Cancelled => "Откажан",
         AppointmentStatus.Missed => "Не се пријавил",
-        AppointmentStatus.InProgress => "Во тек",
         _ => status.ToString()
     };
 
