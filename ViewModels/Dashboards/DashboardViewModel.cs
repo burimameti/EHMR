@@ -588,7 +588,6 @@ public partial class DashboardViewModel : ObservableObject
                 AppointmentStatus.Completed => Color.FromArgb("#10B981"),
                 AppointmentStatus.InProgress => Color.FromArgb("#F59E0B"),
                 AppointmentStatus.Cancelled => Color.FromArgb("#EF4444"),
-                AppointmentStatus.Missed => Color.FromArgb("#94A3B8"),
                 _ => Color.FromArgb("#3B82F6")
             }
         };
@@ -983,7 +982,6 @@ public partial class DashboardViewModel : ObservableObject
         Kpis.Add(new FFMetricTileItem { Title="ТЕРМИНИ ДЕНЕС", Value=State.UpcomingAppointmentsCount.ToString("N0"), Icon="\uf133", Variant=MetricTileVariant.Info, Command=NavigateToAppointmentsCommand });
         Kpis.Add(new FFMetricTileItem { Title="ЗАВРШЕНИ ДЕНЕС ПРЕГЛЕДИ", Value=State.CompletedToday.ToString("N0"), Icon="\uf058", Variant=MetricTileVariant.Success, Command=NavigateToEncountersCommand, CommandParameter="Completed" });
         Kpis.Add(new FFMetricTileItem { Title="ЗАКАЖАНИ И ПРИЈАВЕНИ", Value=State.WaitingToday.ToString("N0"), Icon="\uf254", Variant=MetricTileVariant.Warning, Command=NavigateToEncountersCommand, CommandParameter="Scheduled" });
-        Kpis.Add(new FFMetricTileItem { Title="ПРОПУШТЕНИ", Value=State.NoShowToday.ToString("N0"), Icon="\uf506", Variant=MetricTileVariant.Danger, Command=NavigateToEncountersCommand, CommandParameter="NoShow" });
         Kpis.Add(new FFMetricTileItem
         {
             Title="ВО ТЕК",
@@ -1011,7 +1009,6 @@ public partial class DashboardViewModel : ObservableObject
         _allPatientsTab=new SparkTabItem { Title="Сите пациенти", IsSelected=true };
         var upcomingTab = new SparkTabItem { Title="Закажани прегледи" };
         var inprogressTab = new SparkTabItem { Title="Прегледи во тек" };
-        var neDojadeTab = new SparkTabItem { Title="Пропуштени прегледи" };
         _warning=new SparkTabItem { Title="Критични" };
         _encounters=new SparkTabItem { Title="Прегледи" };
         _churnedTab=new SparkTabItem { Title="Неактивни Пациенти" };
@@ -1026,7 +1023,6 @@ public partial class DashboardViewModel : ObservableObject
         Tabs.Add(_churnedTab);
         Tabs.Add(upcomingTab);
         Tabs.Add(inprogressTab);
-        Tabs.Add(neDojadeTab);
         Tabs.Add(_warning);
 
         RefreshSparkTabCounts();
