@@ -450,7 +450,20 @@
 									</Grid>
 
 									<!--  ДОКУМЕНТИ / РЕШЕНИЕ  -->
-									<controls:CrudSectionHeader Title="ДОКУМЕНТИ НА ПАЦИЕНТ" />
+																			<Grid Padding="{StaticResource FormRowPadding}" ColumnDefinitions="*,*" ColumnSpacing="10">
+											<VerticalStackLayout Grid.Column="0" Spacing="4">
+												<Label IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldLabelStyle}" Text="ЗБО *" />
+												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
+													<Entry BackgroundColor="Transparent" FontSize="13" Placeholder="Здравствен број" Text="{Binding Patient.SzboNumber}" TextColor="{StaticResource SparkTextPrimary}" />
+												</Border>
+												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
+													<Label FontSize="11" Text="ЗБО:" TextColor="{StaticResource SparkTextSecondary}" />
+													<Label FontAttributes="Bold" FontSize="13" Text="{Binding Patient.SzboNumber}" TextColor="{StaticResource SparkTextPrimary}" />
+												</VerticalStackLayout>
+											</VerticalStackLayout>
+										</Grid>
+
+<controls:CrudSectionHeader Title="ДОКУМЕНТИ НА ПАЦИЕНТ" />
 
 									<Border
 										Padding="14"
