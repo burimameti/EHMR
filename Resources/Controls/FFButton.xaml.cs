@@ -5,10 +5,41 @@ namespace EHMR.Resources.Controls;
 
 public partial class FFButton : ContentView
 {
+    private double _lastWidth = -1;
+
     public FFButton()
     {
         InitializeComponent();
         ApplyKind();
+    }
+
+    private void OnButtonSizeChanged(object? sender, EventArgs e)
+    {
+        var width = Width;
+        if (width <= 0 || Math.Abs(width - _lastWidth) < 2)
+            return;
+
+        _lastWidth = width;
+
+        // Keep the normal desktop appearance at comfortable widths,
+        // but reduce internal geometry when the button is constrained.
+        var scale = width >= 180 ? 1d
+            : width >= 145 ? 0.92d
+            : width >= 115 ? 0.84d
+            : 0.76d;
+
+        var horizontalPadding = Math.Max(8, 20 * scale);
+        Container.Padding = new Thickness(horizontalPadding, 0);
+        Container.MinimumHeightRequest = Math.Max(32, HeightRequestEx * scale);
+        Container.StrokeShape = new RoundRectangle
+        {
+            CornerRadius = CornerRadius
+        };
+
+        if (width < 145)
+        {
+            FontSizeEx = Math.Max(11, 13 * scale);
+        }
     }
 
     // ═══════════════════════════════════════════════════════════ //
