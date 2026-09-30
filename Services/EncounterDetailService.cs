@@ -349,6 +349,7 @@ public class EncounterDetailService : IEncounterDetailService
             .Include(p => p.Prescriptions)
 
             .Include(p => p.PatientMedicines).ThenInclude(pm => pm.Medicine)
+            .Include(p => p.PatientMedicines).ThenInclude(pm => pm.ApplicationRegime)
 
             .Include(p => p.Documents)
 
