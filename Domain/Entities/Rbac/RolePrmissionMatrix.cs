@@ -1,27 +1,24 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EHMR.Domain.Entities.Rbac
 {
     public static class RolePermissionMatrix
     {
-        // Глобален дефолт по улога — важи за секој модул освен ако не е override-нат подолу.
+        // Role defaults are the baseline. Explicit per-user module assignments
+        // may override module access for an assigned module.
         private static readonly Dictionary<UserRole, ModuleAction> _roleDefaults = new()
         {
             [UserRole.SuperAdmin]=ModuleAction.Full,
             [UserRole.Admin]=ModuleAction.Full,
             [UserRole.Doctor]=ModuleAction.View|ModuleAction.Create|ModuleAction.Edit,
-            [UserRole.MainNurse]=ModuleAction.View|ModuleAction.Create|ModuleAction.Edit,
+            [UserRole.MainNurse]=ModuleAction.View|ModuleAction.Create,
             [UserRole.Nurse]=ModuleAction.View|ModuleAction.Create,
             [UserRole.Staff]=ModuleAction.View,
         };
 
-        // Исклучоци по модул — само тука додаваш кога некој модул треба различно однесување од дефолтот.
         private static readonly Dictionary<string, Dictionary<UserRole, ModuleAction>> _moduleOverrides
-            = new(System.StringComparer.OrdinalIgnoreCase)
+            = new(StringComparer.OrdinalIgnoreCase)
             {
                 [Modules.Administration]=new()
                 {
