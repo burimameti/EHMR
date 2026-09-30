@@ -21,12 +21,10 @@ namespace EHMR.Converters
         private static readonly Dictionary<AppointmentStatus, string> _labels = new()
         {
             { AppointmentStatus.Scheduled,   "Закажан"   },
-            { AppointmentStatus.CheckedIn,   "Пријавен"  },
             { AppointmentStatus.InProgress,  "Во тек"    },
             { AppointmentStatus.Completed,   "Завршен"   },
             { AppointmentStatus.Cancelled,   "Откажан"   },
             { AppointmentStatus.Missed,      "Пропуштен" },
-            { AppointmentStatus.ReScheduled, "Преместен" },
         };
 
         // Reverse lookup built once from _labels, so the two directions can
