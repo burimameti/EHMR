@@ -284,7 +284,6 @@ namespace EHMR.Services.Dto
         public string Unit { get; set; } = "";
         public string DefaultDosage { get; set; } = "";
         public string Manufacturer { get; set; } = "";
-        public string PharmaceuticalReference { get; set; } = "";
         public bool IsActive
         {
             get; set;
