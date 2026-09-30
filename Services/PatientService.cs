@@ -1,7 +1,9 @@
 using EHMR.Domain.Entities;
 using EHMR.Domain.Interfaces;
+using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Services.Dto;
+using EHMR.UI.Lookup;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
