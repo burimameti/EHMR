@@ -51,6 +51,9 @@ namespace EHMR.Services.Dto
             get; init;
         }
 
+        public PatientDocumentType DocumentType { get; init; } = PatientDocumentType.Other;
+        public string Title { get; init; } = string.Empty;
+        public string Description { get; init; } = string.Empty;
         public string FileName { get; init; } = string.Empty;
 
         public string StoredPath { get; init; } = string.Empty;
