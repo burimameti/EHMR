@@ -430,6 +430,9 @@ public class PatientService : IPatientService
                     {
                         Id=Guid.NewGuid(),
                         PatientId=patient.Id,
+                        DocumentType=vm.DocumentType,
+                        Title=vm.Title,
+                        Description=vm.Description,
                         FileName=vm.FileName,
                         StoredPath=vm.StoredPath,
                         ContentType=vm.ContentType,
@@ -595,6 +598,9 @@ public class PatientService : IPatientService
                 {
                     Id=Guid.NewGuid(),
                     PatientId=existing.Id,
+                    DocumentType=vm.DocumentType,
+                    Title=vm.Title,
+                    Description=vm.Description,
                     FileName=vm.FileName,
                     StoredPath=vm.StoredPath,
                     ContentType=vm.ContentType,
