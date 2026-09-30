@@ -21,8 +21,7 @@ public static class EncounterStatusLocalization
     public static string ToMk(EncounterStatus status) => status switch
     {
         EncounterStatus.Scheduled => "Закажан",
-        EncounterStatus.CheckedIn => "Пријавен",
-        EncounterStatus.InProgress => "Во тек",
+        EncounterStatus.InProgress => "Пријавен",
         EncounterStatus.Completed => "Завршен",
         EncounterStatus.Cancelled => "Откажан",
         EncounterStatus.NoShow => "Не дошол",
