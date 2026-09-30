@@ -24,7 +24,7 @@
 		<Border
 			Grid.Row="1"
 			BackgroundColor="White"
-			MinimumHeightRequest="40"
+			HeightRequest="36"
 			HorizontalOptions="Fill"
 			VerticalOptions="Center"
 			Stroke="{StaticResource Gray300}"
