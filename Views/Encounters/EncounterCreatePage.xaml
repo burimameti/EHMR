@@ -366,9 +366,6 @@
 								</Border>
 							</VerticalStackLayout>
 
-
-							</VerticalStackLayout>
-
 							<!--  ── 2. ЛЕКОВИ ──────────────────────────────  -->
 							<VerticalStackLayout Spacing="10">
 								<Border Style="{StaticResource SectionPillBorderStyle}"><Label CharacterSpacing="0.5" FontAttributes="Bold" FontSize="12" Style="{StaticResource SectionPillLabelStyle}" Text="ЛЕКОВИ" /></Border>
