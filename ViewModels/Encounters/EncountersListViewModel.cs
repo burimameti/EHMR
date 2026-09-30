@@ -577,8 +577,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
 
         CancelledCount=
             AllItems.Count(x =>
-                x.Status==EncounterStatus.Cancelled||
-                x.Status==EncounterStatus.NoShow);
+                x.Status==EncounterStatus.Cancelled);
     }
     protected override void ResetFilters()
     {
