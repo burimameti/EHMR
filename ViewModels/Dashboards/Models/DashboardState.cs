@@ -31,7 +31,6 @@ public partial class DashboardState : ObservableObject
     // =====================================================
     [ObservableProperty] private int completedToday;
     [ObservableProperty] private int waitingToday;
-    [ObservableProperty] private int noShowToday;
     [ObservableProperty] private int upcomingAppointmentsCount;
 
     // =====================================================
