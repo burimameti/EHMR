@@ -722,7 +722,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] private ObservableCollection<DiagnosisDto> diagnoses = new();
     [ObservableProperty] private ObservableCollection<Mkb10CodeDto> mkbResults = new();
-    [ObservableProperty] private string mkbSearchText = string.Empty;
+    [ObservableProperty] private string mkbCodeSearchText = string.Empty;
+    [ObservableProperty] private string mkbDescriptionSearchText = string.Empty;
     [ObservableProperty] private bool showMkbDropdown;
     [ObservableProperty] private string selectedMkb10Display = string.Empty;
 
@@ -730,9 +731,10 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] private string selectedMkbSection = "A";
 
-    partial void OnMkbSearchTextChanged(string value) => DebounceSearchMkb10(value);
+    partial void OnMkbCodeSearchTextChanged(string value) => DebounceSearchMkb10();
+    partial void OnMkbDescriptionSearchTextChanged(string value) => DebounceSearchMkb10();
 
-    private async void DebounceSearchMkb10(string query)
+    private async void DebounceSearchMkb10()
     {
         _mkbSearchCts?.Cancel();
         _mkbSearchCts?.Dispose();
@@ -741,9 +743,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
         try
         {
-            await Task.Delay(400, token);
+            await Task.Delay(300, token);
             if(token.IsCancellationRequested) return;
-            await SearchMkbAsync(query, token);
+            await SearchMkbAsync(token);
         }
         catch(OperationCanceledException) { }
     }
@@ -758,11 +760,11 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         foreach(var item in MkbAlphabetSections)
             item.IsSelected=item.Letter==SelectedMkbSection;
 
-        await SearchMkbAsync(MkbSearchText, CancellationToken.None);
+        await SearchMkbAsync(CancellationToken.None);
     }
 
     [RelayCommand]
-    private async Task SearchMkbAsync(string query, CancellationToken token = default)
+    private async Task SearchMkbAsync(CancellationToken token = default)
     {
         if(string.IsNullOrWhiteSpace(SelectedMkbSection))
         {
@@ -773,7 +775,12 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
         try
         {
-            var results = await _patientService.SearchMkb10CodesAsync(query ?? string.Empty, CancellationToken.None);
+            var results = await _patientService.SearchMkb10CodesAsync(
+                MkbCodeSearchText ?? string.Empty,
+                token,
+                SelectedMkbSection,
+                MacedonianTransliterator.ToCyrillic(MkbDescriptionSearchText ?? string.Empty));
+
             if(token.IsCancellationRequested) return;
 
             MkbResults=new ObservableCollection<Mkb10CodeDto>(results);
@@ -803,7 +810,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
         Diagnoses.Add(diagnosis);
 
-        MkbSearchText=string.Empty;
+        MkbCodeSearchText=string.Empty;
+        MkbDescriptionSearchText=string.Empty;
         MkbResults.Clear();
         ShowMkbDropdown=false;
     }
