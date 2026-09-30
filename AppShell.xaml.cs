@@ -134,6 +134,7 @@ public partial class AppShell : Shell
         // Medicines
         Routing.RegisterRoute(AppRoutes.Medicines.List, typeof(MedicineListPage));
         Routing.RegisterRoute(AppRoutes.Medicines.Detail, typeof(MedicineDetailFormPage));
+        Routing.RegisterRoute(AppRoutes.ApplicationRegimes.List, typeof(ApplicationRegimeListPage));
 
         // Prescriptions
         Routing.RegisterRoute(AppRoutes.Prescriptions.List, typeof(PrescriptionListPage));
