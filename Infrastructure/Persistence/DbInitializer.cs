@@ -48,6 +48,8 @@ public class DatabaseMigrationService
             }
         }
 
+        await NormalizeLegacyStatusesAsync(db);
+
         // Демо податоците се нудат точно еднаш, при првото подигање.
         // Одлуката — прифатена или одбиена — се памти во AppLicense и повеќе
         // не се прашува.
@@ -68,6 +70,28 @@ public class DatabaseMigrationService
 
         var runner = scope.ServiceProvider.GetRequiredService<SeederRunner>();
         await runner.RunAsync(includeDemo);
+    }
+
+    private static async Task NormalizeLegacyStatusesAsync(DesktopTherapyDbContext db)
+    {
+        // Values 4+ were previously used by removed Missed/NoShow statuses.
+        // Keep existing data valid by mapping all obsolete terminal values to Cancelled.
+        var appointments = await db.Appointments
+            .Where(x => (int)x.Status>3)
+            .ToListAsync();
+
+        foreach(var appointment in appointments)
+            appointment.Status=AppointmentStatus.Cancelled;
+
+        var encounters = await db.Encounters
+            .Where(x => (int)x.Status>3)
+            .ToListAsync();
+
+        foreach(var encounter in encounters)
+            encounter.Status=EncounterStatus.Cancelled;
+
+        if(appointments.Count>0||encounters.Count>0)
+            await db.SaveChangesAsync();
     }
 
     /// <summary>
