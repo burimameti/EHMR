@@ -826,7 +826,7 @@ public class EncounterDetailService : IEncounterDetailService
         // ── Appointments still open past the cutoff ──────────────────────
         var staleAppointments = await db.Appointments
             .Where(a => (a.Status==AppointmentStatus.Scheduled
-                         ||a.Status==AppointmentStatus.CheckedIn
+                         ||a.Status==AppointmentStatus.InProgress
                          ||a.Status==AppointmentStatus.InProgress)
                         &&a.ScheduledStart<cutoff)
             .ToListAsync();
@@ -866,7 +866,7 @@ public class EncounterDetailService : IEncounterDetailService
             .Where(e => !e.AppointmentId.HasValue
                         &&!e.IsLocked
                         &&(e.Status==EncounterStatus.Scheduled
-                           ||e.Status==EncounterStatus.CheckedIn
+                           ||e.Status==EncounterStatus.InProgress
                            ||e.Status==EncounterStatus.InProgress)
                         &&e.ScheduledStart.HasValue
                         &&e.ScheduledStart<cutoff)
@@ -919,12 +919,10 @@ public class EncounterDetailService : IEncounterDetailService
     private static EncounterStatus MapToEncounterStatus(AppointmentStatus status) => status switch
     {
         AppointmentStatus.Scheduled => EncounterStatus.Scheduled,
-        AppointmentStatus.CheckedIn => EncounterStatus.InProgress,
         AppointmentStatus.InProgress => EncounterStatus.InProgress,
         AppointmentStatus.Completed => EncounterStatus.Completed,
         AppointmentStatus.Cancelled => EncounterStatus.Cancelled,
         AppointmentStatus.Missed => EncounterStatus.NoShow,
-        AppointmentStatus.ReScheduled => EncounterStatus.Cancelled,
         _ => EncounterStatus.Scheduled
     };
 
@@ -942,8 +940,7 @@ public class EncounterDetailService : IEncounterDetailService
     private static int LifecycleOrder(EncounterStatus s) => s switch
     {
         EncounterStatus.Scheduled => 0,
-        EncounterStatus.CheckedIn => 1,
-        EncounterStatus.InProgress => 2,
+        EncounterStatus.InProgress => 1,
         EncounterStatus.Completed => 4,
         EncounterStatus.Cancelled => 5,
         EncounterStatus.NoShow => 5,
@@ -953,12 +950,9 @@ public class EncounterDetailService : IEncounterDetailService
     private static int LifecycleOrder(AppointmentStatus s) => s switch
     {
         AppointmentStatus.Scheduled => 0,
-        AppointmentStatus.CheckedIn => 1,
-        AppointmentStatus.InProgress => 2,
         AppointmentStatus.Completed => 4,
         AppointmentStatus.Cancelled => 5,
         AppointmentStatus.Missed => 5,
-        AppointmentStatus.ReScheduled => 5,
         _ => 0
     };
 
@@ -971,7 +965,7 @@ public class EncounterDetailService : IEncounterDetailService
 
         // Terminal states on appointment side — map and win
         if(a is AppointmentStatus.Completed or AppointmentStatus.Cancelled
-               or AppointmentStatus.Missed or AppointmentStatus.ReScheduled)
+               or AppointmentStatus.Missed)
             return MapToEncounterStatus(a);
 
         // Non-terminal — whichever is further ahead wins
@@ -984,8 +978,6 @@ public class EncounterDetailService : IEncounterDetailService
     private static AppointmentStatus MapToAppointmentStatus(EncounterStatus s) => s switch
     {
         EncounterStatus.Scheduled => AppointmentStatus.Scheduled,
-        EncounterStatus.CheckedIn => AppointmentStatus.CheckedIn,
-        EncounterStatus.InProgress => AppointmentStatus.InProgress,
         EncounterStatus.Completed => AppointmentStatus.Completed,
         EncounterStatus.Cancelled => AppointmentStatus.Cancelled,
         EncounterStatus.NoShow => AppointmentStatus.Missed,
