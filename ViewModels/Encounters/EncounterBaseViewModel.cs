@@ -225,7 +225,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     // ===================== FILTERED (COMPUTED) VIEWS =====================
     [ObservableProperty]
-    private ObservableCollection<string> applicationRegimeOptions = new();
+    private ObservableCollection<ApplicationRegime> applicationRegimeOptions = new();
 
     public string CurrentDiagnosesSummary => string.Join(", ", PatientDiagnoses
         .Where(x => x.Mkb10Code!=null)
@@ -305,10 +305,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             PatientTherapyCyclesHistory=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
             PatientPrescriptions=new ObservableCollection<Prescription>(ctx.Prescriptions);
             PatientMedicines=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
-            ApplicationRegimeOptions=new ObservableCollection<string>(
-                (await EncounterService.GetApplicationRegimesAsync())
-                    .Select(x => x.Regime)
-                    .ToList());
+            ApplicationRegimeOptions=new ObservableCollection<ApplicationRegime>(
+                await EncounterService.GetApplicationRegimesAsync());
             CurrentPatientScore=ctx.LatestScore?.ScoreText??string.Empty;
             CurrentPatientScoreDate=ctx.LatestScore?.RecordedAt;
             PatientDocuments=new ObservableCollection<PatientDocument>(ctx.Documents);
