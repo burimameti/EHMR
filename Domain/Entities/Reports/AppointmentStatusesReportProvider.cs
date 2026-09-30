@@ -25,7 +25,7 @@ namespace EHMR.Domain.Entities.Reports
 
         public string Key => "appointment-statuses";
         public string Title => "Статус на термини";
-        public string Description => "Преглед на закажани, завршени, откажани и пропуштени термини.";
+        public string Description => "Преглед на закажани, завршени и откажани термини.";
         public string Icon => "📅";
         public ReportType Type => ReportType.AppointmentStatuses;
         public ReportCategory Category => ReportCategory.Operational;
@@ -150,17 +150,16 @@ namespace EHMR.Domain.Entities.Reports
             {
                 "Сите" => appointments,
                 "Завршени" or "Завршен" => appointments.Where(x => x.Status==AppointmentStatus.Completed),
-                "Проблематични" => appointments.Where(x => x.Status is AppointmentStatus.Cancelled or AppointmentStatus.Missed),
+                "Проблематични" => appointments.Where(x => x.Status==AppointmentStatus.Cancelled),
                 "Закажан" => appointments.Where(x => x.Status==AppointmentStatus.Scheduled),
                 "Во тек" => appointments.Where(x => x.Status==AppointmentStatus.InProgress),
                 "Откажан" => appointments.Where(x => x.Status==AppointmentStatus.Cancelled),
-                "Не се пријавил" => appointments.Where(x => x.Status==AppointmentStatus.Missed),
                 _ => appointments
             };
 
             return filtered.Select(x =>
             {
-                var alert = x.Status is AppointmentStatus.Cancelled or AppointmentStatus.Missed;
+                var alert = x.Status==AppointmentStatus.Cancelled;
 
                 return new DynamicReportRow
                 {
@@ -183,7 +182,7 @@ namespace EHMR.Domain.Entities.Reports
 
             _allTab.Value=appointments.Count.ToString("N0");
             _completedTab!.Value=appointments.Count(x => x.Status==AppointmentStatus.Completed).ToString("N0");
-            _problematicTab!.Value=appointments.Count(x => x.Status is AppointmentStatus.Cancelled or AppointmentStatus.Missed).ToString("N0");
+            _problematicTab!.Value=appointments.Count(x => x.Status==AppointmentStatus.Cancelled).ToString("N0");
         }
 
         public ReportMetrics CalculateMetrics(IEnumerable<DynamicReportRow> rows)
@@ -195,7 +194,7 @@ namespace EHMR.Domain.Entities.Reports
             {
                 Title1="Вкупно термини",
                 Value1=list.Count,
-                Title2="Откажани / пропуштени",
+                Title2="Откажани",
                 Value2=alerts,
                 Title3="Реализација",
                 Value3=list.Count==0 ? 100 : (int)((double)(list.Count-alerts)/list.Count*100)
@@ -208,7 +207,6 @@ namespace EHMR.Domain.Entities.Reports
             AppointmentStatus.InProgress => "Во тек",
             AppointmentStatus.Completed => "Завршен",
             AppointmentStatus.Cancelled => "Откажан",
-            AppointmentStatus.Missed => "Не се пријавил",
             _ => status.ToString()
         };
 
@@ -216,7 +214,6 @@ namespace EHMR.Domain.Entities.Reports
         {
             AppointmentStatus.Completed => SparkBadgeTone.Success,
             AppointmentStatus.Cancelled => SparkBadgeTone.Danger,
-            AppointmentStatus.Missed => SparkBadgeTone.Danger,
             AppointmentStatus.InProgress => SparkBadgeTone.Warning,
             _ => SparkBadgeTone.Neutral
         };
