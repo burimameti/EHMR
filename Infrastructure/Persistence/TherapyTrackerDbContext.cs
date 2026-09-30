@@ -400,10 +400,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             entity.Property(x => x.IsActive).HasDefaultValue(true);
             entity.HasIndex(x => x.Regime).IsUnique();
 
-            entity.HasMany(x => x.PatientMedicines)
-                .WithOne(x => x.ApplicationRegime)
-                .HasForeignKey(x => x.ApplicationRegimeId)
-                .OnDelete(DeleteBehavior.NoAction);
         });
     }
 
