@@ -445,7 +445,8 @@ public class PatientService : IPatientService
                     {
                         Id=Guid.NewGuid(),
                         PatientId=patient.Id,
-                        EncounterId=vm.EncounterId,
+                        // Patient-level diagnosis: never bind it to an Encounter.
+                        EncounterId=null,
                         Mkb10CodeId=vm.Mkb10CodeId,
                         DiagnosedAt=vm.DiagnosedAt,
                         IsPrimary=vm.IsPrimary,
@@ -534,7 +535,8 @@ public class PatientService : IPatientService
                     {
                         Id=Guid.NewGuid(),
                         PatientId=existing.Id,
-                        EncounterId=vm.EncounterId,
+                        // Patient-level diagnosis: never bind it to an Encounter.
+                        EncounterId=null,
                         Mkb10CodeId=vm.Mkb10CodeId,
                         DiagnosedAt=vm.DiagnosedAt,
                         IsPrimary=vm.IsPrimary,
@@ -557,7 +559,8 @@ public class PatientService : IPatientService
                 }
                 else
                 {
-                    entity.EncounterId=vm.EncounterId;
+                    // Patient form owns this diagnosis; keep it independent of Encounter.
+                    entity.EncounterId=null;
                     entity.Mkb10CodeId=vm.Mkb10CodeId;
                     entity.DiagnosedAt=vm.DiagnosedAt;
                     entity.IsPrimary=vm.IsPrimary;
