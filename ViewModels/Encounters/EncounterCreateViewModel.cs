@@ -107,7 +107,6 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                     SelectedPatient=matchedPatient;
                     if(matchedPatient.DoctorId!=Guid.Empty)
                         SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==matchedPatient.DoctorId);
-                    await AssignNextAvailableSlotAsync();
                     await LoadTherapyCyclesForPatientAsync(matchedPatient.Id);
                     await LoadAppointmentsForPatientAsync(matchedPatient.Id);
                     await LoadPatientContextAsync(matchedPatient.Id);
@@ -176,7 +175,6 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             SelectedPatient=patient;
             if(patient.DoctorId!=Guid.Empty)
                 SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==patient.DoctorId);
-            await AssignNextAvailableSlotAsync();
             await LoadTherapyCyclesForPatientAsync(patient.Id);
             await LoadAppointmentsForPatientAsync(patient.Id);
             await LoadPatientContextAsync(patient.Id);
@@ -295,6 +293,15 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             await UserDialogService.ShowAlertAsync(
                 "Валидација",
                 "Мора да изберете пациент и реуматолог пред зачувување.",
+                "Во ред");
+            return;
+        }
+
+                if(EncounterMedicines.Any(x => string.IsNullOrWhiteSpace(x.ApplicationRegime)))
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Валидација",
+                "За секој додаден лек мора да изберете режим на апликација.",
                 "Во ред");
             return;
         }
