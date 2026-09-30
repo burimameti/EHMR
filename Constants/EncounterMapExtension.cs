@@ -11,7 +11,6 @@ public static class EncounterStatusSchema
         ["InProgress"]="Во тек",
         ["Completed"]="Завршен",
         ["Cancelled"]="Откажан",
-        ["NoShow"]="Не дојде"
     };
 
     public static readonly Dictionary<string, string> Color = new()
@@ -20,7 +19,6 @@ public static class EncounterStatusSchema
         ["InProgress"]="#22C55E",
         ["Completed"]="#16A34A",
         ["Cancelled"]="#EF4444",
-        ["NoShow"]="#64748B"
     };
 
     public static readonly Dictionary<string, string> Background = new()
@@ -29,7 +27,6 @@ public static class EncounterStatusSchema
         ["InProgress"]="#DCFCE7",
         ["Completed"]="#F0FDF4",
         ["Cancelled"]="#FEF2F2",
-        ["NoShow"]="#F1F5F9"
     };
 
     public static readonly List<string> Keys = Display.Keys.ToList();
