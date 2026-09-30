@@ -247,7 +247,7 @@ public class PatientService : IPatientService
         codeTerm=(codeTerm ?? string.Empty).Trim();
         descriptionTerm=(descriptionTerm ?? string.Empty).Trim();
 
-        if(string.IsNullOrWhiteSpace(codeTerm)&&string.IsNullOrWhiteSpace(descriptionTerm))
+        if(string.IsNullOrWhiteSpace(codeTerm)&&string.IsNullOrWhiteSpace(descriptionTerm)&&string.IsNullOrWhiteSpace(section))
             return [];
 
         await using var db = await _factory.CreateDbContextAsync(ct);
