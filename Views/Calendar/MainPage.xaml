@@ -312,7 +312,7 @@
 					<!--  3. KPI КАРТИЧКИ  -->
 					<Grid
 						Grid.Row="2"
-						ColumnDefinitions="*, *, *"
+						ColumnDefinitions="*, *"
 						ColumnSpacing="12"
 						IsVisible="{Binding IsStatsViewActive}">
 
@@ -337,16 +337,6 @@
 							PeriodText="{Binding KpiPeriodText}"
 							Value="{Binding CompletedPercentageText}" />
 
-						<controls:CalendarKpiCard
-							Title="Не се јавиле"
-							Grid.Column="2"
-							Command="{Binding OpenEncountersCommand}"
-							CommandParameter="NoShow"
-							ComparisonText="{Binding KpiComparisonText}"
-							DeltaText="{Binding NoShowDeltaText}"
-							DeltaTone="{Binding NoShowDeltaTone}"
-							PeriodText="{Binding KpiPeriodText}"
-							Value="{Binding NoShowPercentageText}" />
 					</Grid>
 
 					<!--  4. WEEKLY CALENDAR GRID AREA  -->
