@@ -60,12 +60,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     public Color InputBgColor => IsReadOnly ? Color.FromArgb("#F8FAFC") : Color.FromArgb("#FFFFFF");
     public Color InputBorderColor => IsReadOnly ? Color.FromArgb("#CBD5E1") : Color.FromArgb("#2563EB");
 
-    public ObservableCollection<string> BloodTypeOptions
-    {
-        get;
-    } =
-        new() { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
-
     public ObservableCollection<string> GenderOptions { get; } = PatientEnumLookups.Gender.ToObservableCollection();
     public ObservableCollection<string> StatusOptions { get; } = PatientEnumLookups.Status.ToObservableCollection();
     private readonly FilterLookup _cityLookup = PatientFilterLookups.BuildCityLookupForForm();
@@ -100,6 +94,13 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         => Patient.InactiveReason=value??string.Empty;
 
     [RelayCommand]
+    private void SetActive()
+    {
+        if(IsEditMode)
+            IsPatientActive=true;
+    }
+
+    [RelayCommand]
     private void SetInactive()
     {
         if(IsEditMode)
@@ -108,12 +109,10 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [ObservableProperty] private string selectedStatusDisplay = string.Empty;
     [ObservableProperty] private string selectedRelationDisplay = string.Empty;
     [ObservableProperty] private string selectedCityDisplay = string.Empty;
-    [ObservableProperty] private string selectedBloodTypeDisplay = string.Empty;
 
     partial void OnSelectedRelationDisplayChanged(string value) => Patient.EmergencyRelationship=value??string.Empty;
     partial void OnSelectedCityDisplayChanged(string value) =>
         Patient.City=_cityLookup.ToInternal(value??string.Empty);
-    partial void OnSelectedBloodTypeDisplayChanged(string value) => Patient.BloodType=value??string.Empty;
 
     public PatientDetailFormViewModel(
         IPatientService patientService,
@@ -230,7 +229,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [ObservableProperty] private ObservableCollection<Diagnosis> diagnosisHistory = new();
     [ObservableProperty] private ObservableCollection<Encounter> encounterHistory = new();
     [ObservableProperty] private ObservableCollection<PatientScore> scoreHistory = new();
-    [ObservableProperty] private string currentPatientScore = string.Empty;
     [ObservableProperty] private ObservableCollection<Appointment> appointmentHistory = new();
     [ObservableProperty] private ObservableCollection<TherapyCycle> therapyCycleHistory = new();
 
@@ -269,7 +267,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                     .Where(x => x.PatientId==patientId)
                     .OrderByDescending(x => x.RecordedAt)
                     .ToListAsync());
-            CurrentPatientScore=ScoreHistory.FirstOrDefault()?.ScoreText??string.Empty;
 
             AppointmentHistory=new ObservableCollection<Appointment>(
                 await db.Appointments
@@ -328,7 +325,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         EmergencyContactName=source.EmergencyContactName,
         EmergencyContactPhone=source.EmergencyContactPhone,
         EmergencyRelationship=source.EmergencyRelationship,
-        BloodType=source.BloodType,
         Allergies=source.Allergies,
         Status=source.Status,
         InactiveReason=source.InactiveReason
@@ -352,7 +348,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         EmergencyContactName=p.EmergencyContactName,
         EmergencyContactPhone=p.EmergencyContactPhone,
         EmergencyRelationship=p.EmergencyRelationship,
-        BloodType=p.BloodType,
         Allergies=p.Allergies,
         Status=p.Status,
         InactiveReason=p.InactiveReason
@@ -590,7 +585,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         InactiveReason=Patient.InactiveReason??string.Empty;
         SelectedRelationDisplay=Patient.EmergencyRelationship;
         SelectedCityDisplay=_cityLookup.ToDisplay(Patient.City);
-        SelectedBloodTypeDisplay=Patient.BloodType;
+
     }
 
     [RelayCommand]
