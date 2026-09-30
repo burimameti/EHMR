@@ -75,11 +75,11 @@ namespace EHMR.Services
 
             foreach(var appt in stale)
             {
-                appt.Status=AppointmentStatus.Missed;
+                appt.Status=AppointmentStatus.Cancelled;
 
                 if(encounterByAppointmentId.TryGetValue(appt.Id, out var encounter))
                 {
-                    encounter.Status=EncounterStatus.NoShow;
+                    encounter.Status=EncounterStatus.Cancelled;
                     encounter.IsLocked=true;
                     encounter.EndTime=DateTime.Now;
                     encounter.DurationMinutes=encounter.StartTime.HasValue
@@ -340,7 +340,7 @@ namespace EHMR.Services
                     // ── Lock on ANY terminal outcome, not just Completed ──
                     var isTerminal = resolvedEncounter is EncounterStatus.Completed
                                                         or EncounterStatus.Cancelled
-                                                        or EncounterStatus.NoShow;
+;
 
                     if(isTerminal&&!encounter.IsLocked)
                     {
@@ -387,7 +387,7 @@ namespace EHMR.Services
                 else
                 {
                     // encounter is not null AND encounter.IsLocked == true — visit already
-                    // closed (Completed/Cancelled/Missed). Diagnoses already skipped by the
+                    // closed (Completed/Cancelled). Diagnoses already skipped by the
                     // guard above; freeze medicines for the same reason.
                     medicinesEditable=false;
                 }
@@ -492,7 +492,6 @@ namespace EHMR.Services
             AppointmentStatus.InProgress => EncounterStatus.InProgress,
             AppointmentStatus.Completed => EncounterStatus.Completed,
             AppointmentStatus.Cancelled => EncounterStatus.Cancelled,
-            AppointmentStatus.Missed => EncounterStatus.NoShow,
             _ => EncounterStatus.Scheduled
         };
 
@@ -513,8 +512,7 @@ namespace EHMR.Services
             EncounterStatus.InProgress => 1,
             EncounterStatus.Completed => 4,
             EncounterStatus.Cancelled => 5,
-            EncounterStatus.NoShow => 5,
-            _ => 0
+                _ => 0
         };
 
         private static int LifecycleOrder(AppointmentStatus s) => s switch
@@ -522,7 +520,6 @@ namespace EHMR.Services
             AppointmentStatus.Scheduled => 0,
             AppointmentStatus.Completed => 4,
             AppointmentStatus.Cancelled => 5,
-            AppointmentStatus.Missed => 5,
             _ => 0
         };
 
@@ -530,12 +527,11 @@ namespace EHMR.Services
           EncounterStatus e, AppointmentStatus a)
         {
             // Terminal states on encounter side always win
-            if(e is EncounterStatus.Completed or EncounterStatus.Cancelled or EncounterStatus.NoShow)
+            if(e is EncounterStatus.Completed or EncounterStatus.Cancelled)
                 return e;
 
             // Terminal states on appointment side — map and win
-            if(a is AppointmentStatus.Completed or AppointmentStatus.Cancelled
-                   or AppointmentStatus.Missed)
+            if(a is AppointmentStatus.Completed or AppointmentStatus.Cancelled)
                 return MapToEncounterStatus(a);
 
             // Non-terminal — whichever is further ahead wins
@@ -548,9 +544,9 @@ namespace EHMR.Services
         private static AppointmentStatus MapToAppointmentStatus(EncounterStatus s) => s switch
         {
             EncounterStatus.Scheduled => AppointmentStatus.Scheduled,
+            EncounterStatus.InProgress => AppointmentStatus.InProgress,
             EncounterStatus.Completed => AppointmentStatus.Completed,
             EncounterStatus.Cancelled => AppointmentStatus.Cancelled,
-            EncounterStatus.NoShow => AppointmentStatus.Missed,
             _ => AppointmentStatus.Scheduled
         };
     }
