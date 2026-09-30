@@ -743,12 +743,13 @@
 
 										<controls:CrudSectionHeader Title="БИОЛОШКИ ПОДАТОЦИ" />
 
-										<!--  Реуматолог | МКБ-10 (A–Z) на иста линија  -->
-										<FlexLayout
-											AlignItems="Start"
-											Direction="Row"
-											Wrap="Wrap">
-											<VerticalStackLayout
+										<!--  Реуматолог | Моментален скор  /  МКБ-10 | Лек  -->
+						<Grid
+							ColumnDefinitions="1fr,1fr"
+							RowDefinitions="Auto,Auto"
+							ColumnSpacing="14"
+							RowSpacing="8">
+<VerticalStackLayout Grid.Row="0" Grid.Column="0"
 												Margin="0,0,10,6"
 												FlexLayout.Basis="260"
 												FlexLayout.Grow="1"
@@ -856,7 +857,31 @@
 														TextColor="{StaticResource SparkTextPrimary}" />
 												</VerticalStackLayout>
 											</VerticalStackLayout>
-											<VerticalStackLayout
+<VerticalStackLayout Grid.Row="0" Grid.Column="1"
+												FlexLayout.Basis="240"
+												FlexLayout.Grow="0"
+												Spacing="4">
+												<Label Style="{StaticResource EditFieldLabelStyle}" Text="Моментален скор" />
+												<Border
+													HeightRequest="44"
+													IsVisible="{Binding IsEditMode}"
+													Style="{StaticResource EditFieldBoxStyle}">
+													<Entry
+														BackgroundColor="Transparent"
+														FontSize="13"
+														Placeholder="Внесете резултат или оценка..."
+														PlaceholderColor="{StaticResource SparkTextSecondary}"
+														Text="{Binding CurrentPatientScore, Mode=TwoWay}"
+														TextColor="{StaticResource SparkTextPrimary}" />
+												</Border>
+												<Label
+													FontAttributes="Bold"
+													FontSize="13"
+													IsVisible="{Binding IsReadOnly}"
+													Text="{Binding CurrentPatientScore, FallbackValue='—'}"
+													TextColor="{StaticResource SparkAccentTealDark}" />
+											</VerticalStackLayout>
+<VerticalStackLayout Grid.Row="1" Grid.Column="0"
 												Margin="0,0,0,6"
 												FlexLayout.Basis="380"
 												FlexLayout.Grow="1.6"
@@ -1001,9 +1026,55 @@
 													</Border>
 												</VerticalStackLayout>
 											</VerticalStackLayout>
-										</FlexLayout>
+<VerticalStackLayout Grid.Row="1" Grid.Column="1"
+												Margin="0,0,10,6"
+												FlexLayout.Basis="320"
+												FlexLayout.Grow="1"
+												Spacing="6">
+												<Label Style="{StaticResource EditFieldLabelStyle}" Text="Лек" />
+												<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="6">
+													<controls:FFSearchBox Placeholder="Пребарување на лекот..." Text="{Binding MedicineSearchText, Mode=TwoWay}" />
+													<Border
+														Padding="4"
+														BackgroundColor="White"
+														IsVisible="{Binding ShowMedicineDropdown}"
+														Stroke="{StaticResource SparkBorderSubtle}"
+														StrokeShape="RoundRectangle 8"
+														StrokeThickness="1">
+														<CollectionView
+															HeightRequest="180"
+															ItemsSource="{Binding MedicineResults}"
+															SelectionMode="None">
+															<CollectionView.ItemTemplate>
+																<DataTemplate x:DataType="dto:MedicineDto">
+																	<Border
+																		Padding="10,7"
+																		BackgroundColor="Transparent"
+																		StrokeThickness="0">
+																		<Border.GestureRecognizers>
+																			<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMedicineCommand}" CommandParameter="{Binding .}" />
+																		</Border.GestureRecognizers>
+																		<VerticalStackLayout Spacing="1">
+																			<Label
+																				FontAttributes="Bold"
+																				FontSize="12.5"
+																				Text="{Binding Name}"
+																				TextColor="{StaticResource SparkAccentTealDark}" />
+																			<Label
+																				FontSize="10.5"
+																				Text="{Binding GenericName}"
+																				TextColor="{StaticResource SparkTextSecondary}" />
+																		</VerticalStackLayout>
+																	</Border>
+																</DataTemplate>
+															</CollectionView.ItemTemplate>
+														</CollectionView>
+													</Border>
+												</VerticalStackLayout>
+											</VerticalStackLayout>
+						</Grid>
 
-										<!--  Избрани дијагнози  -->
+<!--  Избрани дијагнози  -->
 										<FlexLayout
 											BindableLayout.ItemsSource="{Binding Diagnoses}"
 											Direction="Row"
@@ -1053,84 +1124,6 @@
 													</Border>
 												</DataTemplate>
 											</BindableLayout.ItemTemplate>
-										</FlexLayout>
-
-										<!--  Лек скроз лево  ·  Моментален скор скроз десно  -->
-										<FlexLayout
-											AlignItems="Start"
-											Direction="Row"
-											JustifyContent="SpaceBetween"
-											Wrap="Wrap">
-											<VerticalStackLayout
-												Margin="0,0,10,6"
-												FlexLayout.Basis="320"
-												FlexLayout.Grow="1"
-												Spacing="6">
-												<Label Style="{StaticResource EditFieldLabelStyle}" Text="Лек" />
-												<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="6">
-													<controls:FFSearchBox Placeholder="Пребарување на лекот..." Text="{Binding MedicineSearchText, Mode=TwoWay}" />
-													<Border
-														Padding="4"
-														BackgroundColor="White"
-														IsVisible="{Binding ShowMedicineDropdown}"
-														Stroke="{StaticResource SparkBorderSubtle}"
-														StrokeShape="RoundRectangle 8"
-														StrokeThickness="1">
-														<CollectionView
-															HeightRequest="180"
-															ItemsSource="{Binding MedicineResults}"
-															SelectionMode="None">
-															<CollectionView.ItemTemplate>
-																<DataTemplate x:DataType="dto:MedicineDto">
-																	<Border
-																		Padding="10,7"
-																		BackgroundColor="Transparent"
-																		StrokeThickness="0">
-																		<Border.GestureRecognizers>
-																			<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMedicineCommand}" CommandParameter="{Binding .}" />
-																		</Border.GestureRecognizers>
-																		<VerticalStackLayout Spacing="1">
-																			<Label
-																				FontAttributes="Bold"
-																				FontSize="12.5"
-																				Text="{Binding Name}"
-																				TextColor="{StaticResource SparkAccentTealDark}" />
-																			<Label
-																				FontSize="10.5"
-																				Text="{Binding GenericName}"
-																				TextColor="{StaticResource SparkTextSecondary}" />
-																		</VerticalStackLayout>
-																	</Border>
-																</DataTemplate>
-															</CollectionView.ItemTemplate>
-														</CollectionView>
-													</Border>
-												</VerticalStackLayout>
-											</VerticalStackLayout>
-											<VerticalStackLayout
-												FlexLayout.Basis="240"
-												FlexLayout.Grow="0"
-												Spacing="4">
-												<Label Style="{StaticResource EditFieldLabelStyle}" Text="Моментален скор" />
-												<Border
-													HeightRequest="44"
-													IsVisible="{Binding IsEditMode}"
-													Style="{StaticResource EditFieldBoxStyle}">
-													<Entry
-														BackgroundColor="Transparent"
-														FontSize="13"
-														Placeholder="Внесете резултат или оценка..."
-														PlaceholderColor="{StaticResource SparkTextSecondary}"
-														Text="{Binding CurrentPatientScore, Mode=TwoWay}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-												</Border>
-												<Label
-													FontAttributes="Bold"
-													FontSize="13"
-													IsVisible="{Binding IsReadOnly}"
-													Text="{Binding CurrentPatientScore, FallbackValue='—'}"
-													TextColor="{StaticResource SparkAccentTealDark}" />
-											</VerticalStackLayout>
 										</FlexLayout>
 
 										<!--  АКТИВНА ТЕРАПИЈА — само табелата, без наслов  -->
