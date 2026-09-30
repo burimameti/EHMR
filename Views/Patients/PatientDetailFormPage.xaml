@@ -972,7 +972,9 @@
 															</CollectionView.ItemTemplate>
 														</CollectionView>
 													</VerticalStackLayout>
-												<VerticalStackLayout Grid.Row="1" Grid.Column="1"
+												
+									</VerticalStackLayout>
+<VerticalStackLayout Grid.Row="1" Grid.Column="1"
 												Margin="0,0,10,6"
 												FlexLayout.Basis="320"
 												FlexLayout.Grow="1"
