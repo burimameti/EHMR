@@ -1330,7 +1330,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     // =====================================================
 
     [RelayCommand]
-    public async void ToggleEditMode()
+    public async Task ToggleEditMode()
     {
         if(!IsEditMode&&SelectedPatient?.Status==PatientStatus.Inactive)
         {
