@@ -289,10 +289,50 @@ public class PatientService : IPatientService
                 Unit=m.Unit,
                 DefaultDosage=m.DefaultDosage,
                 Manufacturer=m.Manufacturer,
-                IsActive=m.IsActive,
-                PharmaceuticalReference=m.PharmaceuticalReference
+                IsActive=m.IsActive
             })
             .ToListAsync(ct);
+    }
+
+    public async Task<List<ApplicationRegimeDto>> GetApplicationRegimesAsync(CancellationToken ct = default)
+    {
+        await using var db = await _factory.CreateDbContextAsync(ct);
+        return await db.ApplicationRegimes
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.Regime)
+            .Select(x => new ApplicationRegimeDto
+            {
+                Id=x.Id,
+                Regime=x.Regime,
+                IsActive=x.IsActive
+            })
+            .ToListAsync(ct);
+    }
+
+    public async Task<ApplicationRegimeDto> AddApplicationRegimeAsync(string regime, CancellationToken ct = default)
+    {
+        regime=(regime??string.Empty).Trim();
+        if(string.IsNullOrWhiteSpace(regime))
+            throw new ArgumentException("Режимот на апликација е задолжителен.", nameof(regime));
+
+        await using var db = await _factory.CreateDbContextAsync(ct);
+        var existing=await db.ApplicationRegimes
+            .FirstOrDefaultAsync(x => x.Regime==regime, ct);
+
+        if(existing!=null)
+            return new ApplicationRegimeDto { Id=existing.Id, Regime=existing.Regime, IsActive=existing.IsActive };
+
+        var entity=new ApplicationRegime
+        {
+            Id=Guid.NewGuid(),
+            Regime=regime,
+            IsActive=true
+        };
+        db.ApplicationRegimes.Add(entity);
+        await db.SaveChangesAsync(ct);
+
+        return new ApplicationRegimeDto { Id=entity.Id, Regime=entity.Regime, IsActive=entity.IsActive };
     }
 
     // =====================================================
@@ -375,6 +415,8 @@ public class PatientService : IPatientService
                         EndDate=vm.EndDate,
                         Notes=vm.Notes,
                         PharmaceuticalReference=vm.PharmaceuticalReference,
+                        ApplicationRegimeId=vm.ApplicationRegimeId,
+                        Quantity=vm.Quantity,
                         IsActive=vm.IsActive
                     };
 
@@ -498,6 +540,9 @@ public class PatientService : IPatientService
                         StartDate=vm.StartDate,
                         EndDate=vm.EndDate,
                         Notes=vm.Notes,
+                        PharmaceuticalReference=vm.PharmaceuticalReference,
+                        ApplicationRegimeId=vm.ApplicationRegimeId,
+                        Quantity=vm.Quantity,
                         IsActive=vm.IsActive
                     };
                     try
@@ -525,6 +570,8 @@ public class PatientService : IPatientService
                     entity.EndDate=vm.EndDate;
                     entity.Notes=vm.Notes;
                     entity.PharmaceuticalReference=vm.PharmaceuticalReference;
+                    entity.ApplicationRegimeId=vm.ApplicationRegimeId;
+                    entity.Quantity=vm.Quantity;
                     entity.IsActive=vm.IsActive;
                 }
             }
@@ -642,6 +689,15 @@ public class PatientService : IPatientService
         PatientId=pm.PatientId,
         MedicineId=pm.MedicineId,
         MedicineName=pm.Medicine?.Name??"",
+        ApplicationRegimeId=pm.ApplicationRegimeId,
+        ApplicationRegime=pm.ApplicationRegime?.Regime??"",
+        GenericName=pm.Medicine?.GenericName??"",
+        Code=pm.Medicine?.Code??"",
+        DosageForm=pm.Medicine?.DosageForm??"",
+        Strength=pm.Medicine?.Strength??0,
+        Unit=pm.Medicine?.Unit??"",
+        DefaultDosage=pm.Medicine?.DefaultDosage??"",
+        Manufacturer=pm.Medicine?.Manufacturer??"",
         DosesFrequency=pm.DosesFrequency,
         Dosage=pm.Dosage,
         StartDate=pm.StartDate,
