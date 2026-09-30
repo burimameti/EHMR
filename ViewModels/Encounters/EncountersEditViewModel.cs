@@ -60,7 +60,7 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
             return;
         }
 
-        if(EncounterMedicines.Any(x => string.IsNullOrWhiteSpace(x.ApplicationRegime)))
+        if(EncounterMedicines.Any(x => string.IsNullOrWhiteSpace(x.ApplicationRegime?.Regime)))
         {
             await UserDialogService.ShowAlertAsync(
                 "Валидација",
@@ -68,6 +68,9 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
                 "Во ред");
             return;
         }
+
+        foreach(var medicine in EncounterMedicines)
+            medicine.ApplicationRegimeId=medicine.ApplicationRegime?.Id;
 
         await ExecuteSafeAsync(async () =>
         {
