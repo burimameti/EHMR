@@ -5,8 +5,8 @@ using System.Windows.Input;
 namespace EHMR.Resources.Controls
 {
     /// <summary>
-    /// Reusable, fully data-driven header: N tabs (with count badges) + a search bar
-    /// + N pickers + N action buttons, all properly laid out.
+    /// Reusable, data-driven header: search bar
+    /// + N pickers + N action buttons, all consistently styled and responsive.
     ///
     /// Usage from a page/dashboard definition:
     ///
@@ -19,9 +19,7 @@ namespace EHMR.Resources.Controls
     ///       ShowCyrillicToggle="True"
     ///       UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}" /&gt;
     ///
-    /// Each Tab/Picker/Button item carries its own Title/Value/Command, so the
-    /// number of tabs, buttons, and pickers is entirely driven by the
-    /// view model — nothing is hardcoded in XAML.
+    /// Pickers and buttons are driven by the view model. Tabs are intentionally not rendered.
     ///
     /// ⚠️ NOTE: Grid column headers should bind to SparkDataGridView.Columns directly,
     /// NOT to SparkExplorerHeaderView. This view only handles the search/filter toolbar.
@@ -54,10 +52,7 @@ namespace EHMR.Resources.Controls
                 : width >= 900 ? 0.82d
                 : 0.76d;
 
-            var s = _responsiveScale;
-
-            ExplorerGrid.Padding = new Thickness(0, 0, 6 * s, Math.Max(1, 1 * s));
-            SecondaryToolbarGrid.Padding = new Thickness(10 * s);
+            var s = _responsiveScale;            SecondaryToolbarGrid.Padding = new Thickness(10 * s);
             SecondaryToolbarGrid.ColumnSpacing = 8 * s;
             SecondaryToolbarGrid.MinimumHeightRequest = 64 * s;
 
