@@ -130,7 +130,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 break;
 
             case ReportType.Patients:
-                Col1Header="ПАЦИЕНТ (ИМЕ/ПРЕЗИМЕ)"; Col2Header="МАТИЧЕН БРОЈ"; Col3Header="ОДДЕЛЕНИЕ"; Col4Header="КРЕИРАН НА"; Col5Header="ДИЈАГНОЗА / АЛЕРГИИ";
+                Col1Header="ПАЦИЕНТ (ИМЕ/ПРЕЗИМЕ)"; Col2Header="ТЕЛЕФОН"; Col3Header="СТАТУС"; Col4Header="КРЕИРАН НА"; Col5Header="ДИЈАГНОЗА / АЛЕРГИИ";
                 Metric1Title="Нови Пациенти"; Metric2Title="Хронични Случаи"; Metric3Title="Активни Картони";
                 break;
         }
@@ -306,8 +306,8 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         return data.Select(p => new GenericReportRow
         {
             PrimaryHeader=p.FullName,
-            SecondaryHeader=PrivacyMaskHelper.MaskNationalId(p.NationalId),
-            HighlightValue=p.Phone??"",
+            SecondaryHeader=p.Phone??"",
+            HighlightValue=p.Status.ToDisplay(),
             DateValue=p.CreatedAt.ToString("dd.MM.yyyy"),
             InformationalText=$"Dg: {p.Diagnoses.Select(x => x.Mkb10Code.Code)}. Алергии: {(string.IsNullOrEmpty(p.Allergies) ? "нема" : p.Allergies)}",
             IsAlertSeverity=!string.IsNullOrEmpty(p.Allergies)
