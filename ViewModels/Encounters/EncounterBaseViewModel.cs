@@ -1300,6 +1300,19 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         if(EncounterMedicines.Any(x => x.MedicineId==medicine.Id&&x.IsActive))
             return;
 
+        // A patient normally has one current primary therapy in this encounter form.
+        // Selecting a different medicine replaces that current therapy; the removed
+        // row is not deleted from history and is later marked inactive by the service.
+        if(EncounterMedicines.Count==1)
+        {
+            var current=EncounterMedicines[0];
+            if(current.MedicineId!=medicine.Id)
+                RemoveMedicine(current);
+        }
+
+        var previous=PatientMedicines
+            .FirstOrDefault(x => x.MedicineId==medicine.Id&&x.IsActive);
+
         var patientMedicine = new PatientMedicine
         {
             Id=Guid.NewGuid(),
@@ -1307,17 +1320,11 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             EncounterId=Encounter.Id==Guid.Empty ? null : Encounter.Id,
             MedicineId=medicine.Id,
             Medicine=medicine,
-            Dosage="1",
-            ApplicationRegimeId=PatientMedicines
-                .FirstOrDefault(x => x.MedicineId==medicine.Id && x.IsActive)
-                ?.ApplicationRegimeId,
-            ApplicationRegime=PatientMedicines
-                .FirstOrDefault(x => x.MedicineId==medicine.Id && x.IsActive)
-                ?.ApplicationRegime,
-            Quantity=PatientMedicines
-                .FirstOrDefault(x => x.MedicineId==medicine.Id && x.IsActive)
-                ?.Quantity ?? 1,
-            DosesFrequency=DosesFrequency.Other,
+            Dosage=previous?.Dosage??"1",
+            ApplicationRegimeId=previous?.ApplicationRegimeId,
+            ApplicationRegime=previous?.ApplicationRegime,
+            Quantity=previous?.Quantity??1,
+            DosesFrequency=previous?.DosesFrequency??DosesFrequency.Other,
             StartDate=DateTime.Now,
             IsActive=true
         };
