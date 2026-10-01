@@ -8,7 +8,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:DataType="viewModels:MedicineDetailFormViewModel">
 
-	<Grid ColumnDefinitions="285,*">
+	<Grid ColumnDefinitions="260,*">
 
 		<Border Grid.Column="0" StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
