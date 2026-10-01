@@ -578,6 +578,8 @@ namespace EHMR.Resources.Controls
             var label=action.Label?.Trim()??string.Empty;
             if(label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase))
                 return ResolveColorResource("SparkBackgroundAlt", "#F7F9FC");
+            if(label.Equals("Детали", StringComparison.OrdinalIgnoreCase))
+                return Color.FromArgb("#F59E0B");
             if(label.Equals("Промени", StringComparison.OrdinalIgnoreCase))
                 return ResolveColorResource("SurfaceAlt", "#1A2436");
             if(label.Equals("Исчисти", StringComparison.OrdinalIgnoreCase)||action.IsPrimary)
@@ -588,7 +590,7 @@ namespace EHMR.Resources.Controls
         private static Color ResolveActionTextColor(SparkButtonItem action)
         {
             var label=action.Label?.Trim()??string.Empty;
-            if(label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase))
+            if(label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase)||label.Equals("Детали", StringComparison.OrdinalIgnoreCase))
                 return ResolveColorResource("SparkTextPrimary", "#1E2733");
             return Colors.White;
         }
