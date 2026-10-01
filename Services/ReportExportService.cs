@@ -86,8 +86,7 @@ namespace EHMR.Services;
                         table.ColumnsDefinition(cd =>
                         {
                             cd.RelativeColumn(4); // Институција и Динамички Наслов
-                            cd.RelativeColumn(2); // Логиран Корисник и Време
-                            cd.RelativeColumn(2); // Период
+                            cd.RelativeColumn(2); // Логиран Корисник
                         });
 
                         // Клетка 1: УСТАНОВА + ДИНАМИЧКИ НАСЛОВ (Месечен/Периодичен...)
@@ -108,14 +107,7 @@ namespace EHMR.Services;
                         table.Cell().BorderRight(1).Padding(5).Column(c =>
                         {
                             c.Item().Text($"ИЗРАБОТИЛ: {generatedBy}").Bold().FontSize(8);
-                            c.Item().Text($"ДАТУМ НА ИЗДАВАЊЕ: {DateTime.Now:dd.MM.yyyy HH:mm}").FontSize(7);
-                        });
-
-                        // Клетка 3: ПЕРИОД
-                        table.Cell().Padding(5).Column(c =>
-                        {
-                            c.Item().Text("ОПСЕГ НА ПЕРИОД:").Bold().FontSize(8);
-                            c.Item().Text($"{startDate:dd.MM.yyyy} - {endDate:dd.MM.yyyy}").FontSize(8);
+                            c.Item().Text($"ДАТУМ НА ИЗДАВАЊЕ: {DateTime.Now:dd.MM.yyyy}").FontSize(7);
                         });
                     });
 
@@ -174,7 +166,13 @@ namespace EHMR.Services;
                             x.TotalPages();
                         });
 
-                        row.RelativeItem().AlignRight().Text($"Потпис на одговорно лице ({generatedBy}): _____________________");
+                        row.RelativeItem().AlignRight().Column(signature =>
+                        {
+                            signature.Item().Text($"Датум на издавање: {DateTime.Now:dd.MM.yyyy}").FontSize(8);
+                            signature.Item().PaddingTop(5)
+                                .Text("Потпис на одговорно лице: ____________________________________________")
+                                .FontSize(9);
+                        });
                     });
                 });
             });
