@@ -608,7 +608,8 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                     </thead>
                     <tbody>";
 
-            foreach(var item in AllItems)
+            // Export exactly what is currently visible after patient/status/search filters.
+            foreach(var item in FilteredItems)
             {
                 htmlBlueprint+=$@"
                     <tr>
