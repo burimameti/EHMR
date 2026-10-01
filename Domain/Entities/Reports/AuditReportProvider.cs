@@ -160,7 +160,7 @@ namespace EHMR.Domain.Entities.Reports
                         x.UserId.ToString()==null ? x.UserId.ToString() : "SYSTEM",
                         x.Action ?? "-",
                         x.EntityName ?? "-",
-                        x.Timestamp.ToString("dd.MM.yyyy HH:mm"),
+                        x.Timestamp.ToString("dd.MM.yyyy"),
                         BuildDetails(x)
                     ],
                     IsAlertSeverity=critical
