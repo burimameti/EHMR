@@ -458,8 +458,10 @@ public partial class DashboardViewModel : ObservableObject
                 select new
                 {
                     a.Id,
+                    a.PatientId,
                     a.CreatedAt,
                     a.Level,
+                    a.Message,
                     PatientName = p.FirstName+" "+p.LastName,
                     p.DoctorId
                 };
@@ -473,6 +475,17 @@ public partial class DashboardViewModel : ObservableObject
             State.CriticalAlerts=criticalRows.Count;
             State.CriticalAlertsSummaryText=BuildCriticalAlertsSummary(criticalRows.Select(x => x.PatientName).ToList());
             State.AlertSummaries=BuildAlertSummaries(allAlertRows.Select(x => x.Level));
+            State.ActiveAlerts=new ObservableCollection<DashboardAlertItem>(
+                allAlertRows.Take(20).Select(x => new DashboardAlertItem
+                {
+                    Id=x.Id,
+                    PatientId=x.PatientId,
+                    PatientName=x.PatientName,
+                    Message=x.Message,
+                    CreatedAtText=x.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm"),
+                    Level=x.Level,
+                    Command=new RelayCommand(() => OpenAlertPatientAsync(x.PatientId))
+                }));
 
             // ── KPI ───────────────────────────────────────────────────────────────
             State.TotalPatients=_allPatients.Count;
@@ -824,6 +837,15 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task NavigateToTherapies() =>
         await Shell.Current.GoToAsync(AppRoutes.Therapy.List);
+
+    private async Task OpenAlertPatientAsync(Guid patientId)
+    {
+        var patient=_allPatients.FirstOrDefault(x => x.Patient.Id==patientId);
+        if(patient is null) return;
+        _selectedPatient.SelectedItem=patient.Patient;
+        _selectedPatient.OpenInEditMode=false;
+        await navigationService.GoToAsync(AppRoutes.Patients.Detail);
+    }
 
     [RelayCommand]
     private async Task NavigateToAlerts(string? level = null)
