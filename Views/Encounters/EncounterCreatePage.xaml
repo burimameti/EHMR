@@ -749,7 +749,7 @@
 														TextColor="{StaticResource SparkTextPrimary}" />
 													<Label
 														FontSize="10"
-														Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+														Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}"
 														TextColor="{StaticResource SparkTextSecondary}" />
 												</VerticalStackLayout>
 												<Border
@@ -859,7 +859,7 @@
 											TextColor="{StaticResource SparkTextSecondary}" />
 										<Label
 											FontSize="11.5"
-											Text="{Binding LatestPatientDocument.UploadedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+											Text="{Binding LatestPatientDocument.UploadedAt, StringFormat='{0:dd.MM.yyyy}'}"
 											TextColor="{StaticResource SparkTextSecondary}" />
 									</VerticalStackLayout>
 									<controls:FFButton
