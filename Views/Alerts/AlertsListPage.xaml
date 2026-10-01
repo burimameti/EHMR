@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EHMR.Views.Alerts.AlertsListPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+    xmlns:viewModels="clr-namespace:EHMR.ViewModels.Alerts"
+    x:Name="PageRoot"
+    x:DataType="viewModels:AlertsListViewModel"
+    BackgroundColor="{StaticResource PageBackground}">
+    <Grid ColumnDefinitions="285,*">
+        <Border Grid.Column="0" StrokeThickness="0">
+            <ContentView x:Name="MenuHost" />
+        </Border>
+
+        <Grid Grid.Column="1" RowDefinitions="Auto,*">
+            <Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+                <controls:FFPageHeader
+                    Title="Предупредувања"
+                    Subtitle="Преглед на сите активни и решени системски предупредувања" />
+            </Border>
+
+            <Border Grid.Row="1" Margin="1,0,1,0" Padding="0,3" StrokeThickness="-1">
+                <ScrollView VerticalScrollBarVisibility="Never">
+                    <VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
+                        <controls:FFSectionCard>
+                            <controls:SparkExplorerHeaderView
+                                Pickers="{Binding Pickers}"
+                                SearchCommand="{Binding SearchCommand}"
+                                SearchPlaceholder="Пребарување на предупредувања..."
+                                SearchText="{Binding SearchText}" />
+                        </controls:FFSectionCard>
+
+                        <controls:FFSectionCard>
+                            <controls:SparkDataGridView
+                                AutoSelectFirstRow="False"
+                                Columns="{Binding GridColumns}"
+                                CurrentPage="{Binding CurrentPage}"
+                                NextPageCommand="{Binding NextPageCommand}"
+                                PageChangedCommand="{Binding PageChangedCommand}"
+                                PageInfoText="{Binding PageInfoText}"
+                                PreviousPageCommand="{Binding PreviousPageCommand}"
+                                RowTappedCommand="{Binding OpenPatientCommand}"
+                                Rows="{Binding GridRows}"
+                                ShowPagination="True"
+                                ShowRowNumbers="True"
+                                TotalPages="{Binding TotalPages}" />
+                        </controls:FFSectionCard>
+                    </VerticalStackLayout>
+                </ScrollView>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Column="1" BackgroundColor="{StaticResource SparkOverlay}" IsVisible="{Binding IsBusy}">
+            <VerticalStackLayout HorizontalOptions="Center" Spacing="12" VerticalOptions="Center">
+                <ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
+                <Label FontSize="13" Text="Вчитување..." TextColor="{StaticResource SparkTextPrimary}" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>
