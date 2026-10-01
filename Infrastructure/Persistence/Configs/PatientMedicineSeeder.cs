@@ -11,6 +11,26 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {
+        var applicationRegimes = await context.ApplicationRegimes
+            .Where(x => x.IsActive)
+            .ToListAsync(ct);
+
+        if(applicationRegimes.Count == 0)
+            return;
+
+        var oral = applicationRegimes.FirstOrDefault(x => x.Regime == "Орално")?.Id;
+        var subcutaneous = applicationRegimes.FirstOrDefault(x => x.Regime == "Поткожно")?.Id;
+
+        var existingMedicines = await context.PatientMedicines
+            .Where(x => x.ApplicationRegimeId == null)
+            .ToListAsync(ct);
+
+        foreach(var item in existingMedicines)
+            item.ApplicationRegimeId = item.DosesFrequency == DosesFrequency.Weekly ? subcutaneous : oral;
+
+        if(existingMedicines.Count > 0)
+            await context.SaveChangesAsync(ct);
+
         if(await context.PatientMedicines.AnyAsync(ct))
             return;
 
@@ -22,6 +42,7 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 Id = Guid.NewGuid(),
                 PatientId = SeedIds.Patient1,
                 MedicineId = SeedIds.Med5, // Метформин
+                ApplicationRegimeId = oral,
                 DosesFrequency = DosesFrequency.TwiceDaily,
                 Dosage = "1 таблета од 850mg",
                 StartDate = DateTime.UtcNow.AddMonths(-5),
@@ -34,6 +55,7 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 Id = Guid.NewGuid(),
                 PatientId = SeedIds.Patient1,
                 MedicineId = SeedIds.Med6, // Амлодипин
+                ApplicationRegimeId = oral,
                 DosesFrequency = DosesFrequency.Daily,
                 Dosage = "1 таблета од 5mg",
                 StartDate = DateTime.UtcNow.AddMonths(-2),
@@ -48,6 +70,7 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 Id = Guid.NewGuid(),
                 PatientId = SeedIds.Patient2,
                 MedicineId = SeedIds.Med7, // Омепразол
+                ApplicationRegimeId = oral,
                 DosesFrequency = DosesFrequency.Daily,
                 Dosage = "1 капсула од 20mg",
                 StartDate = DateTime.UtcNow.AddDays(-14),
@@ -62,6 +85,7 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 Id = Guid.NewGuid(),
                 PatientId = SeedIds.Patient3,
                 MedicineId = SeedIds.Med9, // Метотрексат
+                ApplicationRegimeId = subcutaneous,
                 DosesFrequency = DosesFrequency.Weekly,
                 Dosage = "3 таблети одеднаш (7.5mg вкупно)",
                 StartDate = DateTime.UtcNow.AddMonths(-1),
