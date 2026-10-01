@@ -678,7 +678,6 @@ public partial class AppointmentListViewModel
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
             new() { Header = "РЕУМАТОЛОГ", Key = "Doctor", Width = new GridLength(2, GridUnitType.Star) },
             new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1, GridUnitType.Star) },
-            new() { Header = "ВРЕМЕ", Key = "Time", Width = new GridLength(1, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1, GridUnitType.Star) },
             new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
@@ -695,7 +694,6 @@ public partial class AppointmentListViewModel
             row["Patient"]=a.Patient?.FullName??"";
             row["Doctor"]=a.Doctor?.FullName??"";
             row["Date"]=a.ScheduledStart.ToString("dd.MM.yyyy");
-            row["Time"]=a.ScheduledStart.ToString("HH:mm");
             row["Status"]=new SparkBadgeValue(StatusLabel(a.Status), StatusToTone(a.Status));
 
             AddDefaultActions(a, row, detailLabel: "Повеќе", editLabel: "Промени", canEditPredicate: CanEdit);
