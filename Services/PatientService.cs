@@ -405,16 +405,12 @@ public class PatientService : IPatientService
         if(entity==null)
             return false;
 
-        // Keep existing patient/encounter medicine history valid.
-        await db.PatientMedicines
-            .Where(x => x.ApplicationRegimeId==id)
-            .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.ApplicationRegimeId, (Guid?)null), ct);
-
-        db.ApplicationRegimes.Remove(entity);
+        // Soft-delete the lookup value so existing patient/encounter history
+        // keeps its original application method.
+        entity.IsActive=false;
         await db.SaveChangesAsync(ct);
         return true;
     }
-
     public async Task<ApplicationRegimeDto> AddApplicationRegimeAsync(string regime, CancellationToken ct = default)
     {
         regime=(regime??string.Empty).Trim();
