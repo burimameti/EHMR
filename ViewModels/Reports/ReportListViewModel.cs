@@ -411,7 +411,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             PrimaryHeader=a.UserId.ToString(),
             SecondaryHeader=a.Action,
             HighlightValue=a.AfterValue,
-            DateValue=a.Timestamp.ToString("dd.MM.yyyy HH:mm"),
+            DateValue=a.Timestamp.ToString("dd.MM.yyyy"),
             InformationalText=a.Description,
             IsAlertSeverity=a.AfterValue!=a.BeforeValue
         }).ToList();
@@ -434,7 +434,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             PrimaryHeader=a.Patient?.FullName??"",
             SecondaryHeader=a.Doctor?.FullName??"",
             HighlightValue=StatusLabel(a.Status),
-            DateValue=a.ScheduledStart.ToString("dd.MM.yyyy HH:mm"),
+            DateValue=a.ScheduledStart.ToString("dd.MM.yyyy"),
             InformationalText=a.ReasonForVisit??"",
             IsAlertSeverity=a.Status==AppointmentStatus.Cancelled
         }).ToList();
