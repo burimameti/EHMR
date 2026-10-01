@@ -722,7 +722,7 @@ public partial class DashboardViewModel : ObservableObject
                     x.Patient.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)||
                     x.Patient.FullName.Contains(cyrillicQuery, StringComparison.OrdinalIgnoreCase)||
                     x.Patient.PatientNumber.Contains(query, StringComparison.OrdinalIgnoreCase)||
-                    x.Patient.NationalId.Contains(query, StringComparison.OrdinalIgnoreCase)||
+                    (!string.IsNullOrWhiteSpace(x.Patient.NationalId)&&x.Patient.NationalId.Contains(query, StringComparison.OrdinalIgnoreCase))||
                     x.Patient.SzboNumber.Contains(query, StringComparison.OrdinalIgnoreCase))
                 .OrderBy(x => x.Patient.FullName)
                 .Take(8));
