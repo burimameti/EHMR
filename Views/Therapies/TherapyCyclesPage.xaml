@@ -29,7 +29,7 @@
 			Grid.Column="1"
             Margin="0"
 			RowDefinitions="Auto,*"
-			RowSpacing="16">
+			RowSpacing="0">
 
 			<!--  HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
@@ -58,7 +58,7 @@
 
 					<!--  MAIN DATA & EDIT GRID CARD  -->
 					<controls:FFSectionCard>
-						<Grid ColumnSpacing="16" RowSpacing="16">
+						<Grid ColumnSpacing="16" RowSpacing="0">
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto" />
 								<RowDefinition Height="*" />
