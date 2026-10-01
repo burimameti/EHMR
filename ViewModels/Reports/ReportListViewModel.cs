@@ -344,6 +344,12 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Setting AllItems and applying pipeline...");
             AllItems=rows;
 
+            if(SelectedReportType.Type==ReportType.Patients)
+            {
+                BuildSparkPickers();
+                BuildSparkGridColumns();
+            }
+
             System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Applying pipeline...");
             ApplyPipeline();
 
@@ -477,7 +483,8 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 MedicineValue=medicines,
                 DiagnosisValue=diagnoses,
                 StatusValue=p.Status.ToDisplay(),
-                RheumatologistValue=p.Doctor?.FullName ?? ""
+                RheumatologistValue=p.Doctor?.FullName ?? "",
+                IsAlertSeverity=false
             };
         }).ToList();
     }
@@ -549,6 +556,13 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         _suppressSearchTextSideEffects=false;
 
         StatusFilter=new ReportStatusOption { Label="ИТНО / СИТЕ" };
+        SelectedPatientStatus="Сите";
+        SelectedPatientCity="Сите";
+        SelectedRheumatologist="Сите";
+        SelectedDiagnosis="Сите";
+        SelectedMedicine="Сите";
+        SelectedGender="Сите";
+        SelectedScore="Сите";
         ClearPatientSelection();
     }
 
@@ -602,19 +616,47 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         var rows=AllItems.Where(x => x!=null).ToList();
 
         _statusPicker=MakePicker("Статус", new[] { "Сите" }.Concat(rows.Select(x => x.StatusValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedPatientStatus,
-            selected => SelectedPatientStatus=selected);
+            selected =>
+            {
+                SelectedPatientStatus=selected;
+                ApplyPipeline();
+            });
         _cityPicker=MakePicker("Град", new[] { "Сите" }.Concat(rows.Select(x => x.CityValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedPatientCity,
-            selected => SelectedPatientCity=selected);
+            selected =>
+            {
+                SelectedPatientCity=selected;
+                ApplyPipeline();
+            });
         _rheumatologistPicker=MakePicker("Реуматолог", new[] { "Сите" }.Concat(rows.Select(x => x.RheumatologistValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedRheumatologist,
-            selected => SelectedRheumatologist=selected);
+            selected =>
+            {
+                SelectedRheumatologist=selected;
+                ApplyPipeline();
+            });
         _diagnosisPicker=MakePicker("Дијагноза", new[] { "Сите" }.Concat(rows.Select(x => x.DiagnosisValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedDiagnosis,
-            selected => SelectedDiagnosis=selected);
+            selected =>
+            {
+                SelectedDiagnosis=selected;
+                ApplyPipeline();
+            });
         _medicinePicker=MakePicker("Лек", new[] { "Сите" }.Concat(rows.Select(x => x.MedicineValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedMedicine,
-            selected => SelectedMedicine=selected);
+            selected =>
+            {
+                SelectedMedicine=selected;
+                ApplyPipeline();
+            });
         _genderPicker=MakePicker("Пол", new[] { "Сите" }.Concat(rows.Select(x => x.GenderValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedGender,
-            selected => SelectedGender=selected);
+            selected =>
+            {
+                SelectedGender=selected;
+                ApplyPipeline();
+            });
         _scorePicker=MakePicker("Скор", new[] { "Сите" }.Concat(rows.Select(x => x.LastScoreValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedScore,
-            selected => SelectedScore=selected);
+            selected =>
+            {
+                SelectedScore=selected;
+                ApplyPipeline();
+            });
 
         Pickers.Add(_statusPicker);
         Pickers.Add(_cityPicker);
@@ -631,13 +673,13 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
         if(SelectedReportType.Type==ReportType.Patients)
         {
-            _statusPicker?.SetSelected(SelectedPatientStatus);
-            _cityPicker?.SetSelected(SelectedPatientCity);
-            _rheumatologistPicker?.SetSelected(SelectedRheumatologist);
-            _diagnosisPicker?.SetSelected(SelectedDiagnosis);
-            _medicinePicker?.SetSelected(SelectedMedicine);
-            _genderPicker?.SetSelected(SelectedGender);
-            _scorePicker?.SetSelected(SelectedScore);
+            if(_statusPicker!=null) _statusPicker.SelectedItem=SelectedPatientStatus;
+            if(_cityPicker!=null) _cityPicker.SelectedItem=SelectedPatientCity;
+            if(_rheumatologistPicker!=null) _rheumatologistPicker.SelectedItem=SelectedRheumatologist;
+            if(_diagnosisPicker!=null) _diagnosisPicker.SelectedItem=SelectedDiagnosis;
+            if(_medicinePicker!=null) _medicinePicker.SelectedItem=SelectedMedicine;
+            if(_genderPicker!=null) _genderPicker.SelectedItem=SelectedGender;
+            if(_scorePicker!=null) _scorePicker.SelectedItem=SelectedScore;
         }
         else if(_statusPicker!=null)
             _statusPicker.SelectedItem=StatusFilter.Label;
@@ -748,7 +790,9 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 <table>
                     <thead>
                         <tr>
-                            <th>{Col1Header}</th><th>{Col2Header}</th><th>{Col3Header}</th><th>{Col4Header}</th><th>{Col5Header}</th>
+                            {(SelectedReportType.Type==ReportType.Patients
+                                ? "<th>ПАЦИЕНТ</th><th>ЕЗБО</th><th>ПОЛ</th><th>ТЕЛЕФОН</th><th>ПОСЛ. СКОР</th><th>АДРЕСА</th><th>ГРАД</th><th>ЛЕК</th><th>ДИЈАГНОЗА</th>"
+                                : $"<th>{Col1Header}</th><th>{Col2Header}</th><th>{Col3Header}</th><th>{Col4Header}</th><th>{Col5Header}</th>")}
                         </tr>
                     </thead>
                     <tbody>";
@@ -756,7 +800,24 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             // Export exactly what is currently visible after patient/status/search filters.
             foreach(var item in FilteredItems)
             {
-                htmlBlueprint+=$@"
+                if(SelectedReportType.Type==ReportType.Patients)
+                {
+                    htmlBlueprint+=$@"
+                    <tr>
+                        <td><b>{item.PrimaryHeader}</b></td>
+                        <td>{item.SecondaryHeader}</td>
+                        <td>{item.GenderValue}</td>
+                        <td>{item.PhoneValue}</td>
+                        <td>{item.LastScoreValue}</td>
+                        <td>{item.AddressValue}</td>
+                        <td>{item.CityValue}</td>
+                        <td>{item.MedicineValue}</td>
+                        <td>{item.DiagnosisValue}</td>
+                    </tr>";
+                }
+                else
+                {
+                    htmlBlueprint+=$@"
                     <tr>
                         <td><b>{item.PrimaryHeader}</b></td>
                         <td>{item.SecondaryHeader}</td>
@@ -764,6 +825,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                         <td>{item.DateValue}</td>
                         <td><span class='{(item.IsAlertSeverity ? "alert" : "")}'>{item.InformationalText}</span></td>
                     </tr>";
+                }
             }
 
             htmlBlueprint+="</tbody></table></body></html>";
