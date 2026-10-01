@@ -257,7 +257,10 @@ namespace EHMR.Domain.Entities.Reports
                     .AsNoTracking()
                     .Where(x =>
                         (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
-                        x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to))
+                        x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to)||
+                        x.PatientMedicines.Any(pm =>
+                            pm.StartDate<=to &&
+                            (!pm.EndDate.HasValue||pm.EndDate.Value>=from)))
                     .ToListAsync(cts.Token);
 
                 stopwatch.Stop();
@@ -268,13 +271,13 @@ namespace EHMR.Domain.Entities.Reports
                 RefreshPickers(patients);
 
                 Debug.WriteLine($"[Patients] [7] Applying filters...");
-                var filtered = ApplyFilters(patients);
+                var filtered = ApplyFilters(patients, from, to);
                 var filtered_list = filtered.ToList();
                 Debug.WriteLine($"[Patients] [8] After filtering: {filtered_list.Count} patients");
 
                 Debug.WriteLine($"[Patients] [9] Building report rows...");
                 var rows = filtered_list
-                    .Select(CreateRow)
+                    .Select(patient => CreateRow(patient, from, to))
                     .ToList();
 
                 Debug.WriteLine($"[Patients] [10] Report generation complete ✓");
@@ -345,7 +348,10 @@ namespace EHMR.Domain.Entities.Reports
                     .Select(x => x.ToString()));
         }
 
-        private IEnumerable<Patient> ApplyFilters(IEnumerable<Patient> patients)
+        private IEnumerable<Patient> ApplyFilters(
+            IEnumerable<Patient> patients,
+            DateTime from,
+            DateTime to)
         {
             var query = patients;
 
@@ -391,8 +397,17 @@ namespace EHMR.Domain.Entities.Reports
 
             if(_selectedMedicineFilter!="Сите")
             {
-                query=query.Where(x => x.PatientMedicines.Any(pm => pm.Medicine?.Name==_selectedMedicineFilter));
-                Debug.WriteLine($"[Patients]   - Medicine filter: {_selectedMedicineFilter}");
+                // A medicine belongs to the report when its patient-specific
+                // prescription window overlaps the selected report period.
+                // This is intentionally not limited to the patient's current
+                // active medicine list.
+                query=query.Where(x =>
+                    x.PatientMedicines.Any(pm =>
+                        pm.Medicine?.Name==_selectedMedicineFilter &&
+                        pm.StartDate<=to &&
+                        (!pm.EndDate.HasValue||pm.EndDate.Value>=from)));
+
+                Debug.WriteLine($"[Patients]   - Medicine filter: {_selectedMedicineFilter} ({from:dd.MM.yyyy} - {to:dd.MM.yyyy})");
             }
 
             if(_selectedTherapyStatusFilter!="Сите"&&
@@ -412,7 +427,7 @@ namespace EHMR.Domain.Entities.Reports
             return query;
         }
 
-        private static DynamicReportRow CreateRow(Patient patient)
+        private static DynamicReportRow CreateRow(Patient patient, DateTime from, DateTime to)
         {
             var hasAllergy = !string.IsNullOrWhiteSpace(patient.Allergies);
             var hasMissedTherapy = patient.TherapyCycles.Any(x => x.Status==TherapyStatus.Missed);
@@ -433,7 +448,7 @@ namespace EHMR.Domain.Entities.Reports
                     patient.Address ?? "-",
                     patient.City ?? "-",
                     patient.CreatedAt.ToString("dd.MM.yyyy"),
-                    BuildMedicinesInfo(patient),
+                    BuildMedicinesInfo(patient, from, to),
                     BuildMedicalInfo(patient)
                 ],
                 IsAlertSeverity=hasAllergy||hasMissedTherapy
@@ -459,17 +474,29 @@ namespace EHMR.Domain.Entities.Reports
                     }));
         }
 
-        private static string BuildMedicinesInfo(Patient patient)
+        private static string BuildMedicinesInfo(
+            Patient patient,
+            DateTime from,
+            DateTime to)
         {
             if(patient.PatientMedicines==null||patient.PatientMedicines.Count==0)
                 return "Нема лекови";
 
-            var medicines = string.Join(", ",
-                patient.PatientMedicines
-                    .Where(x => x.Medicine!=null)
-                    .Select(x => x.Medicine!.Name));
+            var medicines = patient.PatientMedicines
+                .Where(x =>
+                    x.Medicine!=null &&
+                    x.StartDate<=to &&
+                    (!x.EndDate.HasValue||x.EndDate.Value>=from))
+                .GroupBy(x => x.Medicine!.Name)
+                .Select(group =>
+                {
+                    var quantity=group.Sum(x => x.Quantity);
+                    return $"{group.Key} — количина: {quantity:0.################}";
+                });
 
-            return string.IsNullOrWhiteSpace(medicines) ? "Нема лекови" : medicines;
+            var result=string.Join(", ", medicines);
+
+            return string.IsNullOrWhiteSpace(result) ? "Нема лекови" : result;
         }
 
         private static string BuildMedicalInfo(Patient patient)
