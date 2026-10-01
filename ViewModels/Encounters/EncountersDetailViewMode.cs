@@ -10,6 +10,7 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
 {
     private readonly ISelectedItemService<Encounter> _selectedItemService;
     private readonly ISelectedItemService<Patient> _selectedPatientService;
+    private readonly IPatientClinicalReportService _clinicalReportService;
 
     public bool CanEditEncounter =>
         Encounter.Id!=Guid.Empty&&Encounter.Status!=EncounterStatus.Completed;
@@ -17,12 +18,13 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
     public EncounterDetailViewModel(
         IEncounterDetailService service, INavigationService navigationService,
         IUserDialogService userDialogService, ISelectedItemService<Encounter> selectedItemService,
-        ISelectedItemService<Patient> selectedPatientService)
+        ISelectedItemService<Patient> selectedPatientService, IPatientClinicalReportService clinicalReportService)
 
         : base(service, navigationService, userDialogService)
     {
         _selectedItemService=selectedItemService;
         _selectedPatientService=selectedPatientService;
+        _clinicalReportService=clinicalReportService;
         PageTitle="Детали за преглед ";
     }
 
@@ -63,6 +65,34 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
             doc.Title,
             new ReadOnlyFile(doc.StoredPath)));
     }
+    [RelayCommand]
+    private async Task GenerateClinicalReportAsync()
+    {
+        if(Encounter.Id==Guid.Empty||Encounter.PatientId==Guid.Empty)
+            return;
+
+        try
+        {
+            var path=await _clinicalReportService.GeneratePdfAsync(
+                Encounter.PatientId,
+                Encounter.Id,
+                null,
+                $"Извештај за преглед - {Encounter.EncounterNumber}");
+
+            await Launcher.Default.OpenAsync(new OpenFileRequest(
+                Path.GetFileName(path),
+                new ReadOnlyFile(path)));
+        }
+        catch(Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex);
+            await UserDialogService.ShowAlertAsync(
+                "Извештај",
+                $"PDF извештајот не може да се генерира: {ex.Message}",
+                "ОК");
+        }
+    }
+
     [RelayCommand]
     private async Task Edit()
     {
