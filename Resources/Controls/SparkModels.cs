@@ -40,7 +40,8 @@ namespace EHMR.Resources.Controls
     {
         Neutral,
         Success,
-        Danger, Warning
+        Danger, 
+        Warning
     }
     public abstract class SparkBindableBase : INotifyPropertyChanged
     {

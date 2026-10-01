@@ -133,7 +133,7 @@
 					x:Name="ActionLayout"
 					Grid.Column="3"
 					Spacing="4"
-					VerticalOptions="Center">
+					VerticalOptions="End">
 					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}" Spacing="8">
 
 						<BindableLayout.ItemTemplate>

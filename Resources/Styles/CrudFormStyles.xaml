@@ -20,7 +20,7 @@
 
 
 		<Setter Property="Padding" Value="0" />
-		<Setter Property="Margin" Value="16,0,16,0" />
+		<Setter Property="Margin" Value="0,0,0,0" />
 		<Setter Property="Shadow" Value="{x:Null}" />
 
 
