@@ -6,11 +6,27 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EHMR.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class initData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "ApplicationRegimes",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Regime = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationRegimes", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "AppLicenses",
                 columns: table => new
@@ -249,7 +265,6 @@ namespace EHMR.Migrations
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ContactPhone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -323,6 +338,7 @@ namespace EHMR.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NationalId = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    SzboNumber = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     DoctorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -337,6 +353,7 @@ namespace EHMR.Migrations
                     BloodType = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Allergies = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    InactiveReason = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -391,6 +408,7 @@ namespace EHMR.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DecisionText = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -584,6 +602,7 @@ namespace EHMR.Migrations
                     DocumentNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EncounterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    TherapyCycleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DocumentType = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
@@ -612,6 +631,37 @@ namespace EHMR.Migrations
                         principalTable: "Patients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientDocuments_TherapyCycles_TherapyCycleId",
+                        column: x => x.TherapyCycleId,
+                        principalTable: "TherapyCycles",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientScores",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EncounterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ScoreText = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    RecordedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientScores", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PatientScores_Encounters_EncounterId",
+                        column: x => x.EncounterId,
+                        principalTable: "Encounters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientScores_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Patients",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -682,12 +732,16 @@ namespace EHMR.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EncounterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ApplicationRegimeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     MedicineId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DosesFrequency = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Dosage = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    PharmaceuticalReference = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -696,6 +750,16 @@ namespace EHMR.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PatientMedicines", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PatientMedicines_ApplicationRegimes_ApplicationRegimeId",
+                        column: x => x.ApplicationRegimeId,
+                        principalTable: "ApplicationRegimes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PatientMedicines_Encounters_EncounterId",
+                        column: x => x.EncounterId,
+                        principalTable: "Encounters",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_PatientMedicines_Medicines_MedicineId",
                         column: x => x.MedicineId,
@@ -714,6 +778,12 @@ namespace EHMR.Migrations
                 name: "IX_Alerts_PatientId",
                 table: "Alerts",
                 column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApplicationRegimes_Regime",
+                table: "ApplicationRegimes",
+                column: "Regime",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Appointments_DoctorId",
@@ -804,6 +874,21 @@ namespace EHMR.Migrations
                 column: "PatientId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PatientDocuments_TherapyCycleId",
+                table: "PatientDocuments",
+                column: "TherapyCycleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientMedicines_ApplicationRegimeId",
+                table: "PatientMedicines",
+                column: "ApplicationRegimeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientMedicines_EncounterId",
+                table: "PatientMedicines",
+                column: "EncounterId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PatientMedicines_MedicineId",
                 table: "PatientMedicines",
                 column: "MedicineId");
@@ -837,6 +922,24 @@ namespace EHMR.Migrations
                 name: "IX_Patients_Status",
                 table: "Patients",
                 column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Patients_SzboNumber",
+                table: "Patients",
+                column: "SzboNumber",
+                unique: true,
+                filter: "[SzboNumber] <> ''");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientScores_EncounterId",
+                table: "PatientScores",
+                column: "EncounterId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientScores_PatientId_RecordedAt",
+                table: "PatientScores",
+                columns: new[] { "PatientId", "RecordedAt" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Prescriptions_EncounterId",
@@ -898,6 +1001,9 @@ namespace EHMR.Migrations
                 name: "PatientMedicines");
 
             migrationBuilder.DropTable(
+                name: "PatientScores");
+
+            migrationBuilder.DropTable(
                 name: "Prescriptions");
 
             migrationBuilder.DropTable(
@@ -920,6 +1026,9 @@ namespace EHMR.Migrations
 
             migrationBuilder.DropTable(
                 name: "Mkb10Codes");
+
+            migrationBuilder.DropTable(
+                name: "ApplicationRegimes");
 
             migrationBuilder.DropTable(
                 name: "Medicines");

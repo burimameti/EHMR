@@ -29,16 +29,15 @@
 						Grid.Column="0"
 						Subtitle="Преглед, пребарување и управување со пациенти" />
 
-					<controls:FFButton
+					<Button
 						Grid.Column="1"
-						BackgroundColorEx="{StaticResource SparkButtonSecondaryBg}"
-						ButtonKind="Primary"
+						Margin="0,9,22,25"
+						BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
 						Command="{Binding AddCommand}"
-						ContentPadding="16,0"
-						HeightRequestEx="45"
 						IsVisible="{Binding CanCreate}"
+						Style="{StaticResource PrimaryButtonStyle}"
 						Text="Нов пациент"
-						TextColorEx="{StaticResource White}" />
+						TextColor="{StaticResource White}" />
 				</Grid>
 			</Border>
 

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EHMR.Migrations
 {
     [DbContext(typeof(DesktopTherapyDbContext))]
-    [Migration("20260824221053_initdocs")]
-    partial class initdocs
+    [Migration("20261001170604_initData")]
+    partial class initData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -196,6 +196,40 @@ namespace EHMR.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AppLicenses");
+                });
+
+            modelBuilder.Entity("EHMR.Domain.Entities.ApplicationRegime", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Regime")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Regime")
+                        .IsUnique();
+
+                    b.ToTable("ApplicationRegimes");
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Appointment", b =>
@@ -769,6 +803,10 @@ namespace EHMR.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("InactiveReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -890,6 +928,9 @@ namespace EHMR.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<Guid?>("TherapyCycleId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -907,6 +948,8 @@ namespace EHMR.Migrations
 
                     b.HasIndex("PatientId");
 
+                    b.HasIndex("TherapyCycleId");
+
                     b.ToTable("PatientDocuments");
                 });
 
@@ -914,6 +957,9 @@ namespace EHMR.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ApplicationRegimeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -955,6 +1001,15 @@ namespace EHMR.Migrations
                     b.Property<Guid>("PatientId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("PharmaceuticalReference")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -962,6 +1017,8 @@ namespace EHMR.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationRegimeId");
 
                     b.HasIndex("EncounterId");
 
@@ -972,6 +1029,36 @@ namespace EHMR.Migrations
                     b.HasIndex("PatientId", "MedicineId", "IsActive");
 
                     b.ToTable("PatientMedicines");
+                });
+
+            modelBuilder.Entity("EHMR.Domain.Entities.PatientScore", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EncounterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PatientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("RecordedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ScoreText")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EncounterId")
+                        .IsUnique();
+
+                    b.HasIndex("PatientId", "RecordedAt");
+
+                    b.ToTable("PatientScores");
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Prescription", b =>
@@ -1315,6 +1402,9 @@ namespace EHMR.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DecisionText")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -1524,13 +1614,25 @@ namespace EHMR.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("EHMR.Domain.Entities.TherapyCycle", "TherapyCycle")
+                        .WithMany("Documents")
+                        .HasForeignKey("TherapyCycleId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Encounter");
 
                     b.Navigation("Patient");
+
+                    b.Navigation("TherapyCycle");
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.PatientMedicine", b =>
                 {
+                    b.HasOne("EHMR.Domain.Entities.ApplicationRegime", "ApplicationRegime")
+                        .WithMany("PatientMedicines")
+                        .HasForeignKey("ApplicationRegimeId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("EHMR.Domain.Entities.Encounter", "Encounter")
                         .WithMany()
                         .HasForeignKey("EncounterId")
@@ -1548,9 +1650,30 @@ namespace EHMR.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("ApplicationRegime");
+
                     b.Navigation("Encounter");
 
                     b.Navigation("Medicine");
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("EHMR.Domain.Entities.PatientScore", b =>
+                {
+                    b.HasOne("EHMR.Domain.Entities.Encounter", "Encounter")
+                        .WithOne("PatientScore")
+                        .HasForeignKey("EHMR.Domain.Entities.PatientScore", "EncounterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EHMR.Domain.Entities.Patient", "Patient")
+                        .WithMany("Scores")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Encounter");
 
                     b.Navigation("Patient");
                 });
@@ -1604,6 +1727,11 @@ namespace EHMR.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("EHMR.Domain.Entities.ApplicationRegime", b =>
+                {
+                    b.Navigation("PatientMedicines");
+                });
+
             modelBuilder.Entity("EHMR.Domain.Entities.Appointment", b =>
                 {
                     b.Navigation("Encounter");
@@ -1616,6 +1744,8 @@ namespace EHMR.Migrations
                     b.Navigation("Diagnoses");
 
                     b.Navigation("MedicationOrders");
+
+                    b.Navigation("PatientScore");
 
                     b.Navigation("Prescriptions");
                 });
@@ -1634,6 +1764,8 @@ namespace EHMR.Migrations
 
                     b.Navigation("Prescriptions");
 
+                    b.Navigation("Scores");
+
                     b.Navigation("TherapyCycles");
                 });
 
@@ -1649,6 +1781,8 @@ namespace EHMR.Migrations
             modelBuilder.Entity("EHMR.Domain.Entities.TherapyCycle", b =>
                 {
                     b.Navigation("Appointments");
+
+                    b.Navigation("Documents");
                 });
 #pragma warning restore 612, 618
         }

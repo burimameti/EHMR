@@ -11,12 +11,15 @@
 		Padding="0"
 		StrokeShape="RoundRectangle 0"
 		StrokeThickness="0">
-		<Grid ColumnDefinitions="4,Auto,*,Auto" ColumnSpacing="0" Padding="0">
+		<Grid
+			Padding="0"
+			ColumnDefinitions="4,Auto,*,Auto"
+			ColumnSpacing="0">
 			<BoxView Grid.Column="0" Color="{StaticResource SidebarActiveBg}" />
 
 			<Border
 				Grid.Column="1"
-				Margin="0,12,12,16"
+				Margin="12,12,12,16"
 				BackgroundColor="{StaticResource SparkAccentTealBg}"
 				HeightRequest="44"
 				Stroke="{StaticResource SparkAccentTeal}"
@@ -63,8 +66,7 @@
 
 			<HorizontalStackLayout
 				Grid.Column="3"
-				Margin="0,0,22,0"
-				HorizontalOptions="End"
+				Margin="22,22,22,22"
 				Spacing="10"
 				VerticalOptions="Center">
 				<ContentView Content="{Binding HeaderContent, Source={x:Reference Root}}" />

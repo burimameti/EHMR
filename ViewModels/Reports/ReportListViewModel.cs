@@ -7,6 +7,7 @@ using EHMR.Domain.Search;
 using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
+using EHMR.Services;
 using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
