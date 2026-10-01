@@ -37,7 +37,7 @@
 						ContentPadding="16,0"
 						HeightRequestEx="45"
 						IsVisible="{Binding CanCreate}"
-						Text="Нов"
+						Text="Нов пациент"
 						TextColorEx="{StaticResource White}" />
 				</Grid>
 			</Border>
