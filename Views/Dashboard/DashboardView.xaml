@@ -269,90 +269,89 @@
 						-->
 						<!--  ===================================================  -->
 						<controls:FFSectionCard>
-							<!--
-								KPI cards stay in one horizontal strip. On narrower windows the strip scrolls
-								instead of forcing cards onto a second row.
-							-->
-							<ScrollView HorizontalScrollBarVisibility="Never" Orientation="Horizontal">
-								<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Kpis}" Spacing="10">
-									<BindableLayout.ItemTemplate>
-										<DataTemplate x:DataType="admin:FFMetricTileItem">
-											<Border
-												Padding="12,8"
-												BackgroundColor="White"
-												HeightRequest="72"
-												HorizontalOptions="Start"
-												Stroke="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
-												StrokeShape="RoundRectangle 12"
-												StrokeThickness="1.5"
-												WidthRequest="220">
-												<Grid
-													ColumnDefinitions="Auto,*,Auto"
-													ColumnSpacing="8"
-													RowDefinitions="Auto,Auto"
-													RowSpacing="3">
-													<Border
-														Grid.RowSpan="2"
-														BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
-														HeightRequest="30"
-														StrokeShape="RoundRectangle 8"
-														StrokeThickness="0"
-														VerticalOptions="Start"
-														WidthRequest="30">
-														<Label
-															FontFamily="FASolid"
-															FontSize="12"
-															HorizontalOptions="Center"
-															Text="{Binding Icon}"
-															TextColor="White"
-															VerticalOptions="Center" />
-													</Border>
+							<!-- Five KPI cards share the complete row; they no longer use fixed
+							     widths or a horizontal strip that leaves empty space on the right. -->
+							<FlexLayout
+								BindableLayout.ItemsSource="{Binding Kpis}"
+								Direction="Row"
+								JustifyContent="SpaceBetween"
+								Wrap="NoWrap">
+								<BindableLayout.ItemTemplate>
+									<DataTemplate x:DataType="admin:FFMetricTileItem">
+										<Border
+											FlexLayout.Basis="19.4%"
+											Padding="12,8"
+											BackgroundColor="White"
+											HeightRequest="72"
+											HorizontalOptions="Fill"
+											Stroke="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+											StrokeShape="RoundRectangle 12"
+											StrokeThickness="1.5">
+											<Grid
+												ColumnDefinitions="Auto,*,Auto"
+												ColumnSpacing="8"
+												RowDefinitions="Auto,Auto"
+												RowSpacing="3">
+												<Border
+													Grid.RowSpan="2"
+													BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+													HeightRequest="30"
+													StrokeShape="RoundRectangle 8"
+													StrokeThickness="0"
+													VerticalOptions="Start"
+													WidthRequest="30">
 													<Label
-														Grid.Column="1"
-														FontAttributes="Bold"
-														FontSize="9"
-														LineBreakMode="TailTruncation"
-														MaxLines="1"
-														Text="{Binding Title}"
-														TextColor="{StaticResource SubtitleColor}"
+														FontFamily="FASolid"
+														FontSize="12"
+														HorizontalOptions="Center"
+														Text="{Binding Icon}"
+														TextColor="White"
 														VerticalOptions="Center" />
+												</Border>
+												<Label
+													Grid.Column="1"
+													FontAttributes="Bold"
+													FontSize="9"
+													LineBreakMode="TailTruncation"
+													MaxLines="1"
+													Text="{Binding Title}"
+													TextColor="{StaticResource SubtitleColor}"
+													VerticalOptions="Center" />
+												<Label
+													Grid.Column="2"
+													FontAttributes="Bold"
+													FontSize="19"
+													Text="{Binding Value}"
+													TextColor="{StaticResource TitleColor}"
+													VerticalOptions="Center" />
+												<Border
+													Grid.Row="1"
+													Grid.Column="1"
+													Grid.ColumnSpan="2"
+													Padding="8,4"
+													BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+													HorizontalOptions="Fill"
+													MinimumHeightRequest="28"
+													StrokeThickness="0">
+													<Border.StrokeShape>
+														<RoundRectangle CornerRadius="8" />
+													</Border.StrokeShape>
+													<Border.GestureRecognizers>
+														<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
+													</Border.GestureRecognizers>
 													<Label
-														Grid.Column="2"
 														FontAttributes="Bold"
-														FontSize="19"
-														Text="{Binding Value}"
-														TextColor="{StaticResource TitleColor}"
-														VerticalOptions="Center" />
-													<Border
-														Grid.Row="1"
-														Grid.Column="1"
-														Grid.ColumnSpan="2"
-														Padding="10,4"
-														BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
-														HorizontalOptions="End"
-														MinimumHeightRequest="28"
-														MinimumWidthRequest="82"
-														StrokeThickness="0">
-														<Border.StrokeShape>
-															<RoundRectangle CornerRadius="8" />
-														</Border.StrokeShape>
-														<Border.GestureRecognizers>
-															<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
-														</Border.GestureRecognizers>
-														<Label
-															FontAttributes="Bold"
-															FontSize="10"
-															HorizontalTextAlignment="Center"
-															Text="Повеќе  ›"
-															TextColor="White" />
-													</Border>
-												</Grid>
-											</Border>
-										</DataTemplate>
-									</BindableLayout.ItemTemplate>
-								</HorizontalStackLayout>
-							</ScrollView>
-						</controls:FFSectionCard>
+														FontSize="10"
+														HorizontalTextAlignment="Center"
+														Text="Повеќе  ›"
+														TextColor="White" />
+												</Border>
+											</Grid>
+										</Border>
+									</DataTemplate>
+								</BindableLayout.ItemTemplate>
+							</FlexLayout>
+						</controls:FFSectionCard>onCard>
 						<!--  ===================================================  -->
 						<!--  PATIENT EXPLORER  -->
 						<!--  ===================================================  -->
