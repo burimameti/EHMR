@@ -12,6 +12,7 @@ using EHMR.Views.Patients;
 using EHMR.Views.Prescription;
 using EHMR.Views.Protocols;
 using EHMR.Views.Reports;
+using EHMR.Views.Mkb10;
 using EHMR.Views.Therapies;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
@@ -142,6 +143,7 @@ public partial class AppShell : Shell
 
         // Calendar
         Routing.RegisterRoute(AppRoutes.Calendar, typeof(CalendarDashboardPage));
+        Routing.RegisterRoute(AppRoutes.CalendarPage, typeof(MainPage));
 
         // Reports
         Routing.RegisterRoute(AppRoutes.Reports.List, typeof(ReportHistoryPage));
@@ -171,8 +173,9 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(AppRoutes.Backup.Destinations, typeof(BackupDestinationsPage));
         Routing.RegisterRoute(AppRoutes.Admin.AdminPanel, typeof(AdminPage));
         // MKB
+        Routing.RegisterRoute(AppRoutes.Mkb10.List, typeof(Mkb10CodeListPage));
+        Routing.RegisterRoute(AppRoutes.Mkb10.Detail, typeof(Mkb10CodeDetailPage));
         Routing.RegisterRoute(AppRoutes.Mkb10Codes.List, typeof(MbkImportExportPage));
-        Routing.RegisterRoute(AppRoutes.CalendarPage, typeof(MainPage));
     }
 
     protected override void OnDisappearing()
