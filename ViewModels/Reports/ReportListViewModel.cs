@@ -462,7 +462,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     private async Task<List<GenericReportRow>> LoadPatientHistoryAsync(
         DesktopTherapyDbContext db, Guid patientId)
     {
-        var scoreHistory = await db.Scores
+        var scoreHistory = await db.PatientScores
             .Include(s => s.Encounter).ThenInclude(e => e.Doctor).ThenInclude(d => d.User)
             .AsNoTracking()
             .Where(s => s.PatientId == patientId)
@@ -471,7 +471,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
         return scoreHistory.Select(s => new GenericReportRow
         {
-            PrimaryHeader = SelectedPatientLabel,\n            HistoryDateValue = s.RecordedAt.ToString("dd.MM.yyyy"),
+            PrimaryHeader = SelectedPatientLabel, HistoryDateValue = s.RecordedAt.ToString("dd.MM.yyyy"),
             HistoryEncounterValue = s.Encounter?.Doctor?.FullName ?? "",
             HistoryScoreValue = s.ScoreText
         }).ToList();

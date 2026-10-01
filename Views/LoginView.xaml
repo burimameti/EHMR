@@ -10,12 +10,7 @@
 
 	<Grid ColumnDefinitions="*,600">
 
-		<!--  =====================================================  -->
-		<!--  LEFT PANEL  -->
-		<!--  =====================================================  -->
-		<!--  =====================================================  -->
-		<!--  LEFT PANEL  -->
-		<!--  =====================================================  -->
+
 		<Grid Grid.Column="0">
 
 			<Grid.Background>
@@ -216,12 +211,12 @@
 
 							</Border>
 
-							<VerticalStackLayout VerticalOptions="Center">
+							<!--<VerticalStackLayout VerticalOptions="Center">
 
 								<Label
 									FontAttributes="Bold"
 									FontSize="32"
-									Text="120+"
+									Text="0"
 									TextColor="White" />
 
 								<Label
@@ -229,7 +224,7 @@
 									Text="Медицински лица"
 									TextColor="{StaticResource LoginMuted}" />
 
-							</VerticalStackLayout>
+							</VerticalStackLayout>-->
 
 						</HorizontalStackLayout>
 
