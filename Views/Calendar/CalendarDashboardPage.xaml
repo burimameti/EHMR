@@ -806,7 +806,7 @@
 
 									<controls:FFButton
 										Margin="0,6,0,0"
-										BackgroundColorEx="{StaticResource ClrAccentTeal}"
+										BackgroundColorEx="{StaticResource SidebarActiveBg}"
 										ButtonKind="Primary"
 										Command="{Binding CreateNewEncounterForSelectedDayCommand}"
 										FontFamily="FASolid"
