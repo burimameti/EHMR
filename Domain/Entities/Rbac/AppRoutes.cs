@@ -11,6 +11,11 @@
             public const string List = "patients";
             public const string Detail = "patientsdetail";
         }
+        public static class Alerts
+        {
+            public const string List = "alertslist";
+        }
+
         public static class Admin
         {
             public const string AdminPanel = "AdminPage";
