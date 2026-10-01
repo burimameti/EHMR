@@ -823,6 +823,7 @@ public class PatientService : IPatientService
         Manufacturer=pm.Medicine?.Manufacturer??"",
         DosesFrequency=pm.DosesFrequency,
         Dosage=pm.Dosage,
+        Quantity=pm.Quantity,
         StartDate=pm.StartDate,
         EndDate=pm.EndDate,
         Notes=pm.Notes,
