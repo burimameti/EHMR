@@ -89,7 +89,7 @@
 					Grid.Column="1"
 					IsVisible="{Binding ShowCyrillicToggle, Source={x:Reference Root}}"
 					Spacing="4"
-					VerticalOptions="Start"
+					VerticalOptions="Center"
 					WidthRequest="100">
 					<Label
 						Margin="0,0,-18,0"
@@ -114,6 +114,7 @@
 				<HorizontalStackLayout
 					x:Name="PickerLayout"
 					Grid.Column="2"
+					VerticalOptions="Center"
 					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
 					Spacing="8"
 					VerticalOptions="Start">
@@ -133,7 +134,7 @@
 					x:Name="ActionLayout"
 					Grid.Column="3"
 					Spacing="4"
-					VerticalOptions="Start">
+					VerticalOptions="Center">
 					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}" Spacing="8">
 
 						<BindableLayout.ItemTemplate>
