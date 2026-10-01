@@ -39,7 +39,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     // Mirrors Encounter's HasEncounterMedicines — drives the medicine table header row.
     public bool HasSelectedMedicines => SelectedMedicines.Count>0;
 
-    // Header now owns identity + timing only ("Термин #.. · dd.MM.yyyy HH:mm–HH:mm").
+    // Header now owns identity + timing only ("Термин #.. · dd.MM.yyyy–HH:mm").
     // Patient/doctor identity lives exclusively in the ПАЦИЕНТ И РЕУМАТОЛОГ card below —
     // no more duplicating the same two names in both places.
     public string HeaderTitle =>
@@ -171,7 +171,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         ? "Изберете пациент за автоматски термин"
         : SelectedDoctorForAppointment is null
         ? "Пациентот нема доделен матичен реуматолог"
-        : $"Прв слободен термин: {Appointment.ScheduledStart:dd.MM.yyyy HH:mm}";
+        : $"Прв слободен термин: {Appointment.ScheduledStart:dd.MM.yyyy}";
 
     // =========================
     // SELECTIONS
