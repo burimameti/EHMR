@@ -137,11 +137,6 @@ namespace EHMR.Resources.Controls
             set => SetValue(EditRowCommandProperty, value);
         }
 
-        // ─── HYPERLINK COMMAND ────────────────────────────────────────────────────
-        // Invoked when a Hyperlink-typed cell is tapped.
-        // CommandParameter = row.Tag (falls back to SparkGridRow).
-        // Usage: HyperlinkCommand="{Binding OpenDoctorCommand}"
-        // ─────────────────────────────────────────────────────────────────────────
         public static readonly BindableProperty HyperlinkCommandProperty =
             BindableProperty.Create(nameof(HyperlinkCommand), typeof(ICommand), typeof(SparkDataGridView));
         public ICommand HyperlinkCommand
@@ -204,12 +199,12 @@ namespace EHMR.Resources.Controls
         #endregion
 
         #region Build
-        private static readonly Color HeaderBg = Color.FromArgb("#334155");        // slate-700, was #5B6B79
+        private static readonly Color HeaderBg = Color.FromArgb("#334155");
         private static readonly Color HeaderTextColor = Color.FromArgb("#FFFFFF");
-        private static readonly Color RowMutedTextColor = Color.FromArgb("#64748B"); // slate-500
-        private static readonly Color RowTextColor = Color.FromArgb("#1E293B");      // slate-800, was hardcoded Colors.Black in BuildText
-        private static readonly Color BorderColor = Color.FromArgb("#E2E8F0");       // slate-200, was #F0F2F5 (too faint to read as a grid)
-        private static readonly Color RowAltBg = Color.FromArgb("#F8FAFC");          // slate-50
+        private static readonly Color RowMutedTextColor = Color.FromArgb("#64748B");
+        private static readonly Color RowTextColor = Color.FromArgb("#1E293B");
+        private static readonly Color BorderColor = Color.FromArgb("#E2E8F0");
+        private static readonly Color RowAltBg = Color.FromArgb("#F8FAFC");
         private static readonly Color RowBg = Colors.White;
 
         private static readonly Color BadgeNeutralBg = Color.FromArgb("#F1F5F9");
@@ -219,12 +214,9 @@ namespace EHMR.Resources.Controls
         private static readonly Color BadgeDangerBg = Color.FromArgb("#FEF2F2");
         private static readonly Color BadgeDangerText = Color.FromArgb("#DC2626");
 
-        // Spark teal, darkened one step for AA contrast against white — was #059669 (green, off-brand)
         private static readonly Color HyperlinkColor = Color.FromArgb("#0F766E");
-
-        private static readonly Color AccentColor = Color.FromArgb("#0F766E");        // primary actions / checkbox / selection
+        private static readonly Color AccentColor = Color.FromArgb("#0F766E");
         private static readonly Color AccentColorMuted = Color.FromArgb("#64748B");
-
 
         private void BuildGrid()
         {
@@ -245,7 +237,6 @@ namespace EHMR.Resources.Controls
             foreach(var column in Columns)
                 GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=ResponsiveColumnWidth(column.Width) });
 
-            // Header row
             GridRoot.RowDefinitions.Add(new RowDefinition { Height=new GridLength(R(44)) });
             if(ShowCheckboxColumn) AddCheckboxHeaderCell(checkboxColumnIndex);
             if(ShowRowNumbers) AddRowNumberHeaderCell(rowNumberColumnIndex);
@@ -255,7 +246,6 @@ namespace EHMR.Resources.Controls
                 if(c<Columns.Count-1) AddColumnDivider(0, c+_columnOffset);
             }
 
-            // Data rows
             var rows = Rows??new ObservableCollection<SparkGridRow>();
 
             if(AutoSelectFirstRow&&rows.Count>0&&(SelectedRowIndex<0||SelectedRowIndex>=rows.Count))
@@ -274,9 +264,7 @@ namespace EHMR.Resources.Controls
                 bool isSelected = r==SelectedRowIndex;
                 var rowBg = isSelected ? SelectedRowBg : (r%2==0 ? RowBg : RowAltBg);
 
-                // FIX: checkbox cell was only added to the header, never to data rows
                 if(ShowCheckboxColumn) AddCheckboxCell(r, rows[r], rowIndex, rowBg, checkboxColumnIndex);
-
                 if(ShowRowNumbers) AddRowNumberCell(r, rowIndex, rowBg, rowNumberColumnIndex);
 
                 for(int c = 0; c<Columns.Count; c++)
@@ -319,7 +307,7 @@ namespace EHMR.Resources.Controls
             var checkbox = new CheckBox
             {
                 IsChecked=localRowIndex==SelectedRowIndex,
-                Color=AccentColor,   // was #21B6C4
+                Color=AccentColor,
                 HorizontalOptions=LayoutOptions.Center,
                 VerticalOptions=LayoutOptions.Center
             };
@@ -492,9 +480,7 @@ namespace EHMR.Resources.Controls
                 SparkGridCellType.Avatar => BuildAvatar(value?.ToString()),
                 SparkGridCellType.Actions => BuildActions(row),
                 SparkGridCellType.Button => BuildSingleButton(value as SparkButtonItem, row),
-                // ── NEW ──────────────────────────────────────────────
                 SparkGridCellType.Hyperlink => BuildHyperlink(value?.ToString(), row, rowIndex-1),
-                // ─────────────────────────────────────────────────────
                 _ => BuildText(value?.ToString()??string.Empty, false)
             };
 
@@ -513,10 +499,6 @@ namespace EHMR.Resources.Controls
             GridRoot.Children.Add(border);
         }
 
-        // ─── HYPERLINK CELL ───────────────────────────────────────────────────────
-        // Underline label — fires HyperlinkCommand(row.Tag ?? row) on tap.
-        // AttachRowTap skips Hyperlink columns so there is no competing gesture.
-        // ─────────────────────────────────────────────────────────────────────────
         private View BuildHyperlink(string? text, SparkGridRow row, int localRowIndex)
         {
             var label = new Label
@@ -577,7 +559,9 @@ namespace EHMR.Resources.Controls
         {
             var label = action.Label?.Trim()??string.Empty;
 
-            if(label.Equals("Детали", StringComparison.OrdinalIgnoreCase))
+            // "Повеќе" is kept here as a compatibility alias for older list VMs.
+            if(label.Equals("Детали", StringComparison.OrdinalIgnoreCase)||
+               label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase))
                 return Color.FromArgb("#73FBFD");
 
             if(label.Equals("Промени", StringComparison.OrdinalIgnoreCase))
@@ -592,10 +576,12 @@ namespace EHMR.Resources.Controls
         private static Color ResolveActionTextColor(SparkButtonItem action)
         {
             var label = action.Label?.Trim()??string.Empty;
-            if(label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase)||label.Equals("Детали", StringComparison.OrdinalIgnoreCase))
+            if(label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase)||
+               label.Equals("Детали", StringComparison.OrdinalIgnoreCase))
                 return ResolveColorResource("SparkTextPrimary", "#1E2733");
             return Colors.White;
         }
+
         private static Color ResolveColorResource(string key, string fallback)
         {
             if(Application.Current?.Resources.TryGetValue(key, out var value)==true&&value is Color color)
@@ -605,38 +591,42 @@ namespace EHMR.Resources.Controls
 
         private View BuildActionIcon(string text, ICommand command, object commandParameter, Color color, Color textColor)
         {
-            return new Border
+            var border = new Border
             {
-                Padding=new Thickness(R(4), R(4)),
-                BackgroundColor=color,
-                StrokeThickness=0,
+                Padding=new Thickness(R(6), R(4)),
+                Background=new SolidColorBrush(color),
+                Stroke=new SolidColorBrush(color),
+                StrokeThickness=1,
                 StrokeShape=new RoundRectangle { CornerRadius=12 },
                 HorizontalOptions=LayoutOptions.Center,
                 VerticalOptions=LayoutOptions.Center,
                 MinimumWidthRequest=R(90),
-                MinimumHeightRequest=R(26),
-                Content=new Label
-                {
-                    Text=text,
-                    FontSize=R(11),
-                    TextColor=textColor,
-                    HorizontalTextAlignment=TextAlignment.Center,
-                    VerticalTextAlignment=TextAlignment.Center
-                },
-                GestureRecognizers=
-                {
-                    new TapGestureRecognizer { Command=command, CommandParameter=commandParameter }
-                }
+                MinimumHeightRequest=R(26)
             };
+
+            border.Content=new Label
+            {
+                Text=text,
+                FontSize=R(11),
+                FontAttributes=FontAttributes.Medium,
+                TextColor=textColor,
+                HorizontalTextAlignment=TextAlignment.Center,
+                VerticalTextAlignment=TextAlignment.Center
+            };
+
+            border.GestureRecognizers.Add(
+                new TapGestureRecognizer { Command=command, CommandParameter=commandParameter });
+
+            return border;
         }
-        private void AttachRowTap(SparkGridRow row, int rowIndex, int localIndex)
+
+        private View AttachRowTap(SparkGridRow row, int rowIndex, int localIndex)
         {
             for(int c = 0; c<Columns.Count; c++)
             {
-                // Skip columns that own their own tap interaction
                 if(Columns[c].CellType==SparkGridCellType.Actions||
                    Columns[c].CellType==SparkGridCellType.Button||
-                   Columns[c].CellType==SparkGridCellType.Hyperlink)   // ← NEW
+                   Columns[c].CellType==SparkGridCellType.Hyperlink)
                     continue;
 
                 var cell = GridRoot.Children
@@ -660,7 +650,7 @@ namespace EHMR.Resources.Controls
             return new Label
             {
                 Text=text,
-                TextColor=RowTextColor,   // was Colors.Black
+                TextColor=RowTextColor,
                 FontSize=R(13),
                 Margin=new Thickness(R(4), 0, 0, 0),
                 HorizontalOptions=LayoutOptions.Fill,
@@ -691,7 +681,7 @@ namespace EHMR.Resources.Controls
             get => (int)GetValue(SelectedRowIndexProperty);
             set => SetValue(SelectedRowIndexProperty, value);
         }
-        private static readonly Color SelectedRowBg = Color.FromArgb("#E6F4F3"); // was #B7F7FA — muted teal tint, not neon
+        private static readonly Color SelectedRowBg = Color.FromArgb("#E6F4F3");
 
         #endregion
 
@@ -732,7 +722,7 @@ namespace EHMR.Resources.Controls
 
             var circle = new Border
             {
-                BackgroundColor=Color.FromArgb("#E2E8F0"),   // was #E7F7FA (cyan) — neutral slate now
+                BackgroundColor=Color.FromArgb("#E2E8F0"),
                 Stroke=Colors.Transparent,
                 WidthRequest=R(26),
                 HeightRequest=R(26),
@@ -743,7 +733,7 @@ namespace EHMR.Resources.Controls
             circle.Content=new Label
             {
                 Text=initials,
-                TextColor=Color.FromArgb("#334155"),   // was #16374A
+                TextColor=Color.FromArgb("#334155"),
                 FontSize=R(11),
                 FontAttributes=FontAttributes.Bold,
                 HorizontalTextAlignment=TextAlignment.Center,
@@ -761,15 +751,11 @@ namespace EHMR.Resources.Controls
 
         #endregion
 
-        // ─────────────────────────────────────────────────────────────
-        // PAGER  (unchanged)
-        // ─────────────────────────────────────────────────────────────
-
-        private static readonly Color PagerActiveBg = Color.FromArgb("#4DD9C7");     // was #21B6C4
+        private static readonly Color PagerActiveBg = Color.FromArgb("#4DD9C7");
         private static readonly Color PagerActiveText = Colors.White;
-        private static readonly Color PagerInactiveText = Color.FromArgb("#334155"); // was #2E3A4E
+        private static readonly Color PagerInactiveText = Color.FromArgb("#334155");
         public static Color PagerBackground => Color.FromArgb("#E2E8F0");
-        public static Color PagerBorder => Color.FromArgb("#E2E8F0");                // was FFColors.Gray300
+        public static Color PagerBorder => Color.FromArgb("#E2E8F0");
         public static Color PagerBorderColor => Color.FromArgb("#E2E8F0");
         public static Color PagerActiveBackground => Color.FromArgb("#4DD9C7");
         public static Color PagerActiveForeground => Colors.White;
