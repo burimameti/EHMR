@@ -109,6 +109,15 @@ namespace EHMR.Services;
                             c.Item().Text($"ИЗРАБОТИЛ: {generatedBy}").Bold().FontSize(8);
                             c.Item().Text($"ДАТУМ НА ИЗДАВАЊЕ: {DateTime.Now:dd.MM.yyyy}").FontSize(7);
                         });
+
+                        // Клетка 3: ОПСЕГ НА ПЕРИОД + ВКУПНА КОЛИЧИНА
+                        table.Cell().Padding(5).Column(c =>
+                        {
+                            c.Item().Text("ОПСЕГ НА ПЕРИОД:").Bold().FontSize(8);
+                            c.Item().Text($"{startDate:dd.MM.yyyy} - {endDate:dd.MM.yyyy}").FontSize(8);
+                            c.Item().PaddingTop(3).Text("ВКУПНА КОЛИЧИНА:").Bold().FontSize(8);
+                            c.Item().Text(GetTotalQuantity(rows)).Bold().FontSize(9);
+                        });
                     });
 
                     // Забелешка за заштита на лични/медицински податоци
@@ -181,6 +190,24 @@ namespace EHMR.Services;
         return Task.FromResult(path);
     }
     // ================= HELPERS =================
+
+    private static string GetTotalQuantity(IReadOnlyList<SparkGridRow> rows)
+    {
+        decimal total = 0;
+
+        foreach(var row in rows)
+        {
+            if(row.TryGetValue("MedicineConsumptionTotalQuantity", out var value) &&
+               decimal.TryParse(value?.ToString(), out var quantity))
+            {
+                total += quantity;
+            }
+        }
+
+        return total == decimal.Truncate(total)
+            ? total.ToString("0")
+            : total.ToString("0.##");
+    }
 
     private static double GetColumnWidth(SparkGridColumn column)
         {
