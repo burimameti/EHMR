@@ -159,15 +159,92 @@
 
 			<controls:FFSectionCard Grid.Row="2">
 
+				<VerticalStackLayout Spacing="10">
 
-				<controls:SparkExplorerHeaderView
-					Buttons="{Binding Buttons}"
-					Pickers="{Binding Pickers}"
-					SearchCommand="{Binding SearchCommand}"
-					SearchPlaceholder="Пребарување во извештај..."
-					SearchText="{Binding SearchText}"
-					Tabs="{Binding Tabs}" />
+					<!-- Patient history selector: same suggestion UX as Dashboard -->
+					<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+						<controls:SparkExplorerHeaderView
+							SearchPlaceholder="Пребарај пациент за историја..."
+							SearchText="{Binding PatientSearchText}"
+							SelectedSuggestion="{Binding SelectedPatientSuggestion, Mode=TwoWay}"
+							ShowSuggestions="{Binding ShowPatientSuggestions}"
+							Suggestions="{Binding PatientSuggestions}"
+							TabsVisible="False">
 
+							<controls:SparkExplorerHeaderView.SuggestionTemplate>
+								<DataTemplate x:DataType="{x:Null}">
+									<Border
+										Margin="2"
+										Padding="12,8"
+										BackgroundColor="{StaticResource Gray100}"
+										Stroke="{StaticResource SparkBorderSubtle}"
+										StrokeShape="RoundRectangle 2"
+										StrokeThickness="1.2">
+										<Grid ColumnDefinitions="2*,1.2*,1.2*" ColumnSpacing="14">
+											<VerticalStackLayout Spacing="1">
+												<Label
+													FontSize="10"
+													Text="Име и презиме"
+													TextColor="{StaticResource SparkAccentTealDark}" />
+												<Label
+													FontAttributes="Bold"
+													FontSize="12"
+													Text="{Binding DisplayText}"
+													TextColor="{StaticResource SparkTextPrimary}" />
+											</VerticalStackLayout>
+											<VerticalStackLayout Grid.Column="1" Spacing="1">
+												<Label
+													FontSize="10"
+													Text="Идентификатор"
+													TextColor="{StaticResource SparkAccentTealDark}" />
+												<Label
+													FontAttributes="Bold"
+													FontSize="12"
+													Text="{Binding Id}"
+													TextColor="{StaticResource SparkTextPrimary}" />
+											</VerticalStackLayout>
+											<Label
+												Grid.Column="2"
+												FontSize="11"
+												Text="Избери за историја"
+												TextColor="{StaticResource SparkAccentTealDark}"
+												VerticalOptions="Center" />
+										</Grid>
+									</Border>
+								</DataTemplate>
+							</controls:SparkExplorerHeaderView.SuggestionTemplate>
+						</controls:SparkExplorerHeaderView>
+
+						<controls:FFButton
+							Grid.Column="1"
+							ButtonKind="Secondary"
+							Command="{Binding ClearPatientHistoryCommand}"
+							HeightRequestEx="42"
+							Text="Исчисти пациент" />
+					</Grid>
+
+					<Border
+						BackgroundColor="{StaticResource SparkContentBackground}"
+						IsVisible="{Binding IsPatientHistoryMode}"
+						Padding="10,7"
+						Stroke="{StaticResource SparkBorder}"
+						StrokeThickness="1">
+						<Label
+							FontAttributes="Bold"
+							FontSize="12"
+							Text="{Binding SelectedPatientLabel, StringFormat='ИСТОРИЈА НА ПАЦИЕНТ: {0}'}"
+							TextColor="{StaticResource SparkAccentTealDark}" />
+					</Border>
+
+					<controls:SparkExplorerHeaderView
+						Buttons="{Binding Buttons}"
+						Pickers="{Binding Pickers}"
+						SearchCommand="{Binding SearchCommand}"
+						SearchPlaceholder="Пребарување во извештај..."
+						SearchText="{Binding SearchText}"
+						Tabs="{Binding Tabs}" />
+
+				</VerticalStackLayout>
 
 			</controls:FFSectionCard>
 
