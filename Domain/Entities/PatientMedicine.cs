@@ -50,7 +50,7 @@ public class PatientMedicine : BaseEntity
     public string PharmaceuticalReference { get; set; } = string.Empty;
 
     /// <summary>Patient-specific quantity, matching the numeric quantity used in encounter medicine entry.</summary>
-    public decimal Quantity { get; set; } = 1;
+    public int Quantity { get; set; } = 1;
 
     /// <summary>False once discontinued/completed — kept instead of deleting so prescription history survives.</summary>
     public bool IsActive { get; set; } = true;
