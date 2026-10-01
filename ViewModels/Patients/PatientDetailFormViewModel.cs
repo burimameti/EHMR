@@ -28,6 +28,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
     private readonly ILicenseService _licenseService;
     private readonly IPatientClinicalReportService _clinicalReportService;
+    private readonly IAuthorizationService _authorizationService;
 
     private PatientEditDto? _originalPatient;
     private bool _isNewPatientMode;
@@ -39,6 +40,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
     private bool _childrenLoaded;
     public bool IsNewPatient => _isNewPatientMode;
+
+    public bool IsAdmin => _authorizationService.HasRole(UserRole.Admin) || _authorizationService.HasRole(UserRole.SuperAdmin);
+    public bool CanReactivatePatient => IsAdmin && !_isNewPatientMode && Patient.Status==PatientStatus.Inactive;
 
     private bool _isOfferingDoctorCreation;
 
@@ -88,6 +92,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             Patient.InactiveReason=string.Empty;
         }
         OnPropertyChanged(nameof(IsPatientInactive));
+        OnPropertyChanged(nameof(CanReactivatePatient));
         OnPropertyChanged(nameof(Patient));
     }
 
@@ -97,8 +102,21 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void SetActive()
     {
-        if(IsEditMode)
-            IsPatientActive=true;
+        if(!IsEditMode)
+            return;
+
+        // Reactivation of an inactive patient is a sensitive operation and is Admin-only.
+        if(!_isNewPatientMode && Patient.Status==PatientStatus.Inactive && !IsAdmin)
+        {
+            _userDialogService.ShowAlertAsync(
+                "Недозволена акција",
+                "Само администратор може да реактивира неактивен пациент.",
+                "ОК");
+            return;
+        }
+
+        IsPatientActive=true;
+        OnPropertyChanged(nameof(CanReactivatePatient));
     }
 
     [RelayCommand]
@@ -122,7 +140,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         IUserDialogService userDialogService,
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
         ILicenseService licenseService,
-        IPatientClinicalReportService clinicalReportService)
+        IPatientClinicalReportService clinicalReportService,
+        IAuthorizationService authorizationService)
     {
         _licenseService=licenseService;
         _patientService=patientService;
@@ -131,6 +150,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         _userDialogService=userDialogService;
         _dbFactory=dbFactory;
         _clinicalReportService=clinicalReportService;
+        _authorizationService=authorizationService;
 
         // MKB10 A-Z sections, исто као во EncounterBaseViewModel.
         for(var letter = 'A'; letter<='Z'; letter++)
