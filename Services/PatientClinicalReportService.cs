@@ -268,7 +268,7 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
     }
 
     private static void BuildHeader(
-        IContainer container,
+        QuestPDF.Infrastructure.IContainer container,
         string title,
         Domain.Entities.Patient patient,
         Domain.Entities.Encounter? focusEncounter,
