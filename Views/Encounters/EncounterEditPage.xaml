@@ -688,18 +688,16 @@
 														</Border>
 														<Border
 															Grid.Column="2"
-															Padding="3,0"
+															Padding="0"
 															BackgroundColor="White"
 															HeightRequest="44"
 															Stroke="{StaticResource SparkBorderSubtle}"
 															StrokeThickness="1">
-															<Picker
-																Title="Избери режим"
-																FontSize="11"
-																ItemDisplayBinding="{Binding Regime}"
+															<controls:FFPicker
+																Placeholder="Избери начин"
 																ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
-																SelectedItem="{Binding ApplicationRegime, Mode=TwoWay}"
-																VerticalOptions="Center" />
+																ItemDisplayBinding="{Binding Regime}"
+																SelectedItem="{Binding ApplicationRegime, Mode=TwoWay}" />
 														</Border>
 														<Border
 															Grid.Column="3"
