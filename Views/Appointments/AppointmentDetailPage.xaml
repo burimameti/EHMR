@@ -121,6 +121,13 @@
 								TextColor="White" />
 							<controls:FFButton
 								ButtonKind="Secondary"
+								Command="{Binding GenerateClinicalReportCommand}"
+								ContentPadding="16,0"
+								HeightRequestEx="40"
+								IsVisible="{Binding IsReadOnly}"
+								Text="Печати / PDF" />
+							<controls:FFButton
+								ButtonKind="Secondary"
 								Command="{Binding ToggleEditModeCommand}"
 								ContentPadding="22,0"
 								HeightRequestEx="40"
