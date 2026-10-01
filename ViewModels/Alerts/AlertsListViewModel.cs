@@ -201,7 +201,7 @@ public partial class AlertsListViewModel : ObservableObject, IQueryAttributable
         row["Ниво"]=new SparkBadgeValue(item.Level.ToLabel(), item.Level switch        {           AlertLevel.Critical => SparkBadgeTone.Danger,         AlertLevel.Warning => SparkBadgeTone.Warning,            _ => SparkBadgeTone.Neutral       });
         row["Пациент"]=item.PatientName;
         row["Опис"]=item.Message;
-        row["Датум"]=item.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm");
+        row["Датум"]=item.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy");
         row["Статус"]=new SparkBadgeValue(
             item.IsResolved ? "Решено" : "Активно",
             item.IsResolved ? SparkBadgeTone.Success : SparkBadgeTone.Warning);
