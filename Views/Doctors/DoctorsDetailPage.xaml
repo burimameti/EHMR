@@ -10,7 +10,7 @@
 	x:DataType="vm:DoctorsDetailViewModel"
 	BackgroundColor="{StaticResource PageBackground}">
 
-	<Grid ColumnDefinitions="285,*">
+	<Grid ColumnDefinitions="260,*">
 
 		<!--  =====================================================  -->
 		<!--  LEFT MENU  -->
