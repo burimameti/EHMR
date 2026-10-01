@@ -10,7 +10,7 @@
 	x:DataType="viewModels:ReportHistoryViewModel">
 
 
-	<Grid ColumnDefinitions="285,*">
+	<Grid ColumnDefinitions="260,*">
 
 		<!--  =========================================================  -->
 		<!--  LEFT MENU  -->
