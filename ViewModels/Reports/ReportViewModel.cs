@@ -733,15 +733,6 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     // REPORT GENERATION
     // =====================================================
 
-    [RelayCommand]
-    public async Task ExecuteReportGenerationAsync()
-    {
-        Debug.WriteLine("ExecuteReportGenerationAsync");
-        await GenerateReportAsync();
-    }
-
-
-
     private async Task GenerateReportAsync()
     {
         if(_activeProvider==null)
