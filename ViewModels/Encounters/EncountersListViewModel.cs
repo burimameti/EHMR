@@ -49,7 +49,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     } =
         new(new[] { "Сите" }.Concat(EncounterStatusSchema.Display.Values.ToObservableCollection()));
 
-  
+
     // =====================================================
     // DATE FILTER
     // =====================================================
@@ -89,9 +89,9 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         }
     }
 
-  
 
-   
+
+
 
     // =====================================================
     // SPARK GRID
@@ -115,8 +115,8 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "PatientName", Width = new GridLength(2, GridUnitType.Star) },
             new() { Header = "СЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.2, GridUnitType.Star) },
             new() { Header = "РЕУМАТОЛОГ", Key = "DoctorName", Width = new GridLength(1.8, GridUnitType.Star) },
-   
-  
+
+
             new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1.2, GridUnitType.Star) },
             new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
@@ -133,7 +133,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
             row["PatientName"]=e.Patient!=null ? $"{e.Patient.FirstName} {e.Patient.LastName}" : "";
             row["SzboNumber"]=e.Patient?.SzboNumber??"—";
             row["DoctorName"]=e.Doctor?.User!=null ? $"{e.Doctor.User.FirstName} {e.Doctor.User.LastName}" : "";
-      
+
             row["Date"]=(e.ScheduledStart??e.EncounterDate).ToString("dd.MM.yyyy HH:mm");
             row["Status"]=new SparkBadgeValue(
                 EncounterStatusSchema.ToDisplay(e.Status.ToString()),
@@ -148,7 +148,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
                 {
                     IsPrimary=true,
                     IconGlyph="👁",
-                    Label="Детали",
+                    Label="Повеќе",
                     Command=SelectCommand,
                     CommandParameter=e
                 }
@@ -163,7 +163,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         GridRows=rows;
     }
 
- 
+
 
     private static SparkBadgeTone StatusToTone(EncounterStatus status) => status switch
     {
@@ -191,7 +191,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     {
         if(_statusPicker==null) return;
         _statusPicker.SelectedItem=SelectedStatusDisplay;
-      
+
     }
 
     // Buttons collection lives in BaseViewModel<T>; base default "✕ Исчисти" applies.
@@ -397,7 +397,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     {
         if(_isSelectingEncounterSuggestion) return;
 
-        var term=value?.Trim()??string.Empty;
+        var term = value?.Trim()??string.Empty;
         if(string.IsNullOrWhiteSpace(term))
         {
             EncounterSuggestions.Clear();
@@ -428,7 +428,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         if(string.IsNullOrWhiteSpace(search)) return query;
 
         var term = search.Trim();
-        var cyrillicTerm=UseCyrillicSearch ? EHMR.Helpers.MacedonianTransliterator.ToCyrillic(term) : term;
+        var cyrillicTerm = UseCyrillicSearch ? EHMR.Helpers.MacedonianTransliterator.ToCyrillic(term) : term;
         return query.Where(x =>
             (x.EncounterNumber??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
             (x.Patient!=null&&((x.Patient.FirstName).Contains(term, StringComparison.OrdinalIgnoreCase)||
@@ -436,12 +436,12 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
                                      (x.Patient.FirstName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)||
                                             (x.Patient.LastName).Contains(term, StringComparison.OrdinalIgnoreCase)||
                                  x.Patient.SzboNumber.Contains(term, StringComparison.OrdinalIgnoreCase)))
-            //(x.Doctor!=null&&((x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(term, StringComparison.OrdinalIgnoreCase)||
-            //                    (x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)))||
-            //(x.ChiefComplaint??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
-            //(x.ChiefComplaint??"").Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)||
-            //(x.ClinicalNotes??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
-            //(x.ClinicalNotes??"").Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)
+        //(x.Doctor!=null&&((x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(term, StringComparison.OrdinalIgnoreCase)||
+        //                    (x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)))||
+        //(x.ChiefComplaint??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
+        //(x.ChiefComplaint??"").Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)||
+        //(x.ClinicalNotes??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
+        //(x.ClinicalNotes??"").Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)
         );
     }
 
@@ -450,7 +450,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         if(SelectedStatus!="All")
             query=query.Where(x => string.Equals(x.Status.ToString(), SelectedStatus, StringComparison.OrdinalIgnoreCase));
 
-   
+
 
         if(SelectedDoctor!="All"&&!string.IsNullOrWhiteSpace(SelectedDoctor))
         {
@@ -532,7 +532,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         SearchText=string.Empty;
 
         SelectedStatus="All";
-  
+
         SelectedDoctor="All";
         _filterByDate=false;
         _filterDate=DateTime.Today;
