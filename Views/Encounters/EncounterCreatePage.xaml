@@ -53,14 +53,7 @@
 							<VerticalStackLayout Spacing="12">
 
 								<!--  Section header  -->
-								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label
-										CharacterSpacing="0.5"
-										FontAttributes="Bold"
-										FontSize="12"
-										Style="{StaticResource SectionPillLabelStyle}"
-										Text="ПАЦИЕНТ И РЕУМАТОЛОГ" />
-								</Border>
+								<controls:CrudSectionHeader Title="ПАЦИЕНТ И РЕУМАТОЛОГ" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
 
 								<!--  Locked context display  -->
 								<Grid
@@ -437,42 +430,11 @@
 							<!--  ── 4. ДЕТАЛИ ЗА ПРЕГЛЕДОТ ────────────────  -->
 							<VerticalStackLayout Spacing="12">
 
-								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label
-										CharacterSpacing="0.5"
-										FontAttributes="Bold"
-										FontSize="12"
-										Style="{StaticResource SectionPillLabelStyle}"
-										Text="ДЕТАЛИ ЗА ПРЕГЛЕДОТ" />
-								</Border>
+								<controls:CrudSectionHeader Title="ДЕТАЛИ ЗА ПРЕГЛЕДОТ" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
 
-								<!--  Status + schedule row  -->
-								<Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="8">
-									<Label
-										FontSize="11"
-										Text="СТАТУС"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Label
-										Grid.Column="1"
-										FontAttributes="Bold"
-										FontSize="12"
-										Text="{Binding StatusDisplay}"
-										TextColor="{StaticResource SparkAccentTealDark}"
-										VerticalOptions="Center" />
-									<Label
-										Grid.Column="2"
-										FontSize="11"
-										Text="АВТОМАТСКИ ТЕРМИН"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<Label
-										Grid.Column="3"
-										FontAttributes="Bold"
-										FontSize="12"
-										Text="{Binding AutomaticScheduleDisplay}"
-										TextColor="{StaticResource SparkTextPrimary}"
-										VerticalOptions="Center" />
+								<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+									<Label FontSize="11" Text="АВТОМАТСКИ ТЕРМИН" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
+									<Label Grid.Column="1" FontAttributes="Bold" FontSize="12" Text="{Binding AutomaticScheduleDisplay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
 								</Grid>
 								<Grid
 									Margin="0,6,0,0"
@@ -520,26 +482,6 @@
 								</Grid>
 							</VerticalStackLayout>
 
-							<!--  ── АКЦИИ ────────────────────────────────────  -->
-							<Grid
-								Padding="0,8,0,8"
-								ColumnDefinitions="*,*"
-								ColumnSpacing="16">
-								<controls:FFButton
-									Grid.Column="0"
-									ButtonKind="Secondary"
-									Command="{Binding CancelCommand}"
-									HeightRequestEx="46"
-									Text="Откажи" />
-								<controls:FFButton
-									Grid.Column="1"
-									BackgroundColorEx="{StaticResource SidebarActiveBg}"
-									ButtonKind="Primary"
-									Command="{Binding SaveEncounterCommand}"
-									HeightRequestEx="46"
-									Text="Зачувај"
-									TextColorEx="{StaticResource SidebarActiveText}" />
-							</Grid>
 
 							<HorizontalStackLayout HorizontalOptions="Center" Spacing="10" Margin="0,14,0,8">
 								<Button BackgroundColor="{StaticResource SidebarActiveBg}" Command="{Binding SaveEncounterCommand}" HeightRequest="42" Style="{StaticResource TabButtonActiveStyle}" Text="Зачувај" TextColor="White" WidthRequest="150" />
@@ -560,14 +502,7 @@
 						<VerticalStackLayout Style="{StaticResource CrudFormSidebarStackStyle}">
 
 							<!--  Section: Поврзување  -->
-							<Border Style="{StaticResource SectionPillBorderStyle}">
-								<Label
-									CharacterSpacing="0.5"
-									FontAttributes="Bold"
-									FontSize="11"
-									Style="{StaticResource SectionPillLabelStyle}"
-									Text="ПОВРЗУВАЊЕ СО ТЕРМИН / ЦИКЛУС" />
-							</Border>
+							<controls:CrudSectionHeader Title="ПОВРЗУВАЊЕ СО ТЕРМИН / ЦИКЛУС" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
 
 							<Grid ColumnDefinitions="*,*" ColumnSpacing="10">
 								<controls:FFButton
@@ -674,14 +609,7 @@
 							</Border>
 
 							<!--  Section: Последни прегледи  -->
-							<Border Style="{StaticResource SectionPillBorderStyle}">
-								<Label
-									CharacterSpacing="0.5"
-									FontAttributes="Bold"
-									FontSize="11"
-									Style="{StaticResource SectionPillLabelStyle}"
-									Text="ПОСЛЕДНИ ПРЕГЛЕДИ" />
-							</Border>
+							<controls:CrudSectionHeader Title="ПОСЛЕДНИ ПРЕГЛЕДИ" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
 
 							<Label
 								FontSize="12"
