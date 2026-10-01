@@ -14,7 +14,7 @@ public class Patient : BaseEntity
 
     public string LastName { get; set; } = string.Empty;
 
-    public string NationalId { get; set; } = string.Empty;
+    public string? NationalId { get; set; }
 
     public string SzboNumber { get; set; } = string.Empty;
 
