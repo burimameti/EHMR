@@ -108,7 +108,7 @@ namespace EHMR.Services;
                         table.Cell().BorderRight(1).Padding(5).Column(c =>
                         {
                             c.Item().Text($"ИЗРАБОТИЛ: {generatedBy}").Bold().FontSize(8);
-                            c.Item().Text($"ДАТУМ НА ИЗДАВАЊЕ: {DateTime.Now:dd.MM.yyyy HH:mm}").FontSize(7);
+                            c.Item().Text($"ДАТУМ НА ИЗДАВАЊЕ: {DateTime.Now:dd.MM.yyyy}").FontSize(7);
                         });
 
                         // Клетка 3: ПЕРИОД
