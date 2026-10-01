@@ -169,7 +169,7 @@
 										<Label
 											FontAttributes="Bold"
 											FontSize="12"
-											Text="{Binding Encounter.EncounterDate, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+											Text="{Binding Encounter.EncounterDate, StringFormat='{0:dd.MM.yyyy}'}"
 											TextColor="{StaticResource SparkTextPrimary}" />
 										<Label
 											FontSize="11"
@@ -754,7 +754,7 @@
 														<Label
 															FontAttributes="Bold"
 															FontSize="11"
-															Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+															Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy}'}"
 															TextColor="{StaticResource SparkAccentTealDark}" />
 														<Label
 															FontSize="10"
