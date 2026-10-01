@@ -607,8 +607,16 @@
 										<HorizontalStackLayout.GestureRecognizers>
 											<TapGestureRecognizer Command="{Binding SetActiveCommand}" />
 										</HorizontalStackLayout.GestureRecognizers>
-										<CheckBox IsChecked="{Binding IsPatientActive, Mode=OneWay}" IsEnabled="False" Color="{StaticResource SparkAccentTeal}" />
+										<CheckBox
+											IsChecked="{Binding IsPatientActive, Mode=OneWay}"
+											IsEnabled="False"
+											Color="{StaticResource SparkAccentTeal}" />
 									</HorizontalStackLayout>
+									<Label
+										FontSize="10"
+										IsVisible="{Binding CanReactivatePatient}"
+										Text="Администратор"
+										TextColor="{StaticResource SparkTextSecondary}" />
 								</VerticalStackLayout>
 								<VerticalStackLayout Spacing="2">
 									<Label FontAttributes="Bold" FontSize="11" Text="Неактивен" TextColor="#DC2626" />
