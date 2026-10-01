@@ -482,7 +482,7 @@ public partial class DashboardViewModel : ObservableObject
                     PatientId=x.PatientId,
                     PatientName=x.PatientName,
                     Message=x.Message,
-                    CreatedAtText=x.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm"),
+                    CreatedAtText=x.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy"),
                     Level=x.Level,
                     Command=new RelayCommand(() => OpenAlertPatientAsync(x.PatientId))
                 }));
@@ -1205,7 +1205,7 @@ public partial class DashboardViewModel : ObservableObject
             var row=new SparkGridRow { Tag=item };
             row["PatientName"]=item.PatientName;
             row["SzboNumber"]=item.SzboNumber;
-            row["Date"]=item.Source.ScheduledStart?.ToString("dd.MM.yyyy HH:mm")??"—";
+            row["Date"]=item.Source.ScheduledStart?.ToString("dd.MM.yyyy")??"—";
             row["Status"]=new SparkBadgeValue(item.StatusText, EncounterStatusToTone(item.Source.Status));
             row["Actions"]=new List<SparkButtonItem>
             {
@@ -1253,7 +1253,7 @@ public partial class DashboardViewModel : ObservableObject
             row["BloodType"]=patient.BloodType;
             row["Phone"]=patient.Phone;
             row["LastActivity"]=item.LastActivity is { } last ? last.ToString("dd.MM.yyyy") : "—";
-            row["NextAppointment"]=item.ActiveAppointment is { } next ? next.ScheduledStart.ToString("dd.MM.yyyy HH:mm") : "—";
+            row["NextAppointment"]=item.ActiveAppointment is { } next ? next.ScheduledStart.ToString("dd.MM.yyyy") : "—";
 
             row["Status"]=new SparkBadgeValue(
                 StateDisplay.TryGetValue(item.State, out var lbl) ? lbl : item.State.ToString(),
