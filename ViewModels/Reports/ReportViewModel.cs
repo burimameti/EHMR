@@ -241,6 +241,23 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         EvaluatePermissions();
     }
 
+    /// <summary>
+    /// Opens the patient report dashboard directly. Other report providers remain
+    /// registered for administration/system-auditing scenarios, but are not part
+    /// of the standard Reports creation flow.
+    /// </summary>
+    public async Task OpenPatientsReportAsync()
+    {
+        var patientReport=_allReports.FirstOrDefault(x => x.Type==ReportType.Patients);
+        if(patientReport is null)
+            return;
+
+        if(IsShowingDetails && _activeReport?.Type==ReportType.Patients)
+            return;
+
+        await SelectReport(patientReport);
+    }
+
     // =====================================================
     // REPORT HUB
     // =====================================================
