@@ -644,11 +644,8 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
             foreach(var pm in group)
             {
-                var from=pm.StartDate>DateTime.MinValue && pm.StartDate>startRange ? pm.StartDate.Date : startRange.Date;
-                var to=pm.EndDate.HasValue && pm.EndDate.Value.Date<endRange.Date ? pm.EndDate.Value.Date : endRange.Date;
-                if(to<from) continue;
-
-                var days=(to-from).Days+1;
+                // Consumption is the recorded Quantity for each therapy record.
+                // Frequency/application count is intentionally not multiplied.
                 total+=pm.Quantity;
 
                 if(pm.Patient is not null)
@@ -940,7 +937,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 new() { Header="ЛЕК", Key="MedicineConsumptionMedicine", Width=new GridLength(2, GridUnitType.Star) },
                 new() { Header="ВКУПНА ПОТРОШЕНА КОЛИЧИНА", Key="MedicineConsumptionQuantity", Width=new GridLength(1.6, GridUnitType.Star) },
                 new() { Header="ПАЦИЕНТИ", Key="MedicineConsumptionPatients", Width=new GridLength(1, GridUnitType.Star) },
-                new() { Header="МКБ-10", Key="MedicineConsumptionDiagnosis", Width=new GridLength(2.8, GridUnitType.Star) },
+                new() { Header="МКБ-10 КОД + ОПИС", Key="MedicineConsumptionDiagnosis", Width=new GridLength(2.8, GridUnitType.Star) },
                 new() { Header="ПЕРИОД", Key="MedicineConsumptionPeriod", Width=new GridLength(1.6, GridUnitType.Star) }
             };
             return;
