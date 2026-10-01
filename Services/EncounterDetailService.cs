@@ -436,6 +436,29 @@ public class EncounterDetailService : IEncounterDetailService
             .ToListAsync(token);
     }
 
+    public async Task<ApplicationRegime> AddApplicationRegimeAsync(string regime, CancellationToken ct = default)
+    {
+        regime=(regime??string.Empty).Trim();
+        if(string.IsNullOrWhiteSpace(regime))
+            throw new ArgumentException("Режимот на апликација е задолжителен.", nameof(regime));
+
+        await using var db=await _factory.CreateDbContextAsync(ct);
+        var existing=await db.ApplicationRegimes.FirstOrDefaultAsync(x => x.Regime==regime, ct);
+        if(existing is not null)
+            return existing;
+
+        var entity=new ApplicationRegime
+        {
+            Id=Guid.NewGuid(),
+            Regime=regime,
+            IsActive=true
+        };
+
+        db.ApplicationRegimes.Add(entity);
+        await db.SaveChangesAsync(ct);
+        return entity;
+    }
+
     public async Task<List<ApplicationRegime>> GetApplicationRegimesAsync(CancellationToken ct = default)
     {
         await using var db = await _factory.CreateDbContextAsync(ct);
