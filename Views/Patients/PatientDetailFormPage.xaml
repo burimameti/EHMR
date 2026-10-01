@@ -510,7 +510,12 @@
 											<Grid ColumnDefinitions="1.35*,0.8*,1.2*,0.7*,28" ColumnSpacing="1">
 												<Border Padding="5,0" BackgroundColor="White" HeightRequest="40" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="10" LineBreakMode="TailTruncation" Text="{Binding MedicineName}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
 												<Border Grid.Column="1" Padding="3,0" BackgroundColor="White" HeightRequest="40" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Entry BackgroundColor="Transparent" FontSize="10" Text="{Binding PatientMedicine.Dosage, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
-												<Border Grid.Column="2" Padding="5,0" BackgroundColor="White" HeightRequest="40" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="9.5" LineBreakMode="TailTruncation" Text="{Binding RegimeDisplay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
+												<Border Grid.Column="2" Padding="0" BackgroundColor="White" HeightRequest="40" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1">
+    <controls:FFPicker
+        Placeholder="Избери начин"
+        ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
+        SelectedItem="{Binding PatientMedicine.ApplicationRegime, Mode=TwoWay}" />
+</Border>
 												<Border Grid.Column="3" Padding="3,0" BackgroundColor="White" HeightRequest="40" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Entry BackgroundColor="Transparent" FontSize="10" Keyboard="Numeric" Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
 												<Border Grid.Column="4" BackgroundColor="White" HeightRequest="40" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Button Padding="0" BackgroundColor="Transparent" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" FontSize="10" IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" Text="✕" TextColor="#DC2626" WidthRequest="28" /></Border>
 											</Grid>
