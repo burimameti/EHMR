@@ -489,11 +489,24 @@
 										Stroke="{StaticResource SparkBorderSubtle}"
 										StrokeShape="RoundRectangle 7"
 										StrokeThickness="1">
-										<Picker
-											Title="Брзо избирање"
-											FontSize="11"
-											ItemsSource="{Binding FollowUpIntervalOptions}"
-											SelectedItem="{Binding SelectedFollowUpInterval, Mode=TwoWay}" />
+										<VerticalStackLayout Grid.Column="1" Spacing="3">
+										<Label
+											FontSize="10"
+											Text="Периодично избирање"
+											TextColor="{StaticResource SparkTextSecondary}" />
+										<Border
+											Padding="3,0"
+											BackgroundColor="White"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											StrokeShape="RoundRectangle 7"
+											StrokeThickness="1">
+											<Picker
+												Title="Брзо избирање"
+												FontSize="11"
+												ItemsSource="{Binding FollowUpIntervalOptions}"
+												SelectedItem="{Binding SelectedFollowUpInterval, Mode=TwoWay}" />
+										</Border>
+									</VerticalStackLayout>
 									</Border>
 								</Grid>
 							</VerticalStackLayout>
