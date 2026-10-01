@@ -1389,6 +1389,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
         EncounterMedicines.Add(patientMedicine);
 
+        if(ApplicationRegimeOptions.Count==0)
+            _=AddApplicationRegimeAsync();
+
         MedicineSearchText=string.Empty;
         MedicineResults.Clear();
         ShowMedicineDropdown=false;
