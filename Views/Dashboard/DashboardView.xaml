@@ -312,7 +312,7 @@
 						Spacing="10"
 						VerticalOptions="Center">
 						<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						BackgroundColorEx="{StaticResource SparkButtonSecondaryBg}"
 						TextColorEx="White"
 							ButtonKind="Primary"
 							Command="{Binding NewEncounterCommand}"
