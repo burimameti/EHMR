@@ -65,29 +65,36 @@ public partial class AlertsListViewModel : ObservableObject, IQueryAttributable
     {
         Pickers.Clear();
 
-        Pickers.Add(new SparkPickerItem
+        var levelPicker=new SparkPickerItem { Placeholder="Ниво" };
+        foreach(var item in LevelFilters) levelPicker.Items.Add(item);
+        levelPicker.SelectedItem=SelectedLevel;
+        levelPicker.PropertyChanged+=(_, e) =>
         {
-            Label="Ниво",
-            Items=LevelFilters,
-            SelectedItem=SelectedLevel,
-            SelectionChangedCommand=new Command<object>(value =>
+            if(e.PropertyName==nameof(SparkPickerItem.SelectedItem) &&
+               levelPicker.SelectedItem is string value)
             {
-                SelectedLevel=value?.ToString() ?? "Сите";
+                SelectedLevel=value;
+                CurrentPage=1;
                 ApplyFilter();
-            })
-        });
+            }
+        };
 
-        Pickers.Add(new SparkPickerItem
+        var statusPicker=new SparkPickerItem { Placeholder="Статус" };
+        foreach(var item in StatusFilters) statusPicker.Items.Add(item);
+        statusPicker.SelectedItem=SelectedStatus;
+        statusPicker.PropertyChanged+=(_, e) =>
         {
-            Label="Статус",
-            Items=StatusFilters,
-            SelectedItem=SelectedStatus,
-            SelectionChangedCommand=new Command<object>(value =>
+            if(e.PropertyName==nameof(SparkPickerItem.SelectedItem) &&
+               statusPicker.SelectedItem is string value)
             {
-                SelectedStatus=value?.ToString() ?? "Сите";
+                SelectedStatus=value;
+                CurrentPage=1;
                 ApplyFilter();
-            })
-        });
+            }
+        };
+
+        Pickers.Add(levelPicker);
+        Pickers.Add(statusPicker);
     }
 
     partial void OnSelectedLevelChanged(string value)
