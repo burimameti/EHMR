@@ -550,7 +550,7 @@ namespace EHMR.Resources.Controls
         {
             if(item==null) return new Label();
             return BuildActionIcon(item.Label??"", item.Command, item.CommandParameter,
-                ResolveActionColor(item));   // was #21B6C4 / #69D3DD
+                ResolveActionColor(item), ResolveActionTextColor(item));
         }
 
         private View BuildActions(SparkGridRow row)
@@ -568,7 +568,7 @@ namespace EHMR.Resources.Controls
                 layout.Children.Add(BuildActionIcon(
                     action.Label??"", action.Command,
                     action.CommandParameter??row.Tag??row,
-                    ResolveActionColor(action)));  // was #11A6C4 / #9AA2AB
+                    ResolveActionColor(action), ResolveActionTextColor(action)));
 
             return layout;
         }
@@ -576,13 +576,21 @@ namespace EHMR.Resources.Controls
         private static Color ResolveActionColor(SparkButtonItem action)
         {
             var label=action.Label?.Trim()??string.Empty;
+            if(label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase))
+                return ResolveColorResource("SparkBackgroundAlt", "#F7F9FC");
             if(label.Equals("Промени", StringComparison.OrdinalIgnoreCase))
                 return ResolveColorResource("SurfaceAlt", "#1A2436");
-            if(label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase)||
-               label.Equals("Исчисти", StringComparison.OrdinalIgnoreCase)||
-               action.IsPrimary)
-                return ResolveColorResource("SidebarActiveBg", "#4DD9C7");
+            if(label.Equals("Исчисти", StringComparison.OrdinalIgnoreCase)||action.IsPrimary)
+                return ResolveColorResource("SparkButtonSecondaryBg", "#475569");
             return ResolveColorResource("TextMuted", "#64748B");
+        }
+
+        private static Color ResolveActionTextColor(SparkButtonItem action)
+        {
+            var label=action.Label?.Trim()??string.Empty;
+            if(label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase))
+                return ResolveColorResource("SparkTextPrimary", "#1E2733");
+            return Colors.White;
         }
         private static Color ResolveColorResource(string key, string fallback)
         {
@@ -591,7 +599,7 @@ namespace EHMR.Resources.Controls
             return Color.FromArgb(fallback);
         }
 
-        private View BuildActionIcon(string text, ICommand command, object commandParameter, Color color)
+        private View BuildActionIcon(string text, ICommand command, object commandParameter, Color color, Color textColor)
         {
             return new Border
             {
@@ -607,7 +615,7 @@ namespace EHMR.Resources.Controls
                 {
                     Text=text,
                     FontSize=R(11),
-                    TextColor=Colors.White,
+                    TextColor=textColor,
                     HorizontalTextAlignment=TextAlignment.Center,
                     VerticalTextAlignment=TextAlignment.Center
                 },
