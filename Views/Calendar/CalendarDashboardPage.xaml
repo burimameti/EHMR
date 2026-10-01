@@ -806,7 +806,7 @@
 
 									<controls:FFButton
 										Margin="0,6,0,0"
-										BackgroundColorEx="{StaticResource SidebarActiveBg}"
+										BackgroundColorEx="{StaticResource SparkButtonSecondaryBg}"
 										ButtonKind="Primary"
 										Command="{Binding CreateNewEncounterForSelectedDayCommand}"
 										FontFamily="FASolid"
