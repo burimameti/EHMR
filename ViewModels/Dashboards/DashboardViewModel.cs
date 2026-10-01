@@ -825,7 +825,7 @@ public partial class DashboardViewModel : ObservableObject
 
     [RelayCommand]
     private async Task NavigateToAlerts() =>
-        await Shell.Current.GoToAsync("notifications?filter=critical");
+        await Shell.Current.GoToAsync(AppRoutes.Encounters.List, new Dictionary<string, object> { ["statusFilter"] = "Active" });
 
     // ─── HYPERLINK in the patient grid → navigate to patient detail ──────────
     // row.Tag = DashboardPatientAggregate, so we cast and reuse SelectCommand logic.
