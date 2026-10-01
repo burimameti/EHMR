@@ -98,7 +98,7 @@ public class PatientService : IPatientService
             .Where(p =>
                 p.FirstName.Contains(term)||
                 p.LastName.Contains(term)||
-                p.NationalId.Contains(term)||
+                (p.NationalId!=null&&p.NationalId.Contains(term))||
                 p.SzboNumber.Contains(term)||
                 p.Phone.Contains(term))
             .OrderBy(p => p.LastName)
