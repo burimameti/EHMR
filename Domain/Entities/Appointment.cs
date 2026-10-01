@@ -61,7 +61,7 @@ public class Appointment : BaseEntity
     }
 
     public override string ToString() =>
-    $"{ScheduledStart:dd.MM.yyyy HH:mm} - {ReasonForVisit}";
+    $"{ScheduledStart:dd.MM.yyyy} - {ReasonForVisit}";
 }
 
 
