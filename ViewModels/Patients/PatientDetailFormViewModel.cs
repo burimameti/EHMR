@@ -449,11 +449,15 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
         }
 
-        if(string.IsNullOrWhiteSpace(Patient.NationalId)||Patient.NationalId.Length!=13)
+        if(!string.IsNullOrWhiteSpace(Patient.NationalId)&&Patient.NationalId.Length!=13)
         {
             await _userDialogService.ShowAlertAsync("Валидација", "ЕМБГ мора да содржи точно 13 цифри.", "OK");
             return;
         }
+
+        Patient.NationalId=string.IsNullOrWhiteSpace(Patient.NationalId)
+            ? null
+            : Patient.NationalId.Trim();
 
         Patient.SzboNumber=Patient.SzboNumber?.Trim()??string.Empty;
 
@@ -674,7 +678,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     {
         FirstName=string.Empty,
         LastName=string.Empty,
-        NationalId=string.Empty,
+        NationalId=null,
         SzboNumber=string.Empty,
         DoctorId=Guid.Empty,
         BirthDate=DateTime.Today.AddYears(-30),
