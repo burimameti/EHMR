@@ -12,10 +12,12 @@ namespace EHMR.Services;
 public class PatientService : IPatientService
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _factory;
+    private readonly IAuthorizationService _authorizationService;
 
-    public PatientService(IDbContextFactory<DesktopTherapyDbContext> factory)
+    public PatientService(IDbContextFactory<DesktopTherapyDbContext> factory, IAuthorizationService authorizationService)
     {
         _factory=factory;
+        _authorizationService=authorizationService;
     }
 
     // =====================================================
@@ -512,6 +514,15 @@ public class PatientService : IPatientService
 
             if(existing==null)
                 throw new KeyNotFoundException($"Patient {patientDto.Id} not found.");
+
+            if(existing.Status==PatientStatus.Inactive &&
+               patientDto.Status==PatientStatus.Active &&
+               !_authorizationService.HasRole(UserRole.Admin) &&
+               !_authorizationService.HasRole(UserRole.SuperAdmin))
+            {
+                throw new UnauthorizedAccessException(
+                    "Само администратор може да реактивира неактивен пациент.");
+            }
 
             CopyScalarFields(patientDto, existing);
 
