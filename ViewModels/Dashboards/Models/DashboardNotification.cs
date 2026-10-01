@@ -34,3 +34,18 @@ public sealed class DashboardAlertSummaryItem
         get; init;
     }
 }
+
+public sealed class DashboardAlertItem
+{
+    public Guid Id { get; init; }
+    public Guid PatientId { get; init; }
+    public string PatientName { get; init; } = "";
+    public string Message { get; init; } = "";
+    public string CreatedAtText { get; init; } = "";
+    public AlertLevel Level { get; init; }
+    public string LevelLabel => Level.ToLabel();
+    public string Icon => Level.ToIcon();
+    public Color AccentColor => Level.ToAccentColor();
+    public Color BackgroundColor => Level.ToBackgroundColor();
+    public ICommand? Command { get; init; }
+}
