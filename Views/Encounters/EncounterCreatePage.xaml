@@ -29,6 +29,12 @@
 				Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader
 					Title="Внесување на нов преглед"
+					PrimaryButtonCommand="{Binding SaveEncounterCommand}"
+					PrimaryButtonText="Зачувај"
+					SecondaryButtonCommand="{Binding CancelCommand}"
+					SecondaryButtonText="Откажи"
+					ShowPrimaryButton="True"
+					ShowSecondaryButton="True"
 					Subtitle="Внесете ги основните и медицинските детали за тековниот преглед" />
 			</Border>
 
@@ -382,10 +388,7 @@
 							</VerticalStackLayout>
 
 
-							<HorizontalStackLayout HorizontalOptions="Center" Spacing="10" Margin="0,14,0,8">
-								<Button BackgroundColor="{StaticResource SidebarActiveBg}" Command="{Binding SaveEncounterCommand}" HeightRequest="42" Style="{StaticResource TabButtonActiveStyle}" Text="Зачувај" TextColor="White" WidthRequest="150" />
-								<Button BackgroundColor="#475569" Command="{Binding CancelCommand}" HeightRequest="42" Style="{StaticResource TabButtonStyle}" Text="Откажи" TextColor="White" WidthRequest="150" />
-							</HorizontalStackLayout>
+							
 						</VerticalStackLayout>
 					</ScrollView>
 				</controls:FFSectionCard>
