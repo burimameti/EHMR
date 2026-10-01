@@ -40,7 +40,12 @@
 
 			<Picker ItemsSource="{Binding StatusFilters}" SelectedItem="{Binding SelectedStatus}" />
 
-			<Button Command="{Binding ClearFiltersCommand}" Text="Исчисти" />
+			<Button
+				BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
+				Command="{Binding ClearFiltersCommand}"
+				CornerRadius="6"
+				Text="Исчисти"
+				TextColor="White" />
 
 			<Button Command="{Binding AddCommand}" Text="Нов" />
 		</Grid>
