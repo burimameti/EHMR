@@ -811,7 +811,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
         if(SelectedReportType.Type==ReportType.Patients)
             BuildPatientReportPickers();
-        else
+        else if(SelectedReportType.Type!=ReportType.MedicineConsumption)
         {
             _statusPicker=MakePicker("Статус", new[] { "ИТНО / СИТЕ" }, StatusFilter.Label,
                 selected => StatusFilter=new ReportStatusOption { Label=selected });
@@ -1045,6 +1045,9 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             <body>
                 <h2>ИЗВЕШТАЈ: {SelectedReportType.Label}</h2>
                 <p>Опсег: {StartDate:dd.MM.yyyy} до {EndDate:dd.MM.yyyy}</p>
+                {(SelectedReportType.Type==ReportType.MedicineConsumption
+                    ? $"<div style='padding:12px 16px; margin-top:10px; background:#F0FDFA; border:1px solid #99F6E4;'><b>Калкулација за период</b><br/>Вкупно потрошена количина: <b>{AllItems.Sum(x => x.MedicineConsumptionValue):0.##}</b><br/>Опфатени различни лекови: <b>{AllItems.Count}</b><br/>Опфатени пациенти: <b>{AllItems.Sum(x => x.MedicinePatientCount)}</b></div>"
+                    : "")}
                 <table>
                     <thead>
                         <tr>
