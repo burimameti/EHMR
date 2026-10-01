@@ -54,7 +54,8 @@ namespace EHMR.Domain.Entities.Reports
             new() { Header = "СТАТУС", Key = "Status", Width = new GridLength(90) },
             new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(90) },
             new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(150) },
-            new() { Header = "СКОР", Key = "Score", Width = new GridLength(120) },
+            new() { Header = "ПОСЛЕДЕН СКОР", Key = "Score", Width = new GridLength(120) },
+            new() { Header = "ИСТОРИЈА НА СКОРОВИ", Key = "ScoreHistory", Width = GridLength.Star },
             new() { Header = "АДРЕСА", Key = "Address", Width = new GridLength(180) },
             new() { Header = "ГРАД", Key = "City", Width = new GridLength(90) },
             new() { Header = "КРЕИРАН НА", Key = "Created", Width = new GridLength(110) },
@@ -455,6 +456,7 @@ namespace EHMR.Domain.Entities.Reports
                         .OrderByDescending(x => x.RecordedAt)
                         .Select(x => x.ScoreText)
                         .FirstOrDefault() ?? "Нема скор",
+                    BuildScoreHistory(patient),
                     patient.Address ?? "-",
                     patient.City ?? "-",
                     patient.CreatedAt.ToString("dd.MM.yyyy"),
