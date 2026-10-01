@@ -484,7 +484,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                     HistoryDateValue=encounter.EncounterDate.ToString("dd.MM.yyyy"),
                     HistoryEncounterValue=encounter.Doctor?.FullName ?? patient.Doctor?.FullName ?? "",
                     HistoryScoreValue=score?.ScoreText ?? "",
-                    HistoryMedicineStatusValue=StatusLabel(encounter.Status)
+                    HistoryMedicineStatusValue=EncounterStatusLabel(encounter.Status)
                 });
                 continue;
             }
@@ -596,6 +596,15 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             ? $"{Math.Round((double)(Metric1Value-Metric2Value)/Metric1Value*100)}%"
             : "100%";
     }
+
+    private static string EncounterStatusLabel(EncounterStatus status) => status switch
+    {
+        EncounterStatus.Scheduled => "Закажан",
+        EncounterStatus.InProgress => "Во тек",
+        EncounterStatus.Completed => "Завршен",
+        EncounterStatus.Cancelled => "Откажан",
+        _ => status.ToString()
+    };
 
     private static string StatusLabel(AppointmentStatus status) => status switch
     {
