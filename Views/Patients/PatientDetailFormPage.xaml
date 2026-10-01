@@ -275,7 +275,17 @@
 				Grid.Row="0"
 				Margin="16,16,16,0"
 				Style="{StaticResource PageCardStyleDashboard}">
-				<controls:FFPageHeader Title="{Binding HeaderTitle}" Subtitle="Преглед и управување со податоците за пациентот" />
+				<controls:FFPageHeader Title="{Binding HeaderTitle}" Subtitle="Преглед и управување со податоците за пациентот}">
+								<controls:FFPageHeader.HeaderContent>
+									<controls:FFButton
+										ButtonKind="Secondary"
+										Command="{Binding GenerateClinicalReportCommand}"
+										ContentPadding="16,0"
+										HeightRequestEx="40"
+										IsVisible="{Binding IsNewPatient, Converter={StaticResource InverseBoolConverter}}"
+										Text="Печати / PDF" />
+								</controls:FFPageHeader.HeaderContent>
+							</controls:FFPageHeader>
 			</Border>
 
 			<!--  Една колона: формата, па историјата под неа  -->
