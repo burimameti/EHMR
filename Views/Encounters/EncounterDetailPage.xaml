@@ -106,25 +106,33 @@
 					Grid.Row="0"
 					Subtitle="{Binding Encounter.EncounterDate, StringFormat='Датум: {0:dd.MM.yyyy}'}">
 					<controls:FFPageHeader.HeaderContent>
-						<Border
-							Padding="14,0"
-							BackgroundColor="{Binding Encounter.Status, Converter={StaticResource StatusBgConverter}}"
-							HeightRequest="34"
-							StrokeShape="RoundRectangle 17"
-							StrokeThickness="0">
-							<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
-								<BoxView
-									CornerRadius="4"
-									HeightRequest="8"
-									WidthRequest="8"
-									Color="{Binding Encounter.Status, Converter={StaticResource StatusColorConverter}}" />
-								<Label
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="{Binding Encounter.Status, Converter={StaticResource StatusTextConverter}}"
-									TextColor="{Binding Encounter.Status, Converter={StaticResource StatusColorConverter}}" />
-							</HorizontalStackLayout>
-						</Border>
+						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+							<controls:FFButton
+								ButtonKind="Secondary"
+								Command="{Binding GenerateClinicalReportCommand}"
+								ContentPadding="16,0"
+								HeightRequestEx="40"
+								Text="Печати / PDF" />
+							<Border
+								Padding="14,0"
+								BackgroundColor="{Binding Encounter.Status, Converter={StaticResource StatusBgConverter}}"
+								HeightRequest="34"
+								StrokeShape="RoundRectangle 17"
+								StrokeThickness="0">
+								<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+									<BoxView
+										CornerRadius="4"
+										HeightRequest="8"
+										WidthRequest="8"
+										Color="{Binding Encounter.Status, Converter={StaticResource StatusColorConverter}}" />
+									<Label
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="{Binding Encounter.Status, Converter={StaticResource StatusTextConverter}}"
+										TextColor="{Binding Encounter.Status, Converter={StaticResource StatusColorConverter}}" />
+								</HorizontalStackLayout>
+							</Border>
+						</HorizontalStackLayout>
 					</controls:FFPageHeader.HeaderContent>
 				</controls:FFPageHeader>
 			</Border>
