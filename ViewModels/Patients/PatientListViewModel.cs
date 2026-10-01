@@ -400,6 +400,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             new() { Header = "ЕЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
 
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "FullName", Width = new GridLength(2.8, GridUnitType.Star) },
+            new() { Header = "БРЗ ПРИКАЗ", Key = "QuickPreview", CellType = SparkGridCellType.QuickPreview, Width = new GridLength(0.85, GridUnitType.Star) },
             new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.8, GridUnitType.Star) },
             new() { Header = "ВОЗРАСТ", Key = "Age", CellType = SparkGridCellType.Number, Width = new GridLength(0.9, GridUnitType.Star) },
             new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.5, GridUnitType.Star) },
@@ -418,6 +419,15 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             row["PatientNumber"]=p.PatientNumber;
             row["SzboNumber"]=p.SzboNumber;
             row["FullName"]=p.FullName;
+            row["QuickPreview"] = string.Join(Environment.NewLine, new[]
+            {
+                $"Име и презиме: {p.FullName}",
+                $"Статус: {p.Status.ToDisplay()}",
+                $"Контакт: {p.Phone}",
+                $"Итен контакт: {GetEmergencyContactText(p)}",
+                $"Адреса: {p.Address}",
+                $"Град: {p.City}"
+            });
             row["Gender"]=p.Gender.ToDisplay();
             row["Age"]=p.Age;
             row["Phone"]=p.Phone;
@@ -451,6 +461,19 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         GridRows=rows;
     }
 
+    private static string GetEmergencyContactText(Patient patient)
+    {
+        var name = patient.EmergencyContactName?.Trim();
+        var phone = patient.EmergencyContactPhone?.Trim();
+
+        if(string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(phone))
+            return "—";
+        if(string.IsNullOrWhiteSpace(name))
+            return phone!;
+        if(string.IsNullOrWhiteSpace(phone))
+            return name!;
+        return $"{name} ({phone})";
+    }
     private static SparkBadgeTone StatusToTone(PatientStatus status) => status switch
     {
         PatientStatus.Active => SparkBadgeTone.Success,
