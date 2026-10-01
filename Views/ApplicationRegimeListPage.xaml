@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
+    x:Name="PageRoot"
     x:Class="EHMR.Views.ApplicationRegimeListPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -28,16 +29,21 @@
 
             <Border Grid.Row="1" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 8">
                 <Grid RowDefinitions="42,*">
-                    <Grid ColumnDefinitions="90,*" BackgroundColor="#475569">
+                    <Grid ColumnDefinitions="90,*,120" BackgroundColor="#475569">
                         <Label Padding="10,0" Text="РЕЖИМ ID" FontAttributes="Bold" FontSize="10" TextColor="White" VerticalTextAlignment="Center" />
                         <Label Grid.Column="1" Padding="10,0" Text="РЕЖИМ" FontAttributes="Bold" FontSize="10" TextColor="White" VerticalTextAlignment="Center" />
+                        <Label Grid.Column="2" Padding="10,0" Text="ОПЦИИ" FontAttributes="Bold" FontSize="10" TextColor="White" VerticalTextAlignment="Center" />
                     </Grid>
                     <CollectionView Grid.Row="1" ItemsSource="{Binding Regimes}" SelectionMode="None">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Grid ColumnDefinitions="90,*" Padding="10,8">
+                                <Grid ColumnDefinitions="90,*,120" Padding="10,8">
                                     <Label Text="{Binding Id}" FontSize="11" TextColor="{StaticResource SparkTextMuted}" />
                                     <Label Grid.Column="1" Text="{Binding Regime}" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource SparkTextPrimary}" />
+                                    <HorizontalStackLayout Grid.Column="2" Spacing="6">
+                                        <Button Padding="10,0" BackgroundColor="{StaticResource SparkButtonSecondaryBg}" Command="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.EditCommand}" CommandParameter="{Binding .}" CornerRadius="6" FontSize="11" Text="Промени" TextColor="White" />
+                                        <Button Padding="10,0" BackgroundColor="#DC2626" Command="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding .}" CornerRadius="6" FontSize="11" Text="Избриши" TextColor="White" />
+                                    </HorizontalStackLayout>
                                 </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
