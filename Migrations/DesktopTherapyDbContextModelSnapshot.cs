@@ -815,7 +815,6 @@ namespace EHMR.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NationalId")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
