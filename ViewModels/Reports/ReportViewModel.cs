@@ -420,24 +420,9 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     }
 
     [RelayCommand]
-    private void BackToHub()
+    private async Task BackToHubAsync()
     {
-        IsShowingDetails=false;
-
-        if(_activeProvider!=null)
-            _activeProvider.FiltersChanged-=OnProviderFiltersChanged;
-
-        _activeProvider=null;
-        _activeReport=null;
-        ActiveReportTitle=string.Empty;
-        ActiveReportIcon=string.Empty;
-        ProcessedRows.Clear();
-
-        GridColumns.Clear();
-        GridRows.Clear();
-        Tabs.Clear();
-        Pickers.Clear();
-        Buttons.Clear();
+        await NavigationService.GoToAsync(AppRoutes.Reports.List);
     }
 
     [RelayCommand]
@@ -874,6 +859,96 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         return string.Join(" ", titleBuilder);
     }
+    [RelayCommand]
+    private async Task ExecuteReportGenerationAsync()
+    {
+        if(_activeProvider==null || IsBusy)
+            return;
+
+        var confirmed=await UserDialogService.ShowConfirmationAsync(
+            "Генерирање извештај",
+            "Генерирањето на извештајот може да трае до 30 секунди. По истекот на периодот автоматски ќе се генерираат PDF и Excel датотеките. Ве молиме не ја затворајте страницата додека трае процесот.",
+            "Генерирај",
+            "Откажи");
+
+        if(!confirmed)
+            return;
+
+        await ExecuteSafeAsync(async () =>
+        {
+            await Task.Delay(TimeSpan.FromSeconds(30));
+
+            if(_activeProvider==null)
+                return;
+
+            var rows=await _activeProvider.GenerateAsync(
+                StartDate.Date,
+                EndDate.Date.AddDays(1));
+
+            AllItems=rows;
+            ApplyPipeline();
+            CalculateMetrics();
+
+            var dynamicTitle=GetDynamicReportTitle();
+            var currentUser=string.IsNullOrWhiteSpace(UserName) ? "Систем" : UserName;
+            var exportRows=BuildExportRows();
+
+            var pdfPath=await _reportExportService.ExportToPdfAsync(
+                reportTitle: dynamicTitle,
+                insitutionName: "КЛИНИКА ЗА РЕУМАТОЛОГИЈА - СКОПЈЕ",
+                generatedBy: currentUser,
+                startDate: StartDate,
+                endDate: EndDate,
+                columns: GridColumns.ToList(),
+                rows: exportRows);
+
+            var excelPath=await _reportExportService.ExportToExcelAsync(
+                dynamicTitle,
+                GridColumns.ToList(),
+                exportRows);
+
+            var pdfInfo=new FileInfo(pdfPath);
+            var excelInfo=new FileInfo(excelPath);
+
+            await _reportHistoryService.AddAsync(new ReportHistory
+            {
+                ReportKey=_activeProvider.Key,
+                ReportTitle=dynamicTitle,
+                Format="PDF",
+                FileName=Path.GetFileName(pdfPath),
+                FilePath=pdfPath,
+                FileSize=pdfInfo.Length,
+                GeneratedBy=currentUser,
+                Success=true,
+                MachineName=Environment.MachineName,
+                StartDate=StartDate,
+                EndDate=EndDate
+            });
+
+            await _reportHistoryService.AddAsync(new ReportHistory
+            {
+                ReportKey=_activeProvider.Key,
+                ReportTitle=dynamicTitle,
+                Format="EXCEL",
+                FileName=Path.GetFileName(excelPath),
+                FilePath=excelPath,
+                FileSize=excelInfo.Length,
+                GeneratedBy=currentUser,
+                Success=true,
+                MachineName=Environment.MachineName,
+                StartDate=StartDate,
+                EndDate=EndDate
+            });
+
+            AddHistoryEntry("PDF + Excel", succeeded:true);
+
+            await UserDialogService.ShowAlertAsync(
+                "Извештајот е генериран",
+                "Извештајот е успешно генериран во PDF и Excel формат. Може да го видите во листата на извештаи.",
+                "ОК");
+        }, "Грешка при генерирање извештај");
+    }
+
     [RelayCommand]
     private async Task ExportToPdfAsync()
     {
