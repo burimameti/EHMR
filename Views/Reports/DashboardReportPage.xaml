@@ -71,6 +71,13 @@
 						Grid.Column="0"
 						Subtitle="Преглед, филтрирање и генерирање извештаи за пациенти" />
 
+					<sc:FFButton
+						Grid.Column="1"
+						ButtonKind="Secondary"
+						Command="{Binding BackToHubCommand}"
+						ContentPadding="16,0"
+						HeightRequestEx="40"
+						Text="Назад кон извештаи" />
 				</Grid>
 			</Border>
 
@@ -169,7 +176,7 @@
 										ContentPadding="16,0"
 										HeightRequestEx="45"
 										IsVisible="{Binding CanCreate}"
-										Text="🔄 Генерирај"
+										Text="Генерирај извештај"
 										TextColorEx="White" />
 								</Grid>
 							</sc:FFSectionCard>
