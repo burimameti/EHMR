@@ -826,13 +826,24 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
     private void BuildSparkGridColumns()
     {
-        if(SelectedReportType.Type==ReportType.Patients && IsPatientHistoryMode)
+        if(SelectedReportType.Type==ReportType.Patients && IsPatientHistoryMode && IsScoreHistoryMode)
         {
             GridColumns=new ObservableCollection<SparkGridColumn>
             {
                 new() { Header="ДАТУМ", Key="HistoryDate", Width=new GridLength(1.2, GridUnitType.Star) },
                 new() { Header="РЕУМАТОЛОГ", Key="HistoryEncounter", Width=new GridLength(2.0, GridUnitType.Star) },
-                new() { Header="СКОР", Key="HistoryScore", Width=new GridLength(1.2, GridUnitType.Star) },
+                new() { Header="СКОР", Key="HistoryScore", Width=new GridLength(1.2, GridUnitType.Star) }
+            };
+            return;
+        }
+
+        if(SelectedReportType.Type==ReportType.Patients && IsPatientHistoryMode)
+        {
+            GridColumns=new ObservableCollection<SparkGridColumn>
+            {
+                new() { Header="ДАТУМ", Key="HistoryDate", Width=new GridLength(1.0, GridUnitType.Star) },
+                new() { Header="ПРЕГЛЕД / РЕУМАТОЛОГ", Key="HistoryEncounter", Width=new GridLength(1.8, GridUnitType.Star) },
+                new() { Header="СКОР", Key="HistoryScore", Width=new GridLength(1.0, GridUnitType.Star) },
                 new() { Header="ЛЕК", Key="HistoryMedicine", Width=new GridLength(2.0, GridUnitType.Star) },
                 new() { Header="ДОЗА", Key="HistoryDosage", Width=new GridLength(1.3, GridUnitType.Star) },
                 new() { Header="ФРЕКВЕНЦИЈА", Key="HistoryFrequency", Width=new GridLength(1.5, GridUnitType.Star) },
@@ -870,7 +881,6 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             };
             return;
         }
-      
 
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
@@ -954,7 +964,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 </style>
             </head>
             <body>
-                <h2>ИЗВЕШТАЈ: {SelectedReportType.Label}</h2>
+                <h2>ИЗВЕШТАЈ: {(IsScoreHistoryMode ? "Историја на Скор" : SelectedReportType.Label)}</h2>
                 <p>Опсег: {StartDate:dd.MM.yyyy} до {EndDate:dd.MM.yyyy}</p>
                 {(SelectedReportType.Type==ReportType.MedicineConsumption
                     ? $"<div style='padding:12px 16px; margin-top:10px; background:#F0FDFA; border:1px solid #99F6E4;'><b>Калкулација за период</b><br/>Вкупно потрошена количина: <b>{AllItems.Sum(x => x.MedicineConsumptionValue):0.##}</b><br/>Опфатени различни лекови: <b>{AllItems.Count}</b><br/>Опфатени пациенти: <b>{AllItems.Sum(x => x.MedicinePatientCount)}</b></div>"
@@ -964,9 +974,11 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                         <tr>
                             {(SelectedReportType.Type==ReportType.MedicineConsumption
                                 ? "<th>ЛЕК</th><th>ВКУПНА ПОТРОШЕНА КОЛИЧИНА</th><th>ПАЦИЕНТИ</th><th>МКБ-10 КОД + ОПИС</th><th>ПЕРИОД</th>"
-                                : SelectedReportType.Type==ReportType.Patients
-                                    ? "<th>ПАЦИЕНТ</th><th>ЕЗБО</th><th>ПОЛ</th><th>ТЕЛЕФОН</th><th>ПОСЛ. СКОР</th><th>АДРЕСА</th><th>ГРАД</th><th>ЛЕК</th><th>ДИЈАГНОЗА</th>"
-                                    : $"<th>{Col1Header}</th><th>{Col2Header}</th><th>{Col3Header}</th><th>{Col4Header}</th><th>{Col5Header}</th>")}
+                                : IsScoreHistoryMode
+                                    ? "<th>ДАТУМ</th><th>РЕУМАТОЛОГ</th><th>СКОР</th>"
+                                    : SelectedReportType.Type==ReportType.Patients
+                                        ? "<th>ПАЦИЕНТ</th><th>ЕЗБО</th><th>ПОЛ</th><th>ТЕЛЕФОН</th><th>ПОСЛ. СКОР</th><th>АДРЕСА</th><th>ГРАД</th><th>ЛЕК</th><th>ДИЈАГНОЗА</th>"
+                                        : $"<th>{Col1Header}</th><th>{Col2Header}</th><th>{Col3Header}</th><th>{Col4Header}</th><th>{Col5Header}</th>")}
                         </tr>
                     </thead>
                     <tbody>";
@@ -974,7 +986,16 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             // Export exactly what is currently visible after patient/status/search filters.
             foreach(var item in FilteredItems)
             {
-                if(SelectedReportType.Type==ReportType.MedicineConsumption)
+                if(IsScoreHistoryMode)
+                {
+                    htmlBlueprint+=$@"
+                    <tr>
+                        <td><b>{item.HistoryDateValue}</b></td>
+                        <td>{item.HistoryEncounterValue}</td>
+                        <td>{item.HistoryScoreValue}</td>
+                    </tr>";
+                }
+                else if(SelectedReportType.Type==ReportType.MedicineConsumption)
                 {
                     htmlBlueprint+=$@"
                     <tr>
