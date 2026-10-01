@@ -358,21 +358,10 @@
 									</Border>
 								</VerticalStackLayout>
 							</Grid>
-
-
-							<!--  ── 4. ДЕТАЛИ ЗА ПРЕГЛЕДОТ ────────────────  -->
-							<VerticalStackLayout Spacing="12">
-
-								<controls:CrudSectionHeader Title="ДЕТАЛИ ЗА ПРЕГЛЕДОТ" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
-
+							<!-- ЗАКАЖУВАЊЕ НА СЛЕДЕН ТЕРМИН -->
+							<VerticalStackLayout Spacing="10">
+								<Label FontAttributes="Bold" FontSize="13" Text="ЗАКАЖУВАЊЕ НА СЛЕДЕН ТЕРМИН" TextColor="{StaticResource SparkTextPrimary}" />
 								<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-									<Label FontSize="11" Text="АВТОМАТСКИ ТЕРМИН" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
-									<Label Grid.Column="1" FontAttributes="Bold" FontSize="12" Text="{Binding AutomaticScheduleDisplay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
-								</Grid>
-								<Grid
-									Margin="0,6,0,0"
-									ColumnDefinitions="Auto,*"
-									ColumnSpacing="8">
 									<CheckBox IsChecked="{Binding ScheduleNextFollowUp, Mode=TwoWay}" VerticalOptions="Center" />
 									<Label
 										Grid.Column="1"
@@ -383,7 +372,6 @@
 										VerticalOptions="Center" />
 								</Grid>
 								<Grid
-									Margin="0,4,0,0"
 									ColumnDefinitions="1.2*,1*"
 									ColumnSpacing="8"
 									IsVisible="{Binding ScheduleNextFollowUp}">
@@ -406,24 +394,14 @@
 										Stroke="{StaticResource SparkBorderSubtle}"
 										StrokeShape="RoundRectangle 7"
 										StrokeThickness="1">
-										<VerticalStackLayout Grid.Column="1" Spacing="3">
-										<Label
-											FontSize="10"
-											Text="Периодично избирање"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Border
-											Padding="3,0"
-											BackgroundColor="White"
-											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeShape="RoundRectangle 7"
-											StrokeThickness="1">
+										<VerticalStackLayout Spacing="3">
+											<Label FontSize="10" Text="Периодично избирање" TextColor="{StaticResource SparkTextSecondary}" />
 											<Picker
 												Title="Брзо избирање"
 												FontSize="11"
 												ItemsSource="{Binding FollowUpIntervalOptions}"
 												SelectedItem="{Binding SelectedFollowUpInterval, Mode=TwoWay}" />
-										</Border>
-									</VerticalStackLayout>
+										</VerticalStackLayout>
 									</Border>
 								</Grid>
 							</VerticalStackLayout>
