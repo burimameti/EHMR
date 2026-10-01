@@ -43,6 +43,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
     public bool IsAdmin => _authorizationService.HasRole(UserRole.Admin) || _authorizationService.HasRole(UserRole.SuperAdmin);
     public bool CanReactivatePatient => IsAdmin && !_isNewPatientMode && Patient.Status==PatientStatus.Inactive;
+    public bool CanShowActiveStatusOption => _isNewPatientMode || Patient.Status!=PatientStatus.Inactive || IsAdmin;
 
     private bool _isOfferingDoctorCreation;
 
@@ -93,6 +94,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         }
         OnPropertyChanged(nameof(IsPatientInactive));
         OnPropertyChanged(nameof(CanReactivatePatient));
+        OnPropertyChanged(nameof(CanShowActiveStatusOption));
         OnPropertyChanged(nameof(Patient));
     }
 
@@ -415,11 +417,11 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
         }
 
-        if(!_isNewPatientMode&&Patient.Status==PatientStatus.Inactive)
+        if(!_isNewPatientMode&&Patient.Status==PatientStatus.Inactive&&!IsAdmin)
         {
             await _userDialogService.ShowAlertAsync(
                 "Пациентот е неактивен",
-                "Податоците за неактивен пациент се заклучени и не може да се менуваат.",
+                "Податоците за неактивен пациент се заклучени. Само администратор може да го реактивира пациентот.",
                 "ОК");
             return;
         }
