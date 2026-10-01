@@ -1105,9 +1105,9 @@
 																	HeightRequest="40"
 																	Stroke="{StaticResource SparkBorderSubtle}"
 																	StrokeThickness="1">
-																	<controls:FFPicker
+																	<controls:FFPicker2
 																		ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
-																		Placeholder="Избери начин"
+																		Placeholder="Изберете режим"
 																		SelectedItem="{Binding PatientMedicine.ApplicationRegime, Mode=TwoWay}" />
 																</Border>
 																<Border
