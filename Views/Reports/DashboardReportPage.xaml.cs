@@ -18,6 +18,14 @@ namespace EHMR.Views.Reports
         BindingContext=_vm;
         MenuHost.Content=_menu;
     }
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if(!_vm.IsShowingDetails)
+                await _vm.OpenPatientsReportAsync();
+        }
+
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
