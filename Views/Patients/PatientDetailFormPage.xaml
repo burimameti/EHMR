@@ -99,7 +99,7 @@
 						<Label
 							FontAttributes="Bold"
 							FontSize="12"
-							Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+							Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy}'}"
 							TextColor="{StaticResource SparkAccentTealDark}"
 							VerticalOptions="Center" />
 						<Label
