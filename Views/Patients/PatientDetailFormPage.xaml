@@ -601,7 +601,7 @@
 						<VerticalStackLayout Grid.Column="1" Spacing="10">
 							<controls:CrudSectionHeader Title="СТАТУС НА ПАЦИЕНТ" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
 							<HorizontalStackLayout HorizontalOptions="Start" Spacing="28">
-								<VerticalStackLayout Spacing="2">
+								<VerticalStackLayout IsVisible="{Binding CanShowActiveStatusOption}" Spacing="2">
 									<Label FontAttributes="Bold" FontSize="11" Text="Активен" TextColor="{StaticResource SparkAccentTealDark}" />
 									<HorizontalStackLayout Spacing="4">
 										<HorizontalStackLayout.GestureRecognizers>
