@@ -206,16 +206,24 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
             .Where(x => medicineIds.Contains(x.Id))
             .Select(x => x.Id)
             .ToListAsync(ct);
+
+        var regimes=await context.ApplicationRegimes
+            .Where(x => x.IsActive)
+            .ToListAsync(ct);
+
+        var oral=regimes.FirstOrDefault(x => x.Regime=="Орално")?.Id;
+        var subcutaneous=regimes.FirstOrDefault(x => x.Regime=="Поткожно")?.Id;
+
         if(availableMedicines.Count==0)
             return;
 
         var rows=new List<PatientMedicine>();
         if(availableMedicines.Contains(SeedIds.Med2))
-            rows.Add(PatientMedicine(Guid.Parse("00000000-0000-0000-0000-000000009001"), EncounterIds[0], SeedIds.Med2, DosesFrequency.TwiceDaily, "1 таблета од 400 mg", today.AddMonths(-8), today.AddMonths(-7), false, "По јадење, краткотрајно за болка."));
+            rows.Add(PatientMedicine(Guid.Parse("00000000-0000-0000-0000-000000009001"), EncounterIds[0], SeedIds.Med2, oral, DosesFrequency.TwiceDaily, "1 таблета од 400 mg", today.AddMonths(-8), today.AddMonths(-7), false, "По јадење, краткотрајно за болка."));
         if(availableMedicines.Contains(SeedIds.Med9))
-            rows.Add(PatientMedicine(Guid.Parse("00000000-0000-0000-0000-000000009002"), EncounterIds[1], SeedIds.Med9, DosesFrequency.Weekly, "7.5 mg еднаш неделно", today.AddMonths(-5), null, true, "Редовна контрола на крвна слика."));
+            rows.Add(PatientMedicine(Guid.Parse("00000000-0000-0000-0000-000000009002"), EncounterIds[1], SeedIds.Med9, subcutaneous, DosesFrequency.Weekly, "7.5 mg еднаш неделно", today.AddMonths(-5), null, true, "Редовна контрола на крвна слика."));
         if(availableMedicines.Contains(SeedIds.Med6))
-            rows.Add(PatientMedicine(Guid.Parse("00000000-0000-0000-0000-000000009003"), EncounterIds[3], SeedIds.Med6, DosesFrequency.Daily, "1 таблета од 5 mg", today.AddDays(-14), null, true, "Да се зема секое утро."));
+            rows.Add(PatientMedicine(Guid.Parse("00000000-0000-0000-0000-000000009003"), EncounterIds[3], SeedIds.Med6, oral, DosesFrequency.Daily, "1 таблета од 5 mg", today.AddDays(-14), null, true, "Да се зема секое утро."));
 
         var ids=rows.Select(x => x.Id).ToArray();
         var existingIds=await context.PatientMedicines
@@ -234,6 +242,7 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         Guid id,
         Guid encounterId,
         Guid medicineId,
+        Guid? applicationRegimeId,
         DosesFrequency frequency,
         string dosage,
         DateTime start,
@@ -245,6 +254,7 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         PatientId=SeedIds.Patient13,
         EncounterId=encounterId,
         MedicineId=medicineId,
+        ApplicationRegimeId=applicationRegimeId,
         DosesFrequency=frequency,
         Dosage=dosage,
         StartDate=start,
