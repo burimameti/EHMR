@@ -52,7 +52,7 @@ namespace EHMR.Domain.Entities.Reports
         public IEnumerable<SparkGridColumn> Columns =>
   [
       new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(220) },
-    new() { Header = "ДОКТОР", Key = "Doctor", Width = new GridLength(220) },
+    new() { Header = "РЕУМАТОЛОГ", Key = "Doctor", Width = new GridLength(220) },
     new() { Header = "ДИЈАГНОЗА", Key = "Diagnosis", Width = new GridLength(170) },
     new() { Header = "ЦИКЛУС", Key = "Cycle", Width = new GridLength(100) },
     new() { Header = "СТАРТ", Key = "Start", Width = new GridLength(110) },
@@ -98,7 +98,7 @@ namespace EHMR.Domain.Entities.Reports
         {
             _reasonPicker=CreatePicker("Причина", _selectedReasonFilter, x => _selectedReasonFilter=x);
             _patientPicker=CreatePicker("Пациент", _selectedPatientFilter, x => _selectedPatientFilter=x);
-            _doctorPicker=CreatePicker("Доктор", _selectedDoctorFilter, x => _selectedDoctorFilter=x);
+            _doctorPicker=CreatePicker("Реуматолог", _selectedDoctorFilter, x => _selectedDoctorFilter=x);
             _cityPicker=CreatePicker("Град", _selectedCityFilter, x => _selectedCityFilter=x);
             _cyclePicker=CreatePicker("Циклус", _selectedCycleFilter, x => _selectedCycleFilter=x);
             _genderPicker=CreatePicker("Пол", _selectedGenderFilter, x => _selectedGenderFilter=x);
