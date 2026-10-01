@@ -17,21 +17,21 @@ namespace EHMR.Domain.Entities.Reports
         private string _selectedStatusFilter = "Сите";
         private string _selectedAllergyFilter = "Сите";
         private string _selectedCityFilter = "Сите";
-        private string _selectedDoctorFilter = "Сите";
+        private string _selectedRheumatologistFilter = "Сите";
         private string _selectedDiagnosisFilter = "Сите";
         private string _selectedMedicineFilter = "Сите";
-        private string _selectedTherapyStatusFilter = "Сите";
         private string _selectedGenderFilter = "Сите";
+        private string _selectedScoreFilter = "Сите";
 
         private SparkTabItem? _allTab, _allergyTab, _activeTab, _inactiveTab;
 
         private SparkPickerItem? _statusPicker;
         private SparkPickerItem? _cityPicker;
-        private SparkPickerItem? _doctorPicker;
+        private SparkPickerItem? _rheumatologistPicker;
         private SparkPickerItem? _diagnosisPicker;
         private SparkPickerItem? _medicinePicker;
-        private SparkPickerItem? _therapyStatusPicker;
         private SparkPickerItem? _genderPicker;
+        private SparkPickerItem? _scorePicker;
 
         public event Action? FiltersChanged;
         private bool _refreshingPickers;
@@ -50,17 +50,14 @@ namespace EHMR.Domain.Entities.Reports
 
         public IEnumerable<SparkGridColumn> Columns =>
         [
-            new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(180) },
-            new() { Header = "СТАТУС", Key = "Status", Width = new GridLength(90) },
-            new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(90) },
-            new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(150) },
-            new() { Header = "ПОСЛЕДЕН СКОР", Key = "Score", Width = new GridLength(120) },
-            new() { Header = "ИСТОРИЈА НА СКОРОВИ", Key = "ScoreHistory", Width = GridLength.Star },
-            new() { Header = "АДРЕСА", Key = "Address", Width = new GridLength(180) },
-            new() { Header = "ГРАД", Key = "City", Width = new GridLength(90) },
-            new() { Header = "КРЕИРАН НА", Key = "Created", Width = new GridLength(110) },
-            new() { Header = "ЛЕКОВИ", Key = "Medicines", Width = new GridLength(150) },
-            new() { Header = "ДИЈАГНОЗА / АЛЕРГИИ", Key = "Medical", Width = GridLength.Star }
+            new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
+            new() { Header = "ЕЗБО", Key = "Szbo", Width = new GridLength(1.2, GridUnitType.Star) },
+            new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.3, GridUnitType.Star) },
+            new() { Header = "ПОСЛ. СКОР", Key = "Score", Width = new GridLength(1.1, GridUnitType.Star) },
+            new() { Header = "АДРЕСА", Key = "Address", Width = new GridLength(1.7, GridUnitType.Star) },
+            new() { Header = "ГРАД", Key = "City", Width = new GridLength(1.1, GridUnitType.Star) },
+            new() { Header = "ЛЕК", Key = "Medicine", Width = new GridLength(1.7, GridUnitType.Star) },
+            new() { Header = "ДИЈАГНОЗА", Key = "Diagnosis", Width = new GridLength(1.7, GridUnitType.Star) }
         ];
 
         public IEnumerable<SparkTabItem> BuildTabs()
@@ -112,10 +109,10 @@ namespace EHMR.Domain.Entities.Reports
                 _selectedCityFilter,
                 value => _selectedCityFilter=value);
 
-            _doctorPicker=CreatePicker(
-                "Доктор",
-                _selectedDoctorFilter,
-                value => _selectedDoctorFilter=value);
+            _rheumatologistPicker=CreatePicker(
+                "Реуматолог",
+                _selectedRheumatologistFilter,
+                value => _selectedRheumatologistFilter=value);
 
             _diagnosisPicker=CreatePicker(
                 "Дијагноза",
@@ -127,25 +124,25 @@ namespace EHMR.Domain.Entities.Reports
                 _selectedMedicineFilter,
                 value => _selectedMedicineFilter=value);
 
-            _therapyStatusPicker=CreatePicker(
-                "Статус на терапија",
-                _selectedTherapyStatusFilter,
-                value => _selectedTherapyStatusFilter=value);
-
             _genderPicker=CreatePicker(
                 "Пол",
                 _selectedGenderFilter,
                 value => _selectedGenderFilter=value);
 
+            _scorePicker=CreatePicker(
+                "Скор",
+                _selectedScoreFilter,
+                value => _selectedScoreFilter=value);
+
             return
             [
                 _statusPicker,
                 _cityPicker,
-                _doctorPicker,
+                _rheumatologistPicker,
                 _diagnosisPicker,
                 _medicinePicker,
-                _therapyStatusPicker,
-                _genderPicker
+                _genderPicker,
+                _scorePicker
             ];
         }
 
@@ -314,8 +311,8 @@ namespace EHMR.Domain.Entities.Reports
             RefreshPicker(_cityPicker,
                 patients.Select(x => x.City));
 
-            Debug.WriteLine($"[Patients]   - Doctor picker...");
-            RefreshPicker(_doctorPicker,
+            Debug.WriteLine($"[Patients]   - Rheumatologist picker...");
+            RefreshPicker(_rheumatologistPicker,
                 patients
                     .Where(x => x.Doctor!=null)
                     .Select(x => x.Doctor!.FullName));
@@ -334,18 +331,15 @@ namespace EHMR.Domain.Entities.Reports
                     .Where(x => x.Medicine!=null)
                     .Select(x => x.Medicine!.Name));
 
-            Debug.WriteLine($"[Patients]   - Therapy status picker...");
-            RefreshPicker(_therapyStatusPicker,
-                patients
-                    .SelectMany(x => x.TherapyCycles)
-                    .Where(x => x.Status.HasValue)
-                    .Select(x => x.Status!.Value.ToDisplay())
-                    .Distinct());
-
             Debug.WriteLine($"[Patients]   - Gender picker...");
             RefreshPicker(_genderPicker,
                 Enum.GetValues<Gender>()
-                    .Select(x => x.ToString()));
+                    .Select(x => x.ToDisplay()));
+
+            RefreshPicker(_scorePicker,
+                patients
+                    .SelectMany(x => x.Scores)
+                    .Select(x => x.ScoreText));
         }
 
         private IEnumerable<Patient> ApplyFilters(
@@ -383,10 +377,10 @@ namespace EHMR.Domain.Entities.Reports
                 Debug.WriteLine($"[Patients]   - City filter: {_selectedCityFilter}");
             }
 
-            if(_selectedDoctorFilter!="Сите")
+            if(_selectedRheumatologistFilter!="Сите")
             {
-                query=query.Where(x => x.Doctor?.FullName==_selectedDoctorFilter);
-                Debug.WriteLine($"[Patients]   - Doctor filter: {_selectedDoctorFilter}");
+                query=query.Where(x => x.Doctor?.FullName==_selectedRheumatologistFilter);
+                Debug.WriteLine($"[Patients]   - Rheumatologist filter: {_selectedRheumatologistFilter}");
             }
 
             if(_selectedDiagnosisFilter!="Сите")
@@ -410,18 +404,20 @@ namespace EHMR.Domain.Entities.Reports
                 Debug.WriteLine($"[Patients]   - Medicine filter: {_selectedMedicineFilter} ({from:dd.MM.yyyy} - {to:dd.MM.yyyy})");
             }
 
-            if(_selectedTherapyStatusFilter!="Сите"&&
-                Enum.TryParse<TherapyStatus>(_selectedTherapyStatusFilter, out var therapyStatus))
-            {
-                query=query.Where(x => x.TherapyCycles.Any(tc => tc.Status==therapyStatus));
-                Debug.WriteLine($"[Patients]   - Therapy status filter: {_selectedTherapyStatusFilter}");
-            }
-
             if(_selectedGenderFilter!="Сите"&&
                 Enum.TryParse<Gender>(_selectedGenderFilter, out var gender))
             {
                 query=query.Where(x => x.Gender==gender);
                 Debug.WriteLine($"[Patients]   - Gender filter: {_selectedGenderFilter}");
+            }
+
+            if(_selectedScoreFilter!="Сите")
+            {
+                query=query.Where(x => x.Scores
+                    .OrderByDescending(s => s.RecordedAt)
+                    .Select(s => s.ScoreText)
+                    .FirstOrDefault()==_selectedScoreFilter);
+                Debug.WriteLine($"[Patients]   - Score filter: {_selectedScoreFilter}");
             }
 
             return query;
@@ -437,19 +433,16 @@ namespace EHMR.Domain.Entities.Reports
                 Cells=
                 [
                     patient.FullName ?? "-",
-                    patient.Status.ToDisplay(),
-                    patient.Gender.ToDisplay(),
+                    patient.SzboNumber ?? "-",
                     patient.Phone ?? "-",
                     patient.Scores
                         .OrderByDescending(x => x.RecordedAt)
                         .Select(x => x.ScoreText)
                         .FirstOrDefault() ?? "Нема скор",
-                    BuildScoreHistory(patient),
                     patient.Address ?? "-",
                     patient.City ?? "-",
-                    patient.CreatedAt.ToString("dd.MM.yyyy"),
                     BuildMedicinesInfo(patient, from, to),
-                    BuildMedicalInfo(patient)
+                    BuildDiagnosisInfo(patient)
                 ],
                 IsAlertSeverity=hasAllergy||hasMissedTherapy
             };
@@ -497,6 +490,18 @@ namespace EHMR.Domain.Entities.Reports
             var result=string.Join(", ", medicines);
 
             return string.IsNullOrWhiteSpace(result) ? "Нема лекови" : result;
+        }
+
+        private static string BuildDiagnosisInfo(Patient patient)
+        {
+            if(patient.Diagnoses==null || patient.Diagnoses.Count==0)
+                return "Нема дијагноза";
+
+            return string.Join(", ",
+                patient.Diagnoses
+                    .Where(x => x.Mkb10Code!=null)
+                    .Select(x => x.Mkb10Code!.Code)
+                    .Distinct());
         }
 
         private static string BuildMedicalInfo(Patient patient)
