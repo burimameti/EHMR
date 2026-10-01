@@ -146,6 +146,9 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [ObservableProperty] private ObservableCollection<Diagnosis> patientDiagnosisHistory = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> patientMedicinesHistory = new();
 
+    public IEnumerable<PatientMedicine> PreviousMedicinesHistory =>
+        PatientMedicinesHistory.Where(x => !x.IsActive).OrderByDescending(x => x.StartDate);
+
     // =========================
     // UI STATE
     // =========================
@@ -439,7 +442,10 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
         PatientDiagnosisHistory=new ObservableCollection<Diagnosis>(ctx.Diagnoses);
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
-        SelectedMedicines=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
+        OnPropertyChanged(nameof(PreviousMedicinesHistory));
+        SelectedMedicines=IsNewAppointment
+            ? new ObservableCollection<PatientMedicine>()
+            : new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
 
         SelectedPatientForAppointment=PatientsList.FirstOrDefault(x => x.Id==Appointment.PatientId);
         SelectedDoctorForAppointment=DoctorsList.FirstOrDefault(x => x.Id==Appointment.DoctorId);
@@ -492,6 +498,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             AppointmentHistory=new ObservableCollection<Appointment>();
             PatientDiagnosisHistory=new ObservableCollection<Diagnosis>();
             PatientMedicinesHistory=new ObservableCollection<PatientMedicine>();
+            OnPropertyChanged(nameof(PreviousMedicinesHistory));
             SelectedMedicines=new ObservableCollection<PatientMedicine>();
             VisibleTherapies=new ObservableCollection<TherapyCycle>();
             SelectedTherapyCycle=null;
@@ -529,7 +536,10 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
         PatientDiagnosisHistory=new ObservableCollection<Diagnosis>(ctx.Diagnoses);
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
-        SelectedMedicines=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
+        OnPropertyChanged(nameof(PreviousMedicinesHistory));
+        SelectedMedicines=IsNewAppointment
+            ? new ObservableCollection<PatientMedicine>()
+            : new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
         VisibleTherapies=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
         SelectedTherapyCycle=VisibleTherapies.FirstOrDefault();
 

@@ -417,24 +417,8 @@
 								<Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="14">
 
 									<!--  Scheduling horizon + auto slot (new only)  -->
-									<Grid
-										Grid.Row="0"
-										ColumnDefinitions="*,1.4*"
-										ColumnSpacing="20"
-										IsVisible="{Binding IsNewAppointment}">
-										<VerticalStackLayout Spacing="6">
-											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Период за закажување" />
-											<controls:FFPicker ItemsSource="{Binding SchedulingHorizonOptions}" SelectedItem="{Binding SelectedSchedulingHorizon, Mode=TwoWay}" />
-										</VerticalStackLayout>
-										<VerticalStackLayout Grid.Column="1" Spacing="6">
-											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Автоматски слободен термин" />
-											<Border Style="{StaticResource DetailValueSurfaceStyle}">
-												<Label Style="{StaticResource InfoPillTextStyle}" Text="{Binding AutomaticSlotText}" />
-											</Border>
-										</VerticalStackLayout>
-									</Grid>
-
-									<!--  Date + Time  -->
+									<!-- Автоматскиот слободен термин намерно не се прикажува. -->
+									<!-- Date + Time -->
 									<Grid
 										Grid.Row="1"
 										ColumnDefinitions="1.4*,1*"
@@ -690,6 +674,25 @@
 
 								</Grid>
 
+								<!--  ИСТОРИЈА НА ПРЕТХОДНИ ЛЕКОВИ  -->
+								<VerticalStackLayout Margin="0,14,0,0" Spacing="8">
+									<Label FontAttributes="Bold" FontSize="11" Text="Историја на претходни лекови" TextColor="{StaticResource SparkTextSecondary}" />
+									<VerticalStackLayout BindableLayout.ItemsSource="{Binding PreviousMedicinesHistory}" Spacing="1">
+										<BindableLayout.EmptyView>
+											<Label FontSize="12" Text="Нема претходни лекови." TextColor="{StaticResource SparkTextSecondary}" />
+										</BindableLayout.EmptyView>
+										<BindableLayout.ItemTemplate>
+											<DataTemplate x:DataType="entities:PatientMedicine">
+												<Grid ColumnDefinitions="*,80,100" ColumnSpacing="1">
+													<Border Padding="8,7" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="11.5" Text="{Binding Medicine.Name, TargetNullValue='Непознат лек'}" TextColor="{StaticResource SparkTextPrimary}" /></Border>
+													<Border Grid.Column="1" Padding="6,7" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="11" Text="{Binding Dosage}" TextColor="{StaticResource SparkTextPrimary}" /></Border>
+													<Border Grid.Column="2" Padding="6,7" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="10.5" Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkTextSecondary}" /></Border>
+												</Grid>
+											</DataTemplate>
+										</BindableLayout.ItemTemplate>
+									</VerticalStackLayout>
+								</VerticalStackLayout>
+
 								<!--  ═══ READ-ONLY MODE: full-width data table ═══  -->
 								<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="0">
 
@@ -857,7 +860,7 @@
 											Margin="0,0,0,8"
 											FontAttributes="Bold"
 											FontSize="11"
-											Text="Доделени лекови"
+											Text="ТЕКОВЕН ЛЕК"
 											TextColor="{StaticResource SparkTextSecondary}" />
 
 										<!--  Table header  -->
