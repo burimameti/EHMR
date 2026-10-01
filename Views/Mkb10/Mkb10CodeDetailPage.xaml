@@ -185,14 +185,14 @@
 							<Label
 								Grid.Row="1"
 								Grid.Column="1"
-								Text="{Binding Mkb10Code.CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
+								Text="{Binding Mkb10Code.CreatedAt, StringFormat='{0:dd.MM.yyyy}'}" />
 
 							<Label Grid.Row="2" Text="Updated" />
 
 							<Label
 								Grid.Row="2"
 								Grid.Column="1"
-								Text="{Binding Mkb10Code.UpdatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
+								Text="{Binding Mkb10Code.UpdatedAt, StringFormat='{0:dd.MM.yyyy}'}" />
 
 						</Grid>
 
