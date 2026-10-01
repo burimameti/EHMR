@@ -110,7 +110,16 @@
 					SecondaryButtonText="Откажи"
 					ShowPrimaryButton="True"
 					ShowSecondaryButton="True"
-					Subtitle="Додавање МКБ дијагнози, забелешки и лекови за пациентот" />
+					Subtitle="Додавање МКБ дијагнози, забелешки и лекови за пациентот">
+					<controls:FFPageHeader.HeaderContent>
+						<controls:FFButton
+							ButtonKind="Secondary"
+							Command="{Binding GenerateClinicalReportCommand}"
+							ContentPadding="16,0"
+							HeightRequestEx="40"
+							Text="Печати / PDF" />
+					</controls:FFPageHeader.HeaderContent>
+				</controls:FFPageHeader>
 			</Border>
 			<!--  MAIN PANEL  -->
 
