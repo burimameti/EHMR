@@ -368,8 +368,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         try
         {
             var path=await _clinicalReportService.GeneratePdfAsync(
-                Patient.Id,
-                title=$"Детален извештај - {Patient.FirstName} {Patient.LastName}");
+                Patient.Id,null,null,
+                $"Детален извештај - {Patient.FirstName} {Patient.LastName}");
 
             await Launcher.Default.OpenAsync(new OpenFileRequest(
                 Path.GetFileName(path),

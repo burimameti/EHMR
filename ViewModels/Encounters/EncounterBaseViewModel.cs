@@ -230,8 +230,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     partial void OnPrescriptionTabChanged(PrescriptionTabFilter value) => OnPropertyChanged(nameof(FilteredPrescriptions));
 
     // ===================== FILTERED (COMPUTED) VIEWS =====================
-    [ObservableProperty]
-    private ObservableCollection<ApplicationRegime> applicationRegimeOptions = new();
+    //[ObservableProperty]
+    //private ObservableCollection<ApplicationRegime> applicationRegimeOptions = new();
 
     public string CurrentDiagnosesSummary => string.Join(", ", PatientDiagnoses
         .Where(x => x.Mkb10Code!=null)

@@ -36,9 +36,9 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         {
             var path=await _clinicalReportService.GeneratePdfAsync(
                 Encounter.PatientId,
-                encounterId=Encounter.Id,
-                appointmentId=Encounter.AppointmentId,
-                title=$"Детален извештај - {SelectedPatient?.FullName ?? "Пациент"}");
+                Encounter.Id,
+                Encounter.AppointmentId,
+                    $"Детален извештај - {SelectedPatient?.FullName??"Пациент"}");
 
             await Launcher.Default.OpenAsync(new OpenFileRequest(
                 System.IO.Path.GetFileName(path),

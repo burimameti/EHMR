@@ -8,9 +8,9 @@
 
 	<Grid
 		HorizontalOptions="Fill"
-		VerticalOptions="Center"
 		RowDefinitions="Auto,Auto"
-		RowSpacing="4">
+		RowSpacing="4"
+		VerticalOptions="Center">
 
 		<Label
 			CharacterSpacing=".5"
@@ -26,10 +26,10 @@
 			BackgroundColor="White"
 			HeightRequest="36"
 			HorizontalOptions="Fill"
-			VerticalOptions="Center"
 			Stroke="{StaticResource Gray300}"
 			StrokeShape="RoundRectangle 6"
-			StrokeThickness="1">
+			StrokeThickness="1"
+			VerticalOptions="Center">
 
 			<Grid
 				Padding="10,0"
@@ -38,11 +38,17 @@
 				HorizontalOptions="Fill"
 				VerticalOptions="Center">
 
-				<Label Grid.Column="0" FontFamily="FASolid" FontSize="12"
-					Text="&#xf002;" TextColor="{StaticResource Gray500}"
+				<Label
+					Grid.Column="0"
+					FontFamily="FASolid"
+					FontSize="12"
+					Text="&#xf002;"
+					TextColor="{StaticResource Gray500}"
 					VerticalOptions="Center" />
 
-				<Entry Grid.Column="1" Margin="8,0,0,0"
+				<Entry
+					Grid.Column="1"
+					Margin="8,0,0,0"
 					BackgroundColor="Transparent"
 					Completed="OnEntryCompleted"
 					FontSize="12"
@@ -54,8 +60,10 @@
 					TextColor="{StaticResource Gray900}"
 					VerticalOptions="Center" />
 
-				<Label Grid.Column="2"
-					FontAttributes="Bold" FontSize="11"
+				<Label
+					Grid.Column="2"
+					FontAttributes="Bold"
+					FontSize="11"
 					IsVisible="{Binding Hint, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
 					LineBreakMode="TailTruncation"
 					Text="{Binding Hint, Source={x:Reference Root}}"
