@@ -302,7 +302,7 @@ public partial class AdminDashboardViewModel : ObservableObject
 
         Cards[3].Value=
             backupDate?
-            .ToString("dd.MM.yyyy HH:mm")
+            .ToString("dd.MM.yyyy")
             ??
             "Нема";
 
