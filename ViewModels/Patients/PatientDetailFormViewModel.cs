@@ -945,25 +945,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             ApplicationRegimeOptions=new ObservableCollection<string>(
                 regimes.Select(x => x.Regime));
 
-            // Стандардни режими за терапијата на пациентот.
-            // Ако веќе постојат во базата, не се додаваат повторно.
-            foreach(var regime in new[]
-            {
-                "Неделно",
-                "На две недели",
-                "На три недели",
-                "Месечно",
-                "На 3 месеци",
-                "На 6 месеци",
-                "Годишно"
-            })
-            {
-                if(!ApplicationRegimeOptions.Any(x =>
-                    string.Equals(x, regime, StringComparison.OrdinalIgnoreCase)))
-                {
-                    ApplicationRegimeOptions.Add(regime);
-                }
-            }
+            // The database registry is the single source of truth for application methods.
         }
         catch(Exception ex)
         {
@@ -978,27 +960,38 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task AddApplicationRegimeAsync()
     {
-        var value = (NewApplicationRegimeText??string.Empty).Trim();
+        var value=await _userDialogService.ShowPromptAsync(
+            "Нов начин на апликација",
+            "Внесете нов начин на апликација за лекот.",
+            "Додај",
+            "Откажи",
+            "Пример: Поткожно");
+
         if(string.IsNullOrWhiteSpace(value))
-        {
-            await _userDialogService.ShowAlertAsync("Режим на апликација", "Внесете режим на апликација.", "ОК");
             return;
-        }
 
         try
         {
-            var regime = await _patientService.AddApplicationRegimeAsync(value);
-            if(!_applicationRegimes.Any(x => x.Id==regime.Id))
-                _applicationRegimes.Add(regime);
-            if(!ApplicationRegimeOptions.Contains(regime.Regime))
-                ApplicationRegimeOptions.Add(regime.Regime);
+            var regime=await _patientService.AddApplicationRegimeAsync(value.Trim());
+            await LoadApplicationRegimesAsync();
 
-            NewApplicationRegimeText=string.Empty;
+            await _userDialogService.ShowAlertAsync(
+                "Успешно",
+                $"Начинот „{regime.Regime}“ е додаден и достапен во изборот.",
+                "ОК");
         }
         catch(Exception ex)
         {
-            await _userDialogService.ShowAlertAsync("Грешка", $"Режимот не може да се зачува: {ex.Message}", "ОК");
+            await _userDialogService.ShowAlertAsync("Грешка", $"Начинот не може да се зачува: {ex.Message}", "ОК");
         }
+    }
+
+    private async Task EnsureApplicationRegimeExistsAsync()
+    {
+        if(ApplicationRegimeOptions.Count>0)
+            return;
+
+        await AddApplicationRegimeAsync();
     }
 
     [RelayCommand]
@@ -1050,6 +1043,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         };
 
         AttachedMedicines.Add(new AttachedMedicineRow(patientMedicine));
+
+        if(ApplicationRegimeOptions.Count==0)
+            _=EnsureApplicationRegimeExistsAsync();
 
         MedicineSearchText=string.Empty;
         MedicineResults.Clear();
