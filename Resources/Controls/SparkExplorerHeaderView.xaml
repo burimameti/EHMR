@@ -114,10 +114,9 @@
 				<HorizontalStackLayout
 					x:Name="PickerLayout"
 					Grid.Column="2"
-					VerticalOptions="Center"
 					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
 					Spacing="8"
-					VerticalOptions="Start">
+					VerticalOptions="Center">
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkPickerItem">
 							<sc:FFPicker

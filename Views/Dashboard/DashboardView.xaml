@@ -269,8 +269,10 @@
 						-->
 						<!--  ===================================================  -->
 						<controls:FFSectionCard>
-							<!-- Five KPI cards share the complete row; they no longer use fixed
-							     widths or a horizontal strip that leaves empty space on the right. -->
+							<!--
+								Five KPI cards share the complete row; they no longer use fixed
+								widths or a horizontal strip that leaves empty space on the right.
+							-->
 							<HorizontalStackLayout
 								BindableLayout.ItemsSource="{Binding Kpis}"
 								HorizontalOptions="Fill"
@@ -278,11 +280,10 @@
 								<BindableLayout.ItemTemplate>
 									<DataTemplate x:DataType="admin:FFMetricTileItem">
 										<Border
-											HorizontalOptions="FillAndExpand"
 											Padding="12,8"
 											BackgroundColor="White"
 											HeightRequest="72"
-											HorizontalOptions="Fill"
+											HorizontalOptions="FillAndExpand"
 											Stroke="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
 											StrokeShape="RoundRectangle 12"
 											StrokeThickness="1.5">
@@ -355,25 +356,61 @@
 						<controls:FFSectionCard IsVisible="{Binding State.HasAnyAlerts}">
 							<VerticalStackLayout Spacing="10">
 								<Grid ColumnDefinitions="*,Auto">
-									<Label FontAttributes="Bold" FontSize="15" Text="ПРЕДУПРЕДУВАЊА" TextColor="{StaticResource SparkTextPrimary}" />
-									<Label Grid.Column="1" FontAttributes="Bold" FontSize="12" Text="{Binding State.ActiveAlerts.Count, StringFormat='Активни: {0}'}" TextColor="{StaticResource SparkTextSecondary}" />
+									<Label
+										FontAttributes="Bold"
+										FontSize="15"
+										Text="ПРЕДУПРЕДУВАЊА"
+										TextColor="{StaticResource SparkTextPrimary}" />
+									<Label
+										Grid.Column="1"
+										FontAttributes="Bold"
+										FontSize="12"
+										Text="{Binding State.ActiveAlerts.Count, StringFormat='Активни: {0}'}"
+										TextColor="{StaticResource SparkTextSecondary}" />
 								</Grid>
 								<VerticalStackLayout BindableLayout.ItemsSource="{Binding State.ActiveAlerts}" Spacing="6">
 									<BindableLayout.ItemTemplate>
 										<DataTemplate x:DataType="dash:DashboardAlertItem">
-											<Border Padding="10,8" BackgroundColor="{Binding BackgroundColor}" Stroke="{Binding AccentColor}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
+											<Border
+												Padding="10,8"
+												BackgroundColor="{Binding BackgroundColor}"
+												Stroke="{Binding AccentColor}"
+												StrokeShape="RoundRectangle 8"
+												StrokeThickness="1">
 												<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-													<Label FontFamily="FASolid" FontSize="17" Text="{Binding Icon}" TextColor="{Binding AccentColor}" VerticalOptions="Center" />
+													<Label
+														FontFamily="FASolid"
+														FontSize="17"
+														Text="{Binding Icon}"
+														TextColor="{Binding AccentColor}"
+														VerticalOptions="Center" />
 													<VerticalStackLayout Grid.Column="1" Spacing="2">
-														<Label FontAttributes="Bold" FontSize="11.5" Text="{Binding PatientName}" TextColor="{StaticResource SparkTextPrimary}" />
-														<Label FontSize="10.5" LineBreakMode="WordWrap" Text="{Binding Message}" TextColor="{StaticResource SparkTextSecondary}" />
-														<Label FontSize="9" Text="{Binding CreatedAtText}" TextColor="{StaticResource SparkTextMuted}" />
+														<Label
+															FontAttributes="Bold"
+															FontSize="11.5"
+															Text="{Binding PatientName}"
+															TextColor="{StaticResource SparkTextPrimary}" />
+														<Label
+															FontSize="10.5"
+															LineBreakMode="WordWrap"
+															Text="{Binding Message}"
+															TextColor="{StaticResource SparkTextSecondary}" />
+														<Label
+															FontSize="9"
+															Text="{Binding CreatedAtText}"
+															TextColor="{StaticResource SparkTextMuted}" />
 													</VerticalStackLayout>
-													<Label Grid.Column="2" FontAttributes="Bold" FontSize="10" Text="{Binding LevelLabel}" TextColor="{Binding AccentColor}" VerticalOptions="Center" />
+													<Label
+														Grid.Column="2"
+														FontAttributes="Bold"
+														FontSize="10"
+														Text="{Binding LevelLabel}"
+														TextColor="{Binding AccentColor}"
+														VerticalOptions="Center" />
 												</Grid>
 											</Border>
-									</DataTemplate>
-								</BindableLayout.ItemTemplate>
+										</DataTemplate>
+									</BindableLayout.ItemTemplate>
 								</VerticalStackLayout>
 							</VerticalStackLayout>
 						</controls:FFSectionCard>

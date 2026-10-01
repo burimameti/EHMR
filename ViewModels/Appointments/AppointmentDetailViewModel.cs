@@ -84,7 +84,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         try
         {
             var path=await _clinicalReportService.GeneratePdfAsync(
-                Appointment.PatientId,Appointment.Encounter.Id,
+                Appointment.PatientId,null,
                 Appointment.Id,
                 $"Детален извештај - {SelectedPatientForAppointment?.FullName ?? "Пациент"}");
 
