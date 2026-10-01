@@ -20,6 +20,80 @@
 			<converters:EncounterStatusChipBackgroundConverter x:Key="EncounterStatusChipBg" />
 			<converters:EncounterStatusChipTextConverter x:Key="EncounterStatusChipFg" />
 			<converters:EncounterStatusChipLabelConverter x:Key="EncounterStatusChipLabel" />
+<DataTemplate x:Key="DashboardKpiTemplate" x:DataType="admin:FFMetricTileItem">
+
+										<Border
+											Padding="12,8"
+											BackgroundColor="White"
+											HeightRequest="72"
+											HorizontalOptions="FillAndExpand"
+											Stroke="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+											StrokeShape="RoundRectangle 12"
+											StrokeThickness="1.5">
+											<Grid
+												ColumnDefinitions="Auto,*,Auto"
+												ColumnSpacing="8"
+												RowDefinitions="Auto,Auto"
+												RowSpacing="3">
+												<Border
+													Grid.RowSpan="2"
+													BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+													HeightRequest="30"
+													StrokeShape="RoundRectangle 8"
+													StrokeThickness="0"
+													VerticalOptions="Start"
+													WidthRequest="30">
+													<Label
+														FontFamily="FASolid"
+														FontSize="12"
+														HorizontalOptions="Center"
+														Text="{Binding Icon}"
+														TextColor="White"
+														VerticalOptions="Center" />
+												</Border>
+												<Label
+													Grid.Column="1"
+													FontAttributes="Bold"
+													FontSize="9"
+													LineBreakMode="TailTruncation"
+													MaxLines="1"
+													Text="{Binding Title}"
+													TextColor="{StaticResource SubtitleColor}"
+													VerticalOptions="Center" />
+												<Label
+													Grid.Column="2"
+													FontAttributes="Bold"
+													FontSize="19"
+													Text="{Binding Value}"
+													TextColor="{StaticResource TitleColor}"
+													VerticalOptions="Center" />
+												<Border
+													Grid.Row="1"
+													Grid.Column="1"
+													Grid.ColumnSpan="2"
+													Padding="8,4"
+													BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+													HorizontalOptions="Fill"
+													MinimumHeightRequest="28"
+													StrokeThickness="0">
+													<Border.StrokeShape>
+														<RoundRectangle CornerRadius="8" />
+													</Border.StrokeShape>
+													<Border.GestureRecognizers>
+														<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
+													</Border.GestureRecognizers>
+													<Label
+														FontAttributes="Bold"
+														FontSize="10"
+														HorizontalTextAlignment="Center"
+														Text="Повеќе  ›"
+														TextColor="White" />
+												</Border>
+											</Grid>
+										</Border>
+									
+							</DataTemplate>
+
 			<Style
 				x:Key="DashboardSummaryCard"
 				BasedOn="{StaticResource PageCardStyleDashboard}"
@@ -269,89 +343,14 @@
 						-->
 						<!--  ===================================================  -->
 						<controls:FFSectionCard>
-							<!--
-								Five KPI cards share the complete row; they no longer use fixed
-								widths or a horizontal strip that leaves empty space on the right.
-							-->
-							<HorizontalStackLayout
-								BindableLayout.ItemsSource="{Binding Kpis}"
-								HorizontalOptions="Fill"
-								Spacing="10">
-								<BindableLayout.ItemTemplate>
-									<DataTemplate x:DataType="admin:FFMetricTileItem">
-										<Border
-											Padding="12,8"
-											BackgroundColor="White"
-											HeightRequest="72"
-											HorizontalOptions="FillAndExpand"
-											Stroke="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
-											StrokeShape="RoundRectangle 12"
-											StrokeThickness="1.5">
-											<Grid
-												ColumnDefinitions="Auto,*,Auto"
-												ColumnSpacing="8"
-												RowDefinitions="Auto,Auto"
-												RowSpacing="3">
-												<Border
-													Grid.RowSpan="2"
-													BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
-													HeightRequest="30"
-													StrokeShape="RoundRectangle 8"
-													StrokeThickness="0"
-													VerticalOptions="Start"
-													WidthRequest="30">
-													<Label
-														FontFamily="FASolid"
-														FontSize="12"
-														HorizontalOptions="Center"
-														Text="{Binding Icon}"
-														TextColor="White"
-														VerticalOptions="Center" />
-												</Border>
-												<Label
-													Grid.Column="1"
-													FontAttributes="Bold"
-													FontSize="9"
-													LineBreakMode="TailTruncation"
-													MaxLines="1"
-													Text="{Binding Title}"
-													TextColor="{StaticResource SubtitleColor}"
-													VerticalOptions="Center" />
-												<Label
-													Grid.Column="2"
-													FontAttributes="Bold"
-													FontSize="19"
-													Text="{Binding Value}"
-													TextColor="{StaticResource TitleColor}"
-													VerticalOptions="Center" />
-												<Border
-													Grid.Row="1"
-													Grid.Column="1"
-													Grid.ColumnSpan="2"
-													Padding="8,4"
-													BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
-													HorizontalOptions="Fill"
-													MinimumHeightRequest="28"
-													StrokeThickness="0">
-													<Border.StrokeShape>
-														<RoundRectangle CornerRadius="8" />
-													</Border.StrokeShape>
-													<Border.GestureRecognizers>
-														<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
-													</Border.GestureRecognizers>
-													<Label
-														FontAttributes="Bold"
-														FontSize="10"
-														HorizontalTextAlignment="Center"
-														Text="Повеќе  ›"
-														TextColor="White" />
-												</Border>
-											</Grid>
-										</Border>
-									</DataTemplate>
-								</BindableLayout.ItemTemplate>
-							</HorizontalStackLayout>
-						</controls:FFSectionCard>
+							<Grid ColumnDefinitions="*,*,*,*,*" ColumnSpacing="10" HorizontalOptions="Fill">
+								<ContentView Grid.Column="0" Content="{Binding Kpis[0]}" ContentTemplate="{StaticResource DashboardKpiTemplate}" HorizontalOptions="Fill" />
+								<ContentView Grid.Column="1" Content="{Binding Kpis[1]}" ContentTemplate="{StaticResource DashboardKpiTemplate}" HorizontalOptions="Fill" />
+								<ContentView Grid.Column="2" Content="{Binding Kpis[2]}" ContentTemplate="{StaticResource DashboardKpiTemplate}" HorizontalOptions="Fill" />
+								<ContentView Grid.Column="3" Content="{Binding Kpis[3]}" ContentTemplate="{StaticResource DashboardKpiTemplate}" HorizontalOptions="Fill" />
+								<ContentView Grid.Column="4" Content="{Binding Kpis[4]}" ContentTemplate="{StaticResource DashboardKpiTemplate}" HorizontalOptions="Fill" />
+							</Grid>
+						</controls:FFSectionCard>onCard>
 
 						<controls:FFSectionCard IsVisible="{Binding State.HasAnyAlerts}">
 							<VerticalStackLayout Spacing="10">
