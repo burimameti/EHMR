@@ -232,9 +232,16 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         .Select(x => $"{x.Mkb10Code!.Code} - {x.Mkb10Code.Description}")
         .Take(3));
 
-    public string ActiveMedicinesSummary => string.Join(", ", PatientMedicines
+    public string ActiveMedicinesSummary => string.Join(" | ", PatientMedicines
         .Where(x => x.IsActive)
-        .Select(x => x.Medicine?.Name ?? "Лек")
+        .Select(x =>
+        {
+            var name=x.Medicine?.Name ?? "Лек";
+            var dosage=string.IsNullOrWhiteSpace(x.Dosage) ? string.Empty : $"Доза: {x.Dosage}";
+            var regime=string.IsNullOrWhiteSpace(x.ApplicationRegime?.Regime) ? string.Empty : $"Начин: {x.ApplicationRegime.Regime}";
+            var quantity=x.Quantity > 0 ? $"Количина: {x.Quantity:0.##}" : string.Empty;
+            return string.Join(", ", new[] { name, dosage, regime, quantity }.Where(v => !string.IsNullOrWhiteSpace(v)));
+        })
         .Distinct(StringComparer.OrdinalIgnoreCase)
         .Take(4));
 
