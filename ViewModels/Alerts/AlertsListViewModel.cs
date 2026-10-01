@@ -198,7 +198,7 @@ public partial class AlertsListViewModel : ObservableObject, IQueryAttributable
     {
         var row=new SparkGridRow { Tag=item };
 
-        row["Ниво"]=new SparkBadgeValue(item.Level.ToLabel(), ToTone(item.Level));
+        row["Ниво"]=new SparkBadgeValue(item.Level.ToLabel(), item.Level switch\n        {\n            AlertLevel.Critical => SparkBadgeTone.Error,\n            AlertLevel.Warning => SparkBadgeTone.Warning,\n            _ => SparkBadgeTone.Info\n        });
         row["Пациент"]=item.PatientName;
         row["Опис"]=item.Message;
         row["Датум"]=item.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm");
