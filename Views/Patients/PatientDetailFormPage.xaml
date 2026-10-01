@@ -293,6 +293,7 @@
 			<Grid
 				Grid.Row="1"
 				Margin="0"
+				Padding="0"
 				Style="{StaticResource CrudFormBodyGridStyle}">
 				<controls:CustomScrollView
 					x:Name="FormScrollView"
@@ -694,11 +695,11 @@
 					</VerticalStackLayout>
 				</controls:CustomScrollView>
 			</Grid>
-			<Border Grid.Row="2" Margin="16,10,16,16" Padding="16,10" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
+			<Border Grid.Row="2" Margin="0,10,0,16" Padding="16,10" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
 				<Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
 					<Label Grid.Column="0" FontSize="10.5" Text="Завршете ги податоците за пациентот" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
 					<controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="42" IsVisible="{Binding IsEditMode}" Text="Откажи" WidthRequestEx="130" />
-					<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SparkButtonSecondaryBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" HeightRequestEx="42" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
+					<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SparkStatusSuccessText}" ButtonKind="Primary" Command="{Binding SaveCommand}" HeightRequestEx="42" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
 					<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding ToggleEditModeAsyncCommand}" HeightRequestEx="42" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="{StaticResource SidebarActiveText}" WidthRequestEx="130" />
 				</Grid>
 			</Border>
