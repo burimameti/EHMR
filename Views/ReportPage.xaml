@@ -221,8 +221,9 @@
 										VerticalOptions="Center" />
 								</Border>
 							</VerticalStackLayout>
-						</VerticalStackLayout>
-					</ScrollView>
+						</Grid>
+					</Border>
+
 
 				</Grid>
 			</Grid>
