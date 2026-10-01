@@ -206,6 +206,16 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         _=GenerateReportAsync();
     }
 
+    [RelayCommand]
+    private async Task GeneratePatientHistoryReportAsync()
+    {
+        if(!SelectedPatientGuid.HasValue || IsBusy)
+            return;
+
+        // Export exactly the patient-scoped data currently represented by the report grid.
+        await ExportToPdfAsync();
+    }
+
     private void ClearPatientSelection()
     {
         _selectedPatientId=null;
@@ -373,7 +383,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     }
 
     private static async Task<List<GenericReportRow>> LoadAuditingAsync(
-        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
+        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange, Guid? patientId)
     {
         var data = await db.AuditLogs
             .AsNoTracking()
@@ -393,7 +403,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     }
 
     private static async Task<List<GenericReportRow>> LoadAppointmentStatusesAsync(
-        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
+        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange, Guid? patientId)
     {
         var data = await db.Appointments
             .Include(a => a.Patient)
@@ -416,7 +426,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     }
 
     private static async Task<List<GenericReportRow>> LoadPatientsAsync(
-        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
+        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange, Guid? patientId)
     {
         var data = await db.Patients
             .AsNoTracking()
