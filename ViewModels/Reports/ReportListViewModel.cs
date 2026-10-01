@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
+using EHMR.Domain.Search;
 using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
@@ -16,6 +17,17 @@ namespace EHMR.ViewModels.Reports;
 public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
+    private readonly IAppointmentSearchQueryHandler _autocomplete;
+
+    [ObservableProperty] private string patientSearchText = string.Empty;
+    [ObservableProperty] private ObservableCollection<SearchSuggestionDto> patientSuggestions = new();
+    [ObservableProperty] private SearchSuggestionDto? selectedPatientSuggestion;
+    [ObservableProperty] private bool showPatientSuggestions;
+    [ObservableProperty] private bool isPatientHistoryMode;
+    [ObservableProperty] private string selectedPatientLabel = string.Empty;
+
+    private bool _isSelectingPatientSuggestion;
+    private string? _selectedPatientId;
 
     private bool _suppressSearchTextSideEffects;
 
@@ -83,10 +95,12 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         IUserDialogService userDialogService,
         IMenuService menuService,
         IAuthorizationService authService,
-        ISelectedItemService<GenericReportRow> selectedItemService)
+        ISelectedItemService<GenericReportRow> selectedItemService,
+        IAppointmentSearchQueryHandler autocomplete)
         : base(navigationService, userDialogService, menuService, authService, selectedItemService)
     {
         _dbFactory=dbFactory;
+        _autocomplete=autocomplete;
         _selectedReportType=ReportTypes.First(x => x.Type==ReportType.MissedTherapies);
         _statusFilter=new ReportStatusOption { Label="ИТНО / СИТЕ" };
         _navigationService=navigationService;
@@ -107,6 +121,110 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
         ApplyPipeline();
     }
+
+    // ============================================================
+    // PATIENT HISTORY SEARCH
+    // Same suggestion interaction used by the Dashboard patient explorer.
+    // Selecting a patient scopes the report to that patient's history.
+    // ============================================================
+
+    partial void OnPatientSearchTextChanged(string value)
+    {
+        if(_isSelectingPatientSuggestion)
+            return;
+
+        var term=value?.Trim()??string.Empty;
+
+        if(string.IsNullOrWhiteSpace(term))
+        {
+            ClearPatientSelection();
+            return;
+        }
+
+        _=SearchPatientsAsync(term);
+    }
+
+    partial void OnSelectedPatientSuggestionChanged(SearchSuggestionDto? value)
+    {
+        if(value is null)
+            return;
+
+        _isSelectingPatientSuggestion=true;
+        PatientSearchText=value.DisplayText;
+        _isSelectingPatientSuggestion=false;
+
+        _selectedPatientId=value.Id;
+        SelectedPatientLabel=value.DisplayText;
+        IsPatientHistoryMode=true;
+
+        PatientSuggestions.Clear();
+        ShowPatientSuggestions=false;
+
+        _=GenerateReportAsync();
+    }
+
+    private async Task SearchPatientsAsync(string term)
+    {
+        var cyrillicTerm=Helpers.MacedonianTransliterator.ToCyrillic(term);
+
+        var result=await DebouncedSuggestionSearchAsync(
+            term,
+            async (q, token) =>
+            {
+                var primary=await _autocomplete.Handle(
+                    new AppointmentSearchQuery(q, new[] { SearchEntityType.Patient }, 8),
+                    token);
+
+                if(cyrillicTerm!=q)
+                {
+                    var secondary=await _autocomplete.Handle(
+                        new AppointmentSearchQuery(cyrillicTerm, new[] { SearchEntityType.Patient }, 8),
+                        token);
+
+                    primary=primary
+                        .Concat(secondary)
+                        .GroupBy(x => x.Id)
+                        .Select(x => x.First())
+                        .Take(8)
+                        .ToList();
+                }
+
+                return primary;
+            });
+
+        if(result is null)
+            return;
+
+        PatientSuggestions=new ObservableCollection<SearchSuggestionDto>(result);
+        ShowPatientSuggestions=PatientSuggestions.Count>0;
+    }
+
+    [RelayCommand]
+    private void ClearPatientHistory()
+    {
+        ClearPatientSelection();
+        _=GenerateReportAsync();
+    }
+
+    private void ClearPatientSelection()
+    {
+        _selectedPatientId=null;
+        IsPatientHistoryMode=false;
+        SelectedPatientLabel=string.Empty;
+        PatientSuggestions.Clear();
+        ShowPatientSuggestions=false;
+        SelectedPatientSuggestion=null;
+
+        if(!string.IsNullOrEmpty(PatientSearchText))
+        {
+            _isSelectingPatientSuggestion=true;
+            PatientSearchText=string.Empty;
+            _isSelectingPatientSuggestion=false;
+        }
+    }
+
+    private Guid? SelectedPatientGuid =>
+        Guid.TryParse(_selectedPatientId, out var id) ? id : null;
 
     // ============================================================
     // COLUMN / METRIC LAYOUT PER REPORT TYPE
@@ -165,25 +283,25 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 {
                     case ReportType.MissedTherapies:
                         System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loading missed therapies...");
-                        rows=await LoadMissedTherapiesAsync(db, startRange, endRange);
+                        rows=await LoadMissedTherapiesAsync(db, startRange, endRange, SelectedPatientGuid);
                         System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loaded {rows.Count} missed therapies");
                         break;
 
                     case ReportType.Auditing:
                         System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loading audit logs...");
-                        rows=await LoadAuditingAsync(db, startRange, endRange);
+                        rows=await LoadAuditingAsync(db, startRange, endRange, SelectedPatientGuid);
                         System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loaded {rows.Count} audit logs");
                         break;
 
                     case ReportType.AppointmentStatuses:
                         System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loading appointment statuses...");
-                        rows=await LoadAppointmentStatusesAsync(db, startRange, endRange);
+                        rows=await LoadAppointmentStatusesAsync(db, startRange, endRange, SelectedPatientGuid);
                         System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loaded {rows.Count} appointments");
                         break;
 
                     case ReportType.Patients:
                         System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loading patients...");
-                        rows=await LoadPatientsAsync(db, startRange, endRange);
+                        rows=await LoadPatientsAsync(db, startRange, endRange, SelectedPatientGuid);
                         System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loaded {rows.Count} patients");
                         break;
 
@@ -232,13 +350,14 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
 
     private static async Task<List<GenericReportRow>> LoadMissedTherapiesAsync(
-        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange)
+        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange, Guid? patientId)
     {
         var data = await db.TherapyCycles
             .Include(p => p.Patient)
             .AsNoTracking()
             .Where(c => c.Status==TherapyStatus.Missed
-                        &&c.StartDate>=startRange&&c.EndDate<=endRange)
+                        &&c.StartDate>=startRange&&c.EndDate<=endRange
+                        &&(!patientId.HasValue||c.PatientId==patientId.Value))
             .OrderByDescending(c => c.EndDate)
             .ToListAsync();
 
@@ -280,7 +399,8 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             .Include(a => a.Patient)
             .Include(a => a.Doctor).ThenInclude(d => d.User)
             .AsNoTracking()
-            .Where(a => a.ScheduledStart>=startRange&&a.ScheduledStart<=endRange)
+            .Where(a => a.ScheduledStart>=startRange&&a.ScheduledStart<=endRange
+                        &&(!patientId.HasValue||a.PatientId==patientId.Value))
             .OrderByDescending(a => a.ScheduledStart)
             .ToListAsync();
 
@@ -300,7 +420,8 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     {
         var data = await db.Patients
             .AsNoTracking()
-            .Where(p => p.CreatedAt>=startRange&&p.CreatedAt<=endRange)
+            .Where(p => p.CreatedAt>=startRange&&p.CreatedAt<=endRange
+                        &&(!patientId.HasValue||p.Id==patientId.Value))
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
 
@@ -363,6 +484,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         _suppressSearchTextSideEffects=false;
 
         StatusFilter=new ReportStatusOption { Label="ИТНО / СИТЕ" };
+        ClearPatientSelection();
     }
 
     // ============================================================
