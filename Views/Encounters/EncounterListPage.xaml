@@ -36,7 +36,7 @@
 						Subtitle="Преглед, пребарување и управување со медицински прегледи" />
 					<controls:FFButton
 						Grid.Column="1"
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						BackgroundColorEx="{StaticResource SparkButtonSecondaryBg}"
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
 						ContentPadding="16,0"
