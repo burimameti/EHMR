@@ -21,7 +21,7 @@
 
 						<Entry
 							Grid.Column="1"
-							Placeholder="Пребарај пациент или доктор..."
+							Placeholder="Пребарај пациент или реуматолог..."
 							Text="{Binding SearchText}" />
 					</Grid>
 				</Border>
