@@ -69,7 +69,7 @@
 				VerticalOptions="Center">
 				<ContentView Content="{Binding HeaderContent, Source={x:Reference Root}}" />
 				<Button
-					BackgroundColor="{StaticResource SidebarActiveBg}"
+					BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
 					Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
 					HeightRequest="42"
 					IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
