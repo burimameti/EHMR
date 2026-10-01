@@ -9,7 +9,7 @@
 	x:DataType="viewModels:ReportListViewModel">
 
 
-	<Grid ColumnDefinitions="285,*">
+	<Grid ColumnDefinitions="260,*">
 
 
 		<!--  ================= LEFT MENU =================  -->
