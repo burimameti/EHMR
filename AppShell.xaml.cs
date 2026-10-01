@@ -4,6 +4,7 @@ using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Views;
 using EHMR.Views.Admin;
+using EHMR.Views.Alerts;
 using EHMR.Views.Appointments;
 using EHMR.Views.Calendar;
 using EHMR.Views.Doctors;
@@ -123,6 +124,9 @@ public partial class AppShell : Shell
     {
         // Dashboard
         Routing.RegisterRoute(AppRoutes.Dashboard, typeof(DashboardView));
+
+        // Alerts
+        Routing.RegisterRoute(AppRoutes.Alerts.List, typeof(AlertsListPage));
 
         // Patients
         Routing.RegisterRoute(AppRoutes.Patients.Detail, typeof(PatientDetailFormPage));
