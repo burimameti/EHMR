@@ -349,7 +349,7 @@
 										Grid.Column="1"
 										FontAttributes="Bold"
 										FontSize="11.5"
-										Text="Закажи следен термин"
+										Text="Закажи следна контрола"
 										TextColor="{StaticResource SparkTextPrimary}"
 										VerticalOptions="Center" />
 								</Grid>
@@ -396,113 +396,6 @@
 					Style="{StaticResource CrudFormCardStyle}">
 					<ScrollView VerticalScrollBarVisibility="Never">
 						<VerticalStackLayout Style="{StaticResource CrudFormSidebarStackStyle}">
-
-							<!--  Section: Поврзување  -->
-							<controls:CrudSectionHeader Title="ПОВРЗУВАЊЕ СО ТЕРМИН / ЦИКЛУС" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
-
-							<Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-								<controls:FFButton
-									Grid.Column="0"
-									ButtonKind="Secondary"
-									Command="{Binding SelectAppointmentCommand}"
-									HeightRequestEx="44"
-									Text="+ Избери термин" />
-								<controls:FFButton
-									Grid.Column="1"
-									ButtonKind="Secondary"
-									Command="{Binding SelectTherapyCycleCommand}"
-									HeightRequestEx="44"
-									Text="+ Избери циклус" />
-								<controls:FFButton
-									Grid.ColumnSpan="2"
-									Margin="0,8,0,0"
-									ButtonKind="Secondary"
-									Command="{Binding AddNewAppointmentCommand}"
-									HeightRequestEx="40"
-									Text="+ Закажи следна контрола" />
-							</Grid>
-
-							<!--  Selected appointment  -->
-							<Border
-								Padding="12,10"
-								BackgroundColor="{StaticResource SparkTabActiveBg}"
-								IsVisible="{Binding HasAppointment}"
-								StrokeShape="RoundRectangle 8"
-								StrokeThickness="0">
-								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-									<Label
-										FontFamily="FASolid"
-										FontSize="12"
-										Text="&#xf073;"
-										TextColor="{StaticResource SparkAccentTeal}"
-										VerticalOptions="Center" />
-									<VerticalStackLayout
-										Grid.Column="1"
-										Spacing="1"
-										VerticalOptions="Center">
-										<Label
-											FontSize="10"
-											Text="Поврзан термин"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="12"
-											Text="{Binding AppointmentDisplay}"
-											TextColor="{StaticResource SparkAccentTealDark}" />
-									</VerticalStackLayout>
-									<Button
-										Grid.Column="2"
-										Padding="0"
-										BackgroundColor="Transparent"
-										Command="{Binding ClearAppointmentCommand}"
-										FontSize="11"
-										HeightRequest="20"
-										Text="✕"
-										TextColor="{StaticResource SparkTextSecondary}"
-										WidthRequest="20" />
-								</Grid>
-							</Border>
-
-							<!--  Selected therapy cycle  -->
-							<Border
-								Padding="12,10"
-								BackgroundColor="{StaticResource SparkTabActiveBg}"
-								IsVisible="{Binding HasTherapyCycle}"
-								StrokeShape="RoundRectangle 8"
-								StrokeThickness="0">
-								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-									<Label
-										FontFamily="FASolid"
-										FontSize="12"
-										Text="&#xf0ec;"
-										TextColor="{StaticResource SparkAccentTeal}"
-										VerticalOptions="Center" />
-									<VerticalStackLayout
-										Grid.Column="1"
-										Spacing="1"
-										VerticalOptions="Center">
-										<Label
-											FontSize="10"
-											Text="Терапевтски циклус"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="12"
-											Text="{Binding TherapyCycleDisplay}"
-											TextColor="{StaticResource SparkAccentTealDark}" />
-									</VerticalStackLayout>
-									<Button
-										Grid.Column="2"
-										Padding="0"
-										BackgroundColor="Transparent"
-										Command="{Binding ClearTherapyCycleCommand}"
-										FontSize="11"
-										HeightRequest="20"
-										Text="✕"
-										TextColor="{StaticResource SparkTextSecondary}"
-										WidthRequest="20" />
-								</Grid>
-							</Border>
 
 							<!--  Section: Последни прегледи  -->
 							<controls:CrudSectionHeader Title="ПОСЛЕДНИ ПРЕГЛЕДИ" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
