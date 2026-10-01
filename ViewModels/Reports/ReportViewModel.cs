@@ -818,7 +818,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                 {
                     activeFilters.Add($"по пол ({selectedVal})");
                 }
-                else if(filterType.Contains("Доктор", StringComparison.OrdinalIgnoreCase)||
+                else if(filterType.Contains("Реуматолог", StringComparison.OrdinalIgnoreCase)||
                          filterType.Contains("Лекар", StringComparison.OrdinalIgnoreCase)||
                          filterType.Contains("Реуматолог", StringComparison.OrdinalIgnoreCase))
                 {
