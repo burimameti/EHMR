@@ -32,7 +32,7 @@ namespace EHMR.Resources.Controls
         Avatar, Hyperlink,
         /// <summary>Row-level action icons (e.g. view/edit). Value is ignored; icons are wired via
         /// SparkDataGridView.RowTappedCommand (view) and EditRowCommand (edit).</summary>
-        Actions, Button
+        Actions, Button, QuickPreview
     }
 
     /// <summary>Semantic color for a badge cell (Predicted risk %, trend, status...).</summary>
