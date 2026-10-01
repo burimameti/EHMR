@@ -436,6 +436,8 @@ public partial class DashboardViewModel : ObservableObject
             var upcomingQuery = db.Appointments
                 .AsNoTracking()
                 .Where(x => x.ScheduledStart.Date>=DateTime.Today)
+                .Where(x => x.Status==AppointmentStatus.Scheduled
+                         || x.Status==AppointmentStatus.InProgress)
                 .AsQueryable();
 
             if(isScoped)
@@ -979,7 +981,7 @@ public partial class DashboardViewModel : ObservableObject
         Kpis.Clear();
 
         Kpis.Add(new FFMetricTileItem { Title="ПАЦИЕНТИ ВКУПНО", Value=State.TotalPatients.ToString("N0"), Icon="\uf0c0", Variant=MetricTileVariant.Primary, Command=NavigateToPatientsCommand });
-        Kpis.Add(new FFMetricTileItem { Title="ТЕРМИНИ ДЕНЕС", Value=State.UpcomingAppointmentsCount.ToString("N0"), Icon="\uf133", Variant=MetricTileVariant.Info, Command=NavigateToAppointmentsCommand });
+        Kpis.Add(new FFMetricTileItem { Title="АКТИВНИ ТЕРМИНИ", Value=State.UpcomingAppointmentsCount.ToString("N0"), Icon="\uf133", Variant=MetricTileVariant.Info, Command=NavigateToAppointmentsCommand });
         Kpis.Add(new FFMetricTileItem { Title="ЗАВРШЕНИ ДЕНЕС ПРЕГЛЕДИ", Value=State.CompletedToday.ToString("N0"), Icon="\uf058", Variant=MetricTileVariant.Success, Command=NavigateToEncountersCommand, CommandParameter="Completed" });
         Kpis.Add(new FFMetricTileItem { Title="ЗАКАЖАНИ И ПРИЈАВЕНИ", Value=State.WaitingToday.ToString("N0"), Icon="\uf254", Variant=MetricTileVariant.Warning, Command=NavigateToEncountersCommand, CommandParameter="Scheduled" });
         Kpis.Add(new FFMetricTileItem
