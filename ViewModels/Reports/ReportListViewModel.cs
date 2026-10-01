@@ -165,6 +165,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         _selectedPatientId=value.Id;
         SelectedPatientLabel=value.DisplayText;
         IsPatientHistoryMode=true;
+        BuildSparkGridColumns();
 
         PatientSuggestions.Clear();
         ShowPatientSuggestions=false;
@@ -230,6 +231,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         _selectedPatientId=null;
         IsPatientHistoryMode=false;
         SelectedPatientLabel=string.Empty;
+        BuildSparkGridColumns();
         PatientSuggestions.Clear();
         ShowPatientSuggestions=false;
         SelectedPatientSuggestion=null;
@@ -320,7 +322,9 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
                     case ReportType.Patients:
                         System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loading patients...");
-                        rows=await LoadPatientsAsync(db, startRange, endRange, SelectedPatientGuid);
+                        rows=SelectedPatientGuid.HasValue
+                            ? await LoadPatientHistoryAsync(db, SelectedPatientGuid.Value)
+                            : await LoadPatientsAsync(db, startRange, endRange, null);
                         System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loaded {rows.Count} patients");
                         break;
 
@@ -438,6 +442,101 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             InformationalText=a.ReasonForVisit??"",
             IsAlertSeverity=a.Status==AppointmentStatus.Cancelled
         }).ToList();
+    }
+
+    private static async Task<List<GenericReportRow>> LoadPatientHistoryAsync(
+        DesktopTherapyDbContext db, Guid patientId)
+    {
+        var patient=await db.Patients
+            .Include(p => p.Doctor).ThenInclude(d => d.User)
+            .Include(p => p.Encounters).ThenInclude(e => e.Doctor).ThenInclude(d => d.User)
+            .Include(p => p.Scores)
+            .Include(p => p.PatientMedicines).ThenInclude(pm => pm.Medicine)
+            .Include(p => p.PatientMedicines).ThenInclude(pm => pm.ApplicationRegime)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id==patientId);
+
+        if(patient is null)
+            return [];
+
+        var rows=new List<GenericReportRow>();
+        var encounterIds=new HashSet<Guid>();
+
+        foreach(var encounter in patient.Encounters.OrderByDescending(e => e.EncounterDate))
+        {
+            encounterIds.Add(encounter.Id);
+
+            var score=patient.Scores
+                .Where(s => s.EncounterId==encounter.Id)
+                .OrderByDescending(s => s.RecordedAt)
+                .FirstOrDefault();
+
+            var medicines=patient.PatientMedicines
+                .Where(pm => pm.EncounterId==encounter.Id)
+                .OrderBy(pm => pm.StartDate)
+                .ToList();
+
+            if(medicines.Count==0)
+            {
+                rows.Add(new GenericReportRow
+                {
+                    PrimaryHeader=patient.FullName,
+                    HistoryDateValue=encounter.EncounterDate.ToString("dd.MM.yyyy"),
+                    HistoryEncounterValue=encounter.Doctor?.FullName ?? patient.Doctor?.FullName ?? "",
+                    HistoryScoreValue=score?.ScoreText ?? "",
+                    HistoryMedicineStatusValue=StatusLabel(encounter.Status)
+                });
+                continue;
+            }
+
+            foreach(var medicine in medicines)
+            {
+                rows.Add(new GenericReportRow
+                {
+                    PrimaryHeader=patient.FullName,
+                    HistoryDateValue=encounter.EncounterDate.ToString("dd.MM.yyyy"),
+                    HistoryEncounterValue=encounter.Doctor?.FullName ?? patient.Doctor?.FullName ?? "",
+                    HistoryScoreValue=score?.ScoreText ?? "",
+                    HistoryMedicineValue=medicine.Medicine?.FullName ?? medicine.Medicine?.Name ?? "",
+                    HistoryDosageValue=medicine.Dosage,
+                    HistoryFrequencyValue=medicine.DosesFrequency.ToDisplay(),
+                    HistoryMedicineStatusValue=medicine.IsActive ? "Активен" : "Завршен"
+                });
+            }
+        }
+
+        // Include medication history that is not linked to an encounter.
+        foreach(var medicine in patient.PatientMedicines
+            .Where(pm => !pm.EncounterId.HasValue || !encounterIds.Contains(pm.EncounterId.Value))
+            .OrderByDescending(pm => pm.StartDate))
+        {
+            rows.Add(new GenericReportRow
+            {
+                PrimaryHeader=patient.FullName,
+                HistoryDateValue=medicine.StartDate.ToString("dd.MM.yyyy"),
+                HistoryEncounterValue="Историја на лекови",
+                HistoryMedicineValue=medicine.Medicine?.FullName ?? medicine.Medicine?.Name ?? "",
+                HistoryDosageValue=medicine.Dosage,
+                HistoryFrequencyValue=medicine.DosesFrequency.ToDisplay(),
+                HistoryMedicineStatusValue=medicine.IsActive ? "Активен" : "Завршен"
+            });
+        }
+
+        // Scores without a matching encounter are also retained.
+        foreach(var score in patient.Scores
+            .Where(s => !encounterIds.Contains(s.EncounterId))
+            .OrderByDescending(s => s.RecordedAt))
+        {
+            rows.Add(new GenericReportRow
+            {
+                PrimaryHeader=patient.FullName,
+                HistoryDateValue=score.RecordedAt.ToString("dd.MM.yyyy"),
+                HistoryEncounterValue="Скор",
+                HistoryScoreValue=score.ScoreText
+            });
+        }
+
+        return rows.OrderByDescending(x => x.HistoryDateValue).ToList();
     }
 
     private static async Task<List<GenericReportRow>> LoadPatientsAsync(
@@ -704,6 +803,21 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
     private void BuildSparkGridColumns()
     {
+        if(SelectedReportType.Type==ReportType.Patients && IsPatientHistoryMode)
+        {
+            GridColumns=new ObservableCollection<SparkGridColumn>
+            {
+                new() { Header="ДАТУМ", Key="HistoryDate", Width=new GridLength(1.0, GridUnitType.Star) },
+                new() { Header="ПРЕГЛЕД / РЕУМАТОЛОГ", Key="HistoryEncounter", Width=new GridLength(1.8, GridUnitType.Star) },
+                new() { Header="СКОР", Key="HistoryScore", Width=new GridLength(1.0, GridUnitType.Star) },
+                new() { Header="ЛЕК", Key="HistoryMedicine", Width=new GridLength(2.0, GridUnitType.Star) },
+                new() { Header="ДОЗА", Key="HistoryDosage", Width=new GridLength(1.3, GridUnitType.Star) },
+                new() { Header="ФРЕКВЕНЦИЈА", Key="HistoryFrequency", Width=new GridLength(1.5, GridUnitType.Star) },
+                new() { Header="СТАТУС", Key="HistoryStatus", Width=new GridLength(1.1, GridUnitType.Star) }
+            };
+            return;
+        }
+
         if(SelectedReportType.Type==ReportType.Patients)
         {
             GridColumns=new ObservableCollection<SparkGridColumn>
@@ -744,7 +858,17 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             row["Date"]=r.DateValue??"";
             row["Info"]=r.InformationalText??"";
 
-            if(SelectedReportType.Type==ReportType.Patients)
+            if(SelectedReportType.Type==ReportType.Patients && IsPatientHistoryMode)
+            {
+                row["HistoryDate"]=r.HistoryDateValue??"";
+                row["HistoryEncounter"]=r.HistoryEncounterValue??"";
+                row["HistoryScore"]=r.HistoryScoreValue??"";
+                row["HistoryMedicine"]=r.HistoryMedicineValue??"";
+                row["HistoryDosage"]=r.HistoryDosageValue??"";
+                row["HistoryFrequency"]=r.HistoryFrequencyValue??"";
+                row["HistoryStatus"]=r.HistoryMedicineStatusValue??"";
+            }
+            else if(SelectedReportType.Type==ReportType.Patients)
             {
                 row["Szbo"]=r.SecondaryHeader??"";
                 row["Gender"]=r.GenderValue??"";
@@ -892,4 +1016,12 @@ public class GenericReportRow
     public string MedicineValue { get; set; } = "";
     public string DiagnosisValue { get; set; } = "";
     public string RheumatologistValue { get; set; } = "";
+
+    public string HistoryDateValue { get; set; } = "";
+    public string HistoryEncounterValue { get; set; } = "";
+    public string HistoryScoreValue { get; set; } = "";
+    public string HistoryMedicineValue { get; set; } = "";
+    public string HistoryDosageValue { get; set; } = "";
+    public string HistoryFrequencyValue { get; set; } = "";
+    public string HistoryMedicineStatusValue { get; set; } = "";
 }
