@@ -17,12 +17,12 @@
             <Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
                     <VerticalStackLayout>
-                        <Label Text="Режими на апликација" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource SparkTextPrimary}" />
-                        <Label Text="Регистар на режими за примена на лекови" FontSize="12" TextColor="{StaticResource SparkTextSecondary}" />
+                        <Label Text="Начини на апликација" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource SparkTextPrimary}" />
+                        <Label Text="Регистар на начини на апликација за лекови" FontSize="12" TextColor="{StaticResource SparkTextSecondary}" />
                     </VerticalStackLayout>
                     <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
-                        <Entry WidthRequest="240" Placeholder="Внесете нов режим..." Text="{Binding NewRegime, Mode=TwoWay}" />
-                        <Button Text="Нов режим" Command="{Binding AddCommand}" />
+                        <Entry WidthRequest="240" Placeholder="Внесете нов начин..." Text="{Binding NewRegime, Mode=TwoWay}" />
+                        <Button Text="Нов начин" Command="{Binding AddCommand}" />
                     </HorizontalStackLayout>
                 </Grid>
             </Border>
@@ -30,8 +30,8 @@
             <Border Grid.Row="1" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 8">
                 <Grid RowDefinitions="42,*">
                     <Grid ColumnDefinitions="90,*,120" BackgroundColor="#475569">
-                        <Label Padding="10,0" Text="РЕЖИМ ID" FontAttributes="Bold" FontSize="10" TextColor="White" VerticalTextAlignment="Center" />
-                        <Label Grid.Column="1" Padding="10,0" Text="РЕЖИМ" FontAttributes="Bold" FontSize="10" TextColor="White" VerticalTextAlignment="Center" />
+                        <Label Padding="10,0" Text="ID" FontAttributes="Bold" FontSize="10" TextColor="White" VerticalTextAlignment="Center" />
+                        <Label Grid.Column="1" Padding="10,0" Text="НАЧИН НА АПЛИКАЦИЈА" FontAttributes="Bold" FontSize="10" TextColor="White" VerticalTextAlignment="Center" />
                         <Label Grid.Column="2" Padding="10,0" Text="ОПЦИИ" FontAttributes="Bold" FontSize="10" TextColor="White" VerticalTextAlignment="Center" />
                     </Grid>
                     <CollectionView Grid.Row="1" ItemsSource="{Binding Regimes}" SelectionMode="None">
