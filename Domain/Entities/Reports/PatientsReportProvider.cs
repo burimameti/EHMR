@@ -267,8 +267,9 @@ namespace EHMR.Domain.Entities.Reports
                     .Include(x => x.Scores)
                         .ThenInclude(x => x.Encounter)
                     .AsNoTracking()
-                    .Where(x => x.RegistrationDate>=from&&
-                                x.RegistrationDate<=to)
+                    .Where(x =>
+                                (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
+                                x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to))
                     .ToListAsync(cts.Token);
 
                 stopwatch.Stop();
