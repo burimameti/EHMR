@@ -207,7 +207,7 @@
 								</Grid>
 
 								<Grid ColumnDefinitions="1.4*,1*,1*,1.4*" RowDefinitions="Auto,Auto" ColumnSpacing="14" RowSpacing="6">
-									<VerticalStackLayout Spacing="1"><Label FontSize="10" Text="Датум на преглед" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="12" Text="{Binding Encounter.EncounterDate, StringFormat='{0:dd.MM.yyyy HH:mm}'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout>
+									<VerticalStackLayout Spacing="1"><Label FontSize="10" Text="Датум на преглед" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="12" Text="{Binding Encounter.EncounterDate, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout>
 									<VerticalStackLayout Grid.Column="1" Spacing="1"><Label FontSize="10" Text="ЕМБГ" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="12" Text="{Binding SelectedPatient.NationalId, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout>
 									<VerticalStackLayout Grid.Column="2" Spacing="1"><Label FontSize="10" Text="ЕЗБО" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="12" Text="{Binding SelectedPatient.SzboNumber, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout>
 									<VerticalStackLayout Grid.Column="3" Spacing="1"><Label FontSize="10" Text="Телефон" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="12" Text="{Binding SelectedPatient.Phone, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout>
