@@ -310,8 +310,12 @@
 													<Border Grid.Column="1" Padding="4,0" BackgroundColor="White" HeightRequest="42" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1">
 														<Entry BackgroundColor="Transparent" FontSize="11.5" Keyboard="Numeric" Text="{Binding Dosage, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
 													</Border>
-													<Border Grid.Column="2" Padding="3,0" BackgroundColor="White" HeightRequest="42" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1">
-														<Picker Title="Избери" FontSize="10.5" ItemDisplayBinding="{Binding Regime}" ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}" SelectedItem="{Binding ApplicationRegime, Mode=TwoWay}" VerticalOptions="Center" />
+													<Border Grid.Column="2" Padding="0" BackgroundColor="White" HeightRequest="42" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1">
+														<controls:FFPicker
+															Placeholder="Избери начин"
+															ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
+															ItemDisplayBinding="{Binding Regime}"
+															SelectedItem="{Binding ApplicationRegime, Mode=TwoWay}" />
 													</Border>
 													<Border Grid.Column="3" Padding="4,0" BackgroundColor="White" HeightRequest="42" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1">
 														<Entry BackgroundColor="Transparent" FontSize="11.5" Keyboard="Numeric" Text="{Binding Quantity, Mode=TwoWay}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
@@ -365,22 +369,15 @@
 											MinimumDate="{Binding FollowUpMinimumDate}"
 											TextColor="{StaticResource SparkTextPrimary}" />
 									</Border>
-									<Border
+									<VerticalStackLayout
 										Grid.Column="1"
-										Padding="3,0"
-										BackgroundColor="White"
-										Stroke="{StaticResource SparkBorderSubtle}"
-										StrokeShape="RoundRectangle 7"
-										StrokeThickness="1">
-										<VerticalStackLayout Spacing="3">
-											<Label FontSize="10" Text="Периодично избирање" TextColor="{StaticResource SparkTextSecondary}" />
-											<Picker
-												Title="Брзо избирање"
-												FontSize="11"
-												ItemsSource="{Binding FollowUpIntervalOptions}"
-												SelectedItem="{Binding SelectedFollowUpInterval, Mode=TwoWay}" />
-										</VerticalStackLayout>
-									</Border>
+										Spacing="3">
+										<Label FontSize="10" Text="Периодично избирање" TextColor="{StaticResource SparkTextSecondary}" />
+										<controls:FFPicker
+											Placeholder="Брзо избирање"
+											ItemsSource="{Binding FollowUpIntervalOptions}"
+											SelectedItem="{Binding SelectedFollowUpInterval, Mode=TwoWay}" />
+									</VerticalStackLayout>
 								</Grid>
 							</VerticalStackLayout>
 
