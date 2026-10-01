@@ -1,4 +1,6 @@
 using System.Collections;
+using System.ComponentModel;
+using System.Reflection;
 using Microsoft.Maui.Controls;
 
 namespace EHMR.Resources.Controls;
@@ -106,6 +108,7 @@ public partial class FFPicker : ContentView
                 if (b is FFPicker picker)
                 {
                     picker.InnerPicker.ItemsSource = n as IList;
+                    picker.ApplyItemDisplayBinding();
                     picker.SyncSelection();
                 }
             });
@@ -127,6 +130,24 @@ public partial class FFPicker : ContentView
                 if (b is FFPicker picker)
                     picker.InnerPicker.ItemDisplayBinding = n as BindingBase;
             });
+
+    private void ApplyItemDisplayBinding()
+    {
+        // If the source contains enum values and the caller did not provide an
+        // explicit display binding, show the human-readable value instead of
+        // the CLR enum name (for example "Daily" or "EHMR.Domain.Entities.X").
+        if (ItemDisplayBinding is not null)
+            return;
+
+        if (ItemsSource is not IList items || items.Count == 0)
+            return;
+
+        var first = items.Cast<object?>().FirstOrDefault(x => x is not null);
+        if (first is not Enum)
+            return;
+
+        InnerPicker.ItemDisplayBinding = new Binding(".", converter: EnumPickerDisplayConverter.Instance);
+    }
 
     public BindingBase ItemDisplayBinding
     {
@@ -188,4 +209,54 @@ public partial class FFPicker : ContentView
         get => (int)GetValue(SelectedIndexProperty);
         set => SetValue(SelectedIndexProperty, value);
     }
+}
+
+internal sealed class EnumPickerDisplayConverter : IValueConverter
+{
+    public static EnumPickerDisplayConverter Instance { get; } = new();
+
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        if (value is not Enum enumValue)
+            return value?.ToString() ?? string.Empty;
+
+        // Keep picker display independent from enum CLR names. These are the
+        // Macedonian data-entry labels already used throughout EHMR.
+        return enumValue switch
+        {
+            DosesFrequency.Daily => "Дневно",
+            DosesFrequency.TwiceDaily => "Двапати",
+            DosesFrequency.ThreeTimesDaily => "Трипати",
+            DosesFrequency.EveryOtherDay => "Секој втор ден",
+            DosesFrequency.EveryThreeDays => "Секој трет ден",
+            DosesFrequency.Weekly => "Неделно",
+            DosesFrequency.Monthly => "Месечно",
+            DosesFrequency.Other => "Друго",
+            PatientStatus.Active => "Активен",
+            PatientStatus.Inactive => "Неактивен",
+            PatientStatus.Discharged => "Отпуштен",
+            PatientStatus.Deceased => "Починат",
+            PatientStatus.Chronic => "Хроничен",
+            PatientStatus.Recovered => "Оздравен",
+            PatientStatus.UnderObservation => "Под опсервација",
+            TherapyStatus.Planned => "Планирана",
+            TherapyStatus.Active => "Активна",
+            TherapyStatus.Scheduled => "Закажана",
+            TherapyStatus.Completed => "Завршена",
+            TherapyStatus.Suspended => "Суспендирана",
+            TherapyStatus.Canceled => "Откажана",
+            TherapyStatus.Missed => "Пропуштена",
+            _ => GetEnumDescription(enumValue)
+        };
+    }
+
+    private static string GetEnumDescription(Enum value)
+    {
+        var member = value.GetType().GetMember(value.ToString()).FirstOrDefault();
+        var description = member?.GetCustomAttribute<DescriptionAttribute>()?.Description;
+        return string.IsNullOrWhiteSpace(description) ? value.ToString() : description;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        => Binding.DoNothing;
 }
