@@ -11,8 +11,8 @@ public partial class FFPicker : ContentView
 
         InnerPicker.SelectedIndexChanged += (_, _) =>
         {
-            if (InnerPicker.SelectedIndex != SelectedIndex)
-                SelectedIndex = InnerPicker.SelectedIndex;
+            SetValue(SelectedIndexProperty, InnerPicker.SelectedIndex);
+            SetValue(SelectedItemProperty, InnerPicker.SelectedItem);
         };
 
         SizeChanged += OnPickerSizeChanged;
@@ -104,7 +104,10 @@ public partial class FFPicker : ContentView
             propertyChanged: (b, _, n) =>
             {
                 if (b is FFPicker picker)
+                {
                     picker.InnerPicker.ItemsSource = n as IList;
+                    picker.SyncSelection();
+                }
             });
 
     public IList ItemsSource
@@ -137,12 +140,31 @@ public partial class FFPicker : ContentView
             typeof(object),
             typeof(FFPicker),
             null,
-            BindingMode.TwoWay);
+            BindingMode.TwoWay,
+            propertyChanged: (b, _, n) =>
+            {
+                if (b is FFPicker picker && !Equals(picker.InnerPicker.SelectedItem, n))
+                    picker.InnerPicker.SelectedItem = n;
+            });
 
     public object SelectedItem
     {
         get => GetValue(SelectedItemProperty);
         set => SetValue(SelectedItemProperty, value);
+    }
+
+    private void SyncSelection()
+    {
+        var selected=GetValue(SelectedItemProperty);
+        if(selected is not null && ItemsSource is IList items && items.Contains(selected))
+        {
+            if(!Equals(InnerPicker.SelectedItem, selected))
+                InnerPicker.SelectedItem=selected;
+            return;
+        }
+
+        if(selected is null && InnerPicker.SelectedIndex!=-1)
+            InnerPicker.SelectedIndex=-1;
     }
 
     public static readonly BindableProperty SelectedIndexProperty =
