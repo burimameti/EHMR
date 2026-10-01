@@ -33,6 +33,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     [ObservableProperty] private SearchSuggestionDto? selectedPatientSuggestion;
     [ObservableProperty] private bool showPatientSuggestions;
     [ObservableProperty] private bool isPatientHistoryMode;
+    [ObservableProperty] private bool isScoreHistoryMode;
     [ObservableProperty] private string selectedPatientLabel = string.Empty;
 
     private bool _isSelectingPatientSuggestion;
@@ -166,6 +167,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         _selectedPatientId=value.Id;
         SelectedPatientLabel=value.DisplayText;
         IsPatientHistoryMode=true;
+        IsScoreHistoryMode=true;
         BuildSparkGridColumns();
 
         PatientSuggestions.Clear();
@@ -231,6 +233,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     {
         _selectedPatientId=null;
         IsPatientHistoryMode=false;
+        IsScoreHistoryMode=false;
         SelectedPatientLabel=string.Empty;
         BuildSparkGridColumns();
         PatientSuggestions.Clear();
@@ -459,96 +462,21 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     private static async Task<List<GenericReportRow>> LoadPatientHistoryAsync(
         DesktopTherapyDbContext db, Guid patientId)
     {
-        var patient=await db.Patients
-            .Include(p => p.Doctor).ThenInclude(d => d.User)
-            .Include(p => p.Encounters).ThenInclude(e => e.Doctor).ThenInclude(d => d.User)
-            .Include(p => p.Scores)
-            .Include(p => p.PatientMedicines).ThenInclude(pm => pm.Medicine)
-            .Include(p => p.PatientMedicines).ThenInclude(pm => pm.ApplicationRegime)
+        var scoreHistory = await db.Scores
+            .Include(s => s.Patient)
+            .Include(s => s.Encounter).ThenInclude(e => e.Doctor).ThenInclude(d => d.User)
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.Id==patientId);
+            .Where(s => s.PatientId == patientId)
+            .OrderByDescending(s => s.RecordedAt)
+            .ToListAsync();
 
-        if(patient is null)
-            return [];
-
-        var rows=new List<GenericReportRow>();
-        var encounterIds=new HashSet<Guid>();
-
-        foreach(var encounter in patient.Encounters.OrderByDescending(e => e.EncounterDate))
+        return scoreHistory.Select(s => new GenericReportRow
         {
-            encounterIds.Add(encounter.Id);
-
-            var score=patient.Scores
-                .Where(s => s.EncounterId==encounter.Id)
-                .OrderByDescending(s => s.RecordedAt)
-                .FirstOrDefault();
-
-            var medicines=patient.PatientMedicines
-                .Where(pm => pm.EncounterId==encounter.Id)
-                .OrderBy(pm => pm.StartDate)
-                .ToList();
-
-            if(medicines.Count==0)
-            {
-                rows.Add(new GenericReportRow
-                {
-                    PrimaryHeader=patient.FullName,
-                    HistoryDateValue=encounter.EncounterDate.ToString("dd.MM.yyyy"),
-                    HistoryEncounterValue=encounter.Doctor?.FullName ?? patient.Doctor?.FullName ?? "",
-                    HistoryScoreValue=score?.ScoreText ?? "",
-                    HistoryMedicineStatusValue=EncounterStatusLabel(encounter.Status)
-                });
-                continue;
-            }
-
-            foreach(var medicine in medicines)
-            {
-                rows.Add(new GenericReportRow
-                {
-                    PrimaryHeader=patient.FullName,
-                    HistoryDateValue=encounter.EncounterDate.ToString("dd.MM.yyyy"),
-                    HistoryEncounterValue=encounter.Doctor?.FullName ?? patient.Doctor?.FullName ?? "",
-                    HistoryScoreValue=score?.ScoreText ?? "",
-                    HistoryMedicineValue=medicine.Medicine?.FullName ?? medicine.Medicine?.Name ?? "",
-                    HistoryDosageValue=medicine.Dosage,
-                    HistoryFrequencyValue=medicine.DosesFrequency.ToDisplay(),
-                    HistoryMedicineStatusValue=medicine.IsActive ? "Активен" : "Завршен"
-                });
-            }
-        }
-
-        // Include medication history that is not linked to an encounter.
-        foreach(var medicine in patient.PatientMedicines
-            .Where(pm => !pm.EncounterId.HasValue || !encounterIds.Contains(pm.EncounterId.Value))
-            .OrderByDescending(pm => pm.StartDate))
-        {
-            rows.Add(new GenericReportRow
-            {
-                PrimaryHeader=patient.FullName,
-                HistoryDateValue=medicine.StartDate.ToString("dd.MM.yyyy"),
-                HistoryEncounterValue="Историја на лекови",
-                HistoryMedicineValue=medicine.Medicine?.FullName ?? medicine.Medicine?.Name ?? "",
-                HistoryDosageValue=medicine.Dosage,
-                HistoryFrequencyValue=medicine.DosesFrequency.ToDisplay(),
-                HistoryMedicineStatusValue=medicine.IsActive ? "Активен" : "Завршен"
-            });
-        }
-
-        // Scores without a matching encounter are also retained.
-        foreach(var score in patient.Scores
-            .Where(s => !encounterIds.Contains(s.EncounterId))
-            .OrderByDescending(s => s.RecordedAt))
-        {
-            rows.Add(new GenericReportRow
-            {
-                PrimaryHeader=patient.FullName,
-                HistoryDateValue=score.RecordedAt.ToString("dd.MM.yyyy"),
-                HistoryEncounterValue="Скор",
-                HistoryScoreValue=score.ScoreText
-            });
-        }
-
-        return rows.OrderByDescending(x => x.HistoryDateValue).ToList();
+            PrimaryHeader = s.Patient?.FullName ?? "",
+            HistoryDateValue = s.RecordedAt.ToString("dd.MM.yyyy"),
+            HistoryEncounterValue = s.Encounter?.Doctor?.FullName ?? "",
+            HistoryScoreValue = s.ScoreText
+        }).ToList();
     }
 
     private static async Task<List<GenericReportRow>> LoadPatientsAsync(
@@ -902,9 +830,9 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         {
             GridColumns=new ObservableCollection<SparkGridColumn>
             {
-                new() { Header="ДАТУМ", Key="HistoryDate", Width=new GridLength(1.0, GridUnitType.Star) },
-                new() { Header="ПРЕГЛЕД / РЕУМАТОЛОГ", Key="HistoryEncounter", Width=new GridLength(1.8, GridUnitType.Star) },
-                new() { Header="СКОР", Key="HistoryScore", Width=new GridLength(1.0, GridUnitType.Star) },
+                new() { Header="ДАТУМ", Key="HistoryDate", Width=new GridLength(1.2, GridUnitType.Star) },
+                new() { Header="РЕУМАТОЛОГ", Key="HistoryEncounter", Width=new GridLength(2.0, GridUnitType.Star) },
+                new() { Header="СКОР", Key="HistoryScore", Width=new GridLength(1.2, GridUnitType.Star) },
                 new() { Header="ЛЕК", Key="HistoryMedicine", Width=new GridLength(2.0, GridUnitType.Star) },
                 new() { Header="ДОЗА", Key="HistoryDosage", Width=new GridLength(1.3, GridUnitType.Star) },
                 new() { Header="ФРЕКВЕНЦИЈА", Key="HistoryFrequency", Width=new GridLength(1.5, GridUnitType.Star) },
