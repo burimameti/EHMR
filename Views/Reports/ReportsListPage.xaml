@@ -164,7 +164,7 @@
 					<!-- Patient history selector: same suggestion UX as Dashboard -->
 					<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
 						<controls:SparkExplorerHeaderView
-							SearchPlaceholder="Пребарај пациент за историја..."
+							SearchPlaceholder="Пребарај пациент за Скор историја..."
 							SearchText="{Binding PatientSearchText}"
 							SelectedSuggestion="{Binding SelectedPatientSuggestion, Mode=TwoWay}"
 							ShowSuggestions="{Binding ShowPatientSuggestions}"
@@ -232,7 +232,7 @@
 						<Label
 							FontAttributes="Bold"
 							FontSize="12"
-							Text="{Binding SelectedPatientLabel, StringFormat='ИСТОРИЈА НА ПАЦИЕНТ: {0}'}"
+							Text="{Binding SelectedPatientLabel, StringFormat='ИСТОРИЈА НА СКОР: {0}'}"
 							TextColor="{StaticResource SparkAccentTealDark}" />
 					</Border>
 
@@ -275,7 +275,7 @@
 						ButtonKind="Primary"
 						Command="{Binding GeneratePatientHistoryReportCommand}"
 						HeightRequestEx="42"
-						Text="Генерирај извештај – Историја на пациент" />
+						Text="Генерирај извештај – Историја на Скор" />
 				</Grid>
 
 
