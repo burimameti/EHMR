@@ -331,7 +331,7 @@
 			<Border Grid.Row="1" StrokeThickness="0">
 				<!--  MAIN SCROLL AREA  -->
 				<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
+					<VerticalStackLayout Margin="18,0,18,12" Spacing="10">
 
 						<!--  ===================================================  -->
 						<!--
@@ -342,18 +342,18 @@
 							the admin dashboard's design system rather than hand-rolled cards.
 						-->
 						<!--  ===================================================  -->
-						<Grid ColumnDefinitions="*,*,*,*,*" ColumnSpacing="10" HorizontalOptions="Fill" Margin="0,0,0,8">
-							<Border Grid.Column="0" Padding="12,8" BackgroundColor="White" HeightRequest="72" HorizontalOptions="Fill" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
+						<Grid ColumnDefinitions="*,*,*,*,*" ColumnSpacing="8" HorizontalOptions="Fill" Margin="0,0,0,4">
+							<Border Grid.Column="0" Padding="10,6" BackgroundColor="White" HeightRequest="68" HorizontalOptions="Fill" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
 								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
-									<Border Grid.RowSpan="2" BackgroundColor="{StaticResource SparkPrimary}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" VerticalOptions="Start" WidthRequest="30">
-										<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="\uf0c0" TextColor="White" VerticalOptions="Center" />
+									<Border Grid.RowSpan="2" BackgroundColor="{StaticResource SparkPrimary}" HeightRequest="27" StrokeShape="RoundRectangle 7" StrokeThickness="0" VerticalOptions="Start" WidthRequest="27">
+										<Label FontFamily="FASolid" FontSize="11" HorizontalOptions="Center" Text="\uf0c0" TextColor="White" VerticalOptions="Center" />
 									</Border>
 									<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="ПАЦИЕНТИ ВКУПНО" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
-									<Label Grid.Column="2" FontAttributes="Bold" FontSize="19" Text="{Binding State.TotalPatients}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
-									<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{StaticResource SparkPrimary}" HorizontalOptions="Fill" MinimumHeightRequest="28" StrokeThickness="0">
+									<Label Grid.Column="2" FontAttributes="Bold" FontSize="18" Text="{Binding State.TotalPatients}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
+									<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="6,2" BackgroundColor="{StaticResource SparkPrimary}" HorizontalOptions="Fill" HeightRequest="22" StrokeThickness="0">
 										<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
 										<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding NavigateToPatientsCommand}" /></Border.GestureRecognizers>
-										<Label FontAttributes="Bold" FontSize="10" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
+										<Label FontAttributes="Bold" FontSize="9" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
 									</Border>
 								</Grid>
 							</Border>
