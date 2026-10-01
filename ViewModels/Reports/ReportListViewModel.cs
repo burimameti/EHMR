@@ -355,7 +355,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 throw;
             }
 
-            // ✅ FIX: Set AllItems and let ApplyPipeline handle the conversion to SparkGridRow
+           
             // DO NOT directly assign to GridRows - it expects ObservableCollection<SparkGridRow>
             System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Setting AllItems and applying pipeline...");
             AllItems=rows;
@@ -888,12 +888,12 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             IsPrimary=true,
             Command=ClearFiltersCommand
         });
-        Buttons.Add(new SparkButtonItem
-        {
-            Label="Извези PDF",
-            IsPrimary=false,
-            Command=ExportToPdfCommand
-        });
+        //Buttons.Add(new SparkButtonItem
+        //{
+        //    Label="Извези PDF",
+        //    IsPrimary=false,
+        //    Command=ExportToPdfCommand
+        //});
     }
 
     private void BuildSparkGridColumns()
@@ -942,8 +942,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             };
             return;
         }
-            return;
-        }
+      
 
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
