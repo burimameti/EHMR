@@ -11,9 +11,6 @@ public class PatientSeeder : IEntitySeeder
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {
-        if(await context.Patients.AnyAsync(ct))
-            return;
-
         var now = DateTime.UtcNow;
 
         var medicineIds = new[]
@@ -506,7 +503,20 @@ public class PatientSeeder : IEntitySeeder
             }
         };
 
-        await context.Patients.AddRangeAsync(patients, ct);
+        // Idempotent expansion: older demo databases may already contain only the
+        // original first few patients. Add the missing seeded patients without
+        // duplicating existing records.
+        var existingPatientIds = await context.Patients
+            .Where(x => patients.Select(p => p.Id).Contains(x.Id))
+            .Select(x => x.Id)
+            .ToHashSetAsync(ct);
+
+        var missingPatients = patients
+            .Where(x => !existingPatientIds.Contains(x.Id))
+            .ToList();
+
+        if(missingPatients.Count > 0)
+            await context.Patients.AddRangeAsync(missingPatients, ct);
 
         var frequenciesInOriginalOrder = new[]
         {
