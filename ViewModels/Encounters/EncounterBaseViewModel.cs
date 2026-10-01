@@ -75,6 +75,37 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [ObservableProperty]
     private ObservableCollection<ApplicationRegime> applicationRegimeOptions = new();
 
+    [RelayCommand]
+    protected async Task AddApplicationRegimeAsync()
+    {
+        var value=await UserDialogService.ShowPromptAsync(
+            "Нов начин на апликација",
+            "Внесете нов начин на апликација за лекот.",
+            "Додај",
+            "Откажи",
+            "Пример: Поткожно");
+
+        if(string.IsNullOrWhiteSpace(value))
+            return;
+
+        try
+        {
+            var regime=await EncounterService.AddApplicationRegimeAsync(value.Trim());
+
+            if(ApplicationRegimeOptions.All(x => x.Id!=regime.Id))
+                ApplicationRegimeOptions.Add(regime);
+
+            await UserDialogService.ShowAlertAsync(
+                "Успешно",
+                $"Начинот „{regime.Regime}“ е додаден и достапен во изборот.",
+                "ОК");
+        }
+        catch(Exception ex)
+        {
+            await UserDialogService.ShowAlertAsync("Грешка", $"Начинот не може да се зачува: {ex.Message}", "ОК");
+        }
+    }
+
     public ObservableCollection<string> ScoreOptions { get; } = new(
         Enumerable.Range(0, 11).Select(x => x.ToString()));
 
