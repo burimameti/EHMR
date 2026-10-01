@@ -157,7 +157,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
             SyncDisplayFromPatient();
             _=LoadApplicationRegimesAsync();
-            _=SearchMkbAsync(CancellationToken.None);
+            // MKB results remain empty until the user searches or selects an A-Z section.
 
             OnPropertyChanged(nameof(IsNewPatient));
             OnPropertyChanged(nameof(HeaderTitle));
