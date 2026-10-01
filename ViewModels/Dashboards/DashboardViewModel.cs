@@ -1005,6 +1005,21 @@ public partial class DashboardViewModel : ObservableObject
     // =========================================================
     public ObservableCollection<FFMetricTileItem> Kpis { get; } = new();
 
+    public FFMetricTileItem? Kpi0 => Kpis.Count > 0 ? Kpis[0] : null;
+    public FFMetricTileItem? Kpi1 => Kpis.Count > 1 ? Kpis[1] : null;
+    public FFMetricTileItem? Kpi2 => Kpis.Count > 2 ? Kpis[2] : null;
+    public FFMetricTileItem? Kpi3 => Kpis.Count > 3 ? Kpis[3] : null;
+    public FFMetricTileItem? Kpi4 => Kpis.Count > 4 ? Kpis[4] : null;
+
+    private void RefreshKpiBindings()
+    {
+        OnPropertyChanged(nameof(Kpi0));
+        OnPropertyChanged(nameof(Kpi1));
+        OnPropertyChanged(nameof(Kpi2));
+        OnPropertyChanged(nameof(Kpi3));
+        OnPropertyChanged(nameof(Kpi4));
+    }
+
     private void BuildKpiTiles()
     {
         Kpis.Clear();
@@ -1021,6 +1036,8 @@ public partial class DashboardViewModel : ObservableObject
             Variant=State.OverdueCycles>0 ? MetricTileVariant.Warning : MetricTileVariant.Neutral,
             Command=NavigateToTherapiesCommand
         });
+
+        RefreshKpiBindings();
     }
 
     // =========================================================
