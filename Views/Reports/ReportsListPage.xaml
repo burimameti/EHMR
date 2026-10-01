@@ -257,6 +257,27 @@
 
 			<controls:FFSectionCard Grid.Row="3">
 
+				<!-- Patient history action appears only after a patient is selected. -->
+				<Grid
+					Margin="0,0,0,10"
+					ColumnDefinitions="*,Auto"
+					IsVisible="{Binding IsPatientHistoryMode}">
+
+					<Label
+						FontAttributes="Bold"
+						FontSize="12"
+						Text="{Binding SelectedPatientLabel, StringFormat='ИСТОРИЈА НА ПАЦИЕНТ: {0}'}"
+						TextColor="{StaticResource SparkAccentTealDark}"
+						VerticalOptions="Center" />
+
+					<controls:FFButton
+						Grid.Column="1"
+						ButtonKind="Primary"
+						Command="{Binding GeneratePatientHistoryReportCommand}"
+						HeightRequestEx="42"
+						Text="Генерирај извештај – Историја на пациент" />
+				</Grid>
+
 
 				<controls:SparkDataGridView
 					Columns="{Binding GridColumns}"
