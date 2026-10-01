@@ -176,7 +176,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     // ============================================================
     // PICKERS
     // ============================================================
-    private SparkPickerItem _statusPicker, _priorityPicker, _typePicker;
+    private SparkPickerItem _statusPicker;
 
     private void BuildSparkPickers()
     {
@@ -184,10 +184,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         _statusPicker=MakePicker("Статус", StatusFilters, SelectedStatusDisplay,
             selected => SelectedStatusDisplay=selected);
 
-
         Pickers.Add(_statusPicker);
-        Pickers.Add(_priorityPicker);
-        Pickers.Add(_typePicker);
     }
 
     protected override void SyncSparkPickersFromFilters()
