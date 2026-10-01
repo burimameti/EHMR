@@ -27,6 +27,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     private readonly IUserDialogService _userDialogService;
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
     private readonly ILicenseService _licenseService;
+    private readonly IPatientClinicalReportService _clinicalReportService;
 
     private PatientEditDto? _originalPatient;
     private bool _isNewPatientMode;
@@ -120,7 +121,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         INavigationService navigationService,
         IUserDialogService userDialogService,
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
-        ILicenseService licenseService)
+        ILicenseService licenseService,
+        IPatientClinicalReportService clinicalReportService)
     {
         _licenseService=licenseService;
         _patientService=patientService;
@@ -128,6 +130,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         _navigationService=navigationService;
         _userDialogService=userDialogService;
         _dbFactory=dbFactory;
+        _clinicalReportService=clinicalReportService;
 
         // MKB10 A-Z sections, исто као во EncounterBaseViewModel.
         for(var letter = 'A'; letter<='Z'; letter++)
@@ -357,6 +360,31 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     // ------------------------------------------------------------------ //
     // Commands
     // ------------------------------------------------------------------ //
+    [RelayCommand]
+    private async Task GenerateClinicalReportAsync()
+    {
+        if(Patient.Id==Guid.Empty) return;
+
+        try
+        {
+            var path=await _clinicalReportService.GeneratePdfAsync(
+                Patient.Id,
+                title=$"Детален извештај - {Patient.FirstName} {Patient.LastName}");
+
+            await Launcher.Default.OpenAsync(new OpenFileRequest(
+                Path.GetFileName(path),
+                new ReadOnlyFile(path)));
+        }
+        catch(Exception ex)
+        {
+            Debug.WriteLine(ex);
+            await _userDialogService.ShowAlertAsync(
+                "Извештај",
+                $"PDF извештајот не може да се генерира: {ex.Message}",
+                "ОК");
+        }
+    }
+
 
     [RelayCommand]
     private async Task ToggleEditModeAsync()
