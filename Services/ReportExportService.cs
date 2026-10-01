@@ -111,11 +111,19 @@ namespace EHMR.Services;
                             c.Item().Text($"ДАТУМ НА ИЗДАВАЊЕ: {DateTime.Now:dd.MM.yyyy}").FontSize(7);
                         });
 
-                        // Клетка 3: ПЕРИОД
+                        // Клетка 3: ОПСЕГ НА ПЕРИОД + ВКУПНА КОЛИЧИНА НА ЛЕКОТ
                         table.Cell().Padding(5).Column(c =>
                         {
                             c.Item().Text("ОПСЕГ НА ПЕРИОД:").Bold().FontSize(8);
                             c.Item().Text($"{startDate:dd.MM.yyyy} - {endDate:dd.MM.yyyy}").FontSize(8);
+
+                            if(IsMedicineConsumptionReport(reportTitle))
+                            {
+                                c.Item().PaddingTop(3).Text("ВКУПНА КОЛИЧИНА НА ЛЕКОТ").Bold().FontSize(8);
+
+                                foreach(var item in GetMedicineConsumptionSummary(rows))
+                                    c.Item().Text($"{item.Medicine} : {item.Quantity}").FontSize(8);
+                            }
                         });
                     });
 
@@ -183,6 +191,31 @@ namespace EHMR.Services;
         return Task.FromResult(path);
     }
     // ================= HELPERS =================
+
+    private static bool IsMedicineConsumptionReport(string reportTitle) =>
+        reportTitle.Contains("Потрошувачка по лек", StringComparison.OrdinalIgnoreCase);
+
+    private static IReadOnlyList<(string Medicine, string Quantity)> GetMedicineConsumptionSummary(
+        IReadOnlyList<SparkGridRow> rows)
+    {
+        var result = new List<(string Medicine, string Quantity)>();
+
+        foreach(var row in rows)
+        {
+            row.TryGetValue("MedicineConsumptionMedicine", out var medicineValue);
+            row.TryGetValue("MedicineConsumptionQuantity", out var quantityValue);
+
+            var medicine = medicineValue?.ToString()?.Trim();
+            var quantity = quantityValue?.ToString()?.Trim();
+
+            if(string.IsNullOrWhiteSpace(medicine) || string.IsNullOrWhiteSpace(quantity))
+                continue;
+
+            result.Add((medicine, quantity));
+        }
+
+        return result;
+    }
 
     private static double GetColumnWidth(SparkGridColumn column)
         {
