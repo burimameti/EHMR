@@ -2,6 +2,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
 using Microsoft.Maui.Controls;
+using EHMR.Domain.Entities;
 
 namespace EHMR.Resources.Controls;
 
