@@ -63,9 +63,6 @@ namespace EHMR.Domain.Entities.Reports
             new() { Header = "ДИЈАГНОЗА / АЛЕРГИИ", Key = "Medical", Width = GridLength.Star }
         ];
 
-        // =====================================================
-        // TABS — Пациент статус + Алергии
-        // =====================================================
         public IEnumerable<SparkTabItem> BuildTabs()
         {
             _allTab=new SparkTabItem { Title="Сите", Value="0", IsSelected=true };
@@ -103,9 +100,6 @@ namespace EHMR.Domain.Entities.Reports
             FiltersChanged?.Invoke();
         }
 
-        // =====================================================
-        // PICKERS
-        // =====================================================
         public IEnumerable<SparkPickerItem> BuildPickers()
         {
             _statusPicker=CreatePicker(
@@ -222,9 +216,6 @@ namespace EHMR.Domain.Entities.Reports
             }
         }
 
-        // =====================================================
-        // BUTTON
-        // =====================================================
         public IEnumerable<SparkButtonItem> BuildButtons()
         {
             return
@@ -238,9 +229,6 @@ namespace EHMR.Domain.Entities.Reports
             ];
         }
 
-        // =====================================================
-        // GENERATE — WITH COMPREHENSIVE LOGGING
-        // =====================================================
         public async Task<List<DynamicReportRow>> GenerateAsync(DateTime from, DateTime to)
         {
             try
@@ -263,13 +251,13 @@ namespace EHMR.Domain.Entities.Reports
                         .ThenInclude(x => x.Medicine)
                     .Include(x => x.Diagnoses)
                         .ThenInclude(x => x.Mkb10Code)
-.Include(x => x.TherapyCycles)
+                    .Include(x => x.TherapyCycles)
                     .Include(x => x.Scores)
                         .ThenInclude(x => x.Encounter)
                     .AsNoTracking()
                     .Where(x =>
-                                (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
-                                x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to))
+                        (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
+                        x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to))
                     .ToListAsync(cts.Token);
 
                 stopwatch.Stop();
@@ -361,7 +349,6 @@ namespace EHMR.Domain.Entities.Reports
         {
             var query = patients;
 
-            // Patient Status filter
             if(_selectedStatusFilter!="Сите")
             {
                 var status = _selectedStatusFilter switch
@@ -378,63 +365,47 @@ namespace EHMR.Domain.Entities.Reports
                 }
             }
 
-            // Allergy filter
             if(_selectedAllergyFilter=="Со алергии")
             {
-                query=query.Where(x =>
-                    !string.IsNullOrWhiteSpace(x.Allergies));
+                query=query.Where(x => !string.IsNullOrWhiteSpace(x.Allergies));
                 Debug.WriteLine($"[Patients]   - Allergy filter: With allergies");
             }
 
-            // City filter
             if(_selectedCityFilter!="Сите")
             {
-                query=query.Where(x =>
-                    x.City==_selectedCityFilter);
+                query=query.Where(x => x.City==_selectedCityFilter);
                 Debug.WriteLine($"[Patients]   - City filter: {_selectedCityFilter}");
             }
 
-            // Doctor filter
             if(_selectedDoctorFilter!="Сите")
             {
-                query=query.Where(x =>
-                    x.Doctor?.FullName==_selectedDoctorFilter);
+                query=query.Where(x => x.Doctor?.FullName==_selectedDoctorFilter);
                 Debug.WriteLine($"[Patients]   - Doctor filter: {_selectedDoctorFilter}");
             }
 
-            // Diagnosis filter
             if(_selectedDiagnosisFilter!="Сите")
             {
-                query=query.Where(x =>
-                    x.Diagnoses.Any(d =>
-                        d.Mkb10Code?.Code==_selectedDiagnosisFilter));
+                query=query.Where(x => x.Diagnoses.Any(d => d.Mkb10Code?.Code==_selectedDiagnosisFilter));
                 Debug.WriteLine($"[Patients]   - Diagnosis filter: {_selectedDiagnosisFilter}");
             }
 
-            // Medicine filter
             if(_selectedMedicineFilter!="Сите")
             {
-                query=query.Where(x =>
-                    x.PatientMedicines.Any(pm =>
-                        pm.Medicine?.Name==_selectedMedicineFilter));
+                query=query.Where(x => x.PatientMedicines.Any(pm => pm.Medicine?.Name==_selectedMedicineFilter));
                 Debug.WriteLine($"[Patients]   - Medicine filter: {_selectedMedicineFilter}");
             }
 
-            // Therapy Status filter
             if(_selectedTherapyStatusFilter!="Сите"&&
                 Enum.TryParse<TherapyStatus>(_selectedTherapyStatusFilter, out var therapyStatus))
             {
-                query=query.Where(x =>
-                    x.TherapyCycles.Any(tc => tc.Status==therapyStatus));
+                query=query.Where(x => x.TherapyCycles.Any(tc => tc.Status==therapyStatus));
                 Debug.WriteLine($"[Patients]   - Therapy status filter: {_selectedTherapyStatusFilter}");
             }
 
-            // Gender filter
             if(_selectedGenderFilter!="Сите"&&
                 Enum.TryParse<Gender>(_selectedGenderFilter, out var gender))
             {
-                query=query.Where(x =>
-                    x.Gender==gender);
+                query=query.Where(x => x.Gender==gender);
                 Debug.WriteLine($"[Patients]   - Gender filter: {_selectedGenderFilter}");
             }
 
@@ -465,9 +436,27 @@ namespace EHMR.Domain.Entities.Reports
                     BuildMedicinesInfo(patient),
                     BuildMedicalInfo(patient)
                 ],
-                // Alert if patient has allergies OR missed therapies
                 IsAlertSeverity=hasAllergy||hasMissedTherapy
             };
+        }
+
+        private static string BuildScoreHistory(Patient patient)
+        {
+            if(patient.Scores==null||patient.Scores.Count==0)
+                return "Нема историја";
+
+            return string.Join(" | ",
+                patient.Scores
+                    .OrderByDescending(x => x.RecordedAt)
+                    .Select(score =>
+                    {
+                        var date=score.RecordedAt.ToString("dd.MM.yyyy");
+                        var encounter=score.Encounter?.EncounterNumber;
+
+                        return string.IsNullOrWhiteSpace(encounter)
+                            ? $"{score.ScoreText} — {date}"
+                            : $"{score.ScoreText} — {date} ({encounter})";
+                    }));
         }
 
         private static string BuildMedicinesInfo(Patient patient)
