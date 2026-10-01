@@ -52,6 +52,9 @@ namespace EHMR.Domain.Entities.Reports
         [
             new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
             new() { Header = "ЕЗБО", Key = "Szbo", Width = new GridLength(1.2, GridUnitType.Star) },
+            new() { Header = "СТАТУС", Key = "Status", Width = new GridLength(1.1, GridUnitType.Star) },
+            new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.9, GridUnitType.Star) },
+            new() { Header = "РЕУМАТОЛОГ", Key = "Rheumatologist", Width = new GridLength(1.5, GridUnitType.Star) },
             new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header = "ПОСЛ. СКОР", Key = "Score", Width = new GridLength(1.1, GridUnitType.Star) },
             new() { Header = "АДРЕСА", Key = "Address", Width = new GridLength(1.7, GridUnitType.Star) },
@@ -425,15 +428,15 @@ namespace EHMR.Domain.Entities.Reports
 
         private static DynamicReportRow CreateRow(Patient patient, DateTime from, DateTime to)
         {
-            var hasAllergy = !string.IsNullOrWhiteSpace(patient.Allergies);
-            var hasMissedTherapy = patient.TherapyCycles.Any(x => x.Status==TherapyStatus.Missed);
-
             return new DynamicReportRow
             {
                 Cells=
                 [
                     patient.FullName ?? "-",
                     patient.SzboNumber ?? "-",
+                    patient.Status.ToDisplay(),
+                    patient.Gender.ToDisplay(),
+                    patient.Doctor?.FullName ?? "-",
                     patient.Phone ?? "-",
                     patient.Scores
                         .OrderByDescending(x => x.RecordedAt)
@@ -444,7 +447,7 @@ namespace EHMR.Domain.Entities.Reports
                     BuildMedicinesInfo(patient, from, to),
                     BuildDiagnosisInfo(patient)
                 ],
-                IsAlertSeverity=hasAllergy||hasMissedTherapy
+                IsAlertSeverity=false
             };
         }
 
