@@ -686,9 +686,7 @@
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
 
-							<Border IsVisible="{Binding HasPatientContext}" Style="{StaticResource SectionPillBorderStyle}">
-								<Label Style="{StaticResource SectionPillLabelStyle}" Text="ИСТОРИЈА НА ДИЈАГНОЗИ" />
-							</Border>
+							<controls:CrudSectionHeader IsVisible="{Binding HasPatientContext}" Title="ИСТОРИЈА НА ДИЈАГНОЗИ" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
 							<VerticalStackLayout
 								BindableLayout.ItemsSource="{Binding PatientDiagnoses}"
 								IsVisible="{Binding HasPatientContext}"
@@ -726,13 +724,7 @@
 							</VerticalStackLayout>
 
 							<!--  Section: Документи  -->
-							<Border IsVisible="{Binding HasPatientContext}" Style="{StaticResource SectionPillBorderStyle}">
-								<Label
-									CharacterSpacing="0.5"
-									FontAttributes="Bold"
-									FontSize="11"
-									Text="ДОКУМЕНТИ НА ПАЦИЕНТ" />
-							</Border>
+							<controls:CrudSectionHeader IsVisible="{Binding HasPatientContext}" Title="ДОКУМЕНТИ НА ПАЦИЕНТ" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
 
 							<Label
 								FontSize="12"
