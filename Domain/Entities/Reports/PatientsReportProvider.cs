@@ -265,6 +265,7 @@ namespace EHMR.Domain.Entities.Reports
                         .ThenInclude(x => x.Mkb10Code)
 .Include(x => x.TherapyCycles)
                     .Include(x => x.Scores)
+                        .ThenInclude(x => x.Encounter)
                     .AsNoTracking()
                     .Where(x => x.RegistrationDate>=from&&
                                 x.RegistrationDate<=to)
