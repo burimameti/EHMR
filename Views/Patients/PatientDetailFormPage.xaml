@@ -258,7 +258,7 @@
 		</ResourceDictionary>
 	</ContentPage.Resources>
 
-	<Grid ColumnDefinitions="285,*">
+	<Grid ColumnDefinitions="260,*">
 
 		<!--  ─── LEFT MENU SIDEBAR ───  -->
 		<Border Grid.Column="0" StrokeThickness="0">
