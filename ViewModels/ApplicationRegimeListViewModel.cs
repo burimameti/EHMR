@@ -13,6 +13,7 @@ public partial class ApplicationRegimeListViewModel : ObservableObject
 
     [ObservableProperty] private ObservableCollection<ApplicationRegimeDto> regimes = new();
     [ObservableProperty] private string newRegime = string.Empty;
+    [ObservableProperty] private ApplicationRegimeDto? editingRegime;
     [ObservableProperty] private bool isBusy;
 
     public ApplicationRegimeListViewModel(
@@ -40,6 +41,59 @@ public partial class ApplicationRegimeListViewModel : ObservableObject
         finally
         {
             IsBusy=false;
+        }
+    }
+
+    [RelayCommand]
+    public async Task EditAsync(ApplicationRegimeDto? item)
+    {
+        if(item is null) return;
+
+        var value=await _userDialogService.ShowPromptAsync(
+            "Измени режим",
+            "Внесете нов назив на начинот на апликација.",
+            "Зачувај",
+            "Откажи",
+            "Начин на апликација",
+            item.Regime);
+
+        if(string.IsNullOrWhiteSpace(value)||string.Equals(value.Trim(),item.Regime,StringComparison.OrdinalIgnoreCase))
+            return;
+
+        try
+        {
+            var updated=await _patientService.UpdateApplicationRegimeAsync(item.Id,value.Trim());
+            var index=Regimes.IndexOf(item);
+            if(index>=0)
+                Regimes[index]=updated;
+        }
+        catch(Exception ex)
+        {
+            await _userDialogService.ShowAlertAsync("Грешка", $"Неуспешна промена: {ex.Message}", "ОК");
+        }
+    }
+
+    [RelayCommand]
+    public async Task DeleteAsync(ApplicationRegimeDto? item)
+    {
+        if(item is null) return;
+
+        var confirmed=await _userDialogService.ShowConfirmationAsync(
+            "Избриши начин на апликација",
+            $"Дали сте сигурни дека сакате да го избришете „{item.Regime}“?",
+            "Избриши",
+            "Откажи");
+
+        if(!confirmed) return;
+
+        try
+        {
+            if(await _patientService.DeleteApplicationRegimeAsync(item.Id))
+                Regimes.Remove(item);
+        }
+        catch(Exception ex)
+        {
+            await _userDialogService.ShowAlertAsync("Грешка", $"Неуспешно бришење: {ex.Message}", "ОК");
         }
     }
 
