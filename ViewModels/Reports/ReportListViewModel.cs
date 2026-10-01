@@ -66,7 +66,8 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         new() { Type = ReportType.MissedTherapies,      Label = "Пропуштени терапии" },
         new() { Type = ReportType.Auditing,              Label = "Аудит" },
         new() { Type = ReportType.AppointmentStatuses,   Label = "Статус на термини" },
-        new() { Type = ReportType.Patients,               Label = "Пациенти" }
+        new() { Type = ReportType.Patients,               Label = "Пациенти" },
+        new() { Type = ReportType.MedicineConsumption,   Label = "Потрошувачка по лек" }
     ];
 
     private ReportTypeOption _selectedReportType;
@@ -273,6 +274,11 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 Col1Header="ПАЦИЕНТ"; Col2Header="ЕЗБО"; Col3Header="ПОЛ"; Col4Header="ТЕЛЕФОН"; Col5Header="ПОСЛ. СКОР";
                 Metric1Title="Пациенти"; Metric2Title="Активни"; Metric3Title="Со внесен скор";
                 break;
+
+            case ReportType.MedicineConsumption:
+                Col1Header="ЛЕК"; Col2Header="ВКУПНА ПОТРОШЕНА КОЛИЧИНА"; Col3Header="ПАЦИЕНТИ"; Col4Header="МАКЕДОНСКА КЛАСИФИКАЦИЈА НА БОЛЕСТИ (МКБ-10)"; Col5Header="ПЕРИОД";
+                Metric1Title="Вкупно потрошена количина"; Metric2Title="Различни лекови"; Metric3Title="Пациенти";
+                break;
         }
     }
 
@@ -326,6 +332,12 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                             ? await LoadPatientHistoryAsync(db, SelectedPatientGuid.Value)
                             : await LoadPatientsAsync(db, startRange, endRange, null);
                         System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loaded {rows.Count} patients");
+                        break;
+
+                    case ReportType.MedicineConsumption:
+                        System.Diagnostics.Debug.WriteLine("[ReportListViewModel] Loading medicine consumption...");
+                        rows=await LoadMedicineConsumptionAsync(db, startRange, endRange, SelectedPatientGuid);
+                        System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loaded {rows.Count} medicine consumption rows");
                         break;
 
                     default:
@@ -597,6 +609,81 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             : "100%";
     }
 
+    private static async Task<List<GenericReportRow>> LoadMedicineConsumptionAsync(
+        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange, Guid? patientId)
+    {
+        var data=await db.PatientMedicines
+            .Include(pm => pm.Patient)
+            .Include(pm => pm.Medicine)
+            .Include(pm => pm.Patient).ThenInclude(p => p.Diagnoses).ThenInclude(d => d.Mkb10Code)
+            .AsNoTracking()
+            .Where(pm => (!patientId.HasValue || pm.PatientId==patientId.Value)
+                         &&pm.StartDate<=endRange
+                         &&(!pm.EndDate.HasValue || pm.EndDate.Value>=startRange))
+            .ToListAsync();
+
+        var grouped=data
+            .GroupBy(pm => pm.Medicine?.FullName??pm.Medicine?.Name??"Непознат лек")
+            .OrderBy(g => g.Key, StringComparer.CurrentCultureIgnoreCase)
+            .ToList();
+
+        var rows=new List<GenericReportRow>();
+        foreach(var group in grouped)
+        {
+            decimal total=0;
+            var patientNames=new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            var diagnoses=new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+
+            foreach(var pm in group)
+            {
+                var from=pm.StartDate>DateTime.MinValue && pm.StartDate>startRange ? pm.StartDate.Date : startRange.Date;
+                var to=pm.EndDate.HasValue && pm.EndDate.Value.Date<endRange.Date ? pm.EndDate.Value.Date : endRange.Date;
+                if(to<from) continue;
+
+                var days=(to-from).Days+1;
+                total+=pm.Quantity*AdministrationCount(pm.DosesFrequency, days);
+
+                if(pm.Patient is not null)
+                    patientNames.Add(pm.Patient.FullName);
+
+                foreach(var diagnosis in pm.Patient?.Diagnoses??[])
+                {
+                    var code=diagnosis.Mkb10Code?.Code?.Trim();
+                    var description=diagnosis.Mkb10Code?.Description?.Trim();
+                    if(string.IsNullOrWhiteSpace(code)&&string.IsNullOrWhiteSpace(description)) continue;
+                    diagnoses.Add(string.IsNullOrWhiteSpace(description) ? code! : $"{code} — {description}");
+                }
+            }
+
+            rows.Add(new GenericReportRow
+            {
+                PrimaryHeader=group.Key,
+                HighlightValue=total.ToString("0.##"),
+                SecondaryHeader=patientNames.Count.ToString(),
+                DateValue=$"{startRange:dd.MM.yyyy} – {endRange:dd.MM.yyyy}",
+                InformationalText=string.Join("; ", diagnoses.OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase)),
+                MedicineConsumptionValue=total,
+                MedicinePatientCount=patientNames.Count,
+                MedicineDiagnosisValue=string.Join("; ", diagnoses.OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase))
+            });
+        }
+
+        return rows;
+    }
+
+    private static int AdministrationCount(DosesFrequency frequency, int days) => frequency switch
+    {
+        DosesFrequency.Daily => days,
+        DosesFrequency.TwiceDaily => days*2,
+        DosesFrequency.ThreeTimesDaily => days*3,
+        DosesFrequency.EveryOtherDay => ((days-1)/2)+1,
+        DosesFrequency.EveryThreeDays => ((days-1)/3)+1,
+        DosesFrequency.Weekly => ((days-1)/7)+1,
+        DosesFrequency.Monthly => ((days-1)/30)+1,
+        DosesFrequency.Other => 1,
+        _ => 1
+    };
+
     private static string EncounterStatusLabel(EncounterStatus status) => status switch
     {
         EncounterStatus.Scheduled => "Закажан",
@@ -851,6 +938,21 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             return;
         }
 
+        if(SelectedReportType.Type==ReportType.MedicineConsumption)
+        {
+            GridColumns=new ObservableCollection<SparkGridColumn>
+            {
+                new() { Header="ЛЕК", Key="MedicineConsumptionMedicine", Width=new GridLength(2, GridUnitType.Star) },
+                new() { Header="ВКУПНА ПОТРОШЕНА КОЛИЧИНА", Key="MedicineConsumptionQuantity", Width=new GridLength(1.6, GridUnitType.Star) },
+                new() { Header="ПАЦИЕНТИ", Key="MedicineConsumptionPatients", Width=new GridLength(1, GridUnitType.Star) },
+                new() { Header="МКБ-10", Key="MedicineConsumptionDiagnosis", Width=new GridLength(2.8, GridUnitType.Star) },
+                new() { Header="ПЕРИОД", Key="MedicineConsumptionPeriod", Width=new GridLength(1.6, GridUnitType.Star) }
+            };
+            return;
+        }
+            return;
+        }
+
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
             new() { Header=Col1Header, Key="Primary", Width=new GridLength(2, GridUnitType.Star) },
@@ -883,6 +985,14 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 row["HistoryDosage"]=r.HistoryDosageValue??"";
                 row["HistoryFrequency"]=r.HistoryFrequencyValue??"";
                 row["HistoryStatus"]=r.HistoryMedicineStatusValue??"";
+            }
+            else if(SelectedReportType.Type==ReportType.MedicineConsumption)
+            {
+                row["MedicineConsumptionMedicine"]=r.PrimaryHeader??"";
+                row["MedicineConsumptionQuantity"]=r.MedicineConsumptionValue.ToString("0.##");
+                row["MedicineConsumptionPatients"]=r.MedicinePatientCount.ToString();
+                row["MedicineConsumptionDiagnosis"]=r.MedicineDiagnosisValue??"";
+                row["MedicineConsumptionPeriod"]=r.DateValue??"";
             }
             else if(SelectedReportType.Type==ReportType.Patients)
             {
@@ -995,7 +1105,8 @@ public enum ReportType
     MissedTherapies,
     Auditing,
     AppointmentStatuses,
-    Patients
+    Patients,
+    MedicineConsumption
 }
 
 public sealed class ReportTypeOption
@@ -1040,4 +1151,7 @@ public class GenericReportRow
     public string HistoryDosageValue { get; set; } = "";
     public string HistoryFrequencyValue { get; set; } = "";
     public string HistoryMedicineStatusValue { get; set; } = "";
+    public decimal MedicineConsumptionValue { get; set; }
+    public int MedicinePatientCount { get; set; }
+    public string MedicineDiagnosisValue { get; set; } = "";
 }
