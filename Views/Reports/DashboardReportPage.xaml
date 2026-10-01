@@ -3,7 +3,6 @@
 	x:Class="EHMR.Views.Reports.DashboardReportPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:converters="clr-namespace:EHMR.Converters"
 	xmlns:models="clr-namespace:EHMR.Domain.Entities.Reports"
 	xmlns:sc="clr-namespace:EHMR.Resources.Controls"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
@@ -14,7 +13,6 @@
 	<ContentPage.Resources>
 		<ResourceDictionary>
 
-			<converters:ReportCategoryConverter x:Key="ReportCategoryConverter" />
 
 			<!--  Same shared card styles used on the Dashboard, so both pages read as one system  -->
 			<Style x:Key="DashboardCardTitle" TargetType="Label">
@@ -69,20 +67,10 @@
 				Style="{StaticResource PageCardStyleDashboard}">
 				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 					<sc:FFPageHeader
-						Title="Извештаи"
+						Title="Извештаи за пациенти"
 						Grid.Column="0"
-						Subtitle="Преглед, пребарување и преземање на генерирани извештаи" />
-					<HorizontalStackLayout
-						Grid.Column="1"
-						Margin="0,8,8,8"
-						Spacing="10"
-						VerticalOptions="Center">
-						<sc:FFButton
-							ButtonKind="Secondary"
-							Command="{Binding BackToHubCommand}"
-							ContentPadding="0,0"
-							Text="Назад" />
-					</HorizontalStackLayout>
+						Subtitle="Преглед, филтрирање и генерирање извештаи за пациенти" />
+
 				</Grid>
 			</Border>
 
@@ -93,139 +81,6 @@
 				<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
 
 					<!--  =========================================================  -->
-					<!--  HUB VIEW — report definition cards  -->
-					<!--  =========================================================  -->
-					<sc:FFSectionCard>
-						<Border.Triggers>
-							<DataTrigger
-								Binding="{Binding IsShowingDetails}"
-								TargetType="Border"
-								Value="True">
-								<Setter Property="IsVisible" Value="False" />
-							</DataTrigger>
-						</Border.Triggers>
-
-						<CollectionView HeightRequest="560" ItemsSource="{Binding AvailableReports}">
-							<CollectionView.EmptyView>
-								<VerticalStackLayout
-									Padding="20"
-									HorizontalOptions="Center"
-									Spacing="16"
-									VerticalOptions="Center">
-									<Label Style="{StaticResource DashboardEmptyStateLabel}" Text="Нема достапни извештаи" />
-								</VerticalStackLayout>
-							</CollectionView.EmptyView>
-
-							<CollectionView.ItemsLayout>
-								<GridItemsLayout
-									HorizontalItemSpacing="12"
-									Orientation="Vertical"
-									Span="2"
-									VerticalItemSpacing="12" />
-							</CollectionView.ItemsLayout>
-							<CollectionView.ItemTemplate>
-								<DataTemplate x:DataType="models:ReportDefinition">
-									<Border
-										Padding="20"
-										BackgroundColor="{StaticResource SparkPageBackground}"
-										Stroke="{StaticResource SparkBorderSubtle}"
-										StrokeThickness="1">
-										<Border.StrokeShape>
-											<RoundRectangle CornerRadius="14" />
-										</Border.StrokeShape>
-										<!--  Same shadow recipe as Dashboard's appointment/encounter cards  -->
-										<Border.Shadow>
-											<Shadow
-												Brush="{StaticResource SparkTextPrimary}"
-												Opacity="0.08"
-												Radius="10"
-												Offset="0,3" />
-										</Border.Shadow>
-										<Border.GestureRecognizers>
-											<TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ReportViewModel}}, Path=SelectReportCommand}" CommandParameter="{Binding .}" />
-										</Border.GestureRecognizers>
-
-										<Grid RowDefinitions="Auto,Auto,1,Auto" RowSpacing="14">
-
-											<!--  Icon + title  -->
-											<Grid Grid.Row="0" ColumnDefinitions="Auto,*">
-												<Border
-													Grid.Column="0"
-													Margin="0,0,14,0"
-													Padding="10"
-													BackgroundColor="{StaticResource SparkTabActiveBg}"
-													HeightRequest="48"
-													StrokeThickness="0"
-													VerticalOptions="Center"
-													WidthRequest="48">
-													<Border.StrokeShape>
-														<RoundRectangle CornerRadius="12" />
-													</Border.StrokeShape>
-													<Label
-														FontSize="22"
-														HorizontalOptions="Center"
-														Text="{Binding Icon}"
-														VerticalOptions="Center" />
-												</Border>
-												<VerticalStackLayout
-													Grid.Column="1"
-													Spacing="3"
-													VerticalOptions="Center">
-													<Label
-														FontSize="15"
-														LineBreakMode="WordWrap"
-														Style="{StaticResource DashboardCardTitle}"
-														Text="{Binding Title}" />
-													<Label
-														CharacterSpacing="0.5"
-														FontAttributes="Bold"
-														FontSize="10"
-														Text="КЛИКНИ ЗА ОТВОРАЊЕ"
-														TextColor="{StaticResource SparkAccentTeal}" />
-												</VerticalStackLayout>
-											</Grid>
-
-											<!--  Description  -->
-											<Label
-												Grid.Row="1"
-												FontSize="13"
-												LineBreakMode="TailTruncation"
-												MaxLines="2"
-												Text="{Binding Description}"
-												TextColor="{StaticResource SparkTextSecondary}" />
-
-											<!--  Divider  -->
-											<BoxView Grid.Row="2" BackgroundColor="{StaticResource SparkBorder}" />
-
-											<!--  Footer — count badge matches Dashboard's card count badge  -->
-											<Grid Grid.Row="3" ColumnDefinitions="*,Auto">
-												<Border
-													Grid.Column="0"
-													Padding="10,4"
-													HorizontalOptions="Start"
-													Style="{StaticResource DashboardCardCountBadge}">
-													<Label Style="{StaticResource DashboardCardCountLabel}" Text="{Binding Category, Converter={StaticResource ReportCategoryConverter}, StringFormat='Категорија: {0}'}" />
-												</Border>
-												<Label
-													Grid.Column="1"
-													FontAttributes="Bold"
-													FontSize="12"
-													Text="Отвори ➔"
-													TextColor="{StaticResource SparkAccentTeal}"
-													VerticalOptions="Center" />
-											</Grid>
-										</Grid>
-									</Border>
-								</DataTemplate>
-							</CollectionView.ItemTemplate>
-						</CollectionView>
-					</sc:FFSectionCard>
-
-					<Border Padding="10,6" BackgroundColor="{StaticResource SparkBadgeNeutralBg}" StrokeThickness="0" HorizontalOptions="End">
-						<Label FontAttributes="Bold" FontSize="12" Text="{Binding HubTotalTemplates, StringFormat='Вкупно извештаи: {0}'}" TextColor="{StaticResource SparkTextSecondary}" />
-					</Border>
-
-					<!--  =========================================================  -->
 					<!--  DETAIL VIEW — table + analytics sidebar  -->
 					<!--  =========================================================  -->
 					<Grid
@@ -233,15 +88,7 @@
 						Margin="4,0,4,0"
 						ColumnDefinitions="*"
 						ColumnSpacing="0"
-						IsVisible="False">
-						<Grid.Triggers>
-							<DataTrigger
-								Binding="{Binding IsShowingDetails}"
-								TargetType="Grid"
-								Value="True">
-								<Setter Property="IsVisible" Value="True" />
-							</DataTrigger>
-						</Grid.Triggers>
+						IsVisible="True">
 
 						<!--  LEFT COLUMN  -->
 						<VerticalStackLayout Grid.Column="0" Spacing="10">
