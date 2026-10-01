@@ -8,7 +8,7 @@
 	x:Name="PageRoot"
 	x:DataType="viewModels:ProtocolRegistryViewModel"
 	BackgroundColor="{StaticResource PageBackground}">
-<Grid ColumnDefinitions="285,*">
+<Grid ColumnDefinitions="260,*">
 		<Border Grid.Column="0" StrokeThickness="0"><ContentView x:Name="MenuHost" /></Border>
 		<Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="0">
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
