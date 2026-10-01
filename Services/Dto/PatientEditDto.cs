@@ -16,7 +16,7 @@ namespace EHMR.Services.Dto
 
         public string FirstName { get; set; } = "";
         public string LastName { get; set; } = "";
-        public string NationalId { get; set; } = "";
+        public string? NationalId { get; set; }
         public string SzboNumber { get; set; } = "";
         public DateTime BirthDate
         {
@@ -86,7 +86,7 @@ namespace EHMR.Services.Dto
 
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
-        public string NationalId { get; set; } = string.Empty;
+        public string? NationalId { get; set; }
         public string SzboNumber { get; set; } = string.Empty;
         public DateTime BirthDate
         {
