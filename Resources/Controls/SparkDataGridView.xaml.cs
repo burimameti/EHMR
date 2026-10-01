@@ -608,7 +608,7 @@ namespace EHMR.Resources.Controls
             {
                 Text=text,
                 FontSize=R(11),
-                FontAttributes=FontAttributes.Medium,
+                FontAttributes=FontAttributes.Bold,
                 TextColor=textColor,
                 HorizontalTextAlignment=TextAlignment.Center,
                 VerticalTextAlignment=TextAlignment.Center
@@ -620,7 +620,7 @@ namespace EHMR.Resources.Controls
             return border;
         }
 
-        private View AttachRowTap(SparkGridRow row, int rowIndex, int localIndex)
+        private void AttachRowTap(SparkGridRow row, int rowIndex, int localIndex)
         {
             for(int c = 0; c<Columns.Count; c++)
             {
