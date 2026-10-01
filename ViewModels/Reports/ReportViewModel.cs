@@ -878,13 +878,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                 columns: GridColumns.ToList(),
                 rows: exportRows);
 
-            var excelPath=await _reportExportService.ExportToExcelAsync(
-                dynamicTitle,
-                GridColumns.ToList(),
-                exportRows);
-
             var pdfInfo=new FileInfo(pdfPath);
-            var excelInfo=new FileInfo(excelPath);
 
             await _reportHistoryService.AddAsync(new ReportHistory
             {
@@ -901,26 +895,11 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                 EndDate=EndDate
             });
 
-            await _reportHistoryService.AddAsync(new ReportHistory
-            {
-                ReportKey=_activeProvider.Key,
-                ReportTitle=dynamicTitle,
-                Format="EXCEL",
-                FileName=Path.GetFileName(excelPath),
-                FilePath=excelPath,
-                FileSize=excelInfo.Length,
-                GeneratedBy=currentUser,
-                Success=true,
-                MachineName=Environment.MachineName,
-                StartDate=StartDate,
-                EndDate=EndDate
-            });
-
-            AddHistoryEntry("PDF + Excel", succeeded:true);
+            AddHistoryEntry("PDF", succeeded:true);
 
             await UserDialogService.ShowAlertAsync(
                 "Извештајот е генериран",
-                "Извештајот е успешно генериран во PDF и Excel формат. Може да го видите во листата на извештаи.",
+                "Извештајот е успешно генериран во PDF формат.",
                 "ОК");
         }, "Грешка при генерирање извештај");
     }
