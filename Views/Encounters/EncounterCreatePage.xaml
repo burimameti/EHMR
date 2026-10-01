@@ -288,7 +288,7 @@
 									</CollectionView>
 								</Border>
 								<Grid
-									ColumnDefinitions="1.45*,1*,1.35*,0.85*,32"
+									ColumnDefinitions="1.45*,1*,1.35*,0.85*,75"
 									ColumnSpacing="1"
 									IsVisible="{Binding HasEncounterMedicines}">
 									<Border
