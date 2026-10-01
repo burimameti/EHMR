@@ -168,7 +168,7 @@ namespace EHMR.Domain.Entities.Reports
                         x.Patient?.FullName ?? "-",
                         x.Doctor?.FullName ?? "-",
                         StatusLabel(x.Status),
-                        x.ScheduledStart.ToString("dd.MM.yyyy HH:mm"),
+                        x.ScheduledStart.ToString("dd.MM.yyyy"),
                         string.IsNullOrWhiteSpace(x.ReasonForVisit) ? "-" : x.ReasonForVisit
                     ],
                     IsAlertSeverity=alert
