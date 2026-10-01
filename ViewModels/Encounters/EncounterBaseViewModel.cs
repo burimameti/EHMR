@@ -73,6 +73,12 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     private DateTime? currentPatientScoreDate;
 
     [ObservableProperty]
+    private ObservableCollection<ApplicationRegime> applicationRegimeOptions = new();
+
+    public ObservableCollection<string> ScoreOptions { get; } = new(
+        Enumerable.Range(0, 11).Select(x => x.ToString()));
+
+    [ObservableProperty]
     private string pageTitle = string.Empty;
 
     private bool _isPatientLockedFromContext;
