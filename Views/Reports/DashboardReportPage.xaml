@@ -44,7 +44,7 @@
 	</ContentPage.Resources>
 
 	<!--  Same 290,* split as the Dashboard menu/content column  -->
-	<Grid ColumnDefinitions="285,*">
+	<Grid ColumnDefinitions="260,*">
 
 		<!--  LEFT MENU  -->
 		<Border Grid.Column="0" StrokeThickness="0">
