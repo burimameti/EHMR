@@ -605,22 +605,10 @@
 										FontSize="10"
 										Text="Избери скор за овој преглед"
 										TextColor="{StaticResource SparkTextSecondary}" />
-									<Border
-										Padding="8,0"
-										BackgroundColor="White"
-										HeightRequest="40"
-										Stroke="{StaticResource SparkBorderSubtle}"
-										StrokeShape="RoundRectangle 6"
-										StrokeThickness="1">
-										<Picker
-											Title="Избери скор"
-											FontSize="11.5"
-											ItemsSource="{Binding ScoreOptions}"
-											SelectedItem="{Binding ScoreText, Mode=TwoWay}"
-											TextColor="{StaticResource SparkTextPrimary}"
-											TitleColor="{StaticResource SparkTextSecondary}"
-											VerticalOptions="Center" />
-									</Border>
+									<controls:FFPicker
+										ItemsSource="{Binding ScoreOptions}"
+										Placeholder="Избери скор"
+										SelectedItem="{Binding ScoreText, Mode=TwoWay}" />
 								</VerticalStackLayout>
 							</Grid>
 							<!--  ЗАКАЖУВАЊЕ НА СЛЕДЕН ТЕРМИН  -->
