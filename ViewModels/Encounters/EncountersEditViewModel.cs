@@ -13,15 +13,44 @@ namespace EHMR.ViewModels.Encounters;
 public partial class EncounterEditViewModel : EncounterBaseViewModel
 {
     private readonly ISelectedItemService<Encounter> _selectedItemService;
+    private readonly IPatientClinicalReportService _clinicalReportService;
     public EncounterEditViewModel(
         IEncounterDetailService service,
         INavigationService navigationService,
         IUserDialogService userDialogService,
-        ISelectedItemService<Encounter> selectedItemService)
+        ISelectedItemService<Encounter> selectedItemService,
+        IPatientClinicalReportService clinicalReportService)
         : base(service, navigationService, userDialogService)
     {
         _selectedItemService=selectedItemService;
+        _clinicalReportService=clinicalReportService;
         PageTitle="Промена на преглед";
+    }
+
+    [RelayCommand]
+    private async Task GenerateClinicalReportAsync()
+    {
+        if(Encounter.PatientId==Guid.Empty) return;
+
+        try
+        {
+            var path=await _clinicalReportService.GeneratePdfAsync(
+                Encounter.PatientId,
+                encounterId=Encounter.Id,
+                appointmentId=Encounter.AppointmentId,
+                title=$"Детален извештај - {SelectedPatient?.FullName ?? "Пациент"}");
+
+            await Launcher.Default.OpenAsync(new OpenFileRequest(
+                System.IO.Path.GetFileName(path),
+                new ReadOnlyFile(path)));
+        }
+        catch(Exception ex)
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Извештај",
+                $"PDF извештајот не може да се генерира: {ex.Message}",
+                "ОК");
+        }
     }
 
     public async Task LoadAsync()
