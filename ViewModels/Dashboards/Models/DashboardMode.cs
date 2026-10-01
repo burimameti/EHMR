@@ -117,7 +117,18 @@ public partial class DashboardViewModel
                 if(ActiveAppointment!=null)
                     return DashboardPatientState.Scheduled;
 
-                return DashboardPatientState.None;
+                // If there is no active appointment/encounter, still expose the
+                // latest recorded encounter status instead of falling back to "—".
+                // This keeps completed/cancelled visits visible in the patient grid.
+                var latest = EncounterHistory.FirstOrDefault();
+                return latest?.Status switch
+                {
+                    EncounterStatus.Completed => DashboardPatientState.Completed,
+                    EncounterStatus.Cancelled => DashboardPatientState.Cancelled,
+                    EncounterStatus.InProgress => DashboardPatientState.InProgress,
+                    EncounterStatus.Scheduled => DashboardPatientState.Scheduled,
+                    _ => DashboardPatientState.None
+                };
             }
         }
 
