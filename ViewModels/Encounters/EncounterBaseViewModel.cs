@@ -76,7 +76,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     private ObservableCollection<ApplicationRegime> applicationRegimeOptions = new();
 
     [RelayCommand]
-    protected async Task AddApplicationRegimeAsync()
+    public async Task AddApplicationRegimeAsync()
     {
         var value=await UserDialogService.ShowPromptAsync(
             "Нов начин на апликација",
