@@ -344,8 +344,8 @@
 				Binding="{Binding IsPrimary}"
 				TargetType="Button"
 				Value="True">
-				<Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTeal}" />
-				<Setter Property="TextColor" Value="{StaticResource SparkButtonPrimaryText}" />
+				<Setter Property="BackgroundColor" Value="{StaticResource SparkButtonSecondaryBg}" />
+				<Setter Property="TextColor" Value="{StaticResource SparkButtonSecondaryText}" />
 				<Setter Property="BorderWidth" Value="0" />
 			</DataTrigger>
 		</Style.Triggers>
