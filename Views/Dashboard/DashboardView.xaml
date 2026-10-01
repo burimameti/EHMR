@@ -344,72 +344,72 @@
 						<!--  ===================================================  -->
 						<controls:FFSectionCard>
 							<Grid ColumnDefinitions="*,*,*,*,*" ColumnSpacing="10" HorizontalOptions="Fill">
-								<Border Grid.Column="0" Padding="12,8" BackgroundColor="White" HeightRequest="72" HorizontalOptions="Fill" Stroke="{Binding Kpis[0].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
+								<Border Grid.Column="0" Padding="12,8" BackgroundColor="White" HeightRequest="72" HorizontalOptions="Fill" Stroke="{Binding Kpi0.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
 	<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
-		<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpis[0].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" VerticalOptions="Start" WidthRequest="30">
-			<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="{Binding Kpis[0].Icon}" TextColor="White" VerticalOptions="Center" />
+		<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi0.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" VerticalOptions="Start" WidthRequest="30">
+			<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="{Binding Kpi0.Icon}" TextColor="White" VerticalOptions="Center" />
 		</Border>
-		<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="{Binding Kpis[0].Title}" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
-		<Label Grid.Column="2" FontAttributes="Bold" FontSize="19" Text="{Binding Kpis[0].Value}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
-		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{Binding Kpis[0].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" MinimumHeightRequest="28" StrokeThickness="0">
+		<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="{Binding Kpi0.Title}" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
+		<Label Grid.Column="2" FontAttributes="Bold" FontSize="19" Text="{Binding Kpi0.Value}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
+		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{Binding Kpi0.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" MinimumHeightRequest="28" StrokeThickness="0">
 			<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-			<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Kpis[0].Command}" CommandParameter="{Binding Kpis[0].CommandParameter}" /></Border.GestureRecognizers>
+			<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Kpi0.Command}" CommandParameter="{Binding Kpi0.CommandParameter}" /></Border.GestureRecognizers>
 			<Label FontAttributes="Bold" FontSize="10" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
 		</Border>
 	</Grid>
 </Border>
-								<Border Grid.Column="1" Padding="12,8" BackgroundColor="White" HeightRequest="72" HorizontalOptions="Fill" Stroke="{Binding Kpis[1].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
+								<Border Grid.Column="1" Padding="12,8" BackgroundColor="White" HeightRequest="72" HorizontalOptions="Fill" Stroke="{Binding Kpi1.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
 	<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
-		<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpis[1].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" VerticalOptions="Start" WidthRequest="30">
-			<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="{Binding Kpis[1].Icon}" TextColor="White" VerticalOptions="Center" />
+		<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi1.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" VerticalOptions="Start" WidthRequest="30">
+			<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="{Binding Kpi1.Icon}" TextColor="White" VerticalOptions="Center" />
 		</Border>
-		<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="{Binding Kpis[1].Title}" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
-		<Label Grid.Column="2" FontAttributes="Bold" FontSize="19" Text="{Binding Kpis[1].Value}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
-		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{Binding Kpis[1].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" MinimumHeightRequest="28" StrokeThickness="0">
+		<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="{Binding Kpi1.Title}" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
+		<Label Grid.Column="2" FontAttributes="Bold" FontSize="19" Text="{Binding Kpi1.Value}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
+		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{Binding Kpi1.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" MinimumHeightRequest="28" StrokeThickness="0">
 			<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-			<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Kpis[1].Command}" CommandParameter="{Binding Kpis[1].CommandParameter}" /></Border.GestureRecognizers>
+			<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Kpi1.Command}" CommandParameter="{Binding Kpi1.CommandParameter}" /></Border.GestureRecognizers>
 			<Label FontAttributes="Bold" FontSize="10" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
 		</Border>
 	</Grid>
 </Border>
-								<Border Grid.Column="2" Padding="12,8" BackgroundColor="White" HeightRequest="72" HorizontalOptions="Fill" Stroke="{Binding Kpis[2].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
+								<Border Grid.Column="2" Padding="12,8" BackgroundColor="White" HeightRequest="72" HorizontalOptions="Fill" Stroke="{Binding Kpi2.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
 	<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
-		<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpis[2].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" VerticalOptions="Start" WidthRequest="30">
-			<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="{Binding Kpis[2].Icon}" TextColor="White" VerticalOptions="Center" />
+		<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi2.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" VerticalOptions="Start" WidthRequest="30">
+			<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="{Binding Kpi2.Icon}" TextColor="White" VerticalOptions="Center" />
 		</Border>
-		<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="{Binding Kpis[2].Title}" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
-		<Label Grid.Column="2" FontAttributes="Bold" FontSize="19" Text="{Binding Kpis[2].Value}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
-		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{Binding Kpis[2].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" MinimumHeightRequest="28" StrokeThickness="0">
+		<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="{Binding Kpi2.Title}" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
+		<Label Grid.Column="2" FontAttributes="Bold" FontSize="19" Text="{Binding Kpi2.Value}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
+		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{Binding Kpi2.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" MinimumHeightRequest="28" StrokeThickness="0">
 			<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-			<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Kpis[2].Command}" CommandParameter="{Binding Kpis[2].CommandParameter}" /></Border.GestureRecognizers>
+			<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Kpi2.Command}" CommandParameter="{Binding Kpi2.CommandParameter}" /></Border.GestureRecognizers>
 			<Label FontAttributes="Bold" FontSize="10" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
 		</Border>
 	</Grid>
 </Border>
-								<Border Grid.Column="3" Padding="12,8" BackgroundColor="White" HeightRequest="72" HorizontalOptions="Fill" Stroke="{Binding Kpis[3].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
+								<Border Grid.Column="3" Padding="12,8" BackgroundColor="White" HeightRequest="72" HorizontalOptions="Fill" Stroke="{Binding Kpi3.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
 	<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
-		<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpis[3].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" VerticalOptions="Start" WidthRequest="30">
-			<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="{Binding Kpis[3].Icon}" TextColor="White" VerticalOptions="Center" />
+		<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi3.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" VerticalOptions="Start" WidthRequest="30">
+			<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="{Binding Kpi3.Icon}" TextColor="White" VerticalOptions="Center" />
 		</Border>
-		<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="{Binding Kpis[3].Title}" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
-		<Label Grid.Column="2" FontAttributes="Bold" FontSize="19" Text="{Binding Kpis[3].Value}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
-		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{Binding Kpis[3].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" MinimumHeightRequest="28" StrokeThickness="0">
+		<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="{Binding Kpi3.Title}" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
+		<Label Grid.Column="2" FontAttributes="Bold" FontSize="19" Text="{Binding Kpi3.Value}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
+		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{Binding Kpi3.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" MinimumHeightRequest="28" StrokeThickness="0">
 			<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-			<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Kpis[3].Command}" CommandParameter="{Binding Kpis[3].CommandParameter}" /></Border.GestureRecognizers>
+			<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Kpi3.Command}" CommandParameter="{Binding Kpi3.CommandParameter}" /></Border.GestureRecognizers>
 			<Label FontAttributes="Bold" FontSize="10" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
 		</Border>
 	</Grid>
 </Border>
-								<Border Grid.Column="4" Padding="12,8" BackgroundColor="White" HeightRequest="72" HorizontalOptions="Fill" Stroke="{Binding Kpis[4].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
+								<Border Grid.Column="4" Padding="12,8" BackgroundColor="White" HeightRequest="72" HorizontalOptions="Fill" Stroke="{Binding Kpi4.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
 	<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
-		<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpis[4].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" VerticalOptions="Start" WidthRequest="30">
-			<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="{Binding Kpis[4].Icon}" TextColor="White" VerticalOptions="Center" />
+		<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi4.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" VerticalOptions="Start" WidthRequest="30">
+			<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="{Binding Kpi4.Icon}" TextColor="White" VerticalOptions="Center" />
 		</Border>
-		<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="{Binding Kpis[4].Title}" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
-		<Label Grid.Column="2" FontAttributes="Bold" FontSize="19" Text="{Binding Kpis[4].Value}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
-		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{Binding Kpis[4].Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" MinimumHeightRequest="28" StrokeThickness="0">
+		<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="{Binding Kpi4.Title}" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
+		<Label Grid.Column="2" FontAttributes="Bold" FontSize="19" Text="{Binding Kpi4.Value}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
+		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{Binding Kpi4.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" MinimumHeightRequest="28" StrokeThickness="0">
 			<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-			<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Kpis[4].Command}" CommandParameter="{Binding Kpis[4].CommandParameter}" /></Border.GestureRecognizers>
+			<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Kpi4.Command}" CommandParameter="{Binding Kpi4.CommandParameter}" /></Border.GestureRecognizers>
 			<Label FontAttributes="Bold" FontSize="10" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
 		</Border>
 	</Grid>
