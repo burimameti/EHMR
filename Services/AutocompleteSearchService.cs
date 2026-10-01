@@ -222,7 +222,7 @@ public class AutocompleteSearchService : IAutocompleteSearchService
             {
                 Id=a.Id.ToString(),
                 Type=SearchEntityType.Appointment,
-                DisplayText=$"{a.Patient.FirstName} {a.Patient.LastName} • {a.ScheduledStart:dd.MM HH:mm}",
+                DisplayText=$"{a.Patient.FirstName} {a.Patient.LastName} • {a.ScheduledStart:dd.MM}",
                 Score=40+TypeBoost(SearchEntityType.Appointment)
             }));
         }
