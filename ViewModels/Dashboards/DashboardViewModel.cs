@@ -850,29 +850,12 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task NavigateToAlerts(string? level = null)
     {
-        if(string.IsNullOrWhiteSpace(level)||!Enum.TryParse<AlertLevel>(level, out var alertLevel))
-            return;
+        var query=new Dictionary<string, object>();
 
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        if(!string.IsNullOrWhiteSpace(level))
+            query["level"]=level;
 
-        var query = db.Alerts
-            .AsNoTracking()
-            .Where(a => !a.IsResolved && a.Level==alertLevel);
-
-        var patientIds = await query
-            .Select(a => a.PatientId)
-            .Distinct()
-            .ToListAsync();
-
-        // The header count is now actionable: clicking it shows the exact
-        // patients that make up that warning/critical/info count.
-        _searchResults=_allPatients
-            .Where(x => patientIds.Contains(x.Patient.Id))
-            .ToList();
-
-        CurrentPage=1;
-        TotalPages=(int)Math.Ceiling(_searchResults.Count/(double)PageSize);
-        ProjectPage();
+        await navigationService.GoToAsync(AppRoutes.Alerts.List, query);
     }
 
     // ─── HYPERLINK in the patient grid → navigate to patient detail ──────────
