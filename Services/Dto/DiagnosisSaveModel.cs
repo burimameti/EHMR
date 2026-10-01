@@ -108,7 +108,7 @@ namespace EHMR.Services.Dto
         }
 
         public Guid? ApplicationRegimeId { get; init; }
-        public int Quantity { get; init; } = 1;
+        public decimal Quantity { get; init; } = 1m;
 
         public bool IsActive
         {
