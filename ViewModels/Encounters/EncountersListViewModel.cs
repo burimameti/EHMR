@@ -134,7 +134,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
             row["SzboNumber"]=e.Patient?.SzboNumber??"—";
             row["DoctorName"]=e.Doctor?.User!=null ? $"{e.Doctor.User.FirstName} {e.Doctor.User.LastName}" : "";
 
-            row["Date"]=(e.ScheduledStart??e.EncounterDate).ToString("dd.MM.yyyy HH:mm");
+            row["Date"]=(e.ScheduledStart??e.EncounterDate).ToString("dd.MM.yyyy");
             row["Status"]=new SparkBadgeValue(
                 EncounterStatusSchema.ToDisplay(e.Status.ToString()),
                 StatusToTone(e.Status));
