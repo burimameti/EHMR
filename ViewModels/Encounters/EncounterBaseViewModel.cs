@@ -192,7 +192,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     public string AppointmentDisplay =>
         LinkedAppointment==null
             ? "Без термин"
-            : $"{LinkedAppointment.ScheduledStart:dd.MM.yyyy HH:mm}";
+            : $"{LinkedAppointment.ScheduledStart:dd.MM.yyyy}";
 
     partial void OnLinkedAppointmentChanged(Appointment? value)
     {
@@ -605,7 +605,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
                         .Contains(query, StringComparison.OrdinalIgnoreCase)
                     ||
                     x.ScheduledStart
-                        .ToString("dd.MM.yyyy HH:mm")
+                        .ToString("dd.MM.yyyy")
                         .Contains(query, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
