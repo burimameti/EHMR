@@ -31,7 +31,7 @@
 
 					<controls:FFButton
 						Grid.Column="1"
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
+						BackgroundColorEx="{StaticResource SparkButtonSecondaryBg}"
 						ButtonKind="Primary"
 						Command="{Binding AddCommand}"
 						ContentPadding="16,0"
