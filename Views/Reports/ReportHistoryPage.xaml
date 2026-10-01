@@ -31,7 +31,7 @@
 			Padding="0"
 			BackgroundColor="{StaticResource PageBackground}"
 			RowDefinitions="Auto,Auto,*"
-			RowSpacing="16">
+			RowSpacing="0">
 
 			<!--  =====================================================  -->
 			<!--  PAGE HEADER  -->
