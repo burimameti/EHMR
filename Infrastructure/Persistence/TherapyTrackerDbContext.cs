@@ -202,7 +202,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             // Encrypted National ID
             entity.Property(x => x.NationalId)
                   .HasConversion(nationalIdConverter)
-                  .IsRequired()
                   .HasMaxLength(500);
 
             entity.Property(x => x.SzboNumber)
