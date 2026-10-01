@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
+using EHMR.Domain.Interfaces;
 using EHMR.Extensions;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Resources.Controls;
