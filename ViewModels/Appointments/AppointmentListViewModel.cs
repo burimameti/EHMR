@@ -696,7 +696,7 @@ public partial class AppointmentListViewModel
             row["Date"]=a.ScheduledStart.ToString("dd.MM.yyyy");
             row["Status"]=new SparkBadgeValue(StatusLabel(a.Status), StatusToTone(a.Status));
 
-            AddDefaultActions(a, row, detailLabel: "Повеќе", editLabel: "Промени", canEditPredicate: CanEdit);
+            AddDefaultActions(a, row, detailLabel: "Детали", editLabel: "Промени", canEditPredicate: CanEdit);
 
             if(CanDelete&&CanCancel(a))
             {

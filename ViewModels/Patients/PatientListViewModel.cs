@@ -423,7 +423,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             row["Phone"]=p.Phone;
             row["Status"]=new SparkBadgeValue(p.Status.ToDisplay(), StatusToTone(p.Status));
 
-            AddDefaultActions(p, row, detailLabel: "Повеќе", editLabel: "Промени", canEditPredicate: x => x.Status==PatientStatus.Active);
+            AddDefaultActions(p, row, detailLabel: "Детали", editLabel: "Промени", canEditPredicate: x => x.Status==PatientStatus.Active);
 
             if(p.Status==PatientStatus.Active)
             {

@@ -1194,7 +1194,7 @@ public partial class DashboardViewModel : ObservableObject
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
             new() { Header="ИМЕ И ПРЕЗИМЕ", Key="PatientName", Width=new GridLength(2.4, GridUnitType.Star) },
-            new() { Header="СЗБО БРОЈ", Key="SzboNumber", Width=new GridLength(1.25, GridUnitType.Star) },
+            new() { Header="ЕЗБО БРОЈ", Key="SzboNumber", Width=new GridLength(1.25, GridUnitType.Star) },
             new() { Header="ДАТУМ НА ПРЕГЛЕД", Key="Date", Width=new GridLength(1.5, GridUnitType.Star) },
             new() { Header="СТАТУС", Key="Status", Width=new GridLength(1.1, GridUnitType.Star), CellType=SparkGridCellType.Badge },
             new() { Header="ОПЦИИ", Key="Actions", Width=GridLength.Auto, CellType=SparkGridCellType.Actions }
@@ -1209,7 +1209,7 @@ public partial class DashboardViewModel : ObservableObject
             row["Status"]=new SparkBadgeValue(item.StatusText, EncounterStatusToTone(item.Source.Status));
             row["Actions"]=new List<SparkButtonItem>
             {
-                new() { IsPrimary=true, Label="Повеќе", Command=OpenEncounterFromPreviewCommand, CommandParameter=item }
+                new() { IsPrimary=true, Label="Детали", Command=OpenEncounterFromPreviewCommand, CommandParameter=item }
             };
             return row;
         }));
@@ -1261,7 +1261,7 @@ public partial class DashboardViewModel : ObservableObject
 
             row["Actions"]=new List<SparkButtonItem>
             {
-                new() { IsPrimary = true, IconGlyph = "👁", Label = "Повеќе",  Command = SelectCommand,  CommandParameter = item },
+                new() { IsPrimary = true, IconGlyph = "👁", Label = "Детали",  Command = SelectCommand,  CommandParameter = item },
                 new() {                   IconGlyph = "✎",  Label = "Промени", Command = EditCommand,    CommandParameter = patient }
             };
 

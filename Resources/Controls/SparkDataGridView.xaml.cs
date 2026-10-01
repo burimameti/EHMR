@@ -576,14 +576,16 @@ namespace EHMR.Resources.Controls
         private static Color ResolveActionColor(SparkButtonItem action)
         {
             var label = action.Label?.Trim()??string.Empty;
-            if(label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase))
-                return ResolveColorResource("SparkBackgroundAlt", "#F7F9FC");
+
             if(label.Equals("Детали", StringComparison.OrdinalIgnoreCase))
-                return Color.FromArgb("#F59E0B");
+                return Color.FromArgb("#73FBFD");
+
             if(label.Equals("Промени", StringComparison.OrdinalIgnoreCase))
                 return ResolveColorResource("SurfaceAlt", "#1A2436");
+
             if(label.Equals("Исчисти", StringComparison.OrdinalIgnoreCase)||action.IsPrimary)
                 return ResolveColorResource("SparkButtonSecondaryBg", "#475569");
+
             return ResolveColorResource("TextMuted", "#64748B");
         }
 
