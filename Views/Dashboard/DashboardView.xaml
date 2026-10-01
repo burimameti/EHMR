@@ -346,7 +346,7 @@
 							<Border Grid.Column="0" Padding="10,6" BackgroundColor="White" HeightRequest="68" HorizontalOptions="Fill" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
 								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
 									<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi0.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="27" StrokeShape="RoundRectangle 7" StrokeThickness="0" VerticalOptions="Start" WidthRequest="27">
-										<Label FontFamily="FASolid" FontSize="11" HorizontalOptions="Center" Text="\uf0c0" TextColor="White" VerticalOptions="Center" />
+										<Label FontFamily="FASolid" FontSize="11" HorizontalOptions="Center" Text="&#xf0c0;" TextColor="White" VerticalOptions="Center" />
 									</Border>
 									<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="ПАЦИЕНТИ ВКУПНО" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
 									<Label Grid.Column="2" FontAttributes="Bold" FontSize="18" Text="{Binding State.TotalPatients}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
@@ -360,7 +360,7 @@
 							<Border Grid.Column="1" Padding="10,6" BackgroundColor="White" HeightRequest="68" HorizontalOptions="Fill" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
 								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
 									<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi1.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="27" StrokeShape="RoundRectangle 7" StrokeThickness="0" VerticalOptions="Start" WidthRequest="27">
-										<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="\uf133" TextColor="White" VerticalOptions="Center" />
+										<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="&#xf133;" TextColor="White" VerticalOptions="Center" />
 									</Border>
 									<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="АКТИВНИ ТЕРМИНИ" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
 									<Label Grid.Column="2" FontAttributes="Bold" FontSize="18" Text="{Binding State.UpcomingAppointmentsCount}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
@@ -374,7 +374,7 @@
 							<Border Grid.Column="2" Padding="10,6" BackgroundColor="White" HeightRequest="68" HorizontalOptions="Fill" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
 								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
 									<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi2.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="27" StrokeShape="RoundRectangle 7" StrokeThickness="0" VerticalOptions="Start" WidthRequest="27">
-										<Label FontFamily="FASolid" FontSize="11" HorizontalOptions="Center" Text="\uf058" TextColor="White" VerticalOptions="Center" />
+										<Label FontFamily="FASolid" FontSize="11" HorizontalOptions="Center" Text="&#xf058;" TextColor="White" VerticalOptions="Center" />
 									</Border>
 									<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="ЗАВРШЕНИ ДЕНЕС ПРЕГЛЕДИ" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
 									<Label Grid.Column="2" FontAttributes="Bold" FontSize="18" Text="{Binding State.CompletedToday}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
@@ -388,7 +388,7 @@
 							<Border Grid.Column="3" Padding="10,6" BackgroundColor="White" HeightRequest="68" HorizontalOptions="Fill" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
 								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
 									<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi3.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="27" StrokeShape="RoundRectangle 7" StrokeThickness="0" VerticalOptions="Start" WidthRequest="27">
-										<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="\uf254" TextColor="White" VerticalOptions="Center" />
+										<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="&#xf254;" TextColor="White" VerticalOptions="Center" />
 									</Border>
 									<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="ЗАКАЖАНИ И ПРИЈАВЕНИ" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
 									<Label Grid.Column="2" FontAttributes="Bold" FontSize="18" Text="{Binding State.WaitingToday}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
@@ -402,7 +402,7 @@
 							<Border Grid.Column="4" Padding="10,6" BackgroundColor="White" HeightRequest="68" HorizontalOptions="Fill" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
 								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
 									<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi4.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="27" StrokeShape="RoundRectangle 7" StrokeThickness="0" VerticalOptions="Start" WidthRequest="27">
-										<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="\uf492" TextColor="White" VerticalOptions="Center" />
+										<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="&#xf492;" TextColor="White" VerticalOptions="Center" />
 									</Border>
 									<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="ВО ТЕК" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
 									<Label Grid.Column="2" FontAttributes="Bold" FontSize="18" Text="{Binding State.ActiveTherapies}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
