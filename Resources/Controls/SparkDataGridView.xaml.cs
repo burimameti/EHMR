@@ -480,6 +480,7 @@ namespace EHMR.Resources.Controls
                 SparkGridCellType.Avatar => BuildAvatar(value?.ToString()),
                 SparkGridCellType.Actions => BuildActions(row),
                 SparkGridCellType.Button => BuildSingleButton(value as SparkButtonItem, row),
+                SparkGridCellType.QuickPreview => BuildQuickPreview(value?.ToString()),
                 SparkGridCellType.Hyperlink => BuildHyperlink(value?.ToString(), row, rowIndex-1),
                 _ => BuildText(value?.ToString()??string.Empty, false)
             };
@@ -497,6 +498,28 @@ namespace EHMR.Resources.Controls
             Grid.SetColumn(border, columnIndex);
             border.Content=content;
             GridRoot.Children.Add(border);
+        }
+
+        private View BuildQuickPreview(string? tooltip)
+        {
+            var button = new Button
+            {
+                Text = "🔍",
+                FontSize = R(16),
+                TextColor = Color.FromArgb("#0F766E"),
+                BackgroundColor = Colors.Transparent,
+                BorderWidth = 0,
+                Padding = new Thickness(6, 0),
+                WidthRequest = R(38),
+                HeightRequest = R(36),
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
+            };
+
+            if(!string.IsNullOrWhiteSpace(tooltip))
+                ToolTipProperties.SetText(button, tooltip);
+
+            return button;
         }
 
         private View BuildHyperlink(string? text, SparkGridRow row, int localRowIndex)
