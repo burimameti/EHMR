@@ -282,7 +282,7 @@ public partial class ReportHistoryViewModel
             row["Report"]=report.ReportTitle;
             row["Format"]=report.Format;
             row["GeneratedBy"]=report.GeneratedBy;
-            row["GeneratedOn"]=report.GeneratedOn.ToString("dd.MM.yyyy HH:mm");
+            row["GeneratedOn"]=report.GeneratedOn.ToString("dd.MM.yyyy");
             row["FileSize"]=$"{report.FileSize/1024d:0.##} KB";
             row["Status"]=new SparkBadgeValue(report.Success ? "Успешно" : "Не успешно", StatusToTone(report.Success));
 
