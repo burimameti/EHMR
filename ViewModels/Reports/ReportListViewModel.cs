@@ -459,7 +459,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         }).ToList();
     }
 
-    private static async Task<List<GenericReportRow>> LoadPatientHistoryAsync(
+    private async Task<List<GenericReportRow>> LoadPatientHistoryAsync(
         DesktopTherapyDbContext db, Guid patientId)
     {
         var scoreHistory = await db.Scores
