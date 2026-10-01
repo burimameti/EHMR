@@ -258,10 +258,9 @@ public class PatientService : IPatientService
 
         var query=db.Mkb10Codes.AsQueryable();
 
-        // A-Z is a browse filter. Once the user types a code or description,
-        // search must work independently of the previously selected letter.
-        if(string.IsNullOrWhiteSpace(codeTerm)&&string.IsNullOrWhiteSpace(descriptionTerm)
-            && !string.IsNullOrWhiteSpace(section))
+        // The selected A-Z section is always the primary scope. Typing a code
+        // or description only narrows results inside that section.
+        if(!string.IsNullOrWhiteSpace(section))
         {
             var prefix=NormalizeMkbCodeTerm(section);
             query=query.Where(x => x.Code.StartsWith(prefix));
