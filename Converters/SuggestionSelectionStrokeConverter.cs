@@ -168,7 +168,7 @@ public sealed class SearchEntityTypeToIconConverter : IValueConverter
 public sealed class SearchEntityTypeToLabelConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
-        value is SearchEntityType.Doctor ? "Доктор" : "Пациент";
+        value is SearchEntityType.Doctor ? "Реуматолог" : "Пациент";
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();
