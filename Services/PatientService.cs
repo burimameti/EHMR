@@ -366,6 +366,55 @@ public class PatientService : IPatientService
             .ToListAsync(ct);
     }
 
+    public async Task<ApplicationRegimeDto> UpdateApplicationRegimeAsync(Guid id, string regime, CancellationToken ct = default)
+    {
+        regime=(regime??string.Empty).Trim();
+        if(id==Guid.Empty)
+            throw new ArgumentException("Невалиден режим.", nameof(id));
+        if(string.IsNullOrWhiteSpace(regime))
+            throw new ArgumentException("Режимот на апликација е задолжителен.", nameof(regime));
+
+        await using var db = await _factory.CreateDbContextAsync(ct);
+        var entity=await db.ApplicationRegimes.FirstOrDefaultAsync(x => x.Id==id, ct);
+        if(entity==null)
+            throw new KeyNotFoundException("Режимот на апликација не постои.");
+
+        var duplicate=await db.ApplicationRegimes.AnyAsync(
+            x => x.Id!=id && x.Regime==regime, ct);
+        if(duplicate)
+            throw new InvalidOperationException("Веќе постои режим со истиот назив.");
+
+        entity.Regime=regime;
+        await db.SaveChangesAsync(ct);
+
+        return new ApplicationRegimeDto
+        {
+            Id=entity.Id,
+            Regime=entity.Regime,
+            IsActive=entity.IsActive
+        };
+    }
+
+    public async Task<bool> DeleteApplicationRegimeAsync(Guid id, CancellationToken ct = default)
+    {
+        if(id==Guid.Empty)
+            return false;
+
+        await using var db = await _factory.CreateDbContextAsync(ct);
+        var entity=await db.ApplicationRegimes.FirstOrDefaultAsync(x => x.Id==id, ct);
+        if(entity==null)
+            return false;
+
+        // Keep existing patient/encounter medicine history valid.
+        await db.PatientMedicines
+            .Where(x => x.ApplicationRegimeId==id)
+            .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.ApplicationRegimeId, (Guid?)null), ct);
+
+        db.ApplicationRegimes.Remove(entity);
+        await db.SaveChangesAsync(ct);
+        return true;
+    }
+
     public async Task<ApplicationRegimeDto> AddApplicationRegimeAsync(string regime, CancellationToken ct = default)
     {
         regime=(regime??string.Empty).Trim();
