@@ -14,6 +14,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 {
     private readonly IAppointmentDetailService _service;
     private readonly ISelectedItemService<Appointment> _selectedItemService;
+    private readonly IPatientClinicalReportService _clinicalReportService;
 
     private CancellationTokenSource _cts = new();
     private CancellationTokenSource _medicineCts = new();
@@ -58,7 +59,8 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         ISelectedItemService<Appointment> selected,
         IUserDialogService userDialogService,
         ISelectedItemService<Appointment> selectedItemService,
-        IMenuService menuService)
+        IMenuService menuService,
+        IPatientClinicalReportService clinicalReportService)
         : base(navigation, userDialogService, menuService, authorizationService, selectedItemService)
     {
         _service=service;
@@ -74,6 +76,31 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     // =========================
     // APPOINTMENT
     // =========================
+    [RelayCommand]
+    private async Task GenerateClinicalReportAsync()
+    {
+        if(Appointment.PatientId==Guid.Empty) return;
+
+        try
+        {
+            var path=await _clinicalReportService.GeneratePdfAsync(
+                Appointment.PatientId,
+                appointmentId=Appointment.Id,
+                title=$"Детален извештај - {SelectedPatientForAppointment?.FullName ?? "Пациент"}");
+
+            await Launcher.Default.OpenAsync(new OpenFileRequest(
+                Path.GetFileName(path),
+                new ReadOnlyFile(path)));
+        }
+        catch(Exception ex)
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Извештај",
+                $"PDF извештајот не може да се генерира: {ex.Message}",
+                "ОК");
+        }
+    }
+
 
     [ObservableProperty] private Appointment appointment = new();
 
