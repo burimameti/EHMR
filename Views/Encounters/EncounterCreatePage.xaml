@@ -232,29 +232,8 @@
 							</VerticalStackLayout>
 
 							<!-- БИОЛОШКА ТЕРАПИЈА -->
-							<Border
-								IsVisible="{Binding HasPatientContext}"
-								Padding="14"
-								BackgroundColor="{StaticResource SparkTabActiveBg}"
-								StrokeShape="RoundRectangle 10"
-								StrokeThickness="0">
-								<VerticalStackLayout Spacing="10">
-									<Grid ColumnDefinitions="*,Auto">
-										<Label
-											FontAttributes="Bold"
-											FontSize="13"
-											Text="БИОЛОШКА ТЕРАПИЈА"
-											TextColor="{StaticResource SparkTextPrimary}"
-											VerticalOptions="Center" />
-										<Border
-											Grid.Column="1"
-											BackgroundColor="{StaticResource SparkAccentTeal}"
-											HeightRequest="2"
-											HorizontalOptions="End"
-											StrokeThickness="0"
-											VerticalOptions="End"
-											WidthRequest="70" />
-									</Grid>
+							<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="10">
+								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
 
 									<Grid ColumnDefinitions="1.25*,1*" ColumnSpacing="20" RowDefinitions="Auto,Auto" RowSpacing="10">
 										<VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
@@ -276,15 +255,14 @@
 											<Label FontSize="10" Text="Забелешка" TextColor="{StaticResource SparkTextSecondary}" />
 											<Label FontAttributes="Bold" FontSize="11.5" LineBreakMode="WordWrap" Text="{Binding EncounterDiagnosisNotes, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
 										</VerticalStackLayout>
-									</Grid>
-								</VerticalStackLayout>
-							</Border>
+								</Grid>
+							</VerticalStackLayout>
 
 
 							<!-- ЛЕКОВИ + СКОРОВИ -->
 							<Grid ColumnDefinitions="4*,1*" ColumnSpacing="14">
 								<VerticalStackLayout Grid.Column="0" Spacing="10">
-									<Label FontAttributes="Bold" FontSize="13" Text="ЛЕКОВИ" TextColor="{StaticResource SparkTextPrimary}" />
+									<controls:CrudSectionHeader Title="ЛЕКОВИ" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
 									<controls:FFSearchBox Placeholder="Пребарување на лекот..." Text="{Binding MedicineSearchText, Mode=TwoWay}" />
 									<Border
 										Padding="4"
@@ -360,7 +338,7 @@
 							</Grid>
 							<!-- ЗАКАЖУВАЊЕ НА СЛЕДЕН ТЕРМИН -->
 							<VerticalStackLayout Spacing="10">
-								<Label FontAttributes="Bold" FontSize="13" Text="ЗАКАЖУВАЊЕ НА СЛЕДЕН ТЕРМИН" TextColor="{StaticResource SparkTextPrimary}" />
+								<controls:CrudSectionHeader Title="ЗАКАЖУВАЊЕ НА СЛЕДЕН ТЕРМИН" TextColor="{StaticResource SparkTextPrimary}" LineColor="{StaticResource SparkAccentTeal}" BackgroundColor="{StaticResource SparkAccentTealBg}" Padding="8,5" />
 								<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
 									<CheckBox IsChecked="{Binding ScheduleNextFollowUp, Mode=TwoWay}" VerticalOptions="Center" />
 									<Label
