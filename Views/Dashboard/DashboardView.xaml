@@ -271,15 +271,14 @@
 						<controls:FFSectionCard>
 							<!-- Five KPI cards share the complete row; they no longer use fixed
 							     widths or a horizontal strip that leaves empty space on the right. -->
-							<FlexLayout
+							<HorizontalStackLayout
 								BindableLayout.ItemsSource="{Binding Kpis}"
-								Direction="Row"
-								JustifyContent="SpaceBetween"
-								Wrap="NoWrap">
+								HorizontalOptions="Fill"
+								Spacing="10">
 								<BindableLayout.ItemTemplate>
 									<DataTemplate x:DataType="admin:FFMetricTileItem">
 										<Border
-											FlexLayout.Basis="19.4%"
+											HorizontalOptions="FillAndExpand"
 											Padding="12,8"
 											BackgroundColor="White"
 											HeightRequest="72"
@@ -350,7 +349,7 @@
 										</Border>
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
-							</FlexLayout>
+							</HorizontalStackLayout>
 						</controls:FFSectionCard>
 
 						<controls:FFSectionCard IsVisible="{Binding State.HasAnyAlerts}">
