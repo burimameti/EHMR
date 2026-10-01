@@ -294,6 +294,7 @@ namespace EHMR
             services.AddSingleton<IMkb10CodeService, Mkb10CodeService>();
             services.AddSingleton<ISparkFormBuilder, SparkFormBuilder>();
             services.AddSingleton<IReportExportService, ReportExportService>();
+            services.AddSingleton<IPatientClinicalReportService, PatientClinicalReportService>();
             services.AddScoped<IBackupHistoryRepository, BackupHistoryRepository>();
             services.AddScoped<IBackupDestinationRepository, BackupDestinationRepository>();
             services.AddScoped<IBackupVerifier, BackupVerifier>();
