@@ -21,6 +21,14 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     private readonly IAppointmentSearchQueryHandler _autocomplete;
 
     [ObservableProperty] private string patientSearchText = string.Empty;
+
+    [ObservableProperty] private string selectedPatientStatus = "Сите";
+    [ObservableProperty] private string selectedPatientCity = "Сите";
+    [ObservableProperty] private string selectedRheumatologist = "Сите";
+    [ObservableProperty] private string selectedDiagnosis = "Сите";
+    [ObservableProperty] private string selectedMedicine = "Сите";
+    [ObservableProperty] private string selectedGender = "Сите";
+    [ObservableProperty] private string selectedScore = "Сите";
     [ObservableProperty] private ObservableCollection<SearchSuggestionDto> patientSuggestions = new();
     [ObservableProperty] private SearchSuggestionDto? selectedPatientSuggestion;
     [ObservableProperty] private bool showPatientSuggestions;
@@ -260,8 +268,8 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 break;
 
             case ReportType.Patients:
-                Col1Header="ПАЦИЕНТ (ИМЕ/ПРЕЗИМЕ)"; Col2Header="ТЕЛЕФОН"; Col3Header="СТАТУС"; Col4Header="КРЕИРАН НА"; Col5Header="ДИЈАГНОЗА / АЛЕРГИИ";
-                Metric1Title="Нови Пациенти"; Metric2Title="Хронични Случаи"; Metric3Title="Активни Картони";
+                Col1Header="ПАЦИЕНТ"; Col2Header="ЕЗБО"; Col3Header="ПОЛ"; Col4Header="ТЕЛЕФОН"; Col5Header="ПОСЛ. СКОР";
+                Metric1Title="Пациенти"; Metric2Title="Активни"; Metric3Title="Со внесен скор";
                 break;
         }
     }
@@ -430,20 +438,47 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         DesktopTherapyDbContext db, DateTime startRange, DateTime endRange, Guid? patientId)
     {
         var data = await db.Patients
+            .Include(p => p.Doctor).ThenInclude(d => d.User)
+            .Include(p => p.Diagnoses).ThenInclude(d => d.Mkb10Code)
+            .Include(p => p.PatientMedicines).ThenInclude(pm => pm.Medicine)
+            .Include(p => p.Scores)
             .AsNoTracking()
             .Where(p => p.CreatedAt>=startRange&&p.CreatedAt<=endRange
                         &&(!patientId.HasValue||p.Id==patientId.Value))
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
 
-        return data.Select(p => new GenericReportRow
+        return data.Select(p =>
         {
-            PrimaryHeader=p.FullName,
-            SecondaryHeader=p.Phone??"",
-            HighlightValue=p.Status.ToDisplay(),
-            DateValue=p.CreatedAt.ToString("dd.MM.yyyy"),
-            InformationalText=$"Dg: {p.Diagnoses.Select(x => x.Mkb10Code.Code)}. Алергии: {(string.IsNullOrEmpty(p.Allergies) ? "нема" : p.Allergies)}",
-            IsAlertSeverity=!string.IsNullOrEmpty(p.Allergies)
+            var lastScore=p.Scores
+                .OrderByDescending(s => s.RecordedAt)
+                .Select(s => s.ScoreText)
+                .FirstOrDefault() ?? "";
+
+            var diagnoses=string.Join(", ", p.Diagnoses
+                .Where(d => d.Mkb10Code!=null)
+                .Select(d => d.Mkb10Code!.Code)
+                .Distinct());
+
+            var medicines=string.Join(", ", p.PatientMedicines
+                .Where(pm => pm.Medicine!=null)
+                .Select(pm => pm.Medicine!.Name)
+                .Distinct());
+
+            return new GenericReportRow
+            {
+                PrimaryHeader=p.FullName,
+                SecondaryHeader=p.SzboNumber,
+                GenderValue=p.Gender.ToDisplay(),
+                PhoneValue=p.Phone,
+                LastScoreValue=lastScore,
+                AddressValue=p.Address,
+                CityValue=p.City,
+                MedicineValue=medicines,
+                DiagnosisValue=diagnoses,
+                StatusValue=p.Status.ToDisplay(),
+                RheumatologistValue=p.Doctor?.FullName ?? ""
+            };
         }).ToList();
     }
 
@@ -479,6 +514,25 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
     protected override IEnumerable<GenericReportRow> ApplyFilters(IEnumerable<GenericReportRow> items)
     {
+        if(SelectedReportType.Type==ReportType.Patients)
+        {
+            if(SelectedPatientStatus!="Сите")
+                items=items.Where(x => x.StatusValue==SelectedPatientStatus);
+            if(SelectedPatientCity!="Сите")
+                items=items.Where(x => x.CityValue==SelectedPatientCity);
+            if(SelectedRheumatologist!="Сите")
+                items=items.Where(x => x.RheumatologistValue==SelectedRheumatologist);
+            if(SelectedDiagnosis!="Сите")
+                items=items.Where(x => x.DiagnosisValue.Contains(SelectedDiagnosis, StringComparison.OrdinalIgnoreCase));
+            if(SelectedMedicine!="Сите")
+                items=items.Where(x => x.MedicineValue.Contains(SelectedMedicine, StringComparison.OrdinalIgnoreCase));
+            if(SelectedGender!="Сите")
+                items=items.Where(x => x.GenderValue==SelectedGender);
+            if(SelectedScore!="Сите")
+                items=items.Where(x => x.LastScoreValue==SelectedScore);
+            return items;
+        }
+
         if(string.IsNullOrWhiteSpace(StatusFilter?.Label)||StatusFilter.Label=="ИТНО / СИТЕ")
             return items;
 
@@ -506,6 +560,12 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
     private SparkPickerItem _reportTypePicker;
     private SparkPickerItem _statusPicker;
+    private SparkPickerItem _cityPicker;
+    private SparkPickerItem _rheumatologistPicker;
+    private SparkPickerItem _diagnosisPicker;
+    private SparkPickerItem _medicinePicker;
+    private SparkPickerItem _genderPicker;
+    private SparkPickerItem _scorePicker;
 
     private void InitializeSparkControls()
     {
@@ -525,17 +585,62 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 if(match!=null) SelectedReportType=match;
             });
 
-        _statusPicker=MakePicker("Статус", new[] { "ИТНО / СИТЕ" }, StatusFilter.Label,
-            selected => StatusFilter=new ReportStatusOption { Label=selected });
+        if(SelectedReportType.Type==ReportType.Patients)
+            BuildPatientReportPickers();
+        else
+        {
+            _statusPicker=MakePicker("Статус", new[] { "ИТНО / СИТЕ" }, StatusFilter.Label,
+                selected => StatusFilter=new ReportStatusOption { Label=selected });
+            Pickers.Add(_statusPicker);
+        }
 
-        Pickers.Add(_reportTypePicker);
+        Pickers.Insert(0, _reportTypePicker);
+    }
+
+    private void BuildPatientReportPickers()
+    {
+        var rows=AllItems.Where(x => x!=null).ToList();
+
+        _statusPicker=MakePicker("Статус", new[] { "Сите" }.Concat(rows.Select(x => x.StatusValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedPatientStatus,
+            selected => SelectedPatientStatus=selected);
+        _cityPicker=MakePicker("Град", new[] { "Сите" }.Concat(rows.Select(x => x.CityValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedPatientCity,
+            selected => SelectedPatientCity=selected);
+        _rheumatologistPicker=MakePicker("Реуматолог", new[] { "Сите" }.Concat(rows.Select(x => x.RheumatologistValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedRheumatologist,
+            selected => SelectedRheumatologist=selected);
+        _diagnosisPicker=MakePicker("Дијагноза", new[] { "Сите" }.Concat(rows.Select(x => x.DiagnosisValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedDiagnosis,
+            selected => SelectedDiagnosis=selected);
+        _medicinePicker=MakePicker("Лек", new[] { "Сите" }.Concat(rows.Select(x => x.MedicineValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedMedicine,
+            selected => SelectedMedicine=selected);
+        _genderPicker=MakePicker("Пол", new[] { "Сите" }.Concat(rows.Select(x => x.GenderValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedGender,
+            selected => SelectedGender=selected);
+        _scorePicker=MakePicker("Скор", new[] { "Сите" }.Concat(rows.Select(x => x.LastScoreValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedScore,
+            selected => SelectedScore=selected);
+
         Pickers.Add(_statusPicker);
+        Pickers.Add(_cityPicker);
+        Pickers.Add(_rheumatologistPicker);
+        Pickers.Add(_diagnosisPicker);
+        Pickers.Add(_medicinePicker);
+        Pickers.Add(_genderPicker);
+        Pickers.Add(_scorePicker);
     }
 
     protected override void SyncSparkPickersFromFilters()
     {
         if(_reportTypePicker!=null) _reportTypePicker.SelectedItem=SelectedReportType.Label;
-        if(_statusPicker!=null) _statusPicker.SelectedItem=StatusFilter.Label;
+
+        if(SelectedReportType.Type==ReportType.Patients)
+        {
+            _statusPicker?.SetSelected(SelectedPatientStatus);
+            _cityPicker?.SetSelected(SelectedPatientCity);
+            _rheumatologistPicker?.SetSelected(SelectedRheumatologist);
+            _diagnosisPicker?.SetSelected(SelectedDiagnosis);
+            _medicinePicker?.SetSelected(SelectedMedicine);
+            _genderPicker?.SetSelected(SelectedGender);
+            _scorePicker?.SetSelected(SelectedScore);
+        }
+        else if(_statusPicker!=null)
+            _statusPicker.SelectedItem=StatusFilter.Label;
     }
 
     protected override void BuildSparkButtons()
@@ -557,13 +662,30 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
     private void BuildSparkGridColumns()
     {
+        if(SelectedReportType.Type==ReportType.Patients)
+        {
+            GridColumns=new ObservableCollection<SparkGridColumn>
+            {
+                new() { Header="ПАЦИЕНТ", Key="Primary", Width=new GridLength(2, GridUnitType.Star) },
+                new() { Header="ЕЗБО", Key="Szbo", Width=new GridLength(1.2, GridUnitType.Star) },
+                new() { Header="ПОЛ", Key="Gender", Width=new GridLength(0.8, GridUnitType.Star) },
+                new() { Header="ТЕЛЕФОН", Key="Phone", Width=new GridLength(1.3, GridUnitType.Star) },
+                new() { Header="ПОСЛ. СКОР", Key="Score", Width=new GridLength(1.1, GridUnitType.Star) },
+                new() { Header="АДРЕСА", Key="Address", Width=new GridLength(1.7, GridUnitType.Star) },
+                new() { Header="ГРАД", Key="City", Width=new GridLength(1.1, GridUnitType.Star) },
+                new() { Header="ЛЕК", Key="Medicine", Width=new GridLength(1.7, GridUnitType.Star) },
+                new() { Header="ДИЈАГНОЗА", Key="Diagnosis", Width=new GridLength(1.7, GridUnitType.Star) }
+            };
+            return;
+        }
+
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
-            new() { Header = Col1Header, Key = "Primary",  Width = new GridLength(2, GridUnitType.Star) },
-            new() { Header = Col2Header, Key = "Secondary", Width = new GridLength(2, GridUnitType.Star) },
-            new() { Header = Col3Header, Key = "Highlight", CellType = SparkGridCellType.Badge, Width = new GridLength(1, GridUnitType.Star) },
-            new() { Header = Col4Header, Key = "Date",      Width = new GridLength(1, GridUnitType.Star) },
-            new() { Header = Col5Header, Key = "Info",      Width = new GridLength(2, GridUnitType.Star) }
+            new() { Header=Col1Header, Key="Primary", Width=new GridLength(2, GridUnitType.Star) },
+            new() { Header=Col2Header, Key="Secondary", Width=new GridLength(2, GridUnitType.Star) },
+            new() { Header=Col3Header, Key="Highlight", CellType=SparkGridCellType.Badge, Width=new GridLength(1, GridUnitType.Star) },
+            new() { Header=Col4Header, Key="Date", Width=new GridLength(1, GridUnitType.Star) },
+            new() { Header=Col5Header, Key="Info", Width=new GridLength(2, GridUnitType.Star) }
         };
     }
 
@@ -579,6 +701,18 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             row["Highlight"]=new SparkBadgeValue(r.HighlightValue??"", r.IsAlertSeverity ? SparkBadgeTone.Danger : SparkBadgeTone.Neutral);
             row["Date"]=r.DateValue??"";
             row["Info"]=r.InformationalText??"";
+
+            if(SelectedReportType.Type==ReportType.Patients)
+            {
+                row["Szbo"]=r.SecondaryHeader??"";
+                row["Gender"]=r.GenderValue??"";
+                row["Phone"]=r.PhoneValue??"";
+                row["Score"]=r.LastScoreValue??"";
+                row["Address"]=r.AddressValue??"";
+                row["City"]=r.CityValue??"";
+                row["Medicine"]=r.MedicineValue??"";
+                row["Diagnosis"]=r.DiagnosisValue??"";
+            }
             rows.Add(row);
         }
 
@@ -685,8 +819,15 @@ public class GenericReportRow
     public string HighlightValue { get; set; } = "";
     public string DateValue { get; set; } = "";
     public string InformationalText { get; set; } = "";
-    public bool IsAlertSeverity
-    {
-        get; set;
-    }
+    public bool IsAlertSeverity { get; set; }
+
+    public string StatusValue { get; set; } = "";
+    public string GenderValue { get; set; } = "";
+    public string PhoneValue { get; set; } = "";
+    public string LastScoreValue { get; set; } = "";
+    public string AddressValue { get; set; } = "";
+    public string CityValue { get; set; } = "";
+    public string MedicineValue { get; set; } = "";
+    public string DiagnosisValue { get; set; } = "";
+    public string RheumatologistValue { get; set; } = "";
 }
