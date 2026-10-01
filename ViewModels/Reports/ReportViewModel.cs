@@ -555,7 +555,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         var activity = new SparkActivityItem
         {
             Title=$"{_activeReport.Title} — {format}",
-            Timestamp=DateTime.Now.ToString("dd.MM.yyyy HH:mm"),
+            Timestamp=DateTime.Now.ToString("dd.MM.yyyy"),
             Description=$"{statusText} од {who}",
             IconGlyph=succeeded ? "\uf00c" : "\uf00d"
         };
