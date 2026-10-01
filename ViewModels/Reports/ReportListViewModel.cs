@@ -649,7 +649,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 if(to<from) continue;
 
                 var days=(to-from).Days+1;
-                total+=pm.Quantity*AdministrationCount(pm.DosesFrequency, days);
+                total+=pm.Quantity;
 
                 if(pm.Patient is not null)
                     patientNames.Add(pm.Patient.FullName);
@@ -678,19 +678,6 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
         return rows;
     }
-
-    private static int AdministrationCount(DosesFrequency frequency, int days) => frequency switch
-    {
-        DosesFrequency.Daily => days,
-        DosesFrequency.TwiceDaily => days*2,
-        DosesFrequency.ThreeTimesDaily => days*3,
-        DosesFrequency.EveryOtherDay => ((days-1)/2)+1,
-        DosesFrequency.EveryThreeDays => ((days-1)/3)+1,
-        DosesFrequency.Weekly => ((days-1)/7)+1,
-        DosesFrequency.Monthly => ((days-1)/30)+1,
-        DosesFrequency.Other => 1,
-        _ => 1
-    };
 
     private static string EncounterStatusLabel(EncounterStatus status) => status switch
     {
