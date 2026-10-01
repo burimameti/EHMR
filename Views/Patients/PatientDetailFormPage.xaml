@@ -1100,15 +1100,12 @@
 																</Border>
 																<Border
 																	Grid.Column="2"
+																	Margin="1,1,8,3"
 																	Padding="0"
-																	BackgroundColor="White"
-																	HeightRequest="40"
+																	HeightRequest="45"
 																	Stroke="{StaticResource SparkBorderSubtle}"
-																	StrokeThickness="1">
-																	<controls:FFPicker2
-																		ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
-																		Placeholder="Изберете режим"
-																		SelectedItem="{Binding PatientMedicine.ApplicationRegime, Mode=TwoWay}" />
+																	StrokeThickness="0">
+																	<controls:FFPicker2 ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}" SelectedItem="{Binding PatientMedicine.ApplicationRegime, Mode=TwoWay}" />
 																</Border>
 																<Border
 																	Grid.Column="3"
