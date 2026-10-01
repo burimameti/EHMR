@@ -602,6 +602,14 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
     private void RecomputeMetrics()
     {
+        if(SelectedReportType.Type==ReportType.MedicineConsumption)
+        {
+            Metric1Value=(int)Math.Round(AllItems.Sum(x => x.MedicineConsumptionValue));
+            Metric2Value=AllItems.Count;
+            Metric3ValueText=AllItems.Sum(x => x.MedicinePatientCount).ToString();
+            return;
+        }
+
         Metric1Value=AllItems.Count;
         Metric2Value=AllItems.Count(x => x.IsAlertSeverity);
         Metric3ValueText=Metric1Value>0
@@ -1040,9 +1048,11 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 <table>
                     <thead>
                         <tr>
-                            {(SelectedReportType.Type==ReportType.Patients
-                                ? "<th>ПАЦИЕНТ</th><th>ЕЗБО</th><th>ПОЛ</th><th>ТЕЛЕФОН</th><th>ПОСЛ. СКОР</th><th>АДРЕСА</th><th>ГРАД</th><th>ЛЕК</th><th>ДИЈАГНОЗА</th>"
-                                : $"<th>{Col1Header}</th><th>{Col2Header}</th><th>{Col3Header}</th><th>{Col4Header}</th><th>{Col5Header}</th>")}
+                            {(SelectedReportType.Type==ReportType.MedicineConsumption
+                                ? "<th>ЛЕК</th><th>ВКУПНА ПОТРОШЕНА КОЛИЧИНА</th><th>ПАЦИЕНТИ</th><th>МКБ-10 КОД + ОПИС</th><th>ПЕРИОД</th>"
+                                : SelectedReportType.Type==ReportType.Patients
+                                    ? "<th>ПАЦИЕНТ</th><th>ЕЗБО</th><th>ПОЛ</th><th>ТЕЛЕФОН</th><th>ПОСЛ. СКОР</th><th>АДРЕСА</th><th>ГРАД</th><th>ЛЕК</th><th>ДИЈАГНОЗА</th>"
+                                    : $"<th>{Col1Header}</th><th>{Col2Header}</th><th>{Col3Header}</th><th>{Col4Header}</th><th>{Col5Header}</th>")}
                         </tr>
                     </thead>
                     <tbody>";
@@ -1050,7 +1060,18 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             // Export exactly what is currently visible after patient/status/search filters.
             foreach(var item in FilteredItems)
             {
-                if(SelectedReportType.Type==ReportType.Patients)
+                if(SelectedReportType.Type==ReportType.MedicineConsumption)
+                {
+                    htmlBlueprint+=$@"
+                    <tr>
+                        <td><b>{item.PrimaryHeader}</b></td>
+                        <td>{item.MedicineConsumptionValue:0.##}</td>
+                        <td>{item.MedicinePatientCount}</td>
+                        <td>{item.MedicineDiagnosisValue}</td>
+                        <td>{item.DateValue}</td>
+                    </tr>";
+                }
+                else if(SelectedReportType.Type==ReportType.Patients)
                 {
                     htmlBlueprint+=$@"
                     <tr>
