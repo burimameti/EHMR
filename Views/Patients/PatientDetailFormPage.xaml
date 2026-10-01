@@ -269,11 +269,12 @@
 		<Grid
 			Grid.Column="1"
 			RowDefinitions="Auto,*,Auto"
-			Style="{StaticResource CrudFormPageGridStyle}">
+			RowSpacing="0"
+			Margin="0">
 
 			<Border
 				Grid.Row="0"
-				Margin="16,16,16,0"
+				Margin="0,16,0,0"
 				Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader Title="{Binding HeaderTitle}" Subtitle="Преглед и управување со податоците за пациентот}">
 								<controls:FFPageHeader.HeaderContent>
@@ -291,14 +292,14 @@
 			<!--  Една колона: формата, па историјата под неа  -->
 			<Grid
 				Grid.Row="1"
-				Margin="16,0,16,0"
+				Margin="0"
 				Style="{StaticResource CrudFormBodyGridStyle}">
 				<controls:CustomScrollView
 					x:Name="FormScrollView"
 					Margin="0"
 					Padding="0"
 					ScrollBarColor="{StaticResource SparkAccentTeal}">
-					<VerticalStackLayout Spacing="6">
+					<VerticalStackLayout Spacing="0">
 
 						<!--  ╔═══════════════════ ФОРМА ═══════════════════╗  -->
 						<controls:FFSectionCard Margin="0" Style="{StaticResource CrudFormCardStyle}">
@@ -697,7 +698,7 @@
 				<Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
 					<Label Grid.Column="0" FontSize="10.5" Text="Завршете ги податоците за пациентот" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
 					<controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="42" IsVisible="{Binding IsEditMode}" Text="Откажи" WidthRequestEx="130" />
-					<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" HeightRequestEx="42" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
+					<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SparkButtonSecondaryBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" HeightRequestEx="42" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
 					<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding ToggleEditModeAsyncCommand}" HeightRequestEx="42" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="{StaticResource SidebarActiveText}" WidthRequestEx="130" />
 				</Grid>
 			</Border>
