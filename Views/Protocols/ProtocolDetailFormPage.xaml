@@ -158,7 +158,7 @@
 										<Label
 											Grid.Column="1"
 											Style="{StaticResource ReadRowValueStyle}"
-											Text="{Binding CurrentProtocol.CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
+											Text="{Binding CurrentProtocol.CreatedAt, StringFormat='{0:dd.MM.yyyy}'}" />
 									</Grid>
 								</VerticalStackLayout>
 							</Border>
