@@ -39,6 +39,7 @@ public partial class DashboardState : ObservableObject
     [ObservableProperty] private int criticalAlerts;
     [ObservableProperty] private string criticalAlertsSummaryText = string.Empty;
     [ObservableProperty] private ObservableCollection<DashboardAlertSummaryItem> alertSummaries = new();
+    [ObservableProperty] private ObservableCollection<DashboardAlertItem> activeAlerts = new();
 
     public bool HasCriticalAlerts => CriticalAlerts>0;
     public bool HasAnyAlerts => AlertSummaries.Any(x => x.Count>0);
