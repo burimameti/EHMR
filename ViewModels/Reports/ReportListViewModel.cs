@@ -615,7 +615,11 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         return items.Where(x =>
             (x.PrimaryHeader?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
             (x.SecondaryHeader?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
-            (x.InformationalText?.Contains(term, StringComparison.OrdinalIgnoreCase)??false));
+            (x.InformationalText?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
+            (x.HistoryScoreValue?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
+            (x.HistoryMedicineValue?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
+            (x.HistoryDosageValue?.Contains(term, StringComparison.OrdinalIgnoreCase)??false)||
+            (x.HistoryFrequencyValue?.Contains(term, StringComparison.OrdinalIgnoreCase)??false));
     }
 
     protected override IEnumerable<GenericReportRow> ApplyFilters(IEnumerable<GenericReportRow> items)
@@ -690,6 +694,9 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     private void BuildSparkPickers()
     {
         Pickers.Clear();
+
+        if(SelectedReportType.Type==ReportType.Patients && IsPatientHistoryMode)
+            return;
 
         _reportTypePicker=MakePicker("Извештај", ReportTypes.Select(x => x.Label), SelectedReportType.Label,
             selected =>
