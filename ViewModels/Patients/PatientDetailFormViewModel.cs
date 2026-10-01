@@ -1165,20 +1165,21 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public partial class MkbAlphabetSection : ObservableObject
+}
+
+public partial class MkbAlphabetSection : ObservableObject
+{
+    public MkbAlphabetSection(string letter, bool isSelected)
     {
-        public MkbAlphabetSection(string letter, bool isSelected)
-        {
-            Letter=letter;
-            IsSelected=isSelected;
-        }
-
-        public string Letter
-        {
-            get;
-        }
-
-        [ObservableProperty]
-        private bool isSelected;
+        Letter=letter;
+        IsSelected=isSelected;
     }
+
+    public string Letter
+    {
+        get;
+    }
+
+    [ObservableProperty]
+    private bool isSelected;
 }
