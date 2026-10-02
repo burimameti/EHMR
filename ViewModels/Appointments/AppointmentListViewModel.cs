@@ -33,6 +33,7 @@ public partial class AppointmentListViewModel
 
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
     private readonly IAppointmentSearchQueryHandler _autocomplete;
+    private readonly IAuthorizationService _authorizationService;
 
     private int _selectedIndex = -1;
 
@@ -110,6 +111,7 @@ public partial class AppointmentListViewModel
     {
         _dbFactory=dbFactory;
         _autocomplete=autocomplete;
+        _authorizationService=authService;
         _selectedStatus=StatusFilters.First(x => x.Filter==AppointmentStatusFilter.All);
 
         PageSize=10;
@@ -412,7 +414,7 @@ public partial class AppointmentListViewModel
     {
         if(item is null) return;
 
-        if(!CanUpdate)
+        if(!_authorizationService.HasDoctorAdminPrivileges)
         {
             await UserDialogService.ShowAlertAsync(PermissionDeniedTitle, "Немате авторизација за уредување термини.", "OK");
             return;
@@ -696,7 +698,7 @@ public partial class AppointmentListViewModel
             row["Date"]=a.ScheduledStart.ToString("dd.MM.yyyy");
             row["Status"]=new SparkBadgeValue(StatusLabel(a.Status), StatusToTone(a.Status));
 
-            AddDefaultActions(a, row, detailLabel: "Детали", editLabel: "Промени", canEditPredicate: CanEdit);
+            AddDefaultActions(a, row, detailLabel: "Детали", editLabel: "Промени", canEditPredicate: _ => _authorizationService.HasDoctorAdminPrivileges && CanEdit(a));
 
             if(CanDelete&&CanCancel(a))
             {
