@@ -1,339 +1,113 @@
-<!--  File: EHMR.Backups/Views/BackupPage.xaml  -->
 <ContentPage
-	x:Class="EHMR.Backups.Views.BackupPage"
-	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
-	xmlns:viewModels="clr-namespace:EHMR.Backups.ViewModels"
-	x:DataType="viewModels:BackupViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
-
-	<ContentPage.Resources>
-		<ResourceDictionary>
-
-			<Style x:Key="SectionPill" TargetType="Border">
-				<Setter Property="Padding" Value="10,4" />
-				<Setter Property="BackgroundColor" Value="{StaticResource SparkTabActiveBg}" />
-				<Setter Property="StrokeThickness" Value="0" />
-				<Setter Property="StrokeShape">
-
-					<Setter.Value>
-
-						<RoundRectangle CornerRadius="8" />
-					</Setter.Value>
-				</Setter>
-			</Style>
-
-			<Style x:Key="SectionPillLabel" TargetType="Label">
-				<Setter Property="FontAttributes" Value="Bold" />
-				<Setter Property="FontSize" Value="11" />
-				<Setter Property="CharacterSpacing" Value="0.5" />
-				<Setter Property="TextColor" Value="{StaticResource SparkAccentTealDark}" />
-			</Style>
-
-			<Style x:Key="BackupFieldLabel" TargetType="Label">
-				<Setter Property="FontSize" Value="12" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
-			</Style>
-
-			<Style x:Key="FieldFrame" TargetType="Border">
-				<Setter Property="Padding" Value="12,4" />
-				<Setter Property="BackgroundColor" Value="{StaticResource SparkPageBackground}" />
-				<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
-				<Setter Property="StrokeThickness" Value="1" />
-				<Setter Property="StrokeShape">
-
-					<Setter.Value>
-
-						<RoundRectangle CornerRadius="10" />
-					</Setter.Value>
-				</Setter>
-			</Style>
-
-			<Style x:Key="ToggleTile" TargetType="Border">
-				<Setter Property="Padding" Value="16,14" />
-				<Setter Property="BackgroundColor" Value="{StaticResource SparkPageBackground}" />
-				<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
-				<Setter Property="StrokeThickness" Value="1" />
-				<Setter Property="StrokeShape">
-
-					<Setter.Value>
-
-						<RoundRectangle CornerRadius="12" />
-					</Setter.Value>
-				</Setter>
-			</Style>
-
-			<Style x:Key="ToggleTitle" TargetType="Label">
-				<Setter Property="FontAttributes" Value="Bold" />
-				<Setter Property="FontSize" Value="14" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-			</Style>
-
-			<Style x:Key="ToggleSubtitle" TargetType="Label">
-				<Setter Property="FontSize" Value="11" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextMuted}" />
-			</Style>
-
-		</ResourceDictionary>
-	</ContentPage.Resources>
-	<Grid ColumnDefinitions="290,*">
-
-		<!--  LEFT MENU  -->
-		<Border Grid.Column="0" StrokeThickness="0">
-			<ContentView x:Name="MenuHost" />
-		</Border>
-
-		<!--  RIGHT MAIN CONTAINER  -->
-		<Grid Grid.Column="1" RowDefinitions="Auto,*">
-
-			<Grid RowDefinitions="Auto,*">
-
-
-				<!--  HEADER  -->
-				<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
-
-					<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-
-						<controls:FFPageHeader
-							Title="Нов бекап"
-							Grid.Column="0"
-							Subtitle="Креирање нов бекап на базата на податоци." />
-
-						<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
-							Grid.Column="1"
-							ButtonKind="Primary"
-							Command="{Binding StartBackupCommand}"
-							ContentPadding="20,0"
-							HeightRequestEx="45"
-							IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
-							Text="Стартувај Бекап" />
-
-					</Grid>
-
-				</Border>
-
-
-				<!--  MAIN SCROLL AREA  -->
-				<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-
-					<VerticalStackLayout Padding="0,8,0,20" Spacing="8">
-
-
-						<!--  ===========================================  -->
-
-						<!--  SETTINGS  -->
-						<!--  ===========================================  -->
-						<Border Style="{StaticResource PageHeaderCardStyle}">
-
-							<VerticalStackLayout Spacing="16">
-
-								<Border HorizontalOptions="Start" Style="{StaticResource SectionPill}">
-
-									<Label Style="{StaticResource SectionPillLabel}" Text="ПОСТАВКИ" />
-
-								</Border>
-
-								<VerticalStackLayout Spacing="6">
-
-									<Label Style="{StaticResource BackupFieldLabel}" Text="Дестинација" />
-
-									<Border Style="{StaticResource FieldFrame}">
-
-										<Picker
-											Title="Избери дестинација"
-											BackgroundColor="Transparent"
-											ItemDisplayBinding="{Binding Name}"
-											ItemsSource="{Binding Destinations}"
-											SelectedItem="{Binding Settings.DestinationId, Mode=TwoWay}" />
-
-									</Border>
-
-								</VerticalStackLayout>
-
-							</VerticalStackLayout>
-
-						</Border>
-
-
-						<!--  ===========================================  -->
-
-						<!--  OPTIONS  -->
-						<!--  ===========================================  -->
-						<Border Style="{StaticResource PageHeaderCardStyle}">
-
-							<VerticalStackLayout Spacing="16">
-
-								<Border HorizontalOptions="Start" Style="{StaticResource SectionPill}">
-
-									<Label Style="{StaticResource SectionPillLabel}" Text="ОПЦИИ" />
-
-								</Border>
-
-								<Grid
-									ColumnDefinitions="*,*"
-									ColumnSpacing="12"
-									RowDefinitions="Auto,Auto"
-									RowSpacing="12">
-
-									<Border
-										Grid.Row="0"
-										Grid.Column="0"
-										Style="{StaticResource ToggleTile}">
-
-										<Grid ColumnDefinitions="*,Auto">
-
-											<VerticalStackLayout Grid.Column="0" Spacing="2">
-
-												<Label Style="{StaticResource ToggleTitle}" Text="Компресирај" />
-
-												<Label Style="{StaticResource ToggleSubtitle}" Text="Помала големина на фајлот" />
-
-											</VerticalStackLayout>
-
-											<Switch
-												Grid.Column="1"
-												IsToggled="{Binding Settings.Compress}"
-												OnColor="{StaticResource SparkAccentTeal}"
-												VerticalOptions="Center" />
-
-										</Grid>
-
-									</Border>
-
-									<Border
-										Grid.Row="0"
-										Grid.Column="1"
-										Style="{StaticResource ToggleTile}">
-
-										<Grid ColumnDefinitions="*,Auto">
-
-											<VerticalStackLayout Grid.Column="0" Spacing="2">
-
-												<Label Style="{StaticResource ToggleTitle}" Text="Криптирај" />
-
-												<Label Style="{StaticResource ToggleSubtitle}" Text="Заштита со лозинка" />
-
-											</VerticalStackLayout>
-
-											<Switch
-												Grid.Column="1"
-												IsToggled="{Binding Settings.Encrypt}"
-												OnColor="{StaticResource SparkAccentTeal}"
-												VerticalOptions="Center" />
-
-										</Grid>
-
-									</Border>
-
-									<Border
-										Grid.Row="1"
-										Grid.Column="0"
-										Grid.ColumnSpan="2"
-										Style="{StaticResource ToggleTile}">
-
-										<Grid ColumnDefinitions="*,Auto">
-
-											<VerticalStackLayout Grid.Column="0" Spacing="2">
-
-												<Label Style="{StaticResource ToggleTitle}" Text="Провери по завршување" />
-
-												<Label Style="{StaticResource ToggleSubtitle}" Text="Валидација на интегритетот на бекапот" />
-
-											</VerticalStackLayout>
-
-											<Switch
-												Grid.Column="1"
-												IsToggled="{Binding Settings.VerifyAfterBackup}"
-												OnColor="{StaticResource SparkAccentTeal}"
-												VerticalOptions="Center" />
-
-										</Grid>
-
-									</Border>
-
-								</Grid>
-
-							</VerticalStackLayout>
-
-						</Border>
-
-
-						<!--  ===========================================  -->
-
-						<!--  PROGRESS / STATUS  -->
-						<!--  ===========================================  -->
-						<Border Style="{StaticResource PageHeaderCardStyle}">
-
-							<VerticalStackLayout Spacing="12">
-
-								<Border HorizontalOptions="Start" Style="{StaticResource SectionPill}">
-
-									<Label Style="{StaticResource SectionPillLabel}" Text="ПРОГРЕС" />
-
-								</Border>
-
-								<Grid ColumnDefinitions="*,Auto" IsVisible="{Binding IsBusy}">
-
-									<ProgressBar
-										Grid.Column="0"
-										HeightRequest="8"
-										Progress="{Binding Progress.Percentage}"
-										ProgressColor="{StaticResource SparkAccentTeal}"
-										VerticalOptions="Center" />
-
-									<Label
-										Grid.Column="1"
-										Margin="10,0,0,0"
-										FontAttributes="Bold"
-										FontSize="14"
-										Text="{Binding Progress.Percentage, StringFormat='{0:P0}'}"
-										TextColor="{StaticResource SparkAccentTeal}" />
-
-								</Grid>
-
-								<Label
-									FontSize="13"
-									Text="{Binding StatusMessage}"
-									TextColor="{StaticResource SparkTextSecondary}" />
-
-							</VerticalStackLayout>
-
-						</Border>
-
-
-					</VerticalStackLayout>
-
-				</ScrollView>
-
-
-				<!--  LOADING OVERLAY  -->
-				<Grid
-					Grid.Row="1"
-					BackgroundColor="{StaticResource SparkOverlay}"
-					IsVisible="{Binding IsBusy}">
-
-					<VerticalStackLayout
-						HorizontalOptions="Center"
-						Spacing="12"
-						VerticalOptions="Center">
-
-						<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
-
-						<Label
-							FontSize="13"
-							Text="Бекап во тек..."
-							TextColor="{StaticResource SparkTextPrimary}" />
-
-					</VerticalStackLayout>
-
-				</Grid>
-
-
-			</Grid>
-		</Grid>
-	</Grid>
-
+    x:Class="EHMR.Backups.Views.BackupPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+    xmlns:viewModels="clr-namespace:EHMR.Backups.ViewModels"
+    x:DataType="viewModels:BackupViewModel"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid ColumnDefinitions="260,*">
+        <Border Grid.Column="0" BackgroundColor="{StaticResource SparkSidebarBg}" StrokeThickness="0">
+            <ContentView x:Name="MenuHost" />
+        </Border>
+
+        <Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="12">
+            <Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                    <controls:FFPageHeader
+                        Title="Нов бекап"
+                        Subtitle="Креирање резервна копија на базата на податоци." />
+                    <controls:FFButton
+                        Grid.Column="1"
+                        ButtonKind="Primary"
+                        BackgroundColorEx="{StaticResource SidebarActiveBg}"
+                        TextColorEx="White"
+                        Command="{Binding StartBackupCommand}"
+                        ContentPadding="18,0"
+                        HeightRequestEx="45"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+                        Text="Стартувај бекап" />
+                </Grid>
+            </Border>
+
+            <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+                <VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}" Spacing="12">
+
+                    <Border Style="{StaticResource PageCardStyleDashboard}">
+                        <VerticalStackLayout Spacing="14">
+                            <Label FontAttributes="Bold" FontSize="16" Text="Дестинација" TextColor="{StaticResource SparkTextPrimary}" />
+                            <Label FontSize="11" Text="Изберете каде ќе биде зачувана резервната копија." TextColor="{StaticResource SparkTextMuted}" />
+                            <Border
+                                Padding="12,2"
+                                BackgroundColor="{StaticResource SparkPageBackground}"
+                                Stroke="{StaticResource SparkBorderSubtle}"
+                                StrokeShape="RoundRectangle 8"
+                                StrokeThickness="1">
+                                <Picker
+                                    Title="Избери дестинација"
+                                    BackgroundColor="Transparent"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    ItemsSource="{Binding Destinations}"
+                                    SelectedItem="{Binding Settings.DestinationId, Mode=TwoWay}" />
+                            </Border>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border Style="{StaticResource PageCardStyleDashboard}">
+                        <VerticalStackLayout Spacing="14">
+                            <Label FontAttributes="Bold" FontSize="16" Text="Опции за бекап" TextColor="{StaticResource SparkTextPrimary}" />
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10" RowDefinitions="Auto,Auto" RowSpacing="10">
+                                <Border Padding="14,12" BackgroundColor="{StaticResource SparkPageBackground}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 10" StrokeThickness="1">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label FontAttributes="Bold" FontSize="13" Text="Компресирај" TextColor="{StaticResource SparkTextPrimary}" />
+                                            <Label FontSize="11" Text="Помала големина на фајлот" TextColor="{StaticResource SparkTextMuted}" />
+                                        </VerticalStackLayout>
+                                        <Switch Grid.Column="1" IsToggled="{Binding Settings.Compress}" OnColor="{StaticResource SparkAccentTeal}" VerticalOptions="Center" />
+                                    </Grid>
+                                </Border>
+                                <Border Grid.Column="1" Padding="14,12" BackgroundColor="{StaticResource SparkPageBackground}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 10" StrokeThickness="1">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label FontAttributes="Bold" FontSize="13" Text="Криптирај" TextColor="{StaticResource SparkTextPrimary}" />
+                                            <Label FontSize="11" Text="Заштита со лозинка" TextColor="{StaticResource SparkTextMuted}" />
+                                        </VerticalStackLayout>
+                                        <Switch Grid.Column="1" IsToggled="{Binding Settings.Encrypt}" OnColor="{StaticResource SparkAccentTeal}" VerticalOptions="Center" />
+                                    </Grid>
+                                </Border>
+                                <Border Grid.Row="1" Grid.ColumnSpan="2" Padding="14,12" BackgroundColor="{StaticResource SparkPageBackground}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 10" StrokeThickness="1">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label FontAttributes="Bold" FontSize="13" Text="Провери по завршување" TextColor="{StaticResource SparkTextPrimary}" />
+                                            <Label FontSize="11" Text="Валидација на интегритетот на бекапот" TextColor="{StaticResource SparkTextMuted}" />
+                                        </VerticalStackLayout>
+                                        <Switch Grid.Column="1" IsToggled="{Binding Settings.VerifyAfterBackup}" OnColor="{StaticResource SparkAccentTeal}" VerticalOptions="Center" />
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border Style="{StaticResource PageCardStyleDashboard}">
+                        <VerticalStackLayout Spacing="10">
+                            <Label FontAttributes="Bold" FontSize="16" Text="Прогрес" TextColor="{StaticResource SparkTextPrimary}" />
+                            <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding IsBusy}" ColumnSpacing="10">
+                                <ProgressBar HeightRequest="8" Progress="{Binding Progress.Percentage}" ProgressColor="{StaticResource SparkAccentTeal}" VerticalOptions="Center" />
+                                <Label Grid.Column="1" FontAttributes="Bold" FontSize="13" Text="{Binding Progress.Percentage, StringFormat='{0:P0}'}" TextColor="{StaticResource SparkAccentTeal}" />
+                            </Grid>
+                            <Label FontSize="12.5" Text="{Binding StatusMessage}" TextColor="{StaticResource SparkTextSecondary}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <Grid Grid.Column="1" BackgroundColor="{StaticResource SparkOverlay}" IsVisible="{Binding IsBusy}">
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="12" VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
+                    <Label FontSize="13" Text="Бекап во тек..." TextColor="{StaticResource SparkTextPrimary}" />
+                </VerticalStackLayout>
+            </Grid>
+        </Grid>
+    </Grid>
 </ContentPage>
