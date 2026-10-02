@@ -20,6 +20,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     private readonly ISelectedItemService<Appointment> _appointmentContext;
     private readonly ISelectedItemService<Patient> _patientContext;
     private readonly ISelectedItemService<Encounter> _encounterContext;
+    private readonly IAuthorizationService _authorizationService;
     private bool _isLoading;
     private bool _isLoaded;
 
@@ -98,12 +99,14 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
         IUserDialogService userDialogService,
         ISelectedItemService<Appointment> appointmentContext,
         ISelectedItemService<Patient> patientContext,
-        ISelectedItemService<Encounter> encounterContext)
+        ISelectedItemService<Encounter> encounterContext,
+        IAuthorizationService authorizationService)
         : base(service, navigationService, userDialogService)
     {
         _appointmentContext=appointmentContext;
         _patientContext=patientContext;
         _encounterContext=encounterContext;
+        _authorizationService=authorizationService;
         PageTitle="Нов Преглед";
 
         EncounterMedicines.CollectionChanged+=OnEncounterMedicinesChanged;
@@ -335,6 +338,12 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     [RelayCommand]
     private async Task SaveEncounter()
     {
+        if(!_authorizationService.CanPerform("encounters", ModuleAction.Create))
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за креирање прегледи.", "ОК");
+            return;
+        }
+
         if(SelectedPatient?.Status==PatientStatus.Inactive)
         {
             await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "За неактивен пациент не може да се креира или менува преглед.", "ОК");
