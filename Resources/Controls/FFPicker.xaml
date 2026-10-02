@@ -26,9 +26,9 @@
 			Grid.Row="1"
 			Padding="0"
 			BackgroundColor="{StaticResource SparkContentBackground}"
-			HeightRequest="42"
-			Stroke="{StaticResource SparkAccentTealDark}"
-			StrokeShape="RoundRectangle 7"
+			HeightRequest="44"
+			Stroke="{StaticResource SparkBorder}"
+			StrokeShape="RoundRectangle 8"
 			StrokeThickness="1">
 
 			<Grid ColumnDefinitions="*,34" ColumnSpacing="0">
@@ -37,7 +37,7 @@
 					x:Name="InnerPicker"
 					Title="{Binding Placeholder, Source={x:Reference Root}}"
 					Grid.Column="0"
-					Margin="10,0,2,0"
+					Margin="12,0,2,0"
 					BackgroundColor="Transparent"
 					FontAttributes="Bold"
 					FontSize="13"
@@ -53,9 +53,9 @@
 					x:Name="ArrowButton"
 					Grid.Column="1"
 					Margin="2,5,5,5"
-					BackgroundColor="{StaticResource SparkAccentTealBg}"
+					BackgroundColor="{StaticResource SparkContentBackground}"
 					HorizontalOptions="Fill"
-					StrokeShape="RoundRectangle 5"
+					StrokeShape="RoundRectangle 6"
 					StrokeThickness="0"
 					VerticalOptions="Fill">
 
@@ -70,7 +70,7 @@
 						HorizontalOptions="Center"
 						InputTransparent="True"
 						Text="&#xf078;"
-						TextColor="{StaticResource SparkAccentTealDark}"
+						TextColor="{StaticResource SparkTextSecondary}"
 						VerticalOptions="Center" />
 				</Border>
 
