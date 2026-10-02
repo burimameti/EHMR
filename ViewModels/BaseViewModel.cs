@@ -433,6 +433,22 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     protected void ClearFilters()
     {
         ResetFilters();
+
+        // Keep the visual picker state in sync with the cleared filter state.
+        // Spark list/report pickers conventionally use the first item as the
+        // "all" option ("Сите" or "All").
+        foreach(var picker in Pickers)
+        {
+            if(picker.Items.Count==0)
+                continue;
+
+            var allItem=picker.Items.FirstOrDefault(x =>
+                string.Equals(x, "Сите", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(x, "All", StringComparison.OrdinalIgnoreCase));
+
+            picker.SelectedItem=allItem ?? picker.Items[0];
+        }
+
         ApplyPipeline();
         SyncSparkPickersFromFilters();
         FilteredItems.Clear();
