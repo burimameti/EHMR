@@ -961,17 +961,18 @@
 													<controls:CrudSectionHeader
 														Title="АКТИВНА ТЕРАПИЈА"
 														Grid.Column="0"
-														Padding="8,5"
+														Padding="1,5"
 														BackgroundColor="{StaticResource SparkAccentTealBg}" />
 													<Button
 														Grid.Column="1"
-														Padding="12,0"
+														Margin="0,0,22,5"
+														Padding="12,12"
 														BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
 														Command="{Binding AddApplicationRegimeCommand}"
 														CornerRadius="6"
 														FontAttributes="Bold"
 														FontSize="10.5"
-														Text="+ Нов начин"
+														Text="+ Додади Нов начин"
 														TextColor="White"
 														VerticalOptions="Center" />
 												</Grid>
@@ -1482,7 +1483,7 @@
 						Grid.Column="2"
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
 						ButtonKind="Primary"
-						Command="{Binding ToggleEditModeAsyncCommand}"
+						Command="{Binding ToggleEditModeCommand}"
 						HeightRequestEx="42"
 						IsVisible="{Binding IsReadOnly}"
 						Text="Уреди"
