@@ -451,7 +451,7 @@ namespace EHMR.Domain.Entities.Reports
                     var selectedPatient=patients.FirstOrDefault(x => x.Id==_selectedScorePatientId.Value);
                     rows=selectedPatient is null
                         ? []
-                        : [CreateRow(selectedPatient, from, to)];
+                        : [CreateRow(selectedPatient, from, to, includeScoreHistory:true)];
                 }
                 else
                 {
@@ -631,7 +631,11 @@ namespace EHMR.Domain.Entities.Reports
             return query;
         }
 
-        private static DynamicReportRow CreateRow(Patient patient, DateTime from, DateTime to)
+        private static DynamicReportRow CreateRow(
+            Patient patient,
+            DateTime from,
+            DateTime to,
+            bool includeScoreHistory=false)
         {
             return new DynamicReportRow
             {
@@ -643,10 +647,12 @@ namespace EHMR.Domain.Entities.Reports
                     patient.Gender.ToDisplay(),
                     patient.Doctor?.FullName ?? "-",
                     patient.Phone ?? "-",
-                    patient.Scores
-                        .OrderByDescending(x => x.RecordedAt)
-                        .Select(x => x.ScoreText)
-                        .FirstOrDefault() ?? "Нема скор",
+                    includeScoreHistory
+                        ? BuildScoreHistory(patient)
+                        : patient.Scores
+                            .OrderByDescending(x => x.RecordedAt)
+                            .Select(x => x.ScoreText)
+                            .FirstOrDefault() ?? "Нема скор",
                     patient.Address ?? "-",
                     patient.City ?? "-",
                     BuildMedicinesInfo(patient, from, to),
