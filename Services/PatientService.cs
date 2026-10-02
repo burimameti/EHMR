@@ -625,12 +625,17 @@ public class PatientService : IPatientService
                 }
             }
 
-            // ---- medicine delete ----
+            // ---- medicine history ----
+            // Therapy is never physically deleted. Removing/changing an active
+            // therapy closes it and keeps the row for the clinical history.
             foreach(var id in model.DeletedMedicineIds)
             {
                 var entity = existing.PatientMedicines.FirstOrDefault(x => x.Id==id);
                 if(entity!=null)
-                    db.Remove(entity);
+                {
+                    entity.IsActive=false;
+                    entity.EndDate ??= DateTime.UtcNow;
+                }
             }
 
             // ---- medicine upsert ----
