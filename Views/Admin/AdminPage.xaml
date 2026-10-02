@@ -1,262 +1,116 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-	x:Class="EHMR.Views.Admin.AdminPage"
-	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:admin="clr-namespace:EHMR.ViewModels.Admin"
-	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
-	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Admin"
-	x:Name="Page"
-	x:DataType="viewModels:AdminDashboardViewModel"
-	BackgroundColor="{StaticResource SparkCanvasBackground}">
+    x:Class="EHMR.Views.Admin.AdminPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+    xmlns:viewModels="clr-namespace:EHMR.ViewModels.Admin"
+    x:Name="Page"
+    x:DataType="viewModels:AdminDashboardViewModel"
+    BackgroundColor="{StaticResource PageBackground}">
 
-	<ContentPage.Resources>
-		<ResourceDictionary>
+    <Grid ColumnDefinitions="260,*">
+        <Border Grid.Column="0" BackgroundColor="{StaticResource SparkSidebarBg}" StrokeThickness="0">
+            <ContentView x:Name="MenuHost" />
+        </Border>
 
-			<!--  card shell — same white surface + hairline border as every other Spark card  -->
-			<Style
-				x:Key="AdminSummaryCard"
-				BasedOn="{StaticResource PageHeaderCardStyle}"
-				TargetType="Border">
-				<Setter Property="Padding" Value="20" />
-				<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
-				<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
-			</Style>
+        <Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="12">
+            <Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                    <controls:FFPageHeader
+                        Title="Администрација"
+                        Subtitle="Управување со корисници, реуматолози, МКБ-10 и резервни копии." />
+                    <controls:FFButton
+                        Grid.Column="1"
+                        ButtonKind="Secondary"
+                        Command="{Binding RefreshCommand}"
+                        ContentPadding="18,0"
+                        HeightRequestEx="45"
+                        Text="Освежи" />
+                </Grid>
+            </Border>
 
-			<Style x:Key="AdminCardTitle" TargetType="Label">
-				<Setter Property="FontSize" Value="{StaticResource SparkFontSizeNormal}" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
-			</Style>
+            <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+                <VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}" Spacing="12">
 
-			<Style x:Key="AdminCardValue" TargetType="Label">
-				<Setter Property="FontAttributes" Value="Bold" />
-				<Setter Property="FontSize" Value="26" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-			</Style>
+                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                        <controls:FFMetricTile
+                            Grid.Column="0"
+                            Title="{Binding Cards[0].Title}"
+                            Command="{Binding Cards[0].Command}"
+                            DisplayMode="Metric"
+                            Icon="{Binding Cards[0].Icon}"
+                            Subtitle="{Binding Cards[0].Subtitle}"
+                            Value="{Binding Cards[0].Value}"
+                            Variant="{Binding Cards[0].Variant}" />
+                        <controls:FFMetricTile
+                            Grid.Column="1"
+                            Title="{Binding Cards[1].Title}"
+                            Command="{Binding Cards[1].Command}"
+                            DisplayMode="Metric"
+                            Icon="{Binding Cards[1].Icon}"
+                            Subtitle="{Binding Cards[1].Subtitle}"
+                            Value="{Binding Cards[1].Value}"
+                            Variant="{Binding Cards[1].Variant}" />
+                        <controls:FFMetricTile
+                            Grid.Column="2"
+                            Title="{Binding Cards[2].Title}"
+                            Command="{Binding Cards[2].Command}"
+                            DisplayMode="Metric"
+                            Icon="{Binding Cards[2].Icon}"
+                            Subtitle="{Binding Cards[2].Subtitle}"
+                            Value="{Binding Cards[2].Value}"
+                            Variant="{Binding Cards[2].Variant}" />
+                        <controls:FFMetricTile
+                            Grid.Column="3"
+                            Title="{Binding Cards[3].Title}"
+                            Command="{Binding Cards[3].Command}"
+                            DisplayMode="Metric"
+                            Icon="{Binding Cards[3].Icon}"
+                            Subtitle="{Binding Cards[3].Subtitle}"
+                            Value="{Binding Cards[3].Value}"
+                            Variant="{Binding Cards[3].Variant}" />
+                    </Grid>
 
-			<Style x:Key="AdminCardSubtitle" TargetType="Label">
-				<Setter Property="FontSize" Value="{StaticResource SparkFontSizeSmall}" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextMuted}" />
-			</Style>
+                    <Border Style="{StaticResource PageCardStyleDashboard}">
+                        <Grid RowDefinitions="Auto,Auto" RowSpacing="12">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontSize="16"
+                                        Text="Последни бекапи"
+                                        TextColor="{StaticResource SparkTextPrimary}" />
+                                    <Label
+                                        FontSize="11"
+                                        Text="Последните извршени резервни копии на системот."
+                                        TextColor="{StaticResource SparkTextMuted}" />
+                                </VerticalStackLayout>
+                                <controls:FFButton
+                                    Grid.Column="1"
+                                    ButtonKind="Secondary"
+                                    Command="{Binding GoToBackupsCommand}"
+                                    ContentPadding="16,0"
+                                    HeightRequestEx="38"
+                                    Text="Прикажи ги сите" />
+                            </Grid>
 
-			<!--
-				round icon chip — bg/text colors come from the item itself
-				(AccentBgColor / AccentColor), same success/warning/neutral/teal
-				families already used for badges elsewhere in the app
-			-->
-			<Style x:Key="AdminCardIconBadge" TargetType="Border">
-				<Setter Property="HeightRequest" Value="44" />
-				<Setter Property="WidthRequest" Value="44" />
-				<Setter Property="StrokeThickness" Value="0" />
-				<Setter Property="StrokeShape">
-					<Setter.Value>
-						<RoundRectangle CornerRadius="22" />
-					</Setter.Value>
-				</Setter>
-			</Style>
+                            <controls:SparkDataGridView
+                                Grid.Row="1"
+                                Columns="{Binding BackupGridColumns}"
+                                RowTappedCommand="{Binding OpenBackupCommand}"
+                                Rows="{Binding BackupGridRows}" />
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
 
-			<Style x:Key="AdminSectionTitle" TargetType="Label">
-				<Setter Property="FontAttributes" Value="Bold" />
-				<Setter Property="FontSize" Value="{StaticResource SparkFontSizeTitle}" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-			</Style>
-
-		</ResourceDictionary>
-	</ContentPage.Resources>
-
-	<Grid ColumnDefinitions="285,*">
-
-		<!--  LEFT MENU  -->
-		<Border
-			Grid.Column="0"
-			BackgroundColor="{StaticResource SparkSidebarBg}"
-			StrokeThickness="0">
-			<ContentView x:Name="MenuHost" />
-		</Border>
-
-		<!--  RIGHT MAIN CONTAINER  -->
-		<Grid
-			Grid.Column="1"
-            Margin="0"
-			RowDefinitions="Auto,*"
-			RowSpacing="16">
-
-			<!--  HEADER  -->
-			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-					<controls:FFPageHeader
-						Title="Администрација"
-						Grid.Column="0"
-						Subtitle="Управување со корисници, реуматолози, МКБ шифрарник и бекапи." />
-
-					<controls:FFButton
-						Grid.Column="1"
-						ButtonKind="Green"
-						Command="{Binding RefreshCommand}"
-						ContentPadding="20,0"
-						HeightRequestEx="45"
-						Text="Освежи" />
-				</Grid>
-			</Border>
-
-			<!--  MAIN SCROLL AREA  -->
-			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Always">
-				<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
-
-					<!--  ===================================================  -->
-					<!--  SUMMARY / NAVIGATION CARDS  -->
-					<!--
-						A CollectionView inside an Auto-sized wrapping strip is
-						unreliable (same measurement issue as the patient
-						dashboard alert chips), so this uses a fixed FlexLayout +
-						BindableLayout — wraps cleanly, each card independently
-						tappable via its own GestureRecognizer.
-					-->
-					<!--  ===================================================  -->
-					<Grid
-						Grid.Row="1"
-						Padding="0"
-						ColumnDefinitions="*,*,*,*"
-						ColumnSpacing="10"
-						HorizontalOptions="Fill">
-						<controls:FFMetricTile
-							Title="{Binding Cards[0].Title}"
-							Grid.Column="0"
-							Command="{Binding Cards[0].Command}"
-							DisplayMode="Metric"
-							Icon="{Binding Cards[0].Icon}"
-							Subtitle="{Binding Cards[0].Subtitle}"
-							Variant="{Binding Cards[0].Variant}"
-							Value="{Binding Cards[0].Value}" />
-						<controls:FFMetricTile
-							Title="{Binding Cards[1].Title}"
-							Grid.Column="1"
-							Command="{Binding Cards[1].Command}"
-							DisplayMode="Metric"
-							Icon="{Binding Cards[1].Icon}"
-							Subtitle="{Binding Cards[1].Subtitle}"
-							Variant="{Binding Cards[1].Variant}"
-							Value="{Binding Cards[1].Value}" />
-						<controls:FFMetricTile
-							Title="{Binding Cards[2].Title}"
-							Grid.Column="2"
-							Command="{Binding Cards[2].Command}"
-							DisplayMode="Metric"
-							Icon="{Binding Cards[2].Icon}"
-							Subtitle="{Binding Cards[2].Subtitle}"
-							Variant="{Binding Cards[2].Variant}"
-							Value="{Binding Cards[2].Value}" />
-						<controls:FFMetricTile
-							Title="{Binding Cards[3].Title}"
-							Grid.Column="3"
-							Command="{Binding Cards[3].Command}"
-							DisplayMode="Metric"
-							Icon="{Binding Cards[3].Icon}"
-							Subtitle="{Binding Cards[3].Subtitle}"
-							Variant="{Binding Cards[3].Variant}"
-							Value="{Binding Cards[3].Value}" />
-					</Grid>
-
-					<!--  ===================================================  -->
-					<!--  QUICK ACTIONS ROW  -->
-					<!--  ===================================================  -->
-					<!--<controls:FFSectionCard>
-						<Grid RowDefinitions="Auto,Auto" RowSpacing="14">
-
-							<Label Style="{StaticResource AdminSectionTitle}" Text="Брзи акции" />
-
-							<FlexLayout
-								Grid.Row="1"
-								Direction="Row"
-								JustifyContent="Start"
-								Wrap="Wrap">
-
-								<controls:FFButton
-									Margin="0,0,12,12"
-									ButtonKind="Secondary"
-									Command="{Binding GoToUsersCommand}"
-									ContentPadding="18,0"
-									HeightRequestEx="42"
-									Text="Нов корисник" />
-
-								<controls:FFButton
-									Margin="0,0,12,12"
-									ButtonKind="Secondary"
-									Command="{Binding GoToDoctorsCommand}"
-									ContentPadding="18,0"
-									HeightRequestEx="42"
-									Text="Нов реуматолог" />
-
-								<controls:FFButton
-									Margin="0,0,12,12"
-									ButtonKind="Secondary"
-									Command="{Binding ImportMkbCommand}"
-									ContentPadding="18,0"
-									HeightRequestEx="42"
-									Text="Увези МКБ-10" />
-
-								<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="White"
-									Margin="0,0,12,12"
-									ButtonKind="Primary"
-									Command="{Binding CreateBackupCommand}"
-									ContentPadding="18,0"
-									HeightRequestEx="42"
-									Text="Направи бекап сега" />
-
-							</FlexLayout>
-						</Grid>
-					</controls:FFSectionCard>-->
-
-					<!--  ===================================================  -->
-					<!--  RECENT BACKUPS LIST  -->
-					<!--  ===================================================  -->
-					<Border Style="{StaticResource PageCardStyleDashboard}">
-						<Grid RowDefinitions="Auto,Auto" RowSpacing="12">
-
-							<Grid ColumnDefinitions="*,Auto">
-								<Label Style="{StaticResource AdminSectionTitle}" Text="Последни бекапи" />
-
-								<controls:FFButton
-									Grid.Column="1"
-									ButtonKind="Secondary"
-									Command="{Binding GoToBackupsCommand}"
-									ContentPadding="16,0"
-									HeightRequestEx="36"
-									Text="Прикажи ги сите" />
-							</Grid>
-
-							<controls:SparkDataGridView
-								Grid.Row="1"
-								Columns="{Binding BackupGridColumns}"
-								RowTappedCommand="{Binding OpenBackupCommand}"
-								Rows="{Binding BackupGridRows}" />
-
-						</Grid>
-					</Border>
-
-				</VerticalStackLayout>
-			</ScrollView>
-
-		</Grid>
-
-		<!--  LOADING OVERLAY  -->
-		<Grid
-			Grid.Column="1"
-			BackgroundColor="{StaticResource SparkOverlay}"
-			IsVisible="{Binding IsBusy}">
-			<VerticalStackLayout
-				HorizontalOptions="Center"
-				Spacing="12"
-				VerticalOptions="Center">
-				<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
-				<Label
-					FontSize="13"
-					Text="Вчитување..."
-					TextColor="{StaticResource SparkTextPrimary}" />
-			</VerticalStackLayout>
-		</Grid>
-
-	</Grid>
+        <Grid Grid.Column="1" BackgroundColor="{StaticResource SparkOverlay}" IsVisible="{Binding IsBusy}">
+            <VerticalStackLayout HorizontalOptions="Center" Spacing="12" VerticalOptions="Center">
+                <ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
+                <Label FontSize="13" Text="Вчитување..." TextColor="{StaticResource SparkTextPrimary}" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
 </ContentPage>
