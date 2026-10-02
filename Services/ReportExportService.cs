@@ -201,6 +201,7 @@ namespace EHMR.Services;
     // ================= HELPERS =================
 
     private static bool IsMedicineConsumptionReport(string reportTitle) =>
+        reportTitle.Contains("Потрошувачка по лек", StringComparison.OrdinalIgnoreCase) ||
         reportTitle.Contains("Пациенти со лек", StringComparison.OrdinalIgnoreCase);
 
     private static IReadOnlyList<(string Medicine, string Quantity)> GetMedicineConsumptionSummary(
