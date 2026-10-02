@@ -490,6 +490,18 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         if(_activeProvider is not PatientsReportProvider patientsProvider)
             return;
 
+        // Clearing the search box must immediately return the report to
+        // the normal all-patient result set.
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            ScorePatientSuggestions.Clear();
+            ShowScorePatientSuggestions=false;
+            SelectedScorePatientSuggestion=null;
+            IsScoreSearchEnabled=false;
+            patientsProvider.SelectScorePatient(null);
+            return;
+        }
+
         ScorePatientSuggestions=new ObservableCollection<ReportPatientSuggestion>(
             patientsProvider.SearchScorePatients(value));
 
