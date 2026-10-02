@@ -120,10 +120,17 @@ namespace EHMR.Services;
 
                             if(IsMedicineConsumptionReport(reportTitle))
                             {
-                                c.Item().PaddingTop(3).Text("ВКУПНА КОЛИЧИНА:").Bold().FontSize(8);
+                                c.Item().PaddingTop(3).Text("ВКУПНА КОЛИЧИНА НА ЛЕКОТ").Bold().FontSize(8);
 
-                                foreach(var item in GetMedicineConsumptionSummary(rows))
-                                    c.Item().Text($"{item.Medicine} : {item.Quantity}").FontSize(8);
+                                if(!string.IsNullOrWhiteSpace(selectedMedicine) && selectedMedicineTotalQuantity.HasValue)
+                                {
+                                    c.Item().Text($"{selectedMedicine} : {selectedMedicineTotalQuantity.Value:0.##}").FontSize(8);
+                                }
+                                else
+                                {
+                                    foreach(var item in GetMedicineConsumptionSummary(rows))
+                                        c.Item().Text($"{item.Medicine} : {item.Quantity}").FontSize(8);
+                                }
                             }
                         });
                     });
@@ -199,23 +206,21 @@ namespace EHMR.Services;
     private static IReadOnlyList<(string Medicine, string Quantity)> GetMedicineConsumptionSummary(
         IReadOnlyList<SparkGridRow> rows)
     {
-        var result = new List<(string Medicine, string Quantity)>();
-
-        foreach(var row in rows)
-        {
-            row.TryGetValue("Medicine", out var medicineValue);
-            row.TryGetValue("Medicine", out var quantityValue);
-
-            var medicine = medicineValue?.ToString()?.Trim().Split(":")[0];
-            var quantity = quantityValue?.ToString()?.Trim();
-
-            if(string.IsNullOrWhiteSpace(medicine) || string.IsNullOrWhiteSpace(quantity))
-                continue;
-
-            result.Add((medicine, quantity));
-        }
-
-        return result;
+        return rows
+            .Select(row =>
+            {
+                row.TryGetValue("MedicineConsumptionMedicine", out var medicineValue);
+                row.TryGetValue("MedicineConsumptionQuantity", out var quantityValue);
+                return new
+                {
+                    Medicine = medicineValue?.ToString()?.Trim() ?? string.Empty,
+                    Quantity = decimal.TryParse(quantityValue?.ToString(), out var q) ? q : 0m
+                };
+            })
+            .Where(x => !string.IsNullOrWhiteSpace(x.Medicine))
+            .GroupBy(x => x.Medicine, StringComparer.CurrentCultureIgnoreCase)
+            .Select(g => (g.First().Medicine, g.Sum(x => x.Quantity).ToString("0.##")))
+            .ToList();
     }
 
     private static double GetColumnWidth(SparkGridColumn column)
