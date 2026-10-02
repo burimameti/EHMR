@@ -6,37 +6,43 @@
 	x:Name="Root">
 
 	<Grid RowDefinitions="Auto,Auto" RowSpacing="5">
-		<!--<Label
-            x:Name="FieldLabel"
-            Margin="2,0,0,0"
-            FontAttributes="Bold"
-            FontSize="11"
-            IsVisible="{Binding Label, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
-            LineBreakMode="TailTruncation"
-            MaxLines="1"
-            Text="{Binding Label, Source={x:Reference Root}}"
-            TextColor="{StaticResource SparkTextSecondary}" />-->
+
+		<Label
+			Margin="2,0,0,0"
+			CharacterSpacing=".4"
+			FontAttributes="Bold"
+			FontSize="11"
+			IsVisible="{Binding Label, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
+			LineBreakMode="TailTruncation"
+			MaxLines="1"
+			Text="{Binding Label, Source={x:Reference Root}}"
+			TextColor="{StaticResource SparkTextSecondary}" />
 
 		<Border
 			Grid.Row="1"
+			Padding="0"
 			BackgroundColor="{StaticResource SparkContentBackground}"
-			HeightRequest="50"
-			Stroke="{StaticResource SparkAccentTealDark}"
-			StrokeShape="RoundRectangle 0"
-			StrokeThickness="0.2">
+			HeightRequest="44"
+			Stroke="{StaticResource SparkBorder}"
+			StrokeShape="RoundRectangle 8"
+			StrokeThickness="1">
 
 			<Picker
 				x:Name="InnerPicker"
-				Margin="0,0,0,0"
+				Title="{Binding Placeholder, Source={x:Reference Root}}"
+				Margin="8,0"
 				BackgroundColor="Transparent"
 				FontAttributes="Bold"
 				FontSize="13"
 				HorizontalOptions="Fill"
 				ItemsSource="{Binding ItemsSource, Source={x:Reference Root}}"
+				ItemDisplayBinding="{Binding ItemDisplayBinding, Source={x:Reference Root}}"
+				SelectedIndex="{Binding SelectedIndex, Source={x:Reference Root}, Mode=TwoWay}"
 				SelectedItem="{Binding SelectedItem, Source={x:Reference Root}, Mode=TwoWay}"
 				TextColor="{StaticResource SparkTextPrimary}"
 				TitleColor="{StaticResource SparkTextMuted}"
-				VerticalOptions="Start" />
+				VerticalOptions="Center" />
+
 		</Border>
 	</Grid>
 </ContentView>
