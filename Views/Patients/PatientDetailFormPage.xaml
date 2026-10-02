@@ -495,12 +495,10 @@
 														FontSize="13"
 														Text="{Binding Patient.NationalId}"
 														TextColor="{StaticResource SparkTextPrimary}" />
-												</VerticalStackLayout></Grid>
-									</VerticalStackLayout>
+												</VerticalStackLayout>
+						</Grid>
+					</VerticalStackLayout>
 
-									
-											
-											</VerticalStackLayout>
 <VerticalStackLayout Grid.Row="1" Spacing="10">
 										<controls:CrudSectionHeader
 											Title="КОНТАКТ ИНФОРМАЦИИ"
