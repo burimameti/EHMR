@@ -96,6 +96,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     [ObservableProperty]
     private string selectedPeriodTypeLabel = "Сите";
 
+    private bool _recalculatingPeriod;
+
     public bool IsCustomPeriod => SelectedPeriodTypeLabel=="Прилагодено";
 
     partial void OnSelectedPeriodTypeLabelChanged(string value)
@@ -106,7 +108,10 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     private void RecalculatePeriodRange()
     {
-        var today = DateTime.Today;
+        _recalculatingPeriod=true;
+        try
+        {
+            var today = DateTime.Today;
 
         switch(SelectedPeriodTypeLabel)
         {
@@ -137,6 +142,11 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             case "Сите":
                 return;
         }
+        }
+        finally
+        {
+            _recalculatingPeriod=false;
+        }
     }
 
     [RelayCommand]
@@ -147,7 +157,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     partial void OnStartDateChanged(DateTime value)
     {
-        if(_activeProvider is null || SelectedPeriodTypeLabel=="Сите")
+        if(_recalculatingPeriod || _activeProvider is null || SelectedPeriodTypeLabel=="Сите")
             return;
 
         if(SelectedPeriodTypeLabel!="Прилагодено")
@@ -158,7 +168,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     partial void OnEndDateChanged(DateTime value)
     {
-        if(_activeProvider is null || SelectedPeriodTypeLabel=="Сите")
+        if(_recalculatingPeriod || _activeProvider is null || SelectedPeriodTypeLabel=="Сите")
             return;
 
         if(SelectedPeriodTypeLabel!="Прилагодено")
