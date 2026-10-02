@@ -1066,11 +1066,10 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     {
         if(row==null) return;
 
-        // A therapy removed from the patient is not deleted. It becomes history
-        // so the clinical record keeps the previous medicine and its dates.
-        row.PatientMedicine.IsActive=false;
-        if(row.PatientMedicine.EndDate is null)
-            row.PatientMedicine.EndDate=DateTime.UtcNow;
+        // Existing patient therapy is never physically deleted. The service
+        // converts it to inactive history when this row is removed.
+        if(row.PatientMedicine.Id!=Guid.Empty)
+            _deletedMedicineIds.Add(row.PatientMedicine.Id);
 
         AttachedMedicines.Remove(row);
     }
