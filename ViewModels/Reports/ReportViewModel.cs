@@ -460,6 +460,20 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     private async void OnProviderFiltersChanged()
     {
+        // A report picker switches the provider back to all-patient mode.
+        // Clear the patient-search text as well so the single search box does
+        // not visually suggest that the grid is still locked to one patient.
+        if(_activeProvider is PatientsReportProvider patientsProvider &&
+           !patientsProvider.SelectedScorePatientId.HasValue &&
+           IsScoreSearchEnabled)
+        {
+            IsScoreSearchEnabled=false;
+            ScorePatientSearchText=string.Empty;
+            SelectedScorePatientSuggestion=null;
+            ScorePatientSuggestions.Clear();
+            ShowScorePatientSuggestions=false;
+        }
+
         _filterDebounce?.Cancel();
         _filterDebounce?.Dispose();
 
