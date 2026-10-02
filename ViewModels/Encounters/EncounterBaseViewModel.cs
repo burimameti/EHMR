@@ -296,6 +296,14 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         .Select(x => string.IsNullOrWhiteSpace(x.DecisionText) ? (x.Notes ?? "Терапија") : x.DecisionText)
         .Take(2));
 
+    // Patient-level therapies that were discontinued are clinical history.
+    // Encounter snapshots are excluded because they belong to individual visits,
+    // not to the patient's active-therapy timeline.
+    public IEnumerable<PatientMedicine> PreviousMedicines =>
+        PatientMedicines
+            .Where(x => !x.IsActive && x.EncounterId==null)
+            .OrderByDescending(x => x.EndDate ?? x.StartDate);
+
     public IEnumerable<Appointment> FilteredAppointments => AppointmentTab switch
     {
         AppointmentTabFilter.Upcoming => PatientAppointments
@@ -369,6 +377,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             OnPropertyChanged(nameof(CurrentDiagnosesSummary));
             OnPropertyChanged(nameof(ActiveMedicinesSummary));
             OnPropertyChanged(nameof(ActiveTherapySummary));
+            OnPropertyChanged(nameof(PreviousMedicines));
             OnPropertyChanged(nameof(HasPatientContext));
             OnPropertyChanged(nameof(HasEncounterContext));
         }
