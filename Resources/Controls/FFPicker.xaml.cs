@@ -247,6 +247,16 @@ internal sealed class EnumPickerDisplayConverter : IValueConverter
             TherapyStatus.Suspended => "Суспендирана",
             TherapyStatus.Canceled => "Откажана",
             TherapyStatus.Missed => "Пропуштена",
+            UserRole.Admin => "Администратор",
+            UserRole.SuperAdmin => "Супер администратор",
+            UserRole.Doctor => "Доктор",
+            UserRole.MainNurse => "Главна сестра",
+            UserRole.Nurse => "Медицинска сестра",
+            UserRole.Staff => "Персонал",
+            UserPosition.Regular => "Редовна позиција",
+            UserPosition.Senior => "Сениор",
+            UserPosition.Head => "Раководител",
+            UserPosition.Primarius => "Примариус",
             _ => GetEnumDescription(enumValue)
         };
     }
