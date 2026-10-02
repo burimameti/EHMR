@@ -23,6 +23,7 @@ namespace EHMR.ViewModels.Encounters;
 public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryAttributable
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
+    private readonly IAuthorizationService _authorizationService;
 
     private string _pendingSearch = string.Empty;
     private string _pendingStatus = string.Empty;
@@ -154,7 +155,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
                 }
             };
 
-            if(CanUpdate)
+            if(CanUpdate && _authorizationService.HasDoctorAdminPrivileges)
                 actions.Add(new SparkButtonItem { IconGlyph="✎", Label="Промени", Command=EditCommand, CommandParameter=e });
 
             row["Actions"]=actions;
@@ -289,6 +290,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         : base(navigationService, userDialogService, menuService, authService, selectedItemService)
     {
         _dbFactory=dbFactory;
+        _authorizationService=authService;
 
         PageSize=10;
         EvaluatePermissions();
@@ -495,7 +497,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     {
         if(item is null) return;
 
-        if(!CanUpdate)
+        if(!_authorizationService.HasDoctorAdminPrivileges)
         {
             await UserDialogService.ShowAlertAsync(PermissionDeniedTitle, "Немате авторизација за уредување прегледи.", "OK");
             return;
