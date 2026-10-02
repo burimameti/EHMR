@@ -549,6 +549,7 @@ namespace EHMR.Domain.Entities.Reports
         {
             // Keep report rows period-scoped while the patient search itself
             // remains global across all registered patients.
+            var allPeriod = from == DateTime.MinValue && to == DateTime.MaxValue;
             var query = allPeriod
                 ? patients.AsEnumerable()
                 : patients.Where(x =>
