@@ -173,7 +173,6 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         await using var db=await _dbFactory.CreateDbContextAsync();
         var medicines=await db.Medicines
             .AsNoTracking()
-            .Where(m => m.IsActive)
             .OrderBy(m => m.Name)
             .ThenBy(m => m.Strength)
             .ToListAsync();
@@ -751,6 +750,8 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         SelectedMedicine="Сите";
         SelectedGender="Сите";
         SelectedScore="Сите";
+        IsMedicineFilterEnabled=false;
+        SelectedMedicineFilter=null;
         ClearPatientSelection();
     }
 
