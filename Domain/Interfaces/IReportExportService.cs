@@ -17,6 +17,8 @@ namespace EHMR.Domain.Interfaces
         DateTime startDate,
         DateTime endDate,
         IReadOnlyList<SparkGridColumn> columns,
-        IReadOnlyList<SparkGridRow> rows);
+        IReadOnlyList<SparkGridRow> rows,
+        string? selectedMedicine = null,
+        decimal? selectedMedicineTotalQuantity = null);
     }
 }
