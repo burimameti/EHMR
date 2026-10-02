@@ -157,7 +157,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     partial void OnStartDateChanged(DateTime value)
     {
-        if(_recalculatingPeriod || _activeProvider is null || SelectedPeriodTypeLabel=="Сите")
+        if(_recalculatingPeriod || _activeProvider is null)
             return;
 
         if(SelectedPeriodTypeLabel!="Прилагодено")
