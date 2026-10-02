@@ -213,11 +213,6 @@
 										<Label Grid.Column="1" Text="Пребарување по лек" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
 										<Label Grid.Column="2" Text="Изберете го лекот во филтерот." TextColor="{StaticResource SparkTextMuted}" VerticalOptions="Center" />
 									</Grid>
-									<sc:SparkExplorerHeaderView
-										Buttons="{Binding Buttons}"
-										Pickers="{Binding Pickers}"
-										SearchPlaceholder="Филтрирај редови..."
-										Tabs="{Binding Tabs}" />
 								</VerticalStackLayout>
 							</sc:FFSectionCard>
 
