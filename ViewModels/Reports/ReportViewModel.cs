@@ -430,26 +430,14 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         }
     }
 
-    partial void OnIsScoreSearchEnabledChanged(bool value)
-    {
-        if(_activeProvider is PatientsReportProvider patientsProvider)
-        {
-            patientsProvider.SetScoreSearchEnabled(value);
-            ScorePatientSearchText=string.Empty;
-            ScorePatientSuggestions.Clear();
-            ShowScorePatientSuggestions=false;
-            SelectedScorePatientSuggestion=null;
-            InitializeSparkControls();
-            _=GenerateReportAsync();
-        }
-    }
-
     partial void OnScorePatientSearchTextChanged(string value)
     {
-        if(_activeProvider is not PatientsReportProvider patientsProvider || !IsScoreSearchEnabled)
+        if(_activeProvider is not PatientsReportProvider patientsProvider)
             return;
 
-        ScorePatientSuggestions=new ObservableCollection<ReportPatientSuggestion>(patientsProvider.SearchScorePatients(value));
+        ScorePatientSuggestions=new ObservableCollection<ReportPatientSuggestion>(
+            patientsProvider.SearchScorePatients(value));
+
         ShowScorePatientSuggestions=ScorePatientSuggestions.Count>0;
     }
 
@@ -461,6 +449,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         ScorePatientSearchText=value.FullName;
         ShowScorePatientSuggestions=false;
         ScorePatientSuggestions.Clear();
+        IsScoreSearchEnabled=true;
+        patientsProvider.SetScoreSearchEnabled(true);
         patientsProvider.SelectScorePatient(value.PatientId);
         InitializeSparkControls();
         _=GenerateReportAsync();
