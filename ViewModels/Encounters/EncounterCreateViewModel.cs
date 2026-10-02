@@ -231,10 +231,32 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     private void LoadCurrentMedicinesForEncounter()
     {
         if(EncounterMedicines.Count>0) return;
-        foreach(var medicine in PatientMedicines.Where(x => x.IsActive).OrderBy(x => x.StartDate))
+
+        // Only patient-level active therapy is carried into a new encounter.
+        // Encounter-scoped rows are historical snapshots and must never appear
+        // as preselected current therapy.
+        foreach(var medicine in PatientMedicines
+            .Where(x => x.IsActive && x.EncounterId==null)
+            .OrderBy(x => x.StartDate))
         {
-            medicine.EncounterId=Encounter.Id==Guid.Empty ? null : Encounter.Id;
-            EncounterMedicines.Add(medicine);
+            EncounterMedicines.Add(new PatientMedicine
+            {
+                Id=Guid.NewGuid(),
+                PatientId=Encounter.PatientId,
+                EncounterId=Encounter.Id==Guid.Empty ? null : Encounter.Id,
+                MedicineId=medicine.MedicineId,
+                Medicine=medicine.Medicine,
+                ApplicationRegimeId=medicine.ApplicationRegimeId,
+                ApplicationRegime=medicine.ApplicationRegime,
+                Quantity=0,
+                Dosage=medicine.Dosage,
+                DosesFrequency=medicine.DosesFrequency,
+                StartDate=DateTime.Now,
+                EndDate=null,
+                Notes=medicine.Notes,
+                PharmaceuticalReference=medicine.PharmaceuticalReference,
+                IsActive=true
+            });
         }
     }
 
