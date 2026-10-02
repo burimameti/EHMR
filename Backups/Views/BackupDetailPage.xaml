@@ -7,7 +7,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.Backups.ViewModels"
 	x:Name="Page"
 	x:DataType="viewModels:BackupDetailsViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
+	BackgroundColor="{StaticResource PageBackground}">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
@@ -44,7 +44,7 @@
 			</Style>
 
 			<Style x:Key="MetricTileBorder" TargetType="Border">
-				<Setter Property="Padding" Value="16" />
+				<Setter Property="Padding" Value="12" />
 				<Setter Property="BackgroundColor" Value="{StaticResource SparkPageBackground}" />
 				<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
 				<Setter Property="StrokeThickness" Value="1" />
@@ -60,7 +60,7 @@
 		</ResourceDictionary>
 	</ContentPage.Resources>
 
-	<Grid ColumnDefinitions="290,*">
+	<Grid ColumnDefinitions="260,*">
 
 
 		<!--  LEFT MENU  -->
@@ -118,7 +118,7 @@
 
 								<Label Style="{StaticResource InfoLabel}" Text="ДАТУМ" />
 
-								<Label Style="{StaticResource InfoValue}" Text="{Binding Backup.StartedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
+								<Label Style="{StaticResource InfoValue}" Text="{Binding Backup.StartedAt, StringFormat='{0:dd.MM.yyyy}'}" />
 
 							</VerticalStackLayout>
 
@@ -234,7 +234,7 @@
 												FontAttributes="Bold"
 												FontSize="18"
 												Text="{Binding FailedBackups}"
-												TextColor="Red" />
+												TextColor="{StaticResource SparkDanger}" />
 
 										</VerticalStackLayout>
 
