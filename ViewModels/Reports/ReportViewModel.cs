@@ -57,6 +57,11 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     private string userName = string.Empty;
 
     [ObservableProperty]
+    private bool isMedicineSearchEnabled;
+
+    public bool IsPatientsReport => _activeReport?.Type==ReportType.Patients;
+
+    [ObservableProperty]
     private DateTime startDate = DateTime.Today.AddMonths(-1);
 
     [ObservableProperty]
@@ -384,6 +389,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         ActiveReportTitle=report.Title;
         ActiveReportIcon=report.Icon;
+        IsMedicineSearchEnabled=false;
+        OnPropertyChanged(nameof(IsPatientsReport));
 
         SearchText=string.Empty;
 
@@ -397,6 +404,16 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         IsShowingDetails=true;
 
         await GenerateReportAsync();
+    }
+
+    partial void OnIsMedicineSearchEnabledChanged(bool value)
+    {
+        if(_activeProvider is PatientsReportProvider patientsProvider)
+        {
+            patientsProvider.SetMedicineFilterEnabled(value);
+            InitializeSparkControls();
+            _=GenerateReportAsync();
+        }
     }
 
     private CancellationTokenSource? _filterDebounce;
@@ -924,7 +941,9 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                     startDate: StartDate,
                     endDate: EndDate,
                     columns: GridColumns.ToList(),
-                    rows: GridRows.ToList()
+                    rows: GridRows.ToList(),
+                    selectedMedicine: (_activeProvider as PatientsReportProvider)?.SelectedMedicineForExport,
+                    selectedMedicineTotalQuantity: (_activeProvider as PatientsReportProvider)?.SelectedMedicineTotalQuantityForExport
                 );
 
                 await UserDialogService.ShowAlertAsync("Успешно", $"Извештајот е зачуван на: {path}", "ОК");
@@ -1029,6 +1048,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         _activeProvider=null;
         _activeReport=null;
+        IsMedicineSearchEnabled=false;
+        OnPropertyChanged(nameof(IsPatientsReport));
 
         ActiveReportTitle=string.Empty;
         ActiveReportIcon=string.Empty;
