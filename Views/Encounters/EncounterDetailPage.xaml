@@ -289,7 +289,7 @@
 
 							<HorizontalStackLayout Padding="0,8" HorizontalOptions="Center" Spacing="12">
 								<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="44" Text="Назад" WidthRequestEx="150" />
-								<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding EditCommand}" HeightRequestEx="44" IsVisible="{Binding CanEditEncounter}" Text="Уреди" TextColorEx="White" WidthRequestEx="180" />
+								<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding EditCommand}" HeightRequestEx="44" IsVisible="{Binding CanShowEdit}" Text="Уреди" TextColorEx="White" WidthRequestEx="180" />
 							</HorizontalStackLayout>
 
 						</VerticalStackLayout>
