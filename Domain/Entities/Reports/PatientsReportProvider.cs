@@ -48,15 +48,27 @@ namespace EHMR.Domain.Entities.Reports
 
         public IReadOnlyList<ReportPatientSuggestion> SearchScorePatients(string query)
         {
-            if(!IsScoreSearchEnabled || string.IsNullOrWhiteSpace(query)) return [];
-            var term=query.Trim();
-            return _loadedPatients.Where(x =>
-                (x.FullName?.Contains(term,StringComparison.OrdinalIgnoreCase)??false) ||
-                (x.PatientNumber?.Contains(term,StringComparison.OrdinalIgnoreCase)??false) ||
-                (!string.IsNullOrWhiteSpace(x.NationalId) && x.NationalId.Contains(term,StringComparison.OrdinalIgnoreCase)) ||
-                (!string.IsNullOrWhiteSpace(x.SzboNumber) && x.SzboNumber.Contains(term,StringComparison.OrdinalIgnoreCase)))
-                .OrderBy(x => x.FullName).Take(8)
-                .Select(x => new ReportPatientSuggestion { PatientId=x.Id, FullName=x.FullName??string.Empty, NationalId=x.NationalId??string.Empty, SzboNumber=x.SzboNumber??string.Empty })
+            if(string.IsNullOrWhiteSpace(query))
+                return [];
+
+            var terms=query.Trim()
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            return _loadedPatients
+                .Where(x => terms.All(term =>
+                    (x.FullName?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.PatientNumber?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (!string.IsNullOrWhiteSpace(x.NationalId) && x.NationalId.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrWhiteSpace(x.SzboNumber) && x.SzboNumber.Contains(term, StringComparison.OrdinalIgnoreCase))))
+                .OrderBy(x => x.FullName)
+                .Take(8)
+                .Select(x => new ReportPatientSuggestion
+                {
+                    PatientId=x.Id,
+                    FullName=x.FullName ?? string.Empty,
+                    NationalId=x.NationalId ?? string.Empty,
+                    SzboNumber=x.SzboNumber ?? string.Empty
+                })
                 .ToList();
         }
 
@@ -355,7 +367,7 @@ namespace EHMR.Domain.Entities.Reports
 
                 Debug.WriteLine($"[Patients] [9] Building report rows...");
                 List<DynamicReportRow> rows;
-                if(IsScoreSearchEnabled && _selectedScorePatientId.HasValue)
+                if(_selectedScorePatientId.HasValue)
                 {
                     var selectedPatient=patients.FirstOrDefault(x => x.Id==_selectedScorePatientId.Value);
                     rows=selectedPatient is null ? [] : selectedPatient.Scores
