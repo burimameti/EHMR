@@ -313,7 +313,7 @@ namespace EHMR.Domain.Entities.Reports
                     .ToList();
 
                 _selectedMedicineTotalQuantity = _selectedMedicineId.HasValue
-                    ? filtered_list
+                    ? patients
                         .SelectMany(x => x.PatientMedicines)
                         .Where(pm => pm.MedicineId==_selectedMedicineId.Value
                                      &&pm.StartDate<=to
