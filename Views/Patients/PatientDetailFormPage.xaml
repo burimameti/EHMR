@@ -33,14 +33,14 @@
 
 			<!--  ═══ ШАБЛОНИ ЗА ИСТОРИЈА НА ПАЦИЕНТОТ ═══  -->
 
-			<DataTemplate x:Key="PatientDiagnosisRowTemplate" x:DataType="entities:Diagnosis">
+			<DataTemplate x:Key="PatientDiagnosisRowTemplate" x:DataType="dto:DiagnosisDto">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
 						<Label
 							FontAttributes="Bold"
 							FontFamily="Consolas"
 							FontSize="12"
-							Text="{Binding Mkb10Code.Code}"
+							Text="{Binding Mkb10Code}"
 							TextColor="{StaticResource SparkAccentTealDark}"
 							VerticalOptions="Center" />
 						<Label
@@ -48,7 +48,7 @@
 							Margin="10,0,0,0"
 							FontSize="12"
 							LineBreakMode="TailTruncation"
-							Text="{Binding Mkb10Code.Description}"
+							Text="{Binding Mkb10Description}"
 							TextColor="{StaticResource SparkTextPrimary}"
 							VerticalOptions="Center" />
 					</Grid>
@@ -1122,15 +1122,11 @@
 																		TextColor="{StaticResource SparkTextPrimary}"
 																		VerticalOptions="Center" />
 																</Border>
-																<Border
+																<controls:FFPicker
 																	Grid.Column="2"
-																	Margin="1,1,8,3"
-																	Padding="0"
-																	HeightRequest="45"
-																	Stroke="{StaticResource SparkBorderSubtle}"
-																	StrokeThickness="0">
-																	<controls:FFPicker2 ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}" SelectedItem="{Binding PatientMedicine.ApplicationRegime, Mode=TwoWay}" />
-																</Border>
+																	ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
+																	MinimumWidthRequest="110"
+																	SelectedItem="{Binding PatientMedicine.ApplicationRegime, Mode=TwoWay}" />
 																<Border
 																	Grid.Column="3"
 																	Padding="3,0"
