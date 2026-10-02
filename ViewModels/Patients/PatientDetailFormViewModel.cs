@@ -222,12 +222,13 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             // DTOs aren't EF-tracked, so no cloning/detaching gymnastics required —
             // just wrap what the service gave us.
             Diagnoses=new ObservableCollection<DiagnosisDto>(full.Diagnoses);
-            // Patient form owns only patient-level therapy links. Encounter
-            // snapshots are historical records and must not appear as editable
-            // active therapy on the patient.
+            // The Patient Edit form works with the patient's current therapy,
+            // regardless of where the PatientMedicine row was originally created.
+            // Active means IsActive=true; EncounterId does not determine whether
+            // a medicine is current or historical.
             AttachedMedicines=new ObservableCollection<AttachedMedicineRow>(
                 full.Medicines
-                    .Where(m => m.EncounterId==null)
+                    .Where(m => m.IsActive)
                     .Select(m => new AttachedMedicineRow(m)));
             Documents=new ObservableCollection<PatientDocumentDto>(full.Documents);
             SelectedDocumentPreview=null;
@@ -272,7 +273,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         .OrderByDescending(x => x.EndDate??x.StartDate);
 
     public IEnumerable<PatientMedicine> PreviousMedicineHistory => MedicineHistory
-        .Where(x => !x.IsActive && x.EncounterId==null)
+        // Every inactive PatientMedicine is historical therapy, regardless of
+        // whether it originated from Patient Edit, an Encounter, or an Appointment.
+        .Where(x => !x.IsActive)
         .OrderByDescending(x => x.EndDate ?? x.StartDate);
     [ObservableProperty] private ObservableCollection<Prescription> prescriptionHistory = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> medicineHistory = new();
@@ -1071,11 +1074,17 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     {
         if(row==null) return;
 
-        // Existing patient therapy is never physically deleted. The service
-        // converts it to inactive history when this row is removed.
+        // Existing therapy is never physically deleted. Closing it here also
+        // keeps the in-memory model consistent with the history rule.
         if(row.PatientMedicine.Id!=Guid.Empty)
+        {
+            row.PatientMedicine.IsActive=false;
+            row.PatientMedicine.EndDate=DateTime.UtcNow;
             _deletedMedicineIds.Add(row.PatientMedicine.Id);
+        }
 
+        // New, unsaved rows simply disappear. Persisted rows are retained in
+        // the database as inactive history by SavePatientAsync.
         AttachedMedicines.Remove(row);
     }
 
