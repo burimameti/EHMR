@@ -176,7 +176,27 @@
 
 							<!--  Explorer header: tabs + search + pickers  -->
 							<sc:FFSectionCard Margin="2,2,-5,2">
-								<sc:SparkExplorerHeaderView
+								<Grid
+						ColumnDefinitions="Auto,Auto,*"
+						ColumnSpacing="10"
+						Margin="0,0,0,8"
+						IsVisible="{Binding IsPatientsReport}">
+						<CheckBox
+							IsChecked="{Binding IsMedicineSearchEnabled, Mode=TwoWay}"
+							VerticalOptions="Center" />
+						<Label
+							Grid.Column="1"
+							Text="Пребарување по лек"
+							TextColor="{StaticResource SparkTextPrimary}"
+							VerticalOptions="Center" />
+						<Label
+							Grid.Column="2"
+							Text="Изберете го лекот во филтерот што ќе се појави десно."
+							TextColor="{StaticResource SparkTextMuted}"
+							VerticalOptions="Center" />
+					</Grid>
+
+					<sc:SparkExplorerHeaderView
 									Buttons="{Binding Buttons}"
 									Pickers="{Binding Pickers}"
 									SearchPlaceholder="Филтрирај редови..."
