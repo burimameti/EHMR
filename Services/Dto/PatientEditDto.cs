@@ -178,6 +178,8 @@ namespace EHMR.Services.Dto
             get; set;
         }
 
+        public Guid? EncounterId { get; set; }
+
         public Guid MedicineId
         {
             get; set;
