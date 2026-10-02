@@ -258,7 +258,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     // PatientDto носи само дијагнози, лекови и документи, не и прегледи,
     // термини, циклуси и рецепти.
 
-    [ObservableProperty] private ObservableCollection<Diagnosis> diagnosisHistory = new();
+    [ObservableProperty] private ObservableCollection<DiagnosisDto> diagnosisHistory = new();
     [ObservableProperty] private ObservableCollection<Encounter> encounterHistory = new();
     [ObservableProperty] private ObservableCollection<PatientScore> scoreHistory = new();
     [ObservableProperty] private ObservableCollection<Appointment> appointmentHistory = new();
@@ -286,12 +286,25 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         {
             await using var db = await _dbFactory.CreateDbContextAsync();
 
-            DiagnosisHistory=new ObservableCollection<Diagnosis>(
+            DiagnosisHistory=new ObservableCollection<DiagnosisDto>(
                 await db.Diagnoses
                     .AsNoTracking()
-                    .Include(x => x.Mkb10Code)
                     .Where(x => x.PatientId==patientId)
                     .OrderByDescending(x => x.DiagnosedAt)
+                    .Select(x => new DiagnosisDto
+                    {
+                        Id=x.Id,
+                        PatientId=x.PatientId,
+                        EncounterId=x.EncounterId,
+                        Mkb10CodeId=x.Mkb10CodeId,
+                        Mkb10Code=x.Mkb10Code != null ? x.Mkb10Code.Code : string.Empty,
+                        Mkb10Description=x.Mkb10Code != null ? x.Mkb10Code.Description ?? string.Empty : string.Empty,
+                        DiagnosedAt=x.DiagnosedAt,
+                        IsPrimary=x.IsPrimary,
+                        Severity=x.Severity,
+                        ClinicalDescription=x.ClinicalDescription,
+                        Status=x.Status
+                    })
                     .ToListAsync());
 
             EncounterHistory=new ObservableCollection<Encounter>(
