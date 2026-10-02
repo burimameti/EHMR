@@ -22,6 +22,31 @@ namespace EHMR.Domain.Entities.Reports
         private string _selectedMedicineFilter = "Сите";
         private string _selectedGenderFilter = "Сите";
         private string _selectedScoreFilter = "Сите";
+        private Guid? _selectedMedicineId;
+        private readonly Dictionary<string, Guid> _medicineIdsByDisplay = new(StringComparer.CurrentCultureIgnoreCase);
+        private decimal? _selectedMedicineTotalQuantity;
+
+        public bool IsMedicineFilterEnabled { get; private set; }
+        public string? SelectedMedicineForExport =>
+            IsMedicineFilterEnabled && _selectedMedicineFilter!="Сите"
+                ? _selectedMedicineFilter
+                : null;
+        public decimal? SelectedMedicineTotalQuantityForExport =>
+            IsMedicineFilterEnabled && _selectedMedicineFilter!="Сите"
+                ? _selectedMedicineTotalQuantity
+                : null;
+
+        public void SetMedicineFilterEnabled(bool enabled)
+        {
+            IsMedicineFilterEnabled=enabled;
+            if(!enabled)
+            {
+                _selectedMedicineFilter="Сите";
+                _selectedMedicineId=null;
+                _selectedMedicineTotalQuantity=null;
+            }
+            FiltersChanged?.Invoke();
+        }
 
         private SparkTabItem? _allTab, _allergyTab, _activeTab, _inactiveTab;
 
@@ -125,7 +150,11 @@ namespace EHMR.Domain.Entities.Reports
             _medicinePicker=CreatePicker(
                 "Лек",
                 _selectedMedicineFilter,
-                value => _selectedMedicineFilter=value);
+                value =>
+                {
+                    _selectedMedicineFilter=value;
+                    _selectedMedicineId=_medicineIdsByDisplay.TryGetValue(value, out var id) ? id : null;
+                });
 
             _genderPicker=CreatePicker(
                 "Пол",
@@ -137,16 +166,20 @@ namespace EHMR.Domain.Entities.Reports
                 _selectedScoreFilter,
                 value => _selectedScoreFilter=value);
 
-            return
-            [
+            var pickers = new List<SparkPickerItem>
+            {
                 _statusPicker,
                 _cityPicker,
                 _rheumatologistPicker,
                 _diagnosisPicker,
-                _medicinePicker,
                 _genderPicker,
                 _scorePicker
-            ];
+            };
+
+            if(IsMedicineFilterEnabled)
+                pickers.Insert(4, _medicinePicker);
+
+            return pickers;
         }
 
         private SparkPickerItem CreatePicker(
@@ -280,6 +313,15 @@ namespace EHMR.Domain.Entities.Reports
                     .Select(patient => CreateRow(patient, from, to))
                     .ToList();
 
+                _selectedMedicineTotalQuantity = _selectedMedicineId.HasValue
+                    ? filtered_list
+                        .SelectMany(x => x.PatientMedicines)
+                        .Where(pm => pm.MedicineId==_selectedMedicineId.Value
+                                     &&pm.StartDate<=to
+                                     &&(!pm.EndDate.HasValue||pm.EndDate.Value>=from))
+                        .Sum(pm => pm.Quantity)
+                    : null;
+
                 Debug.WriteLine($"[Patients] [10] Report generation complete ✓");
                 Debug.WriteLine($"[Patients] Final row count: {rows.Count}");
                 Debug.WriteLine($"[Patients] ========== END GENERATE ==========\n");
@@ -400,7 +442,7 @@ namespace EHMR.Domain.Entities.Reports
                 // active medicine list.
                 query=query.Where(x =>
                     x.PatientMedicines.Any(pm =>
-                        pm.Medicine?.Name==_selectedMedicineFilter &&
+                        pm.MedicineId==_selectedMedicineId &&
                         pm.StartDate<=to &&
                         (!pm.EndDate.HasValue||pm.EndDate.Value>=from)));
 
