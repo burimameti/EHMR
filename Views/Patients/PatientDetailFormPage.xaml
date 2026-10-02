@@ -335,7 +335,7 @@
 
 
 
-										<Grid ColumnDefinitions="1.3*,1.3*,125,90,1*" ColumnSpacing="10">
+										<Grid ColumnDefinitions="1.3*,1.3*,125,90,1*,1*" ColumnSpacing="10">
 											<VerticalStackLayout Grid.Column="0" Spacing="4">
 												<Label
 													IsVisible="{Binding IsEditMode}"
@@ -477,7 +477,31 @@
 										</Grid>
 									</VerticalStackLayout>
 
-									<VerticalStackLayout Grid.Row="1" Spacing="10">
+									
+											<VerticalStackLayout Grid.Column="5" Spacing="4">
+												<Label
+													IsVisible="{Binding IsEditMode}"
+													Style="{StaticResource EditFieldLabelStyle}"
+													Text="ЕМБГ" />
+												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
+													<Entry
+														BackgroundColor="Transparent"
+														FontSize="13"
+														Placeholder="Матичен број"
+														PlaceholderColor="{StaticResource SparkTextSecondary}"
+														Text="{Binding Patient.NationalId}"
+														TextColor="{StaticResource SparkTextPrimary}" />
+												</Border>
+												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
+													<Label FontSize="11" Text="ЕМБГ:" TextColor="{StaticResource SparkTextSecondary}" />
+													<Label
+														FontAttributes="Bold"
+														FontSize="13"
+														Text="{Binding Patient.NationalId}"
+														TextColor="{StaticResource SparkTextPrimary}" />
+												</VerticalStackLayout>
+											</VerticalStackLayout>
+<VerticalStackLayout Grid.Row="1" Spacing="10">
 										<controls:CrudSectionHeader
 											Title="КОНТАКТ ИНФОРМАЦИИ"
 											Padding="8,5"
