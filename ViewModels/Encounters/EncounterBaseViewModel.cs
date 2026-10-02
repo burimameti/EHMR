@@ -274,7 +274,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         get
         {
             var items=PatientMedicines
-                .Where(x => x.IsActive)
+                .Where(x => x.IsActive && x.EncounterId==null)
                 .Select(x =>
                 {
                     var name=x.Medicine?.Name ?? "Лек";
@@ -1358,23 +1358,17 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         if(EncounterMedicines.Any(x => x.MedicineId==medicine.Id&&x.IsActive))
             return;
 
-        // A patient normally has one current primary therapy in this encounter form.
-        // Selecting a different medicine replaces that current therapy; the removed
-        // row is not deleted from history and is later marked inactive by the service.
-        if(EncounterMedicines.Count==1)
-        {
-            var current=EncounterMedicines[0];
-            if(current.MedicineId!=medicine.Id)
-                RemoveMedicine(current);
-        }
-
+        // Multiple medicines are allowed in the current encounter.
+        // Historical/inactive medicines are never automatically added here.
         var previous=PatientMedicines
-            .FirstOrDefault(x => x.MedicineId==medicine.Id&&x.IsActive);
+            .FirstOrDefault(x => x.MedicineId==medicine.Id&&x.IsActive&&x.EncounterId==null);
 
         var patientMedicine = new PatientMedicine
         {
             Id=Guid.NewGuid(),
             PatientId=Encounter.PatientId,
+            // Encounter therapy is a snapshot/history row. It must never become
+            // the patient's active therapy simply because the encounter was saved.
             EncounterId=Encounter.Id==Guid.Empty ? null : Encounter.Id,
             MedicineId=medicine.Id,
             Medicine=medicine,
