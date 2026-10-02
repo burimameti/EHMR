@@ -45,7 +45,6 @@ namespace EHMR.Domain.Entities.Reports
                 _selectedMedicineId=null;
                 _selectedMedicineTotalQuantity=null;
             }
-            FiltersChanged?.Invoke();
         }
 
         private SparkTabItem? _allTab, _allergyTab, _activeTab, _inactiveTab;
