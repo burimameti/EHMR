@@ -11,6 +11,10 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
     private readonly ISelectedItemService<Encounter> _selectedItemService;
     private readonly ISelectedItemService<Patient> _selectedPatientService;
     private readonly IPatientClinicalReportService _clinicalReportService;
+    private readonly IAuthorizationService _authorizationService;
+
+    public bool CanShowEdit =>
+        CanEditEncounter && _authorizationService.HasDoctorAdminPrivileges;
 
     public bool CanEditEncounter =>
         Encounter.Id!=Guid.Empty&&Encounter.Status!=EncounterStatus.Completed;
@@ -18,13 +22,15 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
     public EncounterDetailViewModel(
         IEncounterDetailService service, INavigationService navigationService,
         IUserDialogService userDialogService, ISelectedItemService<Encounter> selectedItemService,
-        ISelectedItemService<Patient> selectedPatientService, IPatientClinicalReportService clinicalReportService)
+        ISelectedItemService<Patient> selectedPatientService, IPatientClinicalReportService clinicalReportService,
+        IAuthorizationService authorizationService)
 
         : base(service, navigationService, userDialogService)
     {
         _selectedItemService=selectedItemService;
         _selectedPatientService=selectedPatientService;
         _clinicalReportService=clinicalReportService;
+        _authorizationService=authorizationService;
         PageTitle="Детали за преглед ";
     }
 
@@ -96,7 +102,7 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
     [RelayCommand]
     private async Task Edit()
     {
-        if(!CanEditEncounter)
+        if(!CanShowEdit)
             return;
 
         _selectedItemService.SelectedItem=Encounter;
