@@ -892,7 +892,9 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                 startDate: StartDate,
                 endDate: EndDate,
                 columns: GridColumns.ToList(),
-                rows: exportRows);
+                rows: exportRows,
+                selectedMedicine: (_activeProvider as PatientsReportProvider)?.SelectedMedicineForExport,
+                selectedMedicineTotalQuantity: (_activeProvider as PatientsReportProvider)?.SelectedMedicineTotalQuantityForExport);
 
             var pdfInfo=new FileInfo(pdfPath);
 
