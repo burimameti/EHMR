@@ -7,9 +7,7 @@
 
 	<Grid RowDefinitions="Auto,Auto" RowSpacing="5">
 
-		<!--  Field label  -->
 		<Label
-			x:Name="FieldLabel"
 			Margin="2,0,0,0"
 			CharacterSpacing=".4"
 			FontAttributes="Bold"
@@ -20,9 +18,7 @@
 			Text="{Binding Label, Source={x:Reference Root}}"
 			TextColor="{StaticResource SparkTextSecondary}" />
 
-		<!--  Professional compact picker field  -->
 		<Border
-			x:Name="PickerBorder"
 			Grid.Row="1"
 			Padding="0"
 			BackgroundColor="{StaticResource SparkContentBackground}"
@@ -31,51 +27,22 @@
 			StrokeShape="RoundRectangle 8"
 			StrokeThickness="1">
 
-			<Grid ColumnDefinitions="*,34" ColumnSpacing="0">
+			<Picker
+				x:Name="InnerPicker"
+				Title="{Binding Placeholder, Source={x:Reference Root}}"
+				Margin="8,0"
+				BackgroundColor="Transparent"
+				FontAttributes="Bold"
+				FontSize="13"
+				HorizontalOptions="Fill"
+				ItemsSource="{Binding ItemsSource, Source={x:Reference Root}}"
+				ItemDisplayBinding="{Binding ItemDisplayBinding, Source={x:Reference Root}}"
+				SelectedIndex="{Binding SelectedIndex, Source={x:Reference Root}, Mode=TwoWay}"
+				SelectedItem="{Binding SelectedItem, Source={x:Reference Root}, Mode=TwoWay}"
+				TextColor="{StaticResource SparkTextPrimary}"
+				TitleColor="{StaticResource SparkTextMuted}"
+				VerticalOptions="Center" />
 
-				<Picker
-					x:Name="InnerPicker"
-					Title="{Binding Placeholder, Source={x:Reference Root}}"
-					Grid.Column="0"
-					Margin="12,0,2,0"
-					BackgroundColor="Transparent"
-					FontAttributes="Bold"
-					FontSize="13"
-					HorizontalOptions="Fill"
-					ItemsSource="{Binding ItemsSource, Source={x:Reference Root}}"
-					SelectedItem="{Binding SelectedItem, Source={x:Reference Root}, Mode=TwoWay}"
-					TextColor="{StaticResource SparkTextPrimary}"
-					TitleColor="{StaticResource SparkTextMuted}"
-					VerticalOptions="Fill" />
-
-				<!--  Dedicated dropdown affordance  -->
-				<Border
-					x:Name="ArrowButton"
-					Grid.Column="1"
-					Margin="2,5,5,5"
-					BackgroundColor="{StaticResource SparkContentBackground}"
-					HorizontalOptions="Fill"
-					StrokeShape="RoundRectangle 6"
-					StrokeThickness="0"
-					VerticalOptions="Fill">
-
-					<Border.GestureRecognizers>
-						<TapGestureRecognizer Tapped="OnArrowTapped" />
-					</Border.GestureRecognizers>
-
-					<Label
-						x:Name="ArrowIcon"
-						FontFamily="FASolid"
-						FontSize="9"
-						HorizontalOptions="Center"
-						InputTransparent="True"
-						Text="&#xf078;"
-						TextColor="{StaticResource SparkTextSecondary}"
-						VerticalOptions="Center" />
-				</Border>
-
-			</Grid>
 		</Border>
-
 	</Grid>
 </ContentView>
