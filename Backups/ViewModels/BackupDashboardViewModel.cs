@@ -132,7 +132,7 @@ public partial class BackupDashboardViewModel : ObservableObject
     {
         // Navigation to BackupPage happens at the View layer (Shell.Current.GoToAsync),
         // this command is just the trigger the header button binds to.
-        await Shell.Current.GoToAsync("BackupHistoryPage");
+        await Shell.Current.GoToAsync("BackupPage");
     }
 
     private static string FormatSize(long bytes)
