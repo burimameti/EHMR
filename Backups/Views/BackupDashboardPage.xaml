@@ -1,160 +1,119 @@
-<!--  File: EHMR.Backups/Views/BackupDashboardPage.xaml  -->
-<!--  (same XAML as before — unchanged, included here for completeness)  -->
 <ContentPage
-	x:Class="EHMR.Backups.Views.BackupDashboardPage"
-	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
-	xmlns:viewModels="clr-namespace:EHMR.Backups.ViewModels"
-	x:DataType="viewModels:BackupDashboardViewModel">
+    x:Class="EHMR.Backups.Views.BackupDashboardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+    xmlns:viewModels="clr-namespace:EHMR.Backups.ViewModels"
+    x:DataType="viewModels:BackupDashboardViewModel"
+    BackgroundColor="{StaticResource PageBackground}">
 
-	<ContentPage.Resources>
-		<ResourceDictionary>
-			<Style x:Key="BackupKpiCard" TargetType="Border">
-				<Setter Property="Padding" Value="20" />
-				<Setter Property="BackgroundColor" Value="{StaticResource White}" />
-				<Setter Property="Stroke" Value="{StaticResource Gray100}" />
-				<Setter Property="StrokeShape" Value="RoundRectangle 12" />
-			</Style>
-			<Style x:Key="BackupKpiLabel" TargetType="Label">
-				<Setter Property="FontSize" Value="13" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-			</Style>
-			<Style x:Key="BackupKpiValue" TargetType="Label">
-				<Setter Property="FontAttributes" Value="Bold" />
-				<Setter Property="FontSize" Value="22" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-			</Style>
-			<Style x:Key="BackupCardTitle" TargetType="Label">
-				<Setter Property="FontAttributes" Value="Bold" />
-				<Setter Property="FontSize" Value="20" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-			</Style>
-		</ResourceDictionary>
-	</ContentPage.Resources>
-	<Grid ColumnDefinitions="290,*">
+    <Grid ColumnDefinitions="260,*">
+        <Border Grid.Column="0" BackgroundColor="{StaticResource SparkSidebarBg}" StrokeThickness="0">
+            <ContentView x:Name="MenuHost" />
+        </Border>
 
-		<!--  LEFT MENU  -->
-		<Border Grid.Column="0" StrokeThickness="0">
-			<ContentView x:Name="MenuHost" />
-		</Border>
+        <Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="12">
+            <Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                    <controls:FFPageHeader
+                        Title="Бекап"
+                        Subtitle="Преглед на состојбата и историјата на резервните копии." />
+                    <controls:FFButton
+                        Grid.Column="1"
+                        ButtonKind="Primary"
+                        BackgroundColorEx="{StaticResource SidebarActiveBg}"
+                        TextColorEx="White"
+                        Command="{Binding RunBackupCommand}"
+                        ContentPadding="18,0"
+                        HeightRequestEx="45"
+                        Text="Нов бекап" />
+                </Grid>
+            </Border>
 
-		<!--  RIGHT MAIN CONTAINER  -->
-		<Grid Grid.Column="1" RowDefinitions="Auto,*">
+            <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+                <VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}" Spacing="12">
 
-			<Border BackgroundColor="{StaticResource Gray200}" StrokeThickness="0">
-				<Grid RowDefinitions="110,Auto,*" RowSpacing="0">
+                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                        <Border Padding="12,8" BackgroundColor="White" HeightRequest="72" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
+                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="3">
+                                <Border Grid.RowSpan="2" BackgroundColor="{StaticResource SparkAccentTeal}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" WidthRequest="30">
+                                    <Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="&#xf1da;" TextColor="White" VerticalOptions="Center" />
+                                </Border>
+                                <Label Grid.Column="1" FontAttributes="Bold" FontSize="9" Text="ПОСЛЕДЕН БЕКАП" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
+                                <Label Grid.Column="2" FontAttributes="Bold" FontSize="15" LineBreakMode="TailTruncation" Text="{Binding LastBackup}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+                                <Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{StaticResource SparkAccentTeal}" StrokeThickness="0" StrokeShape="RoundRectangle 8">
+                                    <Label FontAttributes="Bold" FontSize="9" HorizontalTextAlignment="Center" Text="Состојба" TextColor="White" />
+                                </Border>
+                            </Grid>
+                        </Border>
 
-					<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
-						<Grid ColumnDefinitions="*,*" VerticalOptions="Center">
-							<controls:FFPageHeader Title="Backup Dashboard" Subtitle="Преглед на состојбата на бекап процесите." />
-							<HorizontalStackLayout
-								Grid.Column="1"
-								HorizontalOptions="End"
-								Spacing="10"
-								VerticalOptions="Center">
-								<Button
-									BackgroundColor="{StaticResource SparkAccentTeal}"
-									Command="{Binding RunBackupCommand}"
-									HeightRequest="45"
-									Style="{StaticResource TabButtonActiveStyle}"
-									Text="Нов бекап"
-									TextColor="White"
-									WidthRequest="160" />
-							</HorizontalStackLayout>
-						</Grid>
-					</Border>
+                        <Border Grid.Column="1" Padding="12,8" BackgroundColor="White" HeightRequest="72" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
+                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="3">
+                                <Border Grid.RowSpan="2" BackgroundColor="{StaticResource SparkAccentTeal}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" WidthRequest="30">
+                                    <Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="&#xf0c7;" TextColor="White" VerticalOptions="Center" />
+                                </Border>
+                                <Label Grid.Column="1" FontAttributes="Bold" FontSize="9" Text="ГОЛЕМИНА НА БАЗА" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
+                                <Label Grid.Column="2" FontAttributes="Bold" FontSize="15" Text="{Binding DatabaseSize}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+                                <Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{StaticResource SparkAccentTeal}" StrokeThickness="0" StrokeShape="RoundRectangle 8">
+                                    <Label FontAttributes="Bold" FontSize="9" HorizontalTextAlignment="Center" Text="База" TextColor="White" />
+                                </Border>
+                            </Grid>
+                        </Border>
 
-					<Border Grid.Row="1" Padding="16,20,16,0">
-						<Grid
-							ColumnDefinitions="*,*,*,*"
-							ColumnSpacing="15"
-							RowSpacing="15">
+                        <Border Grid.Column="2" Padding="12,8" BackgroundColor="White" HeightRequest="72" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
+                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="3">
+                                <Border Grid.RowSpan="2" BackgroundColor="{StaticResource SparkAccentTeal}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" WidthRequest="30">
+                                    <Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="&#xf058;" TextColor="White" VerticalOptions="Center" />
+                                </Border>
+                                <Label Grid.Column="1" FontAttributes="Bold" FontSize="9" Text="СТАТУС" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
+                                <Label Grid.Column="2" FontAttributes="Bold" FontSize="15" Text="{Binding BackupStatus}" TextColor="{Binding StatusColor}" VerticalOptions="Center" />
+                                <Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{StaticResource SparkAccentTeal}" StrokeThickness="0" StrokeShape="RoundRectangle 8">
+                                    <Label FontAttributes="Bold" FontSize="9" HorizontalTextAlignment="Center" Text="Системски статус" TextColor="White" />
+                                </Border>
+                            </Grid>
+                        </Border>
 
-							<Border Grid.Column="0" Style="{StaticResource BackupKpiCard}">
-								<Grid RowDefinitions="Auto,Auto" RowSpacing="8">
-									<Label Style="{StaticResource BackupKpiLabel}" Text="Последен бекап" />
-									<Label
-										Grid.Row="1"
-										Style="{StaticResource BackupKpiValue}"
-										Text="{Binding LastBackup}" />
-								</Grid>
-							</Border>
+                        <Border Grid.Column="3" Padding="12,8" BackgroundColor="White" HeightRequest="72" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
+                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="3">
+                                <Border Grid.RowSpan="2" BackgroundColor="{StaticResource SparkAccentTeal}" HeightRequest="30" StrokeShape="RoundRectangle 8" StrokeThickness="0" WidthRequest="30">
+                                    <Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="&#xf0e8;" TextColor="White" VerticalOptions="Center" />
+                                </Border>
+                                <Label Grid.Column="1" FontAttributes="Bold" FontSize="9" Text="ДЕСТИНАЦИИ" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
+                                <Label Grid.Column="2" FontAttributes="Bold" FontSize="15" Text="{Binding DestinationCount}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+                                <Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="8,4" BackgroundColor="{StaticResource SparkAccentTeal}" StrokeThickness="0" StrokeShape="RoundRectangle 8">
+                                    <Label FontAttributes="Bold" FontSize="9" HorizontalTextAlignment="Center" Text="Складишта" TextColor="White" />
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
 
-							<Border Grid.Column="1" Style="{StaticResource BackupKpiCard}">
-								<Grid RowDefinitions="Auto,Auto" RowSpacing="8">
-									<Label Style="{StaticResource BackupKpiLabel}" Text="Големина на база" />
-									<Label
-										Grid.Row="1"
-										Style="{StaticResource BackupKpiValue}"
-										Text="{Binding DatabaseSize}" />
-								</Grid>
-							</Border>
+                    <Border Style="{StaticResource PageCardStyleDashboard}">
+                        <Grid RowDefinitions="Auto,Auto" RowSpacing="12">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label FontAttributes="Bold" FontSize="16" Text="Историја на бекапи" TextColor="{StaticResource SparkTextPrimary}" />
+                                    <Label FontSize="11" Text="Последните извршени резервни копии." TextColor="{StaticResource SparkTextMuted}" />
+                                </VerticalStackLayout>
+                                <controls:FFButton
+                                    Grid.Column="1"
+                                    ButtonKind="Secondary"
+                                    Command="{Binding OpenDestinationsCommand}"
+                                    ContentPadding="14,0"
+                                    HeightRequestEx="38"
+                                    Text="Дестинации" />
+                            </Grid>
+                            <controls:SparkDataGridView Grid.Row="1" Columns="{Binding GridColumns}" Rows="{Binding GridRows}" />
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+            </ScrollView>
 
-							<Border Grid.Column="2" Style="{StaticResource BackupKpiCard}">
-								<Grid RowDefinitions="Auto,Auto" RowSpacing="8">
-									<Label Style="{StaticResource BackupKpiLabel}" Text="Статус" />
-									<Label
-										Grid.Row="1"
-										Style="{StaticResource BackupKpiValue}"
-										Text="{Binding BackupStatus}"
-										TextColor="{Binding StatusColor}" />
-								</Grid>
-							</Border>
-
-							<Border Grid.Column="3" Style="{StaticResource BackupKpiCard}">
-								<Grid RowDefinitions="Auto,Auto" RowSpacing="8">
-									<Label Style="{StaticResource BackupKpiLabel}" Text="Дестинации" />
-									<Label
-										Grid.Row="1"
-										Style="{StaticResource BackupKpiValue}"
-										Text="{Binding DestinationCount}" />
-								</Grid>
-							</Border>
-
-						</Grid>
-					</Border>
-
-					<Border Grid.Row="2" Padding="16,20,16,20">
-						<Border
-							Padding="20"
-							BackgroundColor="{StaticResource White}"
-							Stroke="{StaticResource Gray100}"
-							StrokeShape="RoundRectangle 12">
-							<Grid RowDefinitions="Auto,*" RowSpacing="12">
-
-								<Grid ColumnDefinitions="*,Auto">
-									<Label Style="{StaticResource BackupCardTitle}" Text="Историја на бекапи" />
-								</Grid>
-
-								<!--  Таблата покажува фиксна скорешна листа — овој VM нема страничење.  -->
-								<controls:SparkDataGridView
-									Grid.Row="1"
-									Columns="{Binding GridColumns}"
-									Rows="{Binding GridRows}" />
-
-							</Grid>
-						</Border>
-					</Border>
-
-					<Grid
-						Grid.RowSpan="3"
-						BackgroundColor="#80191E29"
-						IsVisible="{Binding IsBusy}">
-						<VerticalStackLayout
-							HorizontalOptions="Center"
-							Spacing="12"
-							VerticalOptions="Center">
-							<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource Primary}" />
-							<Label
-								FontSize="13"
-								Text="Вчитување..."
-								TextColor="White" />
-						</VerticalStackLayout>
-					</Grid>
-
-				</Grid>
-			</Border>
-		</Grid>
-	</Grid>
+            <Grid Grid.Column="1" Grid.RowSpan="2" BackgroundColor="{StaticResource SparkOverlay}" IsVisible="{Binding IsBusy}">
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="12" VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
+                    <Label FontSize="13" Text="Вчитување..." TextColor="{StaticResource SparkTextPrimary}" />
+                </VerticalStackLayout>
+            </Grid>
+        </Grid>
+    </Grid>
 </ContentPage>
