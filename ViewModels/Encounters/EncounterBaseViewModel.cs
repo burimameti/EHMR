@@ -274,7 +274,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         get
         {
             var items=PatientMedicines
-                .Where(x => x.IsActive)
+                .Where(x => x.IsActive && x.EncounterId==null)
                 .Select(x =>
                 {
                     var name=x.Medicine?.Name ?? "Лек";
@@ -296,12 +296,12 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         .Select(x => string.IsNullOrWhiteSpace(x.DecisionText) ? (x.Notes ?? "Терапија") : x.DecisionText)
         .Take(2));
 
-    // Every inactive medicine is historical therapy, regardless of where it was
-    // created (patient, previous encounter, or previous appointment).
-    // Removing an active medicine automatically moves it to this history.
+    // Patient-level therapies that were discontinued are clinical history.
+    // Encounter snapshots are excluded because they belong to individual visits,
+    // not to the patient's active-therapy timeline.
     public IEnumerable<PatientMedicine> PreviousMedicines =>
         PatientMedicines
-            .Where(x => !x.IsActive)
+            .Where(x => !x.IsActive && x.EncounterId==null)
             .OrderByDescending(x => x.EndDate ?? x.StartDate);
 
     public IEnumerable<Appointment> FilteredAppointments => AppointmentTab switch
@@ -1198,3 +1198,297 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected async Task SelectMkbSectionAsync(MkbAlphabetSection section)
     {
+        if(section==null)
+            return;
+
+        SelectedMkbSection=section.Letter;
+        foreach(var item in MkbAlphabetSections)
+            item.IsSelected=item.Letter==SelectedMkbSection;
+
+        await SearchMkbAsync(string.Empty);
+    }
+
+    // =====================================================
+    // SEARCH MKB — секогаш ограничено на избраната A-Z секција
+    // =====================================================
+
+    [RelayCommand]
+    protected async Task SearchMkbAsync(string query)
+    {
+        if(string.IsNullOrWhiteSpace(SelectedMkbSection))
+        {
+            MkbResults.Clear();
+            ShowMkbDropdown=false;
+            return;
+        }
+
+        SearchCts.Cancel();
+        SearchCts.Dispose();
+        SearchCts=new CancellationTokenSource();
+
+        await ExecuteSafeAsync(async () =>
+        {
+            try
+            {
+                var result=await EncounterService.SearchDiagnoses(
+                    MkbCodeSearchText,
+                    SearchCts.Token,
+                    SelectedMkbSection,
+                    MacedonianTransliterator.ToCyrillic(MkbDescriptionSearchText));
+
+                MkbResults=new ObservableCollection<Mkb10Code>(result);
+                ShowMkbDropdown=MkbResults.Count>0;
+            }
+            catch(OperationCanceledException)
+            {
+                // Корисникот продолжил со пребарување или избрал друга секција.
+            }
+        }, "Грешка при пребарување дијагнози");
+    }
+    // =====================================================
+    // ADD DIAGNOSIS
+    // =====================================================
+
+    [RelayCommand]
+    protected void AddMkb(Mkb10Code code)
+    {
+        if(code==null)
+            return;
+        if(Diagnoses.Any(x =>
+            x.Mkb10CodeId==code.Id))
+            return;
+        var diagnosis = new Diagnosis
+        {
+            Id=Guid.NewGuid(),
+
+            EncounterId=
+                Encounter.Id==Guid.Empty
+                ? null
+                : Encounter.Id,
+            PatientId=
+                Encounter.PatientId,
+            Mkb10CodeId=code.Id,
+
+            Mkb10Code=code,
+            DiagnosedAt=DateTime.Now,
+            IsPrimary=
+                Diagnoses.Count==0,
+            Status=
+                DiagnosisStatus.Active
+        };
+        Diagnoses.Add(diagnosis);
+        MkbResults.Remove(code);
+        ShowMkbDropdown=MkbResults.Count>0;
+    }
+
+    // =====================================================
+    // REMOVE DIAGNOSIS
+    // =====================================================
+
+    [RelayCommand]
+    protected void RemoveMkb(Diagnosis diagnosis)
+    {
+        if(diagnosis==null)
+            return;
+        if(Diagnoses.Contains(diagnosis))
+        {
+            Diagnoses.Remove(diagnosis);
+        }
+    }
+    // =====================================================
+     // MEDICINE SEARCH + ATTACH (encounter-scoped, mirrors MKB10 diagnosis flow)
+     // =====================================================
+    protected CancellationTokenSource MedicineSearchCts = new();
+
+    [ObservableProperty]
+    protected ObservableCollection<Medicine> medicineResults = new();
+
+    // Medicines being attached to THIS encounter (separate from PatientMedicines,
+    // which is the read-only full history loaded via LoadPatientContextAsync)
+    [ObservableProperty]
+    protected ObservableCollection<PatientMedicine> encounterMedicines = new();
+
+    [ObservableProperty]
+    protected string medicineSearchText = string.Empty;
+
+    [ObservableProperty]
+    protected bool showMedicineDropdown;
+
+    partial void OnMedicineSearchTextChanging(string value)
+    {
+        if(string.IsNullOrWhiteSpace(value)||value.Length<2)
+        {
+            MedicineResults.Clear();
+            ShowMedicineDropdown=false;
+            return;
+        }
+        _=SearchMedicinesAsync(value);
+    }
+
+    [RelayCommand]
+    protected async Task SearchMedicinesAsync(string query)
+    {
+        if(string.IsNullOrWhiteSpace(query)||query.Length<2)
+        {
+            MedicineResults.Clear();
+            ShowMedicineDropdown=false;
+            return;
+        }
+
+        MedicineSearchCts.Cancel();
+        MedicineSearchCts.Dispose();
+        MedicineSearchCts=new CancellationTokenSource();
+
+        await ExecuteSafeAsync(async () =>
+        {
+            try
+            {
+                var result = await EncounterService.SearchMedicines(query, MedicineSearchCts.Token);
+                MedicineResults=new ObservableCollection<Medicine>(result);
+                ShowMedicineDropdown=MedicineResults.Count>0;
+            }
+            catch(OperationCanceledException)
+            {
+                // user continued typing
+            }
+        },
+        "Грешка при пребарување лекови");
+    }
+
+    // =====================================================
+    // ADD MEDICINE — Dosage doubles as "quantity" (e.g. "1" tablet/dose)
+    // =====================================================
+
+    [RelayCommand]
+    protected void AddMedicine(Medicine medicine)
+    {
+        if(medicine==null) return;
+
+        if(EncounterMedicines.Any(x => x.MedicineId==medicine.Id&&x.IsActive))
+            return;
+
+        // Multiple medicines are allowed in the current encounter.
+        // Historical/inactive medicines are never automatically added here.
+        var previous=PatientMedicines
+            .FirstOrDefault(x => x.MedicineId==medicine.Id&&x.IsActive&&x.EncounterId==null);
+
+        var patientMedicine = new PatientMedicine
+        {
+            Id=Guid.NewGuid(),
+            PatientId=Encounter.PatientId,
+            // Encounter therapy is a snapshot/history row. It must never become
+            // the patient's active therapy simply because the encounter was saved.
+            EncounterId=Encounter.Id==Guid.Empty ? null : Encounter.Id,
+            MedicineId=medicine.Id,
+            Medicine=medicine,
+            Dosage=previous?.Dosage??"1",
+            ApplicationRegimeId=previous?.ApplicationRegimeId,
+            ApplicationRegime=previous?.ApplicationRegime,
+            Quantity=previous?.Quantity??1,
+            DosesFrequency=previous?.DosesFrequency??DosesFrequency.Other,
+            StartDate=DateTime.Now,
+            IsActive=true
+        };
+
+        EncounterMedicines.Add(patientMedicine);
+
+        if(ApplicationRegimeOptions.Count==0)
+            _=AddApplicationRegimeAsync();
+
+        MedicineSearchText=string.Empty;
+        MedicineResults.Clear();
+        ShowMedicineDropdown=false;
+    }
+    private readonly List<Guid> _deletedMedicineIds = [];
+    protected IReadOnlyList<Guid> DeletedMedicineIds => _deletedMedicineIds;
+
+    // =====================================================
+    // REMOVE MEDICINE
+    // =====================================================
+
+    [RelayCommand]
+    protected void RemoveMedicine(PatientMedicine medicine)
+    {
+        if(medicine==null) return;
+
+        // Only mark for DB deletion if it's a real, already-persisted row.
+        // A row added and removed within the same session (Id was just
+        // Guid.NewGuid()'d in AddMedicine and never saved) doesn't need
+        // a delete — it simply never gets sent to SaveEncounter.
+        if(medicine.Id!=Guid.Empty&&PatientMedicinesHadIdBeforeThisSession(medicine.Id))
+            _deletedMedicineIds.Add(medicine.Id);
+
+        EncounterMedicines.Remove(medicine);
+        PatientMedicines.Remove(medicine);
+    }
+
+    // Tracks ids that existed in PatientMedicines at load time (before any
+    // AddMedicine calls this session), so RemoveMedicine can tell "existing
+    // history row being deleted" apart from "session-added row being undone".
+    private readonly HashSet<Guid> _originalPatientMedicineIds = [];
+
+    private bool PatientMedicinesHadIdBeforeThisSession(Guid id) =>
+        _originalPatientMedicineIds.Contains(id);
+    // =====================================================
+    // EDIT MODE
+    // =====================================================
+
+    [RelayCommand]
+    public async Task ToggleEditMode()
+    {
+        if(!IsEditMode&&SelectedPatient?.Status==PatientStatus.Inactive)
+        {
+            await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "Податоците за неактивен пациент се заклучени и не може да се менуваат.", "ОК");
+            return;
+        }
+
+        IsEditMode=!IsEditMode;
+
+        IsReadOnly=!IsEditMode;
+    }
+    // =====================================================
+    // CONTEXT RESET
+    // =====================================================
+
+    protected void ClearEncounterContext()
+    {
+        LinkedAppointment=null;
+
+        SelectedTherapyCycle=null;
+        Encounter.AppointmentId=null;
+
+        Encounter.TherapyCycleId=null;
+    }
+    // =====================================================
+    // DISPOSE
+    // =====================================================
+    public void Dispose()
+    {
+        SearchCts.Cancel();
+        SearchCts.Dispose();
+
+        CycleSearchCts.Cancel();
+        CycleSearchCts.Dispose();
+
+        AppointmentSearchCts.Cancel();
+        AppointmentSearchCts.Dispose();
+
+        MedicineSearchCts.Cancel();
+        MedicineSearchCts.Dispose();
+
+        GC.SuppressFinalize(this);
+    }
+}
+public partial class MkbAlphabetSection : ObservableObject
+{
+    public MkbAlphabetSection(string letter, bool isSelected)
+    {
+        Letter=letter;
+        IsSelected=isSelected;
+    }
+
+    public string Letter { get; }
+
+    [ObservableProperty]
+    private bool isSelected;
+}
