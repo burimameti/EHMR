@@ -6,7 +6,7 @@
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	xmlns:converters="clr-namespace:EHMR.Converters"
 	xmlns:dto="clr-namespace:EHMR.Services.Dto"
-	xmlns:models="clr-namespace:EHMR.Domain.Entities"
+	xmlns:entities="clr-namespace:EHMR.Domain.Entities"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="PageRoot"
 	x:DataType="viewModels:PatientDetailFormViewModel"
@@ -33,7 +33,7 @@
 
 			<!--  ═══ ШАБЛОНИ ЗА ИСТОРИЈА НА ПАЦИЕНТОТ ═══  -->
 
-			<DataTemplate x:Key="PatientDiagnosisRowTemplate" x:DataType="models:Diagnosis">
+			<DataTemplate x:Key="PatientDiagnosisRowTemplate" x:DataType="entities:Diagnosis">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
 						<Label
