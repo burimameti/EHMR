@@ -19,6 +19,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
     private readonly IAppointmentSearchQueryHandler _autocomplete;
+    private readonly IReportExportService _reportExportService;
 
     [ObservableProperty] private string patientSearchText = string.Empty;
 
@@ -35,6 +36,12 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     [ObservableProperty] private bool isPatientHistoryMode;
     [ObservableProperty] private bool isScoreHistoryMode;
     [ObservableProperty] private string selectedPatientLabel = string.Empty;
+
+    [ObservableProperty] private bool isMedicineFilterEnabled;
+    [ObservableProperty] private ObservableCollection<MedicineFilterOption> medicineFilterOptions = new();
+    [ObservableProperty] private MedicineFilterOption? selectedMedicineFilter;
+
+    public bool IsMedicineConsumptionSelected => SelectedReportType.Type==ReportType.MedicineConsumption;
 
     private bool _isSelectingPatientSuggestion;
     private string? _selectedPatientId;
@@ -80,6 +87,16 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         {
             if(!SetProperty(ref _selectedReportType, value)) return;
             ApplyColumnLayout(value.Type);
+            OnPropertyChanged(nameof(IsMedicineConsumptionSelected));
+            if(value.Type!=ReportType.MedicineConsumption)
+            {
+                IsMedicineFilterEnabled=false;
+                SelectedMedicineFilter=null;
+            }
+            else
+            {
+                _=LoadMedicineFilterOptionsAsync();
+            }
             SyncSparkPickersFromFilters();
             BuildSparkGridColumns();
             _=GenerateReportAsync();
@@ -107,11 +124,13 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         IMenuService menuService,
         IAuthorizationService authService,
         ISelectedItemService<GenericReportRow> selectedItemService,
-        IAppointmentSearchQueryHandler autocomplete)
+        IAppointmentSearchQueryHandler autocomplete,
+        IReportExportService reportExportService)
         : base(navigationService, userDialogService, menuService, authService, selectedItemService)
     {
         _dbFactory=dbFactory;
         _autocomplete=autocomplete;
+        _reportExportService=reportExportService;
         _selectedReportType=ReportTypes.First(x => x.Type==ReportType.MissedTherapies);
         _statusFilter=new ReportStatusOption { Label="ИТНО / СИТЕ" };
         _navigationService=navigationService;
@@ -123,6 +142,48 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         ApplyColumnLayout(SelectedReportType.Type);
         EvaluatePermissions();
         InitializeSparkControls();
+    }
+
+    partial void OnIsMedicineFilterEnabledChanged(bool value)
+    {
+        if(SelectedReportType.Type!=ReportType.MedicineConsumption)
+            return;
+
+        if(!value)
+        {
+            SelectedMedicineFilter=null;
+            _=GenerateReportAsync();
+            return;
+        }
+
+        _=LoadMedicineFilterOptionsAsync();
+    }
+
+    partial void OnSelectedMedicineFilterChanged(MedicineFilterOption? value)
+    {
+        if(SelectedReportType.Type==ReportType.MedicineConsumption && IsMedicineFilterEnabled)
+            _=GenerateReportAsync();
+    }
+
+    private async Task LoadMedicineFilterOptionsAsync()
+    {
+        if(SelectedReportType.Type!=ReportType.MedicineConsumption)
+            return;
+
+        await using var db=await _dbFactory.CreateDbContextAsync();
+        var medicines=await db.Medicines
+            .AsNoTracking()
+            .Where(m => m.IsActive)
+            .OrderBy(m => m.Name)
+            .ThenBy(m => m.Strength)
+            .ToListAsync();
+
+        var currentId=SelectedMedicineFilter?.Id;
+        MedicineFilterOptions=new ObservableCollection<MedicineFilterOption>(
+            medicines.Select(m => new MedicineFilterOption(m.Id, m.FullName)));
+
+        if(currentId.HasValue)
+            SelectedMedicineFilter=MedicineFilterOptions.FirstOrDefault(x => x.Id==currentId.Value);
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -339,7 +400,12 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
                     case ReportType.MedicineConsumption:
                         System.Diagnostics.Debug.WriteLine("[ReportListViewModel] Loading medicine consumption...");
-                        rows=await LoadMedicineConsumptionAsync(db, startRange, endRange, SelectedPatientGuid);
+                        rows=await LoadMedicineConsumptionAsync(
+                            db,
+                            startRange,
+                            endRange,
+                            SelectedPatientGuid,
+                            IsMedicineFilterEnabled ? SelectedMedicineFilter?.Id : null);
                         System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loaded {rows.Count} medicine consumption rows");
                         break;
 
@@ -544,7 +610,11 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     }
 
     private static async Task<List<GenericReportRow>> LoadMedicineConsumptionAsync(
-        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange, Guid? patientId)
+        DesktopTherapyDbContext db,
+        DateTime startRange,
+        DateTime endRange,
+        Guid? patientId,
+        Guid? medicineId)
     {
         var data=await db.PatientMedicines
             .Include(pm => pm.Patient)
@@ -552,6 +622,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             .Include(pm => pm.Patient).ThenInclude(p => p.Diagnoses).ThenInclude(d => d.Mkb10Code)
             .AsNoTracking()
             .Where(pm => (!patientId.HasValue || pm.PatientId==patientId.Value)
+                         &&(!medicineId.HasValue || pm.MedicineId==medicineId.Value)
                          &&pm.StartDate<=endRange
                          &&(!pm.EndDate.HasValue || pm.EndDate.Value>=startRange))
             .ToListAsync();
@@ -945,103 +1016,35 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     public async Task ExportToPdfAsync()
     {
         if(IsBusy) return;
+
         try
         {
             IsBusy=true;
 
-            var htmlBlueprint = $@"
-            <html>
-            <head>
-                <style>
-                    body {{ font-family: Arial, sans-serif; padding: 30px; color: #0F172A; }}
-                    h2 {{ color: #2563EB; border-bottom: 2px solid #E2E8F0; padding-bottom: 10px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 20px; }}
-                    th {{ background-color: #0F172A; color: white; padding: 12px; text-align: left; font-size: 12px; }}
-                    td {{ padding: 12px; border-bottom: 1px solid #E2E8F0; font-size: 13px; }}
-                    .alert {{ background-color: #FEF2F2; color: #991B1B; padding: 6px; border-radius: 4px; }}
-                </style>
-            </head>
-            <body>
-                <h2>ИЗВЕШТАЈ: {(IsScoreHistoryMode ? "Историја на Скор" : SelectedReportType.Label)}</h2>
-                <p>Опсег: {StartDate:dd.MM.yyyy} до {EndDate:dd.MM.yyyy}</p>
-                {(SelectedReportType.Type==ReportType.MedicineConsumption
-                    ? $"<div style='padding:12px 16px; margin-top:10px; background:#F0FDFA; border:1px solid #99F6E4;'><b>Калкулација за период</b><br/>Вкупно потрошена количина: <b>{AllItems.Sum(x => x.MedicineConsumptionValue):0.##}</b><br/>Опфатени различни лекови: <b>{AllItems.Count}</b><br/>Опфатени пациенти: <b>{AllItems.Sum(x => x.MedicinePatientCount)}</b></div>"
-                    : "")}
-                <table>
-                    <thead>
-                        <tr>
-                            {(SelectedReportType.Type==ReportType.MedicineConsumption
-                                ? "<th>ЛЕК</th><th>ВКУПНА ПОТРОШЕНА КОЛИЧИНА</th><th>ПАЦИЕНТИ</th><th>МКБ-10 КОД + ОПИС</th><th>ПЕРИОД</th>"
-                                : IsScoreHistoryMode
-                                    ? "<th>ДАТУМ</th><th>РЕУМАТОЛОГ</th><th>СКОР</th>"
-                                    : SelectedReportType.Type==ReportType.Patients
-                                        ? "<th>ПАЦИЕНТ</th><th>ЕЗБО</th><th>ПОЛ</th><th>ТЕЛЕФОН</th><th>ПОСЛ. СКОР</th><th>АДРЕСА</th><th>ГРАД</th><th>ЛЕК</th><th>ДИЈАГНОЗА</th>"
-                                        : $"<th>{Col1Header}</th><th>{Col2Header}</th><th>{Col3Header}</th><th>{Col4Header}</th><th>{Col5Header}</th>")}
-                        </tr>
-                    </thead>
-                    <tbody>";
+            var rows=FilteredItems.ToList();
+            var selectedMedicine=IsMedicineConsumptionSelected && IsMedicineFilterEnabled
+                ? SelectedMedicineFilter
+                : null;
 
-            // Export exactly what is currently visible after patient/status/search filters.
-            foreach(var item in FilteredItems)
-            {
-                if(IsScoreHistoryMode)
-                {
-                    htmlBlueprint+=$@"
-                    <tr>
-                        <td><b>{item.HistoryDateValue}</b></td>
-                        <td>{item.HistoryEncounterValue}</td>
-                        <td>{item.HistoryScoreValue}</td>
-                    </tr>";
-                }
-                else if(SelectedReportType.Type==ReportType.MedicineConsumption)
-                {
-                    htmlBlueprint+=$@"
-                    <tr>
-                        <td><b>{item.PrimaryHeader}</b></td>
-                        <td>{item.MedicineConsumptionValue:0.##}</td>
-                        <td>{item.MedicinePatientCount}</td>
-                        <td>{item.MedicineDiagnosisValue}</td>
-                        <td>{item.DateValue}</td>
-                    </tr>";
-                }
-                else if(SelectedReportType.Type==ReportType.Patients)
-                {
-                    htmlBlueprint+=$@"
-                    <tr>
-                        <td><b>{item.PrimaryHeader}</b></td>
-                        <td>{item.SecondaryHeader}</td>
-                        <td>{item.GenderValue}</td>
-                        <td>{item.PhoneValue}</td>
-                        <td>{item.LastScoreValue}</td>
-                        <td>{item.AddressValue}</td>
-                        <td>{item.CityValue}</td>
-                        <td>{item.MedicineValue}</td>
-                        <td>{item.DiagnosisValue}</td>
-                    </tr>";
-                }
-                else
-                {
-                    htmlBlueprint+=$@"
-                    <tr>
-                        <td><b>{item.PrimaryHeader}</b></td>
-                        <td>{item.SecondaryHeader}</td>
-                        <td>{item.HighlightValue}</td>
-                        <td>{item.DateValue}</td>
-                        <td><span class='{(item.IsAlertSeverity ? "alert" : "")}'>{item.InformationalText}</span></td>
-                    </tr>";
-                }
-            }
+            var reportTitle=selectedMedicine is null
+                ? SelectedReportType.Label
+                : $"{SelectedReportType.Label} – {selectedMedicine.Display}";
 
-            htmlBlueprint+="</tbody></table></body></html>";
+            var exportColumns=GridColumns.ToList();
+            var exportRows=GridRows.ToList();
 
-            string fileName = $"Report_{SelectedReportType.Type}_{DateTime.Now:yyyyMMdd_HHmmss}.html";
-            string targetFile = Path.Combine(FileSystem.CacheDirectory, fileName);
-            await File.WriteAllTextAsync(targetFile, htmlBlueprint);
-
-            await Launcher.Default.OpenAsync(new OpenFileRequest
-            {
-                File=new ReadOnlyFile(targetFile)
-            });
+            await _reportExportService.ExportToPdfAsync(
+                reportTitle: reportTitle,
+                institutionName: "КЛИНИКА ЗА РЕУМАТОЛОГИЈА - СКОПЈЕ",
+                generatedBy: "Систем",
+                startDate: StartDate,
+                endDate: EndDate,
+                columns: exportColumns,
+                rows: exportRows,
+                selectedMedicine: selectedMedicine?.Display,
+                selectedMedicineTotalQuantity: selectedMedicine is null
+                    ? null
+                    : rows.Sum(x => x.MedicineConsumptionValue));
         }
         catch(Exception ex)
         {
@@ -1052,6 +1055,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             IsBusy=false;
         }
     }
+
 }
 
 public enum ReportType
@@ -1108,4 +1112,9 @@ public class GenericReportRow
     public decimal MedicineConsumptionValue { get; set; }
     public int MedicinePatientCount { get; set; }
     public string MedicineDiagnosisValue { get; set; } = "";
+}
+
+public sealed record MedicineFilterOption(Guid Id, string Display)
+{
+    public override string ToString() => Display;
 }
