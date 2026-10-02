@@ -179,6 +179,8 @@
 								<VerticalStackLayout Spacing="8">
 									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
 										<sc:SparkExplorerHeaderView
+											Buttons="{Binding Buttons}"
+											Pickers="{Binding Pickers}"
 											SearchPlaceholder="Пребарување на пациенти..."
 											SearchText="{Binding ScorePatientSearchText, Mode=TwoWay}"
 											SelectedSuggestion="{Binding SelectedScorePatientSuggestion, Mode=TwoWay}"
