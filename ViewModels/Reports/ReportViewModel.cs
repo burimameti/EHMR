@@ -59,6 +59,21 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     [ObservableProperty]
     private bool isMedicineSearchEnabled;
 
+    [ObservableProperty]
+    private bool isScoreSearchEnabled;
+
+    [ObservableProperty]
+    private string scorePatientSearchText = string.Empty;
+
+    [ObservableProperty]
+    private ObservableCollection<ReportPatientSuggestion> scorePatientSuggestions = new();
+
+    [ObservableProperty]
+    private ReportPatientSuggestion? selectedScorePatientSuggestion;
+
+    [ObservableProperty]
+    private bool showScorePatientSuggestions;
+
     public bool IsPatientsReport => _activeReport?.Type==ReportType.Patients;
 
     [ObservableProperty]
@@ -413,6 +428,42 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             InitializeSparkControls();
             _=GenerateReportAsync();
         }
+    }
+
+    partial void OnIsScoreSearchEnabledChanged(bool value)
+    {
+        if(_activeProvider is PatientsReportProvider patientsProvider)
+        {
+            patientsProvider.SetScoreSearchEnabled(value);
+            ScorePatientSearchText=string.Empty;
+            ScorePatientSuggestions.Clear();
+            ShowScorePatientSuggestions=false;
+            SelectedScorePatientSuggestion=null;
+            InitializeSparkControls();
+            _=GenerateReportAsync();
+        }
+    }
+
+    partial void OnScorePatientSearchTextChanged(string value)
+    {
+        if(_activeProvider is not PatientsReportProvider patientsProvider || !IsScoreSearchEnabled)
+            return;
+
+        ScorePatientSuggestions=new ObservableCollection<ReportPatientSuggestion>(patientsProvider.SearchScorePatients(value));
+        ShowScorePatientSuggestions=ScorePatientSuggestions.Count>0;
+    }
+
+    partial void OnSelectedScorePatientSuggestionChanged(ReportPatientSuggestion? value)
+    {
+        if(value is null || _activeProvider is not PatientsReportProvider patientsProvider)
+            return;
+
+        ScorePatientSearchText=value.FullName;
+        ShowScorePatientSuggestions=false;
+        ScorePatientSuggestions.Clear();
+        patientsProvider.SelectScorePatient(value.PatientId);
+        InitializeSparkControls();
+        _=GenerateReportAsync();
     }
 
     private CancellationTokenSource? _filterDebounce;
@@ -1053,6 +1104,11 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         _activeProvider=null;
         _activeReport=null;
         IsMedicineSearchEnabled=false;
+        IsScoreSearchEnabled=false;
+        ScorePatientSearchText=string.Empty;
+        ScorePatientSuggestions.Clear();
+        ShowScorePatientSuggestions=false;
+        SelectedScorePatientSuggestion=null;
         OnPropertyChanged(nameof(IsPatientsReport));
 
         ActiveReportTitle=string.Empty;
