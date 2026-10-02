@@ -474,11 +474,7 @@
 														TextColor="{StaticResource SparkTextPrimary}" />
 												</VerticalStackLayout>
 											</VerticalStackLayout>
-										</Grid>
-									</VerticalStackLayout>
-
-									
-											<VerticalStackLayout Grid.Column="5" Spacing="4">
+										<VerticalStackLayout Grid.Column="5" Spacing="4">
 												<Label
 													IsVisible="{Binding IsEditMode}"
 													Style="{StaticResource EditFieldLabelStyle}"
@@ -499,7 +495,11 @@
 														FontSize="13"
 														Text="{Binding Patient.NationalId}"
 														TextColor="{StaticResource SparkTextPrimary}" />
-												</VerticalStackLayout>
+												</VerticalStackLayout></Grid>
+									</VerticalStackLayout>
+
+									
+											
 											</VerticalStackLayout>
 <VerticalStackLayout Grid.Row="1" Spacing="10">
 										<controls:CrudSectionHeader
