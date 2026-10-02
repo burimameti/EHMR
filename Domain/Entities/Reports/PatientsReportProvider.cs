@@ -138,7 +138,8 @@ namespace EHMR.Domain.Entities.Reports
                 if(tab is not null)
                     tab.IsSelected=false;
 
-            _allTab?.IsSelected=true;
+            if(_allTab is not null)
+                _allTab.IsSelected=true;
             FiltersChanged?.Invoke();
         }
 
