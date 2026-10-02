@@ -1043,6 +1043,9 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         if(_activeProvider is not null)
         {
             _activeProvider.FiltersChanged-=OnProviderFiltersChanged;
+
+            if(_activeProvider is PatientsReportProvider patientsProvider)
+                patientsProvider.SetMedicineFilterEnabled(false);
         }
 
         _activeProvider=null;
