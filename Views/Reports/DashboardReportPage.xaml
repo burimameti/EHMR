@@ -77,7 +77,7 @@
 						ButtonKind="Secondary"
 						Command="{Binding BackToHubCommand}"
 						ContentPadding="16,16"
-						HeightRequestEx="48"
+						HeightRequestEx="45"
 						Text="Назад"
 						WidthRequestEx="140" />
 				</Grid>
