@@ -61,7 +61,9 @@ namespace EHMR.Services;
     DateTime startDate,
     DateTime endDate,
     IReadOnlyList<SparkGridColumn> columns,
-    IReadOnlyList<SparkGridRow> rows)
+    IReadOnlyList<SparkGridRow> rows,
+    string? selectedMedicine = null,
+    decimal? selectedMedicineTotalQuantity = null)
     {
         var exportColumns = columns.Where(c => c.CellType!=SparkGridCellType.Actions).ToList();
         var path = BuildOutputPath(reportTitle, "pdf");
