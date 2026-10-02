@@ -14,16 +14,19 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
 {
     private readonly ISelectedItemService<Encounter> _selectedItemService;
     private readonly IPatientClinicalReportService _clinicalReportService;
+    private readonly IAuthorizationService _authorizationService;
     public EncounterEditViewModel(
         IEncounterDetailService service,
         INavigationService navigationService,
         IUserDialogService userDialogService,
         ISelectedItemService<Encounter> selectedItemService,
-        IPatientClinicalReportService clinicalReportService)
+        IPatientClinicalReportService clinicalReportService,
+        IAuthorizationService authorizationService)
         : base(service, navigationService, userDialogService)
     {
         _selectedItemService=selectedItemService;
         _clinicalReportService=clinicalReportService;
+        _authorizationService=authorizationService;
         PageTitle="Промена на преглед";
     }
 
@@ -52,6 +55,11 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
                 "ОК");
         }
     }
+
+    private bool CanModifyEncounter =>
+        _authorizationService.HasRole(UserRole.Admin) ||
+        _authorizationService.HasRole(UserRole.SuperAdmin) ||
+        _authorizationService.HasDoctorAdminPrivileges;
 
     public async Task LoadAsync()
     {
@@ -83,6 +91,18 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     [RelayCommand]
     public async Task SaveAsync()
     {
+        if(!CanModifyEncounter)
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за промена на овој преглед.", "ОК");
+            return;
+        }
+
+        if(Encounter.Status==EncounterStatus.Completed||Encounter.IsLocked)
+        {
+            await UserDialogService.ShowAlertAsync("Заклучен преглед", "Завршен преглед не може да се менува.", "ОК");
+            return;
+        }
+
         if(SelectedPatient?.Status==PatientStatus.Inactive)
         {
             await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "Податоците за неактивен пациент се заклучени и не може да се менуваат.", "ОК");
@@ -120,6 +140,18 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     [RelayCommand]
     public async Task ChangeStatusAsync(EncounterStatus newStatus)
     {
+        if(!CanModifyEncounter)
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за промена на статусот на овој преглед.", "ОК");
+            return;
+        }
+
+        if(Encounter.Status==EncounterStatus.Completed||Encounter.IsLocked)
+        {
+            await UserDialogService.ShowAlertAsync("Заклучен преглед", "Завршен преглед не може да се менува.", "ОК");
+            return;
+        }
+
         if(SelectedPatient?.Status==PatientStatus.Inactive)
         {
             await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "Податоците за неактивен пациент се заклучени и не може да се менуваат.", "ОК");
