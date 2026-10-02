@@ -759,6 +759,10 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     {
         Buttons.Clear();
 
+        // Keep the standard BaseViewModel "Исчисти" command available on
+        // report pages as well. Provider-specific buttons are added after it.
+        AddClearFiltersButton();
+
         if(_activeProvider==null)
             return;
 
