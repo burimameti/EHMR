@@ -77,7 +77,7 @@
 
 		<Setter Property="BackgroundColor" Value="White" />
 
-		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="StrokeThickness" Value="2" />
 		<Setter Property="Padding" Value="0" />
 
 		<Setter Property="Shadow" Value="{x:Null}" />

@@ -75,9 +75,10 @@
 						Grid.Column="1"
 						ButtonKind="Secondary"
 						Command="{Binding BackToHubCommand}"
-						ContentPadding="16,0"
-						HeightRequestEx="40"
-						Text="Назад кон извештаи" />
+						ContentPadding="16,16"
+						HeightRequestEx="48"
+						Text="Назад"
+						WidthRequestEx="140" />
 				</Grid>
 			</Border>
 
@@ -92,13 +93,12 @@
 					<!--  =========================================================  -->
 					<Grid
 						x:Name="DetailsGrid"
-						Margin="4,0,4,0"
-						ColumnDefinitions="*"
+						Margin="0,0,0,0"
 						ColumnSpacing="0"
 						IsVisible="True">
 
 						<!--  LEFT COLUMN  -->
-						<VerticalStackLayout Grid.Column="0" Spacing="10">
+						<VerticalStackLayout Spacing="0">
 
 							<!--  Report controls bar  -->
 							<sc:FFSectionCard Margin="0">
@@ -108,7 +108,7 @@
 									VerticalOptions="Center">
 
 									<!--  Active report title + date — title uses same style as Dashboard card titles  -->
-									<VerticalStackLayout
+									<!--<VerticalStackLayout
 										Grid.Column="0"
 										Spacing="2"
 										VerticalOptions="Center">
@@ -120,10 +120,10 @@
 											FontSize="12"
 											Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}"
 											TextColor="{StaticResource SparkTextMuted}" />
-									</VerticalStackLayout>
+									</VerticalStackLayout>-->
 
 									<HorizontalStackLayout
-										Grid.Column="1"
+										Grid.Column="0"
 										Spacing="8"
 										VerticalOptions="Center">
 										<Label
@@ -133,14 +133,10 @@
 										<sc:FFPicker
 											ItemsSource="{Binding PeriodTypeOptions}"
 											Label=""
-											MinimumWidthRequest="130"
 											SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" />
 									</HorizontalStackLayout>
 
-									<HorizontalStackLayout
-										Grid.Column="2"
-										Spacing="8"
-										VerticalOptions="Center">
+									<HorizontalStackLayout Grid.Column="1" VerticalOptions="Center">
 										<Label
 											Style="{StaticResource SparkTabTitleLabelStyle}"
 											Text="ОД"
@@ -148,10 +144,7 @@
 										<sc:FFDatePicker HasLabel="False" SelectedDate="{Binding StartDate, Mode=TwoWay}" />
 									</HorizontalStackLayout>
 
-									<HorizontalStackLayout
-										Grid.Column="3"
-										Spacing="8"
-										VerticalOptions="Center">
+									<HorizontalStackLayout Grid.Column="2" VerticalOptions="Center">
 										<Label
 											Style="{StaticResource SparkTabTitleLabelStyle}"
 											Text="ДО"
@@ -160,7 +153,7 @@
 									</HorizontalStackLayout>
 
 									<sc:FFButton
-										Grid.Column="4"
+										Grid.Column="3"
 										ButtonKind="Secondary"
 										Command="{Binding ApplyPeriodAndRegenerateCommand}"
 										ContentPadding="16,0"
@@ -169,12 +162,12 @@
 										Text="Примени период" />
 
 									<sc:FFButton
-										Grid.Column="5"
+										Grid.Column="4"
 										BackgroundColorEx="{StaticResource SidebarActiveBg}"
 										ButtonKind="Primary"
 										Command="{Binding ExecuteReportGenerationCommand}"
 										ContentPadding="16,0"
-										HeightRequestEx="45"
+										HeightRequestEx="40"
 										IsVisible="{Binding CanCreate}"
 										Text="Генерирај извештај"
 										TextColorEx="White" />
@@ -182,7 +175,7 @@
 							</sc:FFSectionCard>
 
 							<!--  Explorer header: tabs + search + pickers  -->
-							<sc:FFSectionCard Margin="0">
+							<sc:FFSectionCard Margin="2,2,-5,2">
 								<sc:SparkExplorerHeaderView
 									Buttons="{Binding Buttons}"
 									Pickers="{Binding Pickers}"
@@ -196,15 +189,16 @@
 								<Grid RowDefinitions="Auto,*">
 									<ActivityIndicator
 										Grid.Row="0"
+										Margin="2,2,2,2"
 										HeightRequest="50"
 										HorizontalOptions="Center"
 										IsRunning="{Binding IsBusy}"
 										IsVisible="{Binding IsBusy}"
 										VerticalOptions="Center"
-										WidthRequest="50"
 										Color="{StaticResource SparkAccentTeal}" />
 									<sc:SparkDataGridView
 										Grid.Row="1"
+										Margin="2,2,2,2"
 										Columns="{Binding GridColumns}"
 										CurrentPage="{Binding CurrentPage}"
 										NextPageCommand="{Binding NextPageCommand}"

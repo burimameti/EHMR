@@ -107,8 +107,9 @@ namespace EHMR.Services;
                         // Клетка 2: ВИСТИНСКИ ЛОГИРАН КОРИСНИК
                         table.Cell().BorderRight(1).Padding(5).Column(c =>
                         {
-                            c.Item().Text($"ИЗРАБОТИЛ: {generatedBy}").Bold().FontSize(8);
                             c.Item().Text($"ДАТУМ НА ИЗДАВАЊЕ: {DateTime.Now:dd.MM.yyyy}").FontSize(7);
+                            c.Item().Text($"ИЗРАБОТИЛ: ");
+                        
                         });
 
                         // Клетка 3: ОПСЕГ НА ПЕРИОД + ВКУПНА КОЛИЧИНА НА ЛЕКОТ
@@ -119,7 +120,7 @@ namespace EHMR.Services;
 
                             if(IsMedicineConsumptionReport(reportTitle))
                             {
-                                c.Item().PaddingTop(3).Text("ВКУПНА КОЛИЧИНА НА ЛЕКОТ").Bold().FontSize(8);
+                                c.Item().PaddingTop(3).Text("ВКУПНА КОЛИЧИНА:").Bold().FontSize(8);
 
                                 foreach(var item in GetMedicineConsumptionSummary(rows))
                                     c.Item().Text($"{item.Medicine} : {item.Quantity}").FontSize(8);
@@ -182,7 +183,7 @@ namespace EHMR.Services;
                             x.TotalPages();
                         });
 
-                        row.RelativeItem().AlignRight().Text($"Потпис на одговорно лице ({generatedBy}): _____________________");
+                        row.RelativeItem().AlignRight().Text($"Изработил: ________________________________");
                     });
                 });
             });
