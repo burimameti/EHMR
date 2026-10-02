@@ -7,7 +7,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.Backups.ViewModels"
 	x:Name="Page"
 	x:DataType="viewModels:BackupHistoryViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
+	BackgroundColor="{StaticResource PageBackground}">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
@@ -40,7 +40,7 @@
 
 			<!--  Metric tile — same recipe as the Metric1/2/3 cards on DashboardReportPage's analytics sidebar  -->
 			<Style x:Key="MetricTileBorder" TargetType="Border">
-				<Setter Property="Padding" Value="16" />
+				<Setter Property="Padding" Value="12" />
 				<Setter Property="BackgroundColor" Value="{StaticResource SparkPageBackground}" />
 				<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
 				<Setter Property="StrokeThickness" Value="1" />
@@ -59,7 +59,7 @@
 
 			<Style x:Key="MetricTileValue" TargetType="Label">
 				<Setter Property="FontAttributes" Value="Bold" />
-				<Setter Property="FontSize" Value="26" />
+				<Setter Property="FontSize" Value="19" />
 				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 			</Style>
 
@@ -67,7 +67,7 @@
 	</ContentPage.Resources>
 
 	<!--  Same 290,* menu/content split as Dashboard and DashboardReportPage  -->
-	<Grid ColumnDefinitions="290,*">
+	<Grid ColumnDefinitions="260,*">
 
 		<!--  LEFT MENU  -->
 		<Border Grid.Column="0" StrokeThickness="0">
@@ -158,7 +158,7 @@
 								<Grid ColumnDefinitions="4,*">
 									<BoxView
 										Grid.Column="0"
-										BackgroundColor="Red"
+										BackgroundColor="{StaticResource SparkDanger}"
 										HorizontalOptions="Start"
 										WidthRequest="4" />
 									<VerticalStackLayout
@@ -169,7 +169,7 @@
 										<Label
 											Style="{StaticResource MetricTileValue}"
 											Text="{Binding FailedBackups}"
-											TextColor="Red" />
+											TextColor="{StaticResource SparkDanger}" />
 									</VerticalStackLayout>
 								</Grid>
 							</Border>
