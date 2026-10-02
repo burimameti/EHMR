@@ -496,6 +496,7 @@
 														Text="{Binding Patient.NationalId}"
 														TextColor="{StaticResource SparkTextPrimary}" />
 												</VerticalStackLayout>
+						</VerticalStackLayout>
 						</Grid>
 					</VerticalStackLayout>
 
