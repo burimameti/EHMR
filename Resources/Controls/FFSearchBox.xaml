@@ -8,6 +8,7 @@
 
 	<Grid
 		HorizontalOptions="Fill"
+		MinimumWidthRequest="220"
 		RowDefinitions="Auto,Auto"
 		RowSpacing="4"
 		VerticalOptions="Center">

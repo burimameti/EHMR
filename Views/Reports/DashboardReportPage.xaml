@@ -104,8 +104,9 @@
 							<!--  Report controls bar  -->
 							<sc:FFSectionCard Margin="0">
 								<Grid
-									ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto"
-									ColumnSpacing="10"
+									ColumnDefinitions="Auto,*,*,Auto,Auto"
+									ColumnSpacing="22"
+									HorizontalOptions="End"
 									VerticalOptions="Center">
 
 									<!--  Active report title + date — title uses same style as Dashboard card titles  -->
@@ -125,7 +126,7 @@
 
 									<HorizontalStackLayout
 										Grid.Column="0"
-										Spacing="8"
+										Spacing="22"
 										VerticalOptions="Center">
 										<Label
 											Style="{StaticResource SparkTabTitleLabelStyle}"
@@ -170,6 +171,19 @@
 							<!--  Patient search + report filters  -->
 							<sc:FFSectionCard Margin="0,2,-5,0">
 								<VerticalStackLayout Spacing="8">
+									<Grid ColumnDefinitions="Auto,*" ColumnSpacing="0">
+
+										<Label
+											Text="Пребарување по лек"
+											TextColor="{StaticResource SparkTextPrimary}"
+											VerticalOptions="Center" />
+										<CheckBox
+											Grid.Column="1"
+											Margin="22,0,0,0"
+											IsChecked="{Binding IsMedicineSearchEnabled, Mode=TwoWay}" />
+
+
+									</Grid>
 									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
 										<sc:SparkExplorerHeaderView
 											Buttons="{Binding Buttons}"
@@ -231,15 +245,7 @@
 										</sc:SparkExplorerHeaderView>
 
 									</Grid>
-									<Grid ColumnDefinitions="Auto,*" ColumnSpacing="-66">
-										<CheckBox IsChecked="{Binding IsMedicineSearchEnabled, Mode=TwoWay}" VerticalOptions="Center" />
-										<Label
-											Grid.Column="1"
-											Text="Пребарување по лек"
-											TextColor="{StaticResource SparkTextPrimary}"
-											VerticalOptions="Center" />
 
-									</Grid>
 								</VerticalStackLayout>
 							</sc:FFSectionCard>
 

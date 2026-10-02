@@ -81,12 +81,13 @@ public partial class FFDatePicker : ContentView
         control.UpdateDisplay();
     }
 
-    private void OnBorderTapped(object sender, TappedEventArgs e)
+    private async void OnBorderTapped(object sender, TappedEventArgs e)
     {
-        if(IsPickerEnabled)
-        {
-            InnerDatePicker.Focus();
-        }
+        if(!IsPickerEnabled)
+            return;
+
+        await Task.Delay(50);
+        InnerDatePicker.Focus();
     }
 
     private void InnerDatePicker_DateSelected(object sender, DateChangedEventArgs e)

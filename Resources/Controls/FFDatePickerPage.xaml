@@ -49,14 +49,14 @@
 				ColumnSpacing="9">
 
 				<!--  Optional filter  -->
-				<CheckBox
+				<!--<CheckBox
 					Grid.Column="0"
 					Margin="0"
 					HorizontalOptions="Start"
 					IsChecked="{Binding IsFilterActive, Source={x:Reference Root}, Mode=TwoWay}"
 					IsVisible="{Binding IsOptionalFilter, Source={x:Reference Root}}"
 					VerticalOptions="Center"
-					Color="{StaticResource SparkTextPrimary}" />
+					Color="{StaticResource SparkTextPrimary}" />-->
 
 				<!--  Display value  -->
 				<Label
@@ -86,7 +86,6 @@
 					IsEnabled="{Binding IsPickerEnabled, Source={x:Reference Root}}"
 					Opacity="0"
 					VerticalOptions="Fill" />
-
 				<!--  Calendar icon  -->
 				<Border
 					Grid.Column="2"
