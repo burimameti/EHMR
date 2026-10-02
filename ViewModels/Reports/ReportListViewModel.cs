@@ -1036,7 +1036,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
             await _reportExportService.ExportToPdfAsync(
                 reportTitle: reportTitle,
-                institutionName: "КЛИНИКА ЗА РЕУМАТОЛОГИЈА - СКОПЈЕ",
+                insitutionName: "КЛИНИКА ЗА РЕУМАТОЛОГИЈА - СКОПЈЕ",
                 generatedBy: "Систем",
                 startDate: StartDate,
                 endDate: EndDate,
