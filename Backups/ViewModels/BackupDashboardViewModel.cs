@@ -76,7 +76,7 @@ public partial class BackupDashboardViewModel : ObservableObject
             var last = await _historyRepository.GetLastAsync();
 
             LastBackup=last?.CompletedAt is { } completed
-                ? completed.ToLocalTime().ToString("g")
+                ? completed.ToLocalTime().ToString("dd.MM.yyyy")
                 : "Never";
 
             BackupStatus=last?.Status switch
