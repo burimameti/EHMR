@@ -40,7 +40,7 @@ public static class AppNavigation
         // ==========================
         new()
         {
-            GroupTitle="Пациенти",
+            GroupTitle="Регистар на пациенти",
             Route=AppRoutes.Patients.List,
             Module=Modules.Patients,
             Icon=AppGroupIcons.Patients,
@@ -48,7 +48,7 @@ public static class AppNavigation
             [
                 new()
                 {
-                    Title="Регистар на пациенти",
+                    Title="Листа на пациенти",
                     Route=AppRoutes.Patients.List,
                     Module=Modules.Patients,
                     RequiredAction=ModuleAction.View,
@@ -70,7 +70,7 @@ public static class AppNavigation
         // ==========================
         new()
         {
-            GroupTitle = "\u041F\u0440\u0435\u0433\u043B\u0435\u0434\u0438",
+            GroupTitle = "Прегледи",
             Route = AppRoutes.Encounters.List,
             Module = Modules.Encounters,
             Icon = new IconDefinition { Glyph = "\uf0f1", Font = IconFontType.FontAwesomeSolid },
@@ -78,14 +78,14 @@ public static class AppNavigation
             [
                 new()
                 {
-                    Title = "\u041B\u0438\u0441\u0442\u0430 \u043D\u0430 \u043F\u0440\u0435\u0433\u043B\u0435\u0434\u0438",
+                    Title = "Листа на прегледи",
                     Route = AppRoutes.Encounters.List,
                     Module = Modules.Encounters,
                     Icon = new IconDefinition { Glyph = "\uf0ae", Font = IconFontType.FontAwesomeSolid }
                 },
                 new()
                 {
-                    Title = "\u041D\u043E\u0432 \u043F\u0440\u0435\u0433\u043B\u0435\u0434",
+                    Title = "Нов преглед",
                     Route = AppRoutes.Encounters.Create,
                     Module = Modules.Encounters,
                     Icon = new IconDefinition { Glyph = "\uf067", Font = IconFontType.FontAwesomeSolid }

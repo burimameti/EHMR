@@ -108,7 +108,7 @@ namespace EHMR.Services;
                         table.Cell().BorderRight(1).Padding(5).Column(c =>
                         {
                             c.Item().Text($"ДАТУМ НА ИЗДАВАЊЕ: {DateTime.Now:dd.MM.yyyy}").FontSize(7);
-                            c.Item().Text($"ИЗРАБОТИЛ: ");
+                    
                         
                         });
 
@@ -183,7 +183,7 @@ namespace EHMR.Services;
                             x.TotalPages();
                         });
 
-                        row.RelativeItem().AlignRight().Text($"Изработил: ________________________________");
+                        row.RelativeItem().AlignRight().Text($"Потпис на одговорно лице: ________________________________");
                     });
                 });
             });
@@ -194,7 +194,7 @@ namespace EHMR.Services;
     // ================= HELPERS =================
 
     private static bool IsMedicineConsumptionReport(string reportTitle) =>
-        reportTitle.Contains("Потрошувачка по лек", StringComparison.OrdinalIgnoreCase);
+        reportTitle.Contains("Пациенти со лек", StringComparison.OrdinalIgnoreCase);
 
     private static IReadOnlyList<(string Medicine, string Quantity)> GetMedicineConsumptionSummary(
         IReadOnlyList<SparkGridRow> rows)
@@ -203,10 +203,10 @@ namespace EHMR.Services;
 
         foreach(var row in rows)
         {
-            row.TryGetValue("MedicineConsumptionMedicine", out var medicineValue);
-            row.TryGetValue("MedicineConsumptionQuantity", out var quantityValue);
+            row.TryGetValue("Medicine", out var medicineValue);
+            row.TryGetValue("Medicine", out var quantityValue);
 
-            var medicine = medicineValue?.ToString()?.Trim();
+            var medicine = medicineValue?.ToString()?.Trim().Split(":")[0];
             var quantity = quantityValue?.ToString()?.Trim();
 
             if(string.IsNullOrWhiteSpace(medicine) || string.IsNullOrWhiteSpace(quantity))
