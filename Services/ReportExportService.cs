@@ -120,7 +120,7 @@ namespace EHMR.Services;
                             c.Item().Text("ОПСЕГ НА ПЕРИОД:").Bold().FontSize(8);
                             c.Item().Text($"{startDate:dd.MM.yyyy} - {endDate:dd.MM.yyyy}").FontSize(8);
 
-                            if(IsMedicineConsumptionReport(reportTitle))
+                            if(IsMedicineConsumptionReport(reportTitle, selectedMedicine, selectedMedicineTotalQuantity))
                             {
                                 c.Item().PaddingTop(3).Text("ВКУПНА КОЛИЧИНА НА ЛЕКОТ").Bold().FontSize(8);
 
@@ -202,7 +202,11 @@ namespace EHMR.Services;
     }
     // ================= HELPERS =================
 
-    private static bool IsMedicineConsumptionReport(string reportTitle) =>
+    private static bool IsMedicineConsumptionReport(
+        string reportTitle,
+        string? selectedMedicine,
+        decimal? selectedMedicineTotalQuantity) =>
+        (selectedMedicine!=null && selectedMedicineTotalQuantity.HasValue) ||
         reportTitle.Contains("Потрошувачка по лек", StringComparison.OrdinalIgnoreCase) ||
         reportTitle.Contains("Пациенти со лек", StringComparison.OrdinalIgnoreCase);
 
