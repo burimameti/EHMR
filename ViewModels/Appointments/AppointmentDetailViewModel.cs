@@ -29,9 +29,9 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     protected override string ModuleName => Modules.Appointments;
     private bool _isLoading;
     public bool IsNewAppointment => _isNewAppointmentMode;
-    public bool CanSaveAppointment => IsNewAppointment ? CanCreate : CanUpdate;
+    public bool CanSaveAppointment => IsNewAppointment ? CanCreate : CanUpdate&&AuthService.HasDoctorAdminPrivileges;
     public bool CanEditAppointment =>
-        !_isNewAppointmentMode&&CanUpdate&&
+        !_isNewAppointmentMode&&AuthService.HasDoctorAdminPrivileges&&CanUpdate&&
         Appointment.Status is (AppointmentStatus.Scheduled or AppointmentStatus.InProgress)&&
         Appointment.ScheduledStart.Date>=DateTime.Today;
     public bool ShowStatusEditor => IsEditMode&&!IsNewAppointment;
