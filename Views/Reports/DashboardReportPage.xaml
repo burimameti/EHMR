@@ -186,7 +186,8 @@
 											SelectedSuggestion="{Binding SelectedScorePatientSuggestion, Mode=TwoWay}"
 											ShowSuggestions="{Binding ShowScorePatientSuggestions}"
 											Suggestions="{Binding ScorePatientSuggestions}"
-											TabsVisible="False">
+											Tabs="{Binding Tabs}"
+							TabsVisible="True">
 											<sc:SparkExplorerHeaderView.SuggestionTemplate>
 												<DataTemplate x:DataType="{x:Null}">
 													<Border Margin="2" Padding="12,8" BackgroundColor="{StaticResource Gray100}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 2" StrokeThickness="1.2">
