@@ -222,8 +222,13 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             // DTOs aren't EF-tracked, so no cloning/detaching gymnastics required —
             // just wrap what the service gave us.
             Diagnoses=new ObservableCollection<DiagnosisDto>(full.Diagnoses);
+            // Patient form owns only patient-level therapy links. Encounter
+            // snapshots are historical records and must not appear as editable
+            // active therapy on the patient.
             AttachedMedicines=new ObservableCollection<AttachedMedicineRow>(
-                full.Medicines.Select(m => new AttachedMedicineRow(m)));
+                full.Medicines
+                    .Where(m => m.EncounterId==null)
+                    .Select(m => new AttachedMedicineRow(m)));
             Documents=new ObservableCollection<PatientDocumentDto>(full.Documents);
             SelectedDocumentPreview=null;
 
@@ -1060,7 +1065,13 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     private void RemoveMedicine(AttachedMedicineRow row)
     {
         if(row==null) return;
-        if(row.PatientMedicine.Id!=Guid.Empty) _deletedMedicineIds.Add(row.PatientMedicine.Id);
+
+        // A therapy removed from the patient is not deleted. It becomes history
+        // so the clinical record keeps the previous medicine and its dates.
+        row.PatientMedicine.IsActive=false;
+        if(row.PatientMedicine.EndDate is null)
+            row.PatientMedicine.EndDate=DateTime.UtcNow;
+
         AttachedMedicines.Remove(row);
     }
 
