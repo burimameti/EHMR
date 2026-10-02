@@ -15,15 +15,15 @@
 	<ContentPage.Resources>
 		<ResourceDictionary>
 
-			<x:Array x:Key="DosesFrequencyValues" Type="{x:Type models:DosesFrequency}">
-				<models:DosesFrequency>Daily</models:DosesFrequency>
-				<models:DosesFrequency>TwiceDaily</models:DosesFrequency>
-				<models:DosesFrequency>ThreeTimesDaily</models:DosesFrequency>
-				<models:DosesFrequency>EveryOtherDay</models:DosesFrequency>
-				<models:DosesFrequency>EveryThreeDays</models:DosesFrequency>
-				<models:DosesFrequency>Weekly</models:DosesFrequency>
-				<models:DosesFrequency>Monthly</models:DosesFrequency>
-				<models:DosesFrequency>Other</models:DosesFrequency>
+			<x:Array x:Key="DosesFrequencyValues" Type="{x:Type entities:DosesFrequency}">
+				<entities:DosesFrequency>Daily</entities:DosesFrequency>
+				<entities:DosesFrequency>TwiceDaily</entities:DosesFrequency>
+				<entities:DosesFrequency>ThreeTimesDaily</entities:DosesFrequency>
+				<entities:DosesFrequency>EveryOtherDay</entities:DosesFrequency>
+				<entities:DosesFrequency>EveryThreeDays</entities:DosesFrequency>
+				<entities:DosesFrequency>Weekly</entities:DosesFrequency>
+				<entities:DosesFrequency>Monthly</entities:DosesFrequency>
+				<entities:DosesFrequency>Other</entities:DosesFrequency>
 			</x:Array>
 
 			<converters:EncounterStatusToTextConverter x:Key="StatusTextConverter" />
@@ -55,7 +55,7 @@
 				</Border>
 			</DataTemplate>
 
-			<DataTemplate x:Key="PatientEncounterRowTemplate" x:DataType="models:Encounter">
+			<DataTemplate x:Key="PatientEncounterRowTemplate" x:DataType="entities:Encounter">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid
 						Padding="8,6"
@@ -93,7 +93,7 @@
 
 
 
-			<DataTemplate x:Key="PatientAppointmentRowTemplate" x:DataType="models:Appointment">
+			<DataTemplate x:Key="PatientAppointmentRowTemplate" x:DataType="entities:Appointment">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
 						<Label
@@ -114,7 +114,7 @@
 				</Border>
 			</DataTemplate>
 
-			<DataTemplate x:Key="PatientTherapyCycleRowTemplate" x:DataType="models:TherapyCycle">
+			<DataTemplate x:Key="PatientTherapyCycleRowTemplate" x:DataType="entities:TherapyCycle">
 				<Grid Padding="8,6" ColumnDefinitions="Auto,*">
 					<Label
 						FontAttributes="Bold"
@@ -133,7 +133,7 @@
 				</Grid>
 			</DataTemplate>
 
-			<DataTemplate x:Key="PatientTherapyCycleHistoryRowTemplate" x:DataType="models:TherapyCycle">
+			<DataTemplate x:Key="PatientTherapyCycleHistoryRowTemplate" x:DataType="entities:TherapyCycle">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid
 						Padding="8,6"
@@ -179,7 +179,7 @@
 				</Border>
 			</DataTemplate>
 
-			<DataTemplate x:Key="PatientPrescriptionRowTemplate" x:DataType="models:Prescription">
+			<DataTemplate x:Key="PatientPrescriptionRowTemplate" x:DataType="entities:Prescription">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
 						<Label
@@ -200,7 +200,7 @@
 				</Border>
 			</DataTemplate>
 
-			<DataTemplate x:Key="PatientMedicineHistoryRowTemplate" x:DataType="models:PatientMedicine">
+			<DataTemplate x:Key="PatientMedicineHistoryRowTemplate" x:DataType="entities:PatientMedicine">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid
 						Padding="10,8"
@@ -951,7 +951,7 @@
 																TextColor="{StaticResource SparkTextSecondary}" />
 														</BindableLayout.EmptyView>
 														<BindableLayout.ItemTemplate>
-															<DataTemplate x:DataType="models:TherapyCycle">
+															<DataTemplate x:DataType="entities:TherapyCycle">
 																<Border Padding="8,6" Style="{StaticResource CrudFormHistoryRowStyle}">
 																	<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
 																		<Label
@@ -1179,7 +1179,7 @@
 															TextColor="{StaticResource SparkTextSecondary}" />
 													</BindableLayout.EmptyView>
 													<BindableLayout.ItemTemplate>
-														<DataTemplate x:DataType="models:PatientMedicine">
+														<DataTemplate x:DataType="entities:PatientMedicine">
 															<Border Padding="8,6" Style="{StaticResource CrudFormHistoryRowStyle}">
 																<Grid ColumnDefinitions="2*,Auto,Auto" ColumnSpacing="10">
 																	<Label
