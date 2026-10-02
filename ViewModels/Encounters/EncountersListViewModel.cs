@@ -155,7 +155,10 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
                 }
             };
 
-            if(CanUpdate && _authorizationService.HasDoctorAdminPrivileges)
+            if(CanUpdate &&
+               (_authorizationService.HasRole(UserRole.Admin) ||
+                _authorizationService.HasRole(UserRole.SuperAdmin) ||
+                _authorizationService.HasDoctorAdminPrivileges))
                 actions.Add(new SparkButtonItem { IconGlyph="✎", Label="Промени", Command=EditCommand, CommandParameter=e });
 
             row["Actions"]=actions;
