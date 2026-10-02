@@ -331,6 +331,8 @@ namespace EHMR.Domain.Entities.Reports
                 var stopwatch = Stopwatch.StartNew();
 
                 Debug.WriteLine($"[Patients] [3] Starting DB query...");
+                // Load the complete patient set so the single patient search behaves
+                // like the Dashboard search and is not limited by the selected report period.
                 var patients = await db.Patients
                     .Include(x => x.Doctor)
                         .ThenInclude(x => x!.User)
@@ -339,17 +341,11 @@ namespace EHMR.Domain.Entities.Reports
                     .Include(x => x.Diagnoses)
                         .ThenInclude(x => x.Mkb10Code)
                     .Include(x => x.TherapyCycles)
-                     .Include(x => x.Scores)
+                    .Include(x => x.Scores)
                         .ThenInclude(x => x.Encounter)
                             .ThenInclude(x => x.Doctor)
                                 .ThenInclude(x => x!.User)
                     .AsNoTracking()
-                    .Where(x =>
-                        (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
-                        x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to)||
-                        x.PatientMedicines.Any(pm =>
-                            pm.StartDate<=to &&
-                            (!pm.EndDate.HasValue||pm.EndDate.Value>=from)))
                     .ToListAsync(cts.Token);
 
                 stopwatch.Stop();
@@ -472,7 +468,14 @@ namespace EHMR.Domain.Entities.Reports
             DateTime from,
             DateTime to)
         {
-            var query = patients;
+            // Keep report rows period-scoped while the patient search itself
+            // remains global across all registered patients.
+            var query = patients.Where(x =>
+                (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
+                x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to)||
+                x.PatientMedicines.Any(pm =>
+                    pm.StartDate<=to &&
+                    (!pm.EndDate.HasValue||pm.EndDate.Value>=from)));
 
             if(_selectedStatusFilter!="Сите")
             {
