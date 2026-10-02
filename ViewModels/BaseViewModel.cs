@@ -451,7 +451,6 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
 
         ApplyPipeline();
         SyncSparkPickersFromFilters();
-        FilteredItems.Clear();
     }
 
     protected abstract void ResetFilters();
