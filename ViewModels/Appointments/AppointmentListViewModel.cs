@@ -475,8 +475,7 @@ public partial class AppointmentListViewModel
     }
 
     private static bool CanEdit(Appointment a) =>
-        a.Status is (AppointmentStatus.Scheduled or AppointmentStatus.InProgress)&&
-        a.ScheduledStart.Date>=DateTime.Today;
+        a.Status is AppointmentStatus.Scheduled or AppointmentStatus.InProgress;
 
     private static bool CanCancel(Appointment a) =>
         a.Status==AppointmentStatus.Scheduled&&a.ScheduledStart.Date>=DateTime.Today;
