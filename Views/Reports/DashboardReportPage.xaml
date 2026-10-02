@@ -195,6 +195,43 @@
 							VerticalOptions="Center" />
 					</Grid>
 
+					<Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="10" Margin="0,0,0,8">
+						<CheckBox IsChecked="{Binding IsScoreSearchEnabled, Mode=TwoWay}" VerticalOptions="Center" />
+						<Label Grid.Column="1" Text="Пребарување по скор" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+						<Label Grid.Column="2" Text="Изберете пациент за да се прикаже само неговата историја на скор." TextColor="{StaticResource SparkTextMuted}" VerticalOptions="Center" />
+					</Grid>
+
+					<sc:SparkExplorerHeaderView
+						IsVisible="{Binding IsScoreSearchEnabled}"
+						Buttons="{Binding Buttons}"
+						SearchPlaceholder="Пребарување на пациент..."
+						SearchText="{Binding ScorePatientSearchText, Mode=TwoWay}"
+						SelectedSuggestion="{Binding SelectedScorePatientSuggestion, Mode=TwoWay}"
+						ShowSuggestions="{Binding ShowScorePatientSuggestions}"
+						Suggestions="{Binding ScorePatientSuggestions}"
+						TabsVisible="False">
+						<sc:SparkExplorerHeaderView.SuggestionTemplate>
+							<DataTemplate x:DataType="{x:Null}">
+								<Border Margin="2" Padding="12,8" BackgroundColor="{StaticResource Gray100}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 2" StrokeThickness="1.2">
+									<Grid ColumnDefinitions="1.7*,1.1*,1.1*" ColumnSpacing="14">
+										<VerticalStackLayout Spacing="1">
+											<Label FontSize="10" Text="Име и презиме" TextColor="{StaticResource SparkAccentTealDark}" />
+											<Label FontAttributes="Bold" FontSize="12" Text="{Binding FullName}" TextColor="{StaticResource SparkTextPrimary}" />
+										</VerticalStackLayout>
+										<VerticalStackLayout Grid.Column="1" Spacing="1">
+											<Label FontSize="10" Text="ЕМБГ" TextColor="{StaticResource SparkAccentTealDark}" />
+											<Label FontAttributes="Bold" FontSize="12" Text="{Binding NationalId}" TextColor="{StaticResource SparkTextPrimary}" />
+										</VerticalStackLayout>
+										<VerticalStackLayout Grid.Column="2" Spacing="1">
+											<Label FontSize="10" Text="СЗБО број" TextColor="{StaticResource SparkAccentTealDark}" />
+											<Label FontAttributes="Bold" FontSize="12" Text="{Binding SzboNumber}" TextColor="{StaticResource SparkTextPrimary}" />
+										</VerticalStackLayout>
+									</Grid>
+								</Border>
+							</DataTemplate>
+						</sc:SparkExplorerHeaderView.SuggestionTemplate>
+					</sc:SparkExplorerHeaderView>
+
 					<sc:SparkExplorerHeaderView
 									Buttons="{Binding Buttons}"
 									Pickers="{Binding Pickers}"
