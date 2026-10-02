@@ -32,8 +32,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     public bool CanSaveAppointment => IsNewAppointment ? CanCreate : CanUpdate&&AuthService.HasDoctorAdminPrivileges;
     public bool CanEditAppointment =>
         !_isNewAppointmentMode&&AuthService.HasDoctorAdminPrivileges&&CanUpdate&&
-        Appointment.Status is (AppointmentStatus.Scheduled or AppointmentStatus.InProgress)&&
-        Appointment.ScheduledStart.Date>=DateTime.Today;
+        Appointment.Status is AppointmentStatus.Scheduled or AppointmentStatus.InProgress;
     public bool ShowStatusEditor => IsEditMode&&!IsNewAppointment;
 
     // Mirrors Encounter's HasEncounterMedicines — drives the medicine table header row.
