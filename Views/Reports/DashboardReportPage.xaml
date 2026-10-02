@@ -176,6 +176,7 @@
 
 							<!--  Explorer header: tabs + search + pickers  -->
 							<sc:FFSectionCard Margin="2,2,-5,2">
+								<VerticalStackLayout Spacing="8">
 								<Grid
 						ColumnDefinitions="Auto,Auto,*"
 						ColumnSpacing="10"
@@ -238,6 +239,7 @@
 									SearchPlaceholder="Филтрирај редови..."
 									SearchText="{Binding SearchText, Mode=TwoWay}"
 									Tabs="{Binding Tabs}" />
+								</VerticalStackLayout>
 							</sc:FFSectionCard>
 
 							<!--  Data grid  -->
