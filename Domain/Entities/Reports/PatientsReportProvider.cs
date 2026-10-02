@@ -370,11 +370,20 @@ namespace EHMR.Domain.Entities.Reports
                     .Select(x => x.Mkb10Code!.Code));
 
             Debug.WriteLine($"[Patients]   - Medicine picker...");
-            RefreshPicker(_medicinePicker,
-                patients
-                    .SelectMany(x => x.PatientMedicines)
-                    .Where(x => x.Medicine!=null)
-                    .Select(x => x.Medicine!.Name));
+            _medicineIdsByDisplay.Clear();
+            var medicineOptions=patients
+                .SelectMany(x => x.PatientMedicines)
+                .Where(x => x.Medicine!=null)
+                .GroupBy(x => x.Medicine!.Id)
+                .Select(g => g.First().Medicine!)
+                .OrderBy(x => x.Name)
+                .ThenBy(x => x.Strength)
+                .ToList();
+
+            foreach(var medicine in medicineOptions)
+                _medicineIdsByDisplay[medicine.FullName]=medicine.Id;
+
+            RefreshPicker(_medicinePicker, medicineOptions.Select(x => x.FullName));
 
             Debug.WriteLine($"[Patients]   - Gender picker...");
             RefreshPicker(_genderPicker,
