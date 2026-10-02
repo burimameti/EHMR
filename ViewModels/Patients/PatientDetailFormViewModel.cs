@@ -289,7 +289,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             DiagnosisHistory=new ObservableCollection<Diagnosis>(
                 await db.Diagnoses
                     .AsNoTracking()
+                    .Include(x => x.Mkb10Code)
                     .Where(x => x.PatientId==patientId)
+                    .OrderByDescending(x => x.DiagnosedAt)
                     .ToListAsync());
 
             EncounterHistory=new ObservableCollection<Encounter>(
