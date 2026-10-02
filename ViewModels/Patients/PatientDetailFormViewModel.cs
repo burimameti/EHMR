@@ -270,6 +270,10 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     public IEnumerable<TherapyCycle> PreviousTherapies => TherapyCycleHistory
         .Where(x => x.Status!=TherapyStatus.Active&&x.Status!=TherapyStatus.Planned)
         .OrderByDescending(x => x.EndDate??x.StartDate);
+
+    public IEnumerable<PatientMedicine> PreviousMedicineHistory => MedicineHistory
+        .Where(x => !x.IsActive && x.EncounterId==null)
+        .OrderByDescending(x => x.EndDate ?? x.StartDate);
     [ObservableProperty] private ObservableCollection<Prescription> prescriptionHistory = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> medicineHistory = new();
 
@@ -315,6 +319,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                     .ToListAsync());
             OnPropertyChanged(nameof(ActiveTherapies));
             OnPropertyChanged(nameof(PreviousTherapies));
+            OnPropertyChanged(nameof(PreviousMedicineHistory));
 
             PrescriptionHistory=new ObservableCollection<Prescription>(
                 await db.Prescriptions
