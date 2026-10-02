@@ -389,7 +389,6 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         ActiveReportTitle=report.Title;
         ActiveReportIcon=report.Icon;
-        IsMedicineSearchEnabled=false;
         OnPropertyChanged(nameof(IsPatientsReport));
 
         SearchText=string.Empty;
