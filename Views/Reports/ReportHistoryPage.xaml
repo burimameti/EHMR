@@ -43,18 +43,21 @@
 
 					<controls:FFPageHeader Title="Историја на извештаи" Subtitle="Преглед, пребарување и превземање на генерирани извештаи" />
 
-					<HorizontalStackLayout Grid.Column="1" Spacing="10">
+					<HorizontalStackLayout
+						Grid.Column="1"
+						Margin="0,0,33,0"
+						Spacing="10">
 
-						<Button
+						<!--<Button
 							Background="{StaticResource ExpandCardBackground}"
 							Command="{Binding RefreshCommand}"
 							HeightRequest="45"
 							Style="{StaticResource TabButtonActiveStyle}"
-							Text="Освежи"
-							WidthRequest="130" />
+							Text="Искисти"
+							WidthRequest="130" />-->
 
 						<Button
-							BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
+							BackgroundColor="{StaticResource SparkedDarkCard}"
 							Command="{Binding NavigateToReportCommand}"
 							HeightRequest="45"
 							IsVisible="{Binding CanCreate}"
@@ -91,7 +94,7 @@
 								Buttons="{Binding Buttons}"
 								Pickers="{Binding Pickers}"
 								SearchCommand="{Binding SearchCommand}"
-								SearchPlaceholder="Пребарување по име на извештај, корисник или датотека..."
+								SearchPlaceholder="Пребарување ..."
 								SearchText="{Binding ReportSearchText}"
 								Tabs="{Binding Tabs}" />
 

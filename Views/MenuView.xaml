@@ -14,7 +14,7 @@
 		BackgroundColor="{StaticResource SidebarBg}"
 		StrokeThickness="0">
 
-		<Grid RowDefinitions="Auto,Auto,*,Auto" WidthRequest="285">
+		<Grid RowDefinitions="Auto,Auto,*,Auto" WidthRequest="255">
 
 			<!--  ================= HEADER / LOGO =================  -->
 			<Grid
@@ -60,7 +60,7 @@
 							<Border
 								Margin="0,0,0,6"
 								Padding="10,0"
-								HeightRequest="50"
+								HeightRequest="44"
 								StrokeThickness="0">
 								<Border.StrokeShape>
 									<RoundRectangle CornerRadius="12" />

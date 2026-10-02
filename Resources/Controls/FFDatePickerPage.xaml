@@ -5,62 +5,81 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	x:Name="Root">
 
-	<Grid RowDefinitions="Auto, *" RowSpacing="4">
+	<Grid RowDefinitions="Auto,*" RowSpacing="5">
 
+		<!--  Label  -->
 		<Label
 			Grid.Row="0"
-			Margin="2,0,0,0"
+			Margin="1,0,0,0"
 			FontAttributes="Bold"
 			FontSize="11"
 			IsVisible="{Binding HasLabel, Source={x:Reference Root}}"
 			Text="{Binding Label, Source={x:Reference Root}}"
-			TextColor="{StaticResource SparkTextSecondary}" />
+			TextColor="{StaticResource SparkTextPrimary}" />
 
+		<!--  Date field  -->
 		<Border
 			x:Name="PickerBorder"
 			Grid.Row="1"
 			Padding="0"
 			BackgroundColor="{StaticResource White}"
-			HeightRequest="48"
-			Stroke="{StaticResource Gray400}"
+			HeightRequest="46"
+			Stroke="#D7DEE8"
 			StrokeThickness="1">
 
 			<Border.StrokeShape>
-				<RoundRectangle CornerRadius="4" />
+				<RoundRectangle CornerRadius="7" />
 			</Border.StrokeShape>
+
+			<Border.Shadow>
+				<Shadow
+					Brush="#12000000"
+					Opacity="0.08"
+					Radius="3"
+					Offset="0,1" />
+			</Border.Shadow>
 
 			<Border.GestureRecognizers>
 				<TapGestureRecognizer Tapped="OnBorderTapped" />
 			</Border.GestureRecognizers>
 
 			<Grid
-				Padding="12,0"
-				Background="White"
-				ColumnDefinitions="35,*,48">
+				Padding="12,0,10,0"
+				ColumnDefinitions="Auto,*,34"
+				ColumnSpacing="9">
 
+				<!--  Optional filter  -->
 				<CheckBox
 					Grid.Column="0"
-					Margin="0,0,8,0"
+					Margin="0"
+					HorizontalOptions="Start"
 					IsChecked="{Binding IsFilterActive, Source={x:Reference Root}, Mode=TwoWay}"
 					IsVisible="{Binding IsOptionalFilter, Source={x:Reference Root}}"
 					VerticalOptions="Center"
-					Color="{StaticResource Gray800}" />
+					Color="{StaticResource SparkTextPrimary}" />
 
+				<!--  Display value  -->
 				<Label
 					x:Name="DisplayLabel"
 					Grid.Column="1"
-					FontSize="14"
+					FontAttributes="None"
+					FontSize="13.5"
 					InputTransparent="True"
 					LineBreakMode="TailTruncation"
 					MaxLines="1"
 					TextColor="{StaticResource InputText}"
 					VerticalOptions="Center" />
 
+				<!--
+					Native picker.
+					Kept transparent so existing popup/date-selection
+					behavior remains unchanged.
+				-->
 				<DatePicker
 					x:Name="InnerDatePicker"
 					Grid.Column="1"
 					Grid.ColumnSpan="2"
-					BackgroundColor="White"
+					BackgroundColor="Transparent"
 					Date="{Binding SelectedDate, Source={x:Reference Root}, Mode=TwoWay}"
 					DateSelected="InnerDatePicker_DateSelected"
 					HorizontalOptions="Fill"
@@ -68,28 +87,52 @@
 					Opacity="0"
 					VerticalOptions="Fill" />
 
-				<Label
+				<!--  Calendar icon  -->
+				<Border
 					Grid.Column="2"
-					FontFamily="FASolid"
-					FontSize="11"
-					HorizontalOptions="Center"
-					InputTransparent="True"
-					Text="&#xf133;"
-					TextColor="#9CA3AF"
-					VerticalOptions="Center" />
+					Padding="0"
+					BackgroundColor="#F1F5F9"
+					HeightRequest="30"
+					HorizontalOptions="End"
+					StrokeThickness="0"
+					VerticalOptions="Center"
+					WidthRequest="30">
+
+					<Border.StrokeShape>
+						<RoundRectangle CornerRadius="6" />
+					</Border.StrokeShape>
+
+					<Label
+						FontFamily="FASolid"
+						FontSize="12"
+						HorizontalOptions="Center"
+						InputTransparent="True"
+						Text="&#xf133;"
+						TextColor="{StaticResource SparkTextPrimary}"
+						VerticalOptions="Center" />
+				</Border>
 
 			</Grid>
 
+			<!--  Disabled state  -->
 			<Border.Triggers>
+
 				<DataTrigger
 					Binding="{Binding IsPickerEnabled, Source={x:Reference Root}}"
 					TargetType="Border"
 					Value="False">
+
 					<Setter Property="BackgroundColor" Value="{StaticResource Gray100}" />
+
+					<Setter Property="Stroke" Value="#E2E8F0" />
+
 					<Setter Property="Opacity" Value="0.65" />
 				</DataTrigger>
+
 			</Border.Triggers>
 
 		</Border>
+
 	</Grid>
+
 </ContentView>

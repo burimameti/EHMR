@@ -49,7 +49,7 @@ namespace EHMR.Domain.Interfaces
 
         IEnumerable<SparkPickerItem> BuildPickers();
 
-        IEnumerable<SparkButtonItem> BuildButtons();
+        //IEnumerable<SparkButtonItem> BuildButtons();
 
         Task<List<DynamicReportRow>> GenerateAsync(
             DateTime from,

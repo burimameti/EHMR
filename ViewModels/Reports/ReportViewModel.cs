@@ -766,8 +766,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         if(_activeProvider==null)
             return;
 
-        foreach(var button in _activeProvider.BuildButtons())
-            Buttons.Add(button);
+        //foreach(var button in _activeProvider.BuildButtons())
+        //    Buttons.Add(button);
     }
 
     private void BuildSparkGridColumns()

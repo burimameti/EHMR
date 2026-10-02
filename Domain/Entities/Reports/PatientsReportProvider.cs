@@ -383,18 +383,18 @@ namespace EHMR.Domain.Entities.Reports
             }
         }
 
-        public IEnumerable<SparkButtonItem> BuildButtons()
-        {
-            return
-            [
-                new SparkButtonItem
-                {
-                    Label = "Освежи",
-                    IsPrimary = true,
-                    Command = new RelayCommand(() => FiltersChanged?.Invoke())
-                }
-            ];
-        }
+        //public IEnumerable<SparkButtonItem> BuildButtons()
+        //{
+        //    return
+        //    [
+        //        new SparkButtonItem
+        //        {
+        //            Label = "Освежи",
+        //            IsPrimary = true,
+        //            Command = new RelayCommand(() => FiltersChanged?.Invoke())
+        //        }
+        //    ];
+        //}
 
         public async Task<List<DynamicReportRow>> GenerateAsync(DateTime from, DateTime to)
         {
