@@ -37,7 +37,7 @@ public partial class FFPicker : ContentView
 
         if (width < 220)
         {
-            PickerBorder.HeightRequest = 36;
+            PickerBorder.HeightRequest = 38;
             InnerPicker.FontSize = 11.5;
             InnerPicker.Margin = new Thickness(7, 0, 1, 0);
             ArrowButton.WidthRequest = 28;
@@ -47,7 +47,7 @@ public partial class FFPicker : ContentView
         }
         else if (width < 300)
         {
-            PickerBorder.HeightRequest = 39;
+            PickerBorder.HeightRequest = 41;
             InnerPicker.FontSize = 12;
             InnerPicker.Margin = new Thickness(8, 0, 1, 0);
             ArrowButton.WidthRequest = 31;
@@ -57,12 +57,12 @@ public partial class FFPicker : ContentView
         }
         else
         {
-            PickerBorder.HeightRequest = 42;
+            PickerBorder.HeightRequest = 44;
             InnerPicker.FontSize = 13;
-            InnerPicker.Margin = new Thickness(10, 0, 2, 0);
+            InnerPicker.Margin = new Thickness(12, 0, 2, 0);
             ArrowButton.WidthRequest = 34;
             ArrowButton.Margin = new Thickness(2, 5, 5, 5);
-            ArrowIcon.FontSize = 9;
+            ArrowIcon.FontSize = 9.5;
             FieldLabel.FontSize = 11;
         }
     }
