@@ -75,6 +75,7 @@ namespace EHMR.Domain.Entities.Reports
         public void SelectScorePatient(Guid? patientId)
         {
             _selectedScorePatientId=patientId;
+            IsScoreSearchEnabled=patientId.HasValue;
             FiltersChanged?.Invoke();
         }
         public string? SelectedMedicineForExport =>
@@ -122,25 +123,23 @@ namespace EHMR.Domain.Entities.Reports
         public ReportType Type => ReportType.Patients;
         public ReportCategory Category => ReportCategory.Clinical;
 
-        public IEnumerable<SparkGridColumn> Columns => IsScoreSearchEnabled && _selectedScorePatientId.HasValue
-            ? [
-                new() { Header = "ДАТУМ", Key = "HistoryDate", Width = new GridLength(1.2, GridUnitType.Star) },
-                new() { Header = "РЕУМАТОЛОГ", Key = "HistoryRheumatologist", Width = new GridLength(2, GridUnitType.Star) },
-                new() { Header = "СКОР", Key = "HistoryScore", Width = new GridLength(1, GridUnitType.Star) }
-            ]
-            : [
-            new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
-            new() { Header = "ЕЗБО", Key = "Szbo", Width = new GridLength(1.2, GridUnitType.Star) },
-            new() { Header = "СТАТУС", Key = "Status", Width = new GridLength(1.1, GridUnitType.Star) },
-            new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.9, GridUnitType.Star) },
-            new() { Header = "РЕУМАТОЛОГ", Key = "Rheumatologist", Width = new GridLength(1.5, GridUnitType.Star) },
-            new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.3, GridUnitType.Star) },
-            new() { Header = "ПОСЛ. СКОР", Key = "Score", Width = new GridLength(1.1, GridUnitType.Star) },
-            new() { Header = "АДРЕСА", Key = "Address", Width = new GridLength(1.7, GridUnitType.Star) },
-            new() { Header = "ГРАД", Key = "City", Width = new GridLength(1.1, GridUnitType.Star) },
-            new() { Header = "ЛЕК", Key = "Medicine", Width = new GridLength(1.7, GridUnitType.Star) },
-            new() { Header = "ДИЈАГНОЗА", Key = "Diagnosis", Width = new GridLength(1.7, GridUnitType.Star) }
-        ];
+        // Keep the original patient-report grid in every state.
+        // Selecting a patient only narrows the rows; it must never replace the
+        // original columns with a 3-column score-history grid.
+        public IEnumerable<SparkGridColumn> Columns =>
+            [
+                new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
+                new() { Header = "ЕЗБО", Key = "Szbo", Width = new GridLength(1.2, GridUnitType.Star) },
+                new() { Header = "СТАТУС", Key = "Status", Width = new GridLength(1.1, GridUnitType.Star) },
+                new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.9, GridUnitType.Star) },
+                new() { Header = "РЕУМАТОЛОГ", Key = "Rheumatologist", Width = new GridLength(1.5, GridUnitType.Star) },
+                new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.3, GridUnitType.Star) },
+                new() { Header = "ПОСЛ. СКОР", Key = "Score", Width = new GridLength(1.1, GridUnitType.Star) },
+                new() { Header = "АДРЕСА", Key = "Address", Width = new GridLength(1.7, GridUnitType.Star) },
+                new() { Header = "ГРАД", Key = "City", Width = new GridLength(1.1, GridUnitType.Star) },
+                new() { Header = "ЛЕК", Key = "Medicine", Width = new GridLength(1.7, GridUnitType.Star) },
+                new() { Header = "ДИЈАГНОЗА", Key = "Diagnosis", Width = new GridLength(1.7, GridUnitType.Star) }
+            ];
 
         public IEnumerable<SparkTabItem> BuildTabs()
         {
@@ -184,22 +183,42 @@ namespace EHMR.Domain.Entities.Reports
             _statusPicker=CreatePicker(
                 "Статус",
                 _selectedStatusFilter,
-                value => _selectedStatusFilter=value);
+                value =>
+                {
+                    _selectedStatusFilter=value;
+                    _selectedScorePatientId=null;
+                    IsScoreSearchEnabled=false;
+                });
 
             _cityPicker=CreatePicker(
                 "Град",
                 _selectedCityFilter,
-                value => _selectedCityFilter=value);
+                value =>
+                {
+                    _selectedCityFilter=value;
+                    _selectedScorePatientId=null;
+                    IsScoreSearchEnabled=false;
+                });
 
             _rheumatologistPicker=CreatePicker(
                 "Реуматолог",
                 _selectedRheumatologistFilter,
-                value => _selectedRheumatologistFilter=value);
+                value =>
+                {
+                    _selectedRheumatologistFilter=value;
+                    _selectedScorePatientId=null;
+                    IsScoreSearchEnabled=false;
+                });
 
             _diagnosisPicker=CreatePicker(
                 "Дијагноза",
                 _selectedDiagnosisFilter,
-                value => _selectedDiagnosisFilter=value);
+                value =>
+                {
+                    _selectedDiagnosisFilter=value;
+                    _selectedScorePatientId=null;
+                    IsScoreSearchEnabled=false;
+                });
 
             _medicinePicker=CreatePicker(
                 "Лек",
@@ -208,17 +227,33 @@ namespace EHMR.Domain.Entities.Reports
                 {
                     _selectedMedicineFilter=value;
                     _selectedMedicineId=_medicineIdsByDisplay.TryGetValue(value, out var id) ? id : null;
+
+                    // Choosing any report picker returns the grid to the normal
+                    // all-patient mode. The picker filter is then applied to all
+                    // patients instead of remaining locked to the searched patient.
+                    _selectedScorePatientId=null;
+                    IsScoreSearchEnabled=false;
                 });
 
             _genderPicker=CreatePicker(
                 "Пол",
                 _selectedGenderFilter,
-                value => _selectedGenderFilter=value);
+                value =>
+                {
+                    _selectedGenderFilter=value;
+                    _selectedScorePatientId=null;
+                    IsScoreSearchEnabled=false;
+                });
 
             _scorePicker=CreatePicker(
                 "Скор",
                 _selectedScoreFilter,
-                value => _selectedScoreFilter=value);
+                value =>
+                {
+                    _selectedScoreFilter=value;
+                    _selectedScorePatientId=null;
+                    IsScoreSearchEnabled=false;
+                });
 
             var pickers = new List<SparkPickerItem>
             {
@@ -365,15 +400,13 @@ namespace EHMR.Domain.Entities.Reports
                 List<DynamicReportRow> rows;
                 if(_selectedScorePatientId.HasValue)
                 {
+                    // Patient search is a row filter only. Preserve every original
+                    // patient-grid field and show the complete record for the
+                    // selected patient.
                     var selectedPatient=patients.FirstOrDefault(x => x.Id==_selectedScorePatientId.Value);
-                    rows=selectedPatient is null ? [] : selectedPatient.Scores
-                        .Where(x => x.RecordedAt>=from && x.RecordedAt<=to)
-                        .OrderByDescending(x => x.RecordedAt)
-                        .Select(score => new DynamicReportRow
-                        {
-                            Cells=[score.RecordedAt.ToString("dd.MM.yyyy"), score.Encounter?.Doctor?.FullName ?? selectedPatient.Doctor?.FullName ?? "-", score.ScoreText ?? "-"],
-                            IsAlertSeverity=false
-                        }).ToList();
+                    rows=selectedPatient is null
+                        ? []
+                        : [CreateRow(selectedPatient, from, to)];
                 }
                 else
                 {
