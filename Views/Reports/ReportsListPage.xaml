@@ -161,6 +161,25 @@
 
 				<VerticalStackLayout Spacing="10">
 
+					<!-- Medicine filter: explicit medicine selection for consumption reports -->
+					<Grid
+						ColumnDefinitions="Auto,Auto,*"
+						ColumnSpacing="10"
+						IsVisible="{Binding IsMedicineConsumptionSelected}">
+						<CheckBox IsChecked="{Binding IsMedicineFilterEnabled, Mode=TwoWay}" VerticalOptions="Center" />
+						<Label
+							Grid.Column="1"
+							Text="Пребарување по лек"
+							VerticalOptions="Center"
+							TextColor="{StaticResource SparkTextPrimary}" />
+						<controls:FFPicker2
+							Grid.Column="2"
+							ItemsSource="{Binding MedicineFilterOptions}"
+							IsVisible="{Binding IsMedicineFilterEnabled}"
+							Placeholder="Избери лек"
+							SelectedItem="{Binding SelectedMedicineFilter, Mode=TwoWay}" />
+					</Grid>
+
 					<!-- Patient history selector: same suggestion UX as Dashboard -->
 					<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
 						<controls:SparkExplorerHeaderView
