@@ -403,7 +403,7 @@
 									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
 										<controls:CrudSectionHeader
 											Grid.Column="0"
-											Title="ЛЕКОВИ"
+											Title="ТЕКОВНА ТЕРАПИЈА"
 											Padding="8,5"
 											BackgroundColor="{StaticResource SparkAccentTealBg}"
 											LineColor="{StaticResource SparkAccentTeal}"
@@ -510,7 +510,7 @@
 												FontAttributes="Bold"
 												FontSize="8"
 												HorizontalOptions="Center"
-												Text="АКТИВНА"
+												Text="ТЕКОВНА"
 												TextColor="White"
 												VerticalOptions="Center" />
 										</Border>
