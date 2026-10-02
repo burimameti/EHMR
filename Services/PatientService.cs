@@ -806,6 +806,7 @@ public class PatientService : IPatientService
     {
         Id=pm.Id,
         PatientId=pm.PatientId,
+        EncounterId=pm.EncounterId,
         MedicineId=pm.MedicineId,
         MedicineName=pm.Medicine?.Name??"",
         ApplicationRegimeId=pm.ApplicationRegimeId,
