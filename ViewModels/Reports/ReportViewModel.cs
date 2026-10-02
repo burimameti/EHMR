@@ -90,11 +90,11 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         get;
     } = new()
     {
-        "Месечно", "Квартално", "Полугодишно", "Годишно", "Прилагодено"
+        "Сите", "Месечно", "Квартално", "Полугодишно", "Годишно", "Прилагодено"
     };
 
     [ObservableProperty]
-    private string selectedPeriodTypeLabel = "Месечно";
+    private string selectedPeriodTypeLabel = "Сите";
 
     public bool IsCustomPeriod => SelectedPeriodTypeLabel=="Прилагодено";
 
@@ -134,6 +134,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                 break;
 
             case "Прилагодено":
+            case "Сите":
                 return;
         }
     }
@@ -142,6 +143,44 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     private async Task ApplyPeriodAndRegenerateAsync()
     {
         await GenerateReportAsync();
+    }
+
+    partial void OnStartDateChanged(DateTime value)
+    {
+        if(_activeProvider is null || SelectedPeriodTypeLabel=="Сите")
+            return;
+
+        if(SelectedPeriodTypeLabel!="Прилагодено")
+            SelectedPeriodTypeLabel="Прилагодено";
+
+        _=GenerateReportDebouncedAsync();
+    }
+
+    partial void OnEndDateChanged(DateTime value)
+    {
+        if(_activeProvider is null || SelectedPeriodTypeLabel=="Сите")
+            return;
+
+        if(SelectedPeriodTypeLabel!="Прилагодено")
+            SelectedPeriodTypeLabel="Прилагодено";
+
+        _=GenerateReportDebouncedAsync();
+    }
+
+    private async Task GenerateReportDebouncedAsync()
+    {
+        _filterDebounce?.Cancel();
+        _filterDebounce?.Dispose();
+        _filterDebounce=new CancellationTokenSource();
+
+        try
+        {
+            await Task.Delay(150, _filterDebounce.Token);
+            await GenerateReportAsync();
+        }
+        catch(OperationCanceledException)
+        {
+        }
     }
 
     #endregion
@@ -408,7 +447,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         SearchText=string.Empty;
 
-        SelectedPeriodTypeLabel="Месечно";
+        SelectedPeriodTypeLabel="Сите";
         RecalculatePeriodRange();
 
         InitializeSparkControls();
@@ -426,6 +465,12 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         {
             patientsProvider.SetMedicineFilterEnabled(value);
             InitializeSparkControls();
+            if(value && string.Equals(patientsProvider.SelectedMedicineForExport, null, StringComparison.Ordinal))
+            {
+                // The medicine filter is a required mode: generation waits until
+                // a concrete medicine is selected.
+                return;
+            }
             _=GenerateReportAsync();
         }
     }
@@ -774,6 +819,16 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     protected override void ResetFilters()
     {
         SearchText=string.Empty;
+
+        if(_activeProvider is PatientsReportProvider patientsProvider)
+            patientsProvider.ResetReportFilters();
+
+        IsMedicineSearchEnabled=false;
+        IsScoreSearchEnabled=false;
+        ScorePatientSearchText=string.Empty;
+        SelectedScorePatientSuggestion=null;
+        ScorePatientSuggestions.Clear();
+        ShowScorePatientSuggestions=false;
     }
 
     protected override void OnPageProjected(ObservableCollection<DynamicReportRow> page)
@@ -795,6 +850,17 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         if(_activeProvider==null)
             return;
 
+        if(_activeProvider is PatientsReportProvider patientsProvider &&
+           patientsProvider.IsMedicineFilterEnabled &&
+           patientsProvider.SelectedMedicineForExport is null)
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Изберете лек",
+                "Не сте избрале лек.",
+                "ОК");
+            return;
+        }
+
         _generateCts?.Cancel();
         _generateCts?.Dispose();
 
@@ -807,9 +873,11 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         {
             await ExecuteSafeAsync(async () =>
             {
-                var rows = await _activeProvider.GenerateAsync(
-                    StartDate.Date,
-                    EndDate.Date.AddDays(1));
+                var allPeriod=SelectedPeriodTypeLabel=="Сите";
+                var from=allPeriod ? DateTime.MinValue : StartDate.Date;
+                var to=allPeriod ? DateTime.MaxValue : EndDate.Date.AddDays(1);
+
+                var rows = await _activeProvider.GenerateAsync(from, to);
 
                 if(token.IsCancellationRequested)
                     return;
@@ -844,11 +912,13 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         // 1. Период префикс
         string periodPrefix = SelectedPeriodTypeLabel switch
         {
+            "Сите" => "Извештај за пациенти",
             "Месечно" => "Месечен извештај",
             "Квартално" => "Квартален извештај",
             "Полугодишно" => "Полугодишен извештај",
             "Годишно" => "Годишен извештај",
-            _ => "Периодичен извештај"
+            "Прилагодено" => "Прилагоден извештај",
+            _ => "Извештај за пациенти"
         };
 
         titleBuilder.Add(periodPrefix);
