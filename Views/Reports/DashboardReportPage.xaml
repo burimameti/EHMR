@@ -152,14 +152,6 @@
 										<sc:FFDatePicker HasLabel="False" SelectedDate="{Binding EndDate, Mode=TwoWay}" />
 									</HorizontalStackLayout>
 
-									<sc:FFButton
-										Grid.Column="3"
-										ButtonKind="Secondary"
-										Command="{Binding ApplyPeriodAndRegenerateCommand}"
-										ContentPadding="16,0"
-										HeightRequestEx="45"
-										IsVisible="{Binding CanCreate}"
-										Text="Примени период" />
 
 									<sc:FFButton
 										Grid.Column="4"
