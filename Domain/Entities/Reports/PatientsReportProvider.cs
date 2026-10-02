@@ -98,6 +98,50 @@ namespace EHMR.Domain.Entities.Reports
             }
         }
 
+        public void ResetReportFilters()
+        {
+            _selectedStatusFilter="Сите";
+            _selectedAllergyFilter="Сите";
+            _selectedCityFilter="Сите";
+            _selectedRheumatologistFilter="Сите";
+            _selectedDiagnosisFilter="Сите";
+            _selectedMedicineFilter="Сите";
+            _selectedGenderFilter="Сите";
+            _selectedScoreFilter="Сите";
+            _selectedMedicineId=null;
+            _selectedMedicineTotalQuantity=null;
+            _selectedScorePatientId=null;
+            IsScoreSearchEnabled=false;
+
+            _refreshingPickers=true;
+            try
+            {
+                foreach(var picker in new[]
+                {
+                    _statusPicker, _cityPicker, _rheumatologistPicker,
+                    _diagnosisPicker, _medicinePicker, _genderPicker, _scorePicker
+                })
+                {
+                    if(picker is null)
+                        continue;
+
+                    if(picker.Items.Contains("Сите"))
+                        picker.SelectedItem="Сите";
+                }
+            }
+            finally
+            {
+                _refreshingPickers=false;
+            }
+
+            foreach(var tab in new[] { _allTab, _activeTab, _inactiveTab, _allergyTab })
+                if(tab is not null)
+                    tab.IsSelected=false;
+
+            _allTab?.IsSelected=true;
+            FiltersChanged?.Invoke();
+        }
+
         private SparkTabItem? _allTab, _allergyTab, _activeTab, _inactiveTab;
 
         private SparkPickerItem? _statusPicker;
@@ -353,6 +397,7 @@ namespace EHMR.Domain.Entities.Reports
 
         public async Task<List<DynamicReportRow>> GenerateAsync(DateTime from, DateTime to)
         {
+            var allPeriod=from==DateTime.MinValue && to==DateTime.MaxValue;
             try
             {
                 Debug.WriteLine($"\n[Patients] ========== START GENERATE ==========");
@@ -503,12 +548,14 @@ namespace EHMR.Domain.Entities.Reports
         {
             // Keep report rows period-scoped while the patient search itself
             // remains global across all registered patients.
-            var query = patients.Where(x =>
-                (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
-                x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to)||
-                x.PatientMedicines.Any(pm =>
-                    pm.StartDate<=to &&
-                    (!pm.EndDate.HasValue||pm.EndDate.Value>=from)));
+            var query = allPeriod
+                ? patients.AsEnumerable()
+                : patients.Where(x =>
+                    (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
+                    x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to)||
+                    x.PatientMedicines.Any(pm =>
+                        pm.StartDate<=to &&
+                        (!pm.EndDate.HasValue||pm.EndDate.Value>=from)));
 
             if(_selectedStatusFilter!="Сите")
             {
