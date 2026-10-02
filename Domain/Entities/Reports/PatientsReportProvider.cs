@@ -10,6 +10,14 @@ using System.Diagnostics;
 
 namespace EHMR.Domain.Entities.Reports
 {
+    public sealed class ReportPatientSuggestion
+    {
+        public Guid PatientId { get; init; }
+        public string FullName { get; init; } = string.Empty;
+        public string NationalId { get; init; } = string.Empty;
+        public string SzboNumber { get; init; } = string.Empty;
+    }
+
     public sealed class PatientsReportProvider : IReportProvider
     {
         private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
@@ -25,8 +33,38 @@ namespace EHMR.Domain.Entities.Reports
         private Guid? _selectedMedicineId;
         private readonly Dictionary<string, Guid> _medicineIdsByDisplay = new(StringComparer.CurrentCultureIgnoreCase);
         private decimal? _selectedMedicineTotalQuantity;
+        private Guid? _selectedScorePatientId;
+        private List<Patient> _loadedPatients = [];
 
         public bool IsMedicineFilterEnabled { get; private set; }
+        public bool IsScoreSearchEnabled { get; private set; }
+        public Guid? SelectedScorePatientId => _selectedScorePatientId;
+
+        public void SetScoreSearchEnabled(bool enabled)
+        {
+            IsScoreSearchEnabled=enabled;
+            if(!enabled) _selectedScorePatientId=null;
+        }
+
+        public IReadOnlyList<ReportPatientSuggestion> SearchScorePatients(string query)
+        {
+            if(!IsScoreSearchEnabled || string.IsNullOrWhiteSpace(query)) return [];
+            var term=query.Trim();
+            return _loadedPatients.Where(x =>
+                (x.FullName?.Contains(term,StringComparison.OrdinalIgnoreCase)??false) ||
+                (x.PatientNumber?.Contains(term,StringComparison.OrdinalIgnoreCase)??false) ||
+                (!string.IsNullOrWhiteSpace(x.NationalId) && x.NationalId.Contains(term,StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrWhiteSpace(x.SzboNumber) && x.SzboNumber.Contains(term,StringComparison.OrdinalIgnoreCase)))
+                .OrderBy(x => x.FullName).Take(8)
+                .Select(x => new ReportPatientSuggestion { PatientId=x.Id, FullName=x.FullName??string.Empty, NationalId=x.NationalId??string.Empty, SzboNumber=x.SzboNumber??string.Empty })
+                .ToList();
+        }
+
+        public void SelectScorePatient(Guid? patientId)
+        {
+            _selectedScorePatientId=patientId;
+            FiltersChanged?.Invoke();
+        }
         public string? SelectedMedicineForExport =>
             IsMedicineFilterEnabled && _selectedMedicineFilter!="Сите"
                 ? _selectedMedicineFilter
@@ -72,8 +110,13 @@ namespace EHMR.Domain.Entities.Reports
         public ReportType Type => ReportType.Patients;
         public ReportCategory Category => ReportCategory.Clinical;
 
-        public IEnumerable<SparkGridColumn> Columns =>
-        [
+        public IEnumerable<SparkGridColumn> Columns => IsScoreSearchEnabled && _selectedScorePatientId.HasValue
+            ? [
+                new() { Header = "ДАТУМ", Key = "HistoryDate", Width = new GridLength(1.2, GridUnitType.Star) },
+                new() { Header = "РЕУМАТОЛОГ", Key = "HistoryRheumatologist", Width = new GridLength(2, GridUnitType.Star) },
+                new() { Header = "СКОР", Key = "HistoryScore", Width = new GridLength(1, GridUnitType.Star) }
+            ]
+            : [
             new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
             new() { Header = "ЕЗБО", Key = "Szbo", Width = new GridLength(1.2, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "Status", Width = new GridLength(1.1, GridUnitType.Star) },
@@ -284,8 +327,10 @@ namespace EHMR.Domain.Entities.Reports
                     .Include(x => x.Diagnoses)
                         .ThenInclude(x => x.Mkb10Code)
                     .Include(x => x.TherapyCycles)
-                    .Include(x => x.Scores)
+                     .Include(x => x.Scores)
                         .ThenInclude(x => x.Encounter)
+                            .ThenInclude(x => x.Doctor)
+                                .ThenInclude(x => x!.User)
                     .AsNoTracking()
                     .Where(x =>
                         (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
@@ -298,6 +343,7 @@ namespace EHMR.Domain.Entities.Reports
                 stopwatch.Stop();
                 Debug.WriteLine($"[Patients] [4] Query completed in {stopwatch.ElapsedMilliseconds}ms ✓");
                 Debug.WriteLine($"[Patients] [5] Patients loaded: {patients.Count}");
+                _loadedPatients=patients;
 
                 Debug.WriteLine($"[Patients] [6] Refreshing pickers...");
                 RefreshPickers(patients);
@@ -308,9 +354,23 @@ namespace EHMR.Domain.Entities.Reports
                 Debug.WriteLine($"[Patients] [8] After filtering: {filtered_list.Count} patients");
 
                 Debug.WriteLine($"[Patients] [9] Building report rows...");
-                var rows = filtered_list
-                    .Select(patient => CreateRow(patient, from, to))
-                    .ToList();
+                List<DynamicReportRow> rows;
+                if(IsScoreSearchEnabled && _selectedScorePatientId.HasValue)
+                {
+                    var selectedPatient=patients.FirstOrDefault(x => x.Id==_selectedScorePatientId.Value);
+                    rows=selectedPatient is null ? [] : selectedPatient.Scores
+                        .Where(x => x.RecordedAt>=from && x.RecordedAt<=to)
+                        .OrderByDescending(x => x.RecordedAt)
+                        .Select(score => new DynamicReportRow
+                        {
+                            Cells=[score.RecordedAt.ToString("dd.MM.yyyy"), score.Encounter?.Doctor?.FullName ?? selectedPatient.Doctor?.FullName ?? "-", score.ScoreText ?? "-"],
+                            IsAlertSeverity=false
+                        }).ToList();
+                }
+                else
+                {
+                    rows=filtered_list.Select(patient => CreateRow(patient, from, to)).ToList();
+                }
 
                 _selectedMedicineTotalQuantity = _selectedMedicineId.HasValue
                     ? patients
