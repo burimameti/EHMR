@@ -17,7 +17,7 @@ public partial class ReportHistoryViewModel
 {
     private readonly IReportHistoryService _reportService;
 
-    protected override string ModuleName => "reports";
+    protected override string ModuleName => Modules.Reports;
 
     [ObservableProperty] private ObservableCollection<ReportHistory> filteredReports = new();
     [ObservableProperty] private string filteredReportsCount = "";
