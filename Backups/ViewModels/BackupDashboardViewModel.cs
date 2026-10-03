@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Backups.Interfaces;
 using EHMR.Domain.Entities.Rbac;
+using EHMR.Domain.Interfaces;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 using System.Collections.Generic;
