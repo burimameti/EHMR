@@ -35,7 +35,7 @@
 						<HorizontalStackLayout Spacing="10">
 							<controls:FFButton
 								ButtonKind="Secondary"
-								Command="{Binding ToggleEditModeCommand}"
+								Command="{Binding ToggleEditModeCommand}" IsEnabled="{Binding CanUpdate}"
 								HeightRequestEx="40"
 								IsVisible="{Binding Id, Converter={StaticResource GuidToBoolConverter}}"
 								Text="Уреди" />
@@ -46,7 +46,7 @@
 								Text="Назад" />
 							<controls:FFButton
 								BackgroundColorEx="{StaticResource SidebarActiveBg}"
-								Command="{Binding SaveCommand}"
+								Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}"
 								HeightRequestEx="40"
 								IsVisible="{Binding IsReadOnly, Converter={StaticResource InverseBoolConverter}}"
 								Text="Зачувај"
@@ -83,6 +83,7 @@
 										Text="Пациент *" />
 									<controls:FFPicker
 										Grid.Column="1"
+										IsEnabled="{Binding CanEditForm}"
 										BindingContext="{Binding FullName}"
 										ItemsSource="{Binding PatientsList}"
 										Label=""
@@ -134,6 +135,7 @@
 											Text="Лек *" />
 										<controls:FFInput
 											Grid.Column="1"
+											IsEnabled="{Binding CanEditForm}"
 											Placeholder="Внесете име на лек..."
 											Text="{Binding Medication}" />
 									</Grid>
@@ -190,6 +192,7 @@
 									<Border Style="{StaticResource TextAreaFieldBoxStyle}">
 										<Editor
 											AutoSize="TextChanges"
+											IsEnabled="{Binding CanEditForm}"
 											BackgroundColor="Transparent"
 											FontSize="13"
 											MinimumHeightRequest="150"
