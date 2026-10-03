@@ -34,7 +34,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     [ObservableProperty] private string selectedDoctor = "All";
     [ObservableProperty] private bool useCyrillicSearch = true;
 
-    protected override string ModuleName => "encounters";
+    protected override string ModuleName => Modules.Encounters;
     protected override string PermissionDeniedMessage => "Немате авторизација за креирање прегледи.";
     protected override Func<Encounter, Guid?>? DoctorOwnerSelector => e => e.DoctorId;
     // Base DetailRoute is not used directly here since Select/New/Edit each
