@@ -43,7 +43,7 @@ public partial class TherapyDetailsViewModel : ObservableObject
         _dialogService=dialogService;
         _authService=authService;
 
-        IsReadOnly=!_authService.CanAccessModule(Modules.Therapy);
+        IsReadOnly=!CanUpdate;
     }
 
     [RelayCommand]
