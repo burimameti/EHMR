@@ -19,6 +19,7 @@ public partial class BackupDashboardViewModel : ObservableObject
     private readonly IDatabaseProviderResolver _databaseResolver;
     private readonly IStorageProviderResolver _storageResolver;
     private readonly IEnumerable<IBackupStorageProvider> _storageProviders;
+    private readonly IAuthorizationService _authorization;
 
     [ObservableProperty]
     private string lastBackup = "Never";
@@ -62,6 +63,7 @@ public partial class BackupDashboardViewModel : ObservableObject
         _databaseResolver=databaseResolver;
         _storageResolver=storageResolver;
         _storageProviders=storageProviders;
+        _authorization=authorization;
     }
 
     [RelayCommand]
