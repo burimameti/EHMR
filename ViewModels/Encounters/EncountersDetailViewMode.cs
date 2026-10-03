@@ -27,7 +27,7 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
         ISelectedItemService<Patient> selectedPatientService, IPatientClinicalReportService clinicalReportService,
         IAuthorizationService authorizationService)
 
-        : base(service, navigationService, userDialogService)
+        : base(service, navigationService, userDialogService, authorizationService)
     {
         _selectedItemService=selectedItemService;
         _selectedPatientService=selectedPatientService;

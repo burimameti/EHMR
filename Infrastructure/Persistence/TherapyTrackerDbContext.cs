@@ -478,11 +478,11 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     private static void ConfigureRelationships(ModelBuilder modelBuilder)
     {
         // Inventory -> Medicine
-        modelBuilder.Entity<Inventory>()
-            .HasOne(x => x.Medicine)
-            .WithMany()
-            .HasForeignKey(x => x.MedicineId)
-            .OnDelete(DeleteBehavior.Restrict);
+        //modelBuilder.Entity<Inventory>()
+        //    .HasOne(x => x.Medicine)
+        //    .WithMany()
+        //    .HasForeignKey(x => x.MedicineId)
+        //    .OnDelete(DeleteBehavior.Restrict);
 
         // Appointment -> Doctor
         modelBuilder.Entity<Appointment>()
@@ -572,7 +572,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     {
         modelBuilder.Entity<Patient>().HasIndex("FirstName", "LastName");
         modelBuilder.Entity<Appointment>().HasIndex(x => x.ScheduledStart);
-        modelBuilder.Entity<Inventory>().HasIndex(x => x.MedicineId);
+      //  modelBuilder.Entity<Inventory>().HasIndex(x => x.MedicineId);
         modelBuilder.Entity<Medicine>().HasIndex(x => x.Name);
         modelBuilder.Entity<Diagnosis>().HasIndex(x => x.PatientId);
         modelBuilder.Entity<TherapyCycle>().HasIndex(x => x.PatientId);

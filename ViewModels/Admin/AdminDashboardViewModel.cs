@@ -87,7 +87,7 @@ public partial class AdminDashboardViewModel : ObservableObject
         IMkb10CodeService mkbImportService,
         IBackupHistoryRepository backupService,
         ISelectedItemService<BackupHistory> selectedBackup,
-        INavigationService navigationService)
+        INavigationService navigationService, IAuthorizationService authorization)
     {
 
         _userService=userService;
@@ -126,7 +126,7 @@ public partial class AdminDashboardViewModel : ObservableObject
 
 
 
-        BuildCards();
+        BuildCards(); }
 
     public bool CanView => _authorization.CanPerform(Modules.Administration, ModuleAction.View);
     public bool CanManage => _authorization.CanPerform(Modules.Administration, ModuleAction.Manage);
@@ -134,7 +134,7 @@ public partial class AdminDashboardViewModel : ObservableObject
     public bool CanViewMkb => _authorization.CanPerform(Modules.MKBCodes, ModuleAction.View);
     public bool CanViewBackups => _authorization.CanPerform(Modules.Backups, ModuleAction.View);
 
-    }
+    
 
 
 

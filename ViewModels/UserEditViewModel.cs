@@ -221,16 +221,30 @@ public partial class UserEditViewModel : ObservableObject
     private void BuildModulePermissions(IEnumerable<string> modules)
     {
         ModulePermissions.Clear();
+
         foreach(var moduleKey in modules)
         {
             var editor = new ModulePermissionWrapper(moduleKey);
-            var hasExplicit = User.Permissions?.TryGetValue(moduleKey, out var explicitActions) == true;
-            var actions = hasExplicit
-                ? explicitActions
-                : RolePermissionMatrix.GetActions(moduleKey, User.Role);
+
+            ModuleAction actions;
+
+            if(User.Permissions is not null&&
+                User.Permissions.TryGetValue(moduleKey, out var explicitActions))
+            {
+                actions=explicitActions;
+            }
+            else
+            {
+                actions=RolePermissionMatrix.GetActions(moduleKey, User.Role);
+            }
 
             foreach(var action in ModulePermissionCatalog.GetActions(moduleKey))
-                editor.Actions.Add(new ActionPermissionWrapper(action, actions.HasFlag(action)));
+            {
+                editor.Actions.Add(
+                    new ActionPermissionWrapper(
+                        action,
+                        actions.HasFlag(action)));
+            }
 
             ModulePermissions.Add(editor);
         }
