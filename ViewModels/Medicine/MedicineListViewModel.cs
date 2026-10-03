@@ -15,7 +15,7 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
 
-    protected override string ModuleName => "medicines";
+    protected override string ModuleName => Modules.Inventory;
     protected override string DetailRoute => AppRoutes.Medicines.Detail;
     protected override string PermissionDeniedMessage => "Немате авторизација за додавање нов медикамент.";
 
