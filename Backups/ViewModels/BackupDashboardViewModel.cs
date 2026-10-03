@@ -58,7 +58,7 @@ public partial class BackupDashboardViewModel : ObservableObject
         IBackupHistoryRepository historyRepository,
         IDatabaseProviderResolver databaseResolver,
         IStorageProviderResolver storageResolver,
-        IEnumerable<IBackupStorageProvider> storageProviders)
+        IEnumerable<IBackupStorageProvider> storageProviders, IAuthorizationService authorization)
     {
         _historyRepository=historyRepository;
         _databaseResolver=databaseResolver;
