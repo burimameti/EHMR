@@ -938,7 +938,7 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task NewEncounter()
     {
-        if(!CanManageAppointments)
+        if(!CanCreateEncounter)
         {
             await _userDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за додавање на нов преглед.", "OK");
             return;
@@ -950,6 +950,11 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task AddPatient()
     {
+        if(!CanCreatePatient)
+        {
+            await _userDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за додавање нов пациент.", "OK");
+            return;
+        }
         _selectedPatient.SelectedItem=null;
         _selectedPatient.OpenInEditMode=true;
         await navigationService.GoToAsync(AppRoutes.Patients.Detail);
@@ -976,6 +981,11 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task NewEncounterForSelected(Patient? patient)
     {
+        if(!CanCreateEncounter)
+        {
+            await _userDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за креирање нов преглед.", "OK");
+            return;
+        }
         if(patient is null)
         {
             await _userDialogService.ShowAlertAsync("Внимание", "Одберете пациент прво.");
