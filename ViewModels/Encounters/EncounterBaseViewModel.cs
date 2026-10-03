@@ -131,6 +131,50 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     public ObservableCollection<string> ScoreOptions { get; } = new(
         Enumerable.Range(0, 11).Select(x => x.ToString()));
 
+    [RelayCommand]
+    public async Task AddScoreAsync()
+    {
+        if(!CanUpdate)
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за промена на прегледот.", "ОК");
+            return;
+        }
+
+        var value=await UserDialogService.ShowPromptAsync(
+            "Нов скор",
+            "Внесете нова вредност на скор.",
+            "Додај",
+            "Откажи",
+            "Пример: 7.5");
+
+        if(string.IsNullOrWhiteSpace(value))
+            return;
+
+        value=value.Trim();
+        if(!ScoreOptions.Contains(value, StringComparer.OrdinalIgnoreCase))
+            ScoreOptions.Add(value);
+
+        ScoreText=value;
+        OnPropertyChanged(nameof(ScoreOptions));
+    }
+
+    [RelayCommand]
+    public void RemoveScore(string? score)
+    {
+        if(!CanUpdate || string.IsNullOrWhiteSpace(score))
+            return;
+
+        var existing=ScoreOptions.FirstOrDefault(x =>
+            string.Equals(x, score, StringComparison.OrdinalIgnoreCase));
+        if(existing is not null)
+            ScoreOptions.Remove(existing);
+
+        if(string.Equals(ScoreText, score, StringComparison.OrdinalIgnoreCase))
+            ScoreText=string.Empty;
+
+        OnPropertyChanged(nameof(ScoreOptions));
+    }
+
     [ObservableProperty]
     private string pageTitle = string.Empty;
 
