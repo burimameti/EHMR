@@ -31,6 +31,10 @@
 			StrokeShape="RoundRectangle 8"
 			StrokeThickness="1">
 
+			<Border.GestureRecognizers>
+				<PointerGestureRecognizer PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" />
+			</Border.GestureRecognizers>
+
 			<Grid ColumnDefinitions="*,34" ColumnSpacing="0">
 
 				<!--  Invisible native picker: only provides the popup and tap target  -->
@@ -70,6 +74,12 @@
 					VerticalOptions="Center" />
 
 			</Grid>
+			<Border.Triggers>
+				<DataTrigger Binding="{Binding IsPointerOver, Source={x:Reference Root}}" TargetType="Border" Value="True">
+					<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
+					<Setter Property="StrokeThickness" Value="1.5" />
+				</DataTrigger>
+			</Border.Triggers>
 		</Border>
 
 	</Grid>
