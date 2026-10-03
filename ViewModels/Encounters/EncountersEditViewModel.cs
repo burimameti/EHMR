@@ -130,7 +130,7 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     }
 
     private bool CanModifyEncounter => CanUpdate;
-    private bool CanChangeStatus => CanUpdate || CanApprove;
+    public bool CanChangeStatus => CanUpdate || CanApprove;
 
     public async Task LoadAsync()
     {
