@@ -29,7 +29,6 @@ public partial class UserEditViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<ModulePermissionWrapper> _modulePermissions = new();
 
-    public ObservableCollection<ModulePermissionWrapper> ModulePermissions => _modulePermissions;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEditMode))]
