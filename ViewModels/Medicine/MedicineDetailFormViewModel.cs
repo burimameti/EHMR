@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ public partial class MedicineDetailFormViewModel : ObservableObject
     private readonly ISelectedItemService<Medicine> _selectionService;
     private readonly INavigationService _navigationService;
     private readonly IUserDialogService _dialogService;
+    private readonly IAuthorizationService _authorization;
 
     private Medicine? _originalMedicine;
     private bool _isNewMode;
@@ -61,6 +63,10 @@ public partial class MedicineDetailFormViewModel : ObservableObject
     }
 
     public bool IsEditMode => !IsReadOnly;
+    public bool CanCreate => _authorization.CanPerform(Modules.Inventory, ModuleAction.Create);
+    public bool CanUpdate => _authorization.CanPerform(Modules.Inventory, ModuleAction.Edit);
+    public bool CanDelete => _authorization.CanPerform(Modules.Inventory, ModuleAction.Delete);
+    public bool CanEditForm => _isNewMode ? CanCreate : CanUpdate;
 
     public string HeaderTitle =>
         _isNewMode
@@ -88,12 +94,14 @@ public partial class MedicineDetailFormViewModel : ObservableObject
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
         ISelectedItemService<Medicine> selectionService,
         INavigationService navigationService,
-        IUserDialogService dialogService)
+        IUserDialogService dialogService,
+        IAuthorizationService authorization)
     {
         _dbFactory=dbFactory;
         _selectionService=selectionService;
         _navigationService=navigationService;
         _dialogService=dialogService;
+        _authorization=authorization;
 
         Initialize();
     }
