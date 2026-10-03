@@ -9,6 +9,15 @@ public partial class FFSearchBox : ContentView
     {
         InitializeComponent();
     }
+    public static readonly BindableProperty IsPointerOverProperty =
+        BindableProperty.Create(nameof(IsPointerOver), typeof(bool), typeof(FFSearchBox), false);
+
+    public bool IsPointerOver
+    {
+        get => (bool)GetValue(IsPointerOverProperty);
+        private set => SetValue(IsPointerOverProperty, value);
+    }
+
     public static readonly BindableProperty TextProperty =
         BindableProperty.Create(nameof(Text), typeof(string), typeof(FFSearchBox), string.Empty, BindingMode.TwoWay);
 
@@ -49,6 +58,10 @@ public partial class FFSearchBox : ContentView
         get => (System.Windows.Input.ICommand?)GetValue(SearchCommandProperty);
         set => SetValue(SearchCommandProperty, value);
     }
+    private void OnPointerEntered(object sender, PointerEventArgs e) => IsPointerOver=true;
+
+    private void OnPointerExited(object sender, PointerEventArgs e) => IsPointerOver=false;
+
     private void OnEntryTextChanged(object sender, TextChangedEventArgs e)
     {
         // Го проследува внесениот текст без локална логика за пребарување.
