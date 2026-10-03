@@ -38,7 +38,7 @@ public class MenuService : IMenuService
                     .ToList()
             })
             .Where(g =>
-                _auth.CanAccessModule(g.Module)
+                _auth.CanPerform(g.Module, ModuleAction.View)
                 ||g.Items.Any())
             .ToList();
 
