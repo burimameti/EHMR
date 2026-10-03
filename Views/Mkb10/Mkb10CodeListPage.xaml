@@ -40,6 +40,7 @@
 									BackgroundColor="{StaticResource SparkAccentTeal}"
 									TextColor="White"
 									Command="{Binding NewCommand}"
+									IsEnabled="{Binding CanCreate}"
 									HeightRequest="45"
 									Style="{StaticResource TabButtonActiveStyle}"
 									Text="Нов код"
