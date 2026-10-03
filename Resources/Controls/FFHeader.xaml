@@ -74,6 +74,7 @@
 					BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
 					Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
 					HeightRequest="42"
+					IsEnabled="{Binding PrimaryButtonIsEnabled, Source={x:Reference Root}}"
 					IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
 					Style="{StaticResource TabButtonActiveStyle}"
 					Text="{Binding PrimaryButtonText, Source={x:Reference Root}}"
