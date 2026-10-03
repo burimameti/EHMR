@@ -937,7 +937,7 @@
 														<Label
 															Grid.Column="1"
 															FontSize="10"
-															Text="{Binding ScoreHistory[0].RecordedAt, StringFormat='{0:dd.MM.yyyy}', TargetNullValue='—'}"
+															Text="{Binding CurrentPatientScoreDate, StringFormat='{0:dd.MM.yyyy}', TargetNullValue='—'}"
 															TextColor="{StaticResource SparkTextSecondary}" />
 													</Grid>
 												</Border>
