@@ -32,7 +32,8 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     public bool CanSaveAppointment =>
         IsNewAppointment
             ? CanCreate && CanSchedule
-            : CanUpdate && CanScheduleForCurrentChange;
+            : (CanUpdate && CanScheduleForCurrentChange) ||
+              (IsStatusChangeAuthorized && !HasScheduleChange);
 
     public bool CanEditAppointment =>
         !_isNewAppointmentMode&&CanUpdate&&
@@ -48,11 +49,25 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         CanComplete &&
         Appointment.Status is AppointmentStatus.Scheduled or AppointmentStatus.InProgress;
 
+    private bool HasScheduleChange =>
+        _originalAppointment is not null &&
+        (Appointment.ScheduledStart != _originalAppointment.ScheduledStart ||
+         Appointment.ScheduledEnd != _originalAppointment.ScheduledEnd);
+
+    private bool IsStatusChangeAuthorized =>
+        _originalAppointment is not null &&
+        Appointment.Status != _originalAppointment.Status &&
+        Appointment.Status switch
+        {
+            AppointmentStatus.Cancelled => CanCancel,
+            AppointmentStatus.Completed => CanComplete,
+            AppointmentStatus.Scheduled => CanSchedule,
+            AppointmentStatus.InProgress => CanUpdate,
+            _ => false
+        };
+
     private bool CanScheduleForCurrentChange =>
-        Appointment.ScheduledStart != _originalAppointment?.ScheduledStart ||
-        Appointment.ScheduledEnd != _originalAppointment?.ScheduledEnd
-            ? CanSchedule
-            : true;
+        !HasScheduleChange || CanSchedule;
     public bool ShowStatusEditor => IsEditMode&&!IsNewAppointment;
 
     // Mirrors Encounter's HasEncounterMedicines — drives the medicine table header row.
@@ -832,19 +847,18 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             return;
         }
 
-        if(!IsNewAppointment&&!CanEditAppointment)
+        if(!IsNewAppointment&&!CanSaveAppointment)
         {
             await UserDialogService.ShowAlertAsync(
                 "Пристапот е одбиен",
-                "Немате овластување за промена на овој термин.",
+                "Немате овластување за оваа промена на термин.",
                 "ОК");
             return;
         }
 
         if(!IsNewAppointment &&
            _originalAppointment is not null &&
-           (Appointment.ScheduledStart != _originalAppointment.ScheduledStart ||
-            Appointment.ScheduledEnd != _originalAppointment.ScheduledEnd) &&
+           HasScheduleChange &&
            !CanSchedule)
         {
             await UserDialogService.ShowAlertAsync(
