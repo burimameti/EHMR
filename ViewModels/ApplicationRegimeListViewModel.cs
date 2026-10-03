@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Interfaces;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Services.Dto;
 using System.Collections.ObjectModel;
 
@@ -10,6 +11,7 @@ public partial class ApplicationRegimeListViewModel : ObservableObject
 {
     private readonly IPatientService _patientService;
     private readonly IUserDialogService _userDialogService;
+    private readonly IAuthorizationService _authorization;
 
     [ObservableProperty] private ObservableCollection<ApplicationRegimeDto> regimes = new();
     [ObservableProperty] private string newRegime = string.Empty;
@@ -18,16 +20,20 @@ public partial class ApplicationRegimeListViewModel : ObservableObject
 
     public ApplicationRegimeListViewModel(
         IPatientService patientService,
-        IUserDialogService userDialogService)
+        IUserDialogService userDialogService,
+        IAuthorizationService authorization)
     {
         _patientService=patientService;
         _userDialogService=userDialogService;
+        _authorization=authorization;
     }
+
+    public bool CanManage => _authorization.CanPerform(Modules.Administration, ModuleAction.Manage);
 
     [RelayCommand]
     public async Task LoadAsync()
     {
-        if(IsBusy) return;
+        if(IsBusy || !CanManage) return;
         try
         {
             IsBusy=true;
@@ -47,7 +53,7 @@ public partial class ApplicationRegimeListViewModel : ObservableObject
     [RelayCommand]
     public async Task EditAsync(ApplicationRegimeDto? item)
     {
-        if(item is null) return;
+        if(item is null || !CanManage) return;
 
         var value=await _userDialogService.ShowPromptAsync(
             "Измени режим",
@@ -76,7 +82,7 @@ public partial class ApplicationRegimeListViewModel : ObservableObject
     [RelayCommand]
     public async Task DeleteAsync(ApplicationRegimeDto? item)
     {
-        if(item is null) return;
+        if(item is null || !CanManage) return;
 
         var confirmed=await _userDialogService.ShowConfirmationAsync(
             "Избриши начин на апликација",
@@ -100,6 +106,7 @@ public partial class ApplicationRegimeListViewModel : ObservableObject
     [RelayCommand]
     public async Task AddAsync()
     {
+        if(!CanManage) return;
         var value=(NewRegime??string.Empty).Trim();
         if(string.IsNullOrWhiteSpace(value))
         {
