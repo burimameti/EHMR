@@ -22,7 +22,7 @@
                     </VerticalStackLayout>
                     <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
                         <Entry WidthRequest="240" Placeholder="Внесете нов начин..." Text="{Binding NewRegime, Mode=TwoWay}" />
-                        <Button Text="Нов начин" Command="{Binding AddCommand}" />
+                        <Button Text="Нов начин" Command="{Binding AddCommand}" IsEnabled="{Binding CanManage}" />
                     </HorizontalStackLayout>
                 </Grid>
             </Border>
@@ -41,8 +41,8 @@
                                     <Label Text="{Binding Id}" FontSize="11" TextColor="{StaticResource SparkTextMuted}" />
                                     <Label Grid.Column="1" Text="{Binding Regime}" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource SparkTextPrimary}" />
                                     <HorizontalStackLayout Grid.Column="2" Spacing="6">
-                                        <Button Padding="10,0" BackgroundColor="{StaticResource SparkButtonSecondaryBg}" Command="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.EditCommand}" CommandParameter="{Binding .}" CornerRadius="6" FontSize="11" Text="Промени" TextColor="White" />
-                                        <Button Padding="10,0" BackgroundColor="#DC2626" Command="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding .}" CornerRadius="6" FontSize="11" Text="Избриши" TextColor="White" />
+                                        <Button Padding="10,0" BackgroundColor="{StaticResource SparkButtonSecondaryBg}" Command="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.EditCommand}" CommandParameter="{Binding .}" CornerRadius="6" FontSize="11" IsEnabled="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.CanManage}" Text="Промени" TextColor="White" />
+                                        <Button Padding="10,0" BackgroundColor="#DC2626" Command="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding .}" CornerRadius="6" FontSize="11" IsEnabled="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.CanManage}" Text="Избриши" TextColor="White" />
                                     </HorizontalStackLayout>
                                 </Grid>
                             </DataTemplate>
