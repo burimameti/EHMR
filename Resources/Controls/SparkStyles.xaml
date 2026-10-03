@@ -4,37 +4,37 @@
 	<!--  ============================================================  -->
 	<!--  SIDEBAR (Deep Slate / Slate-Blue Theme)  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkSidebarBg">#293441</Color>
+	<Color x:Key="SparkSidebarBg">#0F2238</Color>
 	<!--  was #32404D — slightly deeper, reads as "premium dark" not "washed navy"  -->
-	<Color x:Key="SparkSidebarBgHover">#333F4D</Color>
-	<Color x:Key="SparkSidebarActiveBg">#4DD9C7</Color>
+	<Color x:Key="SparkSidebarBgHover">#162F4A</Color>
+	<Color x:Key="SparkSidebarActiveBg">#2563EB</Color>
 	<!--  aligned to the refined accent teal below, was a mismatched #4CC3D9  -->
-	<Color x:Key="SparkSidebarText">#96A5B5</Color>
+	<Color x:Key="SparkSidebarText">#94A3B8</Color>
 	<Color x:Key="SparkSidebarTextActive">#FFFFFF</Color>
-	<Color x:Key="SparkSidebarBorder">#1F2933</Color>
+	<Color x:Key="SparkSidebarBorder">#0B1B2B</Color>
 
 	<!--  ============================================================  -->
 	<!--  MAIN SURFACES & CANVAS  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkCanvasBackground">#EEF2F6</Color>
+	<Color x:Key="SparkCanvasBackground">#F5F7FB</Color>
 	<!--  Canvas behind the cards  -->
-	<Color x:Key="SparkBackground">#F8FAFC</Color>
+	<Color x:Key="SparkBackground">#FFFFFF</Color>
 	<!--  White card surface  -->
-	<Color x:Key="SparkBackgroundAlt">#F7F9FC</Color>
+	<Color x:Key="SparkBackgroundAlt">#F8FAFC</Color>
 	<!--  Alternating rows/nested sections  -->
-	<Color x:Key="SparkBorder">#E1E6ED</Color>
+	<Color x:Key="SparkBorder">#E2E8F0</Color>
 	<!--  Hairline borders/dividers  -->
 
 	<!--  ============================================================  -->
 	<!--  TYPOGRAPHY  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkTextPrimary">#1E2733</Color>
+	<Color x:Key="SparkTextPrimary">#0F172A</Color>
 	<!--  was #2D3748 — darker for crisper headings/labels  -->
 	<Color x:Key="SparkTextSecondary">#64748B</Color>
 	<!--  Tailwind slate-500, replaces the slightly muddy #718096  -->
 	<Color x:Key="SparkTextMuted">#94A3B8</Color>
 	<!--  slate-400  -->
-	<Color x:Key="SparkLink">#4DD9C7</Color>
+	<Color x:Key="SparkLink">#2563EB</Color>
 	<!--  cleaner, more standard SaaS link blue than #2F8FE0  -->
 
 	<!--  ============================================================  -->
@@ -45,8 +45,8 @@
 	<!--  ============================================================  -->
 	<!--  BUTTONS & INTERACTIVE ELEMENTS  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkButtonPrimaryBg">#4DD9C7</Color>
-	<Color x:Key="SparkButtonPrimaryBgPressed">#32B9AA</Color>
+	<Color x:Key="SparkButtonPrimaryBg">#2563EB</Color>
+	<Color x:Key="SparkButtonPrimaryBgPressed">#1D4ED8</Color>
 	<Color x:Key="SparkButtonPrimaryText">#0F2E2A</Color>
 
 	<Color x:Key="SparkButtonSecondaryBg">#475569</Color>
@@ -58,11 +58,11 @@
 	<!--  ============================================================  -->
 	<!--  TABS CONFIGURATION  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkTabActiveBg">#F0F7F5</Color>
-	<Color x:Key="SparkTabActiveBorder">#4DD9C7</Color>
+	<Color x:Key="SparkTabActiveBg">#EFF6FF</Color>
+	<Color x:Key="SparkTabActiveBorder">#2563EB</Color>
 	<Color x:Key="SparkTabActiveText">#0F2E2A</Color>
-	<Color x:Key="SparkTabInactiveText">#7C8798</Color>
-	<Color x:Key="SparkTabHoverBg">#F1F5F8</Color>
+	<Color x:Key="SparkTabInactiveText">#64748B</Color>
+	<Color x:Key="SparkTabHoverBg">#F8FAFC</Color>
 
 	<!--  ============================================================  -->
 	<!--  SEMANTIC STATUS & BADGES (muted, enterprise-grade — not candy pastel)  -->
@@ -86,11 +86,11 @@
 	<Color x:Key="SparkBadgeDangerText">#C24545</Color>
 
 	<!--  Neutral  -->
-	<Color x:Key="SparkButtonBg">#E8EBF0</Color>
-	<Color x:Key="SparkStatusNeutralBg">#E8EBF0</Color>
-	<Color x:Key="SparkStatusNeutralText">#52586B</Color>
-	<Color x:Key="SparkBadgeNeutralBg">#EBEFF3</Color>
-	<Color x:Key="SparkBadgeNeutralBgSelected">#4DD9C7</Color>
+	<Color x:Key="SparkButtonBg">#F1F5F9</Color>
+	<Color x:Key="SparkStatusNeutralBg">#F1F5F9</Color>
+	<Color x:Key="SparkStatusNeutralText">#475569</Color>
+	<Color x:Key="SparkBadgeNeutralBg">#F1F5F9</Color>
+	<Color x:Key="SparkBadgeNeutralBgSelected">#2563EB</Color>
 	<Color x:Key="SparkBadgeNeutralText">#556072</Color>
 	<Color x:Key="SparkBadgeNeutralTextSelected">#FFFFFF</Color>
 
@@ -109,9 +109,9 @@
 		дефинирани (SparkExpandableCardView, TherapyCyclesPage, BackupHistoryPage,
 		страницата за дестинации). Врзани се за постоечките еквиваленти.
 	-->
-	<Color x:Key="SparkSurface">#F7F9FC</Color>
-	<Color x:Key="SparkSurfaceAlt">#F7F9FC</Color>
-	<Color x:Key="SparkBorderSubtle">#E1E6ED</Color>
+	<Color x:Key="SparkSurface">#F8FAFC</Color>
+	<Color x:Key="SparkSurfaceAlt">#F8FAFC</Color>
+	<Color x:Key="SparkBorderSubtle">#E2E8F0</Color>
 	<Color x:Key="SparkOverlay">#80191E29</Color>
 
 	<!--  ============================================================  -->
@@ -124,13 +124,13 @@
 	<!--  ============================================================  -->
 
 	<!--  FFInput, FFDatePickerPage  -->
-	<Color x:Key="InputText">#1E2733</Color>
+	<Color x:Key="InputText">#0F172A</Color>
 	<Color x:Key="InputPlaceholder">#94A3B8</Color>
 
 	<!--  Components\PageHeader.xaml, SearchFilterBarView.xaml  -->
 	<Style x:Key="DashboardCard" TargetType="Border">
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
-		<Setter Property="Stroke" Value="#E1E6ED" />
+		<Setter Property="Stroke" Value="#E2E8F0" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
 		<Setter Property="StrokeThickness" Value="1" />
 	</Style>
@@ -138,7 +138,7 @@
 	<Style x:Key="MedicalSectionTitle" TargetType="Label">
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="18" />
-		<Setter Property="TextColor" Value="#1E2733" />
+		<Setter Property="TextColor" Value="#0F172A" />
 	</Style>
 
 	<Style x:Key="MutedText" TargetType="Label">
@@ -156,7 +156,7 @@
 	<Style x:Key="EhmrIconButton" TargetType="Button">
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
 		<Setter Property="TextColor" Value="#475569" />
-		<Setter Property="BorderColor" Value="#E1E6ED" />
+		<Setter Property="BorderColor" Value="#E2E8F0" />
 		<Setter Property="BorderWidth" Value="1" />
 		<Setter Property="CornerRadius" Value="8" />
 		<Setter Property="FontSize" Value="14" />
@@ -185,13 +185,13 @@
 	<Style x:Key="GridHeaderLabel" TargetType="Label">
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="22" />
-		<Setter Property="TextColor" Value="#1E2733" />
+		<Setter Property="TextColor" Value="#0F172A" />
 	</Style>
 
 	<Style x:Key="ToolbarContainer" TargetType="Border">
 		<Setter Property="Padding" Value="16,12" />
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
-		<Setter Property="Stroke" Value="#E1E6ED" />
+		<Setter Property="Stroke" Value="#E2E8F0" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
 		<Setter Property="StrokeThickness" Value="1" />
 	</Style>
@@ -199,21 +199,21 @@
 	<Style x:Key="ElevatedCard" TargetType="Border">
 		<Setter Property="Padding" Value="16" />
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
-		<Setter Property="Stroke" Value="#E1E6ED" />
+		<Setter Property="Stroke" Value="#E2E8F0" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
 		<Setter Property="StrokeThickness" Value="1" />
 	</Style>
 
 	<Style x:Key="InputEntry" TargetType="Entry">
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
-		<Setter Property="TextColor" Value="#1E2733" />
+		<Setter Property="TextColor" Value="#0F172A" />
 		<Setter Property="PlaceholderColor" Value="#94A3B8" />
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="HeightRequest" Value="40" />
 	</Style>
 
 	<Style x:Key="PrimaryButtonStyle" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="#4DD9C7" />
+		<Setter Property="BackgroundColor" Value="#2563EB" />
 		<Setter Property="TextColor" Value="#FFFFFF" />
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="13" />
@@ -225,7 +225,7 @@
 	<Style x:Key="ToolbarButton" TargetType="Button">
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
 		<Setter Property="TextColor" Value="#475569" />
-		<Setter Property="BorderColor" Value="#E1E6ED" />
+		<Setter Property="BorderColor" Value="#E2E8F0" />
 		<Setter Property="BorderWidth" Value="1" />
 		<Setter Property="FontSize" Value="12" />
 		<Setter Property="HeightRequest" Value="36" />
@@ -234,7 +234,7 @@
 	</Style>
 
 	<Style x:Key="ActiveTabButtonStyle" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="#4DD9C7" />
+		<Setter Property="BackgroundColor" Value="#2563EB" />
 		<Setter Property="TextColor" Value="#FFFFFF" />
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="12" />
@@ -245,8 +245,8 @@
 
 	<Style x:Key="GridHeaderStyle" TargetType="Border">
 		<Setter Property="Padding" Value="12,10" />
-		<Setter Property="BackgroundColor" Value="#F7F9FC" />
-		<Setter Property="Stroke" Value="#E1E6ED" />
+		<Setter Property="BackgroundColor" Value="#F8FAFC" />
+		<Setter Property="Stroke" Value="#E2E8F0" />
 		<Setter Property="StrokeThickness" Value="1" />
 	</Style>
 
@@ -471,7 +471,7 @@
 	<Style x:Key="SparkCardStyle" TargetType="Border">
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
 		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 0" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
 		<Setter Property="Padding" Value="20" />
 	</Style>
 
