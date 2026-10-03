@@ -37,7 +37,7 @@
 						Command="{Binding NewCommand}"
 						ContentPadding="20,0"
 						HeightRequestEx="45"
-						IsVisible="{Binding CanCreate}"
+						IsEnabled="{Binding CanCreate}"
 						Text="Нов реуматолог"
 						TextColorEx="White" />
 				</Grid>
