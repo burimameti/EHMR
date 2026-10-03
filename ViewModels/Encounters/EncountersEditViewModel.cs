@@ -129,8 +129,11 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         }
     }
 
-    private bool CanModifyEncounter => CanUpdate;
-    public bool CanChangeStatus => CanUpdate || CanApprove;
+    public bool CanAdminEditEncounter =>
+        ( _authorizationService.HasRole(UserRole.Admin) || _authorizationService.HasRole(UserRole.SuperAdmin) ) && CanUpdate;
+
+    private bool CanModifyEncounter => CanAdminEditEncounter;
+    public bool CanChangeStatus => CanAdminEditEncounter || CanApprove;
 
     public async Task LoadAsync()
     {
@@ -156,6 +159,13 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
 
         // load the cycle picker for this encounter's patient and preselect its current cycle
    
+
+        if(!CanAdminEditEncounter)
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Уредување на веќе зачуван преглед е дозволено само за администратор.", "ОК");
+            await NavigationService.GoBackAsync();
+            return;
+        }
 
         IsEditMode=true;
         IsReadOnly=false;
