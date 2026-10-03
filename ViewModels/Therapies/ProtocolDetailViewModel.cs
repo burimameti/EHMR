@@ -82,7 +82,7 @@ public partial class ProtocolDetailFormViewModel(
             await db.SaveChangesAsync();
             await userDialogService.ShowAlertAsync("Успешно", "Протоколот е зачуван во каталогот.", "OK");
 
-            await navigationService.GoToAsync(AppRoutes.Protocols.List);
+            await navigationService.GoToAsync($"//{AppRoutes.Dashboard}");
         }
         catch(Exception ex)
         {
