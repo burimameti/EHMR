@@ -24,6 +24,7 @@ public partial class AdminDashboardViewModel : ObservableObject
     private readonly IBackupHistoryRepository _backupService;
    private readonly INavigationService _navigationService;
     private readonly ISelectedItemService<BackupHistory> _selectedBackup;
+    private readonly IAuthorizationService _authorization;
 
 
     [ObservableProperty]
@@ -94,6 +95,7 @@ public partial class AdminDashboardViewModel : ObservableObject
         _mkbImportService=mkbImportService;
         _backupService=backupService;
         _selectedBackup=selectedBackup;
+        _authorization=authorization;
 
 
         _navigationService=navigationService;
@@ -104,27 +106,33 @@ public partial class AdminDashboardViewModel : ObservableObject
 
         GoToUsersCommand=
     new AsyncRelayCommand(
-        () => _navigationService.GoToAsync(AppRoutes.Users.List));
+        async () => { if(!CanManage) return; await _navigationService.GoToAsync(AppRoutes.Users.List); });
 
         GoToDoctorsCommand=
             new AsyncRelayCommand(
-                () => Shell.Current.GoToAsync(AppRoutes.Doctors.List));
+                async () => { if(!CanViewDoctors) return; await Shell.Current.GoToAsync(AppRoutes.Doctors.List); });
 
 
 
         GoToBackupsCommand=
             new AsyncRelayCommand(
-                () => Shell.Current.GoToAsync(AppRoutes.Backup.History));
+                async () => { if(!CanViewBackups) return; await Shell.Current.GoToAsync(AppRoutes.Backup.History); });
 
 
 
         ImportMkbCommand=
             new AsyncRelayCommand(
-                () => Shell.Current.GoToAsync(AppRoutes.Mkb10Codes.List));
+                async () => { if(!CanViewMkb) return; await Shell.Current.GoToAsync(AppRoutes.Mkb10Codes.List); });
 
 
 
         BuildCards();
+
+    public bool CanView => _authorization.CanPerform(Modules.Administration, ModuleAction.View);
+    public bool CanManage => _authorization.CanPerform(Modules.Administration, ModuleAction.Manage);
+    public bool CanViewDoctors => _authorization.CanPerform(Modules.Doctors, ModuleAction.View);
+    public bool CanViewMkb => _authorization.CanPerform(Modules.MKBCodes, ModuleAction.View);
+    public bool CanViewBackups => _authorization.CanPerform(Modules.Backups, ModuleAction.View);
 
     }
 
