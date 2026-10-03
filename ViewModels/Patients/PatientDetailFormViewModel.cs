@@ -41,9 +41,16 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     private bool _childrenLoaded;
     public bool IsNewPatient => _isNewPatientMode;
 
-    public bool IsAdmin => _authorizationService.HasRole(UserRole.Admin) || _authorizationService.HasRole(UserRole.SuperAdmin);
-    public bool CanReactivatePatient => IsAdmin && !_isNewPatientMode && Patient.Status==PatientStatus.Inactive;
-    public bool CanShowActiveStatusOption => _isNewPatientMode || Patient.Status!=PatientStatus.Inactive || IsAdmin;
+    public bool CanViewPatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.View);
+    public bool CanCreatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Create);
+    public bool CanEditPatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Edit);
+    public bool CanDeletePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Delete);
+    public bool CanPrintPatientReport => _authorizationService.CanPerform(Modules.Reports, ModuleAction.Print);
+    public bool CanManageAdministration => _authorizationService.CanPerform(Modules.Administration, ModuleAction.Manage);
+    public bool CanSavePatient => _isNewPatientMode ? CanCreatePatient : CanEditPatient;
+
+    public bool CanReactivatePatient => CanEditPatient && !_isNewPatientMode && Patient.Status==PatientStatus.Inactive;
+    public bool CanShowActiveStatusOption => _isNewPatientMode || Patient.Status!=PatientStatus.Inactive || CanEditPatient;
 
     private bool _isOfferingDoctorCreation;
 
@@ -104,7 +111,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void SetActive()
     {
-        if(!IsEditMode)
+        if(!IsEditMode || !CanEditPatient)
             return;
 
         // Reactivation of an inactive patient is a sensitive operation and is Admin-only.
@@ -124,7 +131,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void SetInactive()
     {
-        if(IsEditMode)
+        if(IsEditMode && CanEditPatient)
             IsPatientActive=false;
     }
     [ObservableProperty] private string selectedStatusDisplay = string.Empty;
