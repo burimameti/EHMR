@@ -593,13 +593,15 @@ namespace EHMR.Resources.Controls
                 VerticalOptions=LayoutOptions.Center
             };
             foreach(var action in actions)
+            {
                 var button = BuildActionIcon(
                     action.Label??"", action.Command,
                     action.CommandParameter??row.Tag??row,
                     ResolveActionColor(action), ResolveActionTextColor(action));
-                button.IsEnabled = action.IsEnabled;
-                button.Opacity = action.IsEnabled ? 1 : 0.45;
+                button.IsEnabled=action.IsEnabled;
+                button.Opacity=action.IsEnabled ? 1 : 0.45;
                 layout.Children.Add(button);
+            }
 
             return layout;
         }
