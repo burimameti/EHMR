@@ -893,7 +893,7 @@
 						TextColorEx="White"
 								Grid.Column="1"
 								ButtonKind="Primary"
-								Command="{Binding CreateNewEncounterForSelectedDayCommand}"
+								Command="{Binding CreateNewEncounterForSelectedDayCommand}" IsEnabled="{Binding CanCreate}"
 								ContentPadding="16,0"
 								HeightRequestEx="36"
 								Text="{Binding ContentNewButtonText}" />
