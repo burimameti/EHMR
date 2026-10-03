@@ -414,7 +414,7 @@ public partial class AppointmentListViewModel
     {
         if(item is null) return;
 
-        if(!_authorizationService.HasDoctorAdminPrivileges)
+        if(!CanUpdate)
         {
             await UserDialogService.ShowAlertAsync(PermissionDeniedTitle, "Немате авторизација за уредување термини.", "OK");
             return;
@@ -697,7 +697,7 @@ public partial class AppointmentListViewModel
             row["Date"]=a.ScheduledStart.ToString("dd.MM.yyyy");
             row["Status"]=new SparkBadgeValue(StatusLabel(a.Status), StatusToTone(a.Status));
 
-            AddDefaultActions(a, row, detailLabel: "Детали", editLabel: "Промени", canEditPredicate: _ => _authorizationService.HasDoctorAdminPrivileges && CanEdit(a));
+            AddDefaultActions(a, row, detailLabel: "Детали", editLabel: "Промени", canEditPredicate: _ => CanUpdate && CanEdit(a));
 
             if(CanDelete&&CanCancel(a))
             {
