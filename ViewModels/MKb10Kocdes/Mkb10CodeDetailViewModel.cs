@@ -24,7 +24,7 @@ public partial class Mkb10CodeDetailViewModel : ObservableObject
     public bool CanCreate => _authorization.CanPerform(Modules.MKBCodes, ModuleAction.Create);
     public bool CanUpdate => _authorization.CanPerform(Modules.MKBCodes, ModuleAction.Edit);
     public bool CanDelete => _authorization.CanPerform(Modules.MKBCodes, ModuleAction.Delete);
-    public bool CanEditForm => _isNewMode ? CanCreate : CanUpdate;
+    public bool CanEditForm => Mkb10Code.Id == Guid.Empty ? CanCreate : CanUpdate;
 
     public string HeaderTitle =>
         Mkb10Code.Id== new Guid()
@@ -110,7 +110,7 @@ public partial class Mkb10CodeDetailViewModel : ObservableObject
 
     private async Task Save()
     {
-        if(!(_isNewMode ? CanCreate : CanUpdate)) return;
+        if(!(Mkb10Code.Id == Guid.Empty ? CanCreate : CanUpdate)) return;
         await _service.SaveAsync(Mkb10Code);      
 
         await Shell.Current.GoToAsync("..");
