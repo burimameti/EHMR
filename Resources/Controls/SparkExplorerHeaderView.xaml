@@ -145,6 +145,7 @@
 									ContentPadding="16,0"
 									CornerRadius="6"
 									HeightRequestEx="44"
+									IsEnabled="{Binding IsEnabled}"
 									Text="{Binding Label}"
 									WidthRequestEx="0">
 									<sc:FFButton.Triggers>
