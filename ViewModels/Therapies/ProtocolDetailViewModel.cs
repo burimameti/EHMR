@@ -12,11 +12,21 @@ public partial class ProtocolDetailFormViewModel(
     IDbContextFactory<DesktopTherapyDbContext> dbFactory,
     ISelectedItemService<TherapyProtocol> selectedItemService,
     INavigationService navigationService, IAuthStateService authStateService,
-    IUserDialogService userDialogService) : ObservableObject
+    IUserDialogService userDialogService,
+    IAuthorizationService authorizationService) : ObservableObject
 {
     [ObservableProperty] private string _pageTitle = "Нов Протокол";
     [ObservableProperty] private bool _isEditMode;
     [ObservableProperty] private TherapyProtocol _currentProtocol;
+
+    public bool CanCreate => authorizationService.CanPerform(Modules.Protocols, ModuleAction.Create);
+    public bool CanUpdate => authorizationService.CanPerform(Modules.Protocols, ModuleAction.Edit);
+    public bool CanDelete => authorizationService.CanPerform(Modules.Protocols, ModuleAction.Delete);
+    public bool CanApprove => authorizationService.CanPerform(Modules.Protocols, ModuleAction.Approve);
+    public bool CanPrint => authorizationService.CanPerform(Modules.Protocols, ModuleAction.Print);
+    public bool CanExport => authorizationService.CanPerform(Modules.Protocols, ModuleAction.Export);
+    public bool CanSave => IsEditMode ? CanUpdate : CanCreate;
+    public bool CanEditForm => IsEditMode ? CanUpdate : CanCreate;
 
     public void InitializeForm()
     {
@@ -26,6 +36,8 @@ public partial class ProtocolDetailFormViewModel(
         {
             PageTitle="➕ Нов Протокол";
             IsEditMode=false;
+            OnPropertyChanged(nameof(CanSave));
+            OnPropertyChanged(nameof(CanEditForm));
             CurrentProtocol=new TherapyProtocol
             {
                 CreatedAt=DateTime.UtcNow,
@@ -36,6 +48,8 @@ public partial class ProtocolDetailFormViewModel(
         {
             PageTitle=$"✏️ Измена на Протокол: {selected.Name}";
             IsEditMode=true;
+            OnPropertyChanged(nameof(CanSave));
+            OnPropertyChanged(nameof(CanEditForm));
             CurrentProtocol=selected;
         }
     }
@@ -43,6 +57,9 @@ public partial class ProtocolDetailFormViewModel(
     [RelayCommand]
     private async Task SaveAsync()
     {
+        if(!CanSave)
+            return;
+
         if(string.IsNullOrWhiteSpace(CurrentProtocol.Name)||string.IsNullOrWhiteSpace(CurrentProtocol.DiseaseCategory))
         {
             await userDialogService.ShowAlertAsync("Валидација", "Името и Категоријата на болеста се задолжителни полиња.", "OK");
