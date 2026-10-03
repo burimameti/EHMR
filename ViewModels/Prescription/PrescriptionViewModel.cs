@@ -24,7 +24,7 @@ public partial class PrescriptionListViewModel : BaseViewModel<Prescription>, IQ
     private string? _pendingStatus;
 
     // ================= PERMISSIONS / NAVIGATION =================
-    protected override string ModuleName => "prescriptions";
+    protected override string ModuleName => Modules.Prescriptions;
     protected override string DetailRoute => AppRoutes.Prescriptions.Detail;
     protected override string PermissionDeniedMessage => "Немате авторизација за оваа акција со рецепти.";
 
