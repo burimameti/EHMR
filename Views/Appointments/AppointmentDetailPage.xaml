@@ -102,8 +102,8 @@
 		<Grid
 			Grid.Column="1"
 			Padding="0"
-			RowDefinitions="Auto,*,Auto"
-			RowSpacing="16">
+			RowDefinitions="Auto,Auto,*,Auto"
+			RowSpacing="12">
 
 			<!--  PAGE HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
@@ -140,8 +140,33 @@
 			</Border>
 
 			<!--  MAIN PANEL  -->
+			<Border Grid.Row="1" Margin="16,0,16,0" Padding="18,14" BackgroundColor="White" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1">
+				<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+					<Border WidthRequest="54" HeightRequest="54" BackgroundColor="#EFF6FF" Stroke="#BFDBFE" StrokeShape="RoundRectangle 27" StrokeThickness="1">
+						<Label FontFamily="FASolid" FontSize="20" HorizontalOptions="Center" Text="&#xf007;" TextColor="#2563EB" VerticalOptions="Center" />
+					</Border>
+					<VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+						<Label FontAttributes="Bold" FontSize="16" Text="{Binding SelectedPatientForAppointment.FullName, TargetNullValue=Пациент}" TextColor="{StaticResource SparkTextPrimary}" />
+						<HorizontalStackLayout Spacing="14">
+							<Label FontSize="11" Text="{Binding SelectedPatientForAppointment.NationalId, StringFormat='ЕМБГ: {0}'}" TextColor="{StaticResource SparkTextSecondary}" />
+							<Label FontSize="11" Text="{Binding SelectedPatientForAppointment.SzboNumber, StringFormat='ЕЗБО: {0}'}" TextColor="{StaticResource SparkTextSecondary}" />
+						</HorizontalStackLayout>
+					</VerticalStackLayout>
+					<VerticalStackLayout Grid.Column="2" Spacing="4" HorizontalOptions="End" VerticalOptions="Center">
+						<HorizontalStackLayout Spacing="8" HorizontalOptions="End">
+							<Label FontFamily="FASolid" FontSize="11" Text="&#xf073;" TextColor="#64748B" VerticalOptions="Center" />
+							<Label FontAttributes="Bold" FontSize="12" Text="{Binding Appointment.ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}" TextColor="{StaticResource SparkTextPrimary}" />
+						</HorizontalStackLayout>
+						<HorizontalStackLayout Spacing="8" HorizontalOptions="End">
+							<Label FontSize="11" Text="Доктор:" TextColor="{StaticResource SparkTextSecondary}" />
+							<Label FontAttributes="Bold" FontSize="11" Text="{Binding SelectedDoctorForAppointment.FullName, TargetNullValue=—}" TextColor="{StaticResource SparkTextPrimary}" />
+						</HorizontalStackLayout>
+					</VerticalStackLayout>
+				</Grid>
+			</Border>
+
 			<Grid
-				Grid.Row="1"
+				Grid.Row="2"
 				Margin="16,0,16,0"
 				ColumnDefinitions="2.15*,1*"
 				ColumnSpacing="16">
@@ -1206,7 +1231,7 @@
 
 				</Grid>
 			</Grid>
-			<Border Grid.Row="2" Margin="0,0,0,16" Padding="16,10" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
+			<Border Grid.Row="3" Margin="0,0,0,16" Padding="16,10" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
 				<Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
 					<Label Grid.Column="0" FontSize="10.5" Text="Завршете ги податоците за терминот" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
 					<controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="42" IsVisible="{Binding IsEditMode}" Text="Откажи" WidthRequestEx="130" />
