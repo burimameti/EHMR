@@ -144,68 +144,52 @@
 						</controls:FFSectionCard>
 
 						<controls:FFSectionCard Margin="0" ContentPadding="18">
-							<VerticalStackLayout Spacing="6">
+							<VerticalStackLayout Spacing="10">
 								<Grid ColumnDefinitions="*,Auto">
 									<HorizontalStackLayout Spacing="8">
-										<Label
-											FontSize="18"
-											Text="🔐"
-											VerticalOptions="Center" />
-										<controls:CrudSectionHeader Title="Експлицитни Системски Дозволи" />
+										<Label FontSize="18" Text="🔐" VerticalOptions="Center" />
+										<controls:CrudSectionHeader Title="МОДУЛИ И ДОЗВОЛИ" />
 									</HorizontalStackLayout>
-
-									<Button
-										Grid.Column="1"
-										Padding="10,0"
-										BackgroundColor="#F0FDF4"
-										Command="{Binding ApplyDefaultPermissionsForRoleCommand}"
-										FontSize="11"
-										HeightRequest="32"
-										IsVisible="{Binding IsEditMode}"
-										Text="⚡ Дефолтни за улога"
-										TextColor="#16A34A" />
+									<Button Grid.Column="1" Padding="10,0" BackgroundColor="#F0FDF4"
+										Command="{Binding ApplyDefaultPermissionsForRoleCommand}" FontSize="11"
+										HeightRequest="32" IsVisible="{Binding IsEditMode}"
+										Text="⚡ Дефолтни за улога" TextColor="#15803D" />
 								</Grid>
-
-								<CollectionView Margin="0,8,0,0" ItemsSource="{Binding SystemPermissions}">
+								<Label Margin="0,0,0,4" FontSize="12"
+									Text="Секој модул има сопствени дозволи. Неовластените функции остануваат оневозможени во апликацијата."
+									TextColor="#64748B" />
+								<CollectionView ItemsSource="{Binding ModulePermissions}" SelectionMode="None">
 									<CollectionView.ItemsLayout>
-										<LinearItemsLayout ItemSpacing="6" Orientation="Vertical" />
+										<LinearItemsLayout ItemSpacing="8" Orientation="Vertical" />
 									</CollectionView.ItemsLayout>
 									<CollectionView.ItemTemplate>
-										<DataTemplate x:DataType="viewModels:PermissionCheckWrapper">
-											<Border
-												Padding="12"
-												BackgroundColor="#F8FAFC"
-												Stroke="#F1F5F9"
-												StrokeShape="RoundRectangle 8"
-												StrokeThickness="1">
-												<Grid ColumnDefinitions="Auto,*" IsEnabled="{Binding BindingContext.IsEditMode, Source={x:Reference Root}}">
-													<Grid.GestureRecognizers>
-														<TapGestureRecognizer Command="{Binding BindingContext.TogglePermissionCommand, Source={x:Reference Root}}" CommandParameter="{Binding .}" />
-													</Grid.GestureRecognizers>
-
-													<CheckBox
-														Grid.Column="0"
-														InputTransparent="True"
-														IsChecked="{Binding IsSelected}"
-														VerticalOptions="Center"
-														Color="#2563EB" />
-
-													<Label
-														Grid.Column="1"
-														Margin="12,0,0,0"
-														FontAttributes="Bold"
-														FontSize="13"
-														Text="{Binding DisplayName}"
-														TextColor="#0F172A"
-														VerticalOptions="Center" />
+										<DataTemplate x:DataType="viewModels:ModulePermissionWrapper">
+											<Border Padding="12,10" BackgroundColor="#F8FAFC" Stroke="#E2E8F0"
+												StrokeShape="RoundRectangle 8" StrokeThickness="1">
+												<Grid ColumnDefinitions="190,*" ColumnSpacing="12">
+													<Label FontAttributes="Bold" FontSize="13" Text="{Binding DisplayName}"
+														TextColor="#0F172A" VerticalOptions="Center" />
+													<HorizontalStackLayout Grid.Column="1" BindableLayout.ItemsSource="{Binding Actions}"
+														Spacing="10" VerticalOptions="Center">
+														<BindableLayout.ItemTemplate>
+															<DataTemplate x:DataType="viewModels:ActionPermissionWrapper">
+																<HorizontalStackLayout Spacing="2">
+																	<CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
+																		IsEnabled="{Binding BindingContext.IsEditMode, Source={x:Reference Root}}"
+																		Color="#166534" VerticalOptions="Center" />
+																	<Label FontSize="10" Text="{Binding DisplayName}" TextColor="#475569"
+																		VerticalOptions="Center" />
+																</HorizontalStackLayout>
+															</DataTemplate>
+														</BindableLayout.ItemTemplate>
+													</HorizontalStackLayout>
 												</Grid>
 											</Border>
 										</DataTemplate>
 									</CollectionView.ItemTemplate>
 								</CollectionView>
 							</VerticalStackLayout>
-						</controls:FFSectionCard>
-					</VerticalStackLayout>
+						</controls:FFSectionCard>				</VerticalStackLayout>
 
 					<VerticalStackLayout Grid.Column="1" Spacing="16">
 
