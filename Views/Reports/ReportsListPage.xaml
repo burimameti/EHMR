@@ -49,6 +49,7 @@
     ButtonKind="Primary"
     Command="{Binding NewReportCommand}"
     HeightRequestEx="42"
+    IsEnabled="{Binding CanCreate}"
     Text="Нов извештај"
     WidthRequestEx="150" />
 
