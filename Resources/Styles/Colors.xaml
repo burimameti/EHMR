@@ -7,21 +7,21 @@
 	<Color x:Key="OffBlack">#0F172A</Color>
 
 	<!--  Legacy Accent  -->
-	<Color x:Key="Magenta">#4DD9C7</Color>
+	<Color x:Key="Magenta">#2563EB</Color>
 
 	<!--  Primary Blues  -->
 	<Color x:Key="MidnightBlue">#1E3A8A</Color>
 
 	<!--  Sidebar  -->
 
-	<Color x:Key="SidebarSurface">#102A4C</Color>
+	<Color x:Key="SidebarSurface">#0F2238</Color>
 
-	<Color x:Key="SidebarDivider">#274A75</Color>
-	<Color x:Key="SidebarText">#D7E6F8</Color>
+	<Color x:Key="SidebarDivider">#1E3A56</Color>
+	<Color x:Key="SidebarText">#CBD5E1</Color>
 	<Color x:Key="SidebarTextActive">#FFFFFF</Color>
 
 	<!--  Text  -->
-	<Color x:Key="SecondaryDarkText">#EAF2FC</Color>
+	<Color x:Key="SecondaryDarkText">#475569</Color>
 	<Color x:Key="Secondary">#3B82F6</Color>
 
 	<!--  Surfaces  -->
@@ -31,29 +31,29 @@
 	<Color x:Key="CardBg">#FFFFFF</Color>
 
 	<!--  Primary  -->
-	<Color x:Key="EpicPrimary">#4DD9C7</Color>
-	<Color x:Key="EpicPrimaryDark">#32B9AA</Color>
-	<Color x:Key="EpicPrimaryLight">#82E7DB</Color>
+	<Color x:Key="EpicPrimary">#2563EB</Color>
+	<Color x:Key="EpicPrimaryDark">#1D4ED8</Color>
+	<Color x:Key="EpicPrimaryLight">#60A5FA</Color>
 
 	<!--  Canonical CRUD accent tokens; Colors.xaml is merged first.  -->
-	<Color x:Key="SparkAccentTeal">#4DD9C7</Color>
-	<Color x:Key="SparkAccentTealDark">#32B9AA</Color>
-	<Color x:Key="SparkAccentTealBg">#F0F7F5</Color>
-	<Color x:Key="SidebarActiveBg">#4DD9C7</Color>
+	<Color x:Key="SparkAccentTeal">#2563EB</Color>
+	<Color x:Key="SparkAccentTealDark">#1D4ED8</Color>
+	<Color x:Key="SparkAccentTealBg">#EFF6FF</Color>
+	<Color x:Key="SidebarActiveBg">#2563EB</Color>
 
 	<!--  Secondary  -->
-	<Color x:Key="EpicSecondary">#1E40AF</Color>
+	<Color x:Key="EpicSecondary">#1D4ED8</Color>
 	<Color x:Key="EpicSecondaryDark">#1E3A8A</Color>
 	<Color x:Key="EpicSecondaryDarkKpi">#172554</Color>
 	<Color x:Key="EpicSecondaryLight">#93C5FD</Color>
 
 	<!--  Primary Text  -->
-	<Color x:Key="EpicPrimaryText">#4DD9C7</Color>
-	<Color x:Key="EpicPrimaryDarkText">#32B9AA</Color>
-	<Color x:Key="EpicPrimaryLightText">#82E7DB</Color>
+	<Color x:Key="EpicPrimaryText">#2563EB</Color>
+	<Color x:Key="EpicPrimaryDarkText">#1D4ED8</Color>
+	<Color x:Key="EpicPrimaryLightText">#60A5FA</Color>
 
 	<!--  Secondary Text  -->
-	<Color x:Key="EpicSecondaryText">#1E40AF</Color>
+	<Color x:Key="EpicSecondaryText">#1D4ED8</Color>
 	<Color x:Key="EpicSecondaryDarkText">#1E3A8A</Color>
 	<Color x:Key="EpicSecondaryLightText">#93C5FD</Color>
 
@@ -72,8 +72,8 @@
 	<Color x:Key="StatusCompletedBg">#E5EEF8</Color>
 	<Color x:Key="StatusMissed">#D64545</Color>
 	<Color x:Key="StatusMissedBg">#FBE7E7</Color>
-	<Color x:Key="StatusScheduled">#0E8C8C</Color>
-	<Color x:Key="StatusScheduledBg">#DEF1F1</Color>
+	<Color x:Key="StatusScheduled">#2563EB</Color>
+	<Color x:Key="StatusScheduledBg">#DBEAFE</Color>
 	<Color x:Key="StatusCancelled">#7C8C90</Color>
 	<Color x:Key="StatusCancelledBg">#E7ECED</Color>
 
@@ -93,8 +93,8 @@
 	<Color x:Key="StatBlueBg">#E5EEF8</Color>
 	<Color x:Key="StatGreen">#1F9D6F</Color>
 	<Color x:Key="StatGreenBg">#E3F6EC</Color>
-	<Color x:Key="StatTeal">#0E8C8C</Color>
-	<Color x:Key="StatTealBg">#DEF1F1</Color>
+	<Color x:Key="StatTeal">#2563EB</Color>
+	<Color x:Key="StatTealBg">#DBEAFE</Color>
 	<Color x:Key="StatOrange">#D98E2B</Color>
 	<Color x:Key="StatOrangeBg">#FBF0DD</Color>
 	<Color x:Key="StatPurple">#7E57A6</Color>
@@ -106,7 +106,7 @@
 	<Color x:Key="Transparent">Transparent</Color>
 	<Color x:Key="Gray50">#F8FAFC</Color>
 	<Color x:Key="Gray100">#F8FAFC</Color>
-	<Color x:Key="Gray200">#F1F5F9</Color>
+	<Color x:Key="Gray200">#F5F7FB</Color>
 	<Color x:Key="Gray300">#E2E8F0</Color>
 	<Color x:Key="Gray400">#CBD5E1</Color>
 	<Color x:Key="Gray500">#94A3B8</Color>
@@ -117,7 +117,7 @@
 	<Color x:Key="Gray950">#0F172A</Color>
 
 	<Color x:Key="Background">
-		#F1F5F9
+		#F5F7FB
 	</Color>
 
 	<Color x:Key="Divider">
@@ -141,7 +141,7 @@
 	</Color>
 
 	<Color x:Key="InputFocus">
-		#4DD9C7
+		#2563EB
 	</Color>
 
 	<Color x:Key="InputDisabled">
@@ -155,13 +155,13 @@
 	</Color>
 
 	<Color x:Key="TabActive">
-		#4DD9C7
+		#2563EB
 	</Color>
 
 
 	<!--  Blue clinical  -->
 	<Color x:Key="MedicalBlue">
-		#4DD9C7
+		#2563EB
 	</Color>
 
 	<Color x:Key="MedicalBlueSoft">
