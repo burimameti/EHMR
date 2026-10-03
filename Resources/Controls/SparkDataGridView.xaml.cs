@@ -574,8 +574,11 @@ namespace EHMR.Resources.Controls
         private View BuildSingleButton(SparkButtonItem item, SparkGridRow row)
         {
             if(item==null) return new Label();
-            return BuildActionIcon(item.Label??"", item.Command, item.CommandParameter,
+            var button = BuildActionIcon(item.Label??"", item.Command, item.CommandParameter,
                 ResolveActionColor(item), ResolveActionTextColor(item));
+            button.IsEnabled = item.IsEnabled;
+            button.Opacity = item.IsEnabled ? 1 : 0.45;
+            return button;
         }
 
         private View BuildActions(SparkGridRow row)
@@ -590,10 +593,13 @@ namespace EHMR.Resources.Controls
                 VerticalOptions=LayoutOptions.Center
             };
             foreach(var action in actions)
-                layout.Children.Add(BuildActionIcon(
+                var button = BuildActionIcon(
                     action.Label??"", action.Command,
                     action.CommandParameter??row.Tag??row,
-                    ResolveActionColor(action), ResolveActionTextColor(action)));
+                    ResolveActionColor(action), ResolveActionTextColor(action));
+                button.IsEnabled = action.IsEnabled;
+                button.Opacity = action.IsEnabled ? 1 : 0.45;
+                layout.Children.Add(button);
 
             return layout;
         }
@@ -657,8 +663,17 @@ namespace EHMR.Resources.Controls
                 VerticalTextAlignment=TextAlignment.Center
             };
 
+            border.Opacity = 1;
+            border.IsEnabled = true;
             border.GestureRecognizers.Add(
-                new TapGestureRecognizer { Command=command, CommandParameter=commandParameter });
+                new TapGestureRecognizer
+                {
+                    Command = new Command(() =>
+                    {
+                        if(border.IsEnabled)
+                            command?.Execute(commandParameter);
+                    })
+                });
 
             return border;
         }
