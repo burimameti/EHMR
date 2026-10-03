@@ -13,7 +13,7 @@ public partial class UsersViewModel : BaseViewModel<UserAdminDto>
 {
     private readonly IUserService _userService;
 
-    protected override string ModuleName => "users";
+    protected override string ModuleName => Modules.Administration;
     protected override string DetailRoute => AppRoutes.Users.Detail;
     protected override string PermissionDeniedMessage => "Немате авторизација за додавање нов корисник.";
 
