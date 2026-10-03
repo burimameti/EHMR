@@ -1,4 +1,5 @@
 ﻿using EHMR.Domain.Interfaces;
+using EHMR.Domain.Entities.Rbac;
 using System.Diagnostics;
 
 namespace EHMR.Services
@@ -73,18 +74,12 @@ namespace EHMR.Services
 
         public async Task GoBackAsync()
         {
-            if(Shell.Current?.Navigation?.NavigationStack?.Count>1)
-            {
-                await Shell.Current.Navigation.PopAsync();
-            }
-            else if(Shell.Current!=null)
-            {
-                await Shell.Current.GoToAsync("..");
-            }
-            else
-            {
+            var shell = Shell.Current;
+            if(shell is null)
                 throw new InvalidOperationException("Shell.Current is null. Ensure your app uses Shell.");
-            }
+
+            // Dashboard is the application root. Page-level Back always returns there.
+            await shell.GoToAsync($"//{AppRoutes.Dashboard}", true);
         }
 
         public async Task PushModalAsync(object page)
