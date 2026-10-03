@@ -22,7 +22,7 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         ISelectedItemService<Encounter> selectedItemService,
         IPatientClinicalReportService clinicalReportService,
         IAuthorizationService authorizationService)
-        : base(service, navigationService, userDialogService)
+        : base(service, navigationService, userDialogService, authorizationService)
     {
         _selectedItemService=selectedItemService;
         _clinicalReportService=clinicalReportService;
@@ -33,6 +33,12 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     [RelayCommand]
     private async Task GenerateClinicalReportAsync()
     {
+        if(!CanPrint)
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за печатење/генерирање извештај.", "ОК");
+            return;
+        }
+
         if(Encounter.PatientId==Guid.Empty) return;
 
         try
@@ -56,8 +62,8 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         }
     }
 
-    private bool CanModifyEncounter =>
-        _authorizationService.CanPerform("encounters", ModuleAction.Edit);
+    private bool CanModifyEncounter => CanUpdate;
+    private bool CanChangeStatus => CanUpdate || CanApprove;
 
     public async Task LoadAsync()
     {
@@ -137,9 +143,18 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     [RelayCommand]
     public async Task ChangeStatusAsync(EncounterStatus newStatus)
     {
-        if(!CanModifyEncounter)
+        var statusAllowed = newStatus switch
         {
-            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за промена на статусот на овој преглед.", "ОК");
+            EncounterStatus.Completed => CanApprove,
+            EncounterStatus.Cancelled => CanUpdate,
+            EncounterStatus.Scheduled => CanUpdate,
+            EncounterStatus.InProgress => CanUpdate,
+            _ => false
+        };
+
+        if(!statusAllowed)
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за оваа промена на статусот.", "ОК");
             return;
         }
 
