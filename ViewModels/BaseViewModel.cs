@@ -491,8 +491,13 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         }
     };
 
-        if(CanUpdate&&(canEditPredicate?.Invoke(item)??true))
-            actions.Add(new SparkButtonItem { Label=editLabel, Command=EditCommand, CommandParameter=item });
+        actions.Add(new SparkButtonItem
+        {
+            Label=editLabel,
+            Command=EditCommand,
+            CommandParameter=item,
+            IsEnabled=CanUpdate && (canEditPredicate?.Invoke(item) ?? true)
+        });
 
         row["Actions"]=actions;
     }
