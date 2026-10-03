@@ -58,7 +58,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     public DbSet<Patient> Patients => Set<Patient>();
     public DbSet<TaskItem> TaskItems => Set<TaskItem>();
     public DbSet<TherapyCycle> TherapyCycles => Set<TherapyCycle>();
-    public DbSet<Inventory> Inventories => Set<Inventory>();
     public DbSet<PatientDocument> PatientDocuments => Set<PatientDocument>();
     public DbSet<Prescription> Prescriptions => Set<Prescription>();
     public DbSet<TherapyProtocol> TherapyProtocols { get; set; } = null!;
@@ -587,7 +586,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
         modelBuilder.Entity<TaskItem>().Property(x => x.Status).HasConversion<string>();
         modelBuilder.Entity<TherapyCycle>().Property(x => x.Status).HasConversion<string>();
         modelBuilder.Entity<Appointment>().Property(x => x.Status).HasConversion<string>();
-        modelBuilder.Entity<Inventory>().Property(x => x.Status).HasConversion<string>();
         modelBuilder.Entity<Alert>().Property(x => x.Level).HasConversion<string>();
     }
 }
