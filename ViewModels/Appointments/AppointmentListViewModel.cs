@@ -436,7 +436,7 @@ public partial class AppointmentListViewModel
     {
         if(appointment is null) return;
 
-        if(!CanDelete)
+        if(!CanCancel)
         {
             await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за откажување термини.", "OK");
             return;
@@ -699,15 +699,13 @@ public partial class AppointmentListViewModel
 
             AddDefaultActions(a, row, detailLabel: "Детали", editLabel: "Промени", canEditPredicate: _ => CanUpdate && CanEdit(a));
 
-            if(CanDelete&&CanCancel(a))
+            ((List<SparkButtonItem>)row["Actions"]).Add(new SparkButtonItem
             {
-                ((List<SparkButtonItem>)row["Actions"]).Add(new SparkButtonItem
-                {
-                    Label="Откажи термин",
-                    Command=CancelAppointmentCommand,
-                    CommandParameter=a
-                });
-            }
+                Label="Откажи термин",
+                IsEnabled=CanCancel&&CanCancel(a),
+                Command=CancelAppointmentCommand,
+                CommandParameter=a
+            });
 
             rows.Add(row);
         }
