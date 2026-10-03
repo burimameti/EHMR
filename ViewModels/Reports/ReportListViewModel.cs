@@ -352,7 +352,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     [RelayCommand]
     public async Task GenerateReportAsync()
     {
-        if(IsBusy) return;
+        if(!CanView || IsBusy) return;
         try
         {
             IsBusy=true;
@@ -1018,7 +1018,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     [RelayCommand]
     public async Task ExportToPdfAsync()
     {
-        if(IsBusy) return;
+        if(!CanView || !CanExport || IsBusy) return;
 
         try
         {
