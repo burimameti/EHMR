@@ -20,7 +20,7 @@
 						TextColor="White"
 						Command="{Binding NewCommand}"
 						HeightRequest="45"
-						IsVisible="{Binding CanCreate}"
+						IsEnabled="{Binding CanCreate}"
 						Style="{StaticResource TabButtonActiveStyle}"
 						Text="Нов протокол"
 						WidthRequest="170" />
