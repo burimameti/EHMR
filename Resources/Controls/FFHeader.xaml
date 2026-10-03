@@ -77,7 +77,7 @@
 					IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
 					Style="{StaticResource TabButtonActiveStyle}"
 					Text="{Binding PrimaryButtonText, Source={x:Reference Root}}"
-					TextColor="#475569"
+					TextColor="White"
 					WidthRequest="150" />
 				<Button
 					BackgroundColor="#FFFFFF"
@@ -86,7 +86,7 @@
 					IsVisible="{Binding ShowSecondaryButton, Source={x:Reference Root}}"
 					Style="{StaticResource TabButtonStyle}"
 					Text="{Binding SecondaryButtonText, Source={x:Reference Root}}"
-					TextColor="White"
+					TextColor="#475569"
 					WidthRequest="150" />
 				<Button
 					Command="{Binding RefreshCommand, Source={x:Reference Root}}"
