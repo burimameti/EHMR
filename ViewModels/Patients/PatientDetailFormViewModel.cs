@@ -815,7 +815,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void ClearDoctor()
     {
-        if(!IsEditMode) return;
+        if(!IsEditMode || !CanEditPatient) return;
 
         Patient.DoctorId=Guid.Empty;
         SelectedDoctorDisplay=string.Empty;
@@ -827,7 +827,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void SelectDoctor(DoctorDto doctor)
     {
-        if(doctor==null) return;
+        if(doctor==null || !CanEditPatient) return;
 
         Patient.DoctorId=doctor.Id;
         SelectedDoctorDisplay=doctor.DisplayName;
@@ -921,7 +921,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void AddMkb(Mkb10CodeDto code)
     {
-        if(code==null) return;
+        if(code==null || !CanEditPatient) return;
         if(Diagnoses.Any(x => x.Mkb10CodeId==code.Id)) return;
 
         var diagnosis = new DiagnosisDto
@@ -949,7 +949,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void RemoveMkb(DiagnosisDto diagnosis)
     {
-        if(diagnosis==null) return;
+        if(diagnosis==null || !CanEditPatient) return;
         if(diagnosis.Id!=Guid.Empty) _deletedDiagnosisIds.Add(diagnosis.Id);
         Diagnoses.Remove(diagnosis);
     }
@@ -1081,7 +1081,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void AddMedicine(MedicineDto medicine)
     {
-        if(medicine==null) return;
+        if(medicine==null || !CanEditPatient) return;
 
         if(AttachedMedicines.Any(r => r.PatientMedicine.MedicineId==medicine.Id&&r.PatientMedicine.IsActive))
             return;
@@ -1115,7 +1115,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void RemoveMedicine(AttachedMedicineRow row)
     {
-        if(row==null) return;
+        if(row==null || !CanEditPatient) return;
 
         // Existing therapy is never physically deleted. Closing it here also
         // keeps the in-memory model consistent with the history rule.
@@ -1148,7 +1148,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task UploadDocumentAsync()
     {
-        if(IsUploadingDocument) return;
+        if(!CanEditPatient || IsUploadingDocument) return;
 
         try
         {
@@ -1198,7 +1198,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void RemoveDocument(PatientDocumentDto document)
     {
-        if(document==null) return;
+        if(document==null || !CanEditPatient) return;
         if(document.Id!=Guid.Empty) _deletedDocumentIds.Add(document.Id);
         if(SelectedDocumentPreview==document) SelectedDocumentPreview=null;
         Documents.Remove(document);
