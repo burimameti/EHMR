@@ -294,6 +294,12 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             return;
         }
 
+        if(!AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Create))
+        {
+            await UserDialogService.ShowAlertAsync("Недозволена акција", "Немате авторизација за креирање нов преглед.", "ОК");
+            return;
+        }
+
         if(patient.Status==PatientStatus.Inactive)
         {
             await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "За неактивен пациент не може да се креира нов преглед.", "ОК");
@@ -442,6 +448,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
                     IconGlyph="\uD83D\uDCC5",
                     Label="Нов преглед",
                     IsPrimary=true,
+                    IsEnabled=AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Create),
                     Command=NewEncounterForSelectedCommand,
                     CommandParameter=p
                 };
