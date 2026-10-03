@@ -167,10 +167,16 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
 
             AddDefaultActions(p, row, detailLabel: "Преглед", editLabel: "✎");
 
-            if(CanDelete)
-                row["Actions"]=((List<SparkButtonItem>)row["Actions"])
-                    .Append(new SparkButtonItem { Label="🗑", Command=DeleteCommand, CommandParameter=p, IsPrimary=false })
-                    .ToList();
+            row["Actions"]=((List<SparkButtonItem>)row["Actions"])
+                .Append(new SparkButtonItem
+                {
+                    Label="🗑",
+                    Command=DeleteCommand,
+                    CommandParameter=p,
+                    IsPrimary=false,
+                    IsEnabled=CanDelete
+                })
+                .ToList();
 
             rows.Add(row);
         }
@@ -202,7 +208,7 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
     [RelayCommand]
     private async Task DeleteAsync(TherapyProtocol protocol)
     {
-        if(protocol==null) return;
+        if(protocol==null || !CanDelete) return;
 
         bool confirm = await UserDialogService.ShowConfirmationAsync(
             "Потврда за бришење",
