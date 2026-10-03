@@ -124,6 +124,7 @@
 								Command="{Binding GenerateClinicalReportCommand}"
 								ContentPadding="16,0"
 								HeightRequestEx="40"
+								IsEnabled="{Binding CanPrint}"
 								IsVisible="{Binding IsReadOnly}"
 								Text="Печати / PDF" />
 							<controls:FFButton
