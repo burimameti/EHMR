@@ -883,9 +883,9 @@
 											</Border>
 										</VerticalStackLayout>
 
-										<!--  РЕД 1 — ПРЕБАРУВАЊА (на иста линија)  -->
+										<!--  РЕД 2 — ПРЕБАРУВАЊА (на иста линија)  -->
 										<Grid
-											Grid.Row="1"
+											Grid.Row="2"
 											Grid.Column="0"
 											ColumnDefinitions="*,*"
 											ColumnSpacing="8"
@@ -898,7 +898,7 @@
 										</Grid>
 
 										<controls:FFSearchBox
-											Grid.Row="1"
+											Grid.Row="2"
 											Grid.Column="1"
 											IsVisible="{Binding IsEditMode}"
 											Placeholder="Додај лек во активна терапија..."
