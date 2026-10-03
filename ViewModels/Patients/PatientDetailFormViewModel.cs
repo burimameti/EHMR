@@ -704,33 +704,10 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [RelayCommand]
     private async Task CancelAsync()
     {
-        if(_isModalReturnMode)
-        {
-            _selectedItemService.SelectedItem=null;
-            await _navigationService.GoToAsync(AppRoutes.Patients.List);
-            return;
-        }
-
-        if(_isNewPatientMode)
-        {
-            await _navigationService.GoToAsync(AppRoutes.Patients.List);
-            return;
-        }
-
-        if(_originalPatient!=null)
-        {
-            Patient=CloneEditDto(_originalPatient);
-
-            _deletedDiagnosisIds.Clear();
-            _deletedMedicineIds.Clear();
-            _deletedDocumentIds.Clear();
-
-            _childrenLoaded=false;
-            _=LoadPatientAsync(Patient.Id); // pull real DB state back in
-        }
-
-        IsReadOnly=true;
+        _selectedItemService.SelectedItem=null;
+        await _navigationService.GoToAsync($"//{AppRoutes.Dashboard}");
     }
+
 
     public static PatientEditDto CreateBlankForRegistration() => new()
     {
