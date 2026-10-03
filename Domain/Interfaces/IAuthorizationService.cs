@@ -26,7 +26,7 @@ public interface IAuthorizationService
         get;
     }
     bool CanPerform(string module, ModuleAction action);
-    bool HasDoctorAdminPrivileges { get; }
+   // bool HasDoctorAdminPrivileges { get; }
     bool HasRole(UserRole role);
     bool HasModule(string module);
     bool CanAccessModule(string module);

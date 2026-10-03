@@ -16,8 +16,7 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
     public bool CanShowEdit =>
         CanEditEncounter &&
         (_authorizationService.HasRole(UserRole.Admin) ||
-         _authorizationService.HasRole(UserRole.SuperAdmin) ||
-         _authorizationService.HasDoctorAdminPrivileges);
+         _authorizationService.HasRole(UserRole.SuperAdmin) );
 
     public bool CanEditEncounter =>
         Encounter.Id!=Guid.Empty&&Encounter.Status!=EncounterStatus.Completed;
