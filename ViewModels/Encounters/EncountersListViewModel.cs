@@ -497,7 +497,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     {
         if(item is null) return;
 
-        if(!_authorizationService.HasDoctorAdminPrivileges)
+        if(!CanUpdate)
         {
             await UserDialogService.ShowAlertAsync(PermissionDeniedTitle, "Немате авторизација за уредување прегледи.", "OK");
             return;
