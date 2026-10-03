@@ -73,7 +73,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     private DateTime? currentPatientScoreDate;
 
     [ObservableProperty]
-    private ObservableCollection<ApplicationRegime> applicationRegimeOptions = new();
+    private ObservableCollection<string> applicationRegimeOptions = new();
+
+    private List<ApplicationRegime> _applicationRegimes = [];
 
     [RelayCommand]
     public async Task AddApplicationRegimeAsync()
@@ -365,8 +367,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             PatientTherapyCyclesHistory=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
             PatientPrescriptions=new ObservableCollection<Prescription>(ctx.Prescriptions);
             PatientMedicines=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
-            ApplicationRegimeOptions=new ObservableCollection<ApplicationRegime>(
-                await EncounterService.GetApplicationRegimesAsync());
+            await LoadApplicationRegimesAsync();
             CurrentPatientScore=ctx.LatestScore?.ScoreText??string.Empty;
             CurrentPatientScoreDate=ctx.LatestScore?.RecordedAt;
             PatientDocuments=new ObservableCollection<PatientDocument>(ctx.Documents);
@@ -1037,6 +1038,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             try
             {
                 await LoadLookupsAsync();
+                await LoadApplicationRegimesAsync();
                 await SearchMkbAsync(string.Empty);
 
                 // ── NEW ENCOUNTER — early exit, no DB call needed ────────────
@@ -1162,6 +1164,27 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         IsEditMode=false;
         IsReadOnly=true;
     }    
+    private async Task LoadApplicationRegimesAsync()
+    {
+        var regimes = await EncounterService.GetApplicationRegimesAsync();
+        _applicationRegimes = regimes;
+        ApplicationRegimeOptions = new ObservableCollection<string>(
+            regimes.Select(x => x.Regime));
+    }
+
+    protected void ResolveApplicationRegimes(IEnumerable<PatientMedicine> medicines)
+    {
+        foreach(var medicine in medicines)
+        {
+            var text = medicine.ApplicationRegimeDisplay;
+            var regime = _applicationRegimes.FirstOrDefault(
+                x => string.Equals(x.Regime, text, StringComparison.OrdinalIgnoreCase));
+
+            medicine.ApplicationRegime = regime;
+            medicine.ApplicationRegimeId = regime?.Id;
+        }
+    }
+
     // =====================================================
     // DIAGNOSIS / MKB10
     // =====================================================
