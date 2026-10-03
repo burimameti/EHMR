@@ -156,6 +156,7 @@ public partial class LoginViewModel : ObservableObject
             var user = await db.Users
                 .AsNoTracking()
                 .Include(x => x.Modules)
+                .Include(x => x.ModulePermissions)
                 .Include(x => x.Scopes)
                 .FirstOrDefaultAsync(x => x.Username==Username);
 
