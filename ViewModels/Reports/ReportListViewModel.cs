@@ -888,12 +888,13 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             IsPrimary=true,
             Command=ClearFiltersCommand
         });
-        //Buttons.Add(new SparkButtonItem
-        //{
-        //    Label="Извези PDF",
-        //    IsPrimary=false,
-        //    Command=ExportToPdfCommand
-        //});
+        Buttons.Add(new SparkButtonItem
+        {
+            Label="Извези PDF",
+            IsPrimary=false,
+            IsEnabled=CanExport,
+            Command=ExportToPdfCommand
+        });
     }
 
     private void BuildSparkGridColumns()
