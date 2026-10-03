@@ -33,7 +33,7 @@
 
 	<Style x:Key="CrudFormContentStackStyle" TargetType="VerticalStackLayout">
 		<Setter Property="Padding" Value="0" />
-		<Setter Property="Spacing" Value="{StaticResource CrudFormSectionSpacing}" />
+		<Setter Property="Spacing" Value="1" />
 	</Style>
 
 	<Style x:Key="CrudFormSidebarStackStyle" TargetType="VerticalStackLayout">
@@ -42,7 +42,7 @@
 	</Style>
 
 	<Style x:Key="CrudFormSectionStackStyle" TargetType="VerticalStackLayout">
-		<Setter Property="Spacing" Value="12" />
+		<Setter Property="Spacing" Value="6" />
 	</Style>
 
 	<Style x:Key="CrudFormSummarySurfaceStyle" TargetType="Border">
@@ -81,7 +81,7 @@
 
 	<Style x:Key="CrudFormHistoryRowStyle" TargetType="Border">
 		<Setter Property="Margin" Value="0,0,0,5" />
-		<Setter Property="Padding" Value="9,6" />
+		<Setter Property="Padding" Value="2,0" />
 		<Setter Property="BackgroundColor" Value="White" />
 		<Setter Property="Stroke" Value="#D7E0E8" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
@@ -105,7 +105,7 @@
 	</Style>
 	<Style x:Key="CrudCollectionCodeStyle" TargetType="Label">
 		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="FontSize" Value="11.5" />
+		<Setter Property="FontSize" Value="10.5" />
 		<Setter Property="VerticalOptions" Value="Center" />
 		<Setter Property="TextColor" Value="{StaticResource SparkAccentTealDark}" />
 	</Style>

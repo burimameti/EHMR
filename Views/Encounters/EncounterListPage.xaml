@@ -34,7 +34,7 @@
 						Title="Прегледи"
 						Grid.Column="0"
 						Subtitle="Преглед, пребарување и управување со медицински прегледи" />
-					<controls:FFButton
+					<!--<controls:FFButton
 						Grid.Column="1"
 						BackgroundColorEx="{StaticResource SparkButtonSecondaryBg}"
 						ButtonKind="Primary"
@@ -43,7 +43,7 @@
 						HeightRequestEx="45"
 						IsVisible="{Binding CanCreate}"
 						Text="Нов преглед"
-						TextColorEx="{StaticResource White}" />
+						TextColorEx="{StaticResource White}" />-->
 				</Grid>
 			</Border>
 

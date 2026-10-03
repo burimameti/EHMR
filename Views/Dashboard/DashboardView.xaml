@@ -20,79 +20,79 @@
 			<converters:EncounterStatusChipBackgroundConverter x:Key="EncounterStatusChipBg" />
 			<converters:EncounterStatusChipTextConverter x:Key="EncounterStatusChipFg" />
 			<converters:EncounterStatusChipLabelConverter x:Key="EncounterStatusChipLabel" />
-<DataTemplate x:Key="DashboardKpiTemplate" x:DataType="admin:FFMetricTileItem">
+			<DataTemplate x:Key="DashboardKpiTemplate" x:DataType="admin:FFMetricTileItem">
 
-										<Border
-											Padding="12,8"
-											BackgroundColor="White"
-											HeightRequest="72"
-											HorizontalOptions="FillAndExpand"
-											Stroke="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
-											StrokeShape="RoundRectangle 12"
-											StrokeThickness="1.5">
-											<Grid
-												ColumnDefinitions="Auto,*,Auto"
-												ColumnSpacing="8"
-												RowDefinitions="Auto,Auto"
-												RowSpacing="3">
-												<Border
-													Grid.RowSpan="2"
-													BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
-													HeightRequest="30"
-													StrokeShape="RoundRectangle 8"
-													StrokeThickness="0"
-													VerticalOptions="Start"
-													WidthRequest="30">
-													<Label
-														FontFamily="FASolid"
-														FontSize="12"
-														HorizontalOptions="Center"
-														Text="{Binding Icon}"
-														TextColor="White"
-														VerticalOptions="Center" />
-												</Border>
-												<Label
-													Grid.Column="1"
-													FontAttributes="Bold"
-													FontSize="9"
-													LineBreakMode="TailTruncation"
-													MaxLines="1"
-													Text="{Binding Title}"
-													TextColor="{StaticResource SubtitleColor}"
-													VerticalOptions="Center" />
-												<Label
-													Grid.Column="2"
-													FontAttributes="Bold"
-													FontSize="19"
-													Text="{Binding Value}"
-													TextColor="{StaticResource TitleColor}"
-													VerticalOptions="Center" />
-												<Border
-													Grid.Row="1"
-													Grid.Column="1"
-													Grid.ColumnSpan="2"
-													Padding="8,4"
-													BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
-													HorizontalOptions="Fill"
-													MinimumHeightRequest="28"
-													StrokeThickness="0">
-													<Border.StrokeShape>
-														<RoundRectangle CornerRadius="8" />
-													</Border.StrokeShape>
-													<Border.GestureRecognizers>
-														<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
-													</Border.GestureRecognizers>
-													<Label
-														FontAttributes="Bold"
-														FontSize="10"
-														HorizontalTextAlignment="Center"
-														Text="Повеќе  ›"
-														TextColor="White" />
-												</Border>
-											</Grid>
-										</Border>
-									
-							</DataTemplate>
+				<Border
+					Padding="12,8"
+					BackgroundColor="White"
+					HeightRequest="72"
+					HorizontalOptions="FillAndExpand"
+					Stroke="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+					StrokeShape="RoundRectangle 12"
+					StrokeThickness="1.5">
+					<Grid
+						ColumnDefinitions="Auto,*,Auto"
+						ColumnSpacing="8"
+						RowDefinitions="Auto,Auto"
+						RowSpacing="3">
+						<Border
+							Grid.RowSpan="2"
+							BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+							HeightRequest="30"
+							StrokeShape="RoundRectangle 8"
+							StrokeThickness="0"
+							VerticalOptions="Start"
+							WidthRequest="30">
+							<Label
+								FontFamily="FASolid"
+								FontSize="12"
+								HorizontalOptions="Center"
+								Text="{Binding Icon}"
+								TextColor="White"
+								VerticalOptions="Center" />
+						</Border>
+						<Label
+							Grid.Column="1"
+							FontAttributes="Bold"
+							FontSize="9"
+							LineBreakMode="TailTruncation"
+							MaxLines="1"
+							Text="{Binding Title}"
+							TextColor="{StaticResource SubtitleColor}"
+							VerticalOptions="Center" />
+						<Label
+							Grid.Column="2"
+							FontAttributes="Bold"
+							FontSize="19"
+							Text="{Binding Value}"
+							TextColor="{StaticResource TitleColor}"
+							VerticalOptions="Center" />
+						<Border
+							Grid.Row="1"
+							Grid.Column="1"
+							Grid.ColumnSpan="2"
+							Padding="8,4"
+							BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+							HorizontalOptions="Fill"
+							MinimumHeightRequest="28"
+							StrokeThickness="0">
+							<Border.StrokeShape>
+								<RoundRectangle CornerRadius="8" />
+							</Border.StrokeShape>
+							<Border.GestureRecognizers>
+								<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
+							</Border.GestureRecognizers>
+							<Label
+								FontAttributes="Bold"
+								FontSize="10"
+								HorizontalTextAlignment="Center"
+								Text="Повеќе  ›"
+								TextColor="White" />
+						</Border>
+					</Grid>
+				</Border>
+
+			</DataTemplate>
 
 			<Style
 				x:Key="DashboardSummaryCard"
@@ -226,9 +226,9 @@
 		<!--  RIGHT MAIN CONTAINER  -->
 		<Grid
 			Grid.Column="1"
-			Margin="0,0,0,0"
+			Margin="2,2,2,2"
 			RowDefinitions="Auto,*"
-			RowSpacing="16">
+			RowSpacing="01">
 
 			<!--  ===================================================  -->
 			<!--  HEADER  -->
@@ -261,7 +261,7 @@
 					-->
 					<HorizontalStackLayout
 						Grid.Column="1"
-						Margin="8"
+						Margin="12,8,12,8"
 						BindableLayout.ItemsSource="{Binding State.AlertSummaries}"
 						Spacing="10"
 						VerticalOptions="Center">
@@ -342,88 +342,373 @@
 							the admin dashboard's design system rather than hand-rolled cards.
 						-->
 						<!--  ===================================================  -->
-						<Grid ColumnDefinitions="*,*,*,*,*" ColumnSpacing="8" HorizontalOptions="Fill" Margin="0,0,0,4">
-							<Border Grid.Column="0" Padding="10,6" BackgroundColor="White" HeightRequest="68" HorizontalOptions="Fill" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
-								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
-									<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi0.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="27" StrokeShape="RoundRectangle 7" StrokeThickness="0" VerticalOptions="Start" WidthRequest="27">
-										<Label FontFamily="FASolid" FontSize="11" HorizontalOptions="Center" Text="&#xf0c0;" TextColor="White" VerticalOptions="Center" />
+						<Grid
+							Margin="12,12,12,12"
+							ColumnDefinitions="*,*,*,*,*"
+							ColumnSpacing="28"
+							HorizontalOptions="Fill"
+							Style="{StaticResource CrudFormPageGridStyle}">
+							<Border
+								Grid.Column="0"
+								Padding="12,12"
+								BackgroundColor="White"
+								HeightRequest="88"
+								HorizontalOptions="Fill"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 12"
+								StrokeThickness="1.9">
+								<Grid
+									ColumnDefinitions="Auto,*,Auto"
+									ColumnSpacing="8"
+									RowDefinitions="Auto,Auto"
+									RowSpacing="3">
+									<Border
+										Grid.RowSpan="2"
+										BackgroundColor="{Binding Kpi0.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+										HeightRequest="27"
+										StrokeShape="RoundRectangle 7"
+										StrokeThickness="0"
+										VerticalOptions="Start"
+										WidthRequest="27">
+										<Label
+											FontFamily="FASolid"
+											FontSize="11"
+											HorizontalOptions="Center"
+											Text="&#xf0c0;"
+											TextColor="White"
+											VerticalOptions="Center" />
 									</Border>
-									<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="ПАЦИЕНТИ ВКУПНО" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
-									<Label Grid.Column="2" FontAttributes="Bold" FontSize="18" Text="{Binding State.TotalPatients}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
-									<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="6,2" BackgroundColor="{Binding Kpi0.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" HeightRequest="22" StrokeThickness="0">
-										<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-										<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding NavigateToPatientsCommand}" /></Border.GestureRecognizers>
-										<Label FontAttributes="Bold" FontSize="9" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
+									<Label
+										Grid.Column="1"
+										FontAttributes="Bold"
+										FontSize="9"
+										LineBreakMode="TailTruncation"
+										MaxLines="1"
+										Text="ПАЦИЕНТИ ВКУПНО"
+										TextColor="{StaticResource SubtitleColor}"
+										VerticalOptions="Center" />
+									<Label
+										Grid.Column="2"
+										FontAttributes="Bold"
+										FontSize="18"
+										Text="{Binding State.TotalPatients}"
+										TextColor="{StaticResource TitleColor}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Row="1"
+										Grid.Column="1"
+										Grid.ColumnSpan="2"
+										Padding="6,2"
+										BackgroundColor="{Binding Kpi0.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+										HeightRequest="22"
+										HorizontalOptions="Fill"
+										StrokeThickness="0">
+										<Border.StrokeShape>
+											<RoundRectangle CornerRadius="8" />
+										</Border.StrokeShape>
+										<Border.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding NavigateToPatientsCommand}" />
+										</Border.GestureRecognizers>
+										<Label
+											FontAttributes="Bold"
+											FontSize="9"
+											HorizontalTextAlignment="Center"
+											Text="Повеќе  ›"
+											TextColor="White" />
 									</Border>
 								</Grid>
 							</Border>
-							<Border Grid.Column="1" Padding="10,6" BackgroundColor="White" HeightRequest="68" HorizontalOptions="Fill" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
-								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
-									<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi1.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="27" StrokeShape="RoundRectangle 7" StrokeThickness="0" VerticalOptions="Start" WidthRequest="27">
-										<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="&#xf133;" TextColor="White" VerticalOptions="Center" />
+							<Border
+								Grid.Column="1"
+								Padding="12,12"
+								BackgroundColor="White"
+								HeightRequest="88"
+								HorizontalOptions="Fill"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 12"
+								StrokeThickness="1.9">
+								<Grid
+									ColumnDefinitions="Auto,*,Auto"
+									ColumnSpacing="8"
+									RowDefinitions="Auto,Auto"
+									RowSpacing="3">
+									<Border
+										Grid.RowSpan="2"
+										BackgroundColor="{Binding Kpi1.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+										HeightRequest="27"
+										StrokeShape="RoundRectangle 7"
+										StrokeThickness="0"
+										VerticalOptions="Start"
+										WidthRequest="27">
+										<Label
+											FontFamily="FASolid"
+											FontSize="12"
+											HorizontalOptions="Center"
+											Text="&#xf133;"
+											TextColor="White"
+											VerticalOptions="Center" />
 									</Border>
-									<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="АКТИВНИ ТЕРМИНИ" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
-									<Label Grid.Column="2" FontAttributes="Bold" FontSize="18" Text="{Binding State.UpcomingAppointmentsCount}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
-									<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="6,2" BackgroundColor="{Binding Kpi1.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" HeightRequest="22" StrokeThickness="0">
-										<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-										<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding NavigateToAppointmentsCommand}" /></Border.GestureRecognizers>
-										<Label FontAttributes="Bold" FontSize="9" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
+									<Label
+										Grid.Column="1"
+										FontAttributes="Bold"
+										FontSize="9"
+										LineBreakMode="TailTruncation"
+										MaxLines="1"
+										Text="АКТИВНИ ТЕРМИНИ"
+										TextColor="{StaticResource SubtitleColor}"
+										VerticalOptions="Center" />
+									<Label
+										Grid.Column="2"
+										FontAttributes="Bold"
+										FontSize="18"
+										Text="{Binding State.UpcomingAppointmentsCount}"
+										TextColor="{StaticResource TitleColor}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Row="1"
+										Grid.Column="1"
+										Grid.ColumnSpan="2"
+										Padding="6,2"
+										BackgroundColor="{Binding Kpi1.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+										HeightRequest="22"
+										HorizontalOptions="Fill"
+										StrokeThickness="0">
+										<Border.StrokeShape>
+											<RoundRectangle CornerRadius="8" />
+										</Border.StrokeShape>
+										<Border.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding NavigateToAppointmentsCommand}" />
+										</Border.GestureRecognizers>
+										<Label
+											FontAttributes="Bold"
+											FontSize="9"
+											HorizontalTextAlignment="Center"
+											Text="Повеќе  ›"
+											TextColor="White" />
 									</Border>
 								</Grid>
 							</Border>
-							<Border Grid.Column="2" Padding="10,6" BackgroundColor="White" HeightRequest="68" HorizontalOptions="Fill" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
-								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
-									<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi2.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="27" StrokeShape="RoundRectangle 7" StrokeThickness="0" VerticalOptions="Start" WidthRequest="27">
-										<Label FontFamily="FASolid" FontSize="11" HorizontalOptions="Center" Text="&#xf058;" TextColor="White" VerticalOptions="Center" />
+							<Border
+								Grid.Column="2"
+								Padding="12,12"
+								BackgroundColor="White"
+								HeightRequest="88"
+								HorizontalOptions="Fill"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 12"
+								StrokeThickness="1.9">
+								<Grid
+									ColumnDefinitions="Auto,*,Auto"
+									ColumnSpacing="8"
+									RowDefinitions="Auto,Auto"
+									RowSpacing="3">
+									<Border
+										Grid.RowSpan="2"
+										BackgroundColor="{Binding Kpi2.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+										HeightRequest="27"
+										StrokeShape="RoundRectangle 7"
+										StrokeThickness="0"
+										VerticalOptions="Start"
+										WidthRequest="27">
+										<Label
+											FontFamily="FASolid"
+											FontSize="11"
+											HorizontalOptions="Center"
+											Text="&#xf058;"
+											TextColor="White"
+											VerticalOptions="Center" />
 									</Border>
-									<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="ЗАВРШЕНИ ДЕНЕС ПРЕГЛЕДИ" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
-									<Label Grid.Column="2" FontAttributes="Bold" FontSize="18" Text="{Binding State.CompletedToday}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
-									<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="6,2" BackgroundColor="{Binding Kpi2.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" HeightRequest="22" StrokeThickness="0">
-										<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-										<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding NavigateToEncountersCommand}" CommandParameter="Completed" /></Border.GestureRecognizers>
-										<Label FontAttributes="Bold" FontSize="9" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
+									<Label
+										Grid.Column="1"
+										FontAttributes="Bold"
+										FontSize="9"
+										LineBreakMode="TailTruncation"
+										MaxLines="1"
+										Text="ЗАВРШЕНИ ДЕНЕС ПРЕГЛЕДИ"
+										TextColor="{StaticResource SubtitleColor}"
+										VerticalOptions="Center" />
+									<Label
+										Grid.Column="2"
+										FontAttributes="Bold"
+										FontSize="18"
+										Text="{Binding State.CompletedToday}"
+										TextColor="{StaticResource TitleColor}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Row="1"
+										Grid.Column="1"
+										Grid.ColumnSpan="2"
+										Padding="6,2"
+										BackgroundColor="{Binding Kpi2.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+										HeightRequest="22"
+										HorizontalOptions="Fill"
+										StrokeThickness="0">
+										<Border.StrokeShape>
+											<RoundRectangle CornerRadius="8" />
+										</Border.StrokeShape>
+										<Border.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding NavigateToEncountersCommand}" CommandParameter="Completed" />
+										</Border.GestureRecognizers>
+										<Label
+											FontAttributes="Bold"
+											FontSize="9"
+											HorizontalTextAlignment="Center"
+											Text="Повеќе  ›"
+											TextColor="White" />
 									</Border>
 								</Grid>
 							</Border>
-							<Border Grid.Column="3" Padding="10,6" BackgroundColor="White" HeightRequest="68" HorizontalOptions="Fill" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
-								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
-									<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi3.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="27" StrokeShape="RoundRectangle 7" StrokeThickness="0" VerticalOptions="Start" WidthRequest="27">
-										<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="&#xf254;" TextColor="White" VerticalOptions="Center" />
+							<Border
+								Grid.Column="3"
+								Padding="12,12"
+								BackgroundColor="White"
+								HeightRequest="88"
+								HorizontalOptions="Fill"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 12"
+								StrokeThickness="1.9">
+								<Grid
+									ColumnDefinitions="Auto,*,Auto"
+									ColumnSpacing="8"
+									RowDefinitions="Auto,Auto"
+									RowSpacing="3">
+									<Border
+										Grid.RowSpan="2"
+										BackgroundColor="{Binding Kpi3.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+										HeightRequest="27"
+										StrokeShape="RoundRectangle 7"
+										StrokeThickness="0"
+										VerticalOptions="Start"
+										WidthRequest="27">
+										<Label
+											FontFamily="FASolid"
+											FontSize="12"
+											HorizontalOptions="Center"
+											Text="&#xf254;"
+											TextColor="White"
+											VerticalOptions="Center" />
 									</Border>
-									<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="ЗАКАЖАНИ И ПРИЈАВЕНИ" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
-									<Label Grid.Column="2" FontAttributes="Bold" FontSize="18" Text="{Binding State.WaitingToday}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
-									<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="6,2" BackgroundColor="{Binding Kpi3.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" HeightRequest="22" StrokeThickness="0">
-										<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-										<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding NavigateToEncountersCommand}" CommandParameter="Scheduled" /></Border.GestureRecognizers>
-										<Label FontAttributes="Bold" FontSize="9" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
+									<Label
+										Grid.Column="1"
+										FontAttributes="Bold"
+										FontSize="9"
+										LineBreakMode="TailTruncation"
+										MaxLines="1"
+										Text="ЗАКАЖАНИ И ПРИЈАВЕНИ"
+										TextColor="{StaticResource SubtitleColor}"
+										VerticalOptions="Center" />
+									<Label
+										Grid.Column="2"
+										FontAttributes="Bold"
+										FontSize="18"
+										Text="{Binding State.WaitingToday}"
+										TextColor="{StaticResource TitleColor}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Row="1"
+										Grid.Column="1"
+										Grid.ColumnSpan="2"
+										Padding="6,2"
+										BackgroundColor="{Binding Kpi3.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+										HeightRequest="22"
+										HorizontalOptions="Fill"
+										StrokeThickness="0">
+										<Border.StrokeShape>
+											<RoundRectangle CornerRadius="8" />
+										</Border.StrokeShape>
+										<Border.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding NavigateToEncountersCommand}" CommandParameter="Scheduled" />
+										</Border.GestureRecognizers>
+										<Label
+											FontAttributes="Bold"
+											FontSize="9"
+											HorizontalTextAlignment="Center"
+											Text="Повеќе  ›"
+											TextColor="White" />
 									</Border>
 								</Grid>
 							</Border>
-							<Border Grid.Column="4" Padding="10,6" BackgroundColor="White" HeightRequest="68" HorizontalOptions="Fill" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1.5">
-								<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="3">
-									<Border Grid.RowSpan="2" BackgroundColor="{Binding Kpi4.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HeightRequest="27" StrokeShape="RoundRectangle 7" StrokeThickness="0" VerticalOptions="Start" WidthRequest="27">
-										<Label FontFamily="FASolid" FontSize="12" HorizontalOptions="Center" Text="&#xf492;" TextColor="White" VerticalOptions="Center" />
+							<Border
+								Grid.Column="4"
+								Padding="12,12"
+								BackgroundColor="White"
+								HeightRequest="88"
+								HorizontalOptions="Fill"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 12"
+								StrokeThickness="1.9">
+								<Grid
+									ColumnDefinitions="Auto,*,Auto"
+									ColumnSpacing="8"
+									RowDefinitions="Auto,Auto"
+									RowSpacing="3">
+									<Border
+										Grid.RowSpan="2"
+										BackgroundColor="{Binding Kpi4.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+										HeightRequest="27"
+										StrokeShape="RoundRectangle 7"
+										StrokeThickness="0"
+										VerticalOptions="Start"
+										WidthRequest="27">
+										<Label
+											FontFamily="FASolid"
+											FontSize="12"
+											HorizontalOptions="Center"
+											Text="&#xf492;"
+											TextColor="White"
+											VerticalOptions="Center" />
 									</Border>
-									<Label Grid.Column="1" FontAttributes="Bold" FontSize="9" LineBreakMode="TailTruncation" MaxLines="1" Text="ВО ТЕК" TextColor="{StaticResource SubtitleColor}" VerticalOptions="Center" />
-									<Label Grid.Column="2" FontAttributes="Bold" FontSize="18" Text="{Binding State.ActiveTherapies}" TextColor="{StaticResource TitleColor}" VerticalOptions="Center" />
-									<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Padding="6,2" BackgroundColor="{Binding Kpi4.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}" HorizontalOptions="Fill" HeightRequest="22" StrokeThickness="0">
-										<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
-										<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding NavigateToTherapiesCommand}" /></Border.GestureRecognizers>
-										<Label FontAttributes="Bold" FontSize="9" HorizontalTextAlignment="Center" Text="Повеќе  ›" TextColor="White" />
+									<Label
+										Grid.Column="1"
+										FontAttributes="Bold"
+										FontSize="9"
+										LineBreakMode="TailTruncation"
+										MaxLines="1"
+										Text="ВО ТЕК"
+										TextColor="{StaticResource SubtitleColor}"
+										VerticalOptions="Center" />
+									<Label
+										Grid.Column="2"
+										FontAttributes="Bold"
+										FontSize="18"
+										Text="{Binding State.ActiveTherapies}"
+										TextColor="{StaticResource TitleColor}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Row="1"
+										Grid.Column="1"
+										Grid.ColumnSpan="2"
+										Padding="6,2"
+										BackgroundColor="{Binding Kpi4.Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
+										HeightRequest="22"
+										HorizontalOptions="Fill"
+										StrokeThickness="0">
+										<Border.StrokeShape>
+											<RoundRectangle CornerRadius="8" />
+										</Border.StrokeShape>
+										<Border.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding NavigateToTherapiesCommand}" />
+										</Border.GestureRecognizers>
+										<Label
+											FontAttributes="Bold"
+											FontSize="9"
+											HorizontalTextAlignment="Center"
+											Text="Повеќе  ›"
+											TextColor="White" />
 									</Border>
 								</Grid>
 							</Border>
 						</Grid>
 
-						
+
 						<!--  ===================================================  -->
 						<!--  PATIENT EXPLORER  -->
 						<!--  ===================================================  -->
 
-						<Grid ColumnDefinitions="*" ColumnSpacing="6">
+						<Grid ColumnDefinitions="*">
 
 							<controls:FFSectionCard>
-								<VerticalStackLayout Spacing="22">
+								<VerticalStackLayout>
 
 									<controls:SparkExplorerHeaderView
 										Buttons="{Binding Buttons}"
@@ -439,8 +724,6 @@
 										<controls:SparkExplorerHeaderView.SuggestionTemplate>
 											<DataTemplate x:DataType="{x:Null}">
 												<Border
-													Margin="2"
-													Padding="12,8"
 													BackgroundColor="{StaticResource Gray100}"
 													Stroke="{StaticResource SparkBorderSubtle}"
 													StrokeShape="RoundRectangle 2"
@@ -559,10 +842,7 @@
 
 						<!--  ── Термини по датум ────────────────────────────  -->
 						<controls:FFSectionCard>
-							<VerticalStackLayout
-								Padding="0"
-								Spacing="14"
-								Style="{StaticResource FFInputContainerStyle}">
+							<VerticalStackLayout Padding="0">
 
 								<Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="10">
 									<VerticalStackLayout

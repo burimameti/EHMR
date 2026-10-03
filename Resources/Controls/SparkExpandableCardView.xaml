@@ -10,7 +10,7 @@
 		x:Name="CardBorder"
 		Margin="0"
 		Padding="0"
-		BackgroundColor="#FFFFFF"
+		BackgroundColor="#FFFFAA"
 		Stroke="{StaticResource SparkBorder}"
 		StrokeShape="RoundRectangle 12"
 		StrokeThickness="1">

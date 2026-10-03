@@ -77,13 +77,13 @@
 
 		<Setter Property="BackgroundColor" Value="White" />
 
-		<Setter Property="StrokeThickness" Value="2" />
+		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Padding" Value="0" />
 
 		<Setter Property="Shadow" Value="{x:Null}" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
-				<RoundRectangle CornerRadius="0" />
+				<RoundRectangle CornerRadius="11" />
 			</Setter.Value>
 		</Setter>
 	</Style>
