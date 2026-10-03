@@ -32,15 +32,19 @@ public class NavigationService : INavigationService
                 "Shell.Current is null. Ensure the application Shell is initialized.");
 
         var normalized = route.Trim('/');
+        var shellRoute = shell.Items.Any(item =>
+            item.Route.Equals(normalized, StringComparison.OrdinalIgnoreCase));
+
+        // ShellItem/ShellContent routes cannot be navigated as relative routes.
+        // Registered child pages remain relative routes.
+        var navigationRoute = shellRoute
+            ? $"///{normalized}"
+            : normalized;
 
         try
         {
-            // One navigation mechanism only:
-            // main modules are opened from the sidebar, child/detail/create
-            // pages are opened from page buttons. We do not maintain a second
-            // application navigation stack here.
             await shell.GoToAsync(
-                normalized,
+                navigationRoute,
                 false,
                 parameters ?? new Dictionary<string, object>());
 
@@ -49,7 +53,7 @@ public class NavigationService : INavigationService
         }
         catch(Exception ex)
         {
-            Debug.WriteLine($"Navigation failed for [{normalized}]: {ex}");
+            Debug.WriteLine($"Navigation failed for [{navigationRoute}]: {ex}");
             throw;
         }
     }
