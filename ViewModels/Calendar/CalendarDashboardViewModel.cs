@@ -25,7 +25,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
     private DateTime _currentDate;
     private DateTime _currentWeekStart;
 
-    protected override string ModuleName => "Calendar";
+    protected override string ModuleName => Modules.Calendar;
     protected override Func<Encounter, Guid?>? DoctorOwnerSelector => e => e.DoctorId;
 
     [ObservableProperty] private string _currentMonthYearText = string.Empty;
@@ -158,7 +158,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
 
     public ObservableCollection<CalendarDayDto> CalendarDays { get; } = new();
 
-    public bool CanDeleteEncounters => CurrentUserRole=="Admin"||CurrentUserRole=="Doctor";
+    public bool CanDeleteEncounters => CanDelete;
     public string CurrentUserRole { get; set; } = "Doctor";
 
     // ═══════════════════════════════════════════ STATUS FILTER ═══════════════════════════════════════════
