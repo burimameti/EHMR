@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Abstraction;
 using EHMR.Infrastructure.Services;
+using EHMR.Domain.Entities.Rbac;
+using EHMR.Domain.Interfaces;
 
 using System.Collections.ObjectModel;
 
@@ -27,13 +29,17 @@ public partial class MbkImportExportViewModel : ObservableObject
 {
     private readonly Mkb10ImportService _importService;
     private readonly IFileDialogService _fileDialogService;
+    private readonly IAuthorizationService _authorization;
     private CancellationTokenSource? _cts;
 
-    public MbkImportExportViewModel(Mkb10ImportService importService, IFileDialogService fileDialogService)
+    public MbkImportExportViewModel(Mkb10ImportService importService, IFileDialogService fileDialogService, IAuthorizationService authorization)
     {
         _importService=importService;
         _fileDialogService=fileDialogService;
+        _authorization=authorization;
     }
+
+    public bool CanManage => _authorization.CanPerform(Modules.MKBCodes, ModuleAction.Manage);
 
     [ObservableProperty]
     private string? _selectedFilePath;
@@ -71,11 +77,12 @@ public partial class MbkImportExportViewModel : ObservableObject
 
     public ObservableCollection<string> Errors { get; } = new();
 
-    private bool CanBrowse() => !IsImporting;
+    private bool CanBrowse() => CanManage && !IsImporting;
 
     [RelayCommand(CanExecute = nameof(CanBrowse))]
     private async Task BrowseFileAsync()
     {
+        if(!CanManage) return;
         var path = await _fileDialogService.PickOpenFileAsync("Изберете датотека со МКБ-10 кодови");
 
         if(path is not null)
@@ -87,12 +94,12 @@ public partial class MbkImportExportViewModel : ObservableObject
         }
     }
 
-    private bool CanImport() => !string.IsNullOrWhiteSpace(SelectedFilePath)&&!IsImporting;
+    private bool CanImport() => CanManage && !string.IsNullOrWhiteSpace(SelectedFilePath)&&!IsImporting;
 
     [RelayCommand(CanExecute = nameof(CanImport))]
     private async Task ImportAsync()
     {
-        if(string.IsNullOrWhiteSpace(SelectedFilePath)) return;
+        if(!CanManage || string.IsNullOrWhiteSpace(SelectedFilePath)) return;
 
         IsImporting=true;
         NotifyAllCommands();
@@ -143,11 +150,12 @@ public partial class MbkImportExportViewModel : ObservableObject
         }
     }
 
-    private bool CanCancel() => IsImporting;
+    private bool CanCancel() => CanManage && IsImporting;
 
     [RelayCommand(CanExecute = nameof(CanCancel))]
     private void CancelImport()
     {
+        if(!CanManage) return;
         _cts?.Cancel();
     }
 
