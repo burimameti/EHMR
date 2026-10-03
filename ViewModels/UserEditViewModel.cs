@@ -27,7 +27,9 @@ public partial class UserEditViewModel : ObservableObject
     private UserAdminDto _user = new();
 
     [ObservableProperty]
-    private ObservableCollection<PermissionCheckWrapper> _systemPermissions = new();
+    private ObservableCollection<ModulePermissionWrapper> _modulePermissions = new();
+
+    public ObservableCollection<ModulePermissionWrapper> ModulePermissions => _modulePermissions;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEditMode))]
@@ -169,12 +171,7 @@ public partial class UserEditViewModel : ObservableObject
             CanManageTargetUser=actor==null||RoleHierarchy.CanManage(actor.Role, selectedUser.Role);
         }
 
-        SystemPermissions.Clear();
-        foreach(var mod in allSystemModules)
-        {
-            bool isChecked = User.Modules!=null&&User.Modules.Contains(mod, StringComparer.OrdinalIgnoreCase);
-            SystemPermissions.Add(new PermissionCheckWrapper(mod, isChecked));
-        }
+        BuildModulePermissions(allSystemModules);
 
         _selectedRole=User.Role;
         _selectedPosition=User.Position;
@@ -202,20 +199,45 @@ public partial class UserEditViewModel : ObservableObject
         PageTitle=$"✎ Уреди: {User.Username}";
     }
 
-    [RelayCommand]
-    public void TogglePermission(PermissionCheckWrapper item)
-    {
-        if(IsReadOnly||item==null) return;
-        item.IsSelected=!item.IsSelected;
-    }
-
-    [RelayCommand]
+     [RelayCommand]
     public void ApplyDefaultPermissionsForRole()
     {
         if(User==null) return;
-        var defaultModules = Modules.GetDefaultsForRole(User.Role).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        foreach(var wrapper in SystemPermissions)
-            wrapper.IsSelected=defaultModules.Contains(wrapper.PermissionValue);
+
+        foreach(var module in ModulePermissions)
+        {
+            var defaults = RolePermissionMatrix.GetActions(module.ModuleKey, User.Role);
+            foreach(var action in module.Actions)
+                action.IsSelected=defaults.HasFlag(action.Action) && ModulePermissionCatalog.Supports(module.ModuleKey, action.Action);
+        }
+    }
+
+    private void BuildModulePermissions(IEnumerable<string> modules)
+    {
+        ModulePermissions.Clear();
+        foreach(var moduleKey in modules)
+        {
+            var editor = new ModulePermissionWrapper(moduleKey);
+            var hasExplicit = User.Permissions?.TryGetValue(moduleKey, out var explicitActions) == true;
+            var actions = hasExplicit
+                ? explicitActions
+                : RolePermissionMatrix.GetActions(moduleKey, User.Role);
+
+            foreach(var action in ModulePermissionCatalog.GetActions(moduleKey))
+                editor.Actions.Add(new ActionPermissionWrapper(action, actions.HasFlag(action)));
+
+            ModulePermissions.Add(editor);
+        }
+    }
+
+    private Dictionary<string, ModuleAction> BuildPermissionDictionary()
+    {
+        return ModulePermissions.ToDictionary(
+            x => x.ModuleKey,
+            x => x.Actions.Where(a => a.IsSelected)
+                .Select(a => a.Action)
+                .Aggregate(ModuleAction.None, (current, action) => current | action),
+            StringComparer.OrdinalIgnoreCase);
     }
 
     [RelayCommand]
@@ -265,9 +287,10 @@ public partial class UserEditViewModel : ObservableObject
 
         try
         {
-            User.Modules=SystemPermissions
-                .Where(x => x.IsSelected)
-                .Select(x => x.PermissionValue)
+            User.Permissions=BuildPermissionDictionary();
+            User.Modules=User.Permissions
+                .Where(x => x.Value != ModuleAction.None)
+                .Select(x => x.Key)
                 .ToList();
 
             if(_isNewUserMode)
@@ -288,6 +311,9 @@ public partial class UserEditViewModel : ObservableObject
                     _originalUser.Position=User.Position;
                     _originalUser.IsActive=User.IsActive;
                     _originalUser.Modules=new List<string>(User.Modules);
+                    _originalUser.Permissions=User.Permissions!=null
+                        ? new Dictionary<string, ModuleAction>(User.Permissions, StringComparer.OrdinalIgnoreCase)
+                        : null;
                 }
 
                 await _dialogService.ShowAlertAsync("Успешно", "Промените се зачувани.", "ОК");
@@ -348,6 +374,9 @@ public partial class UserEditViewModel : ObservableObject
         Role=source.Role,
         Position=source.Position,
         IsActive=source.IsActive,
-        Modules=source.Modules!=null ? new List<string>(source.Modules) : new List<string>()
+        Modules=source.Modules!=null ? new List<string>(source.Modules) : new List<string>(),
+        Permissions=source.Permissions!=null
+            ? new Dictionary<string, ModuleAction>(source.Permissions, StringComparer.OrdinalIgnoreCase)
+            : null
     };
 }
