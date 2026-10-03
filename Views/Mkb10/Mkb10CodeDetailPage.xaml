@@ -28,9 +28,9 @@
 				<controls:FFPageHeader Title="{Binding HeaderTitle}" Subtitle="{Binding HeaderSubtitle}">
 				<controls:FFPageHeader.HeaderContent>
 					<HorizontalStackLayout Spacing="10">
-						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" WidthRequest="160" />
+						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" IsEnabled="{Binding CanEditForm}" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" WidthRequest="160" />
 						<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" IsVisible="{Binding IsEditMode}" Text="Откажи" WidthRequest="160" />
-						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding ToggleEditModeCommand}" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="White" WidthRequest="160" />
+						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding ToggleEditModeCommand}" IsEnabled="{Binding CanUpdate}" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="White" WidthRequest="160" />
 					</HorizontalStackLayout>
 				</controls:FFPageHeader.HeaderContent>
 			</controls:FFPageHeader>
@@ -119,7 +119,7 @@
 
 								<Label Text="Code" />
 
-								<controls:FFInput IsReadOnly="{Binding IsReadOnly}" Text="{Binding Mkb10Code.Code}" />
+								<controls:FFInput IsReadOnly="{Binding IsReadOnly}" IsEnabled="{Binding CanEditForm}" Text="{Binding Mkb10Code.Code}" />
 
 							</VerticalStackLayout>
 
@@ -127,7 +127,7 @@
 
 								<Label Text="Chapter" />
 
-								<controls:FFPicker IsEnabled="{Binding IsEditMode}" ItemsSource="{Binding ChapterOptions}" SelectedItem="{Binding Mkb10Code.Chapter}" />
+								<controls:FFPicker IsEnabled="{Binding CanEditForm}" ItemsSource="{Binding ChapterOptions}" SelectedItem="{Binding Mkb10Code.Chapter}" />
 
 							</VerticalStackLayout>
 
@@ -148,6 +148,7 @@
 									BackgroundColor="Transparent"
 									HeightRequest="120"
 									IsReadOnly="{Binding IsReadOnly}"
+									IsEnabled="{Binding CanEditForm}"
 									Text="{Binding Mkb10Code.Description}" />
 
 							</Border>
@@ -158,7 +159,7 @@
 
 						<Grid ColumnDefinitions="Auto,*">
 
-							<Switch IsEnabled="{Binding IsEditMode}" IsToggled="{Binding Mkb10Code.IsActive}" />
+							<Switch IsEnabled="{Binding CanEditForm}" IsToggled="{Binding Mkb10Code.IsActive}" />
 
 							<Label
 								Grid.Column="1"
