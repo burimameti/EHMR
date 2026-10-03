@@ -31,5 +31,8 @@ namespace EHMR.Services
         }
 
         public List<string> Modules { get; set; } = new();
+
+        /// <summary>Explicit per-user module actions. Null means keep existing permissions when updating.</summary>
+        public Dictionary<string, ModuleAction>? Permissions { get; set; }
     }
 }
