@@ -101,7 +101,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
         ISelectedItemService<Patient> patientContext,
         ISelectedItemService<Encounter> encounterContext,
         IAuthorizationService authorizationService)
-        : base(service, navigationService, userDialogService)
+        : base(service, navigationService, userDialogService, authorizationService)
     {
         _appointmentContext=appointmentContext;
         _patientContext=patientContext;
