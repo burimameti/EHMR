@@ -110,7 +110,7 @@ public class AuthorizationService : IAuthorizationService
         if(module is null)
             return true;
 
-        return CanAccessModule(module);
+        return CanPerform(module, ModuleAction.View);
     }
 
     // ===================================
