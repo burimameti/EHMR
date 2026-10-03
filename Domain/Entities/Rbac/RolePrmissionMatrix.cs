@@ -1,50 +1,98 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace EHMR.Domain.Entities.Rbac
+namespace EHMR.Domain.Entities.Rbac;
+
+public static class RolePermissionMatrix
 {
-    public static class RolePermissionMatrix
-    {
-        // Role defaults are the baseline. Explicit per-user module assignments
-        // may override module access for an assigned module.
-        private static readonly Dictionary<UserRole, ModuleAction> _roleDefaults = new()
+    private static readonly IReadOnlyDictionary<UserRole, IReadOnlyDictionary<string, ModuleAction>> _templates =
+        new Dictionary<UserRole, IReadOnlyDictionary<string, ModuleAction>>
         {
-            [UserRole.SuperAdmin]=ModuleAction.Full,
-            [UserRole.Admin]=ModuleAction.Full,
-            [UserRole.Doctor]=ModuleAction.View|ModuleAction.Create|ModuleAction.Edit,
-            [UserRole.MainNurse]=ModuleAction.View|ModuleAction.Create,
-            [UserRole.Nurse]=ModuleAction.View|ModuleAction.Create,
-            [UserRole.Staff]=ModuleAction.View,
+            [UserRole.SuperAdmin] = BuildFullTemplate(),
+            [UserRole.Admin] = BuildFullTemplate(),
+
+            [UserRole.Doctor] = Template(
+                (Modules.Dashboard, ModuleAction.View),
+                (Modules.Doctors, ModuleAction.View),
+                (Modules.Patients, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
+                (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel|ModuleAction.Complete),
+                (Modules.Therapy, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
+                (Modules.Protocols, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Approve|ModuleAction.Print|ModuleAction.Export),
+                (Modules.Reports, ModuleAction.View|ModuleAction.Export|ModuleAction.Print),
+                (Modules.Encounters, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Approve|ModuleAction.Print|ModuleAction.Export),
+                (Modules.Calendar, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel),
+                (Modules.MKBCodes, ModuleAction.View),
+                (Modules.Administration, ModuleAction.View)
+            ),
+
+            [UserRole.MainNurse] = Template(
+                (Modules.Dashboard, ModuleAction.View),
+                (Modules.Doctors, ModuleAction.View),
+                (Modules.Patients, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
+                (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel|ModuleAction.Complete),
+                (Modules.Therapy, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
+                (Modules.Protocols, ModuleAction.View|ModuleAction.Print),
+                (Modules.Inventory, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
+                (Modules.Reports, ModuleAction.View|ModuleAction.Export|ModuleAction.Print),
+                (Modules.Encounters, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Print),
+                (Modules.Calendar, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel),
+                (Modules.MKBCodes, ModuleAction.View)
+            ),
+
+            [UserRole.Nurse] = Template(
+                (Modules.Dashboard, ModuleAction.View),
+                (Modules.Doctors, ModuleAction.View),
+                (Modules.Patients, ModuleAction.View|ModuleAction.Create),
+                (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Schedule),
+                (Modules.Therapy, ModuleAction.View|ModuleAction.Create),
+                (Modules.Protocols, ModuleAction.View|ModuleAction.Print),
+                (Modules.Inventory, ModuleAction.View),
+                (Modules.Reports, ModuleAction.View),
+                (Modules.Encounters, ModuleAction.View|ModuleAction.Create),
+                (Modules.Calendar, ModuleAction.View|ModuleAction.Create|ModuleAction.Schedule),
+                (Modules.MKBCodes, ModuleAction.View)
+            ),
+
+            [UserRole.Staff] = Template(
+                (Modules.Dashboard, ModuleAction.View),
+                (Modules.Patients, ModuleAction.View),
+                (Modules.Appointments, ModuleAction.View),
+                (Modules.Therapy, ModuleAction.View),
+                (Modules.Protocols, ModuleAction.View),
+                (Modules.Inventory, ModuleAction.View),
+                (Modules.Reports, ModuleAction.View),
+                (Modules.Encounters, ModuleAction.View),
+                (Modules.Calendar, ModuleAction.View),
+                (Modules.MKBCodes, ModuleAction.View)
+            )
         };
 
-        private static readonly Dictionary<string, Dictionary<UserRole, ModuleAction>> _moduleOverrides
-            = new(StringComparer.OrdinalIgnoreCase)
-            {
-                [Modules.Administration]=new()
-                {
-                    [UserRole.Doctor]=ModuleAction.View,
-                    [UserRole.MainNurse]=ModuleAction.None,
-                    [UserRole.Nurse]=ModuleAction.None,
-                    [UserRole.Staff]=ModuleAction.None,
-                },
-                [Modules.Reports]=new()
-                {
-                    [UserRole.Nurse]=ModuleAction.View,
-                    [UserRole.Staff]=ModuleAction.View,
-                },
-            };
+    public static ModuleAction GetActions(string module, UserRole role)
+        => _templates.TryGetValue(role, out var template) &&
+           template.TryGetValue(module, out var actions)
+            ? actions
+            : ModuleAction.None;
 
-        public static ModuleAction GetActions(string module, UserRole role)
-        {
-            if(_moduleOverrides.TryGetValue(module, out var overrides)&&
-               overrides.TryGetValue(role, out var overrideActions))
-            {
-                return overrideActions;
-            }
+    public static IReadOnlyDictionary<string, ModuleAction> GetTemplate(UserRole role)
+        => _templates.TryGetValue(role, out var template)
+            ? template
+            : new Dictionary<string, ModuleAction>(StringComparer.OrdinalIgnoreCase);
 
-            return _roleDefaults.TryGetValue(role, out var defaults)
-                ? defaults
-                : ModuleAction.None;
-        }
+    private static Dictionary<string, ModuleAction> Template(
+        params (string Module, ModuleAction Actions)[] permissions)
+        => permissions.ToDictionary(
+            x => x.Module,
+            x => x.Actions,
+            StringComparer.OrdinalIgnoreCase);
+
+    private static Dictionary<string, ModuleAction> BuildFullTemplate()
+    {
+        return Modules.GetAll()
+            .ToDictionary(
+                module => module,
+                module => ModulePermissionCatalog.GetActions(module)
+                    .Aggregate(ModuleAction.None, (current, action) => current|action),
+                StringComparer.OrdinalIgnoreCase);
     }
 }
