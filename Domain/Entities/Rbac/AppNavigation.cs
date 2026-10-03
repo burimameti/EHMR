@@ -201,6 +201,17 @@ public static class AppNavigation
                   
 
         // ==========================
+        // PRESCRIPTIONS
+        // ==========================
+        new()
+        {
+            GroupTitle = "Рецепти",
+            Route = AppRoutes.Prescriptions.List,
+            Module = Modules.Prescriptions,
+            Icon = new IconDefinition { Glyph = "\\uf328", Font = IconFontType.FontAwesomeSolid }
+        },
+
+        // ==========================
         // REPORTS
         // ==========================
         new (){
