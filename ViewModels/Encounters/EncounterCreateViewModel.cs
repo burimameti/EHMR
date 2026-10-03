@@ -415,5 +415,8 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
 
     [RelayCommand]
     private async Task Cancel()
-        => await NavigationService.GoBackAsync();
+    {
+        SelectedItemService.SelectedItem=null;
+        await NavigationService.GoBackAsync();
+    }
 }
