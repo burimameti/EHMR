@@ -261,6 +261,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [ObservableProperty] private ObservableCollection<DiagnosisDto> diagnosisHistory = new();
     [ObservableProperty] private ObservableCollection<Encounter> encounterHistory = new();
     [ObservableProperty] private ObservableCollection<PatientScore> scoreHistory = new();
+
+    public string CurrentPatientScore => ScoreHistory.FirstOrDefault()?.ScoreText ?? "—";
+    public DateTime? CurrentPatientScoreDate => ScoreHistory.FirstOrDefault()?.RecordedAt;
     [ObservableProperty] private ObservableCollection<Appointment> appointmentHistory = new();
     [ObservableProperty] private ObservableCollection<TherapyCycle> therapyCycleHistory = new();
 
@@ -320,6 +323,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                     .Where(x => x.PatientId==patientId)
                     .OrderByDescending(x => x.RecordedAt)
                     .ToListAsync());
+            OnPropertyChanged(nameof(CurrentPatientScore));
+            OnPropertyChanged(nameof(CurrentPatientScoreDate));
 
             AppointmentHistory=new ObservableCollection<Appointment>(
                 await db.Appointments
