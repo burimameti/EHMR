@@ -44,7 +44,7 @@
 				<!--  ═══════════════════════════════════════════════════════  -->
 				<!--  ЛЕВА КОЛОНА — ФОРМИ  -->
 				<!--  ═══════════════════════════════════════════════════════  -->
-				<controls:FFSectionCard Grid.Column="0" Margin="0">
+				<controls:FFSectionCard Grid.Column="0" Margin="0" IsEnabled="{Binding CanAdminEditEncounter}">
 					<ScrollView VerticalScrollBarVisibility="Never">
 						<VerticalStackLayout Style="{StaticResource CrudFormContentStackStyle}">
 
@@ -1012,7 +1012,7 @@
 						ButtonKind="Primary"
 						Command="{Binding SaveCommand}"
 						HeightRequestEx="42"
-						IsEnabled="{Binding CanUpdate}"
+						IsEnabled="{Binding CanAdminEditEncounter}"
 						Text="Зачувај"
 						TextColorEx="White"
 						WidthRequestEx="130" />
