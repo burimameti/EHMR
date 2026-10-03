@@ -40,7 +40,17 @@
 				<Grid ColumnDefinitions="*,Auto">
 
 
-					<controls:FFPageHeader Title="Извештаи" Subtitle="Анализа, следење и системски извештаи" />
+					<controls:FFPageHeader
+    Title="Извештаи"
+    Subtitle="Анализа, следење и системски извештаи" />
+
+<controls:FFButton
+    Grid.Column="1"
+    ButtonKind="Primary"
+    Command="{Binding NewReportCommand}"
+    HeightRequestEx="42"
+    Text="Нов извештај"
+    WidthRequestEx="150" />
 
 
 					<!--<Button
