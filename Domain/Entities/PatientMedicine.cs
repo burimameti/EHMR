@@ -31,10 +31,10 @@ public class PatientMedicine : BaseEntity
         get => ApplicationRegime?.Regime ?? string.Empty;
         set
         {
-            var value = value ?? string.Empty;
+            var regimeValue = value ?? string.Empty;
             if (ApplicationRegime is null)
                 ApplicationRegime = new ApplicationRegime();
-            ApplicationRegime.Regime = value;
+            ApplicationRegime.Regime = regimeValue;
         }
     }
 
