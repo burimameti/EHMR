@@ -435,7 +435,7 @@
 						FontSize="14"
 						HeightRequest="46"
 						HorizontalOptions="Start"
-						IsVisible="{Binding CanShowDelete}"
+						IsEnabled="{Binding CanDelete}"
 						Text="Избриши"
 						TextColor="#DC2626" />
 
@@ -468,7 +468,7 @@
 							FontAttributes="Bold"
 							FontSize="14"
 							HeightRequest="46"
-							IsVisible="{Binding CanShowEditToggle}"
+							IsEnabled="{Binding CanUpdate}"
 							Text="Уреди"
 							TextColor="#059669"
 							WidthRequest="130" />
@@ -480,7 +480,7 @@
 							FontAttributes="Bold"
 							FontSize="14"
 							HeightRequest="46"
-							IsVisible="{Binding CanShowSave}"
+							IsEnabled="{Binding CanSave}"
 							Text="Зачувај"
 							TextColor="White"
 							WidthRequest="150" />
