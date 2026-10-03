@@ -48,6 +48,15 @@ public partial class FFPageHeader : ContentView
         set => SetValue(ShowPrimaryButtonProperty, value);
     }
 
+    public static readonly BindableProperty PrimaryButtonIsEnabledProperty =
+        BindableProperty.Create(nameof(PrimaryButtonIsEnabled), typeof(bool), typeof(FFPageHeader), true);
+
+    public bool PrimaryButtonIsEnabled
+    {
+        get => (bool)GetValue(PrimaryButtonIsEnabledProperty);
+        set => SetValue(PrimaryButtonIsEnabledProperty, value);
+    }
+
     public static readonly BindableProperty SecondaryButtonTextProperty =
         BindableProperty.Create(
             nameof(SecondaryButtonText),
