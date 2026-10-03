@@ -567,6 +567,9 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     [RelayCommand]
     private void CreateNewTemplate()
     {
+        if(!CanCreate)
+            return;
+
         // TODO: отвори wizard за нов report template кога ќе биде готов report builder-от.
     }
 
