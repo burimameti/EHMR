@@ -333,16 +333,7 @@
 				<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
 					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
 
-						<!--  ===================================================  -->
-						<!--
-							KPI STRIP
-							
-							These numbers were already computed on every dashboard load but
-							nothing rendered them. Uses FFMetricTile so the dashboard matches
-							the admin dashboard's design system rather than hand-rolled cards.
-						-->
-						<!--  ===================================================  -->
-						<Grid
+						<!-- KPI strip disabled. -->
 							Margin="12,12,12,12"
 							ColumnDefinitions="*,*,*,*,*"
 							ColumnSpacing="28"
