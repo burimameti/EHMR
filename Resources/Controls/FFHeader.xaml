@@ -9,20 +9,20 @@
 
 	<Border
 		Padding="0"
-		StrokeShape="RoundRectangle 0"
+		StrokeShape="RoundRectangle 12"
 		StrokeThickness="0">
 		<Grid
 			Padding="0"
 			ColumnDefinitions="4,Auto,*,Auto"
 			ColumnSpacing="0">
-			<BoxView Grid.Column="0" Color="{StaticResource SidebarActiveBg}" />
+			<BoxView Grid.Column="0" Color="Transparent" />
 
 			<Border
 				Grid.Column="1"
 				Margin="12,12,12,16"
-				BackgroundColor="{StaticResource SparkAccentTealBg}"
+				BackgroundColor="#EFF6FF"
 				HeightRequest="44"
-				Stroke="{StaticResource SparkAccentTeal}"
+				Stroke="#BFDBFE"
 				StrokeShape="RoundRectangle 10"
 				StrokeThickness="1"
 				WidthRequest="44">
@@ -31,7 +31,7 @@
 					FontSize="16"
 					HorizontalOptions="Center"
 					Text="&#xf15c;"
-					TextColor="{StaticResource SparkAccentTealDark}"
+					TextColor="#2563EB"
 					VerticalOptions="Center" />
 			</Border>
 
@@ -46,7 +46,7 @@
 					TextColor="{StaticResource SparkTextSecondary}" />
 				<Label
 					FontAttributes="Bold"
-					FontSize="22"
+					FontSize="20"
 					Text="{Binding Title, Source={x:Reference Root}}"
 					TextColor="{StaticResource SparkTextPrimary}" />
 				<Label
@@ -57,11 +57,11 @@
 					Text="{Binding Subtitle, Source={x:Reference Root}}"
 					TextColor="{StaticResource SparkTextSecondary}" />
 				<BoxView
-					Margin="0,2,0,0"
+					Margin="0,3,0,0"
 					HeightRequest="2"
 					HorizontalOptions="Start"
-					WidthRequest="54"
-					Color="{StaticResource SidebarActiveBg}" />
+					WidthRequest="42"
+					Color="#2563EB" />
 			</VerticalStackLayout>
 
 			<HorizontalStackLayout
@@ -71,16 +71,16 @@
 				VerticalOptions="Center">
 				<ContentView Content="{Binding HeaderContent, Source={x:Reference Root}}" />
 				<Button
-					BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
+					BackgroundColor="#2563EB"
 					Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
 					HeightRequest="42"
 					IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
 					Style="{StaticResource TabButtonActiveStyle}"
 					Text="{Binding PrimaryButtonText, Source={x:Reference Root}}"
-					TextColor="White"
+					TextColor="#475569"
 					WidthRequest="150" />
 				<Button
-					BackgroundColor="#475569"
+					BackgroundColor="#FFFFFF"
 					Command="{Binding SecondaryButtonCommand, Source={x:Reference Root}}"
 					HeightRequest="42"
 					IsVisible="{Binding ShowSecondaryButton, Source={x:Reference Root}}"
