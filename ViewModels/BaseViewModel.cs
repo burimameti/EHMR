@@ -72,6 +72,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     private CancellationTokenSource? _suggestionCts;
     private readonly Dictionary<string, object> _suggestionCache = new();
     // ================= PERMISSIONS =================
+    [ObservableProperty] private bool canView;
     [ObservableProperty] private bool canCreate;
     [ObservableProperty] private bool canUpdate;
     [ObservableProperty] private bool canDelete;
@@ -117,6 +118,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     }
     protected void EvaluatePermissions()
     {
+        CanView=AuthService.CanPerform(ModuleName, ModuleAction.View);
         CanCreate=AuthService.CanPerform(ModuleName, ModuleAction.Create);
         CanUpdate=AuthService.CanPerform(ModuleName, ModuleAction.Edit);
         CanDelete=AuthService.CanPerform(ModuleName, ModuleAction.Delete);
