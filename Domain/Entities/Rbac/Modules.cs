@@ -47,10 +47,11 @@ public static class ModulePermissionCatalog
             [Modules.Reports] = [ModuleAction.View, ModuleAction.Export, ModuleAction.Print],
             [Modules.Encounters] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Approve, ModuleAction.Print, ModuleAction.Export],
             [Modules.Calendar] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Schedule, ModuleAction.Cancel],
-            [Modules.MKBCodes] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Export],
+            [Modules.MKBCodes] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Export, ModuleAction.Manage],
             [Modules.Administration] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Manage],
             [Modules.BackupDashboard] = [ModuleAction.View],
-            [Modules.Backups] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Delete, ModuleAction.Export, ModuleAction.Manage]
+            [Modules.Backups] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Delete, ModuleAction.Export, ModuleAction.Manage],
+            [Modules.Prescriptions] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete]
         };
 
     public static IReadOnlyList<ModuleAction> GetActions(string module)
@@ -78,6 +79,7 @@ public static class Modules
     public const string Calendar = "Calendar";
     public const string MKBCodes = "MKBCodes";
     public const string Administration = "Administration";
+    public const string Prescriptions = "Prescriptions";
 
     private static readonly List<string> _allModules;
     private static readonly Dictionary<UserRole, HashSet<string>> _roleDefaults;
