@@ -29,10 +29,30 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     protected override string ModuleName => Modules.Appointments;
     private bool _isLoading;
     public bool IsNewAppointment => _isNewAppointmentMode;
-    public bool CanSaveAppointment => IsNewAppointment ? CanCreate : CanUpdate;
+    public bool CanSaveAppointment =>
+        IsNewAppointment
+            ? CanCreate && CanSchedule
+            : CanUpdate && CanScheduleForCurrentChange;
+
     public bool CanEditAppointment =>
         !_isNewAppointmentMode&&CanUpdate&&
         Appointment.Status is AppointmentStatus.Scheduled or AppointmentStatus.InProgress;
+
+    public bool CanCancelAppointment =>
+        !_isNewAppointmentMode &&
+        CanCancel &&
+        Appointment.Status is AppointmentStatus.Scheduled or AppointmentStatus.InProgress;
+
+    public bool CanCompleteAppointment =>
+        !_isNewAppointmentMode &&
+        CanComplete &&
+        Appointment.Status is AppointmentStatus.Scheduled or AppointmentStatus.InProgress;
+
+    private bool CanScheduleForCurrentChange =>
+        Appointment.ScheduledStart != _originalAppointment?.ScheduledStart ||
+        Appointment.ScheduledEnd != _originalAppointment?.ScheduledEnd
+            ? CanSchedule
+            : true;
     public bool ShowStatusEditor => IsEditMode&&!IsNewAppointment;
 
     // Mirrors Encounter's HasEncounterMedicines — drives the medicine table header row.
@@ -78,6 +98,15 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [RelayCommand]
     private async Task GenerateClinicalReportAsync()
     {
+        if(!CanPrint)
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Пристапот е одбиен",
+                "Немате овластување за печатење/генерирање извештај.",
+                "ОК");
+            return;
+        }
+
         if(Appointment.PatientId==Guid.Empty) return;
 
         try
@@ -200,10 +229,32 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         set
         {
             if(value==null||Appointment.Status==value.Value) return;
+
+            var allowed = value.Value switch
+            {
+                AppointmentStatus.Cancelled => CanCancelAppointment,
+                AppointmentStatus.Completed => CanCompleteAppointment,
+                AppointmentStatus.Scheduled => CanSchedule,
+                AppointmentStatus.InProgress => CanUpdate,
+                _ => false
+            };
+
+            if(!allowed)
+            {
+                _ = UserDialogService.ShowAlertAsync(
+                    "Пристапот е одбиен",
+                    "Немате овластување за оваа промена на статусот.",
+                    "ОК");
+                return;
+            }
+
             Appointment.Status=value.Value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(Appointment));
             OnPropertyChanged(nameof(CanEditAppointment));
+            OnPropertyChanged(nameof(CanCancelAppointment));
+            OnPropertyChanged(nameof(CanCompleteAppointment));
+            OnPropertyChanged(nameof(CanSaveAppointment));
         }
     }
 
@@ -772,11 +823,33 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [RelayCommand]
     private async Task SaveAsync()
     {
+        if(IsNewAppointment && (!CanCreate || !CanSchedule))
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Пристапот е одбиен",
+                "Немате овластување за креирање и закажување термин.",
+                "ОК");
+            return;
+        }
+
         if(!IsNewAppointment&&!CanEditAppointment)
         {
             await UserDialogService.ShowAlertAsync(
                 "Пристапот е одбиен",
                 "Немате овластување за промена на овој термин.",
+                "ОК");
+            return;
+        }
+
+        if(!IsNewAppointment &&
+           _originalAppointment is not null &&
+           (Appointment.ScheduledStart != _originalAppointment.ScheduledStart ||
+            Appointment.ScheduledEnd != _originalAppointment.ScheduledEnd) &&
+           !CanSchedule)
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Пристапот е одбиен",
+                "Немате овластување за промена на распоредот на термин.",
                 "ОК");
             return;
         }
