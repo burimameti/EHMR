@@ -90,7 +90,7 @@
 						Command="{Binding CreateCycleCommand}"
 						CornerRadius="10"
 						HeightRequest="45"
-						IsVisible="{Binding CanCreate}"
+						IsEnabled="{Binding CanCreate}"
 						Text="➕ Креирај циклус"
 						TextColor="White" />
 
@@ -99,13 +99,14 @@
 						Command="{Binding SaveCycleCommand}"
 						CornerRadius="10"
 						HeightRequest="45"
-						IsVisible="{Binding CanUpdate}"
+						IsEnabled="{Binding CanUpdate}"
 						Text="Зачувај"
 						TextColor="White" />
 
 					<Button
 						BackgroundColor="#DC2626"
 						Command="{Binding DeleteCycleCommand}"
+						IsEnabled="{Binding CanDelete}"
 						CornerRadius="10"
 						HeightRequest="45"
 						Text="Избриши"
