@@ -357,6 +357,17 @@
 											<DataTemplate x:DataType="{x:Null}">
 												<Border
 													BackgroundColor="{StaticResource Gray100}"
+													<VisualStateManager.VisualStateGroups>
+														<VisualStateGroup Name="CommonStates">
+															<VisualState Name="Normal" />
+															<VisualState Name="PointerOver">
+																<VisualState.Setters>
+																	<Setter Property="BackgroundColor" Value="#E5E7EB" />
+																	<Setter Property="Stroke" Value="#CBD5E1" />
+																</VisualState.Setters>
+															</VisualState>
+														</VisualStateGroup>
+													</VisualStateManager.VisualStateGroups>
 													Stroke="{StaticResource SparkBorderSubtle}"
 													StrokeShape="RoundRectangle 2"
 													StrokeThickness="1.2">
