@@ -27,6 +27,11 @@ public partial class TherapyDetailsViewModel : ObservableObject
 
     public bool IsEditMode => !IsReadOnly;
 
+    public bool CanView => _authService.CanPerform(Modules.Therapy, ModuleAction.View);
+    public bool CanCreate => _authService.CanPerform(Modules.Therapy, ModuleAction.Create);
+    public bool CanUpdate => _authService.CanPerform(Modules.Therapy, ModuleAction.Edit);
+    public bool CanDelete => _authService.CanPerform(Modules.Therapy, ModuleAction.Delete);
+
     public TherapyDetailsViewModel(
         ITherapyService therapyService,
         INavigationService navigationService,
@@ -62,7 +67,7 @@ public partial class TherapyDetailsViewModel : ObservableObject
     [RelayCommand]
     private async Task CreateCycleAsync()
     {
-        if(Patient==null) return;
+        if(Patient==null || !CanCreate) return;
 
         var cycle = new TherapyCycle
         {
@@ -82,7 +87,7 @@ public partial class TherapyDetailsViewModel : ObservableObject
     [RelayCommand]
     private async Task SaveCycleAsync()
     {
-        if(SelectedCycle==null) return;
+        if(SelectedCycle==null || !CanUpdate) return;
 
         await _therapyService.UpdateCycleAsync(SelectedCycle);
 
@@ -92,7 +97,7 @@ public partial class TherapyDetailsViewModel : ObservableObject
     [RelayCommand]
     private async Task DeleteCycleAsync()
     {
-        if(SelectedCycle==null) return;
+        if(SelectedCycle==null || !CanDelete) return;
 
         await _therapyService.DeleteCycleAsync(SelectedCycle.Id);
 
