@@ -66,6 +66,10 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
     [ObservableProperty]
     private bool canShowSave;
 
+    public bool CanSave =>
+        IsEditMode &&
+        (_isExistingDoctor ? CanUpdate : CanCreate);
+
     [ObservableProperty]
     private bool canShowEditToggle;
 
@@ -209,7 +213,10 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
     }
 
     partial void OnIsEditModeChanged(bool value)
-        => RefreshButtonVisibility();
+    {
+        RefreshButtonVisibility();
+        OnPropertyChanged(nameof(CanSave));
+    }
 
     partial void OnIsReadOnlyChanged(bool value)
         => RefreshButtonVisibility();
@@ -221,7 +228,7 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
     [RelayCommand]
     private void ToggleEditMode()
     {
-        if(!_isExistingDoctor)
+        if(!_isExistingDoctor || !CanUpdate)
             return;
 
         _snapshot=Doctors.Clone();
@@ -239,6 +246,9 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
     [RelayCommand]
     private async Task Save()
     {
+        if(_isExistingDoctor ? !CanUpdate : !CanCreate)
+            return;
+
         await ExecuteSafeAsync(
             async () =>
             {
@@ -332,7 +342,7 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
     [RelayCommand]
     private async Task Delete()
     {
-        if(!_isExistingDoctor)
+        if(!_isExistingDoctor || !CanDelete)
             return;
 
         await ExecuteSafeAsync(
