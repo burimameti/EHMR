@@ -30,7 +30,7 @@ public static class RolePermissionMatrix
             [UserRole.MainNurse] = Template(
                 (Modules.Dashboard, ModuleAction.View),
                 (Modules.Doctors, ModuleAction.View),
-                (Modules.Patients, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
+                (Modules.Patients, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Activate|ModuleAction.Deactivate),
                 (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel|ModuleAction.Complete),
                 (Modules.Therapy, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
                 (Modules.Protocols, ModuleAction.View|ModuleAction.Print),
