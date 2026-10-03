@@ -23,6 +23,7 @@
 			TextColor="{StaticResource Gray600}" />
 
 		<Border
+			x:Name="SearchBorder"
 			Grid.Row="1"
 			BackgroundColor="White"
 			HeightRequest="36"
@@ -31,6 +32,10 @@
 			StrokeShape="RoundRectangle 6"
 			StrokeThickness="1"
 			VerticalOptions="Center">
+
+			<Border.GestureRecognizers>
+				<PointerGestureRecognizer PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" />
+			</Border.GestureRecognizers>
 
 			<Grid
 				Padding="10,0"
@@ -72,6 +77,12 @@
 					VerticalOptions="Center" />
 
 			</Grid>
+			<Border.Triggers>
+				<DataTrigger Binding="{Binding IsPointerOver, Source={x:Reference Root}}" TargetType="Border" Value="True">
+					<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
+					<Setter Property="StrokeThickness" Value="1.5" />
+				</DataTrigger>
+			</Border.Triggers>
 		</Border>
 	</Grid>
 </ContentView>
