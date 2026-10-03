@@ -47,6 +47,9 @@ public partial class FFEntry : ContentView
         BindableProperty.Create(nameof(RightContent), typeof(View), typeof(FFEntry), null,
             propertyChanged: (b, _, _) => ((FFEntry)b).OnPropertyChanged(nameof(HasRightContent)));
 
+    public static readonly BindableProperty IsPointerOverProperty =
+        BindableProperty.Create(nameof(IsPointerOver), typeof(bool), typeof(FFEntry), false);
+
     public static readonly BindableProperty IsInputFocusedProperty =
         BindableProperty.Create(nameof(IsInputFocused), typeof(bool), typeof(FFEntry), false);
 
@@ -114,6 +117,12 @@ public partial class FFEntry : ContentView
         set => SetValue(RightContentProperty, value);
     }
 
+    public bool IsPointerOver
+    {
+        get => (bool)GetValue(IsPointerOverProperty);
+        private set => SetValue(IsPointerOverProperty, value);
+    }
+
     public bool IsInputFocused
     {
         get => (bool)GetValue(IsInputFocusedProperty);
@@ -144,6 +153,10 @@ public partial class FFEntry : ContentView
     {
         IsInputFocused=false;
     }
+
+    private void OnPointerEntered(object sender, PointerEventArgs e) => IsPointerOver=true;
+
+    private void OnPointerExited(object sender, PointerEventArgs e) => IsPointerOver=false;
 
     // ═══════════════════════════════════════════════════════════ //
     // PUBLIC API                                                  //
