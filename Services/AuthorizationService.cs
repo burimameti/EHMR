@@ -21,15 +21,18 @@ public class AuthorizationService : IAuthorizationService
         &&!HasRole(UserRole.SuperAdmin);
     public bool CanPerform(string module, ModuleAction action)
     {
-        if(!IsAuthenticated||_auth.CurrentUser==null)
-            return false;
-
-        // Мора прво воопшто да има пристап до модулот (explicit Modules override или role default)
-        if(!CanAccessModule(module))
+        if(!IsAuthenticated || _auth.CurrentUser is null || action == ModuleAction.None)
             return false;
 
         if(HasRole(UserRole.SuperAdmin))
             return true;
+
+        var explicitPermission = GetExplicitPermission(module);
+        if(explicitPermission.HasValue)
+            return explicitPermission.Value.HasFlag(action);
+
+        if(!CanAccessModule(module))
+            return false;
 
         var allowed = RolePermissionMatrix.GetActions(module, _auth.CurrentUser.Role);
         return allowed.HasFlag(action);
@@ -57,17 +60,32 @@ public class AuthorizationService : IAuthorizationService
 
     public bool CanAccessModule(string module)
     {
-        if(!IsAuthenticated)
+        if(!IsAuthenticated || _auth.CurrentUser is null)
             return false;
 
-        // Admin bypass
-        if(HasRole(UserRole.Admin)||
-            HasRole(UserRole.SuperAdmin))
-        {
+        if(HasRole(UserRole.SuperAdmin))
             return true;
-        }
+
+        var explicitPermission = GetExplicitPermission(module);
+        if(explicitPermission.HasValue)
+            return explicitPermission.Value != ModuleAction.None;
+
+        if(HasRole(UserRole.Admin))
+            return true;
 
         return HasModule(module);
+    }
+
+    private ModuleAction? GetExplicitPermission(string module)
+    {
+        var permissions = _auth.CurrentUser?.ModulePermissions;
+        if(permissions is null)
+            return null;
+
+        var permission = permissions.FirstOrDefault(x =>
+            string.Equals(x.ModuleKey, module, StringComparison.OrdinalIgnoreCase));
+
+        return permission?.Actions;
     }
 
     // ===================================
