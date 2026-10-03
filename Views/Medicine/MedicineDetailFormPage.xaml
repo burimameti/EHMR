@@ -26,9 +26,9 @@
 				<controls:FFPageHeader Grid.Row="0" Title="{Binding HeaderTitle}" Subtitle="{Binding HeaderSubtitle}">
 	<controls:FFPageHeader.HeaderContent>
 		<HorizontalStackLayout Spacing="10">
-			<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" Command="{Binding SaveCommand}" HeightRequestEx="40" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" />
+			<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" Command="{Binding SaveCommand}" HeightRequestEx="40" IsEnabled="{Binding CanEditForm}" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" />
 			<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="40" IsVisible="{Binding IsEditMode}" Text="Откажи" />
-			<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" Command="{Binding ToggleEditCommand}" HeightRequestEx="40" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="White" />
+			<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" Command="{Binding ToggleEditCommand}" HeightRequestEx="40" IsEnabled="{Binding CanUpdate}" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="White" />
 		</HorizontalStackLayout>
 	</controls:FFPageHeader.HeaderContent>
 </controls:FFPageHeader>
@@ -163,7 +163,7 @@
 										Text="Име на лек *"
 										TextColor="{StaticResource SparkTextSecondary}"
 										VerticalOptions="Center" />
-									<controls:FFInput Grid.Column="1" IsReadOnly="{Binding IsReadOnly}" Placeholder="Пр. Paracetamol" Text="{Binding Medicine.Name}" />
+									<controls:FFInput Grid.Column="1" IsReadOnly="{Binding IsReadOnly}" IsEnabled="{Binding CanEditForm}" Placeholder="Пр. Paracetamol" Text="{Binding Medicine.Name}" />
 								</Grid>
 
 								<Grid
