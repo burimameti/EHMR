@@ -300,12 +300,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             return;
         }
 
-        if(!AuthService.CanPerform(Modules.Encounters, ModuleAction.Create))
-        {
-            await UserDialogService.ShowAlertAsync("Недозволена акција", "Немате авторизација за креирање нов преглед.", "ОК");
-            return;
-        }
-
         if(patient.Status==PatientStatus.Inactive)
         {
             await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "За неактивен пациент не може да се креира нов преглед.", "ОК");
