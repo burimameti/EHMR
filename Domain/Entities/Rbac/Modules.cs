@@ -24,6 +24,10 @@ public enum ModuleAction
     Print = 512,
     Manage = 1024,
 
+    // Patient lifecycle actions.
+    Activate = 2048,
+    Deactivate = 4096,
+
     // Backward-compatible CRUD full access.
     Full = View|Create|Edit|Delete
 }
@@ -39,7 +43,7 @@ public static class ModulePermissionCatalog
         {
             [Modules.Dashboard] = [ModuleAction.View],
             [Modules.Doctors] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete],
-            [Modules.Patients] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete],
+            [Modules.Patients] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Activate, ModuleAction.Deactivate],
             [Modules.Appointments] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Schedule, ModuleAction.Cancel, ModuleAction.Complete],
             [Modules.Therapy] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete],
             [Modules.Protocols] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Approve, ModuleAction.Print, ModuleAction.Export],
