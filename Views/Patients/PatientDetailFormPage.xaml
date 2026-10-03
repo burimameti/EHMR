@@ -337,6 +337,7 @@
 							ContentPadding="16,0"
 							HeightRequestEx="40"
 							IsVisible="{Binding IsNewPatient, Converter={StaticResource InverseBoolConverter}}"
+							IsEnabled="{Binding CanPrintPatientReport}"
 							Text="Печати / PDF" />
 					</controls:FFPageHeader.HeaderContent>
 				</controls:FFPageHeader>
@@ -1379,6 +1380,7 @@
 						ButtonKind="Primary"
 						Command="{Binding SaveCommand}"
 						HeightRequestEx="42"
+						IsEnabled="{Binding CanSavePatient}"
 						IsVisible="{Binding IsEditMode}"
 						Text="Зачувај"
 						TextColorEx="White"
@@ -1389,6 +1391,7 @@
 						ButtonKind="Primary"
 						Command="{Binding ToggleEditModeCommand}"
 						HeightRequestEx="42"
+						IsEnabled="{Binding CanEditPatient}"
 						IsVisible="{Binding IsReadOnly}"
 						Text="Уреди"
 						TextColorEx="{StaticResource SidebarActiveText}"
