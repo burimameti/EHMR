@@ -76,6 +76,12 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
     [RelayCommand]
     private async Task GenerateClinicalReportAsync()
     {
+        if(!CanPrint)
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за печатење/генерирање извештај.", "ОК");
+            return;
+        }
+
         if(Encounter.Id==Guid.Empty||Encounter.PatientId==Guid.Empty)
             return;
 
@@ -100,6 +106,10 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
                 "ОК");
         }
     }
+
+    [RelayCommand]
+    private async Task Cancel()
+        => await NavigationService.GoBackAsync();
 
     [RelayCommand]
     private async Task Edit()
