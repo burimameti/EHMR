@@ -32,7 +32,8 @@
 						PrimaryButtonCommand="{Binding NewCommand}"
 						PrimaryButtonText="Нов термин"
 						RefreshCommand="{Binding LoadCommand}"
-						ShowPrimaryButton="{Binding CanCreate}"
+						PrimaryButtonIsEnabled="{Binding CanCreate}"
+						ShowPrimaryButton="True"
 						ShowRefreshButton="True"
 						Subtitle="Преглед и управување со закажани термини" />
 				</Grid>
