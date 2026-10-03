@@ -104,6 +104,7 @@ namespace EHMR.Resources.Controls
         private ICommand _command;
         private object _commandParameter;
         private bool _isEnabled = true;
+        private bool _isEnabled = true;
 
         public string Title
         {
