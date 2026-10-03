@@ -18,6 +18,15 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     protected readonly INavigationService NavigationService;
     protected readonly IUserDialogService UserDialogService;
+    protected readonly IAuthorizationService AuthorizationService;
+
+    public bool CanView => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.View);
+    public bool CanCreate => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Create);
+    public bool CanUpdate => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Edit);
+    public bool CanDelete => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Delete);
+    public bool CanApprove => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Approve);
+    public bool CanPrint => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Print);
+    public bool CanExport => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Export);
 
     protected CancellationTokenSource SearchCts = new();
 
@@ -43,11 +52,13 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     protected EncounterBaseViewModel(
         IEncounterDetailService encounterService,
         INavigationService navigationService,
-        IUserDialogService userDialogService)
+        IUserDialogService userDialogService,
+        IAuthorizationService authorizationService)
     {
         EncounterService=encounterService;
         NavigationService=navigationService;
         UserDialogService=userDialogService;
+        AuthorizationService=authorizationService;
 
         for(var letter='A'; letter<='Z'; letter++)
             MkbAlphabetSections.Add(new MkbAlphabetSection(letter.ToString(), letter=='A'));
