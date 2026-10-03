@@ -94,8 +94,12 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         {
             var regime=await EncounterService.AddApplicationRegimeAsync(value.Trim());
 
-            if(ApplicationRegimeOptions.All(x => x.Id!=regime.Id))
-                ApplicationRegimeOptions.Add(regime);
+            if(!_applicationRegimes.Any(x => x.Id==regime.Id))
+                _applicationRegimes.Add(regime);
+
+            if(!ApplicationRegimeOptions.Any(x =>
+                string.Equals(x, regime.Regime, StringComparison.OrdinalIgnoreCase)))
+                ApplicationRegimeOptions.Add(regime.Regime);
 
             await UserDialogService.ShowAlertAsync(
                 "Успешно",
