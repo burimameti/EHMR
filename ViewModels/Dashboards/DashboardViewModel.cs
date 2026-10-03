@@ -790,6 +790,12 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private void ClearFilters()
     {
+        if(IsEncounterHistoryMode)
+        {
+            ClosePreviewPanel();
+            return;
+        }
+
         SelectedStatus="All";
         SelectedGender="All";
         SelectedBloodType="All";
@@ -1161,7 +1167,7 @@ public partial class DashboardViewModel : ObservableObject
 
         if(IsEncounterHistoryMode&&PreviewPatient?.Patient is { } patient)
         {
-            Buttons.Add(new SparkButtonItem { Label="Назад", IsPrimary=false, Command=ClosePreviewPanelCommand });
+            Buttons.Add(new SparkButtonItem { Label="Исчисти", IsPrimary=true, Command=ClearFiltersCommand });
             Buttons.Add(new SparkButtonItem { Label="Нов преглед", IsPrimary=false, Command=NewEncounterForSelectedCommand, CommandParameter=patient });
             return;
         }
