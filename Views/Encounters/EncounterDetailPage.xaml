@@ -160,7 +160,7 @@
 			</Border>
 			<!--  ── TWO-COLUMN BODY ──────────────────────────────────────────  -->
 			<Grid
-				Grid.Row="1"
+				Grid.Row="2"
 				ColumnDefinitions="2*,1*"
 				ColumnSpacing="6"
 				Style="{StaticResource CrudFormBodyGridStyle}">
