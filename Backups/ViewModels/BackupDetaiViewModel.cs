@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using EHMR.Backups.Interfaces;
 using EHMR.Backups.Models;
 using EHMR.Domain.Interfaces;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Resources.Controls.Charts;
 using System.Collections.ObjectModel;
 using System;
@@ -26,6 +27,7 @@ public partial class BackupDetailsViewModel : ObservableObject
 {
     private readonly IBackupHistoryRepository _historyRepository;
     private readonly ISelectedItemService<BackupHistory> _selectedItemService;
+    private readonly IAuthorizationService _authorization;
 
     [ObservableProperty]
     private BackupHistory? backup;
@@ -56,10 +58,12 @@ public partial class BackupDetailsViewModel : ObservableObject
 
     public BackupDetailsViewModel(
         IBackupHistoryRepository historyRepository,
-        ISelectedItemService<BackupHistory> selectedItemService)
+        ISelectedItemService<BackupHistory> selectedItemService,
+        IAuthorizationService authorization)
     {
         _historyRepository=historyRepository;
         _selectedItemService=selectedItemService;
+        _authorization=authorization;
     }
 
     /// <summary>Враќање на претходната страница. Копчето „назад" беше врзано на команда што не постоеше.</summary>
