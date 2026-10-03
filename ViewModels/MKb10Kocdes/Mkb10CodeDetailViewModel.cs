@@ -105,10 +105,12 @@ public partial class Mkb10CodeDetailViewModel : ObservableObject
         OnPropertyChanged(nameof(HeaderTitle));
         OnPropertyChanged(nameof(HeaderSubtitle));
         OnPropertyChanged(nameof(IsReadOnly));
+        OnPropertyChanged(nameof(CanEditForm));
     }
 
     private async Task Save()
     {
+        if(!(_isNewMode ? CanCreate : CanUpdate)) return;
         await _service.SaveAsync(Mkb10Code);      
 
         await Shell.Current.GoToAsync("..");
