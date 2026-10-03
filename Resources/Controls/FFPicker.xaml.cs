@@ -51,12 +51,25 @@ public partial class FFPicker : ContentView
 
     bool _syncing;
 
+    public static readonly BindableProperty IsPointerOverProperty =
+        BindableProperty.Create(nameof(IsPointerOver), typeof(bool), typeof(FFPicker), false);
+
+    public bool IsPointerOver
+    {
+        get => (bool)GetValue(IsPointerOverProperty);
+        private set => SetValue(IsPointerOverProperty, value);
+    }
+
     public FFPicker()
     {
         InitializeComponent();
         InnerPicker.SelectedIndexChanged+=OnInnerSelectionChanged;
         UpdateDisplay();
     }
+
+    private void OnPointerEntered(object sender, PointerEventArgs e) => IsPointerOver=true;
+
+    private void OnPointerExited(object sender, PointerEventArgs e) => IsPointerOver=false;
 
     // ---------- Sync ----------
 
