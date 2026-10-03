@@ -57,9 +57,7 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     }
 
     private bool CanModifyEncounter =>
-        _authorizationService.HasRole(UserRole.Admin) ||
-        _authorizationService.HasRole(UserRole.SuperAdmin) ||
-        _authorizationService.HasDoctorAdminPrivileges;
+        _authorizationService.CanPerform("encounters", ModuleAction.Edit);
 
     public async Task LoadAsync()
     {
