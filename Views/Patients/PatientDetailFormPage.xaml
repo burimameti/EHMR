@@ -492,7 +492,7 @@
 										</VerticalStackLayout>
 
 										<!--  ЕМБГ  -->
-										<VerticalStackLayout Grid.Column="5" Spacing="4">
+										<VerticalStackLayout Grid.Column="5" IsVisible="{Binding CanViewNationalId}" Spacing="4">
 											<Label
 												IsVisible="{Binding IsEditMode}"
 												Style="{StaticResource EditFieldLabelStyle}"
