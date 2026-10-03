@@ -389,8 +389,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             return;
         }
 
-        foreach(var medicine in EncounterMedicines)
-            medicine.ApplicationRegimeId=medicine.ApplicationRegime?.Id;
+        ResolveApplicationRegimes(EncounterMedicines);
 
         await ExecuteSafeAsync(async () =>
         {
