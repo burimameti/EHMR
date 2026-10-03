@@ -21,6 +21,7 @@ public partial class LoginViewModel : ObservableObject
     [ObservableProperty] private bool rememberMe;
     [ObservableProperty] private bool isBusy;
     [ObservableProperty] private string errorMessage = string.Empty;
+    private bool _credentialsInitialized;
 
     public LoginViewModel(
         INavigationService navigationService,
@@ -45,8 +46,6 @@ public partial class LoginViewModel : ObservableObject
             // here can no longer produce a silent black-screen crash. Ideally this
             // should be moved to an async Init method called after construction -
             // see note below.
-            LoadSavedCredentials();
-
             Logger.Log("LoginViewModel constructor completed successfully");
         }
         catch(Exception ex)
@@ -58,7 +57,7 @@ public partial class LoginViewModel : ObservableObject
         }
     }
 
-    // ═══════════════════════════════════════════ ЛИЦЕНЦА ═══════════════════════════════════════════
+    public async Task InitializeAsync()\n    {\n        if(_credentialsInitialized) return;\n        _credentialsInitialized=true;\n        await LoadSavedCredentialsAsync();\n    }\n\n    // ═══════════════════════════════════════════ ЛИЦЕНЦА ═══════════════════════════════════════════
 
     [ObservableProperty] private bool isSystemLocked;
     [ObservableProperty] private string licenseKey = string.Empty;
@@ -225,34 +224,7 @@ public partial class LoginViewModel : ObservableObject
         await _dialogService.ShowAlertAsync("Најава", message, "OK");
     }
 
-    private void LoadSavedCredentials()
-    {
-        try
-        {
-            if(!_preferencesService.ContainsKey("saved_username"))
-            {
-                Logger.Log("No saved credentials found");
-                return;
-            }
-
-            Logger.Log("Loading saved credentials");
-            Username=_preferencesService.LoadAsync("saved_username").GetAwaiter().GetResult();
-            Password=_preferencesService.LoadAsync("saved_password").GetAwaiter().GetResult();
-            RememberMe=true;
-            Logger.Log("Saved credentials loaded successfully");
-        }
-        catch(Exception ex)
-        {
-            Logger.LogException("LoadSavedCredentials", ex);
-            // Don't rethrow - a corrupt saved credential shouldn't block the whole
-            // login screen from loading. Just start with a blank form.
-            Username=string.Empty;
-            Password=string.Empty;
-            RememberMe=false;
-        }
-    }
-
-    private async Task PersistCredentials()
+    private async Task LoadSavedCredentialsAsync()\n    {\n        try\n        {\n            if(!_preferencesService.ContainsKey("saved_username"))\n            {\n                Logger.Log("No saved credentials found");\n                return;\n            }\n\n            Logger.Log("Loading saved credentials");\n            Username=await _preferencesService.LoadAsync("saved_username");\n            Password=await _preferencesService.LoadAsync("saved_password");\n            RememberMe=true;\n            Logger.Log("Saved credentials loaded successfully");\n        }\n        catch(Exception ex)\n        {\n            Logger.LogException("LoadSavedCredentials", ex);\n            Username=string.Empty;\n            Password=string.Empty;\n            RememberMe=false;\n        }\n    }\n\n    private async Task PersistCredentials()
     {
         try
         {
