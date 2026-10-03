@@ -115,7 +115,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
 
         // Reactivation of an inactive patient is a sensitive operation and is Admin-only.
-        if(!_isNewPatientMode && Patient.Status==PatientStatus.Inactive && !IsAdmin)
+        if(!_isNewPatientMode && Patient.Status==PatientStatus.Inactive && !CanEditPatient)
         {
             _userDialogService.ShowAlertAsync(
                 "Недозволена акција",
@@ -467,7 +467,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
         }
 
-        if(!_isNewPatientMode&&Patient.Status==PatientStatus.Inactive&&!IsAdmin)
+        if(!_isNewPatientMode&&Patient.Status==PatientStatus.Inactive&&!CanEditPatient)
         {
             await _userDialogService.ShowAlertAsync(
                 "Пациентот е неактивен",
