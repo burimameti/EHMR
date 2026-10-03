@@ -135,6 +135,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     [RelayCommand]
     protected virtual async Task Select(T item)
     {
+        if(!CanView) return;
         SelectedItemService.SelectedItem=item;
         SelectedItemService.OpenInEditMode=false;  // ← додадено, expлицитно read-only за detail-view
         await NavigationService.GoToAsync(DetailRoute);
@@ -487,6 +488,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         {
             IsPrimary=false,
             IconGlyph="👁",
+            IsEnabled=CanView,
             Label=detailLabel,
             Command=SelectCommand,
             CommandParameter=item
