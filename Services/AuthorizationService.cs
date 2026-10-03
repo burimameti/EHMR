@@ -39,16 +39,6 @@ public class AuthorizationService : IAuthorizationService
 
     public Guid? CurrentDoctorId => _auth.CurrentDoctorId;
 
-    /// <summary>
-    /// Only a Doctor explicitly granted the Administration module is allowed
-    /// to edit encounters and appointments from the list views.
-    /// </summary>
-    public bool HasDoctorAdminPrivileges =>
-        HasRole(UserRole.Doctor)
-        &&_auth.CurrentUser?.Modules.Any(m =>
-            string.Equals(m.ModuleKey, Modules.Administration, StringComparison.OrdinalIgnoreCase)
-            &&m.IsEnabled)==true;
-
     // ===================================
     // ROLE
     // ===================================
