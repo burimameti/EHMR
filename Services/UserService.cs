@@ -18,46 +18,47 @@ public class UserService : IUserService
     public async Task<List<UserAdminDto>> GetUsersAsync()
     {
         await using var db = await _factory.CreateDbContextAsync();
-        return await db.Users
+
+        var users = await db.Users
             .Include(x => x.Modules)
-            .Select(x => new UserAdminDto
-            {
-                Id=x.Id,
-                Username=x.Username,
-                FirstName=x.FirstName,
-                LastName=x.LastName,
-                Role=x.Role,
-                Position=x.Position,
-                IsActive=x.IsActive,
-                Modules=x.Modules
-                    .Where(m => m.IsEnabled)
-                    .Select(m => m.ModuleKey)
-                    .ToList()
-            })
+            .Include(x => x.ModulePermissions)
             .ToListAsync();
+
+        return users.Select(MapDto).ToList();
     }
 
     public async Task<UserAdminDto?> GetByIdAsync(Guid id)
     {
         await using var db = await _factory.CreateDbContextAsync();
-        return await db.Users
+
+        var user = await db.Users
             .Include(x => x.Modules)
-            .Where(x => x.Id==id)
-            .Select(x => new UserAdminDto
-            {
-                Id=x.Id,
-                Username=x.Username,
-                FirstName=x.FirstName,
-                LastName=x.LastName,
-                Role=x.Role,
-                Position=x.Position,
-                IsActive=x.IsActive,
-                Modules=x.Modules
-                    .Where(m => m.IsEnabled)
-                    .Select(m => m.ModuleKey)
-                    .ToList()
-            })
-            .FirstOrDefaultAsync();
+            .Include(x => x.ModulePermissions)
+            .FirstOrDefaultAsync(x => x.Id==id);
+
+        return user is null ? null : MapDto(user);
+    }
+
+    private static UserAdminDto MapDto(User user)
+    {
+        return new UserAdminDto
+        {
+            Id=user.Id,
+            Username=user.Username,
+            FirstName=user.FirstName,
+            LastName=user.LastName,
+            Role=user.Role,
+            Position=user.Position,
+            IsActive=user.IsActive,
+            Modules=user.Modules
+                .Where(m => m.IsEnabled)
+                .Select(m => m.ModuleKey)
+                .ToList(),
+            Permissions=user.ModulePermissions.ToDictionary(
+                p => p.ModuleKey,
+                p => p.Actions,
+                StringComparer.OrdinalIgnoreCase)
+        };
     }
 
     public async Task CreateAsync(UserAdminDto dto)
@@ -85,6 +86,19 @@ public class UserService : IUserService
                 ModuleKey=module,
                 IsEnabled=true
             });
+        }
+
+        if(dto.Permissions is not null)
+        {
+            foreach(var permission in dto.Permissions)
+            {
+                db.UserModulePermissions.Add(new UserModulePermission
+                {
+                    UserId=user.Id,
+                    ModuleKey=permission.Key,
+                    Actions=permission.Value
+                });
+            }
         }
 
         await db.SaveChangesAsync();
@@ -115,6 +129,23 @@ public class UserService : IUserService
                 ModuleKey=module,
                 IsEnabled=true
             });
+        }
+
+        // Keep the new permission assignments optional until the administration UI
+        // starts supplying them. Existing user edits must not wipe permissions.
+        if(dto.Permissions is not null)
+        {
+            db.UserModulePermissions.RemoveRange(user.ModulePermissions);
+
+            foreach(var permission in dto.Permissions)
+            {
+                db.UserModulePermissions.Add(new UserModulePermission
+                {
+                    UserId=user.Id,
+                    ModuleKey=permission.Key,
+                    Actions=permission.Value
+                });
+            }
         }
 
         await db.SaveChangesAsync();
