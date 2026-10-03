@@ -1,0 +1,32 @@
+name: EHMR Windows Build
+
+on:
+  push:
+    branches:
+      - claude-final
+      - feature/**
+  pull_request:
+    branches:
+      - claude-final
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Install MAUI workload
+        shell: pwsh
+        run: dotnet workload install maui
+
+      - name: Restore
+        run: dotnet restore EHMR.csproj
+
+      - name: Build Windows x64
+        run: dotnet build EHMR.csproj --no-restore --configuration Debug --framework net9.0-windows10.0.19041.0 --property:Platform=x64
