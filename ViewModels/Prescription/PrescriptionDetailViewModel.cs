@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Interfaces;
+using EHMR.Domain.Entities.Rbac;
 using EHMR.Services.Dto;
 using System.Collections.ObjectModel;
 
@@ -13,6 +14,7 @@ public partial class PrescriptionDetailFormViewModel : ObservableObject
     private readonly IPatientService _patientService; // Потребно за полнење на PatientsList
     private readonly ISelectedItemService<Prescription> _selectedPrescriptionService;
     private readonly IUserDialogService _dialogService;
+    private readonly IAuthorizationService _authorization;
 
     [ObservableProperty] private string pageTitle = "Нов Рецепт";
     [ObservableProperty] private bool isReadOnly;
@@ -24,18 +26,26 @@ public partial class PrescriptionDetailFormViewModel : ObservableObject
     [ObservableProperty] private string status = "Активни";
     [ObservableProperty] private ObservableCollection<PatientDto> patientsList = [];
 
+    public bool CanView => _authorization.CanPerform(Modules.Prescriptions, ModuleAction.View);
+    public bool CanCreate => _authorization.CanPerform(Modules.Prescriptions, ModuleAction.Create);
+    public bool CanUpdate => _authorization.CanPerform(Modules.Prescriptions, ModuleAction.Edit);
+    public bool CanDelete => _authorization.CanPerform(Modules.Prescriptions, ModuleAction.Delete);
+    public bool CanSave => Id==Guid.Empty ? CanCreate : CanUpdate;
+    public bool CanEditForm => Id==Guid.Empty ? CanCreate : CanUpdate;
     public bool IsEditMode => !IsReadOnly;
 
     public PrescriptionDetailFormViewModel(
         IPrescriptionService prescriptionService,
         IPatientService patientService,
         ISelectedItemService<Prescription> selectedPrescriptionService,
-        IUserDialogService dialogService)
+        IUserDialogService dialogService,
+        IAuthorizationService authorization)
     {
         _prescriptionService=prescriptionService;
         _patientService=patientService;
         _selectedPrescriptionService=selectedPrescriptionService;
         _dialogService=dialogService;
+        _authorization=authorization;
 
         // Автоматско вчитавање при иницијализација
         _=InitializeAsync();
@@ -43,6 +53,8 @@ public partial class PrescriptionDetailFormViewModel : ObservableObject
 
     private async Task InitializeAsync()
     {
+        if(!CanView) return;
+
         // 1. Вчитај ги сите пациенти за Picker-от
         var patients = await _patientService.GetAllAsync();
         PatientsList=new ObservableCollection<PatientDto>(patients);
@@ -73,6 +85,9 @@ public partial class PrescriptionDetailFormViewModel : ObservableObject
     [RelayCommand]
     private async Task Save()
     {
+        var isNew = Id==Guid.Empty;
+        if((isNew && !CanCreate) || (!isNew && !CanUpdate)) return;
+
         // Валидација
         if(SelectedPatient==null)
         {
@@ -85,8 +100,6 @@ public partial class PrescriptionDetailFormViewModel : ObservableObject
             await _dialogService.ShowAlertAsync("Грешка", "Полето за лек е задолжително.", "ОК");
             return;
         }
-
-        var isNew = Id==Guid.Empty;
 
         var prescription = new Prescription
         {
@@ -123,6 +136,7 @@ public partial class PrescriptionDetailFormViewModel : ObservableObject
     [RelayCommand]
     private void ToggleEditMode()
     {
+        if(Id!=Guid.Empty && !CanUpdate) return;
         IsReadOnly=!IsReadOnly;
         OnPropertyChanged(nameof(IsEditMode));
     }
