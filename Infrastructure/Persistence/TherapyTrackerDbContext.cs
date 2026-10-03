@@ -64,6 +64,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     public DbSet<TherapyProtocol> TherapyProtocols { get; set; } = null!;
     public DbSet<UserScope> UserScopes => Set<UserScope>();
     public DbSet<Domain.Entities.Rbac.Module> UserModules => base.Set<Domain.Entities.Rbac.Module>();
+    public DbSet<UserModulePermission> UserModulePermissions => Set<UserModulePermission>();
     public DbSet<User> Users => Set<User>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
@@ -547,6 +548,24 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             .WithMany(x => x.Scopes)
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserModulePermission>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.ModuleKey)
+                .IsRequired()
+                .HasMaxLength(100);
+            entity.Property(x => x.Actions)
+                .HasConversion<int>();
+
+            entity.HasIndex(x => new { x.UserId, x.ModuleKey })
+                .IsUnique();
+
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.ModulePermissions)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
     }
 
     // --- 7. SQL INDEX OPTIMIZATIONS LAYER ---
