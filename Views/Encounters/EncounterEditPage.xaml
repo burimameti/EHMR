@@ -445,8 +445,7 @@
 														StrokeShape="RoundRectangle 10"
 														StrokeThickness="0">
 														<Border.GestureRecognizers>
-															<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMkbCommand}"
-																	IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.CanUpdate}" CommandParameter="{Binding .}" />
+															<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMkbCommand}" CommandParameter="{Binding .}" />
 														</Border.GestureRecognizers>
 														<VerticalStackLayout Spacing="2">
 															<Label
@@ -563,8 +562,7 @@
 															BackgroundColor="Transparent"
 															StrokeThickness="0">
 															<Border.GestureRecognizers>
-																<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMedicineCommand}"
-																IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.CanUpdate}" CommandParameter="{Binding .}" />
+																<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMedicineCommand}" CommandParameter="{Binding .}" />
 															</Border.GestureRecognizers>
 															<VerticalStackLayout Spacing="2">
 																<Label
