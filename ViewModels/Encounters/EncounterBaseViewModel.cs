@@ -891,8 +891,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected virtual async Task CancelAsync()
     {
-        await NavigationService.GoToAsync(
-            AppRoutes.Encounters.List);
+        await NavigationService.GoToAsync($"//{AppRoutes.Dashboard}");
     }
     // =====================================================
     // ERROR HANDLING
