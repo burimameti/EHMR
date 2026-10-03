@@ -561,9 +561,8 @@
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
 														<controls:FFPicker
-															BindingContext="{Binding Regime}"
 															ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
-															Placeholder="Избери начин"
+															MinimumWidthRequest="110"
 															SelectedItem="{Binding ApplicationRegime, Mode=TwoWay}" />
 													</Border>
 													<Border
