@@ -23,7 +23,8 @@ public static class RolePermissionMatrix
                 (Modules.Reports, ModuleAction.View|ModuleAction.Export|ModuleAction.Print),
                 (Modules.Encounters, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Approve|ModuleAction.Print|ModuleAction.Export),
                 (Modules.Calendar, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel),
-                (Modules.MKBCodes, ModuleAction.View)
+                (Modules.MKBCodes, ModuleAction.View),
+                (Modules.Prescriptions, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit)
             ),
 
             [UserRole.MainNurse] = Template(
@@ -37,7 +38,8 @@ public static class RolePermissionMatrix
                 (Modules.Reports, ModuleAction.View|ModuleAction.Export|ModuleAction.Print),
                 (Modules.Encounters, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Print),
                 (Modules.Calendar, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel),
-                (Modules.MKBCodes, ModuleAction.View)
+                (Modules.MKBCodes, ModuleAction.View),
+                (Modules.Prescriptions, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit)
             ),
 
             [UserRole.Nurse] = Template(
@@ -51,7 +53,8 @@ public static class RolePermissionMatrix
                 (Modules.Reports, ModuleAction.View),
                 (Modules.Encounters, ModuleAction.View|ModuleAction.Create),
                 (Modules.Calendar, ModuleAction.View|ModuleAction.Create|ModuleAction.Schedule),
-                (Modules.MKBCodes, ModuleAction.View)
+                (Modules.MKBCodes, ModuleAction.View),
+                (Modules.Prescriptions, ModuleAction.View|ModuleAction.Create)
             ),
 
             [UserRole.Staff] = Template(
