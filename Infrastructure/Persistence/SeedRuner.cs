@@ -68,7 +68,6 @@ namespace EHMR.Infrastructure.Persistence
                     Console.WriteLine($"[SEEDER SAVE] {name}");
 
                     await _context.SaveChangesAsync(ct);
-                    await Task.Delay(500, ct); // give some breathing room for the console output
                     Console.WriteLine($"[SEEDER END] {name}");
                 }
                 catch(Exception ex)
