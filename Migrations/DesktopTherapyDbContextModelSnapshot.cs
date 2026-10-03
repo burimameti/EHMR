@@ -559,50 +559,6 @@ namespace EHMR.Migrations
                     b.ToTable("Encounters");
                 });
 
-            modelBuilder.Entity("EHMR.Domain.Entities.Inventory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("CurrentStock")
-                        .HasColumnType("int");
-
-                    b.Property<int>("InitialStock")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MaximumStockLevel")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("MedicineId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("MinimumStockAlert")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MinimumStockLevel")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReservedStock")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MedicineId");
-
-                    b.ToTable("Inventories");
-                });
-
             modelBuilder.Entity("EHMR.Domain.Entities.Medicine", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1199,6 +1155,53 @@ namespace EHMR.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("EHMR.Domain.Entities.Rbac.UserModulePermission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<ModuleAction>("Actions")
+                        .HasConversion<int>()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModuleKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "ModuleKey")
+                        .IsUnique();
+
+                    b.ToTable("UserModulePermissions");
+                });
+
+            modelBuilder.Entity("EHMR.Domain.Entities.Rbac.UserModulePermission", b =>
+                {
+                    b.HasOne("EHMR.Domain.Entities.Rbac.User", "User")
+                        .WithMany("ModulePermissions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("EHMR.Domain.Entities.Rbac.UserScope", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1770,6 +1773,8 @@ namespace EHMR.Migrations
                     b.Navigation("Doctor");
 
                     b.Navigation("Modules");
+
+                    b.Navigation("ModulePermissions");
 
                     b.Navigation("Scopes");
                 });
