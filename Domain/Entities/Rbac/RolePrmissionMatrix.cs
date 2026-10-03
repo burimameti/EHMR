@@ -23,8 +23,7 @@ public static class RolePermissionMatrix
                 (Modules.Reports, ModuleAction.View|ModuleAction.Export|ModuleAction.Print),
                 (Modules.Encounters, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Approve|ModuleAction.Print|ModuleAction.Export),
                 (Modules.Calendar, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel),
-                (Modules.MKBCodes, ModuleAction.View),
-                (Modules.Administration, ModuleAction.View)
+                (Modules.MKBCodes, ModuleAction.View)
             ),
 
             [UserRole.MainNurse] = Template(
