@@ -185,7 +185,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
             Patient=CreateBlankForRegistration();
             PageTitle="Нов Пациент";
-            IsReadOnly=false;
+            IsReadOnly=!CanCreatePatient;
 
             SyncDisplayFromPatient();
             _=LoadApplicationRegimesAsync();
@@ -197,7 +197,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
         }
 
-        IsReadOnly=!_selectedItemService.OpenInEditMode;
+        IsReadOnly=!_selectedItemService.OpenInEditMode || !CanEditPatient;
 
         // Everything (edit fields + children) now comes from one DTO fetch —
         // no more manual entity cloning needed.
