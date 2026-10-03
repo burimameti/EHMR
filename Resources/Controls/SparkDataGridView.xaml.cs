@@ -473,9 +473,14 @@ namespace EHMR.Resources.Controls
             };
 
             // Every list-grid field exposes its complete value on hover.
-            var tooltip = ResolveCellTooltip(value);
-            if(!string.IsNullOrWhiteSpace(tooltip))
-                ToolTipProperties.SetText(border, tooltip);
+            // Action cells contain a collection of buttons; never expose the
+            // collection type as a tooltip (for example System.Collections.Generic.List).
+            if(column.CellType!=SparkGridCellType.Actions)
+            {
+                var tooltip = ResolveCellTooltip(value);
+                if(!string.IsNullOrWhiteSpace(tooltip))
+                    ToolTipProperties.SetText(border, tooltip);
+            }
 
             View content = column.CellType switch
             {
@@ -578,6 +583,8 @@ namespace EHMR.Resources.Controls
                 ResolveActionColor(item), ResolveActionTextColor(item));
             button.IsEnabled = item.IsEnabled;
             button.Opacity = item.IsEnabled ? 1 : 0.45;
+            if(!string.IsNullOrWhiteSpace(item.Label))
+                ToolTipProperties.SetText(button, item.Label);
             return button;
         }
 
@@ -600,6 +607,8 @@ namespace EHMR.Resources.Controls
                     ResolveActionColor(action), ResolveActionTextColor(action));
                 button.IsEnabled=action.IsEnabled;
                 button.Opacity=action.IsEnabled ? 1 : 0.45;
+                if(!string.IsNullOrWhiteSpace(action.Label))
+                    ToolTipProperties.SetText(button, action.Label);
                 layout.Children.Add(button);
             }
 
