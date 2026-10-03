@@ -187,7 +187,7 @@ public partial class MedicineDetailFormViewModel : ObservableObject
     {
         if(_isNewMode)
         {
-            await _navigationService.GoToAsync("..");
+            await _navigationService.GoToAsync($"//{AppRoutes.Dashboard}");
             return;
         }
 
