@@ -13,5 +13,11 @@ public partial class LoginView : ContentPage
 
         // Сега MAUI автоматски ќе ја донесе точната, жива инстанца на ViewModel-от
         BindingContext=viewModel;
+        Appearing+=OnAppearing;
+    }
+
+    private async void OnAppearing(object? sender, EventArgs e)
+    {
+        await viewModel.InitializeAsync();
     }
 }
