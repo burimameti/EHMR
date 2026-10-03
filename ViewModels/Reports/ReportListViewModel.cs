@@ -97,7 +97,9 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             {
                 _=LoadMedicineFilterOptionsAsync();
             }
-            SyncSparkPickersFromFilters();
+            // Rebuild report pickers after the report data is loaded.
+            // Patient picker values come from AllItems, so rebuilding them here
+            // would happen too early and produce empty picker lists.
             BuildSparkGridColumns();
             _=GenerateReportAsync();
         }
@@ -428,11 +430,11 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Setting AllItems and applying pipeline...");
             AllItems=rows;
 
-            if(SelectedReportType.Type==ReportType.Patients)
-            {
-                BuildSparkPickers();
-                BuildSparkGridColumns();
-            }
+            // Picker options are data-driven for the Patients report.
+            // Build them only after AllItems has been populated so the
+            // picker Items collections contain the actual report values.
+            BuildSparkPickers();
+            BuildSparkGridColumns();
 
             System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Applying pipeline...");
             ApplyPipeline();
