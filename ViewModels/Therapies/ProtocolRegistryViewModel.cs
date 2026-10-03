@@ -37,7 +37,7 @@ public partial class ProtocolRegistryViewModel : BaseViewModel<TherapyProtocol>
     } =
         new(["Сите", "Кардиологија", "Онкологија", "Нефрологија", "Пулмологија"]);
 
-    protected override string ModuleName => "protocols";
+    protected override string ModuleName => Modules.Protocols;
     protected override string DetailRoute => AppRoutes.Protocols.Detail;
     protected override string PermissionDeniedMessage => "Немате авторизација за оваа акција со протоколи.";
 
