@@ -31,7 +31,7 @@ public partial class Mkb10CodeListViewModel : BaseViewModel<Mkb10Code>, IQueryAt
     private FilterLookup _chapterLookup = FilterLookup.Empty;
 
     // ================= BASE OVERRIDES =================
-    protected override string ModuleName => "mkb10";
+    protected override string ModuleName => Modules.MKBCodes;
     protected override string DetailRoute => AppRoutes.Mkb10.Detail;
     protected override string PermissionDeniedMessage => "Немате авторизација за додавање нова МКБ-10 шифра.";
 
