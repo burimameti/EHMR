@@ -15,6 +15,8 @@ public partial class ModulePermissionWrapper : ObservableObject
         ModuleKey=moduleKey;
         DisplayName=moduleKey switch
         {
+            Modules.Dashboard => "Почетна страна",
+            Modules.Inventory => "Лекови",
             Modules.MKBCodes => "MKB-10 шифарник",
             Modules.BackupDashboard => "Backup Dashboard",
             Modules.Backups => "Резервни копии",
