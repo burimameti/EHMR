@@ -91,6 +91,11 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     public async Task AddApplicationRegimeAsync()
     {
+        if(!CanUpdate)
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за промена на прегледот.", "ОК");
+            return;
+        }
         var value=await UserDialogService.ShowPromptAsync(
             "Нов начин на апликација",
             "Внесете нов начин на апликација за лекот.",
@@ -540,6 +545,11 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected async Task AddNewAppointmentAsync()
     {
+        if(!AuthorizationService.CanPerform(Modules.Appointments, ModuleAction.Create))
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за креирање термин.", "ОК");
+            return;
+        }
         if(SelectedPatient?.Status==PatientStatus.Inactive)
         {
             await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "За неактивен пациент не може да се креира или менува термин.", "ОК");
@@ -814,6 +824,11 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected async Task AddNewTherapyCycleAsync()
     {
+        if(!CanUpdate)
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за промена на терапијата.", "ОК");
+            return;
+        }
         if(SelectedPatient?.Status==PatientStatus.Inactive)
         {
             await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "За неактивен пациент не може да се креира или менува терапија.", "ОК");
@@ -1289,6 +1304,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected void AddMkb(Mkb10Code code)
     {
+        if(!CanUpdate) return;
         if(code==null)
             return;
         if(Diagnoses.Any(x =>
@@ -1325,6 +1341,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected void RemoveMkb(Diagnosis diagnosis)
     {
+        if(!CanUpdate) return;
         if(diagnosis==null)
             return;
         if(Diagnoses.Contains(diagnosis))
@@ -1399,6 +1416,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected void AddMedicine(Medicine medicine)
     {
+        if(!CanUpdate) return;
         if(medicine==null) return;
 
         if(EncounterMedicines.Any(x => x.MedicineId==medicine.Id&&x.IsActive))
@@ -1446,6 +1464,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected void RemoveMedicine(PatientMedicine medicine)
     {
+        if(!CanUpdate) return;
         if(medicine==null) return;
 
         // Only mark for DB deletion if it's a real, already-persisted row.
