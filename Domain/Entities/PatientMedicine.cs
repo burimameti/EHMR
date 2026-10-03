@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace EHMR.Domain.Entities;
 
 /// <summary>
@@ -22,6 +24,19 @@ public class PatientMedicine : BaseEntity
 
     public Guid? ApplicationRegimeId { get; set; }
     public ApplicationRegime? ApplicationRegime { get; set; }
+
+    [NotMapped]
+    public string ApplicationRegimeDisplay
+    {
+        get => ApplicationRegime?.Regime ?? string.Empty;
+        set
+        {
+            var value = value ?? string.Empty;
+            if (ApplicationRegime is null)
+                ApplicationRegime = new ApplicationRegime();
+            ApplicationRegime.Regime = value;
+        }
+    }
 
     public Guid MedicineId
     {
