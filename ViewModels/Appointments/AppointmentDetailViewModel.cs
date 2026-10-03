@@ -772,6 +772,15 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [RelayCommand]
     private async Task SaveAsync()
     {
+        if(!IsNewAppointment&&!CanEditAppointment)
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Пристапот е одбиен",
+                "Немате овластување за промена на овој термин.",
+                "ОК");
+            return;
+        }
+
         if(SelectedPatientForAppointment==null)
         {
             await UserDialogService.ShowAlertAsync("Валидација", "Изберете пациент.", "OK");
