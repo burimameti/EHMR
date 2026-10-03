@@ -251,8 +251,10 @@ public partial class DashboardViewModel : ObservableObject
     public string CurrentDate => DateTime.Now.ToString("dd MMM yyyy");
     public User? UserName => _auth?.CurrentUser;
     public UserRole UserRole => _auth.CurrentUser?.Role??UserRole.Doctor;
-    public bool CanManageAppointments => _policyService.CanAccessModule(Modules.Appointments);
-    public bool CanCreatePatient => _policyService.CanAccessModule(Modules.Patients);
+    public bool CanView => _policyService.CanPerform(Modules.Dashboard, ModuleAction.View);
+    public bool CanManageAppointments => _policyService.CanPerform(Modules.Appointments, ModuleAction.Create);
+    public bool CanCreatePatient => _policyService.CanPerform(Modules.Patients, ModuleAction.Create);
+    public bool CanCreateEncounter => _policyService.CanPerform(Modules.Encounters, ModuleAction.Create);
 
     // =========================================================
     // STATE
