@@ -67,7 +67,8 @@ public static class RolePermissionMatrix
                 (Modules.Reports, ModuleAction.View),
                 (Modules.Encounters, ModuleAction.View),
                 (Modules.Calendar, ModuleAction.View),
-                (Modules.MKBCodes, ModuleAction.View)
+                (Modules.MKBCodes, ModuleAction.View),
+                (Modules.Prescriptions, ModuleAction.View)
             )
         };
 
