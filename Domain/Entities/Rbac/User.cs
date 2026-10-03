@@ -31,6 +31,9 @@ public class User : BaseEntity
     // Explicit per-user module assignments override the role default for that module.
     public ICollection<Module> Modules { get; set; } = new List<Module>();
 
+    /// <summary>Explicit per-user action permissions overriding role defaults.</summary>
+    public ICollection<UserModulePermission> ModulePermissions { get; set; } = new List<UserModulePermission>();
+
     public ICollection<UserScope> Scopes { get; set; } = new List<UserScope>();
 
     public bool IsAuthorizedToModule(string moduleKey)
