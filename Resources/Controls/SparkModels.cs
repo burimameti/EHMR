@@ -103,8 +103,6 @@ namespace EHMR.Resources.Controls
         private bool _isSelected;
         private ICommand _command;
         private object _commandParameter;
-        private bool _isEnabled = true;
-        private bool _isEnabled = true;
 
         public string Title
         {
@@ -202,6 +200,7 @@ namespace EHMR.Resources.Controls
         private bool _isPrimary;
         private ICommand _command;
         private object _commandParameter;
+        private bool _isEnabled = true;
 
         public string Label
         {
