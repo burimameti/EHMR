@@ -425,7 +425,11 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task GenerateClinicalReportAsync()
     {
-        if(Patient.Id==Guid.Empty) return;
+        if(!CanPrintPatientReport || Patient.Id==Guid.Empty)
+        {
+            await _userDialogService.ShowAlertAsync("Недозволена акција", "Немате авторизација за печатење / PDF извештај.", "ОК");
+            return;
+        }
 
         try
         {
@@ -457,6 +461,12 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
         }
 
+        if(!_isNewPatientMode && !CanEditPatient)
+        {
+            await _userDialogService.ShowAlertAsync("Недозволена акција", "Немате авторизација за измена на пациент.", "ОК");
+            return;
+        }
+
         if(!_isNewPatientMode&&Patient.Status==PatientStatus.Inactive&&!IsAdmin)
         {
             await _userDialogService.ShowAlertAsync(
@@ -482,6 +492,12 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     private async Task SaveAsync()
     {
         if(IsSaving) return;
+
+        if(!CanSavePatient)
+        {
+            await _userDialogService.ShowAlertAsync("Недозволена акција", "Немате авторизација за зачувување на пациент.", "ОК");
+            return;
+        }
 
         if(string.IsNullOrWhiteSpace(Patient.FirstName)||string.IsNullOrWhiteSpace(Patient.LastName))
         {
