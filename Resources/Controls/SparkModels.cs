@@ -103,6 +103,7 @@ namespace EHMR.Resources.Controls
         private bool _isSelected;
         private ICommand _command;
         private object _commandParameter;
+        private bool _isEnabled = true;
 
         public string Title
         {
@@ -231,6 +232,12 @@ namespace EHMR.Resources.Controls
         {
             get => _commandParameter;
             set => Set(ref _commandParameter, value);
+        }
+
+        public bool IsEnabled
+        {
+            get => _isEnabled;
+            set => Set(ref _isEnabled, value);
         }
     }
     /// <summary>One stat card on the detail page, e.g. { Label = "Predicted LTV", Value = "$12,345" }.</summary>
