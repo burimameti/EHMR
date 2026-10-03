@@ -29,7 +29,7 @@ public static class AppNavigation
         //        new()
         //        {
                     GroupTitle = "Календар",
-                    Route = AppRoutes.CalendarPage,
+                    Route = AppRoutes.Calendar,
                     Module = Modules.Calendar,
                     Icon = new IconDefinition { Glyph = "\uf133", Font = IconFontType.FontAwesomeSolid } // Alternative Calendar
             //    }
@@ -111,15 +111,6 @@ public static class AppNavigation
                     RequiredAction = ModuleAction.View,
                     Icon = new IconDefinition { Glyph = "\uf03a", Font = IconFontType.FontAwesomeSolid }
                 },
-                new()
-                {
-                    Title = "Нов термин",
-                    Route = AppRoutes.Appointments.Detail,
-                    Module = Modules.Appointments,
-                    RequiredAction = ModuleAction.Create,
-                    StartsNewRecord = true,
-                    Icon = new IconDefinition { Glyph = "\uf067", Font = IconFontType.FontAwesomeSolid }
-                }
             ]
         },
 
