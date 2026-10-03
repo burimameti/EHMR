@@ -294,7 +294,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             return;
         }
 
-        if(!AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Create))
+        if(!AuthService.CanPerform(Modules.Encounters, ModuleAction.Create))
         {
             await UserDialogService.ShowAlertAsync("Недозволена акција", "Немате авторизација за креирање нов преглед.", "ОК");
             return;
