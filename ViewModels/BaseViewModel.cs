@@ -75,6 +75,13 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     [ObservableProperty] private bool canCreate;
     [ObservableProperty] private bool canUpdate;
     [ObservableProperty] private bool canDelete;
+    [ObservableProperty] private bool canSchedule;
+    [ObservableProperty] private bool canCancel;
+    [ObservableProperty] private bool canComplete;
+    [ObservableProperty] private bool canApprove;
+    [ObservableProperty] private bool canExport;
+    [ObservableProperty] private bool canPrint;
+    [ObservableProperty] private bool canManage;
 
     protected BaseViewModel(
         INavigationService navigationService,
@@ -113,6 +120,13 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         CanCreate=AuthService.CanPerform(ModuleName, ModuleAction.Create);
         CanUpdate=AuthService.CanPerform(ModuleName, ModuleAction.Edit);
         CanDelete=AuthService.CanPerform(ModuleName, ModuleAction.Delete);
+        CanSchedule=AuthService.CanPerform(ModuleName, ModuleAction.Schedule);
+        CanCancel=AuthService.CanPerform(ModuleName, ModuleAction.Cancel);
+        CanComplete=AuthService.CanPerform(ModuleName, ModuleAction.Complete);
+        CanApprove=AuthService.CanPerform(ModuleName, ModuleAction.Approve);
+        CanExport=AuthService.CanPerform(ModuleName, ModuleAction.Export);
+        CanPrint=AuthService.CanPerform(ModuleName, ModuleAction.Print);
+        CanManage=AuthService.CanPerform(ModuleName, ModuleAction.Manage);
     }
 
     // ================= SELECT / NEW / EDIT =================
