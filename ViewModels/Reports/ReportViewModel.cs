@@ -440,7 +440,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     [RelayCommand]
     private async Task SelectReport(ReportDefinition? report)
     {
-        if(report is null)
+        if(!CanExport || report is null)
+            return;
             return;
 
         ClearReportState();
@@ -610,6 +611,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             {
                 Label="Генерирај",
                 IsPrimary=true,
+                IsEnabled=CanExport,
                 Command=SelectReportCommand,
                 CommandParameter=template
             };
