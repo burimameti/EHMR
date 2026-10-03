@@ -279,6 +279,32 @@ public static class AppNavigation
 
         //},
         // ==========================
+        // MKB-10
+        // ==========================
+        new()
+        {
+            GroupTitle = "MKB-10",
+            Route = AppRoutes.Mkb10Codes.List,
+            Module = Modules.MKBCodes,
+            Icon = new IconDefinition { Glyph = "\uf02d", Font = IconFontType.FontAwesomeSolid }
+        },
+
+        // ==========================
+        // BACKUPS
+        // ==========================
+        new()
+        {
+            GroupTitle = "Резервни копии",
+            Route = AppRoutes.Backup.Dashboard,
+            Module = Modules.BackupDashboard,
+            Icon = new IconDefinition { Glyph = "\uf1da", Font = IconFontType.FontAwesomeSolid },
+            Items =
+            [
+                new() { Title = "Контролна табла", Route = AppRoutes.Backup.Dashboard, Module = Modules.BackupDashboard, RequiredAction = ModuleAction.View },
+                new() { Title = "Историја", Route = AppRoutes.Backup.History, Module = Modules.Backups, RequiredAction = ModuleAction.View }
+            ]
+        },
+        // ==========================
         // ADMINISTRATION
         // ==========================
         new()
