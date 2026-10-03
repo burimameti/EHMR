@@ -38,6 +38,7 @@
 	<!--  Canonical CRUD accent tokens; Colors.xaml is merged first.  -->
 	<Color x:Key="SparkAccentTeal">#4DD9C7</Color>
 	<Color x:Key="SparkAccentTealDark">#32B9AA</Color>
+	<Color x:Key="SparkAccentTealLight">#82E7DB</Color>
 	<Color x:Key="SparkAccentTealBg">#F0F7F5</Color>
 	<Color x:Key="SidebarActiveBg">#4DD9C7</Color>
 
