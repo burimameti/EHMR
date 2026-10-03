@@ -1,32 +1,158 @@
 using System.Collections;
-using CommunityToolkit.Maui.Extensions;
-using CommunityToolkit.Maui.Views;
-using Microsoft.Maui.Controls;
+using System.Reflection;
+
 namespace EHMR.Resources.Controls;
+
 public partial class FFPicker : ContentView
 {
- public FFPicker(){InitializeComponent();}
- public static readonly BindableProperty LabelProperty=BindableProperty.Create(nameof(Label),typeof(string),typeof(FFPicker),string.Empty);
- public string Label{get=>(string)GetValue(LabelProperty);set=>SetValue(LabelProperty,value);}
- public static readonly BindableProperty PlaceholderProperty=BindableProperty.Create(nameof(Placeholder),typeof(string),typeof(FFPicker),string.Empty);
- public string Placeholder{get=>(string)GetValue(PlaceholderProperty);set=>SetValue(PlaceholderProperty,value);}
- public static readonly BindableProperty ItemsSourceProperty=BindableProperty.Create(nameof(ItemsSource),typeof(IList),typeof(FFPicker),null);
- public IList ItemsSource{get=>(IList)GetValue(ItemsSourceProperty);set=>SetValue(ItemsSourceProperty,value);}
- public static readonly BindableProperty ItemDisplayBindingProperty=BindableProperty.Create(nameof(ItemDisplayBinding),typeof(BindingBase),typeof(FFPicker),null);
- public BindingBase? ItemDisplayBinding{get=>(BindingBase?)GetValue(ItemDisplayBindingProperty);set=>SetValue(ItemDisplayBindingProperty,value);}
- public static readonly BindableProperty SelectedItemProperty=BindableProperty.Create(nameof(SelectedItem),typeof(object),typeof(FFPicker),null,BindingMode.TwoWay);
- public object? SelectedItem{get=>GetValue(SelectedItemProperty);set=>SetValue(SelectedItemProperty,value);}
- public static readonly BindableProperty SelectedIndexProperty=BindableProperty.Create(nameof(SelectedIndex),typeof(int),typeof(FFPicker),-1,BindingMode.TwoWay);
- public int SelectedIndex{get=>(int)GetValue(SelectedIndexProperty);set=>SetValue(SelectedIndexProperty,value);}
- private async void OnPickerTapped(object? sender,TappedEventArgs e)
- {
-  if(ItemsSource==null||ItemsSource.Count==0)return;
-  var page=Application.Current?.Windows.FirstOrDefault()?.Page??Application.Current?.MainPage;
-  if(page==null)return;
-  var popup=new FFPickerPopup(string.IsNullOrWhiteSpace(Label) ? "Избери" : Label,ItemsSource,ItemDisplayBinding,SelectedItem);
-  var result=await page.ShowPopupAsync(popup);
-  if(result==null)return;
-  SelectedItem=result;
-  for(var i=0;i<ItemsSource.Count;i++)if(Equals(ItemsSource[i],result)){SelectedIndex=i;break;}
- }
+    // ---------- Bindable properties ----------
+
+    public static readonly BindableProperty LabelProperty =
+        BindableProperty.Create(nameof(Label), typeof(string), typeof(FFPicker), string.Empty);
+
+    public static readonly BindableProperty PlaceholderProperty =
+        BindableProperty.Create(nameof(Placeholder), typeof(string), typeof(FFPicker), string.Empty,
+            propertyChanged: (b, _, _) => ((FFPicker)b).UpdateDisplay());
+
+    public static readonly BindableProperty ItemsSourceProperty =
+        BindableProperty.Create(nameof(ItemsSource), typeof(IList), typeof(FFPicker), null,
+            propertyChanged: (b, _, n) => ((FFPicker)b).OnItemsSourceChanged((IList?)n));
+
+    public static readonly BindableProperty SelectedItemProperty =
+        BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(FFPicker), null,
+            BindingMode.TwoWay,
+            propertyChanged: (b, _, n) => ((FFPicker)b).OnSelectedItemChanged(n));
+
+    /// <summary>Property name shown for complex objects (e.g. "Name"). Empty = ToString().</summary>
+    public static readonly BindableProperty DisplayMemberPathProperty =
+        BindableProperty.Create(nameof(DisplayMemberPath), typeof(string), typeof(FFPicker), string.Empty,
+            propertyChanged: (b, _, _) => ((FFPicker)b).OnDisplayMemberPathChanged());
+
+    public string Label
+    {
+        get => (string)GetValue(LabelProperty); set => SetValue(LabelProperty, value);
+    }
+    public string Placeholder
+    {
+        get => (string)GetValue(PlaceholderProperty); set => SetValue(PlaceholderProperty, value);
+    }
+    public IList? ItemsSource
+    {
+        get => (IList?)GetValue(ItemsSourceProperty); set => SetValue(ItemsSourceProperty, value);
+    }
+    public object? SelectedItem
+    {
+        get => GetValue(SelectedItemProperty); set => SetValue(SelectedItemProperty, value);
+    }
+    public string DisplayMemberPath
+    {
+        get => (string)GetValue(DisplayMemberPathProperty); set => SetValue(DisplayMemberPathProperty, value);
+    }
+
+    bool _syncing;
+
+    public FFPicker()
+    {
+        InitializeComponent();
+        InnerPicker.SelectedIndexChanged+=OnInnerSelectionChanged;
+        UpdateDisplay();
+    }
+
+    // ---------- Sync ----------
+
+    void OnItemsSourceChanged(IList? items)
+    {
+        _syncing=true;
+        try
+        {
+            InnerPicker.ItemsSource=items;
+
+            // Native picker clears its selection when the list changes -
+            // put the bound value back so it survives late-loaded lists.
+            if(SelectedItem is not null&&items is not null)
+            {
+                var index = IndexOf(items, SelectedItem);
+                InnerPicker.SelectedIndex=index;
+            }
+        }
+        finally { _syncing=false; }
+
+        UpdateDisplay();
+    }
+
+    void OnSelectedItemChanged(object? item)
+    {
+        if(!_syncing)
+        {
+            _syncing=true;
+            try
+            {
+                InnerPicker.SelectedIndex=item is null||ItemsSource is null
+                    ? -1
+                    : IndexOf(ItemsSource, item);
+            }
+            finally { _syncing=false; }
+        }
+
+        UpdateDisplay();
+    }
+
+    void OnInnerSelectionChanged(object? sender, EventArgs e)
+    {
+        if(_syncing) return;
+
+        // Ignore the native reset-to-null; only real user picks write back.
+        if(InnerPicker.SelectedIndex<0||ItemsSource is null) return;
+
+        _syncing=true;
+        try { SelectedItem=ItemsSource[InnerPicker.SelectedIndex]; }
+        finally { _syncing=false; }
+
+        UpdateDisplay();
+    }
+
+    void OnDisplayMemberPathChanged()
+    {
+        InnerPicker.ItemDisplayBinding=string.IsNullOrWhiteSpace(DisplayMemberPath)
+            ? null
+            : new Binding(DisplayMemberPath);
+        UpdateDisplay();
+    }
+
+    // ---------- Display ----------
+
+    void UpdateDisplay()
+    {
+        var hasValue = SelectedItem is not null;
+
+        ValueLabel.Text=hasValue ? GetDisplayText(SelectedItem!) : Placeholder;
+        ValueLabel.FontAttributes=hasValue ? FontAttributes.Bold : FontAttributes.None;
+        ValueLabel.TextColor=ResolveColor(hasValue ? "SparkTextPrimary" : "SparkTextMuted");
+    }
+
+    string GetDisplayText(object item)
+    {
+        if(string.IsNullOrWhiteSpace(DisplayMemberPath))
+            return item.ToString()??string.Empty;
+
+        var prop = item.GetType().GetProperty(DisplayMemberPath,
+            BindingFlags.Public|BindingFlags.Instance);
+        return prop?.GetValue(item)?.ToString()??item.ToString()??string.Empty;
+    }
+
+    static int IndexOf(IList items, object item)
+    {
+        var i = items.IndexOf(item);
+        if(i>=0) return i;
+
+        // Fallback for equal-by-value items that are different instances.
+        for(var k = 0; k<items.Count; k++)
+            if(Equals(items[k], item)) return k;
+        return -1;
+    }
+
+    static Color ResolveColor(string key) =>
+        Application.Current?.Resources.TryGetValue(key, out var v)==true&&v is Color c
+            ? c
+            : Colors.Gray;
 }

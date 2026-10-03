@@ -161,7 +161,7 @@
 
 				<VerticalStackLayout Spacing="10">
 
-					<!-- Medicine filter: explicit medicine selection for consumption reports -->
+					<!--  Medicine filter: explicit medicine selection for consumption reports  -->
 					<Grid
 						ColumnDefinitions="Auto,Auto,*"
 						ColumnSpacing="10"
@@ -170,17 +170,17 @@
 						<Label
 							Grid.Column="1"
 							Text="Пребарување по лек"
-							VerticalOptions="Center"
-							TextColor="{StaticResource SparkTextPrimary}" />
-						<controls:FFPicker2
+							TextColor="{StaticResource SparkTextPrimary}"
+							VerticalOptions="Center" />
+						<controls:FFPicker
 							Grid.Column="2"
-							ItemsSource="{Binding MedicineFilterOptions}"
 							IsVisible="{Binding IsMedicineFilterEnabled}"
+							ItemsSource="{Binding MedicineFilterOptions}"
 							Placeholder="Избери лек"
 							SelectedItem="{Binding SelectedMedicineFilter, Mode=TwoWay}" />
 					</Grid>
 
-					<!-- Patient history selector: same suggestion UX as Dashboard -->
+					<!--  Patient history selector: same suggestion UX as Dashboard  -->
 					<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
 						<controls:SparkExplorerHeaderView
 							SearchPlaceholder="Пребарај пациент за Скор историја..."
@@ -243,9 +243,9 @@
 					</Grid>
 
 					<Border
+						Padding="10,7"
 						BackgroundColor="{StaticResource SparkContentBackground}"
 						IsVisible="{Binding IsPatientHistoryMode}"
-						Padding="10,7"
 						Stroke="{StaticResource SparkBorder}"
 						StrokeThickness="1">
 						<Label
@@ -276,7 +276,7 @@
 
 			<controls:FFSectionCard Grid.Row="3">
 
-				<!-- Patient history action appears only after a patient is selected. -->
+				<!--  Patient history action appears only after a patient is selected.  -->
 				<Grid
 					Margin="0,0,0,10"
 					ColumnDefinitions="*,Auto"

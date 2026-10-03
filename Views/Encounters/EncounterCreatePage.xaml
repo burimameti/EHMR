@@ -402,20 +402,20 @@
 								<VerticalStackLayout Grid.Column="0" Spacing="10">
 									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
 										<controls:CrudSectionHeader
-											Grid.Column="0"
 											Title="ТЕКОВНА ТЕРАПИЈА"
+											Grid.Column="0"
 											Padding="8,5"
 											BackgroundColor="{StaticResource SparkAccentTealBg}"
 											LineColor="{StaticResource SparkAccentTeal}"
 											TextColor="{StaticResource SparkTextPrimary}" />
 										<Button
 											Grid.Column="1"
+											Padding="12,0"
 											BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
 											Command="{Binding AddApplicationRegimeCommand}"
 											CornerRadius="6"
 											FontAttributes="Bold"
 											FontSize="10.5"
-											Padding="12,0"
 											Text="+ Нов начин"
 											TextColor="White"
 											VerticalOptions="Center" />
@@ -561,7 +561,7 @@
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
 														<controls:FFPicker
-															ItemDisplayBinding="{Binding Regime}"
+															BindingContext="{Binding Regime}"
 															ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
 															Placeholder="Избери начин"
 															SelectedItem="{Binding ApplicationRegime, Mode=TwoWay}" />
@@ -634,17 +634,50 @@
 									LineColor="{StaticResource SparkAccentTeal}"
 									TextColor="{StaticResource SparkTextPrimary}" />
 								<HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-    <Label FontAttributes="Bold" FontSize="11.5" Text="Закажи следна контрола" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
-    <CheckBox IsChecked="{Binding ScheduleNextFollowUp, Mode=TwoWay}" VerticalOptions="Center" />
-</HorizontalStackLayout>
-<Grid ColumnDefinitions="Auto,130,Auto,180" ColumnSpacing="8" IsVisible="{Binding ScheduleNextFollowUp}">
-    <Label FontSize="10" Text="Датум" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
-    <Border Grid.Column="1" Padding="0" BackgroundColor="White" HeightRequest="42" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 7" StrokeThickness="1">
-        <DatePicker Date="{Binding NextFollowUpDate, Mode=TwoWay}" Format="dd.MM.yyyy" MinimumDate="{Binding FollowUpMinimumDate}" HorizontalOptions="Fill" TextColor="{StaticResource SparkTextPrimary}" />
-    </Border>
-    <Label Grid.Column="2" FontSize="10" Text="Периодично избирање" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
-    <controls:FFPicker2 Grid.Column="3" ItemsSource="{Binding FollowUpIntervalOptions}" Placeholder="Брзо избирање" SelectedItem="{Binding SelectedFollowUpInterval, Mode=TwoWay}" />
-</Grid>
+									<Label
+										FontAttributes="Bold"
+										FontSize="11.5"
+										Text="Закажи следна контрола"
+										TextColor="{StaticResource SparkTextPrimary}"
+										VerticalOptions="Center" />
+									<CheckBox IsChecked="{Binding ScheduleNextFollowUp, Mode=TwoWay}" VerticalOptions="Center" />
+								</HorizontalStackLayout>
+								<Grid
+									ColumnDefinitions="Auto,130,Auto,180"
+									ColumnSpacing="8"
+									IsVisible="{Binding ScheduleNextFollowUp}">
+									<Label
+										FontSize="10"
+										Text="Датум"
+										TextColor="{StaticResource SparkTextSecondary}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="0"
+										BackgroundColor="White"
+										HeightRequest="42"
+										Stroke="{StaticResource SparkBorderSubtle}"
+										StrokeShape="RoundRectangle 7"
+										StrokeThickness="1">
+										<DatePicker
+											Date="{Binding NextFollowUpDate, Mode=TwoWay}"
+											Format="dd.MM.yyyy"
+											HorizontalOptions="Fill"
+											MinimumDate="{Binding FollowUpMinimumDate}"
+											TextColor="{StaticResource SparkTextPrimary}" />
+									</Border>
+									<Label
+										Grid.Column="2"
+										FontSize="10"
+										Text="Периодично избирање"
+										TextColor="{StaticResource SparkTextSecondary}"
+										VerticalOptions="Center" />
+									<controls:FFPicker
+										Grid.Column="3"
+										ItemsSource="{Binding FollowUpIntervalOptions}"
+										Placeholder="Брзо избирање"
+										SelectedItem="{Binding SelectedFollowUpInterval, Mode=TwoWay}" />
+								</Grid>
 							</VerticalStackLayout>
 
 
