@@ -1146,8 +1146,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
         // Application regimes are required by the medicine row even before
         // a patient is selected, so load them with the other form lookups.
-        ApplicationRegimeOptions=new ObservableCollection<ApplicationRegime>(
-            await EncounterService.GetApplicationRegimesAsync());
+        await LoadApplicationRegimesAsync();
     }
     // =====================================================
     // LOAD EXISTING VIEW MODE
