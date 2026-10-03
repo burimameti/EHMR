@@ -109,6 +109,7 @@
 						<controls:FFButton
 							ButtonKind="Secondary"
 							Command="{Binding GenerateClinicalReportCommand}"
+							IsEnabled="{Binding CanPrint}"
 							ContentPadding="16,0"
 							HeightRequestEx="40"
 							Text="Печати / PDF" />
@@ -444,7 +445,8 @@
 														StrokeShape="RoundRectangle 10"
 														StrokeThickness="0">
 														<Border.GestureRecognizers>
-															<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMkbCommand}" CommandParameter="{Binding .}" />
+															<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMkbCommand}"
+																	IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.CanUpdate}" CommandParameter="{Binding .}" />
 														</Border.GestureRecognizers>
 														<VerticalStackLayout Spacing="2">
 															<Label
@@ -490,6 +492,7 @@
 																	Padding="0"
 																	BackgroundColor="Transparent"
 																	Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMkbCommand}"
+																	IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.CanUpdate}"
 																	CommandParameter="{Binding .}"
 																	FontSize="11"
 																	HeightRequest="26"
@@ -560,7 +563,8 @@
 															BackgroundColor="Transparent"
 															StrokeThickness="0">
 															<Border.GestureRecognizers>
-																<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMedicineCommand}" CommandParameter="{Binding .}" />
+																<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMedicineCommand}"
+																IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.CanUpdate}" CommandParameter="{Binding .}" />
 															</Border.GestureRecognizers>
 															<VerticalStackLayout Spacing="2">
 																<Label
@@ -702,6 +706,7 @@
 																Padding="0"
 																BackgroundColor="Transparent"
 																Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}"
+																IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.CanUpdate}"
 																CommandParameter="{Binding .}"
 																FontSize="12"
 																Text="✕"
