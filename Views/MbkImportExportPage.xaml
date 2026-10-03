@@ -70,7 +70,7 @@
 						<Button
 							BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
 							TextColor="White"
-							Command="{Binding CancelImportCommand}"
+							Command="{Binding CancelImportCommand}" IsEnabled="{Binding CanManage}"
 							HeightRequest="45"
 							IsVisible="{Binding IsImporting}"
 							Style="{StaticResource TabButtonActiveStyle}"
@@ -79,7 +79,7 @@
 						<Button
 							BackgroundColor="{StaticResource SparkAccentTeal}"
 							TextColor="White"
-							Command="{Binding ImportCommand}"
+							Command="{Binding ImportCommand}" IsEnabled="{Binding CanManage}"
 							HeightRequest="45"
 							Style="{StaticResource TabButtonActiveStyle}"
 							Text="Увези"
@@ -127,7 +127,7 @@
 											Grid.Column="1"
 											BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
 											TextColor="White"
-											Command="{Binding BrowseFileCommand}"
+											Command="{Binding BrowseFileCommand}" IsEnabled="{Binding CanManage}"
 											HeightRequest="38"
 											Style="{StaticResource TabButtonActiveStyle}"
 											Text="Избери..."
