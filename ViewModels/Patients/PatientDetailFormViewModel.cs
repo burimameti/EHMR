@@ -42,6 +42,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     public bool IsNewPatient => _isNewPatientMode;
 
     public bool CanViewPatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.View);
+    public bool CanViewNationalId =>
+        _authorizationService.HasRole(UserRole.Admin) || _authorizationService.HasRole(UserRole.SuperAdmin);
     public bool CanCreatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Create);
     public bool CanEditPatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Edit);
     public bool CanDeletePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Delete);
