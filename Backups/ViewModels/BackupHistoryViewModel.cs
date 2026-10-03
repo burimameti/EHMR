@@ -193,6 +193,7 @@ public partial class BackupHistoryViewModel : BaseViewModel<BackupHistory>
     [RelayCommand]
     private async Task DeleteAsync()
     {
+        if(!CanDelete) return;
         if(SelectedBackupRow?.Tag is not BackupHistory backup)
         {
             await UserDialogService.ShowAlertAsync(
@@ -340,7 +341,8 @@ public partial class BackupHistoryViewModel : BaseViewModel<BackupHistory>
             Label="Нов Бекап",
             IconGlyph="\uf0c7",
             IsPrimary=true,
-            Command=RunBackupCommand
+            Command=RunBackupCommand,
+            IsEnabled=CanCreate
         });
 
         Buttons.Add(new SparkButtonItem
@@ -354,7 +356,8 @@ public partial class BackupHistoryViewModel : BaseViewModel<BackupHistory>
         {
             Label="Избриши",
             IconGlyph="\uf1f8",
-            Command=DeleteCommand
+            Command=DeleteCommand,
+            IsEnabled=CanDelete
         });
 
 
@@ -482,7 +485,8 @@ public partial class BackupHistoryViewModel : BaseViewModel<BackupHistory>
     {
         IconGlyph = "\uf1f8",
         Label = "Избриши",
-        Command = new AsyncRelayCommand(() => DeleteBackupAsync(backup))
+        Command = new AsyncRelayCommand(() => DeleteBackupAsync(backup)),
+        IsEnabled = CanDelete
         // ForegroundColor was an FFGridAction-only property — check whether
         // SparkButtonItem exposes an equivalent (e.g. IsDestructive, Tone,
         // ForegroundColor). If not, this row just won't be tinted red;
