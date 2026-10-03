@@ -19,6 +19,7 @@ public partial class UserEditViewModel : ObservableObject
     private readonly ISelectedItemService<UserAdminDto> _userSelectionService;
     private readonly IUserDialogService _dialogService;
     private readonly IAuthStateService _authStateService;
+    private readonly IAuthorizationService _authorization;
 
     private UserAdminDto? _originalUser;
     private bool _isNewUserMode;
@@ -47,7 +48,11 @@ public partial class UserEditViewModel : ObservableObject
     private bool _isSelfEdit;
 
     public bool IsEditMode => !IsReadOnly;
-    public bool CanShowEditButton => IsReadOnly&&CanManageTargetUser;
+    public bool CanManageAdministration => _authorization.CanPerform(Modules.Administration, ModuleAction.Manage);
+    public bool CanCreateUser => _authorization.CanPerform(Modules.Administration, ModuleAction.Create);
+    public bool CanEditUser => _authorization.CanPerform(Modules.Administration, ModuleAction.Edit);
+    public bool CanDeleteUser => _authorization.CanPerform(Modules.Administration, ModuleAction.Delete);
+    public bool CanShowEditButton => IsReadOnly&&CanManageTargetUser&&CanEditUser;
     public bool CanShowDeleteButton => !_isNewUserMode&&CanManageTargetUser&&!IsSelfEdit;
     private List<UserRole> _roles = new();
     public List<UserRole> Roles => _roles;
@@ -110,12 +115,14 @@ public partial class UserEditViewModel : ObservableObject
         IUserService service,
         ISelectedItemService<UserAdminDto> userSelectionService,
         IUserDialogService dialogService,
-        IAuthStateService authStateService)
+        IAuthStateService authStateService,
+        IAuthorizationService authorization)
     {
         _service=service;
         _userSelectionService=userSelectionService;
         _dialogService=dialogService;
         _authStateService=authStateService;
+        _authorization=authorization;
     }
 
     public async Task InitializeAsync()
@@ -167,7 +174,7 @@ public partial class UserEditViewModel : ObservableObject
             IsReadOnly=true;
 
             IsSelfEdit=actor!=null&&actor.Id==selectedUser.Id;
-            CanManageTargetUser=actor==null||RoleHierarchy.CanManage(actor.Role, selectedUser.Role);
+            CanManageTargetUser=(actor==null||RoleHierarchy.CanManage(actor.Role, selectedUser.Role)) && CanEditUser;
         }
 
         BuildModulePermissions(allSystemModules);
@@ -258,6 +265,8 @@ public partial class UserEditViewModel : ObservableObject
     [RelayCommand]
     public async Task SaveAsync()
     {
+        if((_isNewUserMode&&!CanCreateUser)||(!_isNewUserMode&&!CanEditUser)) return;
+
         if(string.IsNullOrWhiteSpace(User.Username))
         {
             await _dialogService.ShowAlertAsync("Предупредување", "Внесете корисничко име.", "ОК");
@@ -330,7 +339,7 @@ public partial class UserEditViewModel : ObservableObject
     [RelayCommand]
     public async Task DeleteAsync()
     {
-        if(_isNewUserMode||_originalUser==null) return;
+        if(_isNewUserMode||_originalUser==null||!CanDeleteUser) return;
 
         if(!CanManageTargetUser)
         {
