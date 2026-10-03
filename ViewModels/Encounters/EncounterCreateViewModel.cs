@@ -189,16 +189,15 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
         var cyrillicQuery = UseCyrillicPatientSearch
             ? MacedonianTransliterator.ToCyrillic(query)
             : query;
-
         var suggestions = Patients
             .Where(p =>
-                p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)||
-                p.FullName.Contains(cyrillicQuery, StringComparison.OrdinalIgnoreCase)||
-                p.PatientNumber.Contains(query, StringComparison.OrdinalIgnoreCase)||
-                p.NationalId.Contains(query, StringComparison.OrdinalIgnoreCase)||
-                p.SzboNumber.Contains(query, StringComparison.OrdinalIgnoreCase))
+                p.FullName?.Contains(query, StringComparison.OrdinalIgnoreCase)==true||
+                p.FullName?.Contains(cyrillicQuery, StringComparison.OrdinalIgnoreCase)==true||
+                p.PatientNumber?.Contains(query, StringComparison.OrdinalIgnoreCase)==true||
+                p.NationalId?.Contains(query, StringComparison.OrdinalIgnoreCase)==true||
+                p.SzboNumber?.Contains(query, StringComparison.OrdinalIgnoreCase)==true)
             .OrderBy(p => p.FullName)
-            .Take(8);
+            .Take(10);
 
         PatientSuggestions=new ObservableCollection<Patient>(suggestions);
         ShowPatientSuggestions=PatientSuggestions.Count>0;
