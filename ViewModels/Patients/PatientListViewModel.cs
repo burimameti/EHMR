@@ -443,7 +443,11 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             row["Gender"]=p.Gender.ToDisplay();
             row["Age"]=p.Age;
             row["Phone"]=p.Phone;
-            row["Status"]=new SparkBadgeValue(\n                p.Status==PatientStatus.Inactive ? "Неактивен" : p.Status.ToDisplay(),\n                p.Status==PatientStatus.Inactive ? "danger" : StatusToTone(p.Status));
+            row["Status"]=new SparkBadgeValue(
+              p.Status==PatientStatus.Inactive ? "Неактивен" : p.Status.ToDisplay(),
+              p.Status==PatientStatus.Inactive
+                  ? SparkBadgeTone.Danger
+                  : StatusToTone(p.Status));
 
             AddDefaultActions(p, row, detailLabel: "Детали", editLabel: "Промени", canEditPredicate: x => x.Status==PatientStatus.Active);
 
