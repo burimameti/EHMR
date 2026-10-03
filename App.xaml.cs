@@ -31,7 +31,22 @@ namespace EHMR
             // исклучоци што Shell/MAUI internals ги имаат catch-нато тивко.
             AppDomain.CurrentDomain.FirstChanceException+=(s, e) =>
             {
-                Logger.Log($"FirstChanceException: {e.Exception.GetType().Name}: {e.Exception.Message}");
+                // Do not synchronously write every first-chance exception to disk.
+                // MAUI/WinUI and EF Core legitimately throw/catch many internal
+                // exceptions; logging all of them was adding significant I/O during
+                // navigation and hiding the exceptions that actually matter.
+                var ex=e.Exception;
+                var isEfParameterException =
+                    ex.Message.Contains("LINQ query parameter expression", StringComparison.OrdinalIgnoreCase) ||
+                    ex.InnerException?.Message.Contains("unbound variable", StringComparison.OrdinalIgnoreCase)==true;
+                var isXamlException = ex.GetType().Name.Contains("XamlParseException", StringComparison.Ordinal);
+                var isFormatException = ex is FormatException;
+                var isComException = ex is System.Runtime.InteropServices.COMException;
+                var isRoutingException =
+                    ex.Message.Contains("Relative routing to shell elements", StringComparison.OrdinalIgnoreCase);
+
+                if(isEfParameterException || isXamlException || isFormatException || isComException || isRoutingException)
+                    Logger.LogException("FirstChanceException", ex);
             };
 
             TaskScheduler.UnobservedTaskException+=(s, e) =>
