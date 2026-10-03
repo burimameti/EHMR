@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
@@ -5,6 +6,9 @@ using EHMR.Domain.Interfaces;
 using EHMR.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,6 +19,54 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     private readonly ISelectedItemService<Encounter> _selectedItemService;
     private readonly IPatientClinicalReportService _clinicalReportService;
     private readonly IAuthorizationService _authorizationService;
+
+    [ObservableProperty]
+    private bool scheduleNextFollowUp;
+
+    [ObservableProperty]
+    private DateTime nextFollowUpDate=DateTime.Today.AddDays(7);
+
+    [ObservableProperty]
+    private string? selectedFollowUpInterval;
+
+    [ObservableProperty]
+    private ObservableCollection<Encounter> recentEncounters=[];
+
+    [ObservableProperty]
+    private PatientDocument? latestPatientDocument;
+
+    public DateTime FollowUpMinimumDate => DateTime.Today;
+
+    public ObservableCollection<string> FollowUpIntervalOptions { get; } =
+        new()
+        {
+            "1 недела",
+            "2 недели",
+            "3 недели",
+            "1 месец",
+            "3 месеци",
+            "6 месеци",
+            "1 година"
+        };
+
+    public bool HasEncounterMedicines => EncounterMedicines.Count>0;
+
+    partial void OnSelectedFollowUpIntervalChanged(string? value)
+    {
+        if(string.IsNullOrWhiteSpace(value)) return;
+
+        NextFollowUpDate=value switch
+        {
+            "1 недела" => DateTime.Today.AddDays(7),
+            "2 недели" => DateTime.Today.AddDays(14),
+            "3 недели" => DateTime.Today.AddDays(21),
+            "1 месец" => DateTime.Today.AddMonths(1),
+            "3 месеци" => DateTime.Today.AddMonths(3),
+            "6 месеци" => DateTime.Today.AddMonths(6),
+            "1 година" => DateTime.Today.AddYears(1),
+            _ => NextFollowUpDate
+        };
+    }
     public EncounterEditViewModel(
         IEncounterDetailService service,
         INavigationService navigationService,
@@ -28,6 +80,21 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         _clinicalReportService=clinicalReportService;
         _authorizationService=authorizationService;
         PageTitle="Промена на преглед";
+        EncounterMedicines.CollectionChanged+=OnEncounterMedicinesChanged;
+    }
+
+    private void OnEncounterMedicinesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        => OnPropertyChanged(nameof(HasEncounterMedicines));
+
+    private void RefreshSidePanel()
+    {
+        RecentEncounters=new ObservableCollection<Encounter>(
+            PatientEncounters.OrderByDescending(e => e.EncounterDate));
+
+        LatestPatientDocument=PatientDocuments
+            .Where(d => !d.IsDeleted)
+            .OrderByDescending(d => d.UploadedAt)
+            .FirstOrDefault();
     }
 
     [RelayCommand]
@@ -81,8 +148,11 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         // medicine history is left completely alone.
         await InitializeAsync(selected.Id);
 
-        EncounterMedicines=new System.Collections.ObjectModel.ObservableCollection<PatientMedicine>(
+        EncounterMedicines.CollectionChanged-=OnEncounterMedicinesChanged;
+        EncounterMedicines=new ObservableCollection<PatientMedicine>(
             PatientMedicines.Where(x => x.EncounterId==Encounter.Id));
+        EncounterMedicines.CollectionChanged+=OnEncounterMedicinesChanged;
+        RefreshSidePanel();
 
         // load the cycle picker for this encounter's patient and preselect its current cycle
    
@@ -91,6 +161,36 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         IsReadOnly=false;
         _selectedItemService.SelectedItem=null; // consume — prevents stale ID on next navigation
     }
+
+    [RelayCommand]
+    private async Task PreviewDocument(PatientDocument doc)
+    {
+        if(doc is null||string.IsNullOrWhiteSpace(doc.StoredPath)) return;
+
+        if(!File.Exists(doc.StoredPath))
+        {
+            await UserDialogService.ShowAlertAsync("Документ", "Документот не е пронајден на дискот.", "Во ред");
+            return;
+        }
+
+        await Launcher.Default.OpenAsync(new OpenFileRequest(
+            doc.Title,
+            new ReadOnlyFile(doc.StoredPath)));
+    }
+
+    [RelayCommand]
+    private async Task OpenEncounter(Encounter encounter)
+    {
+        if(encounter is null||encounter.Id==Guid.Empty) return;
+
+        _selectedItemService.SelectedItem=encounter;
+        _selectedItemService.OpenInEditMode=false;
+        await NavigationService.GoToAsync(AppRoutes.Encounters.Detail);
+    }
+
+    [RelayCommand]
+    private async Task Cancel()
+        => await NavigationService.GoBackAsync();
 
     [RelayCommand]
     public async Task SaveAsync()
@@ -133,7 +233,8 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
                 Prescriptions.ToList(),
                 EncounterMedicines.ToList(),
                 DeletedMedicineIds.ToList(),
-                ScoreText);
+                ScoreText,
+                ScheduleNextFollowUp ? NextFollowUpDate.Date.AddHours(9) : null);
 
             await UserDialogService.ShowMessageAsync("Податоци за преглед се успешно зачувани", "");
             await NavigationService.GoToAsync(AppRoutes.Encounters.List);
