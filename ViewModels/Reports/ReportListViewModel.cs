@@ -291,6 +291,15 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         await ExportToPdfAsync();
     }
 
+    [RelayCommand]
+    private async Task NewReportAsync()
+    {
+        if(!CanView)
+            return;
+
+        await _navigationService.GoToAsync(AppRoutes.Reports.Detail);
+    }
+
     private void ClearPatientSelection()
     {
         _selectedPatientId=null;
