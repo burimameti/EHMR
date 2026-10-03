@@ -35,6 +35,7 @@
 					SecondaryButtonCommand="{Binding CancelCommand}"
 					SecondaryButtonText="Откажи"
 					ShowPrimaryButton="True"
+					PrimaryButtonIsEnabled="{Binding CanSave}"
 					ShowSecondaryButton="True"
 					Subtitle="Дефинирање на стандардизирани чекори, времетраење и клинички таргети за третманот" />
 			</Border>
@@ -64,7 +65,7 @@
 								<Grid Padding="{StaticResource FormRowPadding}">
 									<VerticalStackLayout Spacing="8">
 										<Label Style="{StaticResource EditFieldLabelStyle}" Text="Наслов на медицинскиот протокол *" />
-										<controls:FFInput Placeholder="Пр. Протокол за третман на секундарна хипертензија" Text="{Binding CurrentProtocol.Name, Mode=TwoWay}" />
+										<controls:FFInput IsEnabled="{Binding CanEditForm}" Placeholder="Пр. Протокол за третман на секундарна хипертензија" Text="{Binding CurrentProtocol.Name, Mode=TwoWay}" />
 									</VerticalStackLayout>
 								</Grid>
 
@@ -77,12 +78,13 @@
 
 									<VerticalStackLayout Grid.Column="0" Spacing="8">
 										<Label Style="{StaticResource EditFieldLabelStyle}" Text="Медицинска категорија *" />
-										<controls:FFInput Placeholder="Пр. Кардиологија" Text="{Binding CurrentProtocol.DiseaseCategory, Mode=TwoWay}" />
+										<controls:FFInput IsEnabled="{Binding CanEditForm}" Placeholder="Пр. Кардиологија" Text="{Binding CurrentProtocol.DiseaseCategory, Mode=TwoWay}" />
 									</VerticalStackLayout>
 
 									<VerticalStackLayout Grid.Column="2" Spacing="8">
 										<Label Style="{StaticResource EditFieldLabelStyle}" Text="Стандардно времетраење (денови)" />
 										<controls:FFInput
+											IsEnabled="{Binding CanEditForm}"
 											Keyboard="Numeric"
 											Placeholder="Пр. 30"
 											Text="{Binding CurrentProtocol.DurationInDays, Mode=TwoWay}" />
