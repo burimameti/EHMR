@@ -34,7 +34,7 @@
 						Margin="0,9,22,25"
 						BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
 						Command="{Binding AddCommand}"
-						IsVisible="{Binding CanCreate}"
+						IsEnabled="{Binding CanCreate}"
 						Style="{StaticResource PrimaryButtonStyle}"
 						Text="Нов пациент"
 						TextColor="{StaticResource White}" />
