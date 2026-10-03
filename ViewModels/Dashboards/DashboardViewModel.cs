@@ -823,7 +823,7 @@ public partial class DashboardViewModel : ObservableObject
         var q = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(PatientSearchText)) q["search"]=PatientSearchText;
         if(!string.IsNullOrWhiteSpace(statusFilter)) q["statusFilter"]=statusFilter;
-        await Shell.Current.GoToAsync($"///{AppRoutes.Patients.List}", q);
+        await navigationService.GoToAsync(AppRoutes.Patients.List, q);
     }
 
     [RelayCommand]
@@ -831,7 +831,7 @@ public partial class DashboardViewModel : ObservableObject
     {
         var q = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(statusFilter)) q["statusFilter"]=statusFilter;
-        await Shell.Current.GoToAsync(AppRoutes.Appointments.List, q);
+        await navigationService.GoToAsync(AppRoutes.Appointments.List, q);
     }
 
     [RelayCommand]
@@ -839,12 +839,12 @@ public partial class DashboardViewModel : ObservableObject
     {
         var q = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(statusFilter)) q["statusFilter"]=statusFilter;
-        await Shell.Current.GoToAsync(AppRoutes.Encounters.List, q);
+        await navigationService.GoToAsync(AppRoutes.Encounters.List, q);
     }
 
     [RelayCommand]
     private async Task NavigateToTherapies() =>
-        await Shell.Current.GoToAsync(AppRoutes.Therapy.List);
+        await navigationService.GoToAsync(AppRoutes.Therapy.List);
 
     private async Task OpenAlertPatientAsync(Guid patientId)
     {
