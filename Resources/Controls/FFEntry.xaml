@@ -78,14 +78,25 @@
 			</Grid>
 
 			<!--  STATES  -->
+			<Border.GestureRecognizers>
+				<PointerGestureRecognizer PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" />
+			</Border.GestureRecognizers>
+
 			<Border.Triggers>
 				<DataTrigger
 					Binding="{Binding IsInputFocused, Source={x:Reference Root}}"
 					TargetType="Border"
 					Value="True">
-					<Setter Property="Stroke" Value="#2563EB" />
+					<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
 					<Setter Property="StrokeThickness" Value="1.5" />
 					<Setter Property="BackgroundColor" Value="#FAFCFF" />
+				</DataTrigger>
+				<DataTrigger
+					Binding="{Binding IsPointerOver, Source={x:Reference Root}}"
+					TargetType="Border"
+					Value="True">
+					<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
+					<Setter Property="StrokeThickness" Value="1.5" />
 				</DataTrigger>
 				<DataTrigger
 					Binding="{Binding HasError, Source={x:Reference Root}}"
