@@ -115,6 +115,32 @@
 					</Border>
 				</HorizontalStackLayout>
 				<HorizontalStackLayout
+					x:Name="ClearButtonLayout"
+					Grid.Row="1"
+					Grid.Column="1"
+					Spacing="8"
+					VerticalOptions="End"
+					IsVisible="{Binding ClearButton, Source={x:Reference Root}}">
+					<sc:FFButton
+						ButtonKind="Secondary"
+						Command="{Binding ClearButton.Command, Source={x:Reference Root}}"
+						CommandParameter="{Binding ClearButton.CommandParameter, Source={x:Reference Root}}"
+						ContentPadding="16,0"
+						CornerRadius="6"
+						HeightRequestEx="44"
+						Text="Исчисти"
+						WidthRequestEx="0">
+						<sc:FFButton.Triggers>
+							<Trigger TargetType="sc:FFButton" Property="IsVisible" Value="True">
+								<Setter Property="IsBlue" Value="True" />
+								<Setter Property="BorderColor" Value="#2563EB" />
+								<Setter Property="TextColorEx" Value="White" />
+							</Trigger>
+						</sc:FFButton.Triggers>
+					</sc:FFButton>
+				</HorizontalStackLayout>
+
+				<HorizontalStackLayout
 					x:Name="PickerLayout"
 					Grid.Row="2"
 					Grid.Column="1"
@@ -139,7 +165,7 @@
 					Grid.Column="0"
 					Spacing="4"
 					VerticalOptions="End">
-					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}" Spacing="8">
+					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding ActionButtons, Source={x:Reference Root}}" Spacing="8">
 
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkButtonItem">
