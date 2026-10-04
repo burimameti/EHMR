@@ -24,7 +24,7 @@
 			Style="{StaticResource CrudFormPageGridStyle}">
 
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<controls:FFPageHeader Title="Внесување на нов преглед" Subtitle="Внесете ги основните и медицинските детали за тековниот преглед">
+				<controls:FFPageHeader Title="Нов Преглед" Subtitle="Креирање нов преглед">
 					<controls:FFPageHeader.HeaderContent>
 						<controls:FFButton
 							ButtonKind="Secondary"
