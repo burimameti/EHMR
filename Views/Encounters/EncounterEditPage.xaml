@@ -386,7 +386,7 @@
 										IsVisible="{Binding HasEncounterMedicines}">
 										<Border
 											Padding="8,7"
-											BackgroundColor="#475569"
+											BackgroundColor="{StaticResource SparkAccentTealDark}"
 											StrokeThickness="0">
 											<Label
 												FontAttributes="Bold"
@@ -397,7 +397,7 @@
 										<Border
 											Grid.Column="1"
 											Padding="8,7"
-											BackgroundColor="#475569"
+											BackgroundColor="{StaticResource SparkAccentTealDark}"
 											StrokeThickness="0">
 											<Label
 												FontAttributes="Bold"
@@ -408,7 +408,7 @@
 										<Border
 											Grid.Column="2"
 											Padding="8,7"
-											BackgroundColor="#475569"
+											BackgroundColor="{StaticResource SparkAccentTealDark}"
 											StrokeThickness="0">
 											<Label
 												FontAttributes="Bold"
@@ -419,7 +419,7 @@
 										<Border
 											Grid.Column="3"
 											Padding="8,7"
-											BackgroundColor="#475569"
+											BackgroundColor="{StaticResource SparkAccentTealDark}"
 											StrokeThickness="0">
 											<Label
 												FontAttributes="Bold"
@@ -430,7 +430,7 @@
 										<Border
 											Grid.Column="4"
 											Padding="0"
-											BackgroundColor="#475569"
+											BackgroundColor="{StaticResource SparkAccentTealDark}"
 											StrokeThickness="0">
 											<Label
 												FontAttributes="Bold"
