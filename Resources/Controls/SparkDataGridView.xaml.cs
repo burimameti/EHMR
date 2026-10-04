@@ -755,6 +755,21 @@ namespace EHMR.Resources.Controls
 
             border.Opacity = 1;
             border.IsEnabled = true;
+
+            var normalBackground = color;
+            var hoverBackground = Color.FromArgb("#64748B");
+            var pointer = new PointerGestureRecognizer();
+            pointer.PointerEntered += (_, _) =>
+            {
+                if (border.IsEnabled)
+                    border.Background = new SolidColorBrush(hoverBackground);
+            };
+            pointer.PointerExited += (_, _) =>
+            {
+                border.Background = new SolidColorBrush(normalBackground);
+            };
+            border.GestureRecognizers.Add(pointer);
+
             border.GestureRecognizers.Add(
                 new TapGestureRecognizer
                 {
