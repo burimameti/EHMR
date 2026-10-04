@@ -12,6 +12,7 @@ public partial class ApplicationRegimeListViewModel : ObservableObject
     private readonly IPatientService _patientService;
     private readonly IUserDialogService _userDialogService;
     private readonly IAuthorizationService _authorization;
+    private readonly INavigationService _navigationService;
 
     [ObservableProperty] private ObservableCollection<ApplicationRegimeDto> regimes = new();
     [ObservableProperty] private string newRegime = string.Empty;
@@ -21,12 +22,18 @@ public partial class ApplicationRegimeListViewModel : ObservableObject
     public ApplicationRegimeListViewModel(
         IPatientService patientService,
         IUserDialogService userDialogService,
-        IAuthorizationService authorization)
+        IAuthorizationService authorization,
+        INavigationService navigationService)
     {
         _patientService=patientService;
         _userDialogService=userDialogService;
         _authorization=authorization;
+        _navigationService=navigationService;
     }
+
+    [RelayCommand]
+    private async Task GoBackAsync()
+        => await _navigationService.GoBackAsync();
 
     public bool CanManage => _authorization.CanPerform(Modules.Administration, ModuleAction.Manage);
 
