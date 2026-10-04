@@ -135,6 +135,12 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
     [RelayCommand]
     public async Task GoBack()
     {
+        var confirmed = await UserDialogService.ShowConfirmationAsync(
+            "Потврда",
+            "Дали сте сигурни дека сакате да се вратите назад?",
+            "Да",
+            "Не");
+        if(!confirmed) return;
         await NavigationService.GoBackAsync();
     }
 
@@ -157,6 +163,12 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
             await UserDialogService.ShowAlertAsync(PermissionDeniedTitle, PermissionDeniedMessage, "OK");
             return;
         }
+        var confirmed = await UserDialogService.ShowConfirmationAsync(
+            "Нов запис",
+            "Дали сте сигурни дека сакате да креирате нов запис?",
+            "Да",
+            "Не");
+        if(!confirmed) return;
         SelectedItemService.SelectedItem=default;
         await NavigationService.GoToAsync(DetailRoute);
     }
@@ -454,8 +466,15 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
 
     // ================= CLEAR FILTERS =================
     [RelayCommand]
-    protected void ClearFilters()
+    protected async Task ClearFilters()
     {
+        var confirmed = await UserDialogService.ShowConfirmationAsync(
+            "Исчисти",
+            "Дали сте сигурни дека сакате да ги исчистите пребарувањето и филтрите?",
+            "Да",
+            "Не");
+        if(!confirmed) return;
+
         ResetFilters();
 
         // Keep the visual picker state in sync with the cleared filter state.
