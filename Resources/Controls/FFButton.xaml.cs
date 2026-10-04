@@ -12,6 +12,34 @@ public partial class FFButton : ContentView
     {
         InitializeComponent();
         ApplyKind();
+
+        var pointer = new PointerGestureRecognizer();
+        pointer.PointerEntered += (_, _) => ApplyHover(true);
+        pointer.PointerExited += (_, _) => ApplyHover(false);
+        Container.GestureRecognizers.Add(pointer);
+    }
+
+    private void ApplyHover(bool isHover)
+    {
+        if (!IsEnabled || IsLoading)
+            return;
+
+        if (isHover)
+        {
+            BackgroundColorEx = ButtonKind switch
+            {
+                FFButtonKind.Primary => Color.FromArgb("#0F766E"),
+                FFButtonKind.Secondary => Color.FromArgb("#5B6875"),
+                FFButtonKind.Green => Color.FromArgb("#166534"),
+                FFButtonKind.Danger => Color.FromArgb("#991B1B"),
+                FFButtonKind.Ghost => Color.FromArgb("#F1F5F9"),
+                _ => BackgroundColorEx
+            };
+        }
+        else
+        {
+            ApplyKind();
+        }
     }
 
     private void OnButtonSizeChanged(object? sender, EventArgs e)
