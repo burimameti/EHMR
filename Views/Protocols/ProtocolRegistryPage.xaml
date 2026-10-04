@@ -13,7 +13,16 @@
 		<Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="0">
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-					<controls:FFPageHeader Title="Регистар на протоколи" Subtitle="Преглед и управување со терапевтски протоколи по медицински гранки" />
+					<controls:FFPageHeader Title="Регистар на протоколи" Subtitle="Преглед и управување со терапевтски протоколи по медицински гранки" >
+				<controls:FFPageHeader.HeaderContent>
+<controls:FFButton
+						ButtonKind="Secondary"
+						Command="{Binding GoBackCommand}"
+						HeightRequestEx="40"
+						Text="Назад"
+						WidthRequestEx="130" />
+			</controls:FFPageHeader.HeaderContent>
+		</controls:FFPageHeader>
 					<Button
 						Grid.Column="1"
 						BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
