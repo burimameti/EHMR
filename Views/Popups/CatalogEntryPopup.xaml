@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="EHMR.Views.Popups.CatalogEntryPopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+
+    <Border
+        Padding="22"
+        BackgroundColor="{StaticResource SparkBackground}"
+        StrokeShape="RoundRectangle 16"
+        StrokeThickness="0"
+        WidthRequest="520">
+
+        <VerticalStackLayout Spacing="16">
+            <Label
+                FontAttributes="Bold"
+                FontSize="19"
+                Text="{Binding Title}"
+                TextColor="{StaticResource SparkTextPrimary}" />
+
+            <BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
+
+            <controls:FFInput
+                Label="Назив"
+                Placeholder="Внесете назив"
+                Text="{Binding Name}"
+                IsReadOnly="{Binding IsReadOnly}"
+                MaxLength="200" />
+
+            <controls:FFInput
+                Label="Опис"
+                Placeholder="Краток опис"
+                Text="{Binding Description}"
+                IsReadOnly="{Binding IsReadOnly}"
+                MaxLength="500" />
+
+            <HorizontalStackLayout HorizontalOptions="End" Spacing="10">
+                <controls:FFButton
+                    ButtonKind="Secondary"
+                    Command="{Binding CancelCommand}"
+                    ContentPadding="20,0"
+                    HeightRequestEx="42"
+                    Text="Затвори" />
+                <controls:FFButton
+                    BackgroundColorEx="{StaticResource SidebarActiveBg}"
+                    TextColorEx="White"
+                    ButtonKind="Primary"
+                    Command="{Binding SaveCommand}"
+                    ContentPadding="20,0"
+                    HeightRequestEx="42"
+                    IsVisible="{Binding IsEditMode}"
+                    Text="Зачувај" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </Border>
+</toolkit:Popup>
