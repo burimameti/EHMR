@@ -39,7 +39,7 @@ namespace EHMR.Resources.Controls
 
         public ObservableCollection<SparkButtonItem> ActionButtons { get; } = new();
         public SparkButtonItem? ClearButton =>
-            Buttons.FirstOrDefault(x => string.Equals(x.Label, "Исчисти", StringComparison.OrdinalIgnoreCase));
+            Buttons.FirstOrDefault(x => string.Equals(x.Label, "Освежи", StringComparison.OrdinalIgnoreCase));
 
         private void OnButtonsChanged(object? sender, NotifyCollectionChangedEventArgs e)
             => RebuildButtonGroups();
@@ -49,7 +49,7 @@ namespace EHMR.Resources.Controls
             ActionButtons.Clear();
             foreach(var button in Buttons)
             {
-                if(!string.Equals(button.Label, "Исчисти", StringComparison.OrdinalIgnoreCase))
+                if(!string.Equals(button.Label, "Освежи", StringComparison.OrdinalIgnoreCase))
                     ActionButtons.Add(button);
             }
             OnPropertyChanged(nameof(ClearButton));
