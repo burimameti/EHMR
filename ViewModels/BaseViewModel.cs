@@ -373,6 +373,17 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
 
     public virtual void Dispose()
     {
+        _suggestionCts?.Cancel();
+        _suggestionCts?.Dispose();
+        _suggestionCts=null;
+        _suggestionCache.Clear();
+        AllItems.Clear();
+        FilteredItems.Clear();
+        Items.Clear();
+        Buttons.Clear();
+        Pickers.Clear();
+        Tabs.Clear();
+        TabsByKey.Clear();
     }
 
     // ================= SPARK BUTTONS =================
