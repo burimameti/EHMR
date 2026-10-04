@@ -21,6 +21,12 @@
                         <Label Text="Регистар на начини на апликација за лекови" FontSize="12" TextColor="{StaticResource SparkTextSecondary}" />
                     </VerticalStackLayout>
                     <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                        <controls:FFButton
+                            ButtonKind="Secondary"
+                            Command="{Binding GoBackCommand}"
+                            HeightRequestEx="40"
+                            Text="Назад"
+                            WidthRequestEx="130" />
                         <Entry WidthRequest="240" Placeholder="Внесете нов начин..." Text="{Binding NewRegime, Mode=TwoWay}" />
                         <Button Text="Нов начин" Command="{Binding AddCommand}" IsEnabled="{Binding CanManage}" />
                     </HorizontalStackLayout>
