@@ -70,6 +70,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     public DbSet<ReportHistory> ReportHistories => Set<ReportHistory>();
     public DbSet<Mkb10Code> Mkb10Codes => Set<Mkb10Code>();
     public DbSet<PatientScore> PatientScores => Set<PatientScore>();
+    public DbSet<ClinicalScoreDefinition> ClinicalScoreDefinitions => Set<ClinicalScoreDefinition>();
 
     public DbSet<Sequence> Sequences => Set<Sequence>();
 
@@ -105,6 +106,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
         ConfigurePatient(modelBuilder);
         ConfigurePatientMedicine(modelBuilder);
         ConfigureApplicationRegime(modelBuilder);
+        ConfigureClinicalScoreDefinition(modelBuilder);
         ConfigurePatientDocument(modelBuilder);
         ConfigureRelationships(modelBuilder);
         ConfigureIndexes(modelBuilder);
@@ -399,6 +401,18 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             entity.Property(x => x.IsActive).HasDefaultValue(true);
             entity.HasIndex(x => x.Regime).IsUnique();
 
+        });
+    }
+
+    private static void ConfigureClinicalScoreDefinition(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ClinicalScoreDefinition>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Name).IsRequired().HasMaxLength(200);
+            entity.Property(x => x.Description).HasMaxLength(500);
+            entity.Property(x => x.IsActive).HasDefaultValue(true);
+            entity.HasIndex(x => x.Name).IsUnique();
         });
     }
 
