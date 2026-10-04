@@ -20,7 +20,7 @@
 				x:Name="SecondaryToolbarGrid"
 				Padding="0"
 				ColumnDefinitions="*,Auto"
-				RowDefinitions="Auto,Auto,Auto"
+				RowDefinitions="Auto,Auto"
 				ColumnSpacing="8"
 				MinimumHeightRequest="64"
 				MinimumWidthRequest="0">
@@ -86,41 +86,36 @@
 						</Grid>
 					</Border>
 				</VerticalStackLayout>
+
+
+
 				<HorizontalStackLayout
-					x:Name="CyrillicToggleLayout"
-					Grid.Row="2"
-					Grid.Column="0"
-					IsVisible="{Binding ShowCyrillicToggle, Source={x:Reference Root}}"
-					Spacing="4"
-					VerticalOptions="Center"
-					WidthRequest="100">
-					<Label
-						Margin="0,0,-18,0"
-						FontSize="12"
-						HorizontalOptions="Start"
-						Text="Кирилица"
-						TextColor="{StaticResource SparkTextSecondary}" />
-					<Border
-						Margin="-28,22,0,0"
-						Padding="0"
-						BackgroundColor="{StaticResource Transparent}"
-						Stroke="Transparent"
-						StrokeThickness="1">
-						<CheckBox
-							HorizontalOptions="Start"
-							IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
-							IsEnabled="True"
-							VerticalOptions="Center"
-							Color="{StaticResource SidebarActiveBg}" />
-					</Border>
-				</HorizontalStackLayout>
-				<HorizontalStackLayout
-					x:Name="ClearButtonLayout"
+					x:Name="PickerLayout"
 					Grid.Row="1"
 					Grid.Column="1"
+					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
 					Spacing="8"
-					VerticalOptions="End"
-					IsVisible="{Binding ClearButton, Source={x:Reference Root}}">
+					VerticalOptions="Center">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate x:DataType="sc:SparkPickerItem">
+							<sc:FFPicker
+								x:Name="HeaderPicker"
+								ItemsSource="{Binding Items}"
+								Label="{Binding Placeholder}"
+								MinimumWidthRequest="110"
+								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
+				</HorizontalStackLayout>
+
+				<HorizontalStackLayout
+					x:Name="ActionLayout"
+					Grid.Row="0"
+					Grid.Column="1"
+					HorizontalOptions="End"
+					Spacing="8"
+					VerticalOptions="Center">
+					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding ActionButtons, Source={x:Reference Root}}" Spacing="8">
 					<sc:FFButton
 						ButtonKind="Secondary"
 						Command="{Binding ClearButton.Command, Source={x:Reference Root}}"
@@ -138,34 +133,6 @@
 							</Trigger>
 						</sc:FFButton.Triggers>
 					</sc:FFButton>
-				</HorizontalStackLayout>
-
-				<HorizontalStackLayout
-					x:Name="PickerLayout"
-					Grid.Row="2"
-					Grid.Column="1"
-					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
-					Spacing="8"
-					VerticalOptions="Center">
-					<BindableLayout.ItemTemplate>
-						<DataTemplate x:DataType="sc:SparkPickerItem">
-							<sc:FFPicker
-								x:Name="HeaderPicker"
-								ItemsSource="{Binding Items}"
-								Label="{Binding Placeholder}"
-								MinimumWidthRequest="110"
-								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
-						</DataTemplate>
-					</BindableLayout.ItemTemplate>
-				</HorizontalStackLayout>
-
-				<VerticalStackLayout
-					x:Name="ActionLayout"
-					Grid.Row="0"
-					Grid.Column="0"
-					Spacing="4"
-					VerticalOptions="End">
-					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding ActionButtons, Source={x:Reference Root}}" Spacing="8">
 
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkButtonItem">
