@@ -33,6 +33,33 @@ public partial class DashboardViewModel
                 .OrderBy(x => x.ScheduledStart)
                 .ToList(),
 
+            CurrentDiagnoses=patient.Diagnoses
+                .Where(x => x.Status==DiagnosisStatus.Active||x.Status==DiagnosisStatus.Chronic)
+                .OrderByDescending(x => x.IsPrimary)
+                .ThenByDescending(x => x.DiagnosedAt)
+                .Select(x =>
+                    !string.IsNullOrWhiteSpace(x.Mkb10Code?.Code)
+                        ? $"{x.Mkb10Code.Code} — {x.Mkb10Code.Description}"
+                        : !string.IsNullOrWhiteSpace(x.ClinicalDescription)
+                            ? x.ClinicalDescription
+                            : x.DiagnosisNumber)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Take(5)
+                .ToArray(),
+
+            CurrentMedicines=patient.PatientMedicines
+                .Where(x => x.IsActive&&x.Medicine!=null)
+                .OrderByDescending(x => x.StartDate)
+                .Select(x =>
+                    string.IsNullOrWhiteSpace(x.Dosage)
+                        ? x.Medicine!.FullName
+                        : $"{x.Medicine.FullName} — {x.Dosage}")
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Take(5)
+                .ToArray(),
+
             HasAlerts=false // TODO load from Notifications
         };
     }
@@ -62,6 +89,10 @@ public partial class DashboardViewModel
         public List<Encounter> Encounters { get; init; } = [];
 
         public List<Appointment> Appointments { get; init; } = [];
+
+        public string[] CurrentDiagnoses { get; init; } = [];
+
+        public string[] CurrentMedicines { get; init; } = [];
 
         public Encounter? ActiveEncounter =>
             Encounters.FirstOrDefault(x =>
