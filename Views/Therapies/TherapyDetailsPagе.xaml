@@ -38,6 +38,13 @@
 
 				<VerticalStackLayout Spacing="20">
 
+					<controls:FFButton
+						ButtonKind="Secondary"
+						Command="{Binding GoBackCommand}"
+						HeightRequestEx="40"
+						Text="Назад"
+						WidthRequestEx="130" />
+
 					<Label
 						FontAttributes="Bold"
 						FontSize="22"
