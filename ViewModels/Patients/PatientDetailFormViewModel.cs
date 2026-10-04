@@ -706,6 +706,13 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [RelayCommand]
     private async Task CancelAsync()
     {
+        var confirmed = await _userDialogService.ShowConfirmationAsync(
+            "Откажи",
+            "Дали сте сигурни дека сакате да се вратите назад без да ги зачувате промените?",
+            "Да",
+            "Не");
+        if(!confirmed) return;
+
         _selectedItemService.SelectedItem=null;
         await _navigationService.GoToAsync($"//{AppRoutes.Dashboard}");
     }
