@@ -1,65 +1,146 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Name="PageRoot"
-    x:Class="EHMR.Views.ApplicationRegimeListPage"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:viewModels="clr-namespace:EHMR.ViewModels"
-    x:DataType="viewModels:ApplicationRegimeListViewModel"
-    BackgroundColor="{StaticResource PageBackground}">
+	x:Class="EHMR.Views.ApplicationRegimeListPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+	x:Name="PageRoot"
+	x:DataType="viewModels:ApplicationRegimeListViewModel"
+	BackgroundColor="{StaticResource PageBackground}">
 
-    <Grid ColumnDefinitions="285,*">
-        <Border Grid.Column="0" StrokeThickness="0">
-            <ContentView x:Name="MenuHost" />
-        </Border>
+	<Grid ColumnDefinitions="285,*">
+		<Border Grid.Column="0" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
+		</Border>
 
-        <Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="16">
-            <Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
-                    <VerticalStackLayout>
-                        <Label Text="Начини на апликација" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource SparkTextPrimary}" />
-                        <Label Text="Регистар на начини на апликација за лекови" FontSize="12" TextColor="{StaticResource SparkTextSecondary}" />
-                    </VerticalStackLayout>
-                    <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
-                        <controls:FFButton
-                            ButtonKind="Secondary"
-                            Command="{Binding GoBackCommand}"
-                            HeightRequestEx="40"
-                            Text="Назад"
-                            WidthRequestEx="130" />
-                        <Entry WidthRequest="240" Placeholder="Внесете нов начин..." Text="{Binding NewRegime, Mode=TwoWay}" />
-                        <Button Text="Нов начин" Command="{Binding AddCommand}" IsEnabled="{Binding CanManage}" />
-                    </HorizontalStackLayout>
-                </Grid>
-            </Border>
+		<Grid
+			Grid.Column="1"
+			RowDefinitions="Auto,*"
+			RowSpacing="16">
+			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+					<VerticalStackLayout>
+						<Label
+							FontAttributes="Bold"
+							FontSize="22"
+							Text="Начини на апликација"
+							TextColor="{StaticResource SparkTextPrimary}" />
+						<Label
+							FontSize="12"
+							Text="Регистар на начини на апликација за лекови"
+							TextColor="{StaticResource SparkTextSecondary}" />
+					</VerticalStackLayout>
+					<HorizontalStackLayout
+						Grid.Column="1"
+						Spacing="8"
+						VerticalOptions="Center">
+						<controls:FFButton
+							ButtonKind="Secondary"
+							Command="{Binding GoBackCommand}"
+							HeightRequestEx="40"
+							Text="Назад"
+							WidthRequestEx="130" />
+						<Entry
+							Placeholder="Внесете нов начин..."
+							Text="{Binding NewRegime, Mode=TwoWay}"
+							WidthRequest="240" />
+						<Button
+							Command="{Binding AddCommand}"
+							IsEnabled="{Binding CanManage}"
+							Text="Нов начин" />
+					</HorizontalStackLayout>
+				</Grid>
+			</Border>
 
-            <Border Grid.Row="1" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 8">
-                <Grid RowDefinitions="42,*">
-                    <Grid ColumnDefinitions="90,*,120" BackgroundColor="#475569">
-                        <Label Padding="10,0" Text="ID" FontAttributes="Bold" FontSize="10" TextColor="White" VerticalTextAlignment="Center" />
-                        <Label Grid.Column="1" Padding="10,0" Text="НАЧИН НА АПЛИКАЦИЈА" FontAttributes="Bold" FontSize="10" TextColor="White" VerticalTextAlignment="Center" />
-                        <Label Grid.Column="2" Padding="10,0" Text="ОПЦИИ" FontAttributes="Bold" FontSize="10" TextColor="White" VerticalTextAlignment="Center" />
-                    </Grid>
-                    <CollectionView Grid.Row="1" ItemsSource="{Binding Regimes}" SelectionMode="None">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid ColumnDefinitions="90,*,120" Padding="10,8">
-                                    <Label Text="{Binding Id}" FontSize="11" TextColor="{StaticResource SparkTextMuted}" />
-                                    <Label Grid.Column="1" Text="{Binding Regime}" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource SparkTextPrimary}" />
-                                    <HorizontalStackLayout Grid.Column="2" Spacing="6">
-                                        <Button Padding="10,0" BackgroundColor="{StaticResource SparkButtonSecondaryBg}" Command="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.EditCommand}" CommandParameter="{Binding .}" CornerRadius="6" FontSize="11" IsEnabled="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.CanManage}" Text="Промени" TextColor="White" />
-                                        <Button Padding="10,0" BackgroundColor="#DC2626" Command="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding .}" CornerRadius="6" FontSize="11" IsEnabled="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.CanManage}" Text="Избриши" TextColor="White" />
-                                    </HorizontalStackLayout>
-                                </Grid>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </Grid>
-            </Border>
+			<Border
+				Grid.Row="1"
+				Padding="0"
+				BackgroundColor="White"
+				Stroke="{StaticResource SparkBorder}"
+				StrokeShape="RoundRectangle 8"
+				StrokeThickness="1">
+				<Grid RowDefinitions="42,*">
+					<Grid BackgroundColor="#475569" ColumnDefinitions="90,*,120">
+						<Label
+							Padding="10,0"
+							FontAttributes="Bold"
+							FontSize="10"
+							Text="ID"
+							TextColor="White"
+							VerticalTextAlignment="Center" />
+						<Label
+							Grid.Column="1"
+							Padding="10,0"
+							FontAttributes="Bold"
+							FontSize="10"
+							Text="НАЧИН НА АПЛИКАЦИЈА"
+							TextColor="White"
+							VerticalTextAlignment="Center" />
+						<Label
+							Grid.Column="2"
+							Padding="10,0"
+							FontAttributes="Bold"
+							FontSize="10"
+							Text="ОПЦИИ"
+							TextColor="White"
+							VerticalTextAlignment="Center" />
+					</Grid>
+					<CollectionView
+						Grid.Row="1"
+						ItemsSource="{Binding Regimes}"
+						SelectionMode="None">
+						<CollectionView.ItemTemplate>
+							<DataTemplate>
+								<Grid Padding="10,8" ColumnDefinitions="90,*,120">
+									<Label
+										FontSize="11"
+										Text="{Binding Id}"
+										TextColor="{StaticResource SparkTextMuted}" />
+									<Label
+										Grid.Column="1"
+										FontAttributes="Bold"
+										FontSize="13"
+										Text="{Binding Regime}"
+										TextColor="{StaticResource SparkTextPrimary}" />
+									<HorizontalStackLayout Grid.Column="2" Spacing="6">
+										<Button
+											Padding="10,0"
+											BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
+											Command="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.EditCommand}"
+											CommandParameter="{Binding .}"
+											CornerRadius="6"
+											FontSize="11"
+											IsEnabled="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.CanManage}"
+											Text="Промени"
+											TextColor="White" />
+										<Button
+											Padding="10,0"
+											BackgroundColor="#DC2626"
+											Command="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.DeleteCommand}"
+											CommandParameter="{Binding .}"
+											CornerRadius="6"
+											FontSize="11"
+											IsEnabled="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.CanManage}"
+											Text="Избриши"
+											TextColor="White" />
+									</HorizontalStackLayout>
+								</Grid>
+							</DataTemplate>
+						</CollectionView.ItemTemplate>
+					</CollectionView>
+				</Grid>
+			</Border>
 
-            <Grid Grid.Column="1" BackgroundColor="{StaticResource SparkOverlay}" IsVisible="{Binding IsBusy}">
-                <ActivityIndicator IsRunning="{Binding IsBusy}" VerticalOptions="Center" HorizontalOptions="Center" />
-            </Grid>
-        </Grid>
-    </Grid>
+			<Grid
+				Grid.Column="1"
+				BackgroundColor="{StaticResource SparkOverlay}"
+				IsVisible="{Binding IsBusy}">
+				<ActivityIndicator
+					HorizontalOptions="Center"
+					IsRunning="{Binding IsBusy}"
+					VerticalOptions="Center" />
+			</Grid>
+		</Grid>
+	</Grid>
 </ContentPage>
