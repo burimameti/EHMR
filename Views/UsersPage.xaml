@@ -28,7 +28,16 @@
 					<controls:FFPageHeader
 						Title="Корисници"
 						Grid.Column="0"
-						Subtitle="Управување со кориснички сметки, безбедносни роли и системски пристап" />
+						Subtitle="Управување со кориснички сметки, безбедносни роли и системски пристап" >
+				<controls:FFPageHeader.HeaderContent>
+<controls:FFButton
+						ButtonKind="Secondary"
+						Command="{Binding GoBackCommand}"
+						HeightRequestEx="40"
+						Text="Назад"
+						WidthRequestEx="130" />
+			</controls:FFPageHeader.HeaderContent>
+		</controls:FFPageHeader>
 
 					<controls:FFButton
 						Grid.Column="1"
