@@ -115,6 +115,46 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
         };
     }
 
+    [RelayCommand]
+    private async Task DeleteMedicineAsync(Medicine? medicine)
+    {
+        if(!CanDelete || medicine is null)
+            return;
+
+        var confirmed = await UserDialogService.ShowConfirmationAsync(
+            "Избриши лек",
+            $"Дали сте сигурни дека сакате да го избришете лекот „{medicine.Name}“?",
+            "Да",
+            "Не");
+
+        if(!confirmed)
+            return;
+
+        try
+        {
+            IsBusy=true;
+            await using var db = await _dbFactory.CreateDbContextAsync();
+
+            var entity = await db.Set<Medicine>().FirstOrDefaultAsync(x => x.Id == medicine.Id);
+            if(entity is null)
+                return;
+
+            db.Set<Medicine>().Remove(entity);
+            await db.SaveChangesAsync();
+
+            AllItems.RemoveAll(x => x.Id == medicine.Id);
+            ApplyPipeline();
+        }
+        catch(Exception ex)
+        {
+            OnError($"Грешка при бришење на лекот: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy=false;
+        }
+    }
+
     private void RefreshSparkGridRows()
     {
         var rows = new ObservableCollection<SparkGridRow>();
@@ -126,6 +166,15 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
             row["DosageForm"]=m.DosageForm;
             row["DefaultDosage"]=m.DefaultDosage;
             AddDefaultActions(m, row);
+            var actions = row["Actions"] as List<SparkButtonItem>;
+            actions?.Add(new SparkButtonItem
+            {
+                IconGlyph="\uf1f8",
+                Label="Избриши",
+                Command=DeleteMedicineCommand,
+                CommandParameter=m,
+                IsEnabled=CanDelete
+            });
             rows.Add(row);
         }
         GridRows=rows;
