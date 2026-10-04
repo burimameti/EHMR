@@ -37,7 +37,16 @@
 					<controls:FFPageHeader
 						Title="Циклуси на терапии"
 						Grid.Column="0"
-						Subtitle="Преглед, пребарување и управување со тераписки циклуси" />
+						Subtitle="Преглед, пребарување и управување со тераписки циклуси" >
+				<controls:FFPageHeader.HeaderContent>
+<controls:FFButton
+						ButtonKind="Secondary"
+						Command="{Binding GoBackCommand}"
+						HeightRequestEx="40"
+						Text="Назад"
+						WidthRequestEx="130" />
+			</controls:FFPageHeader.HeaderContent>
+		</controls:FFPageHeader>
 
 					<controls:FFButton
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
