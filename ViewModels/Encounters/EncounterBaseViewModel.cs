@@ -77,6 +77,15 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [ObservableProperty]
     private PatientScore? score;
 
+    // Multiple scores/findings can be entered during one encounter.
+    // They are persisted through the existing encounter score/notes fields
+    // as newline-separated values, so no schema change is required.
+    [ObservableProperty]
+    private ObservableCollection<string> encounterScores = new();
+
+    [ObservableProperty]
+    private ObservableCollection<string> encounterFindings = new();
+
     [ObservableProperty]
     private string currentPatientScore = string.Empty;
 
@@ -128,8 +137,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         }
     }
 
-    public ObservableCollection<string> ScoreOptions { get; } = new(
-        Enumerable.Range(0, 11).Select(x => x.ToString()));
+    public ObservableCollection<string> ScoreOptions { get; } = new();
 
     [RelayCommand]
     public async Task AddScoreAsync()
@@ -142,7 +150,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
         var value=await UserDialogService.ShowPromptAsync(
             "Нов скор",
-            "Внесете нова вредност на скор.",
+            "Внесете вредност на скор.",
             "Додај",
             "Откажи",
             "Пример: 7.5");
@@ -151,28 +159,51 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             return;
 
         value=value.Trim();
-        if(!ScoreOptions.Contains(value, StringComparer.OrdinalIgnoreCase))
-            ScoreOptions.Add(value);
-
-        ScoreText=value;
-        OnPropertyChanged(nameof(ScoreOptions));
+        EncounterScores.Add(value);
+        ScoreText=string.Join(" | ", EncounterScores);
     }
 
     [RelayCommand]
     public void RemoveScore(string? score)
     {
-        if(!CanUpdate || string.IsNullOrWhiteSpace(score))
+        if(!CanUpdate||string.IsNullOrWhiteSpace(score))
             return;
 
-        var existing=ScoreOptions.FirstOrDefault(x =>
-            string.Equals(x, score, StringComparison.OrdinalIgnoreCase));
-        if(existing is not null)
-            ScoreOptions.Remove(existing);
+        EncounterScores.Remove(score);
+        ScoreText=string.Join(" | ", EncounterScores);
+    }
 
-        if(string.Equals(ScoreText, score, StringComparison.OrdinalIgnoreCase))
-            ScoreText=string.Empty;
+    [RelayCommand]
+    public async Task AddFindingAsync()
+    {
+        if(!CanUpdate)
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за промена на прегледот.", "ОК");
+            return;
+        }
 
-        OnPropertyChanged(nameof(ScoreOptions));
+        var value=await UserDialogService.ShowPromptAsync(
+            "Нов наод",
+            "Внесете клинички наод.",
+            "Додај",
+            "Откажи",
+            "Пример: Болка и оток во левото колено.");
+
+        if(string.IsNullOrWhiteSpace(value))
+            return;
+
+        EncounterFindings.Add(value.Trim());
+        EncounterDiagnosisNotes=string.Join(" | ", EncounterFindings);
+    }
+
+    [RelayCommand]
+    public void RemoveFinding(string? finding)
+    {
+        if(!CanUpdate||string.IsNullOrWhiteSpace(finding))
+            return;
+
+        EncounterFindings.Remove(finding);
+        EncounterDiagnosisNotes=string.Join(" | ", EncounterFindings);
     }
 
     [ObservableProperty]
@@ -1161,6 +1192,15 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
                 EncounterDiagnosisNotes=Encounter.ClinicalNotes??string.Empty;
                 Score=dto.Score;
                 ScoreText=dto.Score?.ScoreText??string.Empty;
+                EncounterScores.Clear();
+                if(!string.IsNullOrWhiteSpace(ScoreText))
+                    foreach(var item in ScoreText.Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                        EncounterScores.Add(item);
+
+                EncounterFindings.Clear();
+                if(!string.IsNullOrWhiteSpace(EncounterDiagnosisNotes))
+                    foreach(var item in EncounterDiagnosisNotes.Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                        EncounterFindings.Add(item);
 
                 SelectedPatient=Patients.FirstOrDefault(x => x.Id==Encounter.PatientId);
                 SelectedDoctor=Doctors.FirstOrDefault(x => x.Id==Encounter.DoctorId);
