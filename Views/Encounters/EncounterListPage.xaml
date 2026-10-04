@@ -33,7 +33,16 @@
 					<controls:FFPageHeader
 						Title="Прегледи"
 						Grid.Column="0"
-						Subtitle="Преглед, пребарување и управување со медицински прегледи" />
+						Subtitle="Преглед, пребарување и управување со медицински прегледи" >
+				<controls:FFPageHeader.HeaderContent>
+<controls:FFButton
+						ButtonKind="Secondary"
+						Command="{Binding GoBackCommand}"
+						HeightRequestEx="40"
+						Text="Назад"
+						WidthRequestEx="130" />
+			</controls:FFPageHeader.HeaderContent>
+		</controls:FFPageHeader>
 					<!--<controls:FFButton
 						Grid.Column="1"
 						BackgroundColorEx="{StaticResource SparkButtonSecondaryBg}"
