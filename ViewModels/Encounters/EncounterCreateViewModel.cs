@@ -393,7 +393,8 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
 
         await ExecuteSafeAsync(async () =>
         {
-            Encounter.SetNotes(EncounterDiagnosisNotes);
+            Encounter.SetNotes(string.Join(" | ", EncounterFindings));
+            ScoreText=string.Join(" | ", EncounterScores);
             Encounter.PatientId=SelectedPatient.Id;
             Encounter.DoctorId=SelectedDoctor.Id;
             Encounter.TherapyCycleId=SelectedTherapyCycle?.Id;
