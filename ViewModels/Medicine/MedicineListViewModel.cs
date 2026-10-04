@@ -217,6 +217,62 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
         ScoreRows=rows;
     }
 
+    [RelayCommand]
+    private async Task AddApplicationRegimeAsync()
+    {
+        if(!CanCreate) return;
+        var value=await UserDialogService.ShowPromptAsync("Нов начин на апликација","Внесете начин на апликација.","Додај","Откажи","Пример: Поткожно");
+        if(string.IsNullOrWhiteSpace(value)) return;
+        value=value.Trim();
+        await using var db=await _dbFactory.CreateDbContextAsync();
+        if(await db.Set<ApplicationRegime>().AnyAsync(x=>x.IsActive&&x.Regime.ToLower()==value.ToLower()))
+        {
+            await UserDialogService.ShowAlertAsync("Постои запис",$"Начинот „{value}“ веќе постои.","ОК"); return;
+        }
+        db.Set<ApplicationRegime>().Add(new ApplicationRegime{Id=Guid.NewGuid(),Regime=value,IsActive=true});
+        await db.SaveChangesAsync();
+        await LoadApplicationRegimesAsync();
+    }
+
+    [RelayCommand]
+    private async Task PreviewApplicationRegimeAsync(ApplicationRegime? item)
+    {
+        if(item is null || !CanView) return;
+        await UserDialogService.ShowAlertAsync("Преглед — начин на апликација",$"Начин на апликација:\n\n{item.Regime}","Затвори");
+    }
+
+    [RelayCommand]
+    private async Task EditApplicationRegimeAsync(ApplicationRegime? item)
+    {
+        if(item is null || !CanUpdate) return;
+        var value=await UserDialogService.ShowPromptAsync("Уреди начин на апликација","Изменете го начинот на апликација.","Зачувај","Откажи","",item.Regime);
+        if(string.IsNullOrWhiteSpace(value)) return;
+        value=value.Trim();
+        await using var db=await _dbFactory.CreateDbContextAsync();
+        if(await db.Set<ApplicationRegime>().AnyAsync(x=>x.Id!=item.Id&&x.IsActive&&x.Regime.ToLower()==value.ToLower()))
+        {
+            await UserDialogService.ShowAlertAsync("Постои запис",$"Начинот „{value}“ веќе постои.","ОК"); return;
+        }
+        var entity=await db.Set<ApplicationRegime>().FirstOrDefaultAsync(x=>x.Id==item.Id);
+        if(entity is null) return;
+        entity.Regime=value; entity.UpdatedAt=DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        await LoadApplicationRegimesAsync();
+    }
+
+    [RelayCommand]
+    private async Task DeleteApplicationRegimeAsync(ApplicationRegime? item)
+    {
+        if(item is null || !CanDelete) return;
+        if(!await UserDialogService.ShowConfirmationAsync("Избриши начин на апликација",$"Дали сте сигурни дека сакате да го избришете „{item.Regime}“?","Избриши","Откажи")) return;
+        await using var db=await _dbFactory.CreateDbContextAsync();
+        var entity=await db.Set<ApplicationRegime>().FirstOrDefaultAsync(x=>x.Id==item.Id);
+        if(entity is null) return;
+        entity.IsActive=false; entity.UpdatedAt=DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        await LoadApplicationRegimesAsync();
+    }
+
     private void RefreshSparkGridRows()
     {
         var rows = new ObservableCollection<SparkGridRow>();
