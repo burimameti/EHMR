@@ -43,6 +43,8 @@ public class PatientService : IPatientService
         return await db.Patients
             .AsNoTracking()
             .Include(p => p.Doctor)
+            .Include(p => p.PatientMedicines)
+                .ThenInclude(pm => pm.Medicine)
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync(ct);
 
