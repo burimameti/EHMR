@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows.Input;
 
 
@@ -32,6 +33,26 @@ namespace EHMR.Resources.Controls
         public SparkExplorerHeaderView()
         {
             InitializeComponent();
+            Buttons.CollectionChanged += OnButtonsChanged;
+            RebuildButtonGroups();
+        }
+
+        private ObservableCollection<SparkButtonItem> ActionButtons { get; } = new();
+        private SparkButtonItem? ClearButton =>
+            Buttons.FirstOrDefault(x => string.Equals(x.Label, "Исчисти", StringComparison.OrdinalIgnoreCase));
+
+        private void OnButtonsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+            => RebuildButtonGroups();
+
+        private void RebuildButtonGroups()
+        {
+            ActionButtons.Clear();
+            foreach(var button in Buttons)
+            {
+                if(!string.Equals(button.Label, "Исчисти", StringComparison.OrdinalIgnoreCase))
+                    ActionButtons.Add(button);
+            }
+            OnPropertyChanged(nameof(ClearButton));
         }
 
         private void OnHeaderSizeChanged(object? sender, EventArgs e)
@@ -167,7 +188,19 @@ namespace EHMR.Resources.Controls
         public ObservableCollection<SparkButtonItem> Buttons
         {
             get => (ObservableCollection<SparkButtonItem>)GetValue(ButtonsProperty);
-            set => SetValue(ButtonsProperty, value);
+            set
+            {
+                var old = (ObservableCollection<SparkButtonItem>)GetValue(ButtonsProperty);
+                if(old != null)
+                    old.CollectionChanged -= OnButtonsChanged;
+
+                SetValue(ButtonsProperty, value);
+
+                if(value != null)
+                    value.CollectionChanged += OnButtonsChanged;
+
+                RebuildButtonGroups();
+            }
         }
 
         #endregion
