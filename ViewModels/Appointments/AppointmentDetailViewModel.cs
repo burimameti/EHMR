@@ -838,6 +838,13 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [RelayCommand]
     private async Task SaveAsync()
     {
+        var confirmed = await UserDialogService.ShowConfirmationAsync(
+            "Зачувај термин",
+            "Дали сте сигурни дека сакате да го зачувате терминот?",
+            "Да",
+            "Не");
+        if(!confirmed) return;
+
         if(IsNewAppointment && (!CanCreate || !CanSchedule))
         {
             await UserDialogService.ShowAlertAsync(
@@ -923,6 +930,13 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [RelayCommand]
     private async Task Cancel()
     {
+        var confirmed = await UserDialogService.ShowConfirmationAsync(
+            "Откажи",
+            "Дали сте сигурни дека сакате да се вратите назад без да ги зачувате промените?",
+            "Да",
+            "Не");
+        if(!confirmed) return;
+
         await ExecuteSafeAsync(async () =>
         {
             if(_isModalReturnMode)
