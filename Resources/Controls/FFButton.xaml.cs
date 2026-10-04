@@ -36,9 +36,9 @@ public partial class FFButton : ContentView
             {
                 FFButtonKind.Primary => Color.FromArgb("#B91C1C"),
                 FFButtonKind.Secondary => Color.FromArgb("#991B1B"),
-                FFButtonKind.Green => Color.FromArgb("#166534"),
+                FFButtonKind.Green => Color.FromArgb("#991B1B"),
                 FFButtonKind.Danger => Color.FromArgb("#991B1B"),
-                FFButtonKind.Ghost => Color.FromArgb("#F1F5F9"),
+                FFButtonKind.Ghost => Color.FromArgb("#FEE2E2"),
                 _ => BackgroundColorEx
             };
         }
@@ -289,9 +289,9 @@ public partial class FFButton : ContentView
 
             // Positive clinical action: Complete, Approve
             case FFButtonKind.Green:
-                BackgroundColorEx=Color.FromArgb("#15803D");
+                BackgroundColorEx=Color.FromArgb("#B91C1C");
                 TextColorEx=Colors.White;
-                BorderColor=Color.FromArgb("#15803D");
+                BorderColor=Color.FromArgb("#B91C1C");
                 BorderThickness=0;
                 break;
 
@@ -305,9 +305,9 @@ public partial class FFButton : ContentView
 
             // Quiet action: Close, Clear filters
             case FFButtonKind.Ghost:
-                BackgroundColorEx=Colors.Transparent;
-                TextColorEx=Color.FromArgb("#1F2933");
-                BorderColor=Color.FromArgb("#64748B");
+                BackgroundColorEx=Color.FromArgb("#FEE2E2");
+                TextColorEx=Color.FromArgb("#991B1B");
+                BorderColor=Color.FromArgb("#B91C1C");
                 BorderThickness=1;
                 break;
         }
