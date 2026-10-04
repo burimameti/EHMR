@@ -438,7 +438,8 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
                 $"Контакт: {p.Phone}",
                 $"Итен контакт: {GetEmergencyContactText(p)}",
                 $"Адреса: {p.Address}",
-                $"Град: {p.City}"
+                $"Град: {p.City}",
+                $"Лекови: {GetMedicinePreviewText(p)}"
             });
             row["Gender"]=p.Gender.ToDisplay();
             row["Age"]=p.Age;
@@ -476,6 +477,25 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             rows.Add(row);
         }
         GridRows=rows;
+    }
+
+    private static string GetMedicinePreviewText(Patient patient)
+    {
+        var medicines = patient.PatientMedicines?
+            .Where(pm => pm.IsActive && pm.Medicine != null)
+            .Select(pm =>
+            {
+                var name = pm.Medicine!.Name?.Trim() ?? string.Empty;
+                var dosage = pm.Dosage?.Trim() ?? string.Empty;
+                return string.IsNullOrWhiteSpace(dosage) ? name : $"{name} ({dosage})";
+            })
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.CurrentCultureIgnoreCase)
+            .ToList();
+
+        return medicines is { Count: > 0 }
+            ? string.Join(", ", medicines)
+            : "Нема активна терапија";
     }
 
     private static string GetEmergencyContactText(Patient patient)
