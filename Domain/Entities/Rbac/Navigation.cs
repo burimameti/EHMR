@@ -19,9 +19,6 @@ public partial class NavigationGroup : ObservableObject
     private bool _isExpanded;
 
     [ObservableProperty]
-    [ObservableProperty]
-    private bool _isHovered;
-
     private bool _isActive;
 }
 
