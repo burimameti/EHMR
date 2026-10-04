@@ -160,6 +160,14 @@
 											Value="True">
 											<Setter Property="ButtonKind" Value="Primary" />
 										</DataTrigger>
+										<DataTrigger
+											Binding="{Binding Label}"
+											TargetType="sc:FFButton"
+											Value="Исчисти">
+											<Setter Property="BackgroundColorEx" Value="#2563EB" />
+											<Setter Property="BorderColor" Value="#2563EB" />
+											<Setter Property="TextColorEx" Value="White" />
+										</DataTrigger>
 									</sc:FFButton.Triggers>
 								</sc:FFButton>
 							</DataTemplate>
