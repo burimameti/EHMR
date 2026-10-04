@@ -14,6 +14,9 @@ public partial class AlertsListPage : ContentPage
         MenuHost.Content=menu;
     }
 
+    private async void OnBackClicked(object sender, EventArgs e)
+        => await Shell.Current.GoToAsync("//dashboard", true);
+
     protected override async void OnAppearing()
     {
         base.OnAppearing();
