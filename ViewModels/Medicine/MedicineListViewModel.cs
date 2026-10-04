@@ -102,6 +102,12 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
     // ================= SPARK GRID =================
     [ObservableProperty] private ObservableCollection<SparkGridColumn> gridColumns = new();
     [ObservableProperty] private ObservableCollection<SparkGridRow> gridRows = new();
+    [ObservableProperty] private ObservableCollection<ApplicationRegime> applicationRegimes = new();
+    [ObservableProperty] private ObservableCollection<SparkGridColumn> applicationRegimeColumns = new();
+    [ObservableProperty] private ObservableCollection<SparkGridRow> applicationRegimeRows = new();
+    [ObservableProperty] private ObservableCollection<ClinicalScoreDefinition> scoreDefinitions = new();
+    [ObservableProperty] private ObservableCollection<SparkGridColumn> scoreColumns = new();
+    [ObservableProperty] private ObservableCollection<SparkGridRow> scoreRows = new();
 
     private void BuildSparkGridColumns()
     {
