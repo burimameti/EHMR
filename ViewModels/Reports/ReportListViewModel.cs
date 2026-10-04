@@ -538,19 +538,95 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     private async Task<List<GenericReportRow>> LoadPatientHistoryAsync(
         DesktopTherapyDbContext db, Guid patientId)
     {
-        var scoreHistory = await db.PatientScores
-            .Include(s => s.Encounter).ThenInclude(e => e.Doctor).ThenInclude(d => d.User)
+        // Current encounter + maximum five previous encounters.
+        var encounters=await db.Encounters
             .AsNoTracking()
-            .Where(s => s.PatientId == patientId)
+            .Include(e => e.Doctor).ThenInclude(d => d.User)
+            .Include(e => e.Diagnoses).ThenInclude(d => d.Mkb10Code)
+            .Where(e => e.PatientId==patientId)
+            .OrderByDescending(e => e.ScheduledStart ?? e.EncounterDate)
+            .Take(6)
+            .ToListAsync();
+
+        if(encounters.Count==0)
+            return [];
+
+        var encounterIds=encounters.Select(e => e.Id).ToList();
+
+        var scores=await db.PatientScores
+            .AsNoTracking()
+            .Where(s => s.PatientId==patientId && encounterIds.Contains(s.EncounterId))
             .OrderByDescending(s => s.RecordedAt)
             .ToListAsync();
 
-        return scoreHistory.Select(s => new GenericReportRow
+        var medicines=await db.PatientMedicines
+            .AsNoTracking()
+            .Include(pm => pm.Medicine)
+            .Include(pm => pm.ApplicationRegime)
+            .Where(pm => pm.PatientId==patientId &&
+                         ((pm.EncounterId.HasValue && encounterIds.Contains(pm.EncounterId.Value)) ||
+                          (!pm.EncounterId.HasValue && pm.IsActive)))
+            .OrderByDescending(pm => pm.StartDate)
+            .ToListAsync();
+
+        var rows=new List<GenericReportRow>(encounters.Count);
+
+        foreach(var encounter in encounters)
         {
-            PrimaryHeader = SelectedPatientLabel, HistoryDateValue = s.RecordedAt.ToString("dd.MM.yyyy"),
-            HistoryEncounterValue = s.Encounter?.Doctor?.FullName ?? "",
-            HistoryScoreValue = s.ScoreText
-        }).ToList();
+            var score=scores
+                .Where(s => s.EncounterId==encounter.Id)
+                .OrderByDescending(s => s.RecordedAt)
+                .FirstOrDefault();
+
+            var diagnoses=encounter.Diagnoses
+                .Where(d => d.Mkb10Code is not null)
+                .OrderByDescending(d => d.IsPrimary)
+                .ThenBy(d => d.Mkb10Code!.Code)
+                .Select(d => $"{d.Mkb10Code!.Code} - {d.Mkb10Code.Description}")
+                .Distinct(StringComparer.CurrentCultureIgnoreCase)
+                .ToList();
+
+            // Maximum five real medicines per encounter. For the latest encounter,
+            // active patient-level medicines without EncounterId are also current therapy.
+            var encounterMedicines=medicines
+                .Where(pm => pm.EncounterId==encounter.Id ||
+                             (!pm.EncounterId.HasValue && encounter.Id==encounters[0].Id))
+                .Take(5)
+                .Select(pm =>
+                {
+                    var name=pm.Medicine?.FullName ?? "Непознат лек";
+                    var dosage=string.IsNullOrWhiteSpace(pm.Dosage)
+                        ? pm.Medicine?.DefaultDosage ?? string.Empty
+                        : pm.Dosage;
+                    var frequency=pm.ApplicationRegime?.Regime;
+                    if(string.IsNullOrWhiteSpace(frequency))
+                        frequency=pm.DosesFrequency.ToString();
+
+                    var details=new List<string>();
+                    if(pm.Quantity>0) details.Add($"кол. {pm.Quantity:0.##}");
+                    if(!string.IsNullOrWhiteSpace(dosage)) details.Add(dosage);
+                    if(!string.IsNullOrWhiteSpace(frequency)) details.Add(frequency);
+
+                    return string.IsNullOrWhiteSpace(string.Join(", ", details))
+                        ? name
+                        : $"{name} ({string.Join(", ", details)})";
+                })
+                .ToList();
+
+            rows.Add(new GenericReportRow
+            {
+                PrimaryHeader=SelectedPatientLabel,
+                HistoryDateValue=(encounter.ScheduledStart ?? encounter.EncounterDate).ToString("dd.MM.yyyy"),
+                HistoryEncounterValue=encounter.Doctor?.FullName ?? string.Empty,
+                HistoryScoreValue=score?.ScoreText ?? string.Empty,
+                HistoryMedicineValue=string.Join("; ", encounterMedicines),
+                HistoryDosageValue=string.Join("; ", diagnoses),
+                HistoryFrequencyValue=encounter.ReasonForVisit ?? string.Empty,
+                HistoryMedicineStatusValue=encounter.Status.ToString()
+            });
+        }
+
+        return rows;
     }
 
     private static async Task<List<GenericReportRow>> LoadPatientsAsync(
