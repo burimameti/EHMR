@@ -333,7 +333,7 @@
 				<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
 					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
 
-												<!--  ===================================================  -->
+						<!--  ===================================================  -->
 						<!--  PATIENT EXPLORER  -->
 						<!--  ===================================================  -->
 
@@ -356,18 +356,7 @@
 										<controls:SparkExplorerHeaderView.SuggestionTemplate>
 											<DataTemplate x:DataType="{x:Null}">
 												<Border
-													BackgroundColor="{StaticResource Gray100}">
-													<VisualStateManager.VisualStateGroups>
-														<VisualStateGroup Name="CommonStates">
-															<VisualState Name="Normal" />
-															<VisualState Name="PointerOver">
-																<VisualState.Setters>
-																	<Setter Property="BackgroundColor" Value="#E5E7EB" />
-																	<Setter Property="Stroke" Value="#CBD5E1" />
-																</VisualState.Setters>
-															</VisualState>
-														</VisualStateGroup>
-													</VisualStateManager.VisualStateGroups>
+													BackgroundColor="{StaticResource Gray100}"
 													Stroke="{StaticResource SparkBorderSubtle}"
 													StrokeShape="RoundRectangle 2"
 													StrokeThickness="1.2">
@@ -428,6 +417,17 @@
 															</Border>
 														</VerticalStackLayout>
 													</Grid>
+													<VisualStateManager.VisualStateGroups>
+														<VisualStateGroup Name="CommonStates">
+															<VisualState Name="Normal" />
+															<VisualState Name="PointerOver">
+																<VisualState.Setters>
+																	<Setter Property="BackgroundColor" Value="#E5E7EB" />
+																	<Setter Property="Stroke" Value="#CBD5E1" />
+																</VisualState.Setters>
+															</VisualState>
+														</VisualStateGroup>
+													</VisualStateManager.VisualStateGroups>
 												</Border>
 											</DataTemplate>
 										</controls:SparkExplorerHeaderView.SuggestionTemplate>
