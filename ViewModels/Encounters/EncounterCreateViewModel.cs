@@ -359,6 +359,13 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     [RelayCommand]
     private async Task SaveEncounter()
     {
+        var confirmed = await UserDialogService.ShowConfirmationAsync(
+            "Зачувај преглед",
+            "Дали сте сигурни дека сакате да го зачувате прегледот?",
+            "Да",
+            "Не");
+        if(!confirmed) return;
+
         if(!_authorizationService.CanPerform("encounters", ModuleAction.Create))
         {
             await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за креирање прегледи.", "ОК");
@@ -417,6 +424,13 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     [RelayCommand]
     private async Task Cancel()
     {
+        var confirmed = await UserDialogService.ShowConfirmationAsync(
+            "Откажи",
+            "Дали сте сигурни дека сакате да се вратите назад без да го зачувате прегледот?",
+            "Да",
+            "Не");
+        if(!confirmed) return;
+
         _appointmentContext.SelectedItem=null;
         _patientContext.SelectedItem=null;
         _encounterContext.SelectedItem=null;
