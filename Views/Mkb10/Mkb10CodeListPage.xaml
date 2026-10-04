@@ -30,7 +30,16 @@
 					<!--  HEADER  -->
 					<controls:FFSectionCard>
 						<Grid ColumnDefinitions="*,*" VerticalOptions="Center">
-							<controls:FFPageHeader Title="МКБ-10 Каталог" Subtitle="Меѓународна класификација на болести и дијагностички шифри" />
+							<controls:FFPageHeader Title="МКБ-10 Каталог" Subtitle="Меѓународна класификација на болести и дијагностички шифри" >
+				<controls:FFPageHeader.HeaderContent>
+<controls:FFButton
+						ButtonKind="Secondary"
+						Command="{Binding GoBackCommand}"
+						HeightRequestEx="40"
+						Text="Назад"
+						WidthRequestEx="130" />
+			</controls:FFPageHeader.HeaderContent>
+		</controls:FFPageHeader>
 							<HorizontalStackLayout
 								Grid.Column="1"
 								HorizontalOptions="End"
