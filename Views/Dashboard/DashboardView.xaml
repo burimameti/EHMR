@@ -772,7 +772,8 @@
 									<CollectionView
 										HeightRequest="220"
 										ItemsSource="{Binding SelectedDateAppointments}"
-										SelectionMode="None">
+										SelectionMode="None"
+										VerticalOptions="Start">
 
 										<CollectionView.EmptyView>
 											<VerticalStackLayout
@@ -786,15 +787,15 @@
 
 										<CollectionView.ItemTemplate>
 											<DataTemplate x:DataType="dash:DashboardAppointmentItem">
-												<Border Style="{StaticResource AppointmentRowStyle}">
-													<Border.GestureRecognizers>
-														<TapGestureRecognizer Command="{Binding Source={x:Reference ThisPage}, Path=BindingContext.OpenAppointmentCommand}" CommandParameter="{Binding .}" />
-													</Border.GestureRecognizers>
-
+												<Border
+														Style="{StaticResource AppointmentRowStyle}"
+														HorizontalOptions="Fill"
+														VerticalOptions="Start">
 													<Grid
-														Padding="0,12,12,12"
+														Padding="0,10,12,10"
 														ColumnDefinitions="3,Auto,*,Auto"
-														ColumnSpacing="10">
+														ColumnSpacing="10"
+														VerticalOptions="Start">
 														<BoxView
 															Grid.Column="0"
 															BackgroundColor="{Binding StatusColor}"
@@ -821,6 +822,7 @@
 															Grid.Column="3"
 															Padding="9,4"
 															BackgroundColor="{Binding StatusColor}"
+															HorizontalOptions="Start"
 															Opacity="0.9"
 															StrokeThickness="0"
 															VerticalOptions="Center">
