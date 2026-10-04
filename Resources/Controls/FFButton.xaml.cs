@@ -26,6 +26,12 @@ public partial class FFButton : ContentView
 
         if (isHover)
         {
+            if(IsBlue)
+            {
+                BackgroundColorEx=Color.FromArgb("#1D4ED8");
+                return;
+            }
+
             BackgroundColorEx = ButtonKind switch
             {
                 FFButtonKind.Primary => Color.FromArgb("#B91C1C"),
@@ -77,6 +83,10 @@ public partial class FFButton : ContentView
 
     public static readonly BindableProperty TextProperty =
         BindableProperty.Create(nameof(Text), typeof(string), typeof(FFButton), string.Empty);
+
+    public static readonly BindableProperty IsBlueProperty =
+        BindableProperty.Create(nameof(IsBlue), typeof(bool), typeof(FFButton), false,
+            propertyChanged: (b, _, _) => ((FFButton)b).ApplyKind());
 
     public static readonly BindableProperty ButtonKindProperty =
         BindableProperty.Create(nameof(ButtonKind), typeof(FFButtonKind), typeof(FFButton), FFButtonKind.Primary,
@@ -140,6 +150,12 @@ public partial class FFButton : ContentView
     {
         get => (string)GetValue(TextProperty);
         set => SetValue(TextProperty, value);
+    }
+
+    public bool IsBlue
+    {
+        get => (bool)GetValue(IsBlueProperty);
+        set => SetValue(IsBlueProperty, value);
     }
 
     public FFButtonKind ButtonKind
@@ -244,6 +260,15 @@ public partial class FFButton : ContentView
 
     private void ApplyKind()
     {
+        if(IsBlue)
+        {
+            BackgroundColorEx=Color.FromArgb("#2563EB");
+            TextColorEx=Colors.White;
+            BorderColor=Color.FromArgb("#2563EB");
+            BorderThickness=0;
+            return;
+        }
+
         switch(ButtonKind)
         {
             // Main action: Save, Create, Confirm
