@@ -28,8 +28,8 @@ public partial class FFButton : ContentView
         {
             BackgroundColorEx = ButtonKind switch
             {
-                FFButtonKind.Primary => Color.FromArgb("#0F766E"),
-                FFButtonKind.Secondary => Color.FromArgb("#5B6875"),
+                FFButtonKind.Primary => Color.FromArgb("#B91C1C"),
+                FFButtonKind.Secondary => Color.FromArgb("#991B1B"),
                 FFButtonKind.Green => Color.FromArgb("#166534"),
                 FFButtonKind.Danger => Color.FromArgb("#991B1B"),
                 FFButtonKind.Ghost => Color.FromArgb("#F1F5F9"),
@@ -248,17 +248,17 @@ public partial class FFButton : ContentView
         {
             // Main action: Save, Create, Confirm
             case FFButtonKind.Primary:
-                BackgroundColorEx=ResolveColorResource("SidebarActiveBg", "#4DD9C7");
+                BackgroundColorEx=Color.FromArgb("#DC2626");
                 TextColorEx=Colors.White;
-                BorderColor=ResolveColorResource("SidebarActiveBg", "#4DD9C7");
+                BorderColor=Color.FromArgb("#DC2626");
                 BorderThickness=0;
                 break;
 
             // Supporting action: Edit, Preview, Back
             case FFButtonKind.Secondary:
-                BackgroundColorEx=Color.FromArgb("#4A5863");
+                BackgroundColorEx=Color.FromArgb("#B91C1C");
                 TextColorEx=Colors.White;
-                BorderColor=Color.FromArgb("#5A5863");
+                BorderColor=Color.FromArgb("#B91C1C");
                 BorderThickness=0;
                 break;
 
