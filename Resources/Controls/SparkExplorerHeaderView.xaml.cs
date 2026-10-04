@@ -37,8 +37,8 @@ namespace EHMR.Resources.Controls
             RebuildButtonGroups();
         }
 
-        private ObservableCollection<SparkButtonItem> ActionButtons { get; } = new();
-        private SparkButtonItem? ClearButton =>
+        public ObservableCollection<SparkButtonItem> ActionButtons { get; } = new();
+        public SparkButtonItem? ClearButton =>
             Buttons.FirstOrDefault(x => string.Equals(x.Label, "Исчисти", StringComparison.OrdinalIgnoreCase));
 
         private void OnButtonsChanged(object? sender, NotifyCollectionChangedEventArgs e)
