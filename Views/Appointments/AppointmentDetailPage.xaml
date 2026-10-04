@@ -113,6 +113,8 @@
 					Margin="0,0,0,12"
 					Subtitle="{Binding HeaderSubtitle}">
 					<controls:FFPageHeader.HeaderContent>
+						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+
 					<controls:FFButton
                             ButtonKind="Secondary"
                             Command="{Binding CancelCommand}"
@@ -141,6 +143,8 @@
 								IsEnabled="{Binding CanEditAppointment}"
 								IsVisible="{Binding CanEditAppointment}"
 								Text="Уреди" />
+						</HorizontalStackLayout>
+					
 						</HorizontalStackLayout>
 					</controls:FFPageHeader.HeaderContent>
 				</controls:FFPageHeader>
