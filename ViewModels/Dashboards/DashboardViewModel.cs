@@ -975,7 +975,7 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task NewEncounter()
     {
-        if(!CanManageAppointments)
+        if(!CanCreateEncounter)
         {
             await _userDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за додавање на нов преглед.", "OK");
             return;
