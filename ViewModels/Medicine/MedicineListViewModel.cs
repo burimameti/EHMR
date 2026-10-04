@@ -63,6 +63,7 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
 
             AllItems=list;
             ApplyPipeline();
+            await LoadCatalogsAsync();
         }
         catch(Exception ex)
         {
@@ -159,6 +160,61 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
         {
             IsBusy=false;
         }
+    }
+
+    private async Task LoadCatalogsAsync()
+    {
+        await LoadApplicationRegimesAsync();
+        await LoadScoreDefinitionsAsync();
+    }
+
+    private async Task LoadApplicationRegimesAsync()
+    {
+        await using var db=await _dbFactory.CreateDbContextAsync();
+        ApplicationRegimes=new ObservableCollection<ApplicationRegime>(await db.Set<ApplicationRegime>().AsNoTracking().Where(x=>x.IsActive).OrderBy(x=>x.Regime).ToListAsync());
+        ApplicationRegimeColumns=new ObservableCollection<SparkGridColumn>
+        {
+            new(){Header="НАЧИН НА АПЛИКАЦИЈА",Key="Regime",Width=new GridLength(3,GridUnitType.Star)},
+            new(){Header="ОПЦИИ",Key="Actions",CellType=SparkGridCellType.Actions,Width=GridLength.Auto}
+        };
+        var rows=new ObservableCollection<SparkGridRow>();
+        foreach(var item in ApplicationRegimes)
+        {
+            var row=new SparkGridRow{Tag=item}; row["Regime"]=item.Regime;
+            row["Actions"]=new List<SparkButtonItem>
+            {
+                new(){IconGlyph="\\uf06e",Label="Преглед",Command=PreviewApplicationRegimeCommand,CommandParameter=item,IsEnabled=CanView},
+                new(){IconGlyph="\\uf044",Label="Уреди",Command=EditApplicationRegimeCommand,CommandParameter=item,IsEnabled=CanUpdate},
+                new(){IconGlyph="\\uf1f8",Label="Избриши",Command=DeleteApplicationRegimeCommand,CommandParameter=item,IsEnabled=CanDelete}
+            };
+            rows.Add(row);
+        }
+        ApplicationRegimeRows=rows;
+    }
+
+    private async Task LoadScoreDefinitionsAsync()
+    {
+        await using var db=await _dbFactory.CreateDbContextAsync();
+        ScoreDefinitions=new ObservableCollection<ClinicalScoreDefinition>(await db.Set<ClinicalScoreDefinition>().AsNoTracking().Where(x=>x.IsActive).OrderBy(x=>x.Name).ToListAsync());
+        ScoreColumns=new ObservableCollection<SparkGridColumn>
+        {
+            new(){Header="СКОР",Key="Name",Width=new GridLength(1.5,GridUnitType.Star)},
+            new(){Header="ОПИС",Key="Description",Width=new GridLength(2.5,GridUnitType.Star)},
+            new(){Header="ОПЦИИ",Key="Actions",CellType=SparkGridCellType.Actions,Width=GridLength.Auto}
+        };
+        var rows=new ObservableCollection<SparkGridRow>();
+        foreach(var item in ScoreDefinitions)
+        {
+            var row=new SparkGridRow{Tag=item}; row["Name"]=item.Name; row["Description"]=item.Description;
+            row["Actions"]=new List<SparkButtonItem>
+            {
+                new(){IconGlyph="\\uf06e",Label="Преглед",Command=PreviewScoreCommand,CommandParameter=item,IsEnabled=CanView},
+                new(){IconGlyph="\\uf044",Label="Уреди",Command=EditScoreDefinitionCommand,CommandParameter=item,IsEnabled=CanUpdate},
+                new(){IconGlyph="\\uf1f8",Label="Избриши",Command=DeleteScoreDefinitionCommand,CommandParameter=item,IsEnabled=CanDelete}
+            };
+            rows.Add(row);
+        }
+        ScoreRows=rows;
     }
 
     private void RefreshSparkGridRows()
