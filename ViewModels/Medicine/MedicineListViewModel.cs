@@ -273,6 +273,66 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
         await LoadApplicationRegimesAsync();
     }
 
+    [RelayCommand]
+    private async Task AddScoreDefinitionAsync()
+    {
+        if(!CanCreate) return;
+        var name=await UserDialogService.ShowPromptAsync("Нов скор","Внесете име на клиничкиот скор.","Следно","Откажи","Пример: DAS28");
+        if(string.IsNullOrWhiteSpace(name)) return;
+        var description=await UserDialogService.ShowPromptAsync("Опис на скор","Внесете краток опис.","Зачувај","Откажи","Опционално");
+        if(description is null) return;
+        name=name.Trim(); description=description.Trim();
+        await using var db=await _dbFactory.CreateDbContextAsync();
+        if(await db.Set<ClinicalScoreDefinition>().AnyAsync(x=>x.IsActive&&x.Name.ToLower()==name.ToLower()))
+        {
+            await UserDialogService.ShowAlertAsync("Постои запис",$"Скорот „{name}“ веќе постои.","ОК"); return;
+        }
+        db.Set<ClinicalScoreDefinition>().Add(new ClinicalScoreDefinition{Id=Guid.NewGuid(),Name=name,Description=description,IsActive=true});
+        await db.SaveChangesAsync();
+        await LoadScoreDefinitionsAsync();
+    }
+
+    [RelayCommand]
+    private async Task PreviewScoreAsync(ClinicalScoreDefinition? item)
+    {
+        if(item is null || !CanView) return;
+        await UserDialogService.ShowAlertAsync("Преглед — скор",$"Скор:\n{item.Name}\n\nОпис:\n{(string.IsNullOrWhiteSpace(item.Description)?"—":item.Description)}","Затвори");
+    }
+
+    [RelayCommand]
+    private async Task EditScoreDefinitionAsync(ClinicalScoreDefinition? item)
+    {
+        if(item is null || !CanUpdate) return;
+        var name=await UserDialogService.ShowPromptAsync("Уреди скор","Изменете го името на скорот.","Следно","Откажи","",item.Name);
+        if(string.IsNullOrWhiteSpace(name)) return;
+        var description=await UserDialogService.ShowPromptAsync("Уреди опис","Изменете го описот.","Зачувај","Откажи","Опционално",item.Description);
+        if(description is null) return;
+        name=name.Trim(); description=description.Trim();
+        await using var db=await _dbFactory.CreateDbContextAsync();
+        if(await db.Set<ClinicalScoreDefinition>().AnyAsync(x=>x.Id!=item.Id&&x.IsActive&&x.Name.ToLower()==name.ToLower()))
+        {
+            await UserDialogService.ShowAlertAsync("Постои запис",$"Скорот „{name}“ веќе постои.","ОК"); return;
+        }
+        var entity=await db.Set<ClinicalScoreDefinition>().FirstOrDefaultAsync(x=>x.Id==item.Id);
+        if(entity is null) return;
+        entity.Name=name; entity.Description=description; entity.UpdatedAt=DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        await LoadScoreDefinitionsAsync();
+    }
+
+    [RelayCommand]
+    private async Task DeleteScoreDefinitionAsync(ClinicalScoreDefinition? item)
+    {
+        if(item is null || !CanDelete) return;
+        if(!await UserDialogService.ShowConfirmationAsync("Избриши скор",$"Дали сте сигурни дека сакате да го избришете скорот „{item.Name}“?","Избриши","Откажи")) return;
+        await using var db=await _dbFactory.CreateDbContextAsync();
+        var entity=await db.Set<ClinicalScoreDefinition>().FirstOrDefaultAsync(x=>x.Id==item.Id);
+        if(entity is null) return;
+        entity.IsActive=false; entity.UpdatedAt=DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        await LoadScoreDefinitionsAsync();
+    }
+
     private void RefreshSparkGridRows()
     {
         var rows = new ObservableCollection<SparkGridRow>();
