@@ -36,7 +36,7 @@ public partial class FFButton : ContentView
             {
                 FFButtonKind.Primary => Color.FromArgb("#B91C1C"),
                 FFButtonKind.Secondary => Color.FromArgb("#991B1B"),
-                FFButtonKind.Green => Color.FromArgb("#991B1B"),
+                FFButtonKind.Green => Color.FromArgb("#166534"),
                 FFButtonKind.Danger => Color.FromArgb("#991B1B"),
                 FFButtonKind.Ghost => Color.FromArgb("#FEE2E2"),
                 _ => BackgroundColorEx
@@ -289,9 +289,9 @@ public partial class FFButton : ContentView
 
             // Positive clinical action: Complete, Approve
             case FFButtonKind.Green:
-                BackgroundColorEx=Color.FromArgb("#B91C1C");
+                BackgroundColorEx=Color.FromArgb("#15803D");
                 TextColorEx=Colors.White;
-                BorderColor=Color.FromArgb("#B91C1C");
+                BorderColor=Color.FromArgb("#15803D");
                 BorderThickness=0;
                 break;
 
