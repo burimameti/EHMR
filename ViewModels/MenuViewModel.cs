@@ -144,18 +144,18 @@ public partial class MenuViewModel : ObservableObject, IDisposable
         if(ActiveRoute==item.Route&&!item.StartsNewRecord)
             return;
 
-        if(!await _navigationLock.WaitAsync(0))
-            return;
-
-        var previousRoute = ActiveRoute;
-        IsNavigating=true;
-
         if(item.StartsNewRecord)
         {
             var confirmed = await ConfirmNewRecordAsync(item.Title);
             if(!confirmed)
                 return;
         }
+
+        if(!await _navigationLock.WaitAsync(0))
+            return;
+
+        var previousRoute = ActiveRoute;
+        IsNavigating=true;
 
         if(item.StartsNewRecord&&item.Route==AppRoutes.Patients.Detail)
         {
