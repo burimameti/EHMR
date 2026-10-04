@@ -459,6 +459,29 @@ public class EncounterDetailService : IEncounterDetailService
         return entity;
     }
 
+    public async Task<ApplicationRegime> UpdateApplicationRegimeAsync(Guid id, string regime, CancellationToken ct = default)
+    {
+        regime=(regime??string.Empty).Trim();
+        if(id==Guid.Empty) throw new ArgumentException("Невалиден начин на апликација.", nameof(id));
+        if(string.IsNullOrWhiteSpace(regime)) throw new ArgumentException("Режимот на апликација е задолжителен.", nameof(regime));
+        await using var db=await _factory.CreateDbContextAsync(ct);
+        var duplicate=await db.ApplicationRegimes.AnyAsync(x => x.Id!=id && x.IsActive && x.Regime.ToLower()==regime.ToLower(), ct);
+        if(duplicate) throw new InvalidOperationException($"Начинот „{regime}“ веќе постои.");
+        var entity=await db.ApplicationRegimes.FirstOrDefaultAsync(x => x.Id==id, ct) ?? throw new InvalidOperationException("Начинот на апликација не постои.");
+        entity.Regime=regime; entity.IsActive=true;
+        await db.SaveChangesAsync(ct); return entity;
+    }
+
+    public async Task DeactivateApplicationRegimeAsync(Guid id, CancellationToken ct = default)
+    {
+        if(id==Guid.Empty) return;
+        await using var db=await _factory.CreateDbContextAsync(ct);
+        var entity=await db.ApplicationRegimes.FirstOrDefaultAsync(x => x.Id==id, ct);
+        if(entity is null) return;
+        entity.IsActive=false;
+        await db.SaveChangesAsync(ct);
+    }
+
     public async Task<List<ApplicationRegime>> GetApplicationRegimesAsync(CancellationToken ct = default)
     {
         await using var db = await _factory.CreateDbContextAsync(ct);

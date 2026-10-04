@@ -96,6 +96,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     private ObservableCollection<string> applicationRegimeOptions = new();
 
     private List<ApplicationRegime> _applicationRegimes = [];
+    public ObservableCollection<ApplicationRegime> ApplicationRegimes { get; } = new();
 
     [RelayCommand]
     public async Task AddApplicationRegimeAsync()
@@ -137,7 +138,39 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         }
     }
 
+    [RelayCommand]
+    public async Task EditApplicationRegimeAsync(ApplicationRegime? regime)
+    {
+        if(!CanUpdate || regime is null) return;
+        var value=await UserDialogService.ShowPromptAsync("Уреди начин на апликација","Изменете го начинот на апликација.","Зачувај","Откажи",regime.Regime);
+        if(string.IsNullOrWhiteSpace(value) || string.Equals(value.Trim(), regime.Regime, StringComparison.OrdinalIgnoreCase)) return;
+        try { await EncounterService.UpdateApplicationRegimeAsync(regime.Id, value.Trim()); await LoadApplicationRegimesAsync(); }
+        catch(Exception ex) { await UserDialogService.ShowAlertAsync("Грешка", $"Начинот не може да се измени: {ex.Message}", "ОК"); }
+    }
+
+    [RelayCommand]
+    public async Task DeleteApplicationRegimeAsync(ApplicationRegime? regime)
+    {
+        if(!CanUpdate || regime is null) return;
+        var confirmed=await UserDialogService.ShowConfirmationAsync("Избриши начин на апликација",$"Дали сте сигурни дека сакате да го избришете „{regime.Regime}“?","Избриши","Откажи");
+        if(!confirmed) return;
+        try { await EncounterService.DeactivateApplicationRegimeAsync(regime.Id); await LoadApplicationRegimesAsync(); }
+        catch(Exception ex) { await UserDialogService.ShowAlertAsync("Грешка", $"Начинот не може да се избрише: {ex.Message}", "ОК"); }
+    }
+
     public ObservableCollection<string> ScoreOptions { get; } = new();
+
+    [RelayCommand]
+    public async Task EditScoreAsync(string? score)
+    {
+        if(!CanUpdate || string.IsNullOrWhiteSpace(score)) return;
+        var index=EncounterScores.IndexOf(score);
+        if(index<0) return;
+        var value=await UserDialogService.ShowPromptAsync("Уреди скор","Изменете ја вредноста на скорот.","Зачувај","Откажи",score);
+        if(string.IsNullOrWhiteSpace(value)) return;
+        EncounterScores[index]=value.Trim();
+        ScoreText=string.Join(" | ", EncounterScores);
+    }
 
     [RelayCommand]
     public async Task AddScoreAsync()
@@ -1280,8 +1313,10 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     {
         var regimes = await EncounterService.GetApplicationRegimesAsync();
         _applicationRegimes = regimes;
-        ApplicationRegimeOptions = new ObservableCollection<string>(
-            regimes.Select(x => x.Regime));
+        ApplicationRegimes.Clear();
+        foreach(var regime in regimes) ApplicationRegimes.Add(regime);
+        ApplicationRegimeOptions.Clear();
+        foreach(var regime in regimes) ApplicationRegimeOptions.Add(regime.Regime);
     }
 
     protected void ResolveApplicationRegimes(IEnumerable<PatientMedicine> medicines)

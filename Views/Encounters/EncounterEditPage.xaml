@@ -333,19 +333,32 @@
 											BackgroundColor="{StaticResource SparkAccentTealBg}"
 											LineColor="{StaticResource SparkAccentTeal}"
 											TextColor="{StaticResource SparkTextPrimary}" />
-										<Button
-											Grid.Column="1"
-											Padding="12,0"
-											BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
-											Command="{Binding AddApplicationRegimeCommand}"
-							IsEnabled="{Binding CanUpdate}"
-											CornerRadius="6"
-											FontAttributes="Bold"
-											FontSize="10.5"
-											Text="+ Нов начин"
-											TextColor="White"
-											VerticalOptions="Center" />
+										<controls:FFButton Grid.Column="1" ButtonKind="Green" Command="{Binding AddApplicationRegimeCommand}" HeightRequestEx="34" Text="+ Нов начин" WidthRequestEx="116" />
 									</Grid>
+									<Border BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
+										<VerticalStackLayout Spacing="0">
+											<Grid ColumnDefinitions="*,Auto" ColumnSpacing="1">
+												<Border Padding="8,7" BackgroundColor="{StaticResource SparkAccentTealDark}" StrokeThickness="0"><Label FontAttributes="Bold" FontSize="9.5" Text="НАЧИН НА АПЛИКАЦИЈА" TextColor="White" /></Border>
+												<Border Grid.Column="1" Padding="8,7" BackgroundColor="{StaticResource SparkAccentTealDark}" StrokeThickness="0" WidthRequest="190"><Label FontAttributes="Bold" FontSize="9.5" HorizontalOptions="Center" Text="ОПЦИИ" TextColor="White" /></Border>
+											</Grid>
+											<VerticalStackLayout BindableLayout.ItemsSource="{Binding ApplicationRegimes}" Spacing="0">
+												<BindableLayout.EmptyView><Label Padding="10,8" FontSize="11" Text="Нема внесени начини на апликација." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
+												<BindableLayout.ItemTemplate>
+													<DataTemplate x:DataType="entities:ApplicationRegime">
+														<Grid ColumnDefinitions="*,Auto" ColumnSpacing="1">
+															<Border Padding="8,6" BackgroundColor="White" HeightRequest="38" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="11.5" Text="{Binding Regime}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
+															<Border Grid.Column="1" BackgroundColor="White" HeightRequest="38" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1" WidthRequest="190">
+																<HorizontalStackLayout HorizontalOptions="Center" Spacing="5" VerticalOptions="Center">
+																	<controls:FFButton ButtonKind="Secondary" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.EditApplicationRegimeCommand}" CommandParameter="{Binding .}" HeightRequestEx="30" Text="Уреди" WidthRequestEx="78" />
+																	<controls:FFButton ButtonKind="Danger" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteApplicationRegimeCommand}" CommandParameter="{Binding .}" HeightRequestEx="30" Text="Избриши" WidthRequestEx="82" />
+																</HorizontalStackLayout>
+															</Border>
+														</Grid>
+													</DataTemplate>
+												</BindableLayout.ItemTemplate>
+											</VerticalStackLayout>
+										</VerticalStackLayout>
+									</Border>
 									<controls:FFSearchBox Placeholder="Додај лек во тековната терапија..." Text="{Binding MedicineSearchText, Mode=TwoWay}" />
 									<Border
 										Padding="4"
@@ -517,15 +530,7 @@
 															Spacing="2"
 															VerticalOptions="Center">
 															<CheckBox IsChecked="{Binding IsActive, Mode=TwoWay}" />
-															<Button
-																Padding="0"
-																BackgroundColor="Transparent"
-																Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}"
-																CommandParameter="{Binding .}"
-																FontSize="12"
-																Text="✕"
-																TextColor="#DC2626"
-																WidthRequest="26" />
+															<controls:FFButton ButtonKind="Danger" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" HeightRequestEx="30" Text="Избриши" WidthRequestEx="78" />
 														</HorizontalStackLayout>
 													</Border>
 												</Grid>
@@ -537,8 +542,8 @@
 								<VerticalStackLayout Grid.Column="1" Spacing="10">
     <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
         <Label FontAttributes="Bold" FontSize="13" Text="СКОРОВИ" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
-        <controls:FFButton Grid.Column="1" ButtonKind="Primary" Command="{Binding AddScoreCommand}" HeightRequestEx="34" Text="+ Додади скор" WidthRequestEx="112" />
-        <controls:FFButton Grid.Column="2" ButtonKind="Secondary" Command="{Binding AddFindingCommand}" HeightRequestEx="34" Text="+ Додади наод" WidthRequestEx="112" />
+        <controls:FFButton Grid.Column="1" ButtonKind="Green" Command="{Binding AddScoreCommand}" HeightRequestEx="34" Text="+ Додади скор" WidthRequestEx="112" />
+        <controls:FFButton Grid.Column="2" ButtonKind="Green" Command="{Binding AddFindingCommand}" HeightRequestEx="34" Text="+ Додади наод" WidthRequestEx="112" />
     </Grid>
     <Label FontSize="10" Text="Внесените скорови и наоди се прикажуваат подолу." TextColor="{StaticResource SparkTextSecondary}" />
     <Border BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
@@ -546,9 +551,10 @@
             <BindableLayout.EmptyView><Label Padding="10,8" FontSize="11" Text="Нема внесени скорови." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
             <BindableLayout.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="10,7" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <Grid Padding="10,7" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="5">
                         <Label FontSize="12" Text="{Binding .}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
-                        <controls:FFButton Grid.Column="1" ButtonKind="Danger" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveScoreCommand}" CommandParameter="{Binding .}" HeightRequestEx="30" Text="Избриши" WidthRequestEx="76" />
+                        <controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.EditScoreCommand}" CommandParameter="{Binding .}" HeightRequestEx="30" Text="Уреди" WidthRequestEx="72" />
+                        <controls:FFButton Grid.Column="2" ButtonKind="Danger" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveScoreCommand}" CommandParameter="{Binding .}" HeightRequestEx="30" Text="Избриши" WidthRequestEx="76" />
                     </Grid>
                 </DataTemplate>
             </BindableLayout.ItemTemplate>
