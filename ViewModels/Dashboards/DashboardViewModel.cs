@@ -836,17 +836,45 @@ public partial class DashboardViewModel : ObservableObject
     {
         Buttons.Clear();
 
-        if(IsEncounterHistoryMode&&PreviewPatient?.Patient is { } patient)
+        // Always keep Refresh first. When a patient is selected from the
+        // dashboard search/suggestions, replace the generic New Encounter
+        // action with the patient-specific action beside Refresh.
+        Buttons.Add(new SparkButtonItem
         {
-            Buttons.Add(new SparkButtonItem { Label="Освежи", IsPrimary=false, IsEnabled=true, Command=RefreshCommand });
-            Buttons.Add(new SparkButtonItem { Label="Нов преглед", IsPrimary=true, IsEnabled=CanCreateEncounter, Command=NewEncounterForSelectedCommand, CommandParameter=patient });
-            Buttons.Add(new SparkButtonItem { Label="Нов извештај", IsPrimary=false, IsEnabled=true, Command=OpenNewReportCommand });
+            Label="Освежи",
+            IsPrimary=false,
+            IsEnabled=true,
+            Command=RefreshCommand
+        });
+
+        if(PreviewPatient?.Patient is { } patient)
+        {
+            Buttons.Add(new SparkButtonItem
+            {
+                Label="Нов преглед",
+                IsPrimary=true,
+                IsEnabled=true,
+                Command=NewEncounterForSelectedCommand,
+                CommandParameter=patient
+            });
+
+            Buttons.Add(new SparkButtonItem
+            {
+                Label="Нов извештај",
+                IsPrimary=false,
+                IsEnabled=true,
+                Command=OpenNewReportCommand
+            });
             return;
         }
 
-        Buttons.Add(new SparkButtonItem { Label="Освежи", IsPrimary=false, IsEnabled=true, Command=RefreshCommand });
-        Buttons.Add(new SparkButtonItem { Label="Нов преглед", IsPrimary=true, IsEnabled=CanCreateEncounter, Command=NewEncounterCommand });
-        //Buttons.Add(new SparkButtonItem { Label="Нов извештај", IsPrimary=false, IsEnabled=true, Command=OpenNewReportCommand });
+        Buttons.Add(new SparkButtonItem
+        {
+            Label="Нов преглед",
+            IsPrimary=true,
+            IsEnabled=CanCreateEncounter,
+            Command=NewEncounterCommand
+        });
     }
 
     [RelayCommand]
