@@ -66,6 +66,19 @@
 									<RoundRectangle CornerRadius="12" />
 								</Border.StrokeShape>
 
+								<VisualStateManager.VisualStateGroups>
+									<VisualStateGroupList>
+										<VisualStateGroup x:Name="PointerStates">
+											<VisualState x:Name="Normal" />
+											<VisualState x:Name="PointerOver">
+												<VisualState.Setters>
+													<Setter Property="BackgroundColor" Value="#566471" />
+												</VisualState.Setters>
+											</VisualState>
+										</VisualStateGroup>
+									</VisualStateGroupList>
+								</VisualStateManager.VisualStateGroups>
+
 								<Border.Triggers>
 									<DataTrigger
 										Binding="{Binding IsActive}"
@@ -217,7 +230,20 @@
 											ColumnSpacing="10"
 											HeightRequest="32">
 
-											<Grid.Triggers>
+											<VisualStateManager.VisualStateGroups>
+											<VisualStateGroupList>
+												<VisualStateGroup x:Name="PointerStates">
+													<VisualState x:Name="Normal" />
+													<VisualState x:Name="PointerOver">
+														<VisualState.Setters>
+															<Setter Property="BackgroundColor" Value="#333F4D" />
+														</VisualState.Setters>
+													</VisualState>
+												</VisualStateGroup>
+											</VisualStateGroupList>
+										</VisualStateManager.VisualStateGroups>
+
+										<Grid.Triggers>
 												<DataTrigger
 													Binding="{Binding IsActive}"
 													TargetType="Grid"
