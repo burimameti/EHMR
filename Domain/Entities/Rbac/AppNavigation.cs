@@ -88,6 +88,8 @@ public static class AppNavigation
                     Title = "Нов преглед",
                     Route = AppRoutes.Encounters.Create,
                     Module = Modules.Encounters,
+                    RequiredAction = ModuleAction.Create,
+                    StartsNewRecord = true,
                     Icon = new IconDefinition { Glyph = "\uf067", Font = IconFontType.FontAwesomeSolid }
                 }
             ]
