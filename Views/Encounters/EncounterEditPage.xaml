@@ -26,6 +26,12 @@
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader Title="Уреди преглед" Subtitle="Изменете ги медицинските детали за тековниот преглед">
                     <controls:FFPageHeader.HeaderContent>
+					<controls:FFButton
+                            ButtonKind="Secondary"
+                            Command="{Binding CancelCommand}"
+                            HeightRequestEx="40"
+                            Text="Назад"
+                            WidthRequestEx="130" />
                         <controls:FFButton ButtonKind="Secondary"
                                            Command="{Binding GenerateClinicalReportCommand}"
                                            IsEnabled="{Binding CanPrint}"
