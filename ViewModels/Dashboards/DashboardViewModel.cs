@@ -656,7 +656,13 @@ public partial class DashboardViewModel : ObservableObject
         CurrentPage=1;
     }
 
-    partial void OnCurrentPageChanged(int value) => OnPropertyChanged(nameof(PageInfoText));
+    partial void OnCurrentPageChanged(int value)
+{
+    OnPropertyChanged(nameof(PageInfoText));
+
+    if(IsEncounterHistoryMode)
+        BuildSelectedPatientEncounterGrid();
+}
     partial void OnTotalPagesChanged(int value) => OnPropertyChanged(nameof(PageInfoText));
 
     [RelayCommand]
@@ -823,7 +829,7 @@ public partial class DashboardViewModel : ObservableObject
 
         if(IsEncounterHistoryMode&&PreviewPatient?.Patient is { } patient)
         {
-            Buttons.Add(new SparkButtonItem { Label="Исчисти", IsPrimary=false, IsEnabled=true, Command=ClearFiltersCommand });
+            Buttons.Add(new SparkButtonItem { Label="Освежи", IsPrimary=false, IsEnabled=true, Command=RefreshCommand });
             Buttons.Add(new SparkButtonItem { Label="Нов преглед", IsPrimary=true, IsEnabled=CanCreateEncounter, Command=NewEncounterForSelectedCommand, CommandParameter=patient });
             Buttons.Add(new SparkButtonItem { Label="Нов извештај", IsPrimary=false, IsEnabled=true, Command=OpenNewReportCommand });
             return;
@@ -1203,15 +1209,15 @@ public partial class DashboardViewModel : ObservableObject
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
-            new() { Header = "СЗБО БРОЈ",      Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
-            // ─── FIX: Hyperlink fires OpenPatientFromGridCommand via HyperlinkCommand binding in XAML
-            new() { Header = "ИМЕ И ПРЕЗИМЕ",        Key = "FullName",   Width = new GridLength(2.8, GridUnitType.Star), CellType = SparkGridCellType.Hyperlink },
-            new() { Header = "ПОЛ",            Key = "Gender",     Width = new GridLength(0.8, GridUnitType.Star) },
-            new() { Header = "ВОЗРАСТ",        Key = "Age",        Width = new GridLength(0.9, GridUnitType.Star), CellType = SparkGridCellType.Number },
-            new() { Header = "КРВ",            Key = "BloodType",  Width = new GridLength(0.8, GridUnitType.Star) },
-            new() { Header = "ТЕЛЕФОН",        Key = "Phone",      Width = new GridLength(1.5, GridUnitType.Star) },
-            new() { Header = "СТАТУС",         Key = "Status",     Width = new GridLength(1.2, GridUnitType.Star), CellType = SparkGridCellType.Badge },
-            new() { Header = "ОПЦИИ",          Key = "Actions",    Width = GridLength.Auto,                        CellType = SparkGridCellType.Actions }
+            new() { Header = "ЕЗБО БРОЈ",      Key = "SzboNumber", Width = new GridLength(1.2, GridUnitType.Star) },
+            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "FullName", Width = new GridLength(2.4, GridUnitType.Star), CellType = SparkGridCellType.Hyperlink },
+            new() { Header = "ЕМБГ", Key = "NationalId", Width = new GridLength(1.45, GridUnitType.Star) },
+            new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.8, GridUnitType.Star) },
+            new() { Header = "ВОЗРАСТ", Key = "Age", Width = new GridLength(0.8, GridUnitType.Star), CellType = SparkGridCellType.Number },
+            new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.35, GridUnitType.Star) },
+            new() { Header = "ГРАД", Key = "City", Width = new GridLength(1.15, GridUnitType.Star) },
+            new() { Header = "СТАТУС", Key = "Status", Width = new GridLength(1.1, GridUnitType.Star), CellType = SparkGridCellType.Badge },
+            new() { Header = "ОПЦИИ", Key = "Actions", Width = GridLength.Auto, CellType = SparkGridCellType.Actions }
         };
     }
 
@@ -1274,10 +1280,11 @@ public partial class DashboardViewModel : ObservableObject
             row["SzboNumber"]=patient.SzboNumber;
             row["FullName"]=patient.FullName;
             row["City"]=patient.City;
+            row["NationalId"]=patient.NationalId;
             row["Gender"]=patient.Gender.ToDisplay();
             row["Age"]=patient.Age;
-            row["BloodType"]=patient.BloodType;
             row["Phone"]=patient.Phone;
+            row["City"]=patient.City;
             row["LastActivity"]=item.LastActivity is { } last ? last.ToString("dd.MM.yyyy") : "—";
             row["NextAppointment"]=item.ActiveAppointment is { } next ? next.ScheduledStart.ToString("dd.MM.yyyy") : "—";
 
