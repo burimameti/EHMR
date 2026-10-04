@@ -1,191 +1,186 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ContentView
-    x:Class="EHMR.Resources.Controls.SparkExplorerHeaderView"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:sc="clr-namespace:EHMR.Resources.Controls"
-    x:Name="Root"
-    SizeChanged="OnHeaderSizeChanged"
-    ZIndex="100">
+	x:Class="EHMR.Resources.Controls.SparkExplorerHeaderView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:sc="clr-namespace:EHMR.Resources.Controls"
+	x:Name="Root"
+	SizeChanged="OnHeaderSizeChanged"
+	ZIndex="100">
 
-    <VerticalStackLayout
-        Margin="0"
-        Padding="10"
-        BackgroundColor="White"
-        Spacing="0">
+	<VerticalStackLayout
+		Margin="0"
+		Padding="10"
+		BackgroundColor="White"
+		Spacing="0">
 
-        <Grid
-            BackgroundColor="Transparent"
-            IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
+		<Grid BackgroundColor="Transparent" IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
 
-            <Grid
-                x:Name="SecondaryToolbarGrid"
-                Padding="0"
-                ColumnDefinitions="*,Auto,Auto"
-                RowDefinitions="Auto"
-                ColumnSpacing="8"
-                MinimumHeightRequest="64"
-                MinimumWidthRequest="0">
+			<Grid
+				x:Name="SecondaryToolbarGrid"
+				Padding="0"
+				ColumnDefinitions="*,Auto,Auto"
+				ColumnSpacing="8"
+				MinimumHeightRequest="64"
+				MinimumWidthRequest="0"
+				RowDefinitions="Auto">
 
-                <!-- ROW 0: all action buttons on the right -->
-                <HorizontalStackLayout
-                    x:Name="ActionLayout"
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    HorizontalOptions="End"
-                    Spacing="8"
-                    VerticalOptions="Center">
+				<!--  COL 2: action buttons (Освежи + dynamic ones)  -->
+				<HorizontalStackLayout
+					x:Name="ActionLayout"
+					Grid.Row="0"
+					Grid.Column="2"
+					HorizontalOptions="End"
+					Spacing="8"
+					VerticalOptions="Center">
 
-                    <!-- Clear is part of the same action row, before the other actions -->
-                    <sc:FFButton
-                        ButtonKind="Green"
-                        Clicked="OnClearClicked"
-                        ContentPadding="16,0"
-                        CornerRadius="6"
-                        HeightRequestEx="44"
-                        IsVisible="{Binding ClearButton, Source={x:Reference Root}}"
-                        Text="Освежи"
-                        WidthRequestEx="0">
-                    </sc:FFButton>
+					<sc:FFButton
+						ButtonKind="Green"
+						Clicked="OnClearClicked"
+						ContentPadding="16,0"
+						CornerRadius="6"
+						HeightRequestEx="44"
+						IsVisible="{Binding HasClearButton, Source={x:Reference Root}}"
+						Text="Освежи"
+						WidthRequestEx="0" />
 
-                    <HorizontalStackLayout
-                        BindableLayout.ItemsSource="{Binding ActionButtons, Source={x:Reference Root}}"
-                        Spacing="8"
-                        HorizontalOptions="End">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate x:DataType="sc:SparkButtonItem">
-                                <sc:FFButton
-                                    ButtonKind="Secondary"
-                                    Command="{Binding Command}"
-                                    CommandParameter="{Binding CommandParameter}"
-                                    ContentPadding="16,0"
-                                    CornerRadius="6"
-                                    HeightRequestEx="44"
-                                    IsEnabled="{Binding IsEnabled}"
-                                    Text="{Binding Label}"
-                                    WidthRequestEx="0">
-                                    <sc:FFButton.Triggers>
-                                        <DataTrigger
-                                            Binding="{Binding IsPrimary}"
-                                            TargetType="sc:FFButton"
-                                            Value="True">
-                                            <Setter Property="ButtonKind" Value="Primary" />
-                                        </DataTrigger>
-                                        
-                                    </sc:FFButton.Triggers>
-                                </sc:FFButton>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </HorizontalStackLayout>
-                </HorizontalStackLayout>
+					<HorizontalStackLayout
+						BindableLayout.ItemsSource="{Binding ActionButtons, Source={x:Reference Root}}"
+						HorizontalOptions="End"
+						Spacing="8">
+						<BindableLayout.ItemTemplate>
+							<DataTemplate x:DataType="sc:SparkButtonItem">
+								<sc:FFButton
+									ButtonKind="Secondary"
+									Command="{Binding Command}"
+									CommandParameter="{Binding CommandParameter}"
+									ContentPadding="16,0"
+									CornerRadius="6"
+									HeightRequestEx="44"
+									IsEnabled="{Binding IsEnabled}"
+									Text="{Binding Label}"
+									WidthRequestEx="0">
+									<sc:FFButton.Triggers>
+										<DataTrigger
+											Binding="{Binding IsPrimary}"
+											TargetType="sc:FFButton"
+											Value="True">
+											<Setter Property="ButtonKind" Value="Primary" />
+										</DataTrigger>
+									</sc:FFButton.Triggers>
+								</sc:FFButton>
+							</DataTemplate>
+						</BindableLayout.ItemTemplate>
+					</HorizontalStackLayout>
+				</HorizontalStackLayout>
 
-                <!-- ROW 1: search on the left, pickers on the right -->
-                <VerticalStackLayout
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    HorizontalOptions="Fill"
-                    MinimumWidthRequest="0"
-                    Spacing="4"
-                    VerticalOptions="Fill">
+				<!--  COL 0: search + suggestions  -->
+				<VerticalStackLayout
+					Grid.Row="0"
+					Grid.Column="0"
+					HorizontalOptions="Fill"
+					MinimumWidthRequest="0"
+					Spacing="4"
+					VerticalOptions="Fill">
 
-                    <sc:FFSearchBox
-                        x:Name="HeaderSearchBox"
-                        HorizontalOptions="Fill"
-                        Label="Пребарување"
-                        Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
-                        SearchCommand="{Binding SearchCommand, Source={x:Reference Root}}"
-                        Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}"
-                        VerticalOptions="Fill" />
+					<sc:FFSearchBox
+						x:Name="HeaderSearchBox"
+						HorizontalOptions="Start"
+						Label="Пребарување"
+						MaximumWidthRequest="800"
+						Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
+						SearchCommand="{Binding SearchCommand, Source={x:Reference Root}}"
+						Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}"
+						VerticalOptions="Fill" />
 
-                    <Border
-                        Padding="4"
-                        BackgroundColor="White"
-                        IsVisible="{Binding ShowSuggestions, Source={x:Reference Root}}"
-                        Stroke="{StaticResource SparkBorderSubtle}"
-                        StrokeShape="RoundRectangle 8"
-                        StrokeThickness="1">
-                        <Grid ColumnDefinitions="*,12" ColumnSpacing="4">
-                            <CollectionView
-                                x:Name="SuggestionList"
-                                Grid.Column="0"
-                                HeightRequest="164"
-                                ItemTemplate="{Binding SuggestionTemplate, Source={x:Reference Root}}"
-                                ItemsSource="{Binding Suggestions, Source={x:Reference Root}}"
-                                Scrolled="OnSuggestionListScrolled"
-                                SelectedItem="{Binding SelectedSuggestion, Source={x:Reference Root}, Mode=TwoWay}"
-                                SelectionMode="Single"
-                                VerticalScrollBarVisibility="Never" />
+					<Border
+						Padding="4"
+						BackgroundColor="White"
+						IsVisible="{Binding ShowSuggestions, Source={x:Reference Root}}"
+						Stroke="{StaticResource SparkBorderSubtle}"
+						StrokeShape="RoundRectangle 8"
+						StrokeThickness="1">
+						<Grid ColumnDefinitions="*,12" ColumnSpacing="4">
+							<CollectionView
+								x:Name="SuggestionList"
+								Grid.Column="0"
+								HeightRequest="164"
+								ItemTemplate="{Binding SuggestionTemplate, Source={x:Reference Root}}"
+								ItemsSource="{Binding Suggestions, Source={x:Reference Root}}"
+								Scrolled="OnSuggestionListScrolled"
+								SelectedItem="{Binding SelectedSuggestion, Source={x:Reference Root}, Mode=TwoWay}"
+								SelectionMode="Single"
+								VerticalScrollBarVisibility="Never" />
 
-                            <Border
-                                x:Name="SuggestionScrollRail"
-                                Grid.Column="1"
-                                Margin="2,4"
-                                BackgroundColor="#E2E8F0"
-                                StrokeThickness="0">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="4" />
-                                </Border.StrokeShape>
+							<Border
+								x:Name="SuggestionScrollRail"
+								Grid.Column="1"
+								Margin="2,4"
+								BackgroundColor="#E2E8F0"
+								StrokeThickness="1">
+								<Border.StrokeShape>
+									<RoundRectangle CornerRadius="4" />
+								</Border.StrokeShape>
 
-                                <Border
-                                    x:Name="SuggestionScrollThumb"
-                                    BackgroundColor="{StaticResource SidebarActiveBg}"
-                                    HeightRequest="38"
-                                    StrokeThickness="0"
-                                    VerticalOptions="Start">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="4" />
-                                    </Border.StrokeShape>
-                                    <Border.GestureRecognizers>
-                                        <PanGestureRecognizer PanUpdated="OnSuggestionThumbPanUpdated" />
-                                    </Border.GestureRecognizers>
-                                </Border>
-                            </Border>
-                        </Grid>
-                    </Border>
+								<Border
+									x:Name="SuggestionScrollThumb"
+									BackgroundColor="{StaticResource SidebarActiveBg}"
+									HeightRequest="38"
+									StrokeThickness="0"
+									VerticalOptions="Start">
+									<Border.StrokeShape>
+										<RoundRectangle CornerRadius="4" />
+									</Border.StrokeShape>
+									<Border.GestureRecognizers>
+										<PanGestureRecognizer PanUpdated="OnSuggestionThumbPanUpdated" />
+									</Border.GestureRecognizers>
+								</Border>
+							</Border>
+						</Grid>
+					</Border>
 
-                    <!-- Kept for existing code-behind compatibility; hidden from the two-row toolbar. -->
-                    <HorizontalStackLayout
-                        x:Name="CyrillicToggleLayout"
-                        IsVisible="False"
-                        HeightRequest="0"
-                        WidthRequest="0"
-                        Spacing="4">
-                        <Label
-                            FontSize="12"
-                            Text="Кирилица"
-                            TextColor="{StaticResource SparkTextSecondary}" />
-                        <CheckBox
-                            IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
-                            IsEnabled="True"
-                            Color="{StaticResource SidebarActiveBg}" />
-                    </HorizontalStackLayout>
-                </VerticalStackLayout>
+					<!--  Kept for code-behind compatibility; hidden by default.  -->
+					<HorizontalStackLayout
+						x:Name="CyrillicToggleLayout"
+						HeightRequest="0"
+						IsVisible="False"
+						Spacing="4"
+						WidthRequest="0">
+						<Label
+							FontSize="12"
+							Text="Кирилица"
+							TextColor="{StaticResource SparkTextSecondary}" />
+						<CheckBox
+							IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
+							IsEnabled="True"
+							Color="{StaticResource SidebarActiveBg}" />
+					</HorizontalStackLayout>
+				</VerticalStackLayout>
 
-                <HorizontalStackLayout
-                    x:Name="PickerLayout"
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
-                    Spacing="8"
-                    VerticalOptions="Center">
+				<!--  COL 1: pickers  -->
+				<HorizontalStackLayout
+					x:Name="PickerLayout"
+					Grid.Row="0"
+					Grid.Column="1"
+					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
+					Spacing="8"
+					VerticalOptions="Center">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate x:DataType="sc:SparkPickerItem">
+							<sc:FFPicker
+								ItemsSource="{Binding Items}"
+								Label="{Binding Placeholder}"
+								MinimumWidthRequest="110"
+								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
+				</HorizontalStackLayout>
+			</Grid>
 
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate x:DataType="sc:SparkPickerItem">
-                            <sc:FFPicker
-                                x:Name="HeaderPicker"
-                                ItemsSource="{Binding Items}"
-                                Label="{Binding Placeholder}"
-                                MinimumWidthRequest="110"
-                                SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </HorizontalStackLayout>
-            </Grid>
-
-            <BoxView
-                BackgroundColor="{StaticResource Transparent}"
-                HeightRequest="6"
-                VerticalOptions="End" />
-        </Grid>
-    </VerticalStackLayout>
+			<BoxView
+				BackgroundColor="{StaticResource Transparent}"
+				HeightRequest="6"
+				VerticalOptions="End" />
+		</Grid>
+	</VerticalStackLayout>
 </ContentView>
