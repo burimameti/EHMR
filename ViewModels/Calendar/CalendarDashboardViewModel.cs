@@ -441,7 +441,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
     [RelayCommand]
     private async Task CreateNewEncounterForSelectedDayAsync()
     {
-        var confirmed = await _dialog.ShowConfirmationAsync(
+        var confirmed = await UserDialogService.ShowConfirmationAsync(
             "Нов преглед",
             "Дали сте сигурни дека сакате да започнете нов преглед?",
             "Да",
