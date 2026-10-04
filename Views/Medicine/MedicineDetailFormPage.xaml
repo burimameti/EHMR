@@ -25,6 +25,8 @@
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader Grid.Row="0" Title="{Binding HeaderTitle}" Subtitle="{Binding HeaderSubtitle}">
 	<controls:FFPageHeader.HeaderContent>
+						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+
 					<controls:FFButton
                             ButtonKind="Secondary"
                             Command="{Binding CancelCommand}"
@@ -36,7 +38,9 @@
 			<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="40" IsVisible="{Binding IsEditMode}" Text="Откажи" />
 			<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" Command="{Binding ToggleEditCommand}" HeightRequestEx="40" IsEnabled="{Binding CanUpdate}" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="White" />
 		</HorizontalStackLayout>
-	</controls:FFPageHeader.HeaderContent>
+	
+						</HorizontalStackLayout>
+					</controls:FFPageHeader.HeaderContent>
 </controls:FFPageHeader>
 			</Border>
 
