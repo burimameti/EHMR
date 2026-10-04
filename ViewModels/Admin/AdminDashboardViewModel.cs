@@ -110,19 +110,19 @@ public partial class AdminDashboardViewModel : ObservableObject
 
         GoToDoctorsCommand=
             new AsyncRelayCommand(
-                async () => { if(!CanViewDoctors) return; await _navigationService.GoToAsync(AppRoutes.Doctors.List); });
+                async () => { if(!CanViewDoctors) return; await Shell.Current.GoToAsync(AppRoutes.Doctors.List); });
 
 
 
         GoToBackupsCommand=
             new AsyncRelayCommand(
-                async () => { if(!CanViewBackups) return; await _navigationService.GoToAsync(AppRoutes.Backup.History); });
+                async () => { if(!CanViewBackups) return; await Shell.Current.GoToAsync(AppRoutes.Backup.History); });
 
 
 
         ImportMkbCommand=
             new AsyncRelayCommand(
-                async () => { if(!CanViewMkb) return; await _navigationService.GoToAsync(AppRoutes.Mkb10Codes.List); });
+                async () => { if(!CanViewMkb) return; await Shell.Current.GoToAsync(AppRoutes.Mkb10Codes.List); });
 
 
 
@@ -234,7 +234,7 @@ public partial class AdminDashboardViewModel : ObservableObject
         }
 
         _selectedBackup.SelectedItem=backup;
-        await _navigationService.GoToAsync(AppRoutes.Backup.BackupDetails);
+        await Shell.Current.GoToAsync(AppRoutes.Backup.BackupDetails);
     }
 
     private void BuildCards()
