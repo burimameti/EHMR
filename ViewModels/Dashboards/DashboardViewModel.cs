@@ -823,7 +823,7 @@ public partial class DashboardViewModel : ObservableObject
         var q = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(PatientSearchText)) q["search"]=PatientSearchText;
         if(!string.IsNullOrWhiteSpace(statusFilter)) q["statusFilter"]=statusFilter;
-        await navigationService.GoToAsync(AppRoutes.Patients.List, q);
+        await Shell.Current.GoToAsync($"///{AppRoutes.Patients.List}", q);
     }
 
     [RelayCommand]
@@ -831,7 +831,7 @@ public partial class DashboardViewModel : ObservableObject
     {
         var q = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(statusFilter)) q["statusFilter"]=statusFilter;
-        await navigationService.GoToAsync(AppRoutes.Appointments.List, q);
+        await Shell.Current.GoToAsync(AppRoutes.Appointments.List, q);
     }
 
     [RelayCommand]
@@ -839,12 +839,12 @@ public partial class DashboardViewModel : ObservableObject
     {
         var q = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(statusFilter)) q["statusFilter"]=statusFilter;
-        await navigationService.GoToAsync(AppRoutes.Encounters.List, q);
+        await Shell.Current.GoToAsync(AppRoutes.Encounters.List, q);
     }
 
     [RelayCommand]
     private async Task NavigateToTherapies() =>
-        await navigationService.GoToAsync(AppRoutes.Therapy.List);
+        await Shell.Current.GoToAsync(AppRoutes.Therapy.List);
 
     private async Task OpenAlertPatientAsync(Guid patientId)
     {
@@ -938,7 +938,7 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task NewEncounter()
     {
-        if(!CanCreateEncounter)
+        if(!CanManageAppointments)
         {
             await _userDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за додавање на нов преглед.", "OK");
             return;
@@ -950,11 +950,6 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task AddPatient()
     {
-        if(!CanCreatePatient)
-        {
-            await _userDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за додавање нов пациент.", "OK");
-            return;
-        }
         _selectedPatient.SelectedItem=null;
         _selectedPatient.OpenInEditMode=true;
         await navigationService.GoToAsync(AppRoutes.Patients.Detail);
@@ -981,11 +976,6 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task NewEncounterForSelected(Patient? patient)
     {
-        if(!CanCreateEncounter)
-        {
-            await _userDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за креирање нов преглед.", "OK");
-            return;
-        }
         if(patient is null)
         {
             await _userDialogService.ShowAlertAsync("Внимание", "Одберете пациент прво.");
