@@ -39,8 +39,7 @@
                     <!-- Clear is part of the same action row, before the other actions -->
                     <sc:FFButton
                         ButtonKind="Secondary"
-                        Command="{Binding ClearButton.Command, Source={x:Reference Root}}"
-                        CommandParameter="{Binding ClearButton.CommandParameter, Source={x:Reference Root}}"
+                        Clicked="OnClearClicked"
                         ContentPadding="16,0"
                         CornerRadius="6"
                         HeightRequestEx="44"
