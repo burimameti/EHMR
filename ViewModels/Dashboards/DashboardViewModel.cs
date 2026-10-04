@@ -817,33 +817,21 @@ public partial class DashboardViewModel : ObservableObject
     // =========================================================
     // SPARK HEADER ACTIONS
     // =========================================================
-    protected override void BuildSparkButtons()
+    private void BuildSparkButtons()
     {
         Buttons.Clear();
 
-        Buttons.Add(new SparkButtonItem
+        if(IsEncounterHistoryMode&&PreviewPatient?.Patient is { } patient)
         {
-            Label="Исчисти",
-            IsPrimary=false,
-            IsEnabled=true,
-            Command=ClearFiltersCommand
-        });
+            Buttons.Add(new SparkButtonItem { Label="Исчисти", IsPrimary=false, IsEnabled=true, Command=ClearFiltersCommand });
+            Buttons.Add(new SparkButtonItem { Label="Нов преглед", IsPrimary=true, IsEnabled=CanCreateEncounter, Command=NewEncounterForSelectedCommand, CommandParameter=patient });
+            Buttons.Add(new SparkButtonItem { Label="Нов извештај", IsPrimary=false, IsEnabled=true, Command=OpenNewReportCommand });
+            return;
+        }
 
-        Buttons.Add(new SparkButtonItem
-        {
-            Label="Нов преглед",
-            IsPrimary=true,
-            IsEnabled=CanCreateEncounter,
-            Command=NewEncounterCommand
-        });
-
-        Buttons.Add(new SparkButtonItem
-        {
-            Label="Нов извештај",
-            IsPrimary=false,
-            IsEnabled=true,
-            Command=OpenNewReportCommand
-        });
+        Buttons.Add(new SparkButtonItem { Label="Исчисти", IsPrimary=false, IsEnabled=true, Command=ClearFiltersCommand });
+        Buttons.Add(new SparkButtonItem { Label="Нов преглед", IsPrimary=true, IsEnabled=CanCreateEncounter, Command=NewEncounterCommand });
+        Buttons.Add(new SparkButtonItem { Label="Нов извештај", IsPrimary=false, IsEnabled=true, Command=OpenNewReportCommand });
     }
 
     [RelayCommand]
@@ -1204,20 +1192,6 @@ public partial class DashboardViewModel : ObservableObject
     // BUTTONS
     // =========================================================
     public ObservableCollection<SparkButtonItem> Buttons { get; } = new();
-
-    private void BuildSparkButtons()
-    {
-        Buttons.Clear();
-
-        if(IsEncounterHistoryMode&&PreviewPatient?.Patient is { } patient)
-        {
-            Buttons.Add(new SparkButtonItem { Label="Исчисти", IsPrimary=true, Command=ClearFiltersCommand });
-            Buttons.Add(new SparkButtonItem { Label="Нов преглед", IsPrimary=false, Command=NewEncounterForSelectedCommand, CommandParameter=patient });
-            return;
-        }
-
-        Buttons.Add(new SparkButtonItem { Label="Исчисти", IsPrimary=true, Command=ClearFiltersCommand });
-    }
 
     // =========================================================
     // GRID
