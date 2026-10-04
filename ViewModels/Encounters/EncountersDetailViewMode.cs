@@ -13,10 +13,13 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
     private readonly IPatientClinicalReportService _clinicalReportService;
     private readonly IAuthorizationService _authorizationService;
 
+    public bool IsAdmin =>
+        _authorizationService.HasRole(UserRole.Admin) ||
+        _authorizationService.HasRole(UserRole.SuperAdmin);
+
     public bool CanShowEdit =>
         CanEditEncounter &&
-        (_authorizationService.HasRole(UserRole.Admin) ||
-         _authorizationService.HasRole(UserRole.SuperAdmin) );
+        IsAdmin;
 
     public bool CanEditEncounter =>
         Encounter.Id!=Guid.Empty&&Encounter.Status!=EncounterStatus.Completed;
