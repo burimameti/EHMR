@@ -28,8 +28,6 @@ namespace EHMR.Services;
                 cell.Style.Fill.BackgroundColor=XLColor.FromHtml("#5B6B79");
                 cell.Style.Font.FontColor=XLColor.White;
 
-                // Ширината на колоната во гридот (device units, пр. 180) се преведува
-                // во Excel "character width" единица (приближно /7).
                 var widthUnits = GetColumnWidth(exportColumns[c]);
                 sheet.Column(c+1).Width=Math.Max(10, widthUnits/7.0);
             }
@@ -79,11 +77,13 @@ namespace EHMR.Services;
                 page.DefaultTextStyle(x => x.FontSize(8).FontFamily("Arial"));
 
                 // ==========================================
-                // HEADER - Медицински образец со Назив на установа
+                // CLEAN PRINT HEADER
                 // ==========================================
                 page.Header().Column(col =>
                 {
-                    col.Item().Border(1).BorderColor("#000000").Table(table =>
+                    // No filled banner/card and no generated-by/confidential note.
+                    // Keep only a restrained document line around the actual header data.
+                    col.Item().BorderBottom(1).BorderColor("#000000").PaddingBottom(5).Table(table =>
                     {
                         table.ColumnsDefinition(cd =>
                         {
@@ -93,8 +93,6 @@ namespace EHMR.Services;
                             cd.RelativeColumn(2.0f); // Period
                         });
 
-                        // Future logo placeholder. The actual logo can be placed here
-                        // later without changing the report header layout.
                         table.Cell().BorderRight(1).Padding(5).AlignCenter().AlignMiddle()
                             .Border(1).BorderColor("#9CA3AF")
                             .MinHeight(42)
@@ -102,8 +100,6 @@ namespace EHMR.Services;
                             .FontSize(8)
                             .FontColor("#6B7280");
 
-                        // Keep the report title clean. Patient/basic data belongs
-                        // in the report content below, not in the document title.
                         table.Cell().BorderRight(1).Padding(5).Column(c =>
                         {
                             c.Item().Text(institutionName.ToUpper())
@@ -111,21 +107,18 @@ namespace EHMR.Services;
                                    .FontSize(10)
                                    .FontColor("#000000");
 
+                            // Keep the report title as a single clean line.
                             c.Item().PaddingTop(2).Text(reportTitle)
                                    .Bold()
                                    .FontSize(11)
                                    .FontColor("#1F2937");
                         });
 
-                        // Клетка 2: ВИСТИНСКИ ЛОГИРАН КОРИСНИК
                         table.Cell().BorderRight(1).Padding(5).Column(c =>
                         {
                             c.Item().Text($"ДАТУМ НА ИЗДАВАЊЕ: {DateTime.Now:dd.MM.yyyy}").FontSize(7);
-                    
-                        
                         });
 
-                        // Клетка 3: ОПСЕГ НА ПЕРИОД + ВКУПНА КОЛИЧИНА НА ЛЕКОТ
                         table.Cell().Padding(5).Column(c =>
                         {
                             c.Item().Text("ОПСЕГ НА ПЕРИОД:").Bold().FontSize(8);
@@ -147,14 +140,6 @@ namespace EHMR.Services;
                             }
                         });
                     });
-
-                    // Забелешка за заштита на лични/медицински податоци
-                    col.Item().BorderLeft(1).BorderRight(1).BorderBottom(1).Padding(3)
-                       .Background("#F3F4F6")
-                       .Text("НАПОМЕНА: Документот содржи заштитени здравствени податоци од Клиника за Реумаaтологија.")
-                       .Italic().FontSize(7);
-
-                    col.Item().Height(8);
                 });
 
                 // ==========================================
@@ -211,6 +196,7 @@ namespace EHMR.Services;
 
         return Task.FromResult(path);
     }
+
     // ================= HELPERS =================
 
     private static bool IsSensitiveIdentityColumn(SparkGridColumn column)
@@ -223,8 +209,6 @@ namespace EHMR.Services;
                header.Contains("EMBG", StringComparison.OrdinalIgnoreCase) ||
                header.Contains("Матичен број", StringComparison.OrdinalIgnoreCase);
     }
-
-
 
     private static bool IsMedicineConsumptionReport(
         string reportTitle,
@@ -255,28 +239,26 @@ namespace EHMR.Services;
     }
 
     private static double GetColumnWidth(SparkGridColumn column)
-        {
-            // Fixed/Absolute ширина (пр. new GridLength(180)) се користи директно.
-            // Auto/Star колони немаат конкретна вредност па добиваат разумен default.
-            return column.Width.IsAbsolute&&column.Width.Value>0
-                ? column.Width.Value
-                : 180d;
-        }
+    {
+        return column.Width.IsAbsolute&&column.Width.Value>0
+            ? column.Width.Value
+            : 180d;
+    }
 
-        private static string CellToText(object? value) => value switch
-        {
-            null => string.Empty,
-            SparkBadgeValue badge => badge.Text,
-            DateTime dt => dt.ToString("dd.MM.yyyy"),
-            _ => value.ToString()??string.Empty
-        };
+    private static string CellToText(object? value) => value switch
+    {
+        null => string.Empty,
+        SparkBadgeValue badge => badge.Text,
+        DateTime dt => dt.ToString("dd.MM.yyyy"),
+        _ => value.ToString()??string.Empty
+    };
 
-        private static string SafeSheetName(string title)
-        {
-            var invalid = new[] { '\\', '/', '*', '[', ']', ':', '?' };
-            var clean = new string(title.Where(c => !invalid.Contains(c)).ToArray());
-            return clean.Length>31 ? clean[..31] : (clean.Length==0 ? "Извештај" : clean);
-        }
+    private static string SafeSheetName(string title)
+    {
+        var invalid = new[] { '\\', '/', '*', '[', ']', ':', '?' };
+        var clean = new string(title.Where(c => !invalid.Contains(c)).ToArray());
+        return clean.Length>31 ? clean[..31] : (clean.Length==0 ? "Извештај" : clean);
+    }
 
     private static string BuildOutputPath(string title, string extension)
     {
@@ -285,7 +267,6 @@ namespace EHMR.Services;
 
         const string folder = @"C:\GenerateReports";
 
-        // Create folder if it doesn't exist
         if(!Directory.Exists(folder))
         {
             Directory.CreateDirectory(folder);
