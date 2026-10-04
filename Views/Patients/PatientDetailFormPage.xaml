@@ -840,12 +840,33 @@
 												Text="{Binding MkbDescriptionSearchText, Mode=TwoWay}" />
 										</Grid>
 
-										<controls:FFSearchBox
+										<VerticalStackLayout
 											Grid.Row="2"
 											Grid.Column="1"
 											IsVisible="{Binding IsEditMode}"
-											Placeholder="Додај лек во активна терапија..."
-											Text="{Binding MedicineSearchText, Mode=TwoWay}" />
+											Spacing="5">
+											<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+												<Label
+													FontAttributes="Bold"
+													FontSize="11"
+													Text="Лек"
+													TextColor="{StaticResource SparkTextSecondary}"
+													VerticalOptions="Center" />
+												<Button
+													Grid.Column="1"
+													Padding="10,8"
+													BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
+													Command="{Binding AddApplicationRegimeCommand}"
+													CornerRadius="6"
+													FontAttributes="Bold"
+													FontSize="10"
+													Text="+ Нов Начин на апликација"
+													TextColor="White" />
+											</Grid>
+											<controls:FFSearchBox
+												Placeholder="Додај лек во активна терапија..."
+												Text="{Binding MedicineSearchText, Mode=TwoWay}" />
+										</VerticalStackLayout>
 
 										<!--  РЕД 2 ЛЕВО — dropdown (половина ширина) + избрани дијагнози  -->
 										<VerticalStackLayout
