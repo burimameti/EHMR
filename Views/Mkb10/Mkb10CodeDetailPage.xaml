@@ -27,6 +27,12 @@
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader Title="{Binding HeaderTitle}" Subtitle="{Binding HeaderSubtitle}">
 				<controls:FFPageHeader.HeaderContent>
+					<controls:FFButton
+                            ButtonKind="Secondary"
+                            Command="{Binding CancelCommand}"
+                            HeightRequestEx="40"
+                            Text="Назад"
+                            WidthRequestEx="130" />
 					<HorizontalStackLayout Spacing="10">
 						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" IsEnabled="{Binding CanEditForm}" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" WidthRequest="160" />
 						<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" IsVisible="{Binding IsEditMode}" Text="Откажи" WidthRequest="160" />
