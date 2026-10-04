@@ -21,8 +21,8 @@
             <Grid
                 x:Name="SecondaryToolbarGrid"
                 Padding="0"
-                ColumnDefinitions="*,Auto"
-                RowDefinitions="Auto,Auto"
+                ColumnDefinitions="*,Auto,Auto"
+                RowDefinitions="Auto"
                 ColumnSpacing="8"
                 MinimumHeightRequest="64"
                 MinimumWidthRequest="0">
@@ -31,14 +31,14 @@
                 <HorizontalStackLayout
                     x:Name="ActionLayout"
                     Grid.Row="0"
-                    Grid.Column="1"
+                    Grid.Column="2"
                     HorizontalOptions="End"
                     Spacing="8"
                     VerticalOptions="Center">
 
                     <!-- Clear is part of the same action row, before the other actions -->
                     <sc:FFButton
-                        ButtonKind="Secondary"
+                        ButtonKind="Green"
                         Clicked="OnClearClicked"
                         ContentPadding="16,0"
                         CornerRadius="6"
@@ -46,13 +46,6 @@
                         IsVisible="{Binding ClearButton, Source={x:Reference Root}}"
                         Text="Исчисти"
                         WidthRequestEx="0">
-                        <sc:FFButton.Triggers>
-                            <Trigger TargetType="sc:FFButton" Property="IsVisible" Value="True">
-                                <Setter Property="IsBlue" Value="True" />
-                                <Setter Property="BorderColor" Value="#2563EB" />
-                                <Setter Property="TextColorEx" Value="White" />
-                            </Trigger>
-                        </sc:FFButton.Triggers>
                     </sc:FFButton>
 
                     <HorizontalStackLayout
@@ -95,7 +88,7 @@
 
                 <!-- ROW 1: search on the left, pickers on the right -->
                 <VerticalStackLayout
-                    Grid.Row="1"
+                    Grid.Row="0"
                     Grid.Column="0"
                     HorizontalOptions="Fill"
                     MinimumWidthRequest="0"
@@ -177,7 +170,7 @@
 
                 <HorizontalStackLayout
                     x:Name="PickerLayout"
-                    Grid.Row="1"
+                    Grid.Row="0"
                     Grid.Column="1"
                     BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
                     Spacing="8"
@@ -198,7 +191,7 @@
 
             <BoxView
                 BackgroundColor="{StaticResource Transparent}"
-                HeightRequest="10"
+                HeightRequest="6"
                 VerticalOptions="End" />
         </Grid>
     </VerticalStackLayout>
