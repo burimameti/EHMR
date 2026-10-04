@@ -26,6 +26,13 @@ public partial class FFButton : ContentView
 
         if (isHover)
         {
+            if(string.Equals(Text, "Откажи", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(Text, "Cancel", StringComparison.OrdinalIgnoreCase))
+            {
+                BackgroundColorEx=Color.FromArgb("#991B1B");
+                return;
+            }
+
             if(IsBlue)
             {
                 BackgroundColorEx=Color.FromArgb("#258F84");
@@ -82,7 +89,7 @@ public partial class FFButton : ContentView
     // ═══════════════════════════════════════════════════════════ //
 
     public static readonly BindableProperty TextProperty =
-        BindableProperty.Create(nameof(Text), typeof(string), typeof(FFButton), string.Empty);
+        BindableProperty.Create(nameof(Text), typeof(string), typeof(FFButton), string.Empty, propertyChanged: (b, _, _) => ((FFButton)b).ApplyKind());
 
     public static readonly BindableProperty IsBlueProperty =
         BindableProperty.Create(nameof(IsBlue), typeof(bool), typeof(FFButton), false,
