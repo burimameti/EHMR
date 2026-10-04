@@ -200,11 +200,26 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
 
     [RelayCommand]
     private async Task Cancel()
-        => await NavigationService.GoBackAsync();
+    {
+        var confirmed = await UserDialogService.ShowConfirmationAsync(
+            "Откажи",
+            "Дали сте сигурни дека сакате да се вратите назад без да ги зачувате промените?",
+            "Да",
+            "Не");
+        if(!confirmed) return;
+        await NavigationService.GoBackAsync();
+    }
 
     [RelayCommand]
     public async Task SaveAsync()
     {
+        var confirmed = await UserDialogService.ShowConfirmationAsync(
+            "Зачувај преглед",
+            "Дали сте сигурни дека сакате да ги зачувате промените на прегледот?",
+            "Да",
+            "Не");
+        if(!confirmed) return;
+
         if(!CanModifyEncounter)
         {
             await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за промена на овој преглед.", "ОК");
