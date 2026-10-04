@@ -355,5 +355,8 @@ public partial class FFMetricTileItem : ObservableObject
     [ObservableProperty]
     private object? commandParameter;
 
+    [ObservableProperty]
+    private bool showMore = true;
+
 
 }
