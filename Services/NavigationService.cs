@@ -78,9 +78,18 @@ namespace EHMR.Services
             if(shell is null)
                 throw new InvalidOperationException("Shell.Current is null. Ensure your app uses Shell.");
 
-            // Application Back buttons intentionally return to the Dashboard.
-            // This is the single navigation rule used by every page-level Back/Cancel action.
-            await shell.GoToAsync($"//{AppRoutes.Dashboard}", true);
+            // Prefer the real Shell navigation stack. This preserves the user's
+            // flow (list -> detail -> edit -> back) instead of always jumping to Dashboard.
+            // Fall back to Dashboard only when there is no previous page in the stack.
+            var navigation = shell.Navigation;
+            if(navigation.NavigationStack.Count>1)
+            {
+                await navigation.PopAsync();
+                return;
+            }
+
+            if(!string.Equals(shell.CurrentState?.Location.OriginalString, $"//{AppRoutes.Dashboard}", StringComparison.OrdinalIgnoreCase))
+                await shell.GoToAsync($"//{AppRoutes.Dashboard}", true);
         }
 
         public async Task PushModalAsync(object page)
