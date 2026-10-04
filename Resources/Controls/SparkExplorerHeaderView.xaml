@@ -19,7 +19,7 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				Padding="0"
-				ColumnDefinitions="*,Auto,Auto,Auto"
+				ColumnDefinitions="*"
 				ColumnSpacing="8"
 				MinimumHeightRequest="64"
 				MinimumWidthRequest="0">
@@ -86,7 +86,7 @@
 				</VerticalStackLayout>
 				<HorizontalStackLayout
 					x:Name="CyrillicToggleLayout"
-					Grid.Column="1"
+					Grid.Column="0"
 					IsVisible="{Binding ShowCyrillicToggle, Source={x:Reference Root}}"
 					Spacing="4"
 					VerticalOptions="Center"
@@ -113,7 +113,7 @@
 				</HorizontalStackLayout>
 				<HorizontalStackLayout
 					x:Name="PickerLayout"
-					Grid.Column="2"
+					Grid.Column="0"
 					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
 					Spacing="8"
 					VerticalOptions="Center">
@@ -131,7 +131,7 @@
 
 				<VerticalStackLayout
 					x:Name="ActionLayout"
-					Grid.Column="3"
+					Grid.Column="0"
 					Spacing="4"
 					VerticalOptions="End">
 					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}" Spacing="8">
