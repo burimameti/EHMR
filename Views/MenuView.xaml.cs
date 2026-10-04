@@ -26,28 +26,7 @@ namespace EHMR.Views
             //((CollectionView)sender).SelectedItem=null;
         }
 
-        private void OnGroupPointerEntered(object sender, PointerEventArgs e)
-        {
-            if(sender is BindableObject view && view.BindingContext is EHMR.Constants.NavigationGroup group)
-                group.IsHovered=true;
-        }
-
-        private void OnGroupPointerExited(object sender, PointerEventArgs e)
-        {
-            if(sender is BindableObject view && view.BindingContext is EHMR.Constants.NavigationGroup group)
-                group.IsHovered=false;
-        }
-
-        private void OnChildPointerEntered(object sender, PointerEventArgs e)
-        {
-            if(sender is BindableObject view && view.BindingContext is EHMR.Constants.NavigationItem item)
-                item.IsHovered=true;
-        }
-
-        private void OnChildPointerExited(object sender, PointerEventArgs e)
-        {
-            if(sender is BindableObject view && view.BindingContext is EHMR.Constants.NavigationItem item)
-                item.IsHovered=false;
-        }
+        // Code-behind
+       
     }
 }
