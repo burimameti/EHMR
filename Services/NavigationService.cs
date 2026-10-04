@@ -78,19 +78,8 @@ namespace EHMR.Services
             if(shell is null)
                 throw new InvalidOperationException("Shell.Current is null. Ensure your app uses Shell.");
 
-            // Back must unwind the current Shell navigation stack first.
-            // This keeps detail/create/edit pages on their originating list page
-            // instead of forcing every Back action to the Dashboard.
-            var navigationStack = shell.Navigation.NavigationStack;
-
-            if(navigationStack.Count > 1)
-            {
-                await shell.Navigation.PopAsync(true);
-                return;
-            }
-
-            // Root/menu pages have no previous page in the stack.
-            // Only those fall back to the application Dashboard.
+            // Application Back buttons intentionally return to the Dashboard.
+            // This is the single navigation rule used by every page-level Back/Cancel action.
             await shell.GoToAsync($"//{AppRoutes.Dashboard}", true);
         }
 
