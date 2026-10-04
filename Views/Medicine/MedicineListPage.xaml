@@ -80,6 +80,28 @@
 									ShowRowNumbers="True"
 									TotalPages="{Binding TotalPages}" />
 						</controls:FFSectionCard>
+
+						<controls:FFSectionCard>
+							<Grid ColumnDefinitions="*,Auto" Padding="4,0,4,10">
+								<VerticalStackLayout Spacing="3">
+									<Label FontAttributes="Bold" FontSize="16" Text="Скорови" TextColor="{StaticResource SparkTextPrimary}" />
+									<Label FontSize="12" Text="Регистар на клинички скорови достапни во прегледите." TextColor="{StaticResource SparkTextSecondary}" />
+								</VerticalStackLayout>
+								<controls:FFButton Grid.Column="1" ButtonKind="Primary" BackgroundColorEx="{StaticResource SidebarActiveBg}" TextColorEx="White" Command="{Binding AddScoreDefinitionCommand}" IsEnabled="{Binding CanCreate}" Text="+ Нов скор" HeightRequestEx="40" ContentPadding="18,0" />
+							</Grid>
+							<controls:SparkDataGridView Columns="{Binding ScoreColumns}" Rows="{Binding ScoreRows}" ShowPagination="False" ShowRowNumbers="True" />
+						</controls:FFSectionCard>
+
+						<controls:FFSectionCard>
+							<Grid ColumnDefinitions="*,Auto" Padding="4,0,4,10">
+								<VerticalStackLayout Spacing="3">
+									<Label FontAttributes="Bold" FontSize="16" Text="Начин на апликација" TextColor="{StaticResource SparkTextPrimary}" />
+									<Label FontSize="12" Text="Регистар на начини на апликација што се користат кај терапијата." TextColor="{StaticResource SparkTextSecondary}" />
+								</VerticalStackLayout>
+								<controls:FFButton Grid.Column="1" ButtonKind="Primary" BackgroundColorEx="{StaticResource SidebarActiveBg}" TextColorEx="White" Command="{Binding AddApplicationRegimeCommand}" IsEnabled="{Binding CanCreate}" Text="+ Нов начин" HeightRequestEx="40" ContentPadding="18,0" />
+							</Grid>
+							<controls:SparkDataGridView Columns="{Binding ApplicationRegimeColumns}" Rows="{Binding ApplicationRegimeRows}" ShowPagination="False" ShowRowNumbers="True" />
+						</controls:FFSectionCard>
 					</VerticalStackLayout>
 				</ScrollView>
 			</Border>
