@@ -44,6 +44,12 @@
 				<controls:FFPageHeader Title="{Binding PageTitle}" Subtitle="Податоци и пристап за избраниот реуматолог">
 
 					<controls:FFPageHeader.HeaderContent>
+					<controls:FFButton
+                            ButtonKind="Secondary"
+                            Command="{Binding CancelCommand}"
+                            HeightRequestEx="40"
+                            Text="Назад"
+                            WidthRequestEx="130" />
 
 						<Border
 							Padding="10,5"
