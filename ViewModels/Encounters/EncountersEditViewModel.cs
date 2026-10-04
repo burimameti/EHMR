@@ -236,7 +236,8 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
 
         await ExecuteSafeAsync(async () =>
         {
-            Encounter.SetNotes(EncounterDiagnosisNotes);
+            Encounter.SetNotes(string.Join(" | ", EncounterFindings));
+            ScoreText=string.Join(" | ", EncounterScores);
             await EncounterService.SaveEncounter(
                 Encounter,
                 Diagnoses.ToList(),
