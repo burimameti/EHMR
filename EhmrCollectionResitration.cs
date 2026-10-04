@@ -362,9 +362,6 @@ namespace EHMR
         // =========================
         private static IServiceCollection RegisterPatientModule(this IServiceCollection services)
         {
-            services.AddTransient<PatientListViewModel>();
-            //services.AddTransient<PatientDetailsViewModel>();
-            services.AddTransient<MedicineListViewModel>();
             services.AddTransient<ReportViewModel>();
             return services;
         }
