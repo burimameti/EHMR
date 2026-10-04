@@ -1,327 +1,342 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-	x:Class="EHMR.Views.MedicineDetailFormPage"
-	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
-	xmlns:models="clr-namespace:EHMR.Domain.Entities"
-	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
-	x:DataType="viewModels:MedicineDetailFormViewModel">
+    x:Class="EHMR.Views.MedicineDetailFormPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+    xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+    BackgroundColor="{StaticResource PageBackground}"
+    x:DataType="viewModels:MedicineDetailFormViewModel">
 
-	<Grid ColumnDefinitions="260,*">
+    <Grid ColumnDefinitions="260,*">
 
-		<Border Grid.Column="0" StrokeThickness="0">
-			<ContentView x:Name="MenuHost" />
-		</Border>
+        <!-- LEFT MENU -->
+        <Border Grid.Column="0" StrokeThickness="0">
+            <ContentView x:Name="MenuHost" />
+        </Border>
 
-		<Grid
-			Grid.Column="1"
-			Padding="0"
-			
-			BackgroundColor="{StaticResource PageBackground}"
-			RowDefinitions="Auto,Auto,*"
-			RowSpacing="16">
+        <!-- MAIN CONTENT -->
+        <Grid
+            Grid.Column="1"
+            Margin="0"
+            RowDefinitions="Auto,*,Auto"
+            RowSpacing="0">
 
-			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<controls:FFPageHeader Grid.Row="0" Title="{Binding HeaderTitle}" Subtitle="{Binding HeaderSubtitle}">
-	<controls:FFPageHeader.HeaderContent>
-						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+            <!-- HEADER — same visual language as New Patient -->
+            <Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
+                <controls:FFPageHeader
+                    Title="{Binding HeaderTitle}"
+                    Subtitle="{Binding HeaderSubtitle}">
+                    <controls:FFPageHeader.HeaderContent>
+                        <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
 
-					<controls:FFButton
-                            ButtonKind="Secondary"
-                            Command="{Binding CancelCommand}"
-                            HeightRequestEx="40"
-                            Text="Назад"
-                            WidthRequestEx="130" />
-		<HorizontalStackLayout Spacing="10">
-			<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" Command="{Binding SaveCommand}" HeightRequestEx="40" IsEnabled="{Binding CanEditForm}" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" />
-			<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="40" IsVisible="{Binding IsEditMode}" Text="Откажи" />
-			<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" Command="{Binding ToggleEditCommand}" HeightRequestEx="40" IsEnabled="{Binding CanUpdate}" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="White" />
-		</HorizontalStackLayout>
-	
-						</HorizontalStackLayout>
-					</controls:FFPageHeader.HeaderContent>
-</controls:FFPageHeader>
-			</Border>
+                            <controls:FFButton
+                                ButtonKind="Secondary"
+                                Command="{Binding CancelCommand}"
+                                HeightRequestEx="40"
+                                Text="Назад"
+                                WidthRequestEx="130" />
 
-			<Border
-				Grid.Row="1"
-				Padding="0"
-				BackgroundColor="{StaticResource SparkBackground}"
-				StrokeThickness="0">
+                            <controls:FFButton
+                                BackgroundColorEx="{StaticResource SidebarActiveBg}"
+                                Command="{Binding SaveCommand}"
+                                HeightRequestEx="40"
+                                IsEnabled="{Binding CanEditForm}"
+                                IsVisible="{Binding IsEditMode}"
+                                Text="Зачувај"
+                                TextColorEx="White" />
 
-				<VerticalStackLayout Spacing="0">
+                            <controls:FFButton
+                                ButtonKind="Secondary"
+                                Command="{Binding CancelCommand}"
+                                HeightRequestEx="40"
+                                IsVisible="{Binding IsEditMode}"
+                                Text="Откажи" />
 
-					<Grid ColumnDefinitions="*,*,*" ColumnSpacing="0">
+                            <controls:FFButton
+                                BackgroundColorEx="{StaticResource SidebarActiveBg}"
+                                Command="{Binding ToggleEditCommand}"
+                                HeightRequestEx="40"
+                                IsEnabled="{Binding CanUpdate}"
+                                IsVisible="{Binding IsReadOnly}"
+                                Text="Уреди"
+                                TextColorEx="White" />
 
-						<Grid
-							Grid.Column="0"
-							Padding="16,14,16,12"
-							BackgroundColor="{Binding IsTab1Active, Converter={StaticResource BoolToActiveBackgroundConverter}}">
+                        </HorizontalStackLayout>
+                    </controls:FFPageHeader.HeaderContent>
+                </controls:FFPageHeader>
+            </Border>
 
-							<Grid.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="1" />
-							</Grid.GestureRecognizers>
+            <!-- FORM -->
+            <Grid
+                Grid.Row="1"
+                Margin="0"
+                Padding="0"
+                Style="{StaticResource CrudFormBodyGridStyle}">
 
-							<HorizontalStackLayout
-								HorizontalOptions="Center"
-								Spacing="8"
-								VerticalOptions="Center">
-								<Label
-									FontFamily="FASolid"
-									FontSize="14"
-									Text="&#xf484;"
-									TextColor="White"
-									VerticalOptions="Center" />
-								<Label
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="Основни податоци"
-									TextColor="White" />
-							</HorizontalStackLayout>
+                <controls:CustomScrollView
+                    Margin="0"
+                    Padding="0"
+                    ScrollBarColor="{StaticResource SparkAccentTeal}">
 
-						</Grid>
+                    <VerticalStackLayout Spacing="0">
 
-						<Grid
-							Grid.Column="1"
-							Padding="16,14,16,12"
-							BackgroundColor="{Binding IsTab2Active, Converter={StaticResource BoolToActiveBackgroundConverter}}">
+                        <controls:FFSectionCard
+                            Margin="0"
+                            Style="{StaticResource CrudFormCardStyle}">
 
-							<Grid.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="2" />
-							</Grid.GestureRecognizers>
+                            <VerticalStackLayout
+                                Spacing="16"
+                                Style="{StaticResource CrudFormContentStackStyle}">
 
-							<HorizontalStackLayout
-								HorizontalOptions="Center"
-								Spacing="8"
-								VerticalOptions="Center">
-								<Label
-									FontFamily="FASolid"
-									FontSize="14"
-									Text="&#xf0f1;"
-									TextColor="White"
-									VerticalOptions="Center" />
-								<Label
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="Фармацевтски референци"
-									TextColor="White" />
-							</HorizontalStackLayout>
+                                <!-- BASIC DATA -->
+                                <VerticalStackLayout Spacing="10">
 
-						</Grid>
+                                    <controls:CrudSectionHeader
+                                        Title="ОСНОВНИ ПОДАТОЦИ"
+                                        LineColor="{StaticResource SparkAccentTeal}"
+                                        Style="{StaticResource SectionHeaderStyle}" />
 
-						<Grid
-							Grid.Column="2"
-							Padding="16,14,16,12"
-							BackgroundColor="{Binding IsTab3Active, Converter={StaticResource BoolToActiveBackgroundConverter}}">
+                                    <Grid
+                                        ColumnDefinitions="1.3*,1.3*,1*,1*"
+                                        ColumnSpacing="12"
+                                        RowDefinitions="Auto,Auto"
+                                        RowSpacing="10">
 
-							<Grid.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="3" />
-							</Grid.GestureRecognizers>
+                                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                            <Label
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldLabelStyle}"
+                                                Text="Име на лек *" />
+                                            <Border
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldBoxStyle}">
+                                                <Entry
+                                                    Placeholder="Пр. Paracetamol"
+                                                    Style="{StaticResource FieldEntryStyle}"
+                                                    Text="{Binding Medicine.Name}" />
+                                            </Border>
+                                            <VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
+                                                <Label Style="{StaticResource ReadHintStyle}" Text="Име:" />
+                                                <Label Style="{StaticResource ReadValueBoldStyle}" Text="{Binding Medicine.Name}" />
+                                            </VerticalStackLayout>
+                                        </VerticalStackLayout>
 
-							<HorizontalStackLayout
-								HorizontalOptions="Center"
-								Spacing="8"
-								VerticalOptions="Center">
-								<Label
-									FontFamily="FASolid"
-									FontSize="14"
-									Text="&#xf05a;"
-									TextColor="White"
-									VerticalOptions="Center" />
-								<Label
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="Системски референци"
-									TextColor="White" />
-							</HorizontalStackLayout>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                            <Label
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldLabelStyle}"
+                                                Text="Генеричко име" />
+                                            <Border
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldBoxStyle}">
+                                                <Entry
+                                                    Placeholder="Пр. Acetaminophen"
+                                                    Style="{StaticResource FieldEntryStyle}"
+                                                    Text="{Binding Medicine.GenericName}" />
+                                            </Border>
+                                            <VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
+                                                <Label Style="{StaticResource ReadHintStyle}" Text="Генеричко име:" />
+                                                <Label Style="{StaticResource ReadValueBoldStyle}" Text="{Binding Medicine.GenericName}" />
+                                            </VerticalStackLayout>
+                                        </VerticalStackLayout>
 
-						</Grid>
+                                        <VerticalStackLayout Grid.Column="2" Spacing="4">
+                                            <Label
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldLabelStyle}"
+                                                Text="Шифра" />
+                                            <Border
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldBoxStyle}">
+                                                <Entry
+                                                    Placeholder="ATC / интерна шифра"
+                                                    Style="{StaticResource FieldEntryStyle}"
+                                                    Text="{Binding Medicine.Code}" />
+                                            </Border>
+                                            <VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
+                                                <Label Style="{StaticResource ReadHintStyle}" Text="Шифра:" />
+                                                <Label Style="{StaticResource ReadValueBoldStyle}" Text="{Binding Medicine.Code}" />
+                                            </VerticalStackLayout>
+                                        </VerticalStackLayout>
 
-					</Grid>
+                                        <VerticalStackLayout Grid.Column="3" Spacing="4">
+                                            <Label
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldLabelStyle}"
+                                                Text="Производител" />
+                                            <Border
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldBoxStyle}">
+                                                <Entry
+                                                    Placeholder="Производител"
+                                                    Style="{StaticResource FieldEntryStyle}"
+                                                    Text="{Binding Medicine.Manufacturer}" />
+                                            </Border>
+                                            <VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
+                                                <Label Style="{StaticResource ReadHintStyle}" Text="Производител:" />
+                                                <Label Style="{StaticResource ReadValueBoldStyle}" Text="{Binding Medicine.Manufacturer}" />
+                                            </VerticalStackLayout>
+                                        </VerticalStackLayout>
 
-					<BoxView HeightRequest="1" Color="{StaticResource SparkBorder}" />
+                                        <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="4">
+                                            <Label
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldLabelStyle}"
+                                                Text="Фармацевтска форма *" />
+                                            <Border
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldBoxStyle}">
+                                                <Entry
+                                                    Placeholder="Таблети, Сируп, Инјекција..."
+                                                    Style="{StaticResource FieldEntryStyle}"
+                                                    Text="{Binding Medicine.DosageForm}" />
+                                            </Border>
+                                            <VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
+                                                <Label Style="{StaticResource ReadHintStyle}" Text="Фармацевтска форма:" />
+                                                <Label Style="{StaticResource ReadValueBoldStyle}" Text="{Binding Medicine.DosageForm}" />
+                                            </VerticalStackLayout>
+                                        </VerticalStackLayout>
 
-				</VerticalStackLayout>
+                                        <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="4">
+                                            <Label
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldLabelStyle}"
+                                                Text="Јачина" />
+                                            <Border
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldBoxStyle}">
+                                                <Entry
+                                                    Keyboard="Numeric"
+                                                    Placeholder="Пр. 500"
+                                                    Style="{StaticResource FieldEntryStyle}"
+                                                    Text="{Binding Medicine.Strength}" />
+                                            </Border>
+                                            <VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
+                                                <Label Style="{StaticResource ReadHintStyle}" Text="Јачина:" />
+                                                <Label Style="{StaticResource ReadValueBoldStyle}" Text="{Binding Medicine.Strength}" />
+                                            </VerticalStackLayout>
+                                        </VerticalStackLayout>
 
-			</Border>
+                                        <VerticalStackLayout Grid.Row="1" Grid.Column="2" Spacing="4">
+                                            <Label
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldLabelStyle}"
+                                                Text="Единица" />
+                                            <Border
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldBoxStyle}">
+                                                <Entry
+                                                    Placeholder="mg, ml, mcg, IU..."
+                                                    Style="{StaticResource FieldEntryStyle}"
+                                                    Text="{Binding Medicine.Unit}" />
+                                            </Border>
+                                            <VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
+                                                <Label Style="{StaticResource ReadHintStyle}" Text="Единица:" />
+                                                <Label Style="{StaticResource ReadValueBoldStyle}" Text="{Binding Medicine.Unit}" />
+                                            </VerticalStackLayout>
+                                        </VerticalStackLayout>
 
-			<controls:FFSectionCard
-				Grid.Row="2" Margin="0" ContentPadding="18">
+                                        <VerticalStackLayout Grid.Row="1" Grid.Column="3" Spacing="4">
+                                            <Label
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldLabelStyle}"
+                                                Text="Стандардна доза" />
+                                            <Border
+                                                IsVisible="{Binding IsEditMode}"
+                                                Style="{StaticResource EditFieldBoxStyle}">
+                                                <Entry
+                                                    Placeholder="Пр. 500 mg еднаш дневно"
+                                                    Style="{StaticResource FieldEntryStyle}"
+                                                    Text="{Binding Medicine.DefaultDosage}" />
+                                            </Border>
+                                            <VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
+                                                <Label Style="{StaticResource ReadHintStyle}" Text="Стандардна доза:" />
+                                                <Label Style="{StaticResource ReadValueBoldStyle}" Text="{Binding Medicine.DefaultDosage}" />
+                                            </VerticalStackLayout>
+                                        </VerticalStackLayout>
 
-				<ScrollView>
-					<VerticalStackLayout Padding="32" Spacing="24">
+                                    </Grid>
+                                </VerticalStackLayout>
 
-						<VerticalStackLayout IsVisible="{Binding IsTab1Active}" Spacing="20">
+                                <!-- APPLICATION INFORMATION -->
+                                <VerticalStackLayout Spacing="10">
 
-							<controls:CrudSectionHeader Title="ИНФОРМАЦИИ ЗА ЛЕКОТ" />
+                                    <controls:CrudSectionHeader
+                                        Title="ДОПОЛНИТЕЛНИ ИНФОРМАЦИИ"
+                                        LineColor="{StaticResource SparkAccentTeal}"
+                                        Style="{StaticResource SectionHeaderStyle}" />
 
-							<BoxView
-								Margin="0,10"
-								HeightRequest="1"
-								Color="{StaticResource SparkBorder}" />
+                                    <Border
+                                        Padding="14"
+                                        BackgroundColor="{StaticResource SparkAccentTealBg}"
+                                        StrokeShape="RoundRectangle 6"
+                                        StrokeThickness="0">
+                                        <HorizontalStackLayout Spacing="10">
+                                            <Label
+                                                FontFamily="FASolid"
+                                                FontSize="17"
+                                                Text="&#xf05a;"
+                                                TextColor="{StaticResource SparkAccentTealDark}"
+                                                VerticalOptions="Center" />
+                                            <Label
+                                                FontSize="12"
+                                                Text="Стандардната доза е само почетна референца. Реалната доза за пациент се дефинира во терапијата."
+                                                TextColor="{StaticResource SparkTextSecondary}"
+                                                VerticalOptions="Center" />
+                                        </HorizontalStackLayout>
+                                    </Border>
 
-							<Grid ColumnDefinitions="*,*" ColumnSpacing="22">
+                                </VerticalStackLayout>
 
-								<Grid
-									ColumnDefinitions="140,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
-									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Име на лек *"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<controls:FFInput Grid.Column="1" IsReadOnly="{Binding IsReadOnly}" IsEnabled="{Binding CanEditForm}" Placeholder="Пр. Paracetamol" Text="{Binding Medicine.Name}" />
-								</Grid>
+                                <!-- SYSTEM INFORMATION -->
+                                <VerticalStackLayout Spacing="10">
 
-								<Grid
-									Grid.Column="1"
-									ColumnDefinitions="140,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
-									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Генеричко име"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<controls:FFInput Grid.Column="1" IsReadOnly="{Binding IsReadOnly}" Placeholder="Пр. Acetaminophen" Text="{Binding Medicine.GenericName}" />
-								</Grid>
+                                    <controls:CrudSectionHeader
+                                        Title="СИСТЕМСКИ ИНФОРМАЦИИ"
+                                        LineColor="{StaticResource SparkAccentTeal}"
+                                        Style="{StaticResource SectionHeaderStyle}" />
 
-							</Grid>
+                                    <Grid
+                                        ColumnDefinitions="160,*"
+                                        ColumnSpacing="12"
+                                        RowDefinitions="Auto,Auto"
+                                        RowSpacing="10">
 
-							<BoxView
-								Margin="0,10"
-								HeightRequest="1"
-								Color="{StaticResource SparkBorder}" />
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Style="{StaticResource ReadHintStyle}"
+                                            Text="Идентификатор (ID)" />
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Style="{StaticResource ReadValueBoldStyle}"
+                                            Text="{Binding Medicine.Id}" />
 
-							<Grid ColumnDefinitions="*,*" ColumnSpacing="22">
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="0"
+                                            Style="{StaticResource ReadHintStyle}"
+                                            Text="Статус" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            FontAttributes="Bold"
+                                            FontSize="13"
+                                            Text="{Binding Medicine.IsActive, StringFormat='Активен: {0}'}"
+                                            TextColor="{StaticResource SparkAccentTealDark}" />
 
-								<Grid
-									ColumnDefinitions="140,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
-									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Фармацевтска форма"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<controls:FFInput Grid.Column="1" IsReadOnly="{Binding IsReadOnly}" Placeholder="Таблети, Сируп..." Text="{Binding Medicine.DosageForm}" />
-								</Grid>
+                                    </Grid>
+                                </VerticalStackLayout>
 
-								<Grid
-									Grid.Column="1"
-									ColumnDefinitions="140,*"
-									ColumnSpacing="16"
-									VerticalOptions="Center">
-									<Label
-										FontAttributes="Bold"
-										FontSize="13"
-										Text="Стандардна доза"
-										TextColor="{StaticResource SparkTextSecondary}"
-										VerticalOptions="Center" />
-									<controls:FFInput Grid.Column="1" IsReadOnly="{Binding IsReadOnly}" Placeholder="Пр. 500 mg" Text="{Binding Medicine.DefaultDosage}" />
-								</Grid>
+                            </VerticalStackLayout>
+                        </controls:FFSectionCard>
 
-							</Grid>
+                    </VerticalStackLayout>
+                </controls:CustomScrollView>
+            </Grid>
 
-						</VerticalStackLayout>
-
-						<VerticalStackLayout IsVisible="{Binding IsTab2Active}" Spacing="20">
-
-							<controls:CrudSectionHeader Title="ДОПОЛНИТЕЛНИ ИНФОРМАЦИИ ЗА АПЛИКАЦИЈА" />
-
-							<BoxView
-								Margin="0,10"
-								HeightRequest="1"
-								Color="{StaticResource SparkBorder}" />
-
-							<Border
-								Padding="18"
-								BackgroundColor="{StaticResource SparkAccentTealBg}"
-								StrokeShape="RoundRectangle 6"
-								StrokeThickness="0">
-
-								<HorizontalStackLayout Spacing="12">
-									<Label
-										FontFamily="FASolid"
-										FontSize="18"
-										Text="&#xf05a;"
-										TextColor="{StaticResource SparkTextPrimary}" />
-									<VerticalStackLayout Spacing="3">
-										<Label
-											FontAttributes="Bold"
-											FontSize="13"
-											Text="Информација"
-											TextColor="{StaticResource SparkTextPrimary}" />
-										<Label
-											FontSize="13"
-											Text="Основните информации за лекот се користат при креирање терапии, рецепти и медицински евиденции."
-											TextColor="{StaticResource SparkTextSecondary}" />
-									</VerticalStackLayout>
-								</HorizontalStackLayout>
-
-							</Border>
-
-						</VerticalStackLayout>
-
-						<VerticalStackLayout IsVisible="{Binding IsTab3Active}" Spacing="20">
-
-							<controls:CrudSectionHeader Title="СИСТЕМСКИ ИНФОРМАЦИИ" />
-
-							<BoxView
-								Margin="0,10"
-								HeightRequest="1"
-								Color="{StaticResource SparkAccentTealDark}" />
-
-							<Grid
-								ColumnDefinitions="160,*"
-								ColumnSpacing="12"
-								RowDefinitions="Auto,Auto"
-								RowSpacing="16">
-
-								<Label
-									Grid.Row="0"
-									Grid.Column="0"
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="Идентификатор (ID)"
-									TextColor="{StaticResource SparkTextSecondary}" />
-
-								<Label
-									Grid.Row="0"
-									Grid.Column="1"
-									FontSize="13"
-									Text="{Binding Medicine.Id}"
-									TextColor="{StaticResource SparkTextPrimary}" />
-
-								<Label
-									Grid.Row="1"
-									Grid.Column="0"
-									FontAttributes="Bold"
-									FontSize="13"
-									Text="Тековен режим"
-									TextColor="{StaticResource SparkTextSecondary}" />
-
-								<Label
-									Grid.Row="1"
-									Grid.Column="1"
-									FontSize="13"
-									Text="{Binding PageTitle}"
-									TextColor="{StaticResource SparkTextPrimary}" />
-
-							</Grid>
-
-						</VerticalStackLayout>
-
-					</VerticalStackLayout>
-				</ScrollView>
-
-			</controls:FFSectionCard>
-
-		</Grid>
-	</Grid>
+        </Grid>
+    </Grid>
 </ContentPage>
