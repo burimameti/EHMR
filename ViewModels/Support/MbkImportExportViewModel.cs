@@ -30,14 +30,20 @@ public partial class MbkImportExportViewModel : ObservableObject
     private readonly Mkb10ImportService _importService;
     private readonly IFileDialogService _fileDialogService;
     private readonly IAuthorizationService _authorization;
+    private readonly INavigationService _navigationService;
     private CancellationTokenSource? _cts;
 
-    public MbkImportExportViewModel(Mkb10ImportService importService, IFileDialogService fileDialogService, IAuthorizationService authorization)
+    public MbkImportExportViewModel(Mkb10ImportService importService, IFileDialogService fileDialogService, IAuthorizationService authorization, INavigationService navigationService)
     {
         _importService=importService;
         _fileDialogService=fileDialogService;
         _authorization=authorization;
+        _navigationService=navigationService;
     }
+
+    [RelayCommand]
+    private async Task GoBackAsync()
+        => await _navigationService.GoBackAsync();
 
     public bool CanManage => _authorization.CanPerform(Modules.MKBCodes, ModuleAction.Manage);
 
