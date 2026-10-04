@@ -47,6 +47,12 @@ public partial class TherapyDetailsViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task GoBackAsync()
+    {
+        await _navigationService.GoBackAsync();
+    }
+
+    [RelayCommand]
     private async Task LoadDataAsync()
     {
         try
