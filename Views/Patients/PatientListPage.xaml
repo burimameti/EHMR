@@ -27,7 +27,16 @@
 					<controls:FFPageHeader
 						Title="Пациенти"
 						Grid.Column="0"
-						Subtitle="Преглед, пребарување и управување со пациенти" />
+						Subtitle="Преглед, пребарување и управување со пациенти" >
+				<controls:FFPageHeader.HeaderContent>
+<controls:FFButton
+						ButtonKind="Secondary"
+						Command="{Binding GoBackCommand}"
+						HeightRequestEx="40"
+						Text="Назад"
+						WidthRequestEx="130" />
+			</controls:FFPageHeader.HeaderContent>
+		</controls:FFPageHeader>
 
 					<Button
 						Grid.Column="1"
