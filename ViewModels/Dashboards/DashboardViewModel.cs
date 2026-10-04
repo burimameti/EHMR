@@ -160,6 +160,7 @@ public partial class DashboardViewModel : ObservableObject
 
         var lastVisits = await db.Encounters
             .AsNoTracking()
+            .Include(e => e.Doctor)
             .Where(e => e.PatientId==item.Patient.Id)
             .OrderByDescending(e => e.ScheduledStart??e.EncounterDate)
             .ToListAsync();
