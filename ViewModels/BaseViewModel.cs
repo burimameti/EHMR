@@ -131,6 +131,13 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         CanManage=AuthService.CanPerform(ModuleName, ModuleAction.Manage);
     }
 
+    // ================= GLOBAL BACK =================
+    [RelayCommand]
+    public async Task GoBack()
+    {
+        await NavigationService.GoBackAsync();
+    }
+
     // ================= SELECT / NEW / EDIT =================
     [RelayCommand]
     protected virtual async Task Select(T item)
