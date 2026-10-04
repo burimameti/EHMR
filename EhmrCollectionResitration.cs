@@ -135,15 +135,7 @@ namespace EHMR
             services.AddSingleton(databaseOptions);
 
             services.AddDbContextFactory<DesktopTherapyDbContext>(options =>
-            {
-                ConfigureDatabase(options, databaseOptions);
-#if DEBUG
-                // EF Core 9 can surface "unbound variable" while evaluating a
-                // captured LINQ parameter. Include the expression in local debug
-                // logs so the offending query can be fixed instead of hiding it.
-                options.EnableSensitiveDataLogging();
-#endif
-            });
+                ConfigureDatabase(options, databaseOptions));
 
             // DatabaseMigrationService и делови од апликацијата го бараат самиот
             // контекст, а AddDbContextFactory регистрира само IDbContextFactory<T>.
@@ -278,6 +270,7 @@ namespace EHMR
             //  services.AddSingleton<IAppointmentService, AppointmentService>();
             // services.AddSingleton<IDocumentService, DocumentService>();
             // services.AddSingleton<IPrescriptionService, PrescriptionService>();
+            services.AddSingleton<INavigationCoordinator, NavigationCoordinator>();
             services.AddSingleton<IReportHistoryService, ReportHistoryService>();
             services.AddSingleton<IUserDialogService, UserDialogService>();
             services.AddSingleton<IAppointmentDetailService, AppointmentDetailService>();
