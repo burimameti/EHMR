@@ -415,6 +415,10 @@ public partial class DashboardViewModel : ObservableObject
                 .AsNoTracking()
                 .Include(p => p.Appointments)
                 .Include(p => p.Encounters)
+                .Include(p => p.Diagnoses)
+                    .ThenInclude(d => d.Mkb10Code)
+                .Include(p => p.PatientMedicines)
+                    .ThenInclude(pm => pm.Medicine)
                 .AsQueryable();
 
             if(isScoped)
@@ -840,7 +844,7 @@ public partial class DashboardViewModel : ObservableObject
             return;
         }
 
-        Buttons.Add(new SparkButtonItem { Label="Исчисти", IsPrimary=false, IsEnabled=true, Command=ClearFiltersCommand });
+        Buttons.Add(new SparkButtonItem { Label="Освежи", IsPrimary=false, IsEnabled=true, Command=RefreshCommand });
         Buttons.Add(new SparkButtonItem { Label="Нов преглед", IsPrimary=true, IsEnabled=CanCreateEncounter, Command=NewEncounterCommand });
         //Buttons.Add(new SparkButtonItem { Label="Нов извештај", IsPrimary=false, IsEnabled=true, Command=OpenNewReportCommand });
     }
@@ -1220,7 +1224,9 @@ public partial class DashboardViewModel : ObservableObject
             new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.8, GridUnitType.Star) },
             new() { Header = "ВОЗРАСТ", Key = "Age", Width = new GridLength(0.8, GridUnitType.Star), CellType = SparkGridCellType.Number },
             new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.35, GridUnitType.Star) },
-            new() { Header = "ГРАД", Key = "City", Width = new GridLength(1.15, GridUnitType.Star) },
+            new() { Header = "ГРАД", Key = "City", Width = new GridLength(1.05, GridUnitType.Star) },
+            new() { Header = "МОМЕНТАЛНА ДИЈАГНОЗА", Key = "CurrentDiagnoses", Width = new GridLength(2.2, GridUnitType.Star) },
+            new() { Header = "ТЕКОВНИ ЛЕКОВИ", Key = "CurrentMedicines", Width = new GridLength(2.0, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "Status", Width = new GridLength(1.1, GridUnitType.Star), CellType = SparkGridCellType.Badge },
             new() { Header = "ОПЦИИ", Key = "Actions", Width = GridLength.Auto, CellType = SparkGridCellType.Actions }
         };
@@ -1286,6 +1292,8 @@ public partial class DashboardViewModel : ObservableObject
             row["FullName"]=patient.FullName;
             row["City"]=patient.City;
             row["NationalId"]=patient.NationalId;
+            row["CurrentDiagnoses"]=item.CurrentDiagnoses.Length==0 ? "—" : string.Join(" • ", item.CurrentDiagnoses);
+            row["CurrentMedicines"]=item.CurrentMedicines.Length==0 ? "—" : string.Join(" • ", item.CurrentMedicines);
             row["Gender"]=patient.Gender.ToDisplay();
             row["Age"]=patient.Age;
             row["Phone"]=patient.Phone;
