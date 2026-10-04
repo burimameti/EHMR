@@ -229,7 +229,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         _selectedPatientId=value.Id;
         SelectedPatientLabel=value.DisplayText;
         IsPatientHistoryMode=true;
-        IsScoreHistoryMode=true;
+        IsScoreHistoryMode=false;
         BuildSparkGridColumns();
 
         PatientSuggestions.Clear();
@@ -1003,8 +1003,8 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 new() { Header="ПРЕГЛЕД / РЕУМАТОЛОГ", Key="HistoryEncounter", Width=new GridLength(1.8, GridUnitType.Star) },
                 new() { Header="СКОР", Key="HistoryScore", Width=new GridLength(1.0, GridUnitType.Star) },
                 new() { Header="ЛЕК", Key="HistoryMedicine", Width=new GridLength(2.0, GridUnitType.Star) },
-                new() { Header="ДОЗА", Key="HistoryDosage", Width=new GridLength(1.3, GridUnitType.Star) },
-                new() { Header="ФРЕКВЕНЦИЈА", Key="HistoryFrequency", Width=new GridLength(1.5, GridUnitType.Star) },
+                new() { Header="МКБ-10", Key="HistoryDosage", Width=new GridLength(2.4, GridUnitType.Star) },
+                new() { Header="ПРИЧИНА", Key="HistoryFrequency", Width=new GridLength(1.7, GridUnitType.Star) },
                 new() { Header="СТАТУС", Key="HistoryStatus", Width=new GridLength(1.1, GridUnitType.Star) }
             };
             return;
