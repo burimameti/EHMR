@@ -19,7 +19,16 @@
                 <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
                     <controls:FFPageHeader
                         Title="Администрација"
-                        Subtitle="Управување со корисници, реуматолози, МКБ-10 и резервни копии." />
+                        Subtitle="Управување со корисници, реуматолози, МКБ-10 и резервни копии." >
+				<controls:FFPageHeader.HeaderContent>
+<controls:FFButton
+						ButtonKind="Secondary"
+						Command="{Binding GoBackCommand}"
+						HeightRequestEx="40"
+						Text="Назад"
+						WidthRequestEx="130" />
+			</controls:FFPageHeader.HeaderContent>
+		</controls:FFPageHeader>
                     <controls:FFButton
                         Grid.Column="1"
                         ButtonKind="Secondary"
