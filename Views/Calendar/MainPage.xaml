@@ -132,12 +132,21 @@
 					RowSpacing="14">
 
 					<!--  1. HEADER TITLE  -->
-					<Label
-						Grid.Row="0"
-						FontAttributes="Bold"
-						FontSize="24"
-						Text="{Binding PageTitle}"
-						TextColor="#0F172A" />
+					<Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalOptions="Center">
+						<Label
+							FontAttributes="Bold"
+							FontSize="24"
+							Text="{Binding PageTitle}"
+						TextColor="#0F172A"
+						VerticalOptions="Center" />
+						<controls:FFButton
+							Grid.Column="1"
+							ButtonKind="Secondary"
+							Command="{Binding GoBackCommand}"
+							HeightRequestEx="40"
+							Text="Назад"
+							WidthRequestEx="130" />
+					</Grid>
 
 					<!--  2. TOOLBAR CONTROLS  -->
 					<!--  Auto за левата група: со 4* текстот на 22px и двете стрелки не собираа и се сечеа.  -->
