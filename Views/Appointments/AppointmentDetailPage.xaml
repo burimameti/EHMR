@@ -113,6 +113,12 @@
 					Margin="0,0,0,12"
 					Subtitle="{Binding HeaderSubtitle}">
 					<controls:FFPageHeader.HeaderContent>
+					<controls:FFButton
+                            ButtonKind="Secondary"
+                            Command="{Binding CancelCommand}"
+                            HeightRequestEx="40"
+                            Text="Назад"
+                            WidthRequestEx="130" />
 						<HorizontalStackLayout Spacing="10">
 							<controls:FFStatusChip
 								BackgroundColor="{Binding Appointment.Status, Converter={StaticResource AppointmentStatusToColorConverter}}"
