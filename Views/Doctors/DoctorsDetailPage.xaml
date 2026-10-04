@@ -44,6 +44,8 @@
 				<controls:FFPageHeader Title="{Binding PageTitle}" Subtitle="Податоци и пристап за избраниот реуматолог">
 
 					<controls:FFPageHeader.HeaderContent>
+						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+
 					<controls:FFButton
                             ButtonKind="Secondary"
                             Command="{Binding CancelCommand}"
@@ -101,6 +103,8 @@
 
 						</Border>
 
+					
+						</HorizontalStackLayout>
 					</controls:FFPageHeader.HeaderContent>
 
 				</controls:FFPageHeader>
