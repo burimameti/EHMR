@@ -27,6 +27,8 @@
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader Title="{Binding PageTitle}" Subtitle="Управување со кориснички улоги и системски дозволи">
 					<controls:FFPageHeader.HeaderContent>
+						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+
 					<controls:FFButton
                             ButtonKind="Secondary"
                             Command="{Binding CancelCommand}"
@@ -56,6 +58,8 @@
 								IsVisible="{Binding IsEditMode}"
 								Text="Зачувај"
 								TextColorEx="White" />
+						</HorizontalStackLayout>
+					
 						</HorizontalStackLayout>
 					</controls:FFPageHeader.HeaderContent>
 				</controls:FFPageHeader>
