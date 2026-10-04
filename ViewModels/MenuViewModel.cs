@@ -150,6 +150,13 @@ public partial class MenuViewModel : ObservableObject, IDisposable
         var previousRoute = ActiveRoute;
         IsNavigating=true;
 
+        if(item.StartsNewRecord)
+        {
+            var confirmed = await ConfirmNewRecordAsync(item.Title);
+            if(!confirmed)
+                return;
+        }
+
         if(item.StartsNewRecord&&item.Route==AppRoutes.Patients.Detail)
         {
             _selectedPatientService.SelectedItem=null;
@@ -367,6 +374,23 @@ public partial class MenuViewModel : ObservableObject, IDisposable
             Items.Add(group);
         }
         ApplyActiveState();
+    }
+
+    private static async Task<bool> ConfirmNewRecordAsync(string title)
+    {
+        var noun = title.Contains("пациент", StringComparison.OrdinalIgnoreCase)
+            ? "нов пациент"
+            : title.Contains("преглед", StringComparison.OrdinalIgnoreCase)
+                ? "нов преглед"
+                : title.Contains("термин", StringComparison.OrdinalIgnoreCase)
+                    ? "нов термин"
+                    : "нов запис";
+
+        return await Shell.Current.DisplayAlert(
+            "Потврда",
+            $"Дали сте сигурни дека сакате да креирате {noun}?",
+            "Да",
+            "Не");
     }
 
     // ============== LOGOUT ==============
