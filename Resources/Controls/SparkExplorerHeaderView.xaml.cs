@@ -55,6 +55,15 @@ namespace EHMR.Resources.Controls
             OnPropertyChanged(nameof(ClearButton));
         }
 
+        private void OnClearClicked(object? sender, EventArgs e)
+        {
+            var command = ClearButton?.Command;
+            var parameter = ClearButton?.CommandParameter;
+
+            if(command?.CanExecute(parameter)==true)
+                command.Execute(parameter);
+        }
+
         private void OnHeaderSizeChanged(object? sender, EventArgs e)
         {
             ApplyResponsiveLayout();
