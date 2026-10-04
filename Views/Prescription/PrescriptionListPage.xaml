@@ -29,7 +29,16 @@
 					<controls:FFPageHeader
 						Title="Рецепти"
 						Grid.Column="0"
-						Subtitle="Преглед, пребарување и управување со рецепти" />
+						Subtitle="Преглед, пребарување и управување со рецепти" >
+				<controls:FFPageHeader.HeaderContent>
+<controls:FFButton
+						ButtonKind="Secondary"
+						Command="{Binding GoBackCommand}"
+						HeightRequestEx="40"
+						Text="Назад"
+						WidthRequestEx="130" />
+			</controls:FFPageHeader.HeaderContent>
+		</controls:FFPageHeader>
 
 					<controls:FFButton
 						Grid.Column="1"
