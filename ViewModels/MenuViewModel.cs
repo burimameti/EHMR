@@ -52,9 +52,12 @@ public partial class MenuViewModel : ObservableObject, IDisposable
 
         ActiveRoute=route;
 
-        if(e.Source==ShellNavigationSource.Pop||
-           (_focusedGroup!=null&&!BelongsToGroup(_focusedGroup, route)))
+        if(e.Source==ShellNavigationSource.Pop)
             ShowMainMenu();
+
+        // Keep the menu open while navigating inside the selected group.
+        // Collapsing/rebuilding it on every route change makes navigation
+        // feel abrupt and causes the sidebar to visually jump.
     }
 
     private string? ResolveMenuRoute(Uri? location)
