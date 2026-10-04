@@ -334,7 +334,7 @@ namespace EHMR.Resources.Controls
         public bool Sortable
         {
             get; set;
-        }
+        } = true;
 
         /// <summary>Executed when the header is clicked.</summary>
         public ICommand HeaderTapCommand
