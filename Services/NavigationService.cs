@@ -58,9 +58,22 @@ namespace EHMR.Services
                 };
 
                 if(normalizedRoute.StartsWith("//"))
+                {
                     await activeShell.GoToAsync(normalizedRoute, true, navParams);
+                }
                 else
+                {
+                    // Module/list routes are navigation roots. Do not leave an old
+                    // Calendar/List page underneath them; otherwise Back can reopen
+                    // a stale page from an earlier navigation flow.
+                    if(IsModuleRootRoute(normalizedRoute) &&
+                       activeShell.Navigation.NavigationStack.Count > 1)
+                    {
+                        await activeShell.Navigation.PopToRootAsync(false);
+                    }
+
                     await activeShell.GoToAsync(normalizedRoute, navParams);
+                }
             }
             catch(Exception ex)
             {
@@ -70,6 +83,29 @@ namespace EHMR.Services
 
             _navEvents.NotifyRouteChanged(normalizedRoute);
             Debug.WriteLine($"Route called - on navService{DateTime.Now}", route);
+        }
+
+        private static bool IsModuleRootRoute(string route)
+        {
+            var cleanRoute=route.Split('?', 2)[0].Trim('/');
+            return cleanRoute.Equals(AppRoutes.Calendar, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.CalendarPage, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Patients.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Doctors.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Medicines.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.ApplicationRegimes.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Prescriptions.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Appointments.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Encounters.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Therapy.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Protocols.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Mkb10.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Mkb10Codes.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Reports.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Users.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Alerts.List, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Backup.Dashboard, StringComparison.OrdinalIgnoreCase)
+                || cleanRoute.Equals(AppRoutes.Admin.AdminPanel, StringComparison.OrdinalIgnoreCase);
         }
 
         public async Task GoBackAsync()
