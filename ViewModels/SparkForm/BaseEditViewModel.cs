@@ -70,8 +70,15 @@ namespace EHMR.ViewModels.SparkForm
         }
 
         [RelayCommand]
-        private void Cancel()
+        private async Task Cancel()
         {
+            var confirmed = await UserDialogService.ShowConfirmationAsync(
+                "Откажи",
+                "Дали сте сигурни дека сакате да се вратите назад без да ги зачувате промените?",
+                "Да",
+                "Не");
+            if(!confirmed) return;
+
             if(_isNew)
             {
                 NavigateBack();
@@ -94,6 +101,13 @@ namespace EHMR.ViewModels.SparkForm
 
             if(_isNew&&!CanCreate) return;
             if(!_isNew&&!CanUpdate) return;
+
+            var confirmed = await UserDialogService.ShowConfirmationAsync(
+                "Зачувај",
+                "Дали сте сигурни дека сакате да ги зачувате податоците?",
+                "Да",
+                "Не");
+            if(!confirmed) return;
 
             await ExecuteSafeAsync(async () =>
             {
