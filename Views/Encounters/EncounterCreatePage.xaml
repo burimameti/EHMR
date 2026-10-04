@@ -605,17 +605,46 @@
 										</BindableLayout.ItemTemplate>
 									</VerticalStackLayout>
 								</VerticalStackLayout>
-									<VerticalStackLayout Grid.Column="1" Spacing="8">
-										<Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
-											<Label FontAttributes="Bold" FontSize="13" Text="СКОРОВИ" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
-											<controls:FFButton Grid.Column="1" ButtonKind="Primary" Command="{Binding AddScoreCommand}" HeightRequestEx="34" Text="+ Нов скор" WidthRequestEx="105" />
-											<controls:FFButton Grid.Column="2" ButtonKind="Danger" Command="{Binding RemoveScoreCommand}" CommandParameter="{Binding ScoreText}" HeightRequestEx="34" Text="Избриши" WidthRequestEx="82" />
-										</Grid>
-										<Label FontSize="10" Text="Избери скор за овој преглед" TextColor="{StaticResource SparkTextSecondary}" />
-										<controls:FFPicker ItemsSource="{Binding ScoreOptions}" Placeholder="Избери скор" SelectedItem="{Binding ScoreText, Mode=TwoWay}" />
-									</VerticalStackLayout>
-							</Grid>
-							<!--  ЗАКАЖУВАЊЕ НА СЛЕДЕН ТЕРМИН  -->
+									<VerticalStackLayout Grid.Column="1" Spacing="10">
+    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
+        <Label FontAttributes="Bold" FontSize="13" Text="СКОРОВИ" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+        <controls:FFButton Grid.Column="1" ButtonKind="Primary" Command="{Binding AddScoreCommand}" HeightRequestEx="34" Text="+ Додади скор" WidthRequestEx="112" />
+        <controls:FFButton Grid.Column="2" ButtonKind="Secondary" Command="{Binding AddFindingCommand}" HeightRequestEx="34" Text="+ Додади наод" WidthRequestEx="112" />
+    </Grid>
+    <Label FontSize="10" Text="Внесените скорови и наоди се прикажуваат подолу." TextColor="{StaticResource SparkTextSecondary}" />
+    <Border BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
+        <VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterScores}" Spacing="0">
+            <BindableLayout.EmptyView>
+                <Label Padding="10,8" FontSize="11" Text="Нема внесени скорови." TextColor="{StaticResource SparkTextSecondary}" />
+            </BindableLayout.EmptyView>
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10,7" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Label FontSize="12" Text="{Binding .}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+                        <controls:FFButton Grid.Column="1" ButtonKind="Danger" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveScoreCommand}" CommandParameter="{Binding .}" HeightRequestEx="30" Text="Избриши" WidthRequestEx="76" />
+                    </Grid>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </VerticalStackLayout>
+    </Border>
+    <Border BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
+        <VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterFindings}" Spacing="0">
+            <BindableLayout.EmptyView>
+                <Label Padding="10,8" FontSize="11" Text="Нема внесени наоди." TextColor="{StaticResource SparkTextSecondary}" />
+            </BindableLayout.EmptyView>
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10,7" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Label FontSize="12" LineBreakMode="WordWrap" Text="{Binding .}" TextColor="{StaticResource SparkTextPrimary}" />
+                        <controls:FFButton Grid.Column="1" ButtonKind="Danger" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveFindingCommand}" CommandParameter="{Binding .}" HeightRequestEx="30" Text="Избриши" WidthRequestEx="76" />
+                    </Grid>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </VerticalStackLayout>
+    </Border>
+</VerticalStackLayout>
+</Grid>
+<!--  ЗАКАЖУВАЊЕ НА СЛЕДЕН ТЕРМИН  -->
 							<VerticalStackLayout Spacing="10">
 								<controls:CrudSectionHeader
 									Title="ЗАКАЖУВАЊЕ НА СЛЕДЕН ТЕРМИН"
