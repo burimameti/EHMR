@@ -266,7 +266,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         var query = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(SearchText)) query["search"]=SearchText;
         if(!string.IsNullOrWhiteSpace(statusFilter)) query["statusFilter"]=statusFilter;
-        await NavigationService.GoToAsync(AppRoutes.Patients.List, query);
+        await Shell.Current.GoToAsync(AppRoutes.Patients.List, query);
     }
 
     [RelayCommand]
@@ -274,7 +274,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     {
         var query = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(statusFilter)) query["statusFilter"]=statusFilter;
-        await NavigationService.GoToAsync(AppRoutes.Appointments.List, query);
+        await Shell.Current.GoToAsync(AppRoutes.Appointments.List, query);
     }
 
     [RelayCommand]
@@ -282,7 +282,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     {
         var query = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(statusFilter)) query["statusFilter"]=statusFilter;
-        await NavigationService.GoToAsync(AppRoutes.Therapy.List, query);
+        await Shell.Current.GoToAsync(AppRoutes.Therapy.List, query);
     }
 
     [RelayCommand]
@@ -291,6 +291,12 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         if(patient is null)
         {
             await UserDialogService.ShowAlertAsync("Внимание", "Одберете пациент прво.");
+            return;
+        }
+
+        if(!AuthService.CanPerform(Modules.Encounters, ModuleAction.Create))
+        {
+            await UserDialogService.ShowAlertAsync("Недозволена акција", "Немате авторизација за креирање нов преглед.", "ОК");
             return;
         }
 
