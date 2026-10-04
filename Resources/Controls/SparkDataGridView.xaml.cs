@@ -217,6 +217,7 @@ namespace EHMR.Resources.Controls
         private static readonly Color HyperlinkColor = Color.FromArgb("#0F766E");
         private static readonly Color AccentColor = Color.FromArgb("#0F766E");
         private static readonly Color AccentColorMuted = Color.FromArgb("#64748B");
+        private readonly Dictionary<string, bool> _sortAscending = new(StringComparer.OrdinalIgnoreCase);
 
         private void BuildGrid()
         {
@@ -421,27 +422,79 @@ namespace EHMR.Resources.Controls
                 FontSize=12,
                 VerticalOptions=LayoutOptions.Center
             });
-            if(column.Sortable)
+            var isSortable = column.Sortable
+                && column.CellType != SparkGridCellType.Actions
+                && column.CellType != SparkGridCellType.Button
+                && column.CellType != SparkGridCellType.QuickPreview;
+
+            if(isSortable)
+            {
                 row.Children.Add(new Label
                 {
-                    Text="\u25BE",
+                    Text=GetSortArrow(column.Key),
                     TextColor=HeaderTextColor,
-                    FontSize=R(10),
+                    FontSize=R(11),
                     VerticalOptions=LayoutOptions.Center
                 });
 
-            border.Content=row;
-
-            if(column.HeaderTapCommand!=null)
+                border.GestureRecognizers.Add(new TapGestureRecognizer
+                {
+                    Command=column.HeaderTapCommand ?? new Command(() => SortRows(column.Key)),
+                    CommandParameter=column.Key
+                });
+            }
+            else if(column.HeaderTapCommand!=null)
+            {
                 border.GestureRecognizers.Add(new TapGestureRecognizer
                 {
                     Command=column.HeaderTapCommand,
                     CommandParameter=column.Key
                 });
+            }
+
+            border.Content=row;
 
             Grid.SetRow(border, 0);
             Grid.SetColumn(border, columnIndex);
             GridRoot.Children.Add(border);
+        }
+
+        private string GetSortArrow(string key)
+        {
+            if(!_sortAscending.TryGetValue(key, out var ascending))
+                return "↕";
+            return ascending ? "↑" : "↓";
+        }
+
+        private void SortRows(string key)
+        {
+            var rows=Rows?.ToList()??new List<SparkGridRow>();
+            if(rows.Count<2) return;
+
+            var ascending=!_sortAscending.TryGetValue(key, out var current)||!current;
+            _sortAscending[key]=ascending;
+
+            rows.Sort((left,right) =>
+            {
+                left.TryGetValue(key,out var lv);
+                right.TryGetValue(key,out var rv);
+                var comparison=StringComparer.CurrentCultureIgnoreCase.Compare(
+                    GetSortableValue(lv),GetSortableValue(rv));
+                return ascending ? comparison : -comparison;
+            });
+
+            Rows=new ObservableCollection<SparkGridRow>(rows);
+        }
+
+        private static string GetSortableValue(object? value)
+        {
+            return value switch
+            {
+                null=>string.Empty,
+                SparkBadgeValue badge=>badge.Text??string.Empty,
+                SparkButtonItem button=>button.Label??string.Empty,
+                _=>Convert.ToString(value,CultureInfo.CurrentCulture)??string.Empty
+            };
         }
 
         public static readonly BindableProperty PageInfoTextProperty =
