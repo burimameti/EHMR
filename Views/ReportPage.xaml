@@ -31,8 +31,15 @@
 
 					<HorizontalStackLayout
 						Grid.Column="1"
-						Padding="100"
+						Padding="20"
+						Spacing="10"
 						VerticalOptions="Center">
+                        <controls:FFButton
+                            ButtonKind="Secondary"
+                            Command="{Binding GoBackCommand}"
+                            HeightRequestEx="40"
+                            Text="Назад"
+                            WidthRequestEx="130" />
 						<Border
 							Padding="12,8"
 							BackgroundColor="{StaticResource SurfaceAlt}"
