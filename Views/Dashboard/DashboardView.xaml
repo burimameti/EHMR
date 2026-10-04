@@ -361,7 +361,7 @@
 													Stroke="{StaticResource SparkBorderSubtle}"
 													StrokeShape="RoundRectangle 2"
 													StrokeThickness="1.2">
-													<Grid ColumnDefinitions="1.7*,1.1*,1.1*,1*" ColumnSpacing="14">
+													<Grid ColumnDefinitions="1.45*,1.0*,1.0*,0.9*,1.0*,0.9*" ColumnSpacing="12">
 														<VerticalStackLayout Spacing="1">
 															<Label
 																FontSize="10"
@@ -396,25 +396,18 @@
 																TextColor="{StaticResource SparkTextPrimary}" />
 														</VerticalStackLayout>
 														<VerticalStackLayout Grid.Column="3" Spacing="1">
-															<Label
-																FontSize="14"
-																HorizontalOptions="Center"
-																Text="Последен преглед"
-																TextColor="{StaticResource SparkAccentTealDark}" />
-															<Border
-																Padding="8,4"
-																BackgroundColor="{Binding LatestEncounterStatus, Converter={StaticResource EncounterStatusChipBg}}"
-																HorizontalOptions="Center"
-																StrokeThickness="0"
-																VerticalOptions="Start">
-																<Border.StrokeShape>
-																	<RoundRectangle CornerRadius="8" />
-																</Border.StrokeShape>
-																<Label
-																	FontAttributes="Bold"
-																	FontSize="12"
-																	Text="{Binding LatestEncounterStatus, Converter={StaticResource EncounterStatusChipLabel}}"
-																	TextColor="{Binding LatestEncounterStatus, Converter={StaticResource EncounterStatusChipFg}}" />
+															<Label FontSize="10" Text="ТЕЛЕФОН" TextColor="{StaticResource SparkAccentTealDark}" />
+															<Label FontAttributes="Bold" FontSize="12" Text="{Binding Patient.Phone}" TextColor="{StaticResource SparkTextPrimary}" />
+														</VerticalStackLayout>
+														<VerticalStackLayout Grid.Column="4" Spacing="1">
+															<Label FontSize="10" Text="ГРАД" TextColor="{StaticResource SparkAccentTealDark}" />
+															<Label FontAttributes="Bold" FontSize="12" Text="{Binding Patient.City}" TextColor="{StaticResource SparkTextPrimary}" />
+														</VerticalStackLayout>
+														<VerticalStackLayout Grid.Column="5" Spacing="1">
+															<Label FontSize="10" Text="ПОСЛЕДЕН ПРЕГЛЕД" TextColor="{StaticResource SparkAccentTealDark}" />
+															<Border Padding="8,4" BackgroundColor="{Binding LatestEncounterStatus, Converter={StaticResource EncounterStatusChipBg}}" HorizontalOptions="Start" StrokeThickness="0" VerticalOptions="Start">
+																<Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+																<Label FontAttributes="Bold" FontSize="11" Text="{Binding LatestEncounterStatus, Converter={StaticResource EncounterStatusChipLabel}}" TextColor="{Binding LatestEncounterStatus, Converter={StaticResource EncounterStatusChipFg}}" />
 															</Border>
 														</VerticalStackLayout>
 													</Grid>
@@ -471,7 +464,7 @@
 										RowTappedCommand="{Binding OpenDashboardGridItemCommand}"
 										Rows="{Binding GridRows}"
 										SelectionChangedCommand="{Binding OpenDashboardGridItemCommand}"
-										ShowPagination="{Binding IsPatientGridMode}"
+										ShowPagination="True"
 										TotalPages="{Binding TotalPages}" />
 								</VerticalStackLayout>
 							</controls:FFSectionCard>
