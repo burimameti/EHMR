@@ -981,6 +981,13 @@ public partial class DashboardViewModel : ObservableObject
             await _userDialogService.ShowAlertAsync("Внимание", "Одберете пациент прво.");
             return;
         }
+        var confirmed = await _userDialogService.ShowConfirmationAsync(
+            "Нов преглед",
+            "Дали сте сигурни дека сакате да започнете нов преглед?",
+            "Да",
+            "Не");
+        if(!confirmed) return;
+
         _selectedPatient.SelectedItem=patient;
         await navigationService.GoToAsync(AppRoutes.Encounters.Create);
     }
