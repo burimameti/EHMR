@@ -119,7 +119,6 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
 
 
             new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1.3, GridUnitType.Star) },
-            new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1.2, GridUnitType.Star) },
             new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
@@ -136,10 +135,6 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
             row["DoctorName"]=e.Doctor?.User!=null ? $"{e.Doctor.User.FirstName} {e.Doctor.User.LastName}" : "";
 
             row["Date"]=(e.ScheduledStart??e.EncounterDate).ToString("dd.MM.yyyy");
-            row["Status"]=new SparkBadgeValue(
-                EncounterStatusSchema.ToDisplay(e.Status.ToString()),
-                StatusToTone(e.Status));
-
             // Select goes to Detail (view), Edit goes to a different route (Edit) —
             // can't use AddDefaultActions here since both actions use base commands
             // that point at the same DetailRoute; these navigate to different routes.
