@@ -125,6 +125,7 @@
                                 IsEnabled="{Binding CanPrint}"
                                 Text="Печати / PDF" />
                             <Border
+                                IsVisible="{Binding IsAdmin}"
                                 Padding="12,0"
                                 BackgroundColor="{Binding Encounter.Status, Converter={StaticResource StatusBgConverter}}"
                                 HeightRequest="34"
@@ -411,48 +412,6 @@
                                         </DataTemplate>
                                     </BindableLayout.ItemTemplate>
                                 </VerticalStackLayout>
-                            </VerticalStackLayout>
-
-                            <VerticalStackLayout Spacing="10">
-                                <controls:CrudSectionHeader
-                                    Title="КЛИНИЧКИ НАОДИ И БЕЛЕШКИ"
-                                    Padding="8,5"
-                                    BackgroundColor="{StaticResource SparkAccentTealBg}"
-                                    LineColor="{StaticResource SparkAccentTeal}"
-                                    TextColor="{StaticResource SparkTextPrimary}" />
-
-                                <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
-                                    <Border Padding="12" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
-                                        <VerticalStackLayout Spacing="3">
-                                            <Label FontSize="10" Text="Главна поплака" TextColor="{StaticResource SparkTextSecondary}" />
-                                            <Label FontSize="12" LineBreakMode="WordWrap" Text="{Binding Encounter.ChiefComplaint, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
-                                        </VerticalStackLayout>
-                                    </Border>
-                                    <Border Grid.Column="1" Padding="12" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
-                                        <VerticalStackLayout Spacing="3">
-                                            <Label FontSize="10" Text="Историја на сегашна болест" TextColor="{StaticResource SparkTextSecondary}" />
-                                            <Label FontSize="12" LineBreakMode="WordWrap" Text="{Binding Encounter.HistoryOfPresentIllness, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
-                                        </VerticalStackLayout>
-                                    </Border>
-                                    <Border Grid.Row="1" Padding="12" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
-                                        <VerticalStackLayout Spacing="3">
-                                            <Label FontSize="10" Text="Клиничка процена" TextColor="{StaticResource SparkTextSecondary}" />
-                                            <Label FontSize="12" LineBreakMode="WordWrap" Text="{Binding Encounter.Assessment, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
-                                        </VerticalStackLayout>
-                                    </Border>
-                                    <Border Grid.Row="1" Grid.Column="1" Padding="12" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
-                                        <VerticalStackLayout Spacing="3">
-                                            <Label FontSize="10" Text="Клинички забелешки" TextColor="{StaticResource SparkTextSecondary}" />
-                                            <Label FontSize="12" LineBreakMode="WordWrap" Text="{Binding Encounter.ClinicalNotes, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
-                                        </VerticalStackLayout>
-                                    </Border>
-                                    <Border Grid.Row="2" Grid.ColumnSpan="2" Padding="12" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
-                                        <VerticalStackLayout Spacing="3">
-                                            <Label FontSize="10" Text="Забелешка" TextColor="{StaticResource SparkTextSecondary}" />
-                                            <Label FontSize="12" LineBreakMode="WordWrap" Text="{Binding Encounter.Notes, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
-                                        </VerticalStackLayout>
-                                    </Border>
-                                </Grid>
                             </VerticalStackLayout>
 
                             <VerticalStackLayout Spacing="10">
