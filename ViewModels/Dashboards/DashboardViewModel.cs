@@ -1244,68 +1244,102 @@ public partial class DashboardViewModel : ObservableObject
 
     private void BuildSparkGridColumns()
     {
-        // Keep the Dashboard patient grid identical to Patient List.
-        // Dashboard-specific patient actions are wired to the Dashboard commands,
-        // but the columns and displayed patient data stay the same.
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
-            new() { Header = "БРОЈ НА ПАЦИЕНТ", Key = "PatientNumber", Width = new GridLength(1.3, GridUnitType.Star) },
-            new() { Header = "ЕЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
-            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "FullName", Width = new GridLength(2.8, GridUnitType.Star) },
-            new() { Header = "БРЗ ПРИКАЗ", Key = "QuickPreview", CellType = SparkGridCellType.QuickPreview, Width = new GridLength(0.85, GridUnitType.Star) },
+            new() { Header = "ЕЗБО БРОЈ",      Key = "SzboNumber", Width = new GridLength(1.2, GridUnitType.Star) },
+            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "FullName", Width = new GridLength(2.4, GridUnitType.Star), CellType = SparkGridCellType.Hyperlink },
+            new() { Header = "ЕМБГ", Key = "NationalId", Width = new GridLength(1.45, GridUnitType.Star) },
             new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.8, GridUnitType.Star) },
-            new() { Header = "ВОЗРАСТ", Key = "Age", CellType = SparkGridCellType.Number, Width = new GridLength(0.9, GridUnitType.Star) },
-            new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.5, GridUnitType.Star) },
-            new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1.2, GridUnitType.Star) },
-            new() { Header = "НОВ ПРЕГЛЕД", Key = "Pregled", CellType = SparkGridCellType.Button, Width = new GridLength(1.4, GridUnitType.Star) },
-            new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
+            new() { Header = "ВОЗРАСТ", Key = "Age", Width = new GridLength(0.8, GridUnitType.Star), CellType = SparkGridCellType.Number },
+            new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.35, GridUnitType.Star) },
+            new() { Header = "ГРАД", Key = "City", Width = new GridLength(1.05, GridUnitType.Star) },
+            new() { Header = "МОМЕНТАЛНА ДИЈАГНОЗА", Key = "CurrentDiagnoses", Width = new GridLength(2.2, GridUnitType.Star) },
+            new() { Header = "ТЕКОВНИ ЛЕКОВИ", Key = "CurrentMedicines", Width = new GridLength(2.0, GridUnitType.Star) },
+            new() { Header = "СТАТУС", Key = "Status", Width = new GridLength(1.1, GridUnitType.Star), CellType = SparkGridCellType.Badge },
+            new() { Header = "ОПЦИИ", Key = "Actions", Width = GridLength.Auto, CellType = SparkGridCellType.Actions }
         };
     }
 
+    private void BuildSelectedPatientEncounterGrid()
+    {
+        GridColumns=new ObservableCollection<SparkGridColumn>
+        {
+            new() { Header="ИМЕ И ПРЕЗИМЕ", Key="PatientName", Width=new GridLength(2.4, GridUnitType.Star) },
+            new() { Header="ЕЗБО БРОЈ", Key="SzboNumber", Width=new GridLength(1.25, GridUnitType.Star) },
+            new() { Header="ДАТУМ НА ПРЕГЛЕД", Key="Date", Width=new GridLength(1.5, GridUnitType.Star) },
+            new() { Header="СТАТУС", Key="Status", Width=new GridLength(1.1, GridUnitType.Star), CellType=SparkGridCellType.Badge },
+            new() { Header="ОПЦИИ", Key="Actions", Width=GridLength.Auto, CellType=SparkGridCellType.Actions }
+        };
+
+        GridRows=new ObservableCollection<SparkGridRow>(PreviewRecentVisits.Select(item =>
+        {
+            var row=new SparkGridRow { Tag=item };
+            row["PatientName"]=item.PatientName;
+            row["SzboNumber"]=item.SzboNumber;
+            row["Date"]=item.Source.ScheduledStart?.ToString("dd.MM.yyyy")??"—";
+            row["Status"]=new SparkBadgeValue(item.StatusText, EncounterStatusToTone(item.Source.Status));
+            row["Actions"]=new List<SparkButtonItem>
+            {
+                new() { IsPrimary=true, Label="Детали", Command=OpenEncounterFromPreviewCommand, CommandParameter=item }
+            };
+            return row;
+        }));
+    }
+
+    private void BuildRecentEncounterColumns()
+    {
+        RecentEncounterColumns=new ObservableCollection<SparkGridColumn>
+        {
+            new() { Header = "СЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.25, GridUnitType.Star) },
+            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "Patient", Width = new GridLength(2.2, GridUnitType.Star), CellType = SparkGridCellType.Hyperlink },
+            new() { Header = "ДАТУМ НА ПРЕГЛЕД", Key = "Date", Width = new GridLength(1.5, GridUnitType.Star) }
+        };
+    }
+
+    private void RefreshRecentEncounterRows(IEnumerable<DashboardEncounterItem> encounters)
+    {
+        RecentEncounterRows=new ObservableCollection<SparkGridRow>(encounters.Select(item =>
+        {
+            var row = new SparkGridRow { Tag=item };
+            row["SzboNumber"]=item.SzboNumber;
+            row["Date"]=item.Time;
+            row["Patient"]=item.PatientName;
+            return row;
+        }));
+    }
     private void RefreshSparkGridRows()
     {
         var rows = new ObservableCollection<SparkGridRow>();
 
         foreach(var item in FilteredPatients)
         {
-            var patient=item.Patient;
-            var row=new SparkGridRow { Tag=item };
+            var patient = item.Patient;
+            var row = new SparkGridRow { Tag=item };
 
-            row["PatientNumber"]=patient.PatientNumber;
             row["SzboNumber"]=patient.SzboNumber;
             row["FullName"]=patient.FullName;
-            row["QuickPreview"]=string.Join(Environment.NewLine, new[]
-            {
-                $"Име и презиме: {patient.FullName}",
-                $"Статус: {patient.Status.ToDisplay()}",
-                $"Контакт: {patient.Phone}",
-                $"Итен контакт: {GetEmergencyContactText(patient)}",
-                $"Адреса: {patient.Address}",
-                $"Град: {patient.City}",
-                $"Лекови: {GetMedicinePreviewText(patient)}"
-            });
+            row["City"]=patient.City;
+            row["NationalId"]=patient.NationalId;
+            row["CurrentDiagnoses"]=item.CurrentDiagnoses.Length==0 ? "—" : string.Join(" • ", item.CurrentDiagnoses);
+            row["CurrentMedicines"]=item.CurrentMedicines.Length==0 ? "—" : string.Join(" • ", item.CurrentMedicines);
             row["Gender"]=patient.Gender.ToDisplay();
             row["Age"]=patient.Age;
             row["Phone"]=patient.Phone;
-            row["Status"]=new SparkBadgeValue(
-                patient.Status==PatientStatus.Inactive ? "Неактивен" : patient.Status.ToDisplay(),
-                patient.Status==PatientStatus.Inactive ? SparkBadgeTone.Danger : StatusToTone(patient.Status));
+            row["City"]=patient.City;
+            row["LastActivity"]=item.LastActivity is { } last ? last.ToString("dd.MM.yyyy") : "—";
+            row["NextAppointment"]=item.ActiveAppointment is { } next ? next.ScheduledStart.ToString("dd.MM.yyyy") : "—";
 
-            row["Pregled"]=new SparkButtonItem
-            {
-                IconGlyph=patient.Status==PatientStatus.Active ? "\uD83D\DCC5" : "\uD83D\DD12",
-                Label=patient.Status==PatientStatus.Active ? "Нов преглед" : "Неактивен",
-                IsPrimary=patient.Status==PatientStatus.Active,
-                IsEnabled=patient.Status==PatientStatus.Active,
-                Command=patient.Status==PatientStatus.Active ? NewEncounterForSelectedCommand : null,
-                CommandParameter=patient
-            };
+            row["Status"]=new SparkBadgeValue(
+                StateDisplay.TryGetValue(item.State, out var lbl) ? lbl : item.State.ToString(),
+                StateToTone(item.State));
 
             row["Actions"]=new List<SparkButtonItem>
             {
-                new() { IsPrimary=true, IconGlyph="👁", Label="Детали", Command=OpenDashboardGridItemCommand, CommandParameter=item },
-                new() { IconGlyph="✎", Label="Промени", Command=EditCommand, CommandParameter=patient }
+                new() { IsPrimary = true, IconGlyph = "👁", Label = "Детали",  Command = SelectCommand,  CommandParameter = item },
+                new() {                   IconGlyph = "✎",  Label = "Промени", Command = EditCommand,    CommandParameter = patient }
             };
+
+            row["Alerts"]=item.HasAlerts ? "⚠" : "";
 
             rows.Add(row);
         }
@@ -1313,38 +1347,25 @@ public partial class DashboardViewModel : ObservableObject
         GridRows=rows;
     }
 
-    private static string GetMedicinePreviewText(Patient patient)
+    private static readonly Dictionary<DashboardPatientState, string> StateDisplay = new()
     {
-        var medicines=patient.PatientMedicines?
-            .Where(pm => pm.IsActive&&pm.Medicine!=null)
-            .Select(pm =>
-            {
-                var name=pm.Medicine!.Name?.Trim()??string.Empty;
-                var dosage=pm.Dosage?.Trim()??string.Empty;
-                return string.IsNullOrWhiteSpace(dosage) ? name : $"{name} ({dosage})";
-            })
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Distinct(StringComparer.CurrentCultureIgnoreCase)
-            .ToList();
+        [DashboardPatientState.None]="—",
+        [DashboardPatientState.Scheduled]="Закажан",
+        [DashboardPatientState.InProgress]="Во тек",
+        [DashboardPatientState.Completed]="Завршен",
+        [DashboardPatientState.Cancelled]="Откажан",
+        [DashboardPatientState.Critical]="Критично"
+    };
 
-        return medicines is { Count: > 0 }
-            ? string.Join(", ", medicines)
-            : "Нема активна терапија";
-    }
-
-    private static string GetEmergencyContactText(Patient patient)
+    private static SparkBadgeTone StateToTone(DashboardPatientState state) => state switch
     {
-        var name=patient.EmergencyContactName?.Trim();
-        var phone=patient.EmergencyContactPhone?.Trim();
-
-        if(string.IsNullOrWhiteSpace(name)&&string.IsNullOrWhiteSpace(phone))
-            return "—";
-        if(string.IsNullOrWhiteSpace(name))
-            return phone!;
-        if(string.IsNullOrWhiteSpace(phone))
-            return name!;
-        return $"{name} ({phone})";
-    }
+        DashboardPatientState.Completed => SparkBadgeTone.Success,
+        DashboardPatientState.InProgress => SparkBadgeTone.Success,
+        DashboardPatientState.Scheduled => SparkBadgeTone.Neutral,
+        DashboardPatientState.Cancelled => SparkBadgeTone.Danger,
+        DashboardPatientState.Critical => SparkBadgeTone.Danger,
+        _ => SparkBadgeTone.Neutral
+    };
 
     private static SparkBadgeTone StatusToTone(PatientStatus status) => status switch
     {
@@ -1355,3 +1376,191 @@ public partial class DashboardViewModel : ObservableObject
         _ => SparkBadgeTone.Neutral
     };
 
+    // =========================================================
+    // DAY STRIP
+    // =========================================================
+    private static readonly string[] MkDayAbbrev = { "Нед", "Пон", "Вто", "Сре", "Чет", "Пет", "Саб" };
+
+    [ObservableProperty] private DateTime dayStripStartDate = DateTime.Today.AddDays(-3);
+
+    private void BuildDayStrip()
+    {
+        State.DayStrip.Clear();
+
+        var encounterCountsByDate = _allPatients
+            .SelectMany(p => p.Encounters)
+            .Where(e => e.ScheduledStart.HasValue)
+            .GroupBy(e => e.ScheduledStart!.Value.Date)
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        for(int i = 0; i<7; i++)
+        {
+            var date = DayStripStartDate.AddDays(i);
+            var capturedDate = date; // capture for lambda
+            var day = new DashboardDayItem
+            {
+                Date=date,
+                DayLabel=MkDayAbbrev[(int)date.DayOfWeek],
+                DayNumber=date.Day.ToString(),
+                IsSelected=date.Date==SelectedDate.Date,
+                EncounterCount=encounterCountsByDate.TryGetValue(date.Date, out var count) ? count : 0
+            };
+            // ─── FIX: capture capturedDate, not date (loop variable closure bug)
+            day.Command=new RelayCommand(() => SelectedDate=capturedDate);
+            State.DayStrip.Add(day);
+        }
+    }
+
+    [RelayCommand]
+    private void PreviousWeek()
+    {
+        DayStripStartDate=DayStripStartDate.AddDays(-7);
+        BuildDayStrip();
+    }
+
+    [RelayCommand]
+    private void NextWeek()
+    {
+        DayStripStartDate=DayStripStartDate.AddDays(7);
+        BuildDayStrip();
+    }
+
+    [RelayCommand]
+    private void GoToToday()
+    {
+        var alreadyToday = SelectedDate.Date==DateTime.Today;
+        SelectedDate=DateTime.Today;
+        DayStripStartDate=DateTime.Today.AddDays(-3);
+        BuildDayStrip();
+
+        if(alreadyToday)
+            _=LoadSelectedDateAppointmentsAsync();
+    }
+
+    // =========================================================
+    // DAILY ENCOUNTERS (in-memory refresh, fast)
+    // =========================================================
+    private void RefreshDailyEncounters()
+    {
+        var items = _allPatients
+            .SelectMany(p => p.Encounters.Select(e => (Patient: p.Patient, Encounter: e)))
+            .Where(x => x.Encounter.ScheduledStart.HasValue&&
+                        x.Encounter.ScheduledStart.Value.Date==SelectedDate.Date)
+            .OrderBy(x => x.Encounter.ScheduledStart)
+            .Select(x => new DashboardEncounterItem
+            {
+                Source=x.Encounter,
+                PatientName=x.Patient.FullName,
+                SzboNumber=x.Patient.SzboNumber,
+                Time=x.Encounter.ScheduledStart!.Value.ToString("HH:mm"),
+                StatusText=EncounterStatusDisplay.TryGetValue(x.Encounter.Status, out var lbl) ? lbl : x.Encounter.Status.ToString(),
+                StatusColor=EncounterStatusToColor(x.Encounter.Status)
+            })
+            .ToList();
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            State.DailyEncounters.Clear();
+            foreach(var item in items) State.DailyEncounters.Add(item);
+        });
+    }
+
+    private static readonly Dictionary<EncounterStatus, string> EncounterStatusDisplay = new()
+    {
+        [EncounterStatus.Scheduled]="Закажан",
+        [EncounterStatus.InProgress]="Во тек",
+        [EncounterStatus.Completed]="Завршен",
+        [EncounterStatus.Cancelled]="Откажан",
+    };
+
+    private static Color EncounterStatusToColor(EncounterStatus status) => status switch
+    {
+        EncounterStatus.Completed => Color.FromArgb("#16A34A"),
+        EncounterStatus.InProgress => Color.FromArgb("#2563EB"),
+        EncounterStatus.Scheduled => Color.FromArgb("#64748B"),
+        EncounterStatus.Cancelled => Color.FromArgb("#DC2626"),
+        _ => Color.FromArgb("#94A3B8")
+    };
+
+    private static SparkBadgeTone EncounterStatusToTone(EncounterStatus status) => status switch
+    {
+        EncounterStatus.Completed => SparkBadgeTone.Success,
+        EncounterStatus.Cancelled => SparkBadgeTone.Danger,
+        _ => SparkBadgeTone.Neutral
+    };
+    // =========================================================
+    // ALERTS
+    // =========================================================
+    private static string BuildCriticalAlertsSummary(List<string> patientNames)
+    {
+        if(patientNames.Count==0) return string.Empty;
+        const int max = 2;
+        if(patientNames.Count<=max) return string.Join(", ", patientNames);
+        var shown = string.Join(", ", patientNames.Take(max));
+        var remaining = patientNames.Count-max;
+        return remaining==1 ? $"{shown} и уште 1" : $"{shown} и уште {remaining}";
+    }
+
+    private ObservableCollection<DashboardAlertSummaryItem> BuildAlertSummaries(IEnumerable<AlertLevel> levels)
+    {
+        var counts = levels.GroupBy(l => l).ToDictionary(g => g.Key, g => g.Count());
+        var items = new ObservableCollection<DashboardAlertSummaryItem>();
+
+        var orderedLevels = new[] { AlertLevel.Critical, AlertLevel.Warning, AlertLevel.Info }
+            .Concat(counts.Keys.Except(new[] { AlertLevel.Critical, AlertLevel.Warning, AlertLevel.Info }))
+            .Distinct();
+
+        foreach(var level in orderedLevels)
+        {
+            var count = counts.TryGetValue(level, out var c) ? c : 0;
+            items.Add(new DashboardAlertSummaryItem
+            {
+                Level=level,
+                Count=count,
+                Label=level.ToLabel(),
+                Icon=level.ToIcon(),
+                AccentColor=level.ToAccentColor(),
+                BackgroundColor=level.ToBackgroundColor(),
+                Command=new RelayCommand(() => NavigateToAlertsCommand.Execute(level.ToString()))
+            });
+        }
+
+        return items;
+    }
+
+    private async Task RunAlertSweepIfNeededAsync()
+    {
+        var today = DateTime.UtcNow.ToString("yyyy-MM-dd");
+
+        if(_preferencesService.ContainsKey(LastAlertSweepKey)&&
+            await _preferencesService.LoadAsync(LastAlertSweepKey)==today)
+            return;
+
+        try
+        {
+            var created = await _alertService.RunDailySweepAsync();
+            Debug.WriteLine($"Alert sweep created {created} new alert(s).");
+        }
+        catch(Exception ex)
+        {
+            Debug.WriteLine($"Alert sweep failed: {ex}");
+        }
+
+        await _preferencesService.SaveAsync(LastAlertSweepKey, today);
+    }
+
+    // =========================================================
+    // WIRING
+    // =========================================================
+    private void InitializeSparkControls()
+    {
+        BuildSparkTabs();
+        BuildSparkButtons();
+        BuildSparkGridColumns();
+        BuildRecentEncounterColumns();
+        RefreshSparkGridRows();
+        BuildDayStrip();
+        RefreshDailyEncounters();
+        BuildKpiTiles();
+    }
+}
