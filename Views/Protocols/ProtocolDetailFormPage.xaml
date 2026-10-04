@@ -33,7 +33,7 @@
 					PrimaryButtonCommand="{Binding SaveCommand}"
 					PrimaryButtonText="Зачувај"
 					SecondaryButtonCommand="{Binding CancelCommand}"
-					SecondaryButtonText="Откажи"
+					SecondaryButtonText="Назад"
 					ShowPrimaryButton="True"
 					PrimaryButtonIsEnabled="{Binding CanSave}"
 					ShowSecondaryButton="True"
