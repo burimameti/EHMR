@@ -75,7 +75,8 @@
 							BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
 							HorizontalOptions="Fill"
 							MinimumHeightRequest="28"
-							StrokeThickness="0">
+							StrokeThickness="0"
+							IsVisible="{Binding ShowMore}">
 							<Border.StrokeShape>
 								<RoundRectangle CornerRadius="8" />
 							</Border.StrokeShape>
