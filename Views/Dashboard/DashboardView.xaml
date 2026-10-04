@@ -74,9 +74,9 @@
 							Padding="8,4"
 							BackgroundColor="{Binding Variant, Converter={StaticResource MetricTileVariantToColorConverter}}"
 							HorizontalOptions="Fill"
+							IsVisible="{Binding ShowMore}"
 							MinimumHeightRequest="28"
-							StrokeThickness="0"
-							IsVisible="{Binding ShowMore}">
+							StrokeThickness="0">
 							<Border.StrokeShape>
 								<RoundRectangle CornerRadius="8" />
 							</Border.StrokeShape>
@@ -477,12 +477,7 @@
 							</controls:FFSectionCard>
 
 
-
 						</Grid>
-
-
-
-
 
 						<!--  ── Термини по датум ────────────────────────────  -->
 						<controls:FFSectionCard>
@@ -499,9 +494,10 @@
 											Text="Термини по датум"
 											TextColor="{StaticResource TitleColor}" />
 										<Label
-											FontSize="11"
+											FontAttributes="Bold"
+											FontSize="16"
 											Text="{Binding SelectedDate, StringFormat='{0:dddd, dd MMMM yyyy}'}"
-											TextColor="{StaticResource SubtitleColor}" />
+											TextColor="{StaticResource PrimaryColor}" />
 									</VerticalStackLayout>
 									<Border
 										Grid.Column="1"
@@ -788,9 +784,9 @@
 										<CollectionView.ItemTemplate>
 											<DataTemplate x:DataType="dash:DashboardAppointmentItem">
 												<Border
-														Style="{StaticResource AppointmentRowStyle}"
-														HorizontalOptions="Fill"
-														VerticalOptions="Start">
+													HorizontalOptions="Fill"
+													Style="{StaticResource AppointmentRowStyle}"
+													VerticalOptions="Start">
 													<Grid
 														Padding="0,10,12,10"
 														ColumnDefinitions="3,Auto,*,Auto"

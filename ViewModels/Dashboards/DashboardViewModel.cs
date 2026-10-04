@@ -831,7 +831,7 @@ public partial class DashboardViewModel : ObservableObject
 
         Buttons.Add(new SparkButtonItem { Label="Исчисти", IsPrimary=false, IsEnabled=true, Command=ClearFiltersCommand });
         Buttons.Add(new SparkButtonItem { Label="Нов преглед", IsPrimary=true, IsEnabled=CanCreateEncounter, Command=NewEncounterCommand });
-        Buttons.Add(new SparkButtonItem { Label="Нов извештај", IsPrimary=false, IsEnabled=true, Command=OpenNewReportCommand });
+        //Buttons.Add(new SparkButtonItem { Label="Нов извештај", IsPrimary=false, IsEnabled=true, Command=OpenNewReportCommand });
     }
 
     [RelayCommand]

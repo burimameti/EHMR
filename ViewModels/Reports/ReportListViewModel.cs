@@ -621,7 +621,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 HistoryFrequencyValue=encounter.ReasonForVisit ?? string.Empty,
                 HistoryMedicineStatusValue=EncounterStatusLabel(encounter.Status)
             });
-
+        }
         return rows;
     }
 
