@@ -75,7 +75,7 @@
 						Grid.Column="1"
 						Margin="0,0,33,0"
 						ButtonKind="Secondary"
-						Command="{Binding BackToHubCommand}"
+						Command="{Binding GoBackCommand}"
 						ContentPadding="16,16"
 						HeightRequestEx="45"
 						Text="Назад"
