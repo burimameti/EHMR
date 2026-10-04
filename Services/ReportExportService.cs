@@ -14,7 +14,7 @@ namespace EHMR.Services;
         public async Task<string> ExportToExcelAsync(string reportTitle, IReadOnlyList<SparkGridColumn> columns, IReadOnlyList<SparkGridRow> rows)
         {
             // Actions колоната (копчиња "Преглед"/"Промени") нема смисла во извоз
-            var exportColumns = columns.Where(c => c.CellType!=SparkGridCellType.Actions).ToList();
+            var exportColumns = columns.Where(c => c.CellType!=SparkGridCellType.Actions && !IsSensitiveIdentityColumn(c)).ToList();
 
             using var workbook = new XLWorkbook();
             var sheet = workbook.Worksheets.Add(SafeSheetName(reportTitle));
@@ -65,7 +65,7 @@ namespace EHMR.Services;
     string? selectedMedicine = null,
     decimal? selectedMedicineTotalQuantity = null)
     {
-        var exportColumns = columns.Where(c => c.CellType!=SparkGridCellType.Actions).ToList();
+        var exportColumns = columns.Where(c => c.CellType!=SparkGridCellType.Actions && !IsSensitiveIdentityColumn(c)).ToList();
         var path = BuildOutputPath(reportTitle, "pdf");
 
         QuestPDF.Settings.License=LicenseType.Community;
@@ -87,12 +87,23 @@ namespace EHMR.Services;
                     {
                         table.ColumnsDefinition(cd =>
                         {
-                            cd.RelativeColumn(4); // Институција и Динамички Наслов
-                            cd.RelativeColumn(2); // Логиран Корисник и Време
-                            cd.RelativeColumn(2); // Период
+                            cd.RelativeColumn(1.1f); // Logo placeholder
+                            cd.RelativeColumn(4.0f); // Institution + report title
+                            cd.RelativeColumn(2.0f); // Issue date
+                            cd.RelativeColumn(2.0f); // Period
                         });
 
-                        // Клетка 1: УСТАНОВА + ДИНАМИЧКИ НАСЛОВ (Месечен/Периодичен...)
+                        // Future logo placeholder. The actual logo can be placed here
+                        // later without changing the report header layout.
+                        table.Cell().BorderRight(1).Padding(5).AlignCenter().AlignMiddle()
+                            .Border(1).BorderColor("#9CA3AF")
+                            .MinHeight(42)
+                            .Text("LOGO")
+                            .FontSize(8)
+                            .FontColor("#6B7280");
+
+                        // Keep the report title clean. Patient/basic data belongs
+                        // in the report content below, not in the document title.
                         table.Cell().BorderRight(1).Padding(5).Column(c =>
                         {
                             c.Item().Text(institutionName.ToUpper())
@@ -201,6 +212,19 @@ namespace EHMR.Services;
         return Task.FromResult(path);
     }
     // ================= HELPERS =================
+
+    private static bool IsSensitiveIdentityColumn(SparkGridColumn column)
+    {
+        var header = column.Header?.Trim() ?? string.Empty;
+        var key = column.Key?.Trim() ?? string.Empty;
+
+        return key.Equals("NationalId", StringComparison.OrdinalIgnoreCase) ||
+               header.Contains("ЕМБГ", StringComparison.OrdinalIgnoreCase) ||
+               header.Contains("EMBG", StringComparison.OrdinalIgnoreCase) ||
+               header.Contains("Матичен број", StringComparison.OrdinalIgnoreCase);
+    }
+
+
 
     private static bool IsMedicineConsumptionReport(
         string reportTitle,
