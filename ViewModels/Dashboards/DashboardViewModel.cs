@@ -128,6 +128,8 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty] private ObservableCollection<int> availableEncounterYears = new();
     [ObservableProperty] private int selectedEncounterYear = DateTime.Today.Year;
     [ObservableProperty] private bool hasEncounterYearOptions;
+    [ObservableProperty] private ObservableCollection<string> previewDiagnoses = new();
+    [ObservableProperty] private ObservableCollection<string> previewMedicines = new();
     private List<Encounter> _previewPatientEncounters = [];
     [ObservableProperty] private ObservableCollection<SparkGridColumn> recentEncounterColumns = new();
     [ObservableProperty] private ObservableCollection<SparkGridRow> recentEncounterRows = new();
@@ -223,6 +225,8 @@ public partial class DashboardViewModel : ObservableObject
     {
         _patientPreviewVersion++;
         PreviewPatient=null;
+        PreviewDiagnoses=new ObservableCollection<string>();
+        PreviewMedicines=new ObservableCollection<string>();
         PreviewRecentVisits=new ObservableCollection<DashboardEncounterItem>();
         _previewPatientEncounters=[];
         AvailableEncounterYears=new ObservableCollection<int>();
