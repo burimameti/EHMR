@@ -61,7 +61,16 @@
 			<!--  HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<Grid ColumnDefinitions="*,*" VerticalOptions="Center">
-					<controls:FFPageHeader Title="Увоз / Извоз на МКБ" Subtitle="Увезете МКБ-10 шифрарник од датотека." />
+					<controls:FFPageHeader Title="Увоз / Извоз на МКБ" Subtitle="Увезете МКБ-10 шифрарник од датотека.">
+						<controls:FFPageHeader.HeaderContent>
+							<controls:FFButton
+								ButtonKind="Secondary"
+								Command="{Binding GoBackCommand}"
+								HeightRequestEx="40"
+								Text="Назад"
+								WidthRequestEx="130" />
+						</controls:FFPageHeader.HeaderContent>
+					</controls:FFPageHeader>
 					<HorizontalStackLayout
 						Grid.Column="1"
 						HorizontalOptions="End"
