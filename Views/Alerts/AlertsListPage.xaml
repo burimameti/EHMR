@@ -17,7 +17,16 @@
             <Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
                 <controls:FFPageHeader
                     Title="Предупредувања"
-                    Subtitle="Преглед на сите активни и решени системски предупредувања" />
+                    Subtitle="Преглед на сите активни и решени системски предупредувања" >
+				<controls:FFPageHeader.HeaderContent>
+<controls:FFButton
+						ButtonKind="Secondary"
+						Command="{Binding GoBackCommand}"
+						HeightRequestEx="40"
+						Text="Назад"
+						WidthRequestEx="130" />
+			</controls:FFPageHeader.HeaderContent>
+		</controls:FFPageHeader>
             </Border>
 
             <Border Grid.Row="1" Margin="1,0,1,0" Padding="0,3" StrokeThickness="-1">
