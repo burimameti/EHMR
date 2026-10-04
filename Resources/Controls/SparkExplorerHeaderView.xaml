@@ -44,7 +44,7 @@
                         CornerRadius="6"
                         HeightRequestEx="44"
                         IsVisible="{Binding ClearButton, Source={x:Reference Root}}"
-                        Text="Исчисти"
+                        Text="Освежи"
                         WidthRequestEx="0">
                     </sc:FFButton>
 
