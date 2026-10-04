@@ -52,7 +52,7 @@ namespace EHMR.Resources.Controls
                 : width >= 900 ? 0.82d
                 : 0.76d;
 
-            var s = _responsiveScale;            SecondaryToolbarGrid.Padding = new Thickness(10 * s);
+            var s = _responsiveScale;            SecondaryToolbarGrid.Padding = new Thickness(0);
             SecondaryToolbarGrid.ColumnSpacing = 8 * s;
             SecondaryToolbarGrid.MinimumHeightRequest = 64 * s;
 
@@ -85,16 +85,8 @@ namespace EHMR.Resources.Controls
                 }
             }
 
-            // Dense desktop widths: keep the toolbar on one line and let the
-            // search area absorb the available space rather than stacking controls.
-            SecondaryToolbarGrid.ColumnDefinitions.Clear();
-            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-            if (CyrillicToggleLayout.IsVisible)
-                SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            else
-                SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0) });
-            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            // Actions, search and filter options intentionally occupy separate rows.
+            // Keep the layout stable; only scale spacing and control sizing.
         }
 
         #region Search Visibility
