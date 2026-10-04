@@ -21,7 +21,7 @@
 				<controls:FFPageHeader.HeaderContent>
 <controls:FFButton
 						ButtonKind="Secondary"
-						Command="{Binding GoBackCommand}"
+						Clicked="OnBackClicked"
 						HeightRequestEx="40"
 						Text="Назад"
 						WidthRequestEx="130" />
