@@ -312,6 +312,13 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             return;
         }
 
+        var confirmed = await UserDialogService.ShowConfirmationAsync(
+            "Нов преглед",
+            "Дали сте сигурни дека сакате да започнете нов преглед?",
+            "Да",
+            "Не");
+        if(!confirmed) return;
+
         SelectedItemService.SelectedItem=patient;
         await NavigationService.GoToAsync(AppRoutes.Encounters.Create);
     }
