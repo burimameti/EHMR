@@ -525,6 +525,11 @@ namespace EHMR.Resources.Controls
                 VerticalOptions=LayoutOptions.Fill
             };
 
+            var pointer = new PointerGestureRecognizer();
+            pointer.PointerEntered += (_, _) => SetRowHover(rowIndex, true);
+            pointer.PointerExited += (_, _) => SetRowHover(rowIndex, false);
+            border.GestureRecognizers.Add(pointer);
+
             // Every list-grid field exposes its complete value on hover.
             // Action cells contain a collection of buttons; never expose the
             // collection type as a tooltip (for example System.Collections.Generic.List).
@@ -561,6 +566,27 @@ namespace EHMR.Resources.Controls
             Grid.SetColumn(border, columnIndex);
             border.Content=content;
             GridRoot.Children.Add(border);
+        }
+
+        private void SetRowHover(int gridRowIndex, bool isHover)
+        {
+            var hoverBackground = Color.FromArgb("#F1F5F9");
+
+            foreach (var cell in GridRoot.Children
+                         .OfType<Border>()
+                         .Where(b => Grid.GetRow(b) == gridRowIndex))
+            {
+                if (isHover)
+                {
+                    cell.BackgroundColor = hoverBackground;
+                    continue;
+                }
+
+                var localIndex = gridRowIndex - 1;
+                cell.BackgroundColor = localIndex == SelectedRowIndex
+                    ? SelectedRowBg
+                    : (localIndex % 2 == 0 ? RowBg : RowAltBg);
+            }
         }
 
         private static string? ResolveCellTooltip(object? value)
