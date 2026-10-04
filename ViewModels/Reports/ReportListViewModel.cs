@@ -592,25 +592,6 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 .Where(pm => pm.EncounterId==encounter.Id ||
                              (!pm.EncounterId.HasValue && encounter.Id==encounters[0].Id))
                 .Take(5)
-                .Select(pm =>
-                {
-                    var name=pm.Medicine?.FullName ?? "Непознат лек";
-                    var dosage=string.IsNullOrWhiteSpace(pm.Dosage)
-                        ? pm.Medicine?.DefaultDosage ?? string.Empty
-                        : pm.Dosage;
-                    var frequency=pm.ApplicationRegime?.Regime;
-                    if(string.IsNullOrWhiteSpace(frequency))
-                        frequency=pm.DosesFrequency.ToString();
-
-                    var details=new List<string>();
-                    if(pm.Quantity>0) details.Add($"кол. {pm.Quantity:0.##}");
-                    if(!string.IsNullOrWhiteSpace(dosage)) details.Add(dosage);
-                    if(!string.IsNullOrWhiteSpace(frequency)) details.Add(frequency);
-
-                    return string.IsNullOrWhiteSpace(string.Join(", ", details))
-                        ? name
-                        : $"{name} ({string.Join(", ", details)})";
-                })
                 .ToList();
 
             rows.Add(new GenericReportRow
@@ -619,12 +600,27 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 HistoryDateValue=(encounter.ScheduledStart ?? encounter.EncounterDate).ToString("dd.MM.yyyy"),
                 HistoryEncounterValue=encounter.Doctor?.FullName ?? string.Empty,
                 HistoryScoreValue=score?.ScoreText ?? string.Empty,
-                HistoryMedicineValue=string.Join("; ", encounterMedicines),
+                HistoryMedicineValue=string.Join("; ", encounterMedicines.Select(pm =>
+                    pm.Medicine?.FullName ?? pm.Medicine?.Name ?? "Непознат лек")),
+                HistoryQuantityValue=string.Join("; ", encounterMedicines
+                    .Where(pm => pm.Quantity > 0)
+                    .Select(pm => pm.Quantity.ToString("0.##"))),
+                HistoryRegimenValue=string.Join("; ", encounterMedicines.Select(pm =>
+                {
+                    var dosage=string.IsNullOrWhiteSpace(pm.Dosage)
+                        ? pm.Medicine?.DefaultDosage ?? string.Empty
+                        : pm.Dosage;
+                    var frequency=pm.ApplicationRegime?.Regime;
+                    if(string.IsNullOrWhiteSpace(frequency))
+                        frequency=pm.DosesFrequency.ToString();
+
+                    return string.Join(", ", new[] { dosage, frequency }
+                        .Where(x => !string.IsNullOrWhiteSpace(x)));
+                }).Where(x => !string.IsNullOrWhiteSpace(x))),
                 HistoryDosageValue=string.Join("; ", diagnoses),
                 HistoryFrequencyValue=encounter.ReasonForVisit ?? string.Empty,
-                HistoryMedicineStatusValue=encounter.Status.ToString()
+                HistoryMedicineStatusValue=EncounterStatusLabel(encounter.Status)
             });
-        }
 
         return rows;
     }
@@ -1003,6 +999,8 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 new() { Header="ПРЕГЛЕД / РЕУМАТОЛОГ", Key="HistoryEncounter", Width=new GridLength(1.8, GridUnitType.Star) },
                 new() { Header="СКОР", Key="HistoryScore", Width=new GridLength(1.0, GridUnitType.Star) },
                 new() { Header="ЛЕК", Key="HistoryMedicine", Width=new GridLength(2.0, GridUnitType.Star) },
+                new() { Header="КОЛИЧИНА", Key="HistoryQuantity", Width=new GridLength(1.0, GridUnitType.Star) },
+                new() { Header="ДОЗА / РЕЖИМ", Key="HistoryRegimen", Width=new GridLength(1.8, GridUnitType.Star) },
                 new() { Header="МКБ-10", Key="HistoryDosage", Width=new GridLength(2.4, GridUnitType.Star) },
                 new() { Header="ПРИЧИНА", Key="HistoryFrequency", Width=new GridLength(1.7, GridUnitType.Star) },
                 new() { Header="СТАТУС", Key="HistoryStatus", Width=new GridLength(1.1, GridUnitType.Star) }
@@ -1069,6 +1067,8 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 row["HistoryEncounter"]=r.HistoryEncounterValue??"";
                 row["HistoryScore"]=r.HistoryScoreValue??"";
                 row["HistoryMedicine"]=r.HistoryMedicineValue??"";
+                row["HistoryQuantity"]=r.HistoryQuantityValue??"";
+                row["HistoryRegimen"]=r.HistoryRegimenValue??"";
                 row["HistoryDosage"]=r.HistoryDosageValue??"";
                 row["HistoryFrequency"]=r.HistoryFrequencyValue??"";
                 row["HistoryStatus"]=r.HistoryMedicineStatusValue??"";
@@ -1195,6 +1195,8 @@ public class GenericReportRow
     public string HistoryEncounterValue { get; set; } = "";
     public string HistoryScoreValue { get; set; } = "";
     public string HistoryMedicineValue { get; set; } = "";
+    public string HistoryQuantityValue { get; set; } = "";
+    public string HistoryRegimenValue { get; set; } = "";
     public string HistoryDosageValue { get; set; } = "";
     public string HistoryFrequencyValue { get; set; } = "";
     public string HistoryMedicineStatusValue { get; set; } = "";
