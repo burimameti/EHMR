@@ -336,73 +336,52 @@
 									TextColor="{StaticResource SparkTextPrimary}" />
 
 								<Grid
-									ColumnDefinitions="1.25*,1*"
-									ColumnSpacing="20"
-									RowDefinitions="Auto,Auto"
-									RowSpacing="10">
-									<VerticalStackLayout
-										Grid.Row="0"
-										Grid.Column="0"
-										Spacing="2">
-										<Label
-											FontSize="10"
-											Text="МКБ-10 дијагноза"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="11.5"
-											LineBreakMode="WordWrap"
-											Text="{Binding CurrentDiagnosesSummary, TargetNullValue='Нема внесена дијагноза.'}"
-											TextColor="{StaticResource SparkTextPrimary}" />
-									</VerticalStackLayout>
+                                    ColumnDefinitions="1.2*,1.2*,0.8*"
+                                    ColumnSpacing="20">
+                                    <VerticalStackLayout
+                                        Grid.Column="0"
+                                        Spacing="2">
+                                        <Label
+                                            FontSize="10"
+                                            Text="МКБ-10 дијагноза"
+                                            TextColor="{StaticResource SparkTextSecondary}" />
+                                        <Label
+                                            FontAttributes="Bold"
+                                            FontSize="11.5"
+                                            LineBreakMode="WordWrap"
+                                            Text="{Binding CurrentDiagnosesSummary, TargetNullValue='Нема внесена дијагноза.'}"
+                                            TextColor="{StaticResource SparkTextPrimary}" />
+                                    </VerticalStackLayout>
 
-									<VerticalStackLayout
-										Grid.Row="0"
-										Grid.Column="1"
-										Spacing="2">
-										<Label
-											FontSize="10"
-											Text="Претходен скор"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="11.5"
-											Text="{Binding CurrentPatientScore, TargetNullValue='—'}"
-											TextColor="{StaticResource SparkTextPrimary}" />
-									</VerticalStackLayout>
+                                    <VerticalStackLayout
+                                        Grid.Column="1"
+                                        Spacing="2">
+                                        <Label
+                                            FontSize="10"
+                                            Text="Активна терапија"
+                                            TextColor="{StaticResource SparkTextSecondary}" />
+                                        <Label
+                                            FontAttributes="Bold"
+                                            FontSize="11.5"
+                                            LineBreakMode="WordWrap"
+                                            Text="{Binding ActiveMedicinesSummary, TargetNullValue='Нема активна терапија.'}"
+                                            TextColor="{StaticResource SparkTextPrimary}" />
+                                    </VerticalStackLayout>
 
-									<VerticalStackLayout
-										Grid.Row="1"
-										Grid.Column="0"
-										Spacing="2">
-										<Label
-											FontSize="10"
-											Text="Активна терапија"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="11.5"
-											LineBreakMode="WordWrap"
-											Text="{Binding ActiveMedicinesSummary, TargetNullValue='Нема активна терапија.'}"
-											TextColor="{StaticResource SparkTextPrimary}" />
-									</VerticalStackLayout>
-
-									<VerticalStackLayout
-										Grid.Row="1"
-										Grid.Column="1"
-										Spacing="2">
-										<Label
-											FontSize="10"
-											Text="Забелешка"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="11.5"
-											LineBreakMode="WordWrap"
-											Text="{Binding EncounterDiagnosisNotes, TargetNullValue='—'}"
-											TextColor="{StaticResource SparkTextPrimary}" />
-									</VerticalStackLayout>
-								</Grid>
+                                    <VerticalStackLayout
+                                        Grid.Column="2"
+                                        Spacing="2">
+                                        <Label
+                                            FontSize="10"
+                                            Text="Претходен скор"
+                                            TextColor="{StaticResource SparkTextSecondary}" />
+                                        <Label
+                                            FontAttributes="Bold"
+                                            FontSize="11.5"
+                                            Text="{Binding CurrentPatientScore, TargetNullValue='—'}"
+                                            TextColor="{StaticResource SparkTextPrimary}" />
+                                    </VerticalStackLayout>
+                                </Grid>
 							</VerticalStackLayout>
 
 
