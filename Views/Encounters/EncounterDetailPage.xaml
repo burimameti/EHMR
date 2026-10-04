@@ -319,84 +319,79 @@
                                     LineColor="{StaticResource SparkAccentTeal}"
                                     TextColor="{StaticResource SparkTextPrimary}" />
 
-                                <Grid ColumnDefinitions="1.2*,1.2*,0.8*" ColumnSpacing="14">
-                                    <Border
-                                        Padding="12"
-                                        BackgroundColor="White"
-                                        Stroke="{StaticResource SparkBorderSubtle}"
-                                        StrokeShape="RoundRectangle 8"
-                                        StrokeThickness="1">
-                                        <VerticalStackLayout Spacing="6">
-                                            <Label FontSize="10" Text="МКБ-10 дијагноза" TextColor="{StaticResource SparkTextSecondary}" />
-                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Diagnoses}" Spacing="5">
-                                                <BindableLayout.ItemTemplate>
-                                                    <DataTemplate x:DataType="entities:Diagnosis">
-                                                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-                                                            <Label
-                                                                FontAttributes="Bold"
-                                                                FontSize="11.5"
-                                                                Text="{Binding Mkb10Code.Code, TargetNullValue='—'}"
-                                                                TextColor="{StaticResource SparkAccentTealDark}" />
-                                                            <Label
-                                                                Grid.Column="1"
-                                                                FontSize="11.5"
-                                                                LineBreakMode="WordWrap"
-                                                                Text="{Binding Mkb10Code.Description, TargetNullValue='—'}"
-                                                                TextColor="{StaticResource SparkTextPrimary}" />
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </BindableLayout.ItemTemplate>
-                                            </VerticalStackLayout>
+                                <Grid ColumnDefinitions="1.2*,1.2*,0.8*" ColumnSpacing="20">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                        <Label
+                                            FontSize="10"
+                                            Text="МКБ-10 дијагноза"
+                                            TextColor="{StaticResource SparkTextSecondary}" />
+                                        <VerticalStackLayout
+                                            BindableLayout.ItemsSource="{Binding Diagnoses}"
+                                            Spacing="2">
+                                            <BindableLayout.EmptyView>
+                                                <Label
+                                                    FontSize="11.5"
+                                                    Text="Нема внесена дијагноза."
+                                                    TextColor="{StaticResource SparkTextSecondary}" />
+                                            </BindableLayout.EmptyView>
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate x:DataType="entities:Diagnosis">
+                                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                                        <Label
+                                                            FontAttributes="Bold"
+                                                            FontSize="11.5"
+                                                            Text="{Binding Mkb10Code.Code, TargetNullValue='—'}"
+                                                            TextColor="{StaticResource SparkAccentTealDark}" />
+                                                        <Label
+                                                            Grid.Column="1"
+                                                            FontSize="11.5"
+                                                            LineBreakMode="WordWrap"
+                                                            Text="{Binding Mkb10Code.Description, TargetNullValue='—'}"
+                                                            TextColor="{StaticResource SparkTextPrimary}" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
                                         </VerticalStackLayout>
-                                    </Border>
+                                    </VerticalStackLayout>
 
-                                    <Border
-                                        Grid.Column="1"
-                                        Padding="12"
-                                        BackgroundColor="White"
-                                        Stroke="{StaticResource SparkBorderSubtle}"
-                                        StrokeShape="RoundRectangle 8"
-                                        StrokeThickness="1">
-                                        <VerticalStackLayout Spacing="6">
-                                            <Label FontSize="10" Text="Лекови и количина" TextColor="{StaticResource SparkTextSecondary}" />
-                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="5">
-                                                <BindableLayout.ItemTemplate>
-                                                    <DataTemplate x:DataType="entities:PatientMedicine">
-                                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                                                            <Label
-                                                                FontAttributes="Bold"
-                                                                FontSize="11.5"
-                                                                LineBreakMode="WordWrap"
-                                                                Text="{Binding Medicine.Name, TargetNullValue='—'}"
-                                                                TextColor="{StaticResource SparkTextPrimary}" />
-                                                            <Label
-                                                                Grid.Column="1"
-                                                                FontSize="11.5"
-                                                                Text="{Binding Quantity, TargetNullValue='—'}"
-                                                                TextColor="{StaticResource SparkTextPrimary}" />
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </BindableLayout.ItemTemplate>
-                                            </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                        <Label
+                                            FontSize="10"
+                                            Text="Активна терапија"
+                                            TextColor="{StaticResource SparkTextSecondary}" />
+                                        <VerticalStackLayout
+                                            BindableLayout.ItemsSource="{Binding EncounterMedicines}"
+                                            Spacing="2">
+                                            <BindableLayout.EmptyView>
+                                                <Label
+                                                    FontSize="11.5"
+                                                    Text="Нема активна терапија."
+                                                    TextColor="{StaticResource SparkTextSecondary}" />
+                                            </BindableLayout.EmptyView>
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate x:DataType="entities:PatientMedicine">
+                                                    <Label
+                                                        FontAttributes="Bold"
+                                                        FontSize="11.5"
+                                                        LineBreakMode="WordWrap"
+                                                        Text="{Binding Medicine.Name, TargetNullValue='—'}"
+                                                        TextColor="{StaticResource SparkTextPrimary}" />
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
                                         </VerticalStackLayout>
-                                    </Border>
+                                    </VerticalStackLayout>
 
-                                    <Border
-                                        Grid.Column="2"
-                                        Padding="12"
-                                        BackgroundColor="White"
-                                        Stroke="{StaticResource SparkBorderSubtle}"
-                                        StrokeShape="RoundRectangle 8"
-                                        StrokeThickness="1">
-                                        <VerticalStackLayout Spacing="6">
-                                            <Label FontSize="10" Text="Скор" TextColor="{StaticResource SparkTextSecondary}" />
-                                            <Label
-                                                FontAttributes="Bold"
-                                                FontSize="20"
-                                                Text="{Binding Score.ScoreText, TargetNullValue='—'}"
-                                                TextColor="{StaticResource SparkAccentTealDark}" />
-                                        </VerticalStackLayout>
-                                    </Border>
+                                    <VerticalStackLayout Grid.Column="2" Spacing="2">
+                                        <Label
+                                            FontSize="10"
+                                            Text="Претходен скор"
+                                            TextColor="{StaticResource SparkTextSecondary}" />
+                                        <Label
+                                            FontAttributes="Bold"
+                                            FontSize="11.5"
+                                            Text="{Binding Score.ScoreText, TargetNullValue='—'}"
+                                            TextColor="{StaticResource SparkTextPrimary}" />
+                                    </VerticalStackLayout>
                                 </Grid>
                             </VerticalStackLayout>
 
