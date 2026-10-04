@@ -1042,7 +1042,7 @@ public partial class DashboardViewModel : ObservableObject
             Value=State.ActiveTherapies.ToString("N0"),
             Icon="\uf492",
             Variant=State.OverdueCycles>0 ? MetricTileVariant.Warning : MetricTileVariant.Neutral,
-            Command=NavigateToTherapiesCommand
+            ShowMore=false
         });
 
         RefreshKpiBindings();
