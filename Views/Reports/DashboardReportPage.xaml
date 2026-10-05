@@ -102,7 +102,7 @@
 								Suggestions="{Binding ScorePatientSuggestions}"
 								Tabs="{Binding Tabs}"
 								TabsVisible="True">
-								<SparkExplorerHeaderView.SuggestionTemplate>
+								<sc:SparkExplorerHeaderView.SuggestionTemplate>
 									<DataTemplate x:DataType="{x:Null}">
 										<Border Margin="2" Padding="12,8" BackgroundColor="{StaticResource Gray100}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 2" StrokeThickness="1.2">
 											<Grid ColumnDefinitions="1.7*,1.1*,1.1*" ColumnSpacing="14">
