@@ -22,14 +22,14 @@
 				ColumnSpacing="8"
 				MinimumHeightRequest="64"
 				MinimumWidthRequest="0"
-				RowDefinitions="Auto">
+				RowDefinitions="Auto,Auto">
 
 				<!--  COL 2: action buttons (Освежи + dynamic ones)  -->
 				<HorizontalStackLayout
 					x:Name="ActionLayout"
 					Grid.Row="0"
 					Grid.Column="2"
-					Margin="0,15,0,0"
+					Margin="0,8,0,0"
 					HorizontalOptions="End"
 					Spacing="8"
 					VerticalOptions="Center">
@@ -157,12 +157,17 @@
 				</VerticalStackLayout>
 
 				<!--  COL 1: pickers  -->
-				<HorizontalStackLayout
+				<FlexLayout
 					x:Name="PickerLayout"
-					Grid.Row="0"
-					Grid.Column="1"
+					Grid.Row="1"
+					Grid.Column="0"
+					Grid.ColumnSpan="3"
+					HorizontalOptions="Fill"
 					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
-					Spacing="8"
+					Direction="Row"
+					JustifyContent="Start"
+					AlignItems="Center"
+					Wrap="Wrap"
 					VerticalOptions="Center">
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkPickerItem">
@@ -173,7 +178,7 @@
 								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
-				</HorizontalStackLayout>
+				</FlexLayout>
 			</Grid>
 
 			<BoxView
