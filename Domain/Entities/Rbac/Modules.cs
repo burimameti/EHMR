@@ -48,7 +48,7 @@ public static class ModulePermissionCatalog
             [Modules.Therapy] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete],
             [Modules.Protocols] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Approve, ModuleAction.Print, ModuleAction.Export],
             [Modules.Inventory] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Export],
-            [Modules.Reports] = [ModuleAction.View, ModuleAction.Export, ModuleAction.Print],
+            [Modules.Reports] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Export, ModuleAction.Print],
             [Modules.Encounters] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Approve, ModuleAction.Print, ModuleAction.Export],
             [Modules.Calendar] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Schedule, ModuleAction.Cancel],
             [Modules.MKBCodes] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Export, ModuleAction.Manage],
