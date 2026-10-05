@@ -27,18 +27,18 @@
 					<controls:FFPageHeader
 						Title="Пациенти"
 						Grid.Column="0"
-						Subtitle="Преглед, пребарување и управување со пациенти" >
-				<controls:FFPageHeader.HeaderContent>
-<controls:FFButton
-						ButtonKind="Secondary"
-						Command="{Binding GoBackCommand}"
-						HeightRequestEx="40"
-						Text="Назад"
-						WidthRequestEx="130" />
-			</controls:FFPageHeader.HeaderContent>
-		</controls:FFPageHeader>
+						Subtitle="Преглед, пребарување и управување со пациенти">
+						<controls:FFPageHeader.HeaderContent>
+							<controls:FFButton
+								ButtonKind="Secondary"
+								Command="{Binding GoBackCommand}"
+								HeightRequestEx="40"
+								Text="Назад"
+								WidthRequestEx="130" />
+						</controls:FFPageHeader.HeaderContent>
+					</controls:FFPageHeader>
 
-					<Button
+					<!--<Button
 						Grid.Column="1"
 						Margin="0,9,22,25"
 						BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
@@ -46,7 +46,7 @@
 						IsEnabled="{Binding CanCreate}"
 						Style="{StaticResource PrimaryButtonStyle}"
 						Text="Нов пациент"
-						TextColor="{StaticResource White}" />
+						TextColor="{StaticResource White}" />-->
 				</Grid>
 			</Border>
 

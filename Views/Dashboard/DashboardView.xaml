@@ -245,21 +245,6 @@
 						Title="Почетна страна"
 						Grid.Column="0"
 						Subtitle="" />
-
-					<!--
-						COL 1: ALERTS
-						FIX: CollectionView inside an "Auto" Grid column is a known MAUI
-						measurement bug — it either collapses to zero width or refuses
-						to size itself to its content, so the three chips could end up
-						squeezed, wrapped, or clipped instead of sitting in one row.
-						Since this is a small, fixed set of alert chips (not a scrolling
-						list), swapping to HorizontalStackLayout + BindableLayout avoids
-						the CollectionView measurement issue entirely: a StackLayout
-						sizes correctly inside an Auto column every time, so all three
-						cards are guaranteed to lay out side-by-side, horizontally,
-						without affecting the "*" title column or the Auto button
-						column next to it.
-					-->
 					<HorizontalStackLayout
 						Grid.Column="1"
 						Margin="12,8,12,8"
@@ -307,33 +292,7 @@
 							</DataTemplate>
 						</BindableLayout.ItemTemplate>
 					</HorizontalStackLayout>
-					<!--  COL 2: BUTTONS — untouched  -->
-					<!--<HorizontalStackLayout
-						Grid.Column="2"
-						Spacing="10"
-						VerticalOptions="Center">
 
-						<controls:FFButton
-							BackgroundColorEx="{StaticResource SparkButtonSecondaryBg}"
-							ButtonKind="Primary"
-							Command="{Binding NewEncounterCommand}"
-							ContentPadding="20,0"
-							HeightRequestEx="45"
-							IsEnabled="{Binding CanCreateEncounter}"
-							Text="Нов преглед"
-							TextColorEx="White" />
-
-						-->
-					<!--<controls:FFButton
-							ButtonKind="Secondary"
-							Command="{Binding NewAppointmentCommand}"
-							ContentPadding="20,0"
-							HeightRequestEx="45"
-							IsEnabled="{Binding CanManageAppointments}"
-							Text="Нов термин" />-->
-					<!--
-
-					</HorizontalStackLayout>-->
 				</Grid>
 			</Border>
 			<Border Grid.Row="1" StrokeThickness="0">
@@ -462,104 +421,6 @@
 										</controls:SparkExplorerHeaderView.SuggestionTemplate>
 									</controls:SparkExplorerHeaderView>
 
-									<Grid
-										Margin="0,8,0,10"
-										ColumnDefinitions="*,Auto"
-										ColumnSpacing="12"
-										IsVisible="{Binding IsEncounterHistoryMode}">
-										<controls:CrudSectionHeader Title="ПРЕГЛЕДИ НА ИЗБРАН ПАЦИЕНТ" />
-										<HorizontalStackLayout
-											Grid.Column="1"
-											IsVisible="{Binding HasEncounterYearOptions}"
-											Spacing="8"
-											VerticalOptions="Center">
-											<Label
-												FontAttributes="Bold"
-												FontSize="11.5"
-												Text="Година"
-												TextColor="{StaticResource SparkTextSecondary}"
-												VerticalOptions="Center" />
-											<controls:FFPicker
-												ItemsSource="{Binding AvailableEncounterYears}"
-												Label=""
-												MinimumWidthRequest="105"
-												SelectedItem="{Binding SelectedEncounterYear, Mode=TwoWay}" />
-										</HorizontalStackLayout>
-									</Grid>
-
-									<Grid
-										Margin="0,0,0,10"
-										ColumnDefinitions="1*,1*"
-										ColumnSpacing="12"
-										IsVisible="{Binding IsEncounterHistoryMode}">
-										<Border
-											Padding="12,10"
-											BackgroundColor="{StaticResource SparkContentBackground}"
-											Stroke="{StaticResource SparkBorder}"
-											StrokeShape="RoundRectangle 10"
-											StrokeThickness="1">
-											<VerticalStackLayout Spacing="6">
-												<Label
-													FontAttributes="Bold"
-													FontSize="11"
-													Text="ДИЈАГНОЗИ"
-													TextColor="{StaticResource SparkAccentTealDark}" />
-												<CollectionView
-													ItemsSource="{Binding PreviewDiagnoses}"
-													MaximumHeightRequest="130"
-													SelectionMode="None">
-													<CollectionView.EmptyView>
-														<Label
-															FontSize="11"
-															Text="Нема активни дијагнози"
-															TextColor="{StaticResource SparkTextMuted}" />
-													</CollectionView.EmptyView>
-													<CollectionView.ItemTemplate>
-														<DataTemplate>
-															<Label
-																FontSize="11.5"
-																Text="{Binding .}"
-																TextColor="{StaticResource SparkTextPrimary}" />
-														</DataTemplate>
-													</CollectionView.ItemTemplate>
-												</CollectionView>
-											</VerticalStackLayout>
-										</Border>
-										<Border
-											Grid.Column="1"
-											Padding="12,10"
-											BackgroundColor="{StaticResource SparkContentBackground}"
-											Stroke="{StaticResource SparkBorder}"
-											StrokeShape="RoundRectangle 10"
-											StrokeThickness="1">
-											<VerticalStackLayout Spacing="6">
-												<Label
-													FontAttributes="Bold"
-													FontSize="11"
-													Text="ТЕКОВНИ ЛЕКОВИ"
-													TextColor="{StaticResource SparkAccentTealDark}" />
-												<CollectionView
-													ItemsSource="{Binding PreviewMedicines}"
-													MaximumHeightRequest="130"
-													SelectionMode="None">
-													<CollectionView.EmptyView>
-														<Label
-															FontSize="11"
-															Text="Нема активни лекови"
-															TextColor="{StaticResource SparkTextMuted}" />
-													</CollectionView.EmptyView>
-													<CollectionView.ItemTemplate>
-														<DataTemplate>
-															<Label
-																FontSize="11.5"
-																Text="{Binding .}"
-																TextColor="{StaticResource SparkTextPrimary}" />
-														</DataTemplate>
-													</CollectionView.ItemTemplate>
-												</CollectionView>
-											</VerticalStackLayout>
-										</Border>
-									</Grid>
 
 									<controls:SparkDataGridView
 										AutoSelectFirstRow="False"

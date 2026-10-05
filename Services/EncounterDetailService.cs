@@ -783,7 +783,80 @@ public class EncounterDetailService : IEncounterDetailService
                     entity.IsActive=vm.IsActive;
                 }
             }
+            // ─────────────────────────────────────────────────────────────────────────────
+            // EncounterDetailService.SaveEncounter(...)
+            //
+            // ВМЕТНИ го ОВОЈ блок веднаш ПОСЛЕ циклусот:
+            //     foreach(var vm in medicines.Where(x => !deletedMedicineIds.Contains(x.Id))) { ... }
+            // а ПРЕД блокот:
+            //     if(encounter.AppointmentId is { } linkedApptId && linkedApptId != Guid.Empty) { ... }
+            //
+            // Условот `!exists` значи: само при креирање на нов преглед (не при уредување на стар),
+            // за стар преглед да не ја менува тековната терапија на пациентот.
+            // ─────────────────────────────────────────────────────────────────────────────
 
+            // ── Sync на тековна (patient-level) терапија ────────────────────────────────
+            // Snapshot редовите (EncounterId != null) веќе се зачувани погоре.
+            // Овде ги затвораме стариот лек(ови) и отвораме нови patient-level редови,
+            // за да се појави стариот во PreviousMedicines, а новиот во ActiveMedicinesSummary.
+            if(!exists)
+            {
+                var now = DateTime.Now;
+
+                var activeEncounterMeds = medicines
+                    .Where(x => x.IsActive&&!deletedMedicineIds.Contains(x.Id))
+                    .ToList();
+
+                var currentPatientRows = await db.PatientMedicines
+                    .Where(x => x.PatientId==encounter.PatientId
+                             &&x.IsActive
+                             &&x.EncounterId==null)
+                    .ToListAsync();
+
+                // 1) Затвори ги старите редови што ги нема во прегледот (избришани/заменети)
+                //    или им е сменета дозата / начинот на апликација.
+                foreach(var old in currentPatientRows)
+                {
+                    var match = activeEncounterMeds.FirstOrDefault(m => m.MedicineId==old.MedicineId);
+
+                    var unchanged = match is not null
+                        &&string.Equals(match.Dosage, old.Dosage, StringComparison.OrdinalIgnoreCase)
+                        &&match.ApplicationRegimeId==old.ApplicationRegimeId;
+
+                    if(unchanged)
+                        continue;
+
+                    old.IsActive=false;   // оди во PreviousMedicines
+                    old.EndDate=now;
+                }
+
+                // 2) Отвори нов patient-level ред за нови/променети лекови.
+                foreach(var m in activeEncounterMeds)
+                {
+                    var stillCurrent = currentPatientRows.Any(old =>
+                        old.IsActive&&old.MedicineId==m.MedicineId);
+
+                    if(stillCurrent)
+                        continue;
+
+                    db.PatientMedicines.Add(new PatientMedicine
+                    {
+                        Id=Guid.NewGuid(),
+                        PatientId=encounter.PatientId,
+                        EncounterId=null,             // тековна терапија на пациентот
+                        MedicineId=m.MedicineId,
+                        ApplicationRegimeId=m.ApplicationRegimeId,
+                        Quantity=m.Quantity,
+                        Dosage=m.Dosage,
+                        DosesFrequency=m.DosesFrequency,
+                        StartDate=now,
+                        EndDate=null,
+                        Notes=m.Notes,
+                        PharmaceuticalReference=m.PharmaceuticalReference,
+                        IsActive=true
+                    });
+                }
+            }
             if(encounter.AppointmentId is { } linkedApptId&&linkedApptId!=Guid.Empty)
             {
                 var appt = await db.Appointments

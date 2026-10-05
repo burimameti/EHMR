@@ -424,14 +424,14 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             new() { Header = "ВОЗРАСТ", Key = "Age", CellType = SparkGridCellType.Number, Width = new GridLength(0.9, GridUnitType.Star) },
             new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.5, GridUnitType.Star) },
             new() { Header = "СТАТУС", Key = "Status", CellType = SparkGridCellType.Badge, Width = new GridLength(1.2, GridUnitType.Star) },
-            new() { Header = "НОВ ПРЕГЛЕД", Key = "Pregled", CellType = SparkGridCellType.Button, Width = new GridLength(1.4, GridUnitType.Star) },
+            //new() { Header = "НОВ ПРЕГЛЕД", Key = "Pregled", CellType = SparkGridCellType.Button, Width = new GridLength(1.4, GridUnitType.Star) },
             new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
 
     private void RefreshSparkGridRows(IEnumerable<Patient> patients)
     {
-        var rows = new ObservableCollection<SparkGridRow>();
+        var rows = new ObservableCollection<SparkGridRow>();var pstatus =PatientStatus.Active;
         foreach(var p in patients)
         {
             var row = new SparkGridRow { Tag=p };
@@ -451,35 +451,41 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
             row["Gender"]=p.Gender.ToDisplay();
             row["Age"]=p.Age;
             row["Phone"]=p.Phone;
-            row["Status"]=new SparkBadgeValue(
-              p.Status==PatientStatus.Inactive ? "Неактивен" : p.Status.ToDisplay(),
-              p.Status==PatientStatus.Inactive
-                  ? SparkBadgeTone.Danger
-                  : StatusToTone(p.Status));
-
+            var statusText = p.Status.ToDisplay();
+            row["Status"]=statusText=="Сите"
+                ? new SparkBadgeValue("Нема статус", SparkBadgeTone.Neutral)
+                : new SparkBadgeValue(
+                    p.Status==PatientStatus.Inactive ? "Неактивен" : statusText,
+                    p.Status==PatientStatus.Inactive ? SparkBadgeTone.Danger : StatusToTone(p.Status));
             AddDefaultActions(p, row, detailLabel: "Детали", editLabel: "Промени", canEditPredicate: x => x.Status==PatientStatus.Active);
 
-            if(p.Status==PatientStatus.Active)
-            {
-                row["Pregled"]=new SparkButtonItem
-                {
-                    IconGlyph="\uD83D\uDCC5",
-                    Label="Нов преглед",
-                    IsPrimary=true,
-                    IsEnabled=AuthService.CanPerform(Modules.Encounters, ModuleAction.Create),
-                    Command=NewEncounterForSelectedCommand,
-                    CommandParameter=p
-                };
-            }
-            else
-            {
-                row["Pregled"]=new SparkButtonItem
-                {
-                    IconGlyph="\ud83d\udd12",
-                    Label="Неактивен",
-                    IsPrimary=false
-                };
-            }
+            //if(p.Status!=PatientStatus.Active)
+            //{
+            //    row["Status"]=new SparkButtonItem
+            //    {
+            //        IconGlyph="\ud83d\udd12",
+            //        Label="Неактивен",
+            //        IsPrimary=false
+            //    };
+            //    //row["Pregled"]=new SparkButtonItem
+            //    //{
+            //    //    IconGlyph="\uD83D\uDCC5",
+            //    //    Label="Нов преглед",
+            //    //    IsPrimary=true,
+            //    //    IsEnabled=AuthService.CanPerform(Modules.Encounters, ModuleAction.Create),
+            //    //    Command=NewEncounterForSelectedCommand,
+            //    //    CommandParameter=p
+            //    //};
+            //}
+            //else
+            //{
+            //    row["Pregled"]=new SparkButtonItem
+            //    {
+            //        IconGlyph="\ud83d\udd12",
+            //        Label="Неактивен",
+            //        IsPrimary=false
+            //    };
+            //}
 
             rows.Add(row);
         }

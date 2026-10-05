@@ -120,28 +120,27 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
                     Section(column, "ЛИЧНИ И ОСНОВНИ ПОДАТОЦИ", () =>
                     {
                         TwoColumn(column, "Пациент", patient.FullName);
-                        TwoColumn(column, "Пациентски број", patient.PatientNumber);
-                        TwoColumn(column, "ЕМБГ", patient.NationalId);
+                        //TwoColumn(column, "Пациентски број", patient.PatientNumber);              
                         TwoColumn(column, "ЕЗБО", patient.SzboNumber);
                         TwoColumn(column, "Датум на раѓање", patient.BirthDate.ToString("dd.MM.yyyy"));
                         TwoColumn(column, "Пол", patient.Gender.ToString());
                         TwoColumn(column, "Телефон", patient.Phone);
                         TwoColumn(column, "Е-пошта", patient.Email);
                         TwoColumn(column, "Адреса", JoinAddress(patient.Address, patient.City, patient.PostalCode));
-                        TwoColumn(column, "Матичен реуматолог", patient.Doctor?.FullName ?? "—");
+                       // TwoColumn(column, "Матичен реуматолог", patient.Doctor?.FullName ?? "—");
                         TwoColumn(column, "Статус", patient.Status.ToString());
-                        if(patient.Status==Domain.Entities.PatientStatus.Inactive)
-                            TwoColumn(column, "Причина за неактивност", patient.InactiveReason);
+                        //if(patient.Status==Domain.Entities.PatientStatus.Inactive)
+                        //    TwoColumn(column, "Причина за неактивност", patient.InactiveReason);
                         TwoColumn(column, "Регистрација", patient.RegistrationDate.ToString("dd.MM.yyyy"));
                     });
 
-                    Section(column, "МЕДИЦИНСКИ И БИОЛОШКИ ПОДАТОЦИ", () =>
-                    {
-                        TwoColumn(column, "Крвна група", patient.BloodType);
-                        TwoColumn(column, "Итна контакт личност", patient.EmergencyContactName);
-                        TwoColumn(column, "Телефон за итен контакт", patient.EmergencyContactPhone);
-                        TwoColumn(column, "Однос", patient.EmergencyRelationship);
-                    });
+                    //Section(column, "МЕДИЦИНСКИ И БИОЛОШКИ ПОДАТОЦИ", () =>
+                    //{
+                    //   // TwoColumn(column, "Крвна група", patient.BloodType);
+                    //    TwoColumn(column, "Итна контакт личност", patient.EmergencyContactName);
+                    //    TwoColumn(column, "Телефон за итен контакт", patient.EmergencyContactPhone);
+                    //    TwoColumn(column, "Однос", patient.EmergencyRelationship);
+                    //});
 
                     Section(column, "МКБ-10 ДИЈАГНОЗИ", () =>
                     {
@@ -181,78 +180,78 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
                                 $"{t.StartDate:dd.MM.yyyy} – {(t.EndDate.HasValue ? t.EndDate.Value.ToString("dd.MM.yyyy") : "—")} · {t.DecisionText ?? t.Notes ?? "Без забелешка"}");
                     });
 
-                    Section(column, "СКОРОВИ", () =>
-                    {
-                        if(scores.Count==0) Empty(column, "Нема внесени скорови.");
-                        foreach(var s in scores)
-                            Row(column,
-                                s.ScoreText,
-                                $"{s.RecordedAt:dd.MM.yyyy HH:mm} · Преглед: {s.Encounter?.EncounterNumber ?? "—"}");
-                    });
+                    //Section(column, "СКОРОВИ", () =>
+                    //{
+                    //    //Posleden skor
+                    //    if(scores.Count==0) Empty(column, "Нема внесени скорови.");
+                    //   // foreach(var s in scores.FirstOrDefault())
+                    //        Row(scores.FirstOrDefault().ScoreText,
+                    //            scores.FirstOrDefault().ScoreText, null);
+                    //});
 
-                    Section(column, "ПРЕГЛЕДИ", () =>
-                    {
-                        if(encounters.Count==0) Empty(column, "Нема внесени прегледи.");
-                        foreach(var e in encounters)
-                        {
-                            var diagnosisText=string.Join(", ",
-                                e.Diagnoses.Select(d => $"{d.Mkb10Code?.Code} {d.Mkb10Code?.Description}"));
-                            Row(column,
-                                $"{e.EncounterNumber} · {e.EncounterDate:dd.MM.yyyy HH:mm} · {e.Status}",
-                                $"Реуматолог: {e.Doctor?.FullName ?? "—"} · Скор: {e.PatientScore?.ScoreText ?? "—"}");
-                            if(!string.IsNullOrWhiteSpace(e.ChiefComplaint))
-                                TextLine(column, "Главна поплака", e.ChiefComplaint);
-                            if(!string.IsNullOrWhiteSpace(e.ReasonForVisit))
-                                TextLine(column, "Причина за посета", e.ReasonForVisit);
-                            if(!string.IsNullOrWhiteSpace(e.HistoryOfPresentIllness))
-                                TextLine(column, "Анамнеза", e.HistoryOfPresentIllness);
-                            if(!string.IsNullOrWhiteSpace(e.Assessment))
-                                TextLine(column, "Проценка", e.Assessment);
-                            if(!string.IsNullOrWhiteSpace(e.Plan))
-                                TextLine(column, "План", e.Plan);
-                            if(!string.IsNullOrWhiteSpace(e.ClinicalNotes ?? e.Notes))
-                                TextLine(column, "Забелешка", e.ClinicalNotes ?? e.Notes);
-                            if(!string.IsNullOrWhiteSpace(diagnosisText))
-                                TextLine(column, "Дијагнози", diagnosisText);
-                        }
-                    });
+                    //Section(column, "ПРЕГЛЕДИ", () =>
+                    //{
+                    //    if(encounters.Count==0) Empty(column, "Нема внесени прегледи.");
+                    //    foreach(var e in encounters)
+                    //    {
+                    //        var diagnosisText=string.Join(", ",
+                    //            e.Diagnoses.Select(d => $"{d.Mkb10Code?.Code} {d.Mkb10Code?.Description}"));
+                    //        Row(column,
+                    //            $"{e.EncounterNumber} · {e.EncounterDate:dd.MM.yyyy HH:mm} · {e.Status}",
+                    //            $"Реуматолог: {e.Doctor?.FullName ?? "—"} · Скор: {e.PatientScore?.ScoreText ?? "—"}");
+                    //        //if(!string.IsNullOrWhiteSpace(e.ChiefComplaint))
+                    //        //    TextLine(column, "Главна поплака", e.ChiefComplaint);
+                    //        if(!string.IsNullOrWhiteSpace(e.ReasonForVisit))
+                    //            TextLine(column, "Причина за посета", e.ReasonForVisit);
+                    //        if(!string.IsNullOrWhiteSpace(e.HistoryOfPresentIllness))
+                    //            TextLine(column, "Анамнеза", e.HistoryOfPresentIllness);
+                    //        if(!string.IsNullOrWhiteSpace(e.Assessment))
+                    //            TextLine(column, "Проценка", e.Assessment);
+                    //        if(!string.IsNullOrWhiteSpace(e.Plan))
+                    //            TextLine(column, "План", e.Plan);
+                    //        if(!string.IsNullOrWhiteSpace(e.ClinicalNotes ?? e.Notes))
+                    //            TextLine(column, "Забелешка", e.ClinicalNotes ?? e.Notes);
+                    //        if(!string.IsNullOrWhiteSpace(diagnosisText))
+                    //            TextLine(column, "Дијагнози", diagnosisText);
+                    //    }
+                    //});
 
-                    Section(column, "ТЕРМИНИ", () =>
-                    {
-                        if(appointments.Count==0) Empty(column, "Нема внесени термини.");
-                        foreach(var a in appointments)
-                            Row(column,
-                                $"{a.AppointmentNumber} · {a.ScheduledStart:dd.MM.yyyy HH:mm}–{a.ScheduledEnd:HH:mm} · {a.Status}",
-                                $"Реуматолог: {a.Doctor?.FullName ?? "—"} · Причина: {a.ReasonForVisit}");
-                            // ClinicalNotes is rendered below as its own field to preserve long notes.
-                        foreach(var a in appointments.Where(x => !string.IsNullOrWhiteSpace(x.ClinicalNotes)))
-                            TextLine(column, "Забелешка за термин", $"{a.ScheduledStart:dd.MM.yyyy HH:mm}: {a.ClinicalNotes}");
-                    });
+                    //Section(column, "ТЕРМИНИ", () =>
+                    //{
+                    //    if(appointments.Count==0) Empty(column, "Нема внесени термини.");
+                    //    foreach(var a in appointments)
+                    //        Row(column,
+                    //            $"{a.AppointmentNumber} · {a.ScheduledStart:dd.MM.yyyy HH:mm}–{a.ScheduledEnd:HH:mm} · {a.Status}",
+                    //            $"Реуматолог: {a.Doctor?.FullName ?? "—"} · Причина: {a.ReasonForVisit}");
+                    //        // ClinicalNotes is rendered below as its own field to preserve long notes.
+                    //    foreach(var a in appointments.Where(x => !string.IsNullOrWhiteSpace(x.ClinicalNotes)))
+                    //        TextLine(column, "Забелешка за термин", $"{a.ScheduledStart:dd.MM.yyyy HH:mm}: {a.ClinicalNotes}");
+                    //});
 
-                    Section(column, "РЕЦЕПТИ", () =>
-                    {
-                        if(prescriptions.Count==0) Empty(column, "Нема внесени рецепти.");
-                        foreach(var p in prescriptions)
-                            Row(column,
-                                $"{p.PrescriptionNumber} · {p.Medication ?? "—"}",
-                                $"Доза: {p.Dosage ?? "—"} · Статус: {p.Status} · Издадено: {p.IssuedDate:dd.MM.yyyy} · Важи до: {p.ExpiryDate:dd.MM.yyyy}");
-                            foreach(var p in prescriptions.Where(x => !string.IsNullOrWhiteSpace(x.Instructions) || !string.IsNullOrWhiteSpace(x.Notes)))
-                                TextLine(column, "Инструкции / забелешка", $"{p.Instructions} {p.Notes}");
-                    });
+                    //Section(column, "РЕЦЕПТИ", () =>
+                    //{
+                    //    if(prescriptions.Count==0) Empty(column, "Нема внесени рецепти.");
+                    //    foreach(var p in prescriptions)
+                    //        Row(column,
+                    //            $"{p.PrescriptionNumber} · {p.Medication ?? "—"}",
+                    //            $"Доза: {p.Dosage ?? "—"} · Статус: {p.Status} · Издадено: {p.IssuedDate:dd.MM.yyyy} · Важи до: {p.ExpiryDate:dd.MM.yyyy}");
+                    //        foreach(var p in prescriptions.Where(x => !string.IsNullOrWhiteSpace(x.Instructions) || !string.IsNullOrWhiteSpace(x.Notes)))
+                    //            TextLine(column, "Инструкции / забелешка", $"{p.Instructions} {p.Notes}");
+                    //});
 
-                    Section(column, "ДОКУМЕНТИ", () =>
-                    {
-                        if(documents.Count==0) Empty(column, "Нема прикачени документи.");
-                        foreach(var d in documents)
-                            Row(column,
-                                $"{d.Title} · {d.DocumentType}",
-                                $"{d.FileName} · {d.ContentType} · {d.UploadedAt:dd.MM.yyyy HH:mm} · {FormatBytes(d.FileSize)}");
-                    });
+                    //Section(column, "ДОКУМЕНТИ", () =>
+                    //{
+                    //    if(documents.Count==0) Empty(column, "Нема прикачени документи.");
+                    //    foreach(var d in documents)
+                    //        Row(column,
+                    //            $"{d.Title} · {d.DocumentType}",
+                    //            $"{d.FileName} · {d.ContentType} · {d.UploadedAt:dd.MM.yyyy HH:mm} · {FormatBytes(d.FileSize)}");
+                    //});
                 });
 
                 page.Footer().Row(row =>
                 {
-                    row.RelativeItem().Text("EHMR · Доверлив медицински извештај");
+                    //row.RelativeItem().Text("EHMR · Доверлив медицински извештај");
                     row.RelativeItem().AlignRight().Text(x =>
                     {
                         x.Span("Страница ");
@@ -281,22 +280,22 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
             .Padding(10)
             .Column(c =>
             {
-                c.Item().Text(title).Bold().FontSize(16).FontColor("#0F766E");
-                c.Item().PaddingTop(2).Text(patient.FullName).Bold().FontSize(12);
+                c.Item().Text(title).Bold().FontSize(16).FontColor("#000000");
+               // c.Item().PaddingTop(2).Text(patient.FullName).Bold().FontSize(12);
+                //c.Item().PaddingTop(2).Text(
+                //    $"ЕЗБО: {patient.SzboNumber} · ЕМБГ: {patient.NationalId} · " +
+                //    $"Реуматолог: {patient.Doctor?.FullName ?? "—"}").FontSize(9);
                 c.Item().PaddingTop(2).Text(
-                    $"ЕЗБО: {patient.SzboNumber} · ЕМБГ: {patient.NationalId} · " +
-                    $"Реуматолог: {patient.Doctor?.FullName ?? "—"}").FontSize(9);
-                c.Item().PaddingTop(2).Text(
-                    $"Генерирано: {DateTime.Now:dd.MM.yyyy HH:mm} · " +
-                    $"Корисник: {generatedBy ?? "EHMR"}").FontSize(8);
-                if(focusEncounter is not null)
-                    c.Item().PaddingTop(4).Text(
-                        $"Фокусиран преглед: {focusEncounter.EncounterNumber} · {focusEncounter.EncounterDate:dd.MM.yyyy HH:mm}")
-                        .Bold().FontSize(9);
-                if(focusAppointment is not null)
-                    c.Item().PaddingTop(2).Text(
-                        $"Фокусиран термин: {focusAppointment.AppointmentNumber} · {focusAppointment.ScheduledStart:dd.MM.yyyy HH:mm}")
-                        .Bold().FontSize(9);
+                    $"Датум: {DateTime.Now:dd.MM.yyyy HH:mm} · " );
+                   
+                //if(focusEncounter is not null)
+                //    c.Item().PaddingTop(4).Text(
+                //        $"Фокусиран преглед: {focusEncounter.EncounterNumber} · {focusEncounter.EncounterDate:dd.MM.yyyy HH:mm}")
+                //        .Bold().FontSize(9);
+                //if(focusAppointment is not null)
+                //    c.Item().PaddingTop(2).Text(
+                //        $"Фокусиран термин: {focusAppointment.AppointmentNumber} · {focusAppointment.ScheduledStart:dd.MM.yyyy HH:mm}")
+                //        .Bold().FontSize(9);
             });
     }
 
@@ -310,7 +309,7 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
             section.Item()
                 .Background("#E6FFFB")
                 .BorderBottom(2)
-                .BorderColor("#0F766E")
+                .BorderColor("#AAAAAA")
                 .Padding(6)
                 .Text(title)
                 .Bold()

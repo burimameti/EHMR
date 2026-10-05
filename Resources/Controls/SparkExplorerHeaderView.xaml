@@ -35,11 +35,11 @@
 					VerticalOptions="Center">
 
 					<sc:FFButton
-						ButtonKind="Ghost"
+						ButtonKind="Secondary"
 						Clicked="OnClearClicked"
-						ContentPadding="16,0"
+						ContentPadding="8,0"
 						CornerRadius="6"
-						HeightRequestEx="44"
+						HeightRequestEx="45"
 						IsVisible="{Binding HasClearButton, Source={x:Reference Root}}"
 						Text="Освежи"
 						WidthRequestEx="0" />
