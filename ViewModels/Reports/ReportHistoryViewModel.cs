@@ -93,6 +93,10 @@ public partial class ReportHistoryViewModel
 
     private async Task LoadCoreAsync()
     {
+        // Re-evaluate after authentication/role has been established.
+        // The ViewModel is transient, while AuthStateService is singleton.
+        EvaluatePermissions();
+
         var reports = await _reportService.GetAllAsync();
         AllItems=reports.ToList();
 
@@ -395,9 +399,20 @@ public partial class ReportHistoryViewModel
         await LoadAsync();
     }
     [RelayCommand]
-    private void NavigateToReport()
+    private async void NavigateToReport()
     {
-       _navigationService.GoToAsync(AppRoutes.Reports.Detail);
+        EvaluatePermissions();
+
+        if(!CanCreate)
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Пристапот е одбиен",
+                "Немате авторизација за креирање извештај.",
+                "OK");
+            return;
+        }
+
+        await _navigationService.GoToAsync(AppRoutes.Reports.Detail);
     }
     // ================= SELECT — overridden to open the file, not navigate =================
     protected override async Task Select(ReportHistory item)
