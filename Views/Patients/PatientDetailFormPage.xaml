@@ -929,6 +929,12 @@
 											Grid.Column="1"
 											Spacing="8">
 
+											<Label
+												FontAttributes="Bold"
+												FontSize="11"
+												Text="АКТИВНА ТЕРАПИЈА"
+												TextColor="{StaticResource SparkTextSecondary}" />
+											
 											<Border
 												Padding="4"
 												BackgroundColor="White"
