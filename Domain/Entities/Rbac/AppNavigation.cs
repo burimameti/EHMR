@@ -190,7 +190,7 @@ public static class AppNavigation
             //    {
                     GroupTitle = "Лекови",
                     Route = AppRoutes.Medicines.List,
-                    Module = Modules.Inventory,
+                    Module = Modules.Medicines,
                     Icon = new IconDefinition { Glyph = "\uf484", Font = IconFontType.FontAwesomeSolid } // Medicine Bottle
                 //},
                 //new()
