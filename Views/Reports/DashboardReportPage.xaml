@@ -148,8 +148,8 @@
 										TotalPages="{Binding TotalPages}" />
 								</Grid>
 							</sc:FFSectionCard>
-
 						</VerticalStackLayout>
+					</sc:FFSectionCard>
 
 						<!--  Analytics and PDF export removed.  -->
 
