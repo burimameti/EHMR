@@ -169,7 +169,7 @@ public class UserService : IUserService
             Modules.Dashboard,
             Modules.Patients,
             Modules.Therapy,
-            Modules.Inventory,
+            Modules.Medicines,
             Modules.Administration
         });
     }
