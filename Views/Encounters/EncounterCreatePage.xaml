@@ -610,13 +610,7 @@
 										StrokeShape="RoundRectangle 8"
 										StrokeThickness="1">
 										<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterScores}" Spacing="0">
-											<BindableLayout.EmptyView>
-												<Label
-													Padding="10,8"
-													FontSize="11"
-													Text="Нема внесени скорови."
-													TextColor="{StaticResource SparkTextSecondary}" />
-											</BindableLayout.EmptyView>
+
 											<BindableLayout.ItemTemplate>
 												<DataTemplate>
 													<Grid
@@ -675,13 +669,7 @@
 										StrokeShape="RoundRectangle 8"
 										StrokeThickness="1">
 										<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterFindings}" Spacing="0">
-											<BindableLayout.EmptyView>
-												<Label
-													Padding="10,8"
-													FontSize="11"
-													Text="Нема внесени наоди."
-													TextColor="{StaticResource SparkTextSecondary}" />
-											</BindableLayout.EmptyView>
+
 											<BindableLayout.ItemTemplate>
 												<DataTemplate>
 													<Grid
@@ -798,12 +786,7 @@
 								BindableLayout.ItemsSource="{Binding RecentEncounters}"
 								IsVisible="{Binding HasPatientContext}"
 								Spacing="6">
-								<BindableLayout.EmptyView>
-									<Label
-										FontSize="12"
-										Text="Нема евидентирани прегледи."
-										TextColor="{StaticResource SparkTextSecondary}" />
-								</BindableLayout.EmptyView>
+
 								<BindableLayout.ItemTemplate>
 									<DataTemplate x:DataType="entities:Encounter">
 										<Border
@@ -865,7 +848,7 @@
 
 							<!--  История на терапии  -->
 							<controls:CrudSectionHeader
-								Title="ИСТОРИЈА НА ТЕРАПИИ"
+								Title="         "
 								Padding="8,5"
 								BackgroundColor="{StaticResource SparkAccentTealBg}"
 								IsVisible="{Binding HasPatientContext}"
@@ -875,12 +858,7 @@
 								BindableLayout.ItemsSource="{Binding PreviousMedicines}"
 								IsVisible="{Binding HasPatientContext}"
 								Spacing="6">
-								<BindableLayout.EmptyView>
-									<Label
-										FontSize="12"
-										Text="Нема претходни терапии."
-										TextColor="{StaticResource SparkTextSecondary}" />
-								</BindableLayout.EmptyView>
+
 								<BindableLayout.ItemTemplate>
 									<DataTemplate x:DataType="entities:PatientMedicine">
 										<Border
@@ -974,7 +952,7 @@
 							<Label
 								FontSize="12"
 								IsVisible="{Binding HasPatientContext, Converter={StaticResource InverseBoolConverter}}"
-								Text="Изберете пациент за документи."
+								Text="Изберете документ."
 								TextColor="{StaticResource SparkTextSecondary}" />
 
 							<FlexLayout
@@ -983,12 +961,7 @@
 								IsVisible="{Binding HasPatientContext}"
 								JustifyContent="Start"
 								Wrap="Wrap">
-								<BindableLayout.EmptyView>
-									<Label
-										FontSize="12"
-										Text="Нема прикачени документи."
-										TextColor="{StaticResource SparkTextSecondary}" />
-								</BindableLayout.EmptyView>
+
 								<BindableLayout.ItemTemplate>
 									<DataTemplate x:DataType="entities:PatientDocument">
 										<Border
