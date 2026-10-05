@@ -59,7 +59,7 @@
 							HeightRequest="45"
 							IsVisible="{Binding CanCreate}"
 							Style="{StaticResource TabButtonActiveStyle}"
-							Text="Нов Извештаи"
+							Text="Нов Извештај"
 							WidthRequest="160" />
 
 					</HorizontalStackLayout>
