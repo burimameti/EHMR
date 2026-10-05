@@ -8,6 +8,28 @@
     BackgroundColor="{StaticResource PageBackground}"
     x:DataType="viewModels:MedicineDetailFormViewModel">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="FieldEntryStyle" TargetType="Entry">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
+                <Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+            </Style>
+
+            <Style x:Key="ReadHintStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+            </Style>
+
+            <Style x:Key="ReadValueBoldStyle" TargetType="Label">
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <Grid ColumnDefinitions="260,*">
 
         <!-- LEFT MENU -->
