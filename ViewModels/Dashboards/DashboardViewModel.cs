@@ -130,7 +130,7 @@ public partial class DashboardViewModel : ObservableObject
             list.Add(new SparkButtonItem
             {
                 Label="Нов преглед",
-                IsPrimary=true,
+                IsPrimary=false,
                 IsEnabled=true,
                 Command=NewEncounterForSelectedCommand,
                 CommandParameter=patient
@@ -141,7 +141,7 @@ public partial class DashboardViewModel : ObservableObject
             list.Add(new SparkButtonItem
             {
                 Label="Нов преглед",
-                IsPrimary=true,
+                IsPrimary=false,
                 IsEnabled=true, // permission is checked inside NewEncounter()
                 Command=NewEncounterCommand
             });

@@ -112,16 +112,16 @@ public static class AppNavigation
                     Module = Modules.Appointments,
                     RequiredAction = ModuleAction.View,
                     Icon = new IconDefinition { Glyph = "\uf03a", Font = IconFontType.FontAwesomeSolid }
-                },
-                new()
-                {
-                    Title = "Нов термин",
-                    Route = AppRoutes.Appointments.Detail,
-                    Module = Modules.Appointments,
-                    RequiredAction = ModuleAction.Create,
-                    StartsNewRecord = true,
-                    Icon = new IconDefinition { Glyph = "\uf067", Font = IconFontType.FontAwesomeSolid }
                 }
+                //new()
+                //{
+                //    Title = "Нов термин",
+                //    Route = AppRoutes.Appointments.Detail,
+                //    Module = Modules.Appointments,
+                //    RequiredAction = ModuleAction.Create,
+                //    StartsNewRecord = true,
+                //    Icon = new IconDefinition { Glyph = "\uf067", Font = IconFontType.FontAwesomeSolid }
+                //}
             ]
         },
 

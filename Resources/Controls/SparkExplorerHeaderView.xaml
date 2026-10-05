@@ -10,7 +10,6 @@
 
 	<VerticalStackLayout
 		Margin="0"
-		Padding="10"
 		BackgroundColor="White"
 		Spacing="0">
 
@@ -30,12 +29,13 @@
 					x:Name="ActionLayout"
 					Grid.Row="0"
 					Grid.Column="2"
+					Margin="0,15,0,0"
 					HorizontalOptions="End"
 					Spacing="8"
 					VerticalOptions="Center">
 
 					<sc:FFButton
-						ButtonKind="Green"
+						ButtonKind="Ghost"
 						Clicked="OnClearClicked"
 						ContentPadding="16,0"
 						CornerRadius="6"
@@ -85,9 +85,8 @@
 
 					<sc:FFSearchBox
 						x:Name="HeaderSearchBox"
-						HorizontalOptions="Start"
+						HorizontalOptions="Fill"
 						Label="Пребарување"
-						MaximumWidthRequest="800"
 						Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
 						SearchCommand="{Binding SearchCommand, Source={x:Reference Root}}"
 						Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}"
