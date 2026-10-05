@@ -17,13 +17,13 @@
 		VerticalOptions="Center">
 		<Border.Shadow>
 			<Shadow
-				Brush="#18000000"
+				Brush="#18412A2A"
 				Radius="4"
 				Offset="0,1" />
 		</Border.Shadow>
-		<Border.StrokeShape>
+		<!--<Border.StrokeShape>
 			<RoundRectangle CornerRadius="{Binding CornerRadius, Source={x:Reference Root}}" />
-		</Border.StrokeShape>
+		</Border.StrokeShape>-->
 		<Border.GestureRecognizers>
 			<TapGestureRecognizer Tapped="OnTapped" />
 		</Border.GestureRecognizers>

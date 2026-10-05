@@ -224,8 +224,6 @@
 
 		<Setter Property="BackgroundColor" Value="{StaticResource EpicPrimary}" />
 		<Setter Property="TextColor" Value="White" />
-		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="Padding" Value="16,8" />
 
 	</Style>
 </ResourceDictionary>
