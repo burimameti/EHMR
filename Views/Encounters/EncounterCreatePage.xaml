@@ -761,7 +761,7 @@
 
 							<!--  История на терапии  -->
 							<controls:CrudSectionHeader
-								Title="         "
+								Title="ИСТОРИЈА НА ТЕРАПИИ"
 								Padding="8,5"
 								BackgroundColor="{StaticResource SparkAccentTealBg}"
 								IsVisible="{Binding HasPatientContext}"
