@@ -771,8 +771,13 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         if(_activeProvider==null)
             return;
 
-        //foreach(var button in _activeProvider.BuildButtons())
-        //    Buttons.Add(button);
+        Buttons.Add(new SparkButtonItem
+        {
+            Label="Генерирај извештај",
+            IsPrimary=true,
+            IsEnabled=CanCreate,
+            Command=ExecuteReportGenerationCommand
+        });
     }
 
     private void BuildSparkGridColumns()
