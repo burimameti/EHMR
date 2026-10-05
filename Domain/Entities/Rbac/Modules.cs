@@ -48,6 +48,7 @@ public static class ModulePermissionCatalog
             [Modules.Therapy] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete],
             [Modules.Protocols] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Approve, ModuleAction.Print, ModuleAction.Export],
             [Modules.Inventory] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Export],
+            [Modules.Medicines] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Export],
             [Modules.Reports] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Export, ModuleAction.Print],
             [Modules.Encounters] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Approve, ModuleAction.Print, ModuleAction.Export],
             [Modules.Calendar] = [ModuleAction.View, ModuleAction.Create, ModuleAction.Edit, ModuleAction.Delete, ModuleAction.Schedule, ModuleAction.Cancel],
@@ -78,6 +79,7 @@ public static class Modules
     public const string Therapy = "Therapy";
     public const string Protocols = "Protocols";
     public const string Inventory = "Inventory";
+    public const string Medicines = "Medicines";
     public const string Reports = "Reports";
     public const string Encounters = "Encounters";
     public const string Calendar = "Calendar";
