@@ -195,14 +195,6 @@ namespace EHMR.Services.Dto
             get; set;
         }
         public string Dosage { get; set; } = "";
-        public DateTime StartDate
-        {
-            get; set;
-        }
-        public DateTime? EndDate
-        {
-            get; set;
-        }
         public string Notes { get; set; } = "";
         public string PharmaceuticalReference { get; set; } = "";
         public decimal Quantity { get; set; } = 1;
