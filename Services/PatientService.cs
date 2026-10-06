@@ -591,7 +591,6 @@ public class PatientService : IPatientService
             if(entity!=null)
             {
                 entity.IsActive=false;
-                entity.EndDate??=DateTime.UtcNow;
             }
         }
 
@@ -610,8 +609,6 @@ public class PatientService : IPatientService
             entity.MedicineId=vm.MedicineId;
             entity.Dosage=vm.Dosage;
             entity.DosesFrequency=vm.DosesFrequency;
-            entity.StartDate=vm.StartDate;
-            entity.EndDate=vm.EndDate;
             entity.Notes=vm.Notes;
             entity.PharmaceuticalReference=vm.PharmaceuticalReference;
             entity.ApplicationRegimeId=vm.ApplicationRegimeId;
@@ -658,8 +655,6 @@ public class PatientService : IPatientService
         MedicineId=vm.MedicineId,
         Dosage=vm.Dosage,
         DosesFrequency=vm.DosesFrequency,
-        StartDate=vm.StartDate,
-        EndDate=vm.EndDate,
         Notes=vm.Notes,
         PharmaceuticalReference=vm.PharmaceuticalReference,
         ApplicationRegimeId=vm.ApplicationRegimeId,
