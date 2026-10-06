@@ -45,8 +45,6 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 ApplicationRegimeId = oral,
                 DosesFrequency = DosesFrequency.TwiceDaily,
                 Dosage = "1 таблета од 850mg",
-                StartDate = DateTime.UtcNow.AddMonths(-5),
-                EndDate = null,
                 Notes = "Да се зема строго за време на оброк.",
                 IsActive = true
             },
@@ -58,8 +56,6 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 ApplicationRegimeId = oral,
                 DosesFrequency = DosesFrequency.Daily,
                 Dosage = "1 таблета од 5mg",
-                StartDate = DateTime.UtcNow.AddMonths(-2),
-                EndDate = null,
                 Notes = "Редовна наутро за крвен притисок.",
                 IsActive = true
             },
@@ -73,8 +69,6 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 ApplicationRegimeId = oral,
                 DosesFrequency = DosesFrequency.Daily,
                 Dosage = "1 капсула од 20mg",
-                StartDate = DateTime.UtcNow.AddDays(-14),
-                EndDate = DateTime.UtcNow.AddDays(14), // Краткотрајна хронична терапија
                 Notes = "Наутро на гладно, 30 минути пред појадок.",
                 IsActive = true
             },
@@ -88,8 +82,6 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 ApplicationRegimeId = subcutaneous,
                 DosesFrequency = DosesFrequency.Weekly,
                 Dosage = "3 таблети одеднаш (7.5mg вкупно)",
-                StartDate = DateTime.UtcNow.AddMonths(-1),
-                EndDate = null,
                 Notes = "Да се зема исклучиво во Вторник. Потребна редовна крвна слика.",
                 IsActive = true
             }
