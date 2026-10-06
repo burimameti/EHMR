@@ -382,7 +382,7 @@ public class EncounterDetailService : IEncounterDetailService
                                 .ToList(),
 
             PatientMedicines=patient.PatientMedicines
-                                .OrderByDescending(pm => pm.StartDate)
+                                .OrderByDescending(pm => pm.IsActive)
                                 .ToList(),
 
             Documents=patient.Documents
@@ -744,7 +744,6 @@ public class EncounterDetailService : IEncounterDetailService
                 if(entity is not null)
                 {
                     entity.IsActive=false;
-                    entity.EndDate=DateTime.UtcNow;
                 }
             }
 
