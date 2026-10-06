@@ -25,6 +25,9 @@ public class PatientMedicine : BaseEntity
     public Guid? ApplicationRegimeId { get; set; }
     public ApplicationRegime? ApplicationRegime { get; set; }
 
+    public Guid? ResolutionDocumentId { get; set; }
+    public PatientDocument? ResolutionDocument { get; set; }
+
     [NotMapped]
     public string ApplicationRegimeDisplay
     {
