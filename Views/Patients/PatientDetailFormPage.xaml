@@ -1071,6 +1071,7 @@
 																HeightRequestEx="32"
 																HorizontalOptions="Center"
 																IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
+																IsEnabled="{Binding CanDelete}"
 																Text=" X "
 																VerticalOptions="Center"
 																WidthRequestEx="44" />
