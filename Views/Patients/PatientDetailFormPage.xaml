@@ -898,7 +898,10 @@
 									ColumnDefinitions="*"
 									RowDefinitions="Auto,Auto"
 									RowSpacing="14">
-									<VerticalStackLayout Grid.Row="0" Grid.ColumnSpan="1" Spacing="8">
+									<VerticalStackLayout
+										Grid.Row="0"
+										Grid.ColumnSpan="1"
+										Spacing="8">
 
 										<Grid
 											ColumnDefinitions="Auto,Auto,*,Auto"
@@ -906,7 +909,7 @@
 											HeightRequest="34">
 
 											<Border
-												Grid.Column="1"
+												Grid.Column="0"
 												Padding="6,2"
 												BackgroundColor="{StaticResource SparkAccentTealBg}"
 												StrokeShape="RoundRectangle 4"
@@ -915,7 +918,7 @@
 												<Label
 													FontAttributes="Bold"
 													FontSize="9"
-													Text="ТЕКОВНИ ЛЕКОВИ"
+													Text="АКТИВНИ ЛЕКОВИ"
 													TextColor="{StaticResource SparkAccentTealDark}" />
 											</Border>
 											<controls:FFButton
@@ -1025,7 +1028,7 @@
 															<Label
 																FontSize="11.5"
 																LineBreakMode="TailTruncation"
-																Text="{Binding DefaultDosage}"
+																Text="{Binding PatientMedicine.Dosage}"
 																TextColor="{StaticResource SparkTextPrimary}"
 																VerticalOptions="Center" />
 														</Border>
@@ -1044,7 +1047,10 @@
 															Grid.Column="4"
 															Stroke="{StaticResource SparkBorderSubtle}"
 															Style="{StaticResource TableCellBorderStyle}">
-															<HorizontalStackLayout HorizontalOptions="Center" Spacing="4" VerticalOptions="Center">
+															<HorizontalStackLayout
+																HorizontalOptions="Center"
+																Spacing="4"
+																VerticalOptions="Center">
 																<controls:FFButton
 																	ButtonKind="Secondary"
 																	Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.UploadMedicineResolutionCommand}"
@@ -1053,7 +1059,12 @@
 																	IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
 																	Text="Прикачи"
 																	WidthRequestEx="68" />
-																<Label FontFamily="FASolid" FontSize="13" Text="&#xf06e;" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center">
+																<Label
+																	FontFamily="FASolid"
+																	FontSize="13"
+																	Text="&#xf06e;"
+																	TextColor="{StaticResource SparkAccentTealDark}"
+																	VerticalOptions="Center">
 																	<Label.GestureRecognizers>
 																		<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding PatientMedicine.ResolutionDocument}" />
 																	</Label.GestureRecognizers>
@@ -1070,8 +1081,8 @@
 																CommandParameter="{Binding .}"
 																HeightRequestEx="32"
 																HorizontalOptions="Center"
-																IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
 																IsEnabled="{Binding CanDelete}"
+																IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
 																Text=" X "
 																VerticalOptions="Center"
 																WidthRequestEx="44" />
@@ -1083,7 +1094,10 @@
 									</VerticalStackLayout>
 
 									<!--  РЕД 3 ДЕСНО — ПРЕТХОДНИ ТЕРАПИИ (Неактивна)  -->
-									<VerticalStackLayout Grid.Row="1" Grid.ColumnSpan="1" Spacing="8">
+									<VerticalStackLayout
+										Grid.Row="1"
+										Grid.ColumnSpan="1"
+										Spacing="8">
 
 										<Grid
 											ColumnDefinitions="Auto,Auto,*"
@@ -1148,7 +1162,7 @@
 											</CollectionView>
 										</Border>
 
-										<Grid ColumnDefinitions="1.25*,0.85*,0.55*,0.9*,0.9*,1.1*,56" ColumnSpacing="1">
+										<Grid ColumnDefinitions="1.25*,0.85*,0.55*,1.1*,56" ColumnSpacing="1">
 											<Border Style="{StaticResource TableHeaderBorderStyle}">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" />
 											</Border>
@@ -1158,16 +1172,16 @@
 											<Border Grid.Column="2" Style="{StaticResource TableHeaderBorderStyle}">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="КОЛ." />
 											</Border>
-											<Border Grid.Column="3" Style="{StaticResource TableHeaderBorderStyle}">
+											<!--<Border Grid.Column="3" Style="{StaticResource TableHeaderBorderStyle}">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ОД" />
 											</Border>
 											<Border Grid.Column="4" Style="{StaticResource TableHeaderBorderStyle}">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ДО" />
-											</Border>
-											<Border Grid.Column="5" Style="{StaticResource TableHeaderBorderStyle}">
+											</Border>-->
+											<Border Grid.Column="3" Style="{StaticResource TableHeaderBorderStyle}">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕШЕНИЕ" />
 											</Border>
-											<Border Grid.Column="6" Style="{StaticResource TableHeaderBorderStyle}" />
+											<Border Grid.Column="4" Style="{StaticResource TableHeaderBorderStyle}" />
 										</Grid>
 
 										<VerticalStackLayout BindableLayout.ItemsSource="{Binding PreviousMedicines}" Spacing="0">
@@ -1206,7 +1220,7 @@
 																Style="{StaticResource TableCellEntryStyle}"
 																Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" />
 														</Border>
-														<Border
+														<!--<Border
 															Grid.Column="3"
 															Padding="2,0"
 															Stroke="{StaticResource SparkBorderSubtle}"
@@ -1229,12 +1243,15 @@
 																Format="dd.MM.yyyy"
 																IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
 																TextColor="{StaticResource SparkTextPrimary}" />
-														</Border>
+														</Border>-->
 														<Border
-															Grid.Column="5"
+															Grid.Column="3"
 															Stroke="{StaticResource SparkBorderSubtle}"
 															Style="{StaticResource TableCellBorderStyle}">
-															<HorizontalStackLayout HorizontalOptions="Center" Spacing="4" VerticalOptions="Center">
+															<HorizontalStackLayout
+																HorizontalOptions="Center"
+																Spacing="4"
+																VerticalOptions="Center">
 																<controls:FFButton
 																	ButtonKind="Secondary"
 																	Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.UploadMedicineResolutionCommand}"
@@ -1243,7 +1260,12 @@
 																	IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
 																	Text="Прикачи"
 																	WidthRequestEx="68" />
-																<Label FontFamily="FASolid" FontSize="13" Text="&#xf06e;" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center">
+																<Label
+																	FontFamily="FASolid"
+																	FontSize="13"
+																	Text="&#xf06e;"
+																	TextColor="{StaticResource SparkAccentTealDark}"
+																	VerticalOptions="Center">
 																	<Label.GestureRecognizers>
 																		<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding PatientMedicine.ResolutionDocument}" />
 																	</Label.GestureRecognizers>
@@ -1251,7 +1273,7 @@
 															</HorizontalStackLayout>
 														</Border>
 														<Border
-															Grid.Column="6"
+															Grid.Column="4"
 															Stroke="{StaticResource SparkBorderSubtle}"
 															Style="{StaticResource TableCellBorderStyle}">
 															<controls:FFButton
@@ -1288,7 +1310,7 @@
 									<!--  ДОСИЕ  -->
 									<VerticalStackLayout Grid.Column="0" Spacing="10">
 										<controls:CrudSectionHeader
-											Title="ДРУГА ДОКУМЕНТАЦИЈА ЗА ПАЦИЕНТОТ"
+											Title="ПРИКАЧИ ДРУГА ДОКУМЕНТАЦИЈА ЗА ПАЦИЕНТОТ"
 											LineColor="{StaticResource White}"
 											Style="{StaticResource SectionHeaderStyle}" />
 										<Border
@@ -1298,7 +1320,10 @@
 											StrokeShape="RoundRectangle 10"
 											StrokeThickness="1">
 											<VerticalStackLayout Spacing="12">
-												<Grid ColumnDefinitions="*,Auto" IsVisible="{Binding IsEditMode}" ColumnSpacing="10">
+												<Grid
+													ColumnDefinitions="*,Auto"
+													ColumnSpacing="10"
+													IsVisible="{Binding IsEditMode}">
 													<Label
 														FontSize="12"
 														Text="{Binding Documents.Count, StringFormat='Вкупно документи: {0}'}"
@@ -1396,8 +1421,7 @@
 																		Text="&#xf019;"
 																		TextColor="{StaticResource SparkAccentTealDark}"
 																		VerticalOptions="Center">
-																		<Label.GestureRecognizers>
-																			</Label.GestureRecognizers>
+																		<Label.GestureRecognizers />
 																	</Label>
 																	<Label
 																		Grid.Column="3"
