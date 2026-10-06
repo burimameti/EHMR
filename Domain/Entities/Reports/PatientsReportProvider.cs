@@ -306,12 +306,10 @@ namespace EHMR.Domain.Entities.Reports
                 _cityPicker,
                 _rheumatologistPicker,
                 _diagnosisPicker,
+                _medicinePicker,
                 _genderPicker,
                 _scorePicker
             };
-
-            if(IsMedicineFilterEnabled)
-                pickers.Insert(4, _medicinePicker);
 
             return pickers;
         }
