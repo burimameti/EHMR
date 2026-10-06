@@ -157,11 +157,12 @@
 				</VerticalStackLayout>
 
 				<!--  COL 1: pickers  -->
-				<HorizontalScrollView
+				<ScrollView
 					x:Name="PickerScroll"
 					Grid.Row="0"
 					Grid.Column="1"
 					HorizontalOptions="Fill"
+					Orientation="Horizontal"
 					HorizontalScrollBarVisibility="Never"
 					VerticalOptions="Center">
 					<HorizontalStackLayout
@@ -180,7 +181,7 @@
 							</DataTemplate>
 						</BindableLayout.ItemTemplate>
 					</HorizontalStackLayout>
-				</HorizontalScrollView>
+				</ScrollView>
 			</Grid>
 
 			<BoxView
