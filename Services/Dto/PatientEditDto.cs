@@ -185,6 +185,7 @@ namespace EHMR.Services.Dto
             get; set;
         }
         public Guid? ApplicationRegimeId { get; set; }
+        public Guid? ResolutionDocumentId { get; set; }
         public string ApplicationRegime { get; set; } = "";
         public string MedicineName { get; set; } = "";
 
