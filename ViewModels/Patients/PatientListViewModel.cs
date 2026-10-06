@@ -266,7 +266,7 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         var query = new Dictionary<string, object>();
         if(!string.IsNullOrWhiteSpace(SearchText)) query["search"]=SearchText;
         if(!string.IsNullOrWhiteSpace(statusFilter)) query["statusFilter"]=statusFilter;
-        await Shell.Current.GoToAsync(AppRoutes.Patients.List, query);
+        await Shell.Current.GoToAsync($"//{AppRoutes.Patients.List}", query);
     }
 
     [RelayCommand]
