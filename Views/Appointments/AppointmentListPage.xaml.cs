@@ -17,13 +17,11 @@ namespace EHMR.Views
             MenuHost.Content=menu;
         }
 
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             base.OnAppearing();
             if(_viewModel!=null)
-            {
-                await _viewModel.LoadAsync();
-            }
+                Dispatcher.Dispatch(() => _ = _viewModel.LoadAsync());
         }
         private void OnSelectedStatusChanged(object sender, EventArgs e)
         {
