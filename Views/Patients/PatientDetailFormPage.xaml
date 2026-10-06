@@ -1288,18 +1288,24 @@
 									<!--  ДОСИЕ  -->
 									<VerticalStackLayout Grid.Column="0" Spacing="10">
 										<controls:CrudSectionHeader
-											Title="ДОСИЕ"
+											Title="ДРУГА ДОКУМЕНТАЦИЈА ЗА ПАЦИЕНТОТ"
 											LineColor="{StaticResource White}"
 											Style="{StaticResource SectionHeaderStyle}" />
 										<Border
 											Padding="14"
 											BackgroundColor="White"
 											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeShape="RoundRectangle 8"
+											StrokeShape="RoundRectangle 10"
 											StrokeThickness="1">
 											<VerticalStackLayout Spacing="12">
-												<HorizontalStackLayout IsVisible="{Binding IsEditMode}" Spacing="10">
+												<Grid ColumnDefinitions="*,Auto" IsVisible="{Binding IsEditMode}" ColumnSpacing="10">
+													<Label
+														FontSize="12"
+														Text="{Binding Documents.Count, StringFormat='Вкупно документи: {0}'}"
+														TextColor="{StaticResource SparkTextSecondary}"
+														VerticalOptions="Center" />
 													<controls:FFButton
+														Grid.Column="1"
 														ButtonKind="Secondary"
 														Command="{Binding UploadDocumentCommand}"
 														ContentPadding="16,0"
@@ -1307,10 +1313,11 @@
 														IsEnabled="{Binding IsUploadingDocument, Converter={StaticResource InvertedBoolConverter}}"
 														Text="📎 Прикачи документ" />
 													<ActivityIndicator
+														Grid.Column="1"
 														IsRunning="{Binding IsUploadingDocument}"
 														IsVisible="{Binding IsUploadingDocument}"
 														Color="{StaticResource SparkAccentTeal}" />
-												</HorizontalStackLayout>
+												</Grid>
 												<CollectionView ItemsSource="{Binding Documents}" SelectionMode="None">
 													<CollectionView.EmptyView>
 														<Label
@@ -1331,7 +1338,7 @@
 																<Border.GestureRecognizers>
 																	<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding .}" />
 																</Border.GestureRecognizers>
-																<Grid ColumnDefinitions="36,*,Auto,Auto" ColumnSpacing="10">
+																<Grid ColumnDefinitions="42,*,Auto,Auto" ColumnSpacing="12">
 																	<Border
 																		BackgroundColor="{StaticResource SparkAccentTealBg}"
 																		HeightRequest="40"
@@ -1353,23 +1360,44 @@
 																				VerticalOptions="Center" />
 																		</Grid>
 																	</Border>
-																	<Label
+																	<VerticalStackLayout
 																		Grid.Column="1"
-																		FontSize="13"
-																		LineBreakMode="TailTruncation"
-																		Text="{Binding FileName}"
-																		TextColor="{StaticResource SparkTextPrimary}"
-																		VerticalOptions="Center" />
+																		Spacing="2"
+																		VerticalOptions="Center">
+																		<Label
+																			FontAttributes="Bold"
+																			FontSize="13"
+																			LineBreakMode="TailTruncation"
+																			Text="{Binding Title, TargetNullValue={Binding FileName}}"
+																			TextColor="{StaticResource SparkTextPrimary}" />
+																		<Label
+																			FontSize="11"
+																			LineBreakMode="TailTruncation"
+																			Text="{Binding FileName}"
+																			TextColor="{StaticResource SparkTextSecondary}" />
+																		<Label
+																			FontSize="10"
+																			Text="{Binding UploadedAt, StringFormat='Прикачен: {0:dd.MM.yyyy HH:mm}'}"
+																			TextColor="{StaticResource SparkTextSecondary}" />
+																	</VerticalStackLayout>
+																	<controls:FFButton
+																		Grid.Column="2"
+																		ButtonKind="Secondary"
+																		Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DownloadDocumentCommand}"
+																		CommandParameter="{Binding .}"
+																		HeightRequestEx="32"
+																		Text="Преземи"
+																		WidthRequestEx="82" />
 																	<Label
 																		Grid.Column="2"
 																		FontFamily="FASolid"
 																		FontSize="14"
+																		IsVisible="False"
 																		Text="&#xf019;"
 																		TextColor="{StaticResource SparkAccentTealDark}"
 																		VerticalOptions="Center">
 																		<Label.GestureRecognizers>
-																			<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DownloadDocumentCommand}" CommandParameter="{Binding .}" />
-																		</Label.GestureRecognizers>
+																			</Label.GestureRecognizers>
 																	</Label>
 																	<Label
 																		Grid.Column="3"
