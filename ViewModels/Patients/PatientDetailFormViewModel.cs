@@ -1346,7 +1346,18 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     private void RemoveDocument(PatientDocumentDto document)
     {
         if(document==null||!CanEditPatient) return;
-        if(document.Id!=Guid.Empty) _deletedDocumentIds.Add(document.Id);
+        if(document.Id!=Guid.Empty)
+        {
+            _deletedDocumentIds.Add(document.Id);
+            foreach(var medicine in AttachedMedicines.Select(x => x.PatientMedicine).Concat(PreviousMedicines.Select(x => x.PatientMedicine)))
+            {
+                if(medicine.ResolutionDocumentId==document.Id)
+                {
+                    medicine.ResolutionDocumentId=null;
+                    medicine.ResolutionDocument=null;
+                }
+            }
+        }
         if(SelectedDocumentPreview==document) SelectedDocumentPreview=null;
         Documents.Remove(document);
     }
