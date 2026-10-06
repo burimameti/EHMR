@@ -22,9 +22,10 @@
 
 			<!--  ═══ СТИЛОВИ ЗА ОВАА СТРАНА ═══  -->
 
+			<!--  Section headers: сива позадина, иста како ДОКУМЕНТИ / ЛЕКОВИ на останатите страни  -->
 			<Style x:Key="SectionHeaderStyle" TargetType="controls:CrudSectionHeader">
 				<Setter Property="Padding" Value="8,5" />
-				<Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTealBg}" />
+				<Setter Property="BackgroundColor" Value="{StaticResource Gray300}" />
 				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 			</Style>
 
@@ -52,21 +53,23 @@
 				<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
 			</Style>
 
+			<!--  Table header: сива, иста како ЛЕКОВИ табелата на Encounter Detail  -->
 			<Style x:Key="TableHeaderBorderStyle" TargetType="Border">
 				<Setter Property="Padding" Value="8,6" />
-				<Setter Property="BackgroundColor" Value="#475569" />
+				<Setter Property="BackgroundColor" Value="{StaticResource Gray300}" />
 				<Setter Property="StrokeThickness" Value="0" />
 			</Style>
 
 			<Style x:Key="TableHeaderLabelStyle" TargetType="Label">
 				<Setter Property="FontAttributes" Value="Bold" />
 				<Setter Property="FontSize" Value="9" />
-				<Setter Property="TextColor" Value="White" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 			</Style>
 
+			<!--  Висина 46 како во табелата на Encounter Create  -->
 			<Style x:Key="TableCellBorderStyle" TargetType="Border">
 				<Setter Property="BackgroundColor" Value="White" />
-				<Setter Property="HeightRequest" Value="42" />
+				<Setter Property="HeightRequest" Value="46" />
 				<Setter Property="StrokeThickness" Value="1" />
 			</Style>
 
@@ -254,12 +257,11 @@
 			<ContentView x:Name="MenuHost" />
 		</Border>
 
-		<!--  ─── MAIN CONTENT AREA ───  -->
+		<!--  ─── MAIN CONTENT AREA (ист page grid како Encounter страните) ───  -->
 		<Grid
 			Grid.Column="1"
-			Margin="0"
 			RowDefinitions="Auto,*,Auto"
-			RowSpacing="0">
+			Style="{StaticResource CrudFormPageGridStyle}">
 
 			<!--  Header  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
@@ -286,16 +288,8 @@
 			</Border>
 
 			<!--  Body: формата, па историјата под неа  -->
-			<Grid
-				Grid.Row="1"
-				Margin="0"
-				Padding="0"
-				Style="{StaticResource CrudFormBodyGridStyle}">
-				<controls:CustomScrollView
-					x:Name="FormScrollView"
-					Margin="0"
-					Padding="0"
-					ScrollBarColor="{StaticResource SparkAccentTeal}">
+			<Grid Grid.Row="1" Style="{StaticResource CrudFormBodyGridStyle}">
+				<controls:CustomScrollView x:Name="FormScrollView" ScrollBarColor="{StaticResource SparkAccentTeal}">
 					<VerticalStackLayout Spacing="0">
 
 						<!--  ╔═══════════════ ФОРМА ═══════════════╗  -->
@@ -308,6 +302,7 @@
 									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
 										<controls:CrudSectionHeader
 											Title="ЛИЧНИ ПОДАТОЦИ"
+											LineColor="{StaticResource White}"
 											Style="{StaticResource SectionHeaderStyle}"
 											VerticalOptions="Center" />
 										<controls:FFStatusChip
@@ -462,7 +457,7 @@
 
 									<controls:CrudSectionHeader
 										Title="КОНТАКТ ИНФОРМАЦИИ"
-										LineColor="{StaticResource SparkAccentTeal}"
+										LineColor="{StaticResource White}"
 										Style="{StaticResource SectionHeaderStyle}" />
 
 									<Grid
@@ -621,7 +616,7 @@
 
 									<controls:CrudSectionHeader
 										Title="МАТИЧЕН РЕУМАТОЛОГ"
-										LineColor="{StaticResource SparkAccentTeal}"
+										LineColor="{StaticResource White}"
 										Style="{StaticResource SectionHeaderStyle}" />
 
 									<Grid
@@ -825,16 +820,13 @@
 													Text="Лек"
 													TextColor="{StaticResource SparkTextSecondary}"
 													VerticalOptions="Center" />
-												<Button
+												<controls:FFButton
 													Grid.Column="1"
-													Padding="10,8"
-													BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
+													ButtonKind="Secondary"
 													Command="{Binding AddApplicationRegimeCommand}"
-													CornerRadius="6"
-													FontAttributes="Bold"
-													FontSize="10"
-													Text="+ Нов Начин на апликација"
-													TextColor="White" />
+													HeightRequestEx="34"
+													Text="+ Нов начин"
+													WidthRequestEx="116" />
 											</Grid>
 											<controls:FFSearchBox Placeholder="Додај лек во активна терапија..." Text="{Binding MedicineSearchText, Mode=TwoWay}" />
 										</VerticalStackLayout>
@@ -934,7 +926,7 @@
 												FontSize="11"
 												Text="АКТИВНА ТЕРАПИЈА"
 												TextColor="{StaticResource SparkTextSecondary}" />
-											
+
 											<Border
 												Padding="4"
 												BackgroundColor="White"
@@ -974,7 +966,7 @@
 											</Border>
 
 											<!--  Заглавие на табелата (се крие кога нема лекови)  -->
-											<Grid ColumnDefinitions="1.5*,1*,0.7*,32" ColumnSpacing="1">
+											<Grid ColumnDefinitions="1.5*,1*,0.7*,56" ColumnSpacing="1">
 												<Grid.Triggers>
 													<DataTrigger
 														Binding="{Binding AttachedMedicines.Count}"
@@ -1006,7 +998,7 @@
 												</BindableLayout.EmptyView>
 												<BindableLayout.ItemTemplate>
 													<DataTemplate x:DataType="viewModels:AttachedMedicineRow">
-														<Grid ColumnDefinitions="1.5*,1*,0.7*,32" ColumnSpacing="1">
+														<Grid ColumnDefinitions="1.5*,1*,0.7*,56" ColumnSpacing="1">
 															<Border
 																Padding="8,0"
 																Stroke="{StaticResource SparkBorderSubtle}"
@@ -1043,16 +1035,16 @@
 																Grid.Column="3"
 																Stroke="{StaticResource SparkBorderSubtle}"
 																Style="{StaticResource TableCellBorderStyle}">
-																<Button
-																	Padding="0"
-																	BackgroundColor="Transparent"
+																<controls:FFButton
+																	ButtonKind="Danger"
 																	Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}"
 																	CommandParameter="{Binding .}"
-																	FontFamily="FASolid"
-																	FontSize="10"
+																	HeightRequestEx="32"
+																	HorizontalOptions="Center"
 																	IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
-																	Text="&#xf2ed;"
-																	TextColor="#DC2626" />
+																	Text=" X "
+																	VerticalOptions="Center"
+																	WidthRequestEx="44" />
 															</Border>
 														</Grid>
 													</DataTemplate>
@@ -1102,12 +1094,15 @@
 
 									<!--  ДОСИЕ  -->
 									<VerticalStackLayout Grid.Column="0" Spacing="10">
-										<controls:CrudSectionHeader Title="ДОСИЕ" Style="{StaticResource SectionHeaderStyle}" />
+										<controls:CrudSectionHeader
+											Title="ДОСИЕ"
+											LineColor="{StaticResource White}"
+											Style="{StaticResource SectionHeaderStyle}" />
 										<Border
 											Padding="14"
-											BackgroundColor="{StaticResource SparkBackground}"
-											Stroke="{StaticResource SparkAccentTealBg}"
-											StrokeShape="RoundRectangle 12"
+											BackgroundColor="White"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											StrokeShape="RoundRectangle 8"
 											StrokeThickness="1">
 											<VerticalStackLayout Spacing="12">
 												<HorizontalStackLayout IsVisible="{Binding IsEditMode}" Spacing="10">
@@ -1136,9 +1131,9 @@
 															<Border
 																Margin="0,0,0,8"
 																Padding="10,8"
-																BackgroundColor="{StaticResource SparkBackground}"
-																Stroke="{StaticResource SparkAccentTeal}"
-																StrokeShape="RoundRectangle 8"
+																BackgroundColor="{StaticResource SparkTabActiveBg}"
+																Stroke="{StaticResource SparkBorderSubtle}"
+																StrokeShape="RoundRectangle 10"
 																StrokeThickness="1">
 																<Border.GestureRecognizers>
 																	<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding .}" />
@@ -1208,7 +1203,7 @@
 									<VerticalStackLayout Grid.Column="1" Spacing="10">
 										<controls:CrudSectionHeader
 											Title="СТАТУС НА ПАЦИЕНТ"
-											LineColor="{StaticResource SparkAccentTeal}"
+											LineColor="{StaticResource White}"
 											Style="{StaticResource SectionHeaderStyle}" />
 
 										<HorizontalStackLayout HorizontalOptions="Start" Spacing="28">
@@ -1251,12 +1246,7 @@
 											</VerticalStackLayout>
 										</HorizontalStackLayout>
 
-										<Border
-											Margin="0,2,0,4"
-											BackgroundColor="{StaticResource SparkAccentTeal}"
-											HeightRequest="2"
-											HorizontalOptions="Fill"
-											StrokeThickness="0" />
+										<BoxView HeightRequest="1" Color="{StaticResource SparkBorderSubtle}" />
 
 										<VerticalStackLayout IsVisible="{Binding IsPatientInactive}" Spacing="8">
 											<controls:CrudSectionHeader
@@ -1283,7 +1273,10 @@
 
 									<!--  ЗАБЕЛЕШКА  -->
 									<VerticalStackLayout Grid.Column="2" Spacing="10">
-										<controls:CrudSectionHeader Title="ЗАБЕЛЕШКА" Style="{StaticResource SectionHeaderStyle}" />
+										<controls:CrudSectionHeader
+											Title="ЗАБЕЛЕШКА"
+											LineColor="{StaticResource White}"
+											Style="{StaticResource SectionHeaderStyle}" />
 										<Border IsEnabled="{Binding IsEditMode}" Style="{StaticResource TextAreaFieldBoxStyle}">
 											<Editor
 												AutoSize="TextChanges"
@@ -1305,7 +1298,10 @@
 						<controls:FFSectionCard Margin="0" Style="{StaticResource CrudFormCardStyle}">
 							<VerticalStackLayout Style="{StaticResource CrudFormSidebarStackStyle}">
 
-								<controls:CrudSectionHeader Title="ИСТОРИЈА НА ПАЦИЕНТОТ" />
+								<controls:CrudSectionHeader
+									Title="ИСТОРИЈА НА ПАЦИЕНТОТ"
+									LineColor="{StaticResource White}"
+									Style="{StaticResource SectionHeaderStyle}" />
 
 								<FlexLayout
 									AlignItems="Start"
@@ -1350,10 +1346,10 @@
 				</controls:CustomScrollView>
 			</Grid>
 
-			<!--  Footer  -->
+			<!--  Footer (ист margin како на Encounter страните)  -->
 			<Border
 				Grid.Row="2"
-				Margin="0,10,0,16"
+				Margin="16,10,16,16"
 				Padding="16,10"
 				BackgroundColor="White"
 				Stroke="{StaticResource SparkBorderSubtle}"
