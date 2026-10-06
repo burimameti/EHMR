@@ -1359,7 +1359,7 @@
 																			FontAttributes="Bold"
 																			FontSize="13"
 																			LineBreakMode="TailTruncation"
-																			Text="{Binding Title, TargetNullValue={Binding FileName}}"
+																			Text="{Binding Title}"
 																			TextColor="{StaticResource SparkTextPrimary}" />
 																		<Label
 																			FontSize="11"
