@@ -953,6 +953,9 @@ namespace EHMR.Migrations
                     b.Property<Guid?>("ApplicationRegimeId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ResolutionDocumentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -1012,6 +1015,8 @@ namespace EHMR.Migrations
                     b.HasIndex("ApplicationRegimeId");
 
                     b.HasIndex("EncounterId");
+
+                    b.HasIndex("ResolutionDocumentId");
 
                     b.HasIndex("MedicineId");
 
@@ -1652,6 +1657,11 @@ namespace EHMR.Migrations
                         .HasForeignKey("ApplicationRegimeId")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("EHMR.Domain.Entities.PatientDocument", "ResolutionDocument")
+                        .WithMany()
+                        .HasForeignKey("ResolutionDocumentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("EHMR.Domain.Entities.Encounter", "Encounter")
                         .WithMany()
                         .HasForeignKey("EncounterId")
@@ -1670,6 +1680,8 @@ namespace EHMR.Migrations
                         .IsRequired();
 
                     b.Navigation("ApplicationRegime");
+
+                    b.Navigation("ResolutionDocument");
 
                     b.Navigation("Encounter");
 
