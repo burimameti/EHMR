@@ -27,6 +27,7 @@ namespace EHMR.ViewModels
         public decimal Quantity => PatientMedicine.Quantity;
         public string Dosage => PatientMedicine.Dosage;
         public bool IsActive => PatientMedicine.IsActive;
+        public Guid? ResolutionDocumentId => PatientMedicine.ResolutionDocumentId;
 
         public string RegimeDisplay =>
             string.IsNullOrWhiteSpace(PatientMedicine.ApplicationRegime)
