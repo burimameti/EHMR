@@ -18,18 +18,18 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				Padding="0"
-				ColumnDefinitions="*,Auto,Auto"
-				ColumnSpacing="8"
+				ColumnDefinitions="1.35*,Auto,Auto"
+				ColumnSpacing="18"
 				MinimumHeightRequest="64"
 				MinimumWidthRequest="0"
-				RowDefinitions="Auto,Auto">
+				RowDefinitions="Auto">
 
 				<!--  COL 2: action buttons (Освежи + dynamic ones)  -->
 				<HorizontalStackLayout
 					x:Name="ActionLayout"
 					Grid.Row="0"
 					Grid.Column="2"
-					Margin="0,8,0,0"
+					Margin="0,0,0,0"
 					HorizontalOptions="End"
 					Spacing="8"
 					VerticalOptions="Center">
@@ -159,22 +159,22 @@
 				<!--  COL 1: pickers  -->
 				<FlexLayout
 					x:Name="PickerLayout"
-					Grid.Row="1"
-					Grid.Column="0"
-					Grid.ColumnSpan="3"
-					HorizontalOptions="Fill"
+					Grid.Row="0"
+					Grid.Column="1"
+					HorizontalOptions="Start"
 					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
 					Direction="Row"
 					JustifyContent="Start"
 					AlignItems="Center"
-					Wrap="Wrap"
+					Wrap="NoWrap"
 					VerticalOptions="Center">
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkPickerItem">
 							<sc:FFPicker
 								ItemsSource="{Binding Items}"
 								Label="{Binding Placeholder}"
-								MinimumWidthRequest="110"
+								MinimumWidthRequest="120"
+								Margin="0,0,8,0"
 								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
