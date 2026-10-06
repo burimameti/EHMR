@@ -343,8 +343,26 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
             row["GenericName"]=m.GenericName;
             row["DosageForm"]=m.DosageForm;
             row["DefaultDosage"]=m.DefaultDosage;
-            AddDefaultActions(m, row);
-            var actions = row["Actions"] as List<SparkButtonItem>;
+            var actions = new List<SparkButtonItem>
+            {
+                new()
+                {
+                    IconGlyph="\uf06e",
+                    Label="Детали",
+                    Command=SelectCommand,
+                    CommandParameter=m,
+                    IsEnabled=CanView
+                },
+                new()
+                {
+                    IconGlyph="\uf044",
+                    Label="Уреди",
+                    Command=EditCommand,
+                    CommandParameter=m,
+                    IsEnabled=CanUpdate
+                }
+            };
+            row["Actions"]=actions;
             actions?.Add(new SparkButtonItem
             {
                 IconGlyph="\uf1f8",
