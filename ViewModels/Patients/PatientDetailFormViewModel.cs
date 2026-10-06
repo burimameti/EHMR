@@ -251,7 +251,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             PreviousMedicines=new ObservableCollection<PreviousMedicineRow>(
                 full.Medicines
                     .Where(m => !m.IsActive)
-                    .OrderByDescending(m => m.EndDate??m.StartDate)
                     .Select(m => new PreviousMedicineRow(m)));
 
             Documents=new ObservableCollection<PatientDocumentDto>(full.Documents);
@@ -552,16 +551,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
         }
 
-        var badPrevious = PreviousMedicines.FirstOrDefault(x => x.EndDate.Date<x.StartDate.Date);
-        if(badPrevious!=null)
-        {
-            await _userDialogService.ShowAlertAsync(
-                "Валидација",
-                $"Претходна терапија „{badPrevious.MedicineName}“: датумот „До“ не може да биде пред „Од“.",
-                "OK");
-            return;
-        }
-
         var emptyScore = ScoreEditor.Items.FirstOrDefault(x => string.IsNullOrWhiteSpace(x.Description));
         if(emptyScore!=null)
         {
@@ -731,8 +720,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         MedicineId=m.MedicineId,
         Dosage=m.Dosage,
         DosesFrequency=m.DosesFrequency,
-        StartDate=m.StartDate,
-        EndDate=active ? m.EndDate : (m.EndDate??DateTime.Today),
         Notes=m.Notes,
         PharmaceuticalReference=m.PharmaceuticalReference,
         ApplicationRegimeId=_applicationRegimes.FirstOrDefault(r => string.Equals(r.Regime, m.ApplicationRegime, StringComparison.OrdinalIgnoreCase))?.Id,
@@ -1466,25 +1453,6 @@ public partial class PreviousMedicineRow : ObservableObject
     }
     public string MedicineName => PatientMedicine.MedicineName;
 
-    public DateTime StartDate
-    {
-        get => PatientMedicine.StartDate;
-        set
-        {
-            PatientMedicine.StartDate=value;
-            OnPropertyChanged();
-        }
-    }
-
-    public DateTime EndDate
-    {
-        get => PatientMedicine.EndDate??DateTime.Today;
-        set
-        {
-            PatientMedicine.EndDate=value;
-            OnPropertyChanged();
-        }
-    }
 }
 
 public partial class MkbAlphabetSection : ObservableObject
