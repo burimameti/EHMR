@@ -1015,8 +1015,8 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
         }
 
         var value=await _userDialogService.ShowPromptAsync(
-            "Нов начин на апликација",
-            "Внесете нов начин на апликација за лекот.",
+            "Нов режим на апликација",
+            "Внесете нов режим на апликација за лекот.",
             "Додај",
             "Откажи",
             "Пример: Поткожно");
@@ -1031,12 +1031,12 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
 
             await _userDialogService.ShowAlertAsync(
                 "Успешно",
-                $"Начинот „{regime.Regime}“ е додаден и достапен во изборот.",
+                $"Режимот „{regime.Regime}“ е додаден и достапен во изборот.",
                 "ОК");
         }
         catch(Exception ex)
         {
-            await _userDialogService.ShowAlertAsync("Грешка", $"Начинот не може да се зачува: {ex.Message}", "ОК");
+            await _userDialogService.ShowAlertAsync("Грешка", $"Режимот не може да се зачува: {ex.Message}", "ОК");
         }
     }
 
