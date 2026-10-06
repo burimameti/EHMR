@@ -18,7 +18,7 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				Padding="0"
-				ColumnDefinitions="1.35*,Auto,Auto"
+				ColumnDefinitions="1.2*,1.8*,Auto"
 				ColumnSpacing="18"
 				MinimumHeightRequest="64"
 				MinimumWidthRequest="0"
@@ -157,28 +157,30 @@
 				</VerticalStackLayout>
 
 				<!--  COL 1: pickers  -->
-				<FlexLayout
-					x:Name="PickerLayout"
+				<HorizontalScrollView
+					x:Name="PickerScroll"
 					Grid.Row="0"
 					Grid.Column="1"
-					HorizontalOptions="Start"
-					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
-					Direction="Row"
-					JustifyContent="Start"
-					AlignItems="Center"
-					Wrap="NoWrap"
+					HorizontalOptions="Fill"
+					HorizontalScrollBarVisibility="Never"
 					VerticalOptions="Center">
-					<BindableLayout.ItemTemplate>
-						<DataTemplate x:DataType="sc:SparkPickerItem">
-							<sc:FFPicker
-								ItemsSource="{Binding Items}"
-								Label="{Binding Placeholder}"
-								MinimumWidthRequest="120"
-								Margin="0,0,8,0"
-								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
-						</DataTemplate>
-					</BindableLayout.ItemTemplate>
-				</FlexLayout>
+					<HorizontalStackLayout
+						x:Name="PickerLayout"
+						BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
+						HorizontalOptions="Start"
+						Spacing="8"
+						VerticalOptions="Center">
+						<BindableLayout.ItemTemplate>
+							<DataTemplate x:DataType="sc:SparkPickerItem">
+								<sc:FFPicker
+									ItemsSource="{Binding Items}"
+									Label="{Binding Placeholder}"
+									MinimumWidthRequest="120"
+									SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+							</DataTemplate>
+						</BindableLayout.ItemTemplate>
+					</HorizontalStackLayout>
+				</HorizontalScrollView>
 			</Grid>
 
 			<BoxView
