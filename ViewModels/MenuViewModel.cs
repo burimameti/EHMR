@@ -189,36 +189,36 @@ public partial class MenuViewModel : ObservableObject, IDisposable
         if(group==null)
             return;
 
+        // Direct menu entries (no children) are real navigation targets.
         if(group.Items.Count==0)
         {
-            if(ActiveRoute==group.Route)
+            if(string.IsNullOrWhiteSpace(group.Route) ||
+               ActiveRoute?.Equals(group.Route, StringComparison.OrdinalIgnoreCase)==true)
                 return;
 
             if(!await _navigationLock.WaitAsync(0))
                 return;
 
-            var previousRoute = ActiveRoute;
+            var previousRoute=ActiveRoute;
             IsNavigating=true;
 
             try
             {
-                if(!string.IsNullOrWhiteSpace(group.Route))
-                {
-                    ActiveRoute=group.Route;
-                    await _navigation.GoToAsync(group.Route);
-                }
+                ActiveRoute=group.Route;
+                await _navigation.GoToAsync(group.Route);
             }
             catch(Exception ex)
             {
                 ActiveRoute=previousRoute;
                 System.Diagnostics.Debug.WriteLine(
-                    $"Navigation to '{group.Route}' failed: {ex}");
+                    $"Direct menu navigation to '{group.Route}' failed: {ex}");
             }
             finally
             {
                 IsNavigating=false;
                 _navigationLock.Release();
             }
+
             return;
         }
 
