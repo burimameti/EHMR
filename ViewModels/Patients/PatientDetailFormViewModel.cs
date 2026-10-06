@@ -539,6 +539,19 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
         }
 
+        var medicineWithoutResolution = AttachedMedicines.FirstOrDefault(x => x.PatientMedicine.ResolutionDocumentId is null)
+            ?? PreviousMedicines.FirstOrDefault(x => x.PatientMedicine.ResolutionDocumentId is null);
+        if(medicineWithoutResolution is not null)
+        {
+            var medicineName=medicineWithoutResolution.PatientMedicine.MedicineName;
+            var state=medicineWithoutResolution.PatientMedicine.IsActive ? "активниот" : "неактивниот";
+            await _userDialogService.ShowAlertAsync(
+                "Валидација",
+                $"За {state} лек „{medicineName}“ мора да се прикачи решение пред зачувување.",
+                "ОК");
+            return;
+        }
+
         var badPrevious = PreviousMedicines.FirstOrDefault(x => x.EndDate.Date<x.StartDate.Date);
         if(badPrevious!=null)
         {
