@@ -1555,7 +1555,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             ApplicationRegime=previous?.ApplicationRegime,
             Quantity=previous?.Quantity??1,
             DosesFrequency=previous?.DosesFrequency??DosesFrequency.Other,
-            StartDate=DateTime.Now,
             IsActive=true
         };
 
