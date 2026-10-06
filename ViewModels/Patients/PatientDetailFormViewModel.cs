@@ -542,8 +542,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         medicineWithoutResolution ??= PreviousMedicines.FirstOrDefault(x => x.PatientMedicine.ResolutionDocumentId is null)?.PatientMedicine;
         if(medicineWithoutResolution is not null)
         {
-            var medicineName=medicineWithoutResolution.PatientMedicine.MedicineName;
-            var state=medicineWithoutResolution.PatientMedicine.IsActive ? "активниот" : "неактивниот";
+            var medicineName=medicineWithoutResolution.MedicineName;
+            var state=medicineWithoutResolution.IsActive ? "активниот" : "неактивниот";
             await _userDialogService.ShowAlertAsync(
                 "Валидација",
                 $"За {state} лек „{medicineName}“ мора да се прикачи решение пред зачувување.",
