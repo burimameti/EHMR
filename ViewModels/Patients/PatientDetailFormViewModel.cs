@@ -1038,12 +1038,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task AddApplicationRegimeAsync()
     {
-        if(!CanManageAdministration)
-        {
-            await _userDialogService.ShowAlertAsync("Недозволена акција", "Немате авторизација за управување со начини на апликација.", "ОК");
-            return;
-        }
-
         var value = await _userDialogService.ShowPromptAsync(
             "Нов режим на апликација",
             "Внесете нов режим на апликација за лекот.",
