@@ -47,18 +47,18 @@ namespace EHMR.Services
                     return;
                 }
 
-                // Dashboard/Login are Shell hierarchy roots. All other EHMR
-                // pages are registered with Routing.RegisterRoute(), so they MUST
-                // remain relative routes. Using // for those global routes causes
-                // Shell to reject/ignore the navigation on some menu entries.
+                // Routes declared as Shell hierarchy items (FlyoutItem/ShellItem)
+                // must use an absolute Shell URI. Pages registered with
+                // Routing.RegisterRoute() must stay relative. Detect the former
+                // from the actual Shell instead of maintaining a fragile hard-coded
+                // list of root routes.
                 var cleanRoute = route.Split('?', 2)[0].Trim('/');
-                normalizedRoute = cleanRoute switch
-                {
-                    "dashboard" => "//dashboard",
-                    "patients" => "//patients",
-                    "login" => "//login",
-                    _ => route.TrimStart('/')
-                };
+                var shellRoot = activeShell.Items.FirstOrDefault(item =>
+                    string.Equals(item.Route, cleanRoute, StringComparison.OrdinalIgnoreCase));
+
+                normalizedRoute = shellRoot is not null
+                    ? $"//{cleanRoute}"
+                    : route.TrimStart('/');
 
                 // Menu navigation should be a single Shell operation. The previous
                 // implementation performed PopToRootAsync + GoToAsync for module
