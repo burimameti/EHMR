@@ -22,7 +22,7 @@ public partial class DashboardView : ContentPage
         base.OnAppearing();
 
         Debug.WriteLine("Dashboard OnAppearing");
-        _=_viewModel.Initialize();
+        Dispatcher.Dispatch(() => _ = _viewModel.Initialize());
     }
 
     private void OnCalendarIconTapped(object sender, TappedEventArgs e)
