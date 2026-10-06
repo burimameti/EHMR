@@ -1099,7 +1099,7 @@
 												<Label
 													FontAttributes="Bold"
 													FontSize="9"
-													Text="НЕАКТИЦНИ ЛЕКОВИ"
+													Text="НЕАКТИВНИ ЛЕКОВИ"
 													TextColor="{StaticResource SparkTextPrimary}" />
 											</Border>
 										</Grid>
