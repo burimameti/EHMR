@@ -47,7 +47,6 @@
 						Command="{Binding NewMedicineCommand}"
 						ContentPadding="20,0"
 						HeightRequestEx="45"
-						IsEnabled="{Binding CanCreate}"
 						Text="+ Нов лек" />
 				</Grid>
 			</Border>
@@ -95,10 +94,10 @@
 						<controls:FFSectionCard>
 							<Grid ColumnDefinitions="*,Auto" Padding="4,0,4,10">
 								<VerticalStackLayout Spacing="3">
-									<Label FontAttributes="Bold" FontSize="16" Text="Начин на апликација" TextColor="{StaticResource SparkTextPrimary}" />
-									<Label FontSize="12" Text="Регистар на начини на апликација што се користат кај терапијата." TextColor="{StaticResource SparkTextSecondary}" />
+									<Label FontAttributes="Bold" FontSize="16" Text="Режим на апликација" TextColor="{StaticResource SparkTextPrimary}" />
+									<Label FontSize="12" Text="Регистар на режими на апликација што се користат кај терапијата." TextColor="{StaticResource SparkTextSecondary}" />
 								</VerticalStackLayout>
-								<controls:FFButton Grid.Column="1" ButtonKind="Primary" BackgroundColorEx="{StaticResource SidebarActiveBg}" TextColorEx="White" Command="{Binding AddApplicationRegimeCommand}" IsEnabled="{Binding CanCreate}" Text="+ Нов начин" HeightRequestEx="40" ContentPadding="18,0" />
+								<controls:FFButton Grid.Column="1" ButtonKind="Primary" BackgroundColorEx="{StaticResource SidebarActiveBg}" TextColorEx="White" Command="{Binding AddApplicationRegimeCommand}" Text="+ Нов режим" HeightRequestEx="40" ContentPadding="18,0" />
 							</Grid>
 							<controls:SparkDataGridView Columns="{Binding ApplicationRegimeColumns}" Rows="{Binding ApplicationRegimeRows}" ShowPagination="False" ShowRowNumbers="True" />
 						</controls:FFSectionCard>
