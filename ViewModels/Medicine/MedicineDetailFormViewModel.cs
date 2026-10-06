@@ -64,8 +64,8 @@ public partial class MedicineDetailFormViewModel : ObservableObject
 
     public bool IsEditMode => !IsReadOnly;
     public bool CanCreate => _authorization.CanPerform(Modules.Medicines, ModuleAction.Create);
-    public bool CanUpdate => _authorization.CanPerform(Modules.Inventory, ModuleAction.Edit);
-    public bool CanDelete => _authorization.CanPerform(Modules.Inventory, ModuleAction.Delete);
+    public bool CanUpdate => _authorization.CanPerform(Modules.Medicines, ModuleAction.Edit);
+    public bool CanDelete => _authorization.CanPerform(Modules.Medicines, ModuleAction.Delete);
     public bool CanEditForm => _isNewMode ? CanCreate : CanUpdate;
 
     public string HeaderTitle =>
