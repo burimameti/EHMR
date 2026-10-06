@@ -27,6 +27,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     public bool CanApprove => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Approve);
     public bool CanPrint => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Print);
     public bool CanExport => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Export);
+    private bool CanModifyScores => CanCreate || CanUpdate;
 
     protected CancellationTokenSource SearchCts = new();
 
@@ -101,11 +102,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     public async Task AddApplicationRegimeAsync()
     {
-        if(!CanUpdate)
-        {
-            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за промена на прегледот.", "ОК");
-            return;
-        }
         var value=await UserDialogService.ShowPromptAsync(
             "Нов режим на апликација",
             "Внесете нов режим на апликација за лекот.",
@@ -163,7 +159,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     public async Task EditScoreAsync(string? score)
     {
-        if(!CanUpdate || string.IsNullOrWhiteSpace(score)) return;
+        if(!CanModifyScores || string.IsNullOrWhiteSpace(score)) return;
         var index=EncounterScores.IndexOf(score);
         if(index<0) return;
         var value=await UserDialogService.ShowPromptAsync("Уреди скор","Изменете ја вредноста на скорот.","Зачувај","Откажи",score);
@@ -175,9 +171,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     public async Task AddScoreAsync()
     {
-        if(!CanUpdate)
+        if(!CanModifyScores)
         {
-            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за промена на прегледот.", "ОК");
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за внес на скор.", "ОК");
             return;
         }
 
@@ -199,7 +195,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     public void RemoveScore(string? score)
     {
-        if(!CanUpdate||string.IsNullOrWhiteSpace(score))
+        if(!CanModifyScores||string.IsNullOrWhiteSpace(score))
             return;
 
         EncounterScores.Remove(score);
