@@ -331,6 +331,12 @@
 										BackgroundColor="{StaticResource SparkAccentTealBg}"
 										LineColor="{StaticResource SparkAccentTeal}"
 										TextColor="{StaticResource SparkTextPrimary}" />
+									<controls:FFButton
+										ButtonKind="Secondary"
+										Command="{Binding AddApplicationRegimeCommand}"
+										HeightRequestEx="34"
+										Text="+ Нов режим"
+										WidthRequestEx="116" />
 
 									<controls:FFSearchBox Placeholder="Додај лек во тековната терапија..." Text="{Binding MedicineSearchText, Mode=TwoWay}" />
 
