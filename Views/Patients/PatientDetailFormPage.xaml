@@ -617,7 +617,7 @@
 										Style="{StaticResource SectionHeaderStyle}" />
 
 									<Grid
-										ColumnDefinitions="*,*"
+										ColumnDefinitions="*,*,*"
 										ColumnSpacing="12"
 										RowDefinitions="Auto,Auto,Auto,Auto"
 										RowSpacing="8">
@@ -625,7 +625,7 @@
 										<!--  РЕД 0 — Доктор  -->
 										<VerticalStackLayout
 											Grid.Row="0"
-											Grid.ColumnSpan="2"
+											Grid.ColumnSpan="3"
 											Spacing="8">
 
 											<!--  Edit  -->
@@ -713,7 +713,7 @@
 										<!--  РЕД 1 — МКБ СЕКЦИЈА · ЛАТИНИЦА A–Z  -->
 										<VerticalStackLayout
 											Grid.Row="1"
-											Grid.ColumnSpan="2"
+											Grid.ColumnSpan="3"
 											IsVisible="{Binding IsEditMode}"
 											Spacing="5">
 											<Label
@@ -793,7 +793,7 @@
 										<!--  РЕД 2 — МКБ: лево пребарување, десно избрани дијагнози  -->
 										<Grid
 											Grid.Row="2"
-											Grid.ColumnSpan="2"
+											Grid.ColumnSpan="3"
 											ColumnDefinitions="*,*"
 											ColumnSpacing="12">
 
@@ -972,14 +972,6 @@
 
 											<!--  Заглавие на табелата (се крие кога нема лекови)  -->
 											<Grid ColumnDefinitions="1.35*,1.25*,1.15*,0.65*,56" ColumnSpacing="1">
-												<Grid.Triggers>
-													<DataTrigger
-														Binding="{Binding AttachedMedicines.Count}"
-														TargetType="Grid"
-														Value="0">
-														<Setter Property="IsVisible" Value="False" />
-													</DataTrigger>
-												</Grid.Triggers>
 												<Border Style="{StaticResource TableHeaderBorderStyle}">
 													<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" />
 												</Border>
@@ -1140,14 +1132,6 @@
 											</Border>
 
 											<Grid ColumnDefinitions="1.4*,0.9*,0.6*,1*,1*,56" ColumnSpacing="1">
-												<Grid.Triggers>
-													<DataTrigger
-														Binding="{Binding PreviousMedicines.Count}"
-														TargetType="Grid"
-														Value="0">
-														<Setter Property="IsVisible" Value="False" />
-													</DataTrigger>
-												</Grid.Triggers>
 												<Border Style="{StaticResource TableHeaderBorderStyle}">
 													<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" />
 												</Border>
@@ -1167,13 +1151,6 @@
 											</Grid>
 
 											<VerticalStackLayout BindableLayout.ItemsSource="{Binding PreviousMedicines}" Spacing="0">
-												<BindableLayout.EmptyView>
-													<Label
-														Padding="0,5"
-														FontSize="11"
-														Text="Нема претходни терапии."
-														TextColor="{StaticResource SparkTextSecondary}" />
-												</BindableLayout.EmptyView>
 												<BindableLayout.ItemTemplate>
 													<DataTemplate x:DataType="viewModels:PreviousMedicineRow">
 														<Grid ColumnDefinitions="1.4*,0.9*,0.6*,1*,1*,56" ColumnSpacing="1">
