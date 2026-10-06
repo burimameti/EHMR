@@ -667,6 +667,12 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             _deletedDiagnosisIds.Clear();
             _deletedMedicineIds.Clear();
             _deletedDocumentIds.Clear();
+
+            foreach(var medicine in AttachedMedicines)
+                medicine.MarkPersisted();
+            foreach(var medicine in PreviousMedicines)
+                medicine.MarkPersisted();
+
             _childrenLoaded=false;
 
             await LoadPatientAsync(Patient.Id); // ScoreEditor.Load() ги чисти и неговите deleted ids
@@ -1135,7 +1141,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             IsActive=true
         };
 
-        AttachedMedicines.Add(new AttachedMedicineRow(patientMedicine));
+        var row = new AttachedMedicineRow(patientMedicine);
+        row.MarkNew();
+        AttachedMedicines.Add(row);
 
         if(ApplicationRegimeOptions.Count==0)
             _=EnsureApplicationRegimeExistsAsync();
@@ -1148,16 +1156,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void RemoveMedicine(AttachedMedicineRow row)
     {
-        if(row==null||!CanEditPatient) return;
-
-        // Existing therapy is never physically deleted. Closing it here also
-        // keeps the in-memory model consistent with the history rule.
-        if(row.PatientMedicine.Id!=Guid.Empty)
-        {
-            row.PatientMedicine.IsActive=false;
-            row.PatientMedicine.EndDate=DateTime.UtcNow;
-            _deletedMedicineIds.Add(row.PatientMedicine.Id);
-        }
+        if(row==null||!CanEditPatient||!row.CanDelete) return;
 
         AttachedMedicines.Remove(row);
     }
@@ -1226,7 +1225,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             IsActive=false
         };
 
-        PreviousMedicines.Add(new PreviousMedicineRow(dto));
+        var row = new PreviousMedicineRow(dto);
+        row.MarkNew();
+        PreviousMedicines.Add(row);
 
         PreviousMedicineSearchText=string.Empty;
         PreviousMedicineResults.Clear();
@@ -1236,8 +1237,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void RemovePreviousMedicine(PreviousMedicineRow row)
     {
-        if(row==null||!CanEditPatient) return;
-        if(row.PatientMedicine.Id!=Guid.Empty) _deletedMedicineIds.Add(row.PatientMedicine.Id);
+        if(row==null||!CanEditPatient||!row.CanDelete) return;
+
         PreviousMedicines.Remove(row);
     }
 
@@ -1447,6 +1448,20 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 public partial class PreviousMedicineRow : ObservableObject
 {
     public PreviousMedicineRow(PatientMedicineDto medicine) => PatientMedicine=medicine;
+
+    public bool CanDelete { get; private set; } = false;
+
+    public void MarkNew()
+    {
+        CanDelete=true;
+        OnPropertyChanged(nameof(CanDelete));
+    }
+
+    public void MarkPersisted()
+    {
+        CanDelete=false;
+        OnPropertyChanged(nameof(CanDelete));
+    }
 
     public PatientMedicineDto PatientMedicine
     {
