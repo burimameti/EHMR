@@ -9,7 +9,7 @@
 	ZIndex="100">
 
 	<VerticalStackLayout
-		Margin="0"
+		Margin="10,0,0,0"
 		BackgroundColor="White"
 		Spacing="0">
 
@@ -18,8 +18,8 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				Padding="0"
-				ColumnDefinitions="1.2*,1.8*,Auto"
-				ColumnSpacing="18"
+				ColumnDefinitions="*,Auto,Auto"
+				ColumnSpacing="2"
 				MinimumHeightRequest="64"
 				MinimumWidthRequest="0"
 				RowDefinitions="Auto">
@@ -78,7 +78,7 @@
 				<VerticalStackLayout
 					Grid.Row="0"
 					Grid.Column="0"
-					HorizontalOptions="Fill"
+					HorizontalOptions="FillAndExpand"
 					MinimumWidthRequest="0"
 					Spacing="4"
 					VerticalOptions="Fill">
@@ -93,23 +93,23 @@
 						VerticalOptions="Fill" />
 
 					<Border
-						Padding="4"
+						Padding="1"
 						BackgroundColor="White"
 						IsVisible="{Binding ShowSuggestions, Source={x:Reference Root}}"
-						Stroke="{StaticResource SparkBorderSubtle}"
-						StrokeShape="RoundRectangle 8"
-						StrokeThickness="1">
+						Stroke="{StaticResource SparkOverlay}"
+						StrokeShape="RoundRectangle 2"
+						StrokeThickness="0.5">
 						<Grid ColumnDefinitions="*,12" ColumnSpacing="4">
 							<CollectionView
 								x:Name="SuggestionList"
 								Grid.Column="0"
-								HeightRequest="164"
+								HeightRequest="200"
 								ItemTemplate="{Binding SuggestionTemplate, Source={x:Reference Root}}"
 								ItemsSource="{Binding Suggestions, Source={x:Reference Root}}"
 								Scrolled="OnSuggestionListScrolled"
 								SelectedItem="{Binding SelectedSuggestion, Source={x:Reference Root}, Mode=TwoWay}"
 								SelectionMode="Single"
-								VerticalScrollBarVisibility="Never" />
+								VerticalScrollBarVisibility="Always" />
 
 							<Border
 								x:Name="SuggestionScrollRail"
@@ -128,7 +128,7 @@
 									StrokeThickness="0"
 									VerticalOptions="Start">
 									<Border.StrokeShape>
-										<RoundRectangle CornerRadius="4" />
+										<RoundRectangle CornerRadius="1" />
 									</Border.StrokeShape>
 									<Border.GestureRecognizers>
 										<PanGestureRecognizer PanUpdated="OnSuggestionThumbPanUpdated" />
@@ -142,9 +142,9 @@
 					<HorizontalStackLayout
 						x:Name="CyrillicToggleLayout"
 						HeightRequest="0"
-						IsVisible="False"
+						IsVisible="True"
 						Spacing="4"
-						WidthRequest="0">
+						WidthRequest="60">
 						<Label
 							FontSize="12"
 							Text="Кирилица"
@@ -162,8 +162,8 @@
 					Grid.Row="0"
 					Grid.Column="1"
 					HorizontalOptions="Fill"
-					Orientation="Horizontal"
 					HorizontalScrollBarVisibility="Never"
+					Orientation="Horizontal"
 					VerticalOptions="Center">
 					<HorizontalStackLayout
 						x:Name="PickerLayout"
@@ -184,10 +184,10 @@
 				</ScrollView>
 			</Grid>
 
-			<BoxView
+			<!--<BoxView
 				BackgroundColor="{StaticResource Transparent}"
 				HeightRequest="6"
-				VerticalOptions="End" />
+				VerticalOptions="End" />-->
 		</Grid>
 	</VerticalStackLayout>
 </ContentView>

@@ -14,7 +14,7 @@
 		MinimumWidthRequest="{Binding WidthRequestEx, Source={x:Reference Root}}"
 		Stroke="{Binding BorderColor, Source={x:Reference Root}}"
 		StrokeThickness="{Binding BorderThickness, Source={x:Reference Root}}"
-		VerticalOptions="Center">
+		VerticalOptions="End">
 		<Border.Shadow>
 			<Shadow
 				Brush="#18412A2A"

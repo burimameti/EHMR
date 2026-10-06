@@ -79,10 +79,10 @@
 						<controls:FFSectionCard>
 							<Grid RowDefinitions="Auto,*" RowSpacing="6">
 								<ActivityIndicator
+									HeightRequest="18"
 									HorizontalOptions="End"
 									IsRunning="{Binding IsBusy}"
 									IsVisible="{Binding IsBusy}"
-									HeightRequest="18"
 									WidthRequest="18"
 									Color="{StaticResource SparkAccentTeal}" />
 								<controls:SparkDataGridView
@@ -113,7 +113,10 @@
 		</Grid>
 
 		<!--  LOADING OVERLAY  -->
-		
+		<Grid
+			Grid.ColumnSpan="2"
+			BackgroundColor="#80000000"
+			IsVisible="{Binding IsBusy}">
 			<VerticalStackLayout
 				HorizontalOptions="Center"
 				Spacing="12"
@@ -125,6 +128,5 @@
 					TextColor="{StaticResource SparkTextPrimary}" />
 			</VerticalStackLayout>
 		</Grid>
-
 	</Grid>
 </ContentPage>
