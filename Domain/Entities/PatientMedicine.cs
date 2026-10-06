@@ -4,7 +4,7 @@ namespace EHMR.Domain.Entities;
 
 /// <summary>
 /// Join entity between Patient and Medicine. Carries the per-patient
-/// prescribing details (frequency, dosage, active window) that don't
+/// prescribing details (frequency and dosage) that don't
 /// belong on the Medicine catalog entity itself, since the same medicine
 /// can be prescribed differently to different patients.
 /// </summary>
@@ -56,12 +56,6 @@ public class PatientMedicine : BaseEntity
 
     /// <summary>Free-text actual dosage for this patient, e.g. "1 tablet" or "5ml" — defaults from Medicine.DefaultDosage but can be overridden.</summary>
     public string Dosage { get; set; } = string.Empty;
-
-    public DateTime StartDate { get; set; } = DateTime.UtcNow;
-    public DateTime? EndDate
-    {
-        get; set;
-    }
 
     public string Notes { get; set; } = string.Empty;
 
