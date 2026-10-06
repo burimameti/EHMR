@@ -462,7 +462,7 @@
 										<Label
 											FontAttributes="Bold"
 											FontSize="9"
-											Text="НАЧИН НА АПЛИКАЦИЈА"
+											Text="РЕЖИМ НА АПЛИКАЦИЈА"
 											TextColor="{StaticResource SparkTextPrimary}" />
 									</Border>
 									<Border
