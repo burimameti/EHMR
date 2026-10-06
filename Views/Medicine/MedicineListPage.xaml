@@ -48,7 +48,7 @@
 						ContentPadding="20,0"
 						HeightRequestEx="45"
 						IsEnabled="{Binding CanCreate}"
-						Text="Нов лек" />
+						Text="+ Нов лек" />
 				</Grid>
 			</Border>
 
