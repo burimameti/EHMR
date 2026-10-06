@@ -26,7 +26,7 @@
 			Grid.Row="1"
 			Padding="0"
 			BackgroundColor="{StaticResource SparkContentBackground}"
-			HeightRequest="44"
+			HeightRequest="36"
 			Stroke="{StaticResource SparkBorder}"
 			StrokeShape="RoundRectangle 8"
 			StrokeThickness="1">
