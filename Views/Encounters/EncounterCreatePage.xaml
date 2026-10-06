@@ -524,7 +524,7 @@
 											ButtonKind="Secondary"
 											Command="{Binding AddScoreCommand}"
 											HeightRequestEx="34"
-											Text="+ Додади Скор"
+											Text="Додади Скор"
 											WidthRequestEx="90" />
 									</Grid>
 									<Border
@@ -534,13 +534,6 @@
 										StrokeShape="RoundRectangle 0"
 										StrokeThickness="0">
 										<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterScores}" Spacing="0">
-											<BindableLayout.EmptyView>
-												<Label
-													Padding="10,8"
-													FontSize="14"
-													Text="Кликенте додади да се внесе скор."
-													TextColor="{StaticResource SparkTextSecondary}" />
-											</BindableLayout.EmptyView>
 											<BindableLayout.ItemTemplate>
 												<DataTemplate x:DataType="x:String">
 													<Grid
@@ -983,7 +976,7 @@
 					<Label
 						Grid.Column="0"
 						FontSize="10.5"
-						Text="Завршете го внесувањето на прегледот"
+						Text=""
 						TextColor="{StaticResource SparkTextSecondary}"
 						VerticalOptions="Center" />
 					<controls:FFButton
