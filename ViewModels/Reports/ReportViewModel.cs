@@ -442,7 +442,6 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     {
         if(!CanExport || report is null)
             return;
-            return;
 
         ClearReportState();
 
