@@ -1204,14 +1204,14 @@
 									<Label FontSize="11.5" LineBreakMode="TailTruncation" Text="{Binding PatientMedicine.DefaultDosage}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
 								</Border>
 								<Border
-									Grid.Column="5"
+									Grid.Column="3"
 									Padding="4,0"
 									Stroke="{StaticResource SparkBorderSubtle}"
 									Style="{StaticResource TableCellBorderStyle}">
 									<Entry IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" Keyboard="Numeric" Style="{StaticResource TableCellEntryStyle}" Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" />
 								</Border>
 														<Border
-															Grid.Column="5"
+															Grid.Column="4"
 															Stroke="{StaticResource SparkBorderSubtle}"
 															Style="{StaticResource TableCellBorderStyle}">
 															<HorizontalStackLayout
