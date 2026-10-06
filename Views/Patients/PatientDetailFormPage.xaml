@@ -794,7 +794,7 @@
 										<Grid
 											Grid.Row="2"
 											Grid.ColumnSpan="3"
-											ColumnDefinitions="*,*"
+											ColumnDefinitions="*,*,0.7*"
 											ColumnSpacing="12">
 
 											<VerticalStackLayout Grid.Column="0" Spacing="8">
@@ -895,7 +895,7 @@
 
 								<Grid
 									Grid.Row="3"
-									ColumnDefinitions="1.6*,1.6*,1.1*"
+									ColumnDefinitions="1.6*,1.6*"
 									ColumnSpacing="10">
 									<VerticalStackLayout Grid.Column="0" Spacing="8">
 
@@ -1271,7 +1271,7 @@
 
 
 
-									<!--  ═══ 4. СКОРОВИ ═══  -->
+									<!--  ═══ 3. СКОРОВИ — на иста линија со МКБ ═══  -->
 									<VerticalStackLayout Grid.Column="2" Spacing="10">
 										<controls:CrudSectionHeader
 											Title="СКОРОВИ"
