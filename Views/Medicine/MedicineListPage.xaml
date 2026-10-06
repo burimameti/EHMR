@@ -38,16 +38,6 @@
 						WidthRequestEx="130" />
 			</controls:FFPageHeader.HeaderContent>
 		</controls:FFPageHeader>
-
-					<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="White"
-						Grid.Column="1"
-						ButtonKind="Primary"
-						Command="{Binding NewMedicineCommand}"
-						ContentPadding="20,0"
-						HeightRequestEx="45"
-						Text="+ Нов лек" />
 				</Grid>
 			</Border>
 
@@ -56,6 +46,21 @@
 				<ScrollView VerticalScrollBarVisibility="Never">
 					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
 						<controls:FFSectionCard>
+							<Grid ColumnDefinitions="*,Auto" Padding="4,0,4,10">
+								<VerticalStackLayout Spacing="3">
+									<Label FontAttributes="Bold" FontSize="16" Text="Лекови" TextColor="{StaticResource SparkTextPrimary}" />
+									<Label FontSize="12" Text="Регистар на лекови и нивните стандардни дози." TextColor="{StaticResource SparkTextSecondary}" />
+								</VerticalStackLayout>
+								<controls:FFButton
+									Grid.Column="1"
+									ButtonKind="Primary"
+									BackgroundColorEx="{StaticResource SidebarActiveBg}"
+									TextColorEx="White"
+									Command="{Binding NewMedicineCommand}"
+									ContentPadding="18,0"
+									HeightRequestEx="40"
+									Text="Нов лек" />
+							</Grid>
 							<controls:SparkExplorerHeaderView
 								Buttons="{Binding Buttons}"
 								Pickers="{Binding Pickers}"
@@ -97,7 +102,7 @@
 									<Label FontAttributes="Bold" FontSize="16" Text="Режим на апликација" TextColor="{StaticResource SparkTextPrimary}" />
 									<Label FontSize="12" Text="Регистар на режими на апликација што се користат кај терапијата." TextColor="{StaticResource SparkTextSecondary}" />
 								</VerticalStackLayout>
-								<controls:FFButton Grid.Column="1" ButtonKind="Primary" BackgroundColorEx="{StaticResource SidebarActiveBg}" TextColorEx="White" Command="{Binding AddApplicationRegimeCommand}" Text="+ Нов режим" HeightRequestEx="40" ContentPadding="18,0" />
+								<controls:FFButton Grid.Column="1" ButtonKind="Primary" BackgroundColorEx="{StaticResource SidebarActiveBg}" TextColorEx="White" Command="{Binding AddApplicationRegimeCommand}" Text="Додади начин" HeightRequestEx="40" ContentPadding="18,0" />
 							</Grid>
 							<controls:SparkDataGridView Columns="{Binding ApplicationRegimeColumns}" Rows="{Binding ApplicationRegimeRows}" ShowPagination="False" ShowRowNumbers="True" />
 						</controls:FFSectionCard>
