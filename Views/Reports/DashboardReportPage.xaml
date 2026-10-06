@@ -8,7 +8,8 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="PageRoot"
 	x:DataType="viewModels:ReportViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
+	Shell.PresentationMode="NotAnimated"
+	BackgroundColor="{StaticResource White}">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
@@ -195,23 +196,6 @@
 
 				</VerticalStackLayout>
 			</ScrollView>
-
-			<!--  LOADING OVERLAY — identical to Dashboard's overlay  -->
-			<Grid
-				Grid.Row="1"
-				BackgroundColor="{StaticResource SparkOverlay}"
-				IsVisible="{Binding IsBusy}">
-				<VerticalStackLayout
-					HorizontalOptions="Center"
-					Spacing="12"
-					VerticalOptions="Center">
-					<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
-					<Label
-						FontSize="13"
-						Text="Вчитување..."
-						TextColor="{StaticResource SparkTextPrimary}" />
-				</VerticalStackLayout>
-			</Grid>
 
 		</Grid>
 	</Grid>
