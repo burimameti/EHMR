@@ -426,7 +426,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             entity.Property(x => x.Dosage).HasMaxLength(100);
             entity.Property(x => x.Notes).HasMaxLength(500);
             entity.Property(x => x.PharmaceuticalReference).HasMaxLength(200);
-            entity.Property(x => x.StartDate).IsRequired();
             entity.Property(x => x.IsActive).HasDefaultValue(true);
 
             entity.HasOne(x => x.Patient)
