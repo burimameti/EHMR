@@ -24,6 +24,12 @@ public class AuthorizationService : IAuthorizationService
         if(!IsAuthenticated || _auth.CurrentUser is null || action == ModuleAction.None)
             return false;
 
+        // Medicines are a shared clinic catalog. Creating medicines is intentionally
+        // available to every authenticated user; it is not an RBAC privilege.
+        if(string.Equals(module, Modules.Medicines, StringComparison.OrdinalIgnoreCase)
+            && action == ModuleAction.Create)
+            return true;
+
         if(HasRole(UserRole.SuperAdmin)||HasRole(UserRole.Admin))
             return true;
 
