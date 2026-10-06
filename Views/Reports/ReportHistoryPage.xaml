@@ -65,15 +65,14 @@
 							Text="Искисти"
 							WidthRequest="130" />-->
 
-						<Button
-							BackgroundColor="{StaticResource LoginDark1}"
+						<controls:FFButton
+							ButtonKind="Primary"
 							Command="{Binding NavigateToReportCommand}"
-							HeightRequest="38"
+							ContentPadding="18,0"
+							HeightRequestEx="42"
 							IsVisible="{Binding CanCreate}"
-							MinimumHeightRequest="38"
-							Text="Нов Ixзвештај"
-							TextColor="White"
-							WidthRequest="140" />
+							Text="Нов извештај"
+							WidthRequestEx="150" />
 
 					</HorizontalStackLayout>
 
