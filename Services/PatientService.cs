@@ -751,6 +751,7 @@ public class PatientService : IPatientService
         MedicineName=pm.Medicine?.Name??"",
         ApplicationRegimeId=pm.ApplicationRegimeId,
         ResolutionDocumentId=pm.ResolutionDocumentId,
+        ResolutionDocument=pm.ResolutionDocument is null ? null : MapDocument(pm.ResolutionDocument),
         ApplicationRegime=pm.ApplicationRegime?.Regime??"",
         GenericName=pm.Medicine?.GenericName??"",
         Code=pm.Medicine?.Code??"",
