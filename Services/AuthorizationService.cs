@@ -24,7 +24,7 @@ public class AuthorizationService : IAuthorizationService
         if(!IsAuthenticated || _auth.CurrentUser is null || action == ModuleAction.None)
             return false;
 
-        if(HasRole(UserRole.SuperAdmin))
+        if(HasRole(UserRole.SuperAdmin)||HasRole(UserRole.Admin))
             return true;
 
         var explicitPermission = GetExplicitPermission(module);
