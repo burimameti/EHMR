@@ -19,6 +19,23 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
     protected override string DetailRoute => AppRoutes.Medicines.Detail;
     protected override string PermissionDeniedMessage => "Немате авторизација за додавање нов медикамент.";
 
+    [RelayCommand]
+    private async Task NewMedicineAsync()
+    {
+        if(!CanCreate)
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Пристапот е одбиен",
+                PermissionDeniedMessage,
+                "ОК");
+            return;
+        }
+
+        SelectedItemService.SelectedItem=default;
+        SelectedItemService.OpenInEditMode=true;
+        await NavigationService.GoToAsync(DetailRoute);
+    }
+
     public ICommand SearchCommand
     {
         get;
