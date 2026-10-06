@@ -12,7 +12,7 @@
 
 		<!--  Внес: опис (со предлози) + бројка + додади  -->
 		<Grid
-			ColumnDefinitions="*,90,44"
+			ColumnDefinitions="*,90,116"
 			ColumnSpacing="8"
 			IsVisible="{Binding IsEditable}">
 			<controls:FFSearchBox Placeholder="Опис на скор (пр. DAS28)..." Text="{Binding DescriptionText, Mode=TwoWay}" />
@@ -20,7 +20,7 @@
 				Grid.Column="1"
 				Padding="6,0"
 				BackgroundColor="White"
-				HeightRequest="42"
+				HeightRequest="46"
 				Stroke="{StaticResource SparkBorderSubtle}"
 				StrokeShape="RoundRectangle 7"
 				StrokeThickness="1">
@@ -36,9 +36,9 @@
 				Grid.Column="2"
 				ButtonKind="Secondary"
 				Command="{Binding AddCommand}"
-				HeightRequestEx="42"
-				Text="+"
-				WidthRequestEx="44" />
+				HeightRequestEx="46"
+				Text="Додади Скор"
+				WidthRequestEx="116" />
 		</Grid>
 
 		<!--  Предлози (најупотребените најгоре)  -->
@@ -108,13 +108,6 @@
 
 		<!--  Редови  -->
 		<VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" Spacing="0">
-			<BindableLayout.EmptyView>
-				<Label
-					Padding="0,5"
-					FontSize="11"
-					Text="Нема внесени скорови."
-					TextColor="{StaticResource SparkTextSecondary}" />
-			</BindableLayout.EmptyView>
 			<BindableLayout.ItemTemplate>
 				<DataTemplate x:DataType="vm:ScoreRow">
 					<Grid ColumnDefinitions="*,90,44" ColumnSpacing="1">
