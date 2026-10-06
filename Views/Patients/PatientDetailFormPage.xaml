@@ -825,7 +825,7 @@
 													ButtonKind="Secondary"
 													Command="{Binding AddApplicationRegimeCommand}"
 													HeightRequestEx="34"
-													Text="+ Нов начин"
+													Text="+ Нов режим"
 													WidthRequestEx="116" />
 											</Grid>
 											<controls:FFSearchBox Placeholder="Додај лек во активна терапија..." Text="{Binding MedicineSearchText, Mode=TwoWay}" />
