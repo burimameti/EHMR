@@ -55,6 +55,7 @@ namespace EHMR.Services
                 normalizedRoute = cleanRoute switch
                 {
                     "dashboard" => "//dashboard",
+                    "patients" => "//patients",
                     "login" => "//login",
                     _ => route.TrimStart('/')
                 };
