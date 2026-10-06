@@ -18,12 +18,12 @@ public partial class PatientListPage : ContentPage
         MenuHost.Content=menu;
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
 
         if(BindingContext is PatientListViewModel vm)
-            await vm.LoadAsync();
+            Dispatcher.Dispatch(() => _ = vm.LoadAsync());
     }
 
     //private void OnSelectedStatusChanged(object sender, EventArgs e)
