@@ -717,6 +717,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         Notes=m.Notes,
         PharmaceuticalReference=m.PharmaceuticalReference,
         ApplicationRegimeId=_applicationRegimes.FirstOrDefault(r => string.Equals(r.Regime, m.ApplicationRegime, StringComparison.OrdinalIgnoreCase))?.Id,
+        ResolutionDocumentId=m.ResolutionDocumentId,
         Quantity=m.Quantity,
         IsActive=active
     };
@@ -1240,6 +1241,42 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
     partial void OnSelectedDocumentPreviewChanged(PatientDocumentDto? value)
         => OnPropertyChanged(nameof(HasDocumentPreview));
+
+    [RelayCommand]
+    private async Task UploadMedicineResolutionAsync(object? target)
+    {
+        if(!CanEditPatient||IsUploadingDocument) return;
+        PatientMedicineDto? medicine=target switch
+        {
+            AttachedMedicineRow active => active.PatientMedicine,
+            PreviousMedicineRow previous => previous.PatientMedicine,
+            _ => null
+        };
+        if(medicine is null) return;
+        try
+        {
+            IsUploadingDocument=true;
+            var file=await FilePicker.Default.PickAsync(new PickOptions { PickerTitle="Изберете скенирано решение" });
+            if(file is null) return;
+            var patientFolder=Path.Combine(FileSystem.AppDataDirectory,"patient-documents",Patient.Id.ToString());
+            Directory.CreateDirectory(patientFolder);
+            var storedPath=Path.Combine(patientFolder,$"{Guid.NewGuid()}_{file.FileName}");
+            await using(var source=await file.OpenReadAsync())
+            await using(var dest=File.Create(storedPath)) await source.CopyToAsync(dest);
+            var newDoc=new PatientDocumentDto
+            {
+                Id=Guid.NewGuid(), PatientId=Patient.Id, DocumentType=PatientDocumentType.Resenie,
+                Title=medicine.IsActive ? "Решение за активен лек" : "Решение за неактивен лек",
+                Description=medicine.IsActive ? "Решение за активна терапија" : "Решение за неактивност на лек",
+                FileName=file.FileName, StoredPath=storedPath, ContentType=file.ContentType, UploadedAt=DateTime.UtcNow
+            };
+            Documents.Add(newDoc);
+            medicine.ResolutionDocumentId=newDoc.Id;
+            SelectedDocumentPreview=newDoc;
+        }
+        catch(Exception ex){ await _userDialogService.ShowAlertAsync("Грешка",$"Прикачувањето на решението не успеа: {ex.Message}","OK"); }
+        finally{ IsUploadingDocument=false; }
+    }
 
     [RelayCommand]
     private async Task UploadDocumentAsync()
