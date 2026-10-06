@@ -466,7 +466,11 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         IsShowingDetails=true;
 
+        // Generate first so the provider can load the real filter values from DB,
+        // then rebuild the bound picker items. This prevents the detail page from
+        // opening with only the initial "Сите" option.
         await GenerateReportAsync();
+        InitializeSparkControls();
     }
 
     partial void OnIsMedicineSearchEnabledChanged(bool value)
