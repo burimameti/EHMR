@@ -422,20 +422,30 @@
 									</controls:SparkExplorerHeaderView>
 
 
-									<controls:SparkDataGridView
-										AutoSelectFirstRow="False"
-										Columns="{Binding GridColumns}"
-										CurrentPage="{Binding CurrentPage}"
-										EditRowCommand="{Binding EditCommand}"
-										HyperlinkCommand="{Binding OpenDashboardGridItemCommand}"
-										NextPageCommand="{Binding NextPageCommand}"
-										PageChangedCommand="{Binding PageChangedCommand}"
-										PreviousPageCommand="{Binding PreviousPageCommand}"
-										RowTappedCommand="{Binding OpenDashboardGridItemCommand}"
-										Rows="{Binding GridRows}"
-										SelectionChangedCommand="{Binding OpenDashboardGridItemCommand}"
-										ShowPagination="True"
-										TotalPages="{Binding TotalPages}" />
+									<Grid RowDefinitions="Auto,*" RowSpacing="6">
+										<ActivityIndicator
+											HorizontalOptions="End"
+											IsRunning="{Binding IsBusy}"
+											IsVisible="{Binding IsBusy}"
+											HeightRequest="18"
+											WidthRequest="18"
+											Color="{StaticResource SparkAccentTeal}" />
+										<controls:SparkDataGridView
+											Grid.Row="1"
+											AutoSelectFirstRow="False"
+											Columns="{Binding GridColumns}"
+											CurrentPage="{Binding CurrentPage}"
+											EditRowCommand="{Binding EditCommand}"
+											HyperlinkCommand="{Binding OpenDashboardGridItemCommand}"
+											NextPageCommand="{Binding NextPageCommand}"
+											PageChangedCommand="{Binding PageChangedCommand}"
+											PreviousPageCommand="{Binding PreviousPageCommand}"
+											RowTappedCommand="{Binding OpenDashboardGridItemCommand}"
+											Rows="{Binding GridRows}"
+											SelectionChangedCommand="{Binding OpenDashboardGridItemCommand}"
+											ShowPagination="True"
+											TotalPages="{Binding TotalPages}" />
+									</Grid>
 								</VerticalStackLayout>
 							</controls:FFSectionCard>
 
@@ -811,22 +821,6 @@
 			</Border>
 		</Grid>
 
-		<!--  LOADING OVERLAY  -->
-		<Grid
-			Grid.Column="1"
-			BackgroundColor="{StaticResource SparkOverlay}"
-			IsVisible="{Binding IsBusy}">
-			<VerticalStackLayout
-				HorizontalOptions="Center"
-				Spacing="12"
-				VerticalOptions="Center">
-				<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
-				<Label
-					FontSize="13"
-					Text="Вчитување..."
-					TextColor="{StaticResource SparkTextPrimary}" />
-			</VerticalStackLayout>
-		</Grid>
 
 	</Grid>
 </ContentPage>
