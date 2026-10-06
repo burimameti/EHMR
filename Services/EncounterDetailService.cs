@@ -775,8 +775,6 @@ public class EncounterDetailService : IEncounterDetailService
                     entity.Quantity=vm.Quantity;
                     entity.Dosage=vm.Dosage;
                     entity.DosesFrequency=vm.DosesFrequency;
-                    entity.StartDate=vm.StartDate;
-                    entity.EndDate=vm.EndDate;
                     entity.Notes=vm.Notes;
                     entity.IsActive=vm.IsActive;
                 }
@@ -825,7 +823,6 @@ public class EncounterDetailService : IEncounterDetailService
                         continue;
 
                     old.IsActive=false;   // оди во PreviousMedicines
-                    old.EndDate=now;
                 }
 
                 // 2) Отвори нов patient-level ред за нови/променети лекови.
@@ -847,8 +844,6 @@ public class EncounterDetailService : IEncounterDetailService
                         Quantity=m.Quantity,
                         Dosage=m.Dosage,
                         DosesFrequency=m.DosesFrequency,
-                        StartDate=now,
-                        EndDate=null,
                         Notes=m.Notes,
                         PharmaceuticalReference=m.PharmaceuticalReference,
                         IsActive=true
