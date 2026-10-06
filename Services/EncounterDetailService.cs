@@ -763,8 +763,6 @@ public class EncounterDetailService : IEncounterDetailService
                         Quantity=vm.Quantity,
                         Dosage=vm.Dosage,
                         DosesFrequency=vm.DosesFrequency,
-                        StartDate=vm.StartDate,
-                        EndDate=vm.EndDate,
                         Notes=vm.Notes,
                         IsActive=vm.IsActive
                     });
