@@ -997,13 +997,6 @@
 
 											<!--  Редови  -->
 											<VerticalStackLayout BindableLayout.ItemsSource="{Binding AttachedMedicines}" Spacing="0">
-												<BindableLayout.EmptyView>
-													<Label
-														Padding="0,5"
-														FontSize="11"
-														Text="Нема активна терапија."
-														TextColor="{StaticResource SparkTextSecondary}" />
-												</BindableLayout.EmptyView>
 												<BindableLayout.ItemTemplate>
 													<DataTemplate x:DataType="viewModels:AttachedMedicineRow">
 														<Grid ColumnDefinitions="1.35*,1.25*,1.15*,0.65*,56" ColumnSpacing="1">
@@ -1265,7 +1258,7 @@
 								</VerticalStackLayout>
 
 								<!--  ═══ 4. СКОРОВИ ═══  -->
-								<VerticalStackLayout Spacing="10">
+								<VerticalStackLayout Grid.Row="3" Grid.Column="2" Spacing="10">
 									<controls:CrudSectionHeader
 										Title="СКОРОВИ"
 										LineColor="{StaticResource White}"
@@ -1543,7 +1536,7 @@
 					<Label
 						Grid.Column="0"
 						FontSize="10.5"
-						Text="Завршете ги податоците за пациентот"
+						Text=""
 						TextColor="{StaticResource SparkTextSecondary}"
 						VerticalOptions="Center" />
 					<controls:FFButton
