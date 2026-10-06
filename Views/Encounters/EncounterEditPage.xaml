@@ -325,18 +325,21 @@
 
 								<!--  Лева колона: терапија  -->
 								<VerticalStackLayout Grid.Column="0" Spacing="10">
-									<controls:CrudSectionHeader
-										Title="ТЕКОВНА ТЕРАПИЈА"
-										Padding="8,5"
-										BackgroundColor="{StaticResource SparkAccentTealBg}"
-										LineColor="{StaticResource SparkAccentTeal}"
-										TextColor="{StaticResource SparkTextPrimary}" />
-									<controls:FFButton
-										ButtonKind="Secondary"
-										Command="{Binding AddApplicationRegimeCommand}"
-										HeightRequestEx="34"
-										Text="+ Нов режим"
-										WidthRequestEx="116" />
+									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+										<controls:CrudSectionHeader
+											Title="ТЕКОВНА ТЕРАПИЈА"
+											Padding="8,5"
+											BackgroundColor="{StaticResource SparkAccentTealBg}"
+											LineColor="{StaticResource SparkAccentTeal}"
+											TextColor="{StaticResource SparkTextPrimary}" />
+										<controls:FFButton
+											Grid.Column="1"
+											ButtonKind="Secondary"
+											Command="{Binding AddApplicationRegimeCommand}"
+											HeightRequestEx="34"
+											Text="+ Нов режим"
+											WidthRequestEx="116" />
+									</Grid>
 
 									<controls:FFSearchBox Placeholder="Додај лек во тековната терапија..." Text="{Binding MedicineSearchText, Mode=TwoWay}" />
 
