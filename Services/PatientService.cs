@@ -759,8 +759,6 @@ public class PatientService : IPatientService
         DosesFrequency=pm.DosesFrequency,
         Dosage=pm.Dosage,
         Quantity=pm.Quantity,
-        StartDate=pm.StartDate,
-        EndDate=pm.EndDate,
         Notes=pm.Notes,
         IsActive=pm.IsActive
     };
