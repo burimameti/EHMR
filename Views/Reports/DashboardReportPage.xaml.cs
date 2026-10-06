@@ -26,11 +26,5 @@ namespace EHMR.Views.Reports
                 await _vm.OpenPatientsReportAsync();
         }
 
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            if(BindingContext is IDisposable disposable)
-                disposable.Dispose();
-        }
     }
 }
