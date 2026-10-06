@@ -49,11 +49,12 @@ namespace EHMR.Services
 
                 // Shell root pages must use absolute routes; registered detail/create/edit
                 // pages remain relative so they stay inside the current Shell stack.
-                 normalizedRoute=route switch
+                 var cleanRoute = route.Split('?', 2)[0].Trim('/');
+                normalizedRoute = cleanRoute switch
                 {
                     "dashboard" => "//dashboard",
                     "login" => "//login",
-                    "patients" => "//patients",
+                    _ when IsModuleRootRoute(cleanRoute) => $"//{cleanRoute}",
                     _ => route
                 };
 
@@ -106,18 +107,16 @@ namespace EHMR.Services
             if(shell is null)
                 throw new InvalidOperationException("Shell.Current is null. Ensure your app uses Shell.");
 
-            // Prefer the real Shell navigation stack. This preserves the user's
-            // flow (list -> detail -> edit -> back) instead of always jumping to Dashboard.
-            // Fall back to Dashboard only when there is no previous page in the stack.
-            var navigation = shell.Navigation;
-            if(navigation.NavigationStack.Count>1)
-            {
-                await navigation.PopAsync();
-                return;
-            }
+            // EHMR uses Dashboard as the single Back destination. Do not pop
+            // the Shell stack: doing so can return to stale detail/create pages
+            // and is the source of the inconsistent Back behavior across modules.
+            var current = shell.CurrentState?.Location.OriginalString;
+            var dashboard = $"//{AppRoutes.Dashboard}";
 
-            if(!string.Equals(shell.CurrentState?.Location.OriginalString, $"//{AppRoutes.Dashboard}", StringComparison.OrdinalIgnoreCase))
-                await shell.GoToAsync($"//{AppRoutes.Dashboard}", true);
+            if(string.Equals(current, dashboard, StringComparison.OrdinalIgnoreCase))
+                return;
+
+            await shell.GoToAsync(dashboard, false);
         }
 
         public async Task PushModalAsync(object page)
