@@ -895,9 +895,10 @@
 
 								<Grid
 									Grid.Row="3"
-									ColumnDefinitions="1.6*,1.6*"
-									ColumnSpacing="10">
-									<VerticalStackLayout Grid.Column="0" Spacing="8">
+									ColumnDefinitions="*"
+									RowDefinitions="Auto,Auto"
+									RowSpacing="14">
+									<VerticalStackLayout Grid.Row="0" Grid.ColumnSpan="1" Spacing="8">
 
 										<Grid
 											ColumnDefinitions="Auto,Auto,*,Auto"
@@ -1081,7 +1082,7 @@
 									</VerticalStackLayout>
 
 									<!--  РЕД 3 ДЕСНО — ПРЕТХОДНИ ТЕРАПИИ (Неактивна)  -->
-									<VerticalStackLayout Grid.Column="1" Spacing="8">
+									<VerticalStackLayout Grid.Row="1" Grid.ColumnSpan="1" Spacing="8">
 
 										<Grid
 											ColumnDefinitions="Auto,Auto,*"
