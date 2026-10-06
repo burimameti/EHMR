@@ -54,6 +54,15 @@ public partial class FFDatePicker : ContentView
 
     public bool IsPickerEnabled => !IsOptionalFilter||IsFilterActive;
 
+    public static readonly BindableProperty IsPointerOverProperty =
+        BindableProperty.Create(nameof(IsPointerOver), typeof(bool), typeof(FFDatePicker), false);
+
+    public bool IsPointerOver
+    {
+        get => (bool)GetValue(IsPointerOverProperty);
+        private set => SetValue(IsPointerOverProperty, value);
+    }
+
     public bool IsFilterActive
     {
         get => (bool)GetValue(IsFilterActiveProperty);
@@ -89,6 +98,10 @@ public partial class FFDatePicker : ContentView
         await Task.Delay(50);
         InnerDatePicker.Focus();
     }
+
+    private void OnPointerEntered(object sender, PointerEventArgs e) => IsPointerOver=true;
+
+    private void OnPointerExited(object sender, PointerEventArgs e) => IsPointerOver=false;
 
     private void InnerDatePicker_DateSelected(object sender, DateChangedEventArgs e)
     {
