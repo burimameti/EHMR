@@ -1272,6 +1272,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             };
             Documents.Add(newDoc);
             medicine.ResolutionDocumentId=newDoc.Id;
+            medicine.ResolutionDocument=newDoc;
             SelectedDocumentPreview=newDoc;
         }
         catch(Exception ex){ await _userDialogService.ShowAlertAsync("Грешка",$"Прикачувањето на решението не успеа: {ex.Message}","OK"); }
