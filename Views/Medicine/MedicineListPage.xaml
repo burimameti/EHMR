@@ -44,7 +44,7 @@
 						TextColorEx="White"
 						Grid.Column="1"
 						ButtonKind="Primary"
-						Command="{Binding NewCommand}"
+						Command="{Binding NewMedicineCommand}"
 						ContentPadding="20,0"
 						HeightRequestEx="45"
 						IsEnabled="{Binding CanCreate}"
