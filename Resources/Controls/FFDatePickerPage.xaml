@@ -41,6 +41,7 @@
 
 			<Border.GestureRecognizers>
 				<TapGestureRecognizer Tapped="OnBorderTapped" />
+				<PointerGestureRecognizer PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" />
 			</Border.GestureRecognizers>
 
 			<Grid
@@ -77,15 +78,16 @@
 				-->
 				<DatePicker
 					x:Name="InnerDatePicker"
-					Grid.Column="1"
-					Grid.ColumnSpan="2"
+					Grid.Column="0"
+					Grid.ColumnSpan="3"
 					BackgroundColor="Transparent"
 					Date="{Binding SelectedDate, Source={x:Reference Root}, Mode=TwoWay}"
 					DateSelected="InnerDatePicker_DateSelected"
 					HorizontalOptions="Fill"
 					IsEnabled="{Binding IsPickerEnabled, Source={x:Reference Root}}"
-					Opacity="0"
-					VerticalOptions="Fill" />
+					Opacity="0.01"
+					VerticalOptions="Fill"
+					ZIndex="20" />
 				<!--  Calendar icon  -->
 				<Border
 					Grid.Column="2"
