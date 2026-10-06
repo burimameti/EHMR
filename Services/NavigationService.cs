@@ -57,23 +57,15 @@ namespace EHMR.Services
                     _ => route
                 };
 
-                if(normalizedRoute.StartsWith("//"))
-                {
-                    await activeShell.GoToAsync(normalizedRoute, true, navParams);
-                }
-                else
-                {
-                    // Module/list routes are navigation roots. Do not leave an old
-                    // Calendar/List page underneath them; otherwise Back can reopen
-                    // a stale page from an earlier navigation flow.
-                    if(IsModuleRootRoute(normalizedRoute) &&
-                       activeShell.Navigation.NavigationStack.Count > 1)
-                    {
-                        await activeShell.Navigation.PopToRootAsync(false);
-                    }
-
-                    await activeShell.GoToAsync(normalizedRoute, navParams);
-                }
+                // Menu navigation should be a single Shell operation. The previous
+                // implementation performed PopToRootAsync + GoToAsync for module
+                // routes, which made every menu click wait for two navigation
+                // transitions. Disable Shell animation as well; page loading remains
+                // owned by the destination ViewModel.
+                await activeShell.GoToAsync(
+                    normalizedRoute,
+                    false,
+                    navParams);
             }
             catch(Exception ex)
             {
