@@ -617,7 +617,7 @@
 										Style="{StaticResource SectionHeaderStyle}" />
 
 									<Grid
-										ColumnDefinitions="*,*,*"
+										ColumnDefinitions="2*,2*,0.7*"
 										ColumnSpacing="12"
 										RowDefinitions="Auto,Auto,Auto,Auto"
 										RowSpacing="8">
