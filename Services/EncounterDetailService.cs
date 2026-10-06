@@ -797,8 +797,6 @@ public class EncounterDetailService : IEncounterDetailService
             // за да се појави стариот во PreviousMedicines, а новиот во ActiveMedicinesSummary.
             if(!exists)
             {
-                var now = DateTime.Now;
-
                 var activeEncounterMeds = medicines
                     .Where(x => x.IsActive&&!deletedMedicineIds.Contains(x.Id))
                     .ToList();
