@@ -38,23 +38,29 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     private readonly List<Guid> _deletedMedicineIds = [];
     private readonly List<Guid> _deletedDocumentIds = [];
 
+    /// <summary>Споделен едитор за скорови (опис + бројка, предлози по употреба).</summary>
+    public ScoreEditorViewModel ScoreEditor
+    {
+        get;
+    }
+
     private bool _childrenLoaded;
     public bool IsNewPatient => _isNewPatientMode;
 
     public bool CanViewPatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.View);
     public bool CanViewNationalId =>
-        _authorizationService.HasRole(UserRole.Admin) || _authorizationService.HasRole(UserRole.SuperAdmin);
+        _authorizationService.HasRole(UserRole.Admin)||_authorizationService.HasRole(UserRole.SuperAdmin);
     public bool CanCreatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Create);
     public bool CanEditPatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Edit);
     public bool CanDeletePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Delete);
-public bool CanActivatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Activate);
-public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Deactivate);
+    public bool CanActivatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Activate);
+    public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Deactivate);
     public bool CanPrintPatientReport => _authorizationService.CanPerform(Modules.Reports, ModuleAction.Print);
     public bool CanManageAdministration => _authorizationService.CanPerform(Modules.Administration, ModuleAction.Manage);
     public bool CanSavePatient => _isNewPatientMode ? CanCreatePatient : CanEditPatient;
 
-    public bool CanReactivatePatient => CanActivatePatient && !_isNewPatientMode && Patient.Status==PatientStatus.Inactive;
-    public bool CanShowActiveStatusOption => _isNewPatientMode || Patient.Status!=PatientStatus.Inactive || CanActivatePatient;
+    public bool CanReactivatePatient => CanActivatePatient&&!_isNewPatientMode&&Patient.Status==PatientStatus.Inactive;
+    public bool CanShowActiveStatusOption => _isNewPatientMode||Patient.Status!=PatientStatus.Inactive||CanActivatePatient;
 
     private bool _isOfferingDoctorCreation;
 
@@ -115,11 +121,11 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [RelayCommand]
     private void SetActive()
     {
-        if(!IsEditMode || !CanEditPatient)
+        if(!IsEditMode||!CanEditPatient)
             return;
 
         // Reactivation of an inactive patient is a sensitive operation and is Admin-only.
-        if(!_isNewPatientMode && Patient.Status==PatientStatus.Inactive && !CanEditPatient)
+        if(!_isNewPatientMode&&Patient.Status==PatientStatus.Inactive&&!CanActivatePatient)
         {
             _userDialogService.ShowAlertAsync(
                 "Недозволена акција",
@@ -135,9 +141,10 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [RelayCommand]
     private void SetInactive()
     {
-        if(IsEditMode && CanEditPatient)
+        if(IsEditMode&&CanEditPatient)
             IsPatientActive=false;
     }
+
     [ObservableProperty] private string selectedStatusDisplay = string.Empty;
     [ObservableProperty] private string selectedRelationDisplay = string.Empty;
     [ObservableProperty] private string selectedCityDisplay = string.Empty;
@@ -169,6 +176,8 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
         for(var letter = 'A'; letter<='Z'; letter++)
             MkbAlphabetSections.Add(new MkbAlphabetSection(letter.ToString(), letter=='A'));
 
+        ScoreEditor=new ScoreEditorViewModel(dbFactory);
+
         InitializeForm();
     }
 
@@ -190,6 +199,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
             Patient=CreateBlankForRegistration();
             PageTitle="Нов Пациент";
             IsReadOnly=!CanCreatePatient;
+            ScoreEditor.IsReadOnly=IsReadOnly;
 
             SyncDisplayFromPatient();
             _=LoadApplicationRegimesAsync();
@@ -201,10 +211,10 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
             return;
         }
 
-        IsReadOnly=!_selectedItemService.OpenInEditMode || !CanEditPatient;
+        IsReadOnly=!_selectedItemService.OpenInEditMode||!CanEditPatient;
+        ScoreEditor.IsReadOnly=IsReadOnly;
 
-        // Everything (edit fields + children) now comes from one DTO fetch —
-        // no more manual entity cloning needed.
+        // Everything (edit fields + children) now comes from one DTO fetch.
         _=LoadPatientAsync(selectedPatient.Id);
 
         OnPropertyChanged(nameof(IsNewPatient));
@@ -230,17 +240,20 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
 
             SyncDisplayFromPatient();
 
-            // DTOs aren't EF-tracked, so no cloning/detaching gymnastics required —
-            // just wrap what the service gave us.
             Diagnoses=new ObservableCollection<DiagnosisDto>(full.Diagnoses);
-            // The Patient Edit form works with the patient's current therapy,
-            // regardless of where the PatientMedicine row was originally created.
-            // Active means IsActive=true; EncounterId does not determine whether
-            // a medicine is current or historical.
+
+            // Тековни терапии = IsActive. Претходни = !IsActive (рачно внесени или затворени).
             AttachedMedicines=new ObservableCollection<AttachedMedicineRow>(
                 full.Medicines
                     .Where(m => m.IsActive)
                     .Select(m => new AttachedMedicineRow(m)));
+
+            PreviousMedicines=new ObservableCollection<PreviousMedicineRow>(
+                full.Medicines
+                    .Where(m => !m.IsActive)
+                    .OrderByDescending(m => m.EndDate??m.StartDate)
+                    .Select(m => new PreviousMedicineRow(m)));
+
             Documents=new ObservableCollection<PatientDocumentDto>(full.Documents);
             SelectedDocumentPreview=null;
 
@@ -260,21 +273,16 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     }
 
     // ═══════════════════════════════════════════ ИСТОРИЈА НА ПАЦИЕНТОТ ═══════════════════════════════════════════
-    //
-    // Шесте картици со историја беа врзани за колекции што не постоеја во овој
-    // ViewModel, па сите шест секогаш стоеја празни со порака „нема евидентирани…"
-    // без разлика колку записи има пациентот.
-    //
     // Прикажувањето е само за читање, па се вчитуваат директно како ентитети —
-    // PatientDto носи само дијагнози, лекови и документи, не и прегледи,
-    // термини, циклуси и рецепти.
+    // PatientDto носи само дијагнози, лекови и документи.
 
     [ObservableProperty] private ObservableCollection<DiagnosisDto> diagnosisHistory = new();
     [ObservableProperty] private ObservableCollection<Encounter> encounterHistory = new();
     [ObservableProperty] private ObservableCollection<PatientScore> scoreHistory = new();
 
-    public string CurrentPatientScore => ScoreHistory.FirstOrDefault()?.ScoreText ?? "—";
+    public string CurrentPatientScore => ScoreHistory.FirstOrDefault()?.DisplayText??"—";
     public DateTime? CurrentPatientScoreDate => ScoreHistory.FirstOrDefault()?.RecordedAt;
+
     [ObservableProperty] private ObservableCollection<Appointment> appointmentHistory = new();
     [ObservableProperty] private ObservableCollection<TherapyCycle> therapyCycleHistory = new();
 
@@ -286,11 +294,6 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
         .Where(x => x.Status!=TherapyStatus.Active&&x.Status!=TherapyStatus.Planned)
         .OrderByDescending(x => x.EndDate??x.StartDate);
 
-    public IEnumerable<PatientMedicine> PreviousMedicineHistory => MedicineHistory
-        // Every inactive PatientMedicine is historical therapy, regardless of
-        // whether it originated from Patient Edit, an Encounter, or an Appointment.
-        .Where(x => !x.IsActive)
-        .OrderByDescending(x => x.EndDate ?? x.StartDate);
     [ObservableProperty] private ObservableCollection<Prescription> prescriptionHistory = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> medicineHistory = new();
 
@@ -311,8 +314,8 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
                         PatientId=x.PatientId,
                         EncounterId=x.EncounterId,
                         Mkb10CodeId=x.Mkb10CodeId,
-                        Mkb10Code=x.Mkb10Code != null ? x.Mkb10Code.Code : string.Empty,
-                        Mkb10Description=x.Mkb10Code != null ? x.Mkb10Code.Description ?? string.Empty : string.Empty,
+                        Mkb10Code=x.Mkb10Code!=null ? x.Mkb10Code.Code : string.Empty,
+                        Mkb10Description=x.Mkb10Code!=null ? x.Mkb10Code.Description??string.Empty : string.Empty,
                         DiagnosedAt=x.DiagnosedAt,
                         IsPrimary=x.IsPrimary,
                         Severity=x.Severity,
@@ -336,6 +339,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
                     .ToListAsync());
             OnPropertyChanged(nameof(CurrentPatientScore));
             OnPropertyChanged(nameof(CurrentPatientScoreDate));
+            ScoreEditor.Load(ScoreHistory);
 
             AppointmentHistory=new ObservableCollection<Appointment>(
                 await db.Appointments
@@ -353,7 +357,6 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
                     .ToListAsync());
             OnPropertyChanged(nameof(ActiveTherapies));
             OnPropertyChanged(nameof(PreviousTherapies));
-            OnPropertyChanged(nameof(PreviousMedicineHistory));
 
             PrescriptionHistory=new ObservableCollection<Prescription>(
                 await db.Prescriptions
@@ -361,7 +364,6 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
                     .Where(x => x.PatientId==patientId)
                     .ToListAsync());
 
-            // Редот на картичката покажува Medicine.Name — без Include останува празен.
             MedicineHistory=new ObservableCollection<PatientMedicine>(
                 await db.PatientMedicines
                     .AsNoTracking()
@@ -429,7 +431,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [RelayCommand]
     private async Task GenerateClinicalReportAsync()
     {
-        if(!CanPrintPatientReport || Patient.Id==Guid.Empty)
+        if(!CanPrintPatientReport||Patient.Id==Guid.Empty)
         {
             await _userDialogService.ShowAlertAsync("Недозволена акција", "Немате авторизација за печатење / PDF извештај.", "ОК");
             return;
@@ -437,8 +439,8 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
 
         try
         {
-            var path=await _clinicalReportService.GeneratePdfAsync(
-                Patient.Id,null,null,
+            var path = await _clinicalReportService.GeneratePdfAsync(
+                Patient.Id, null, null,
                 $"Детален извештај - {Patient.FirstName} {Patient.LastName}");
 
             await Launcher.Default.OpenAsync(new OpenFileRequest(
@@ -455,7 +457,6 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
         }
     }
 
-
     [RelayCommand]
     private async Task ToggleEditModeAsync()
     {
@@ -465,13 +466,13 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
             return;
         }
 
-        if(!_isNewPatientMode && !CanEditPatient)
+        if(!_isNewPatientMode&&!CanEditPatient)
         {
             await _userDialogService.ShowAlertAsync("Недозволена акција", "Немате авторизација за измена на пациент.", "ОК");
             return;
         }
 
-        if(!_isNewPatientMode&&Patient.Status==PatientStatus.Inactive&&!CanEditPatient)
+        if(!_isNewPatientMode&&Patient.Status==PatientStatus.Inactive&&!CanActivatePatient)
         {
             await _userDialogService.ShowAlertAsync(
                 "Пациентот е неактивен",
@@ -490,7 +491,6 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
         get => _isSaving;
         set => SetProperty(ref _isSaving, value);
     }
-
 
     [RelayCommand]
     private async Task SaveAsync()
@@ -539,6 +539,23 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
             return;
         }
 
+        var badPrevious = PreviousMedicines.FirstOrDefault(x => x.EndDate.Date<x.StartDate.Date);
+        if(badPrevious!=null)
+        {
+            await _userDialogService.ShowAlertAsync(
+                "Валидација",
+                $"Претходна терапија „{badPrevious.MedicineName}“: датумот „До“ не може да биде пред „Од“.",
+                "OK");
+            return;
+        }
+
+        var emptyScore = ScoreEditor.Items.FirstOrDefault(x => string.IsNullOrWhiteSpace(x.Description));
+        if(emptyScore!=null)
+        {
+            await _userDialogService.ShowAlertAsync("Валидација", "Описот на скорот е задолжителен.", "OK");
+            return;
+        }
+
         // Лимитот важи само за нови пациенти — измена на постоечки останува можна
         // и по заклучување, за да не се изгуби пристап до веќе внесените досиеја.
         if(_isNewPatientMode)
@@ -572,51 +589,51 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
             Diagnoses=
             [
                 .. Diagnoses.Select(x => new DiagnosisSaveModel
-            {
-                Id = x.Id,
-                // Diagnoses entered from the Patient form belong to the patient,
-                // not to a specific Encounter.
-                EncounterId = null,
-                Mkb10CodeId = x.Mkb10CodeId,
-                DiagnosedAt = x.DiagnosedAt,
-                IsPrimary = x.IsPrimary,
-                Severity = x.Severity,
-                ClinicalDescription = x.ClinicalDescription,
-                Status = x.Status
-            })
+                {
+                    Id = x.Id,
+                    // Diagnoses entered from the Patient form belong to the patient,
+                    // not to a specific Encounter.
+                    EncounterId = null,
+                    Mkb10CodeId = x.Mkb10CodeId,
+                    DiagnosedAt = x.DiagnosedAt,
+                    IsPrimary = x.IsPrimary,
+                    Severity = x.Severity,
+                    ClinicalDescription = x.ClinicalDescription,
+                    Status = x.Status
+                })
             ],
 
             Medicines=
             [
-                .. AttachedMedicines.Select(x => new PatientMedicineSaveModel
-            {
-                Id = x.PatientMedicine.Id,
-                MedicineId = x.PatientMedicine.MedicineId,
-                Dosage = x.PatientMedicine.Dosage,
-                DosesFrequency = x.PatientMedicine.DosesFrequency,
-                StartDate = x.PatientMedicine.StartDate,
-                EndDate = x.PatientMedicine.EndDate,
-                Notes = x.PatientMedicine.Notes,
-                PharmaceuticalReference = x.PatientMedicine.PharmaceuticalReference,
-                ApplicationRegimeId = _applicationRegimes.FirstOrDefault(r => string.Equals(r.Regime, x.PatientMedicine.ApplicationRegime, StringComparison.OrdinalIgnoreCase))?.Id,
-                Quantity = x.PatientMedicine.Quantity,
-                IsActive = x.PatientMedicine.IsActive
-            })
+                .. AttachedMedicines.Select(x => ToMedicineSave(x.PatientMedicine, true)),
+                .. PreviousMedicines.Select(x => ToMedicineSave(x.PatientMedicine, false))
             ],
+
+            Scores=
+            [
+                .. ScoreEditor.Items.Select(x => new PatientScoreSaveModel
+                {
+                    Id = x.Id,
+                    Description = x.Description,
+                    Number = x.Number,
+                    RecordedAt = x.RecordedAt
+                })
+            ],
+            DeletedScoreIds= [.. ScoreEditor.DeletedIds],
 
             Documents=
             [
                 .. Documents.Select(x => new PatientDocumentSaveModel
-            {
-                Id = x.Id,
-                DocumentType = x.DocumentType,
-                Title = x.Title,
-                Description = x.Description,
-                FileName = x.FileName,
-                StoredPath = x.StoredPath,
-                ContentType = x.ContentType,
-                UploadedAt = x.UploadedAt
-            })
+                {
+                    Id = x.Id,
+                    DocumentType = x.DocumentType,
+                    Title = x.Title,
+                    Description = x.Description,
+                    FileName = x.FileName,
+                    StoredPath = x.StoredPath,
+                    ContentType = x.ContentType,
+                    UploadedAt = x.UploadedAt
+                })
             ],
 
             DeletedDiagnosisIds=_deletedDiagnosisIds,
@@ -639,7 +656,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
             _deletedDocumentIds.Clear();
             _childrenLoaded=false;
 
-            await LoadPatientAsync(Patient.Id);
+            await LoadPatientAsync(Patient.Id); // ScoreEditor.Load() ги чисти и неговите deleted ids
 
             await _userDialogService.ShowAlertAsync("Успешно", "Пациентот е успешно зачуван.", "OK");
 
@@ -676,9 +693,6 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
         }
         catch(Exception ex)
         {
-            // Catches anything else — e.g. a failure in LoadPatientAsync right after
-            // a successful save, so the user always gets feedback instead of a
-            // silent unhandled exception.
             Debug.WriteLine(ex.ToString());
 
             await _userDialogService.ShowAlertAsync(
@@ -692,6 +706,21 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
         }
     }
 
+    private PatientMedicineSaveModel ToMedicineSave(PatientMedicineDto m, bool active) => new()
+    {
+        Id=m.Id,
+        MedicineId=m.MedicineId,
+        Dosage=m.Dosage,
+        DosesFrequency=m.DosesFrequency,
+        StartDate=m.StartDate,
+        EndDate=active ? m.EndDate : (m.EndDate??DateTime.Today),
+        Notes=m.Notes,
+        PharmaceuticalReference=m.PharmaceuticalReference,
+        ApplicationRegimeId=_applicationRegimes.FirstOrDefault(r => string.Equals(r.Regime, m.ApplicationRegime, StringComparison.OrdinalIgnoreCase))?.Id,
+        Quantity=m.Quantity,
+        IsActive=active
+    };
+
     private void SyncDisplayFromPatient()
     {
         SelectedGenderDisplay=PatientEnumLookups.Gender.ToDisplay(Patient.Gender.ToString());
@@ -700,7 +729,6 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
         InactiveReason=Patient.InactiveReason??string.Empty;
         SelectedRelationDisplay=Patient.EmergencyRelationship;
         SelectedCityDisplay=_cityLookup.ToDisplay(Patient.City);
-
     }
 
     [RelayCommand]
@@ -716,7 +744,6 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
         _selectedItemService.SelectedItem=null;
         await _navigationService.GoToAsync($"//{AppRoutes.Dashboard}");
     }
-
 
     public static PatientEditDto CreateBlankForRegistration() => new()
     {
@@ -750,13 +777,20 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [ObservableProperty] private string doctorSearchText = string.Empty;
     [ObservableProperty] private bool showDoctorDropdown;
     [ObservableProperty] private string selectedDoctorDisplay = string.Empty;
-    public bool CanClearDoctor => IsEditMode && !string.IsNullOrWhiteSpace(SelectedDoctorDisplay);
-    // THIS WAS MISSING
+    public bool CanClearDoctor => IsEditMode&&!string.IsNullOrWhiteSpace(SelectedDoctorDisplay);
+
     [ObservableProperty]
     private bool useCyrillicDoctorSearch = true;
+
     partial void OnDoctorSearchTextChanged(string value) => DebounceDoctorSearch(value);
     partial void OnSelectedDoctorDisplayChanged(string value) => OnPropertyChanged(nameof(CanClearDoctor));
-    partial void OnIsReadOnlyChanged(bool value) => OnPropertyChanged(nameof(CanClearDoctor));
+
+    partial void OnIsReadOnlyChanged(bool value)
+    {
+        OnPropertyChanged(nameof(CanClearDoctor));
+        if(ScoreEditor!=null)
+            ScoreEditor.IsReadOnly=value;
+    }
 
     private async void DebounceDoctorSearch(string query)
     {
@@ -803,7 +837,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [RelayCommand]
     private void ClearDoctor()
     {
-        if(!IsEditMode || !CanEditPatient) return;
+        if(!IsEditMode||!CanEditPatient) return;
 
         Patient.DoctorId=Guid.Empty;
         SelectedDoctorDisplay=string.Empty;
@@ -815,7 +849,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [RelayCommand]
     private void SelectDoctor(DoctorDto doctor)
     {
-        if(doctor==null || !CanEditPatient) return;
+        if(doctor==null||!CanEditPatient) return;
 
         Patient.DoctorId=doctor.Id;
         SelectedDoctorDisplay=doctor.DisplayName;
@@ -825,7 +859,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     }
 
     // =====================================================
-    // MKB10 DIAGNOSIS SEARCH + ATTACH (усогласено со EncounterBaseViewModel: A-Z секции)
+    // MKB10 DIAGNOSIS SEARCH + ATTACH (A-Z секции)
     // =====================================================
 
     private CancellationTokenSource _mkbSearchCts = new();
@@ -893,10 +927,10 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
         try
         {
             var results = await _patientService.SearchMkb10CodesAsync(
-                MkbCodeSearchText ?? string.Empty,
+                MkbCodeSearchText??string.Empty,
                 token,
                 SelectedMkbSection,
-                MacedonianTransliterator.ToCyrillic(MkbDescriptionSearchText ?? string.Empty));
+                MacedonianTransliterator.ToCyrillic(MkbDescriptionSearchText??string.Empty));
 
             if(token.IsCancellationRequested) return;
 
@@ -909,7 +943,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [RelayCommand]
     private void AddMkb(Mkb10CodeDto code)
     {
-        if(code==null || !CanEditPatient) return;
+        if(code==null||!CanEditPatient) return;
         if(Diagnoses.Any(x => x.Mkb10CodeId==code.Id)) return;
 
         var diagnosis = new DiagnosisDto
@@ -937,13 +971,13 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [RelayCommand]
     private void RemoveMkb(DiagnosisDto diagnosis)
     {
-        if(diagnosis==null || !CanEditPatient) return;
+        if(diagnosis==null||!CanEditPatient) return;
         if(diagnosis.Id!=Guid.Empty) _deletedDiagnosisIds.Add(diagnosis.Id);
         Diagnoses.Remove(diagnosis);
     }
 
     // =====================================================
-    // MEDICINE SEARCH + ATTACH
+    // ТЕКОВНИ ТЕРАПИИ (status = активен)
     // =====================================================
 
     private CancellationTokenSource _medicineSearchCts = new();
@@ -956,8 +990,6 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [ObservableProperty] private ObservableCollection<MedicineDto> medicineResults = new();
     [ObservableProperty] private string medicineSearchText = string.Empty;
     [ObservableProperty] private bool showMedicineDropdown;
-
-
 
     partial void OnMedicineSearchTextChanged(string value) => DebounceSearchMedicine(value);
 
@@ -992,8 +1024,6 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
             _applicationRegimes=regimes;
             ApplicationRegimeOptions=new ObservableCollection<string>(
                 regimes.Select(x => x.Regime));
-
-            // The database registry is the single source of truth for application methods.
         }
         catch(Exception ex)
         {
@@ -1014,7 +1044,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
             return;
         }
 
-        var value=await _userDialogService.ShowPromptAsync(
+        var value = await _userDialogService.ShowPromptAsync(
             "Нов режим на апликација",
             "Внесете нов режим на апликација за лекот.",
             "Додај",
@@ -1026,7 +1056,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
 
         try
         {
-            var regime=await _patientService.AddApplicationRegimeAsync(value.Trim());
+            var regime = await _patientService.AddApplicationRegimeAsync(value.Trim());
             await LoadApplicationRegimesAsync();
 
             await _userDialogService.ShowAlertAsync(
@@ -1072,10 +1102,11 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
             await _userDialogService.ShowAlertAsync("Грешка", $"Пребарувањето на лекови не успеа: {ex.Message}", "OK");
         }
     }
+
     [RelayCommand]
     private void AddMedicine(MedicineDto medicine)
     {
-        if(medicine==null || !CanEditPatient) return;
+        if(medicine==null||!CanEditPatient) return;
 
         if(AttachedMedicines.Any(r => r.PatientMedicine.MedicineId==medicine.Id&&r.PatientMedicine.IsActive))
             return;
@@ -1109,7 +1140,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [RelayCommand]
     private void RemoveMedicine(AttachedMedicineRow row)
     {
-        if(row==null || !CanEditPatient) return;
+        if(row==null||!CanEditPatient) return;
 
         // Existing therapy is never physically deleted. Closing it here also
         // keeps the in-memory model consistent with the history rule.
@@ -1120,9 +1151,86 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
             _deletedMedicineIds.Add(row.PatientMedicine.Id);
         }
 
-        // New, unsaved rows simply disappear. Persisted rows are retained in
-        // the database as inactive history by SavePatientAsync.
         AttachedMedicines.Remove(row);
+    }
+
+    // =====================================================
+    // ПРЕТХОДНИ ТЕРАПИИ (рачно, status = неактивен)
+    // =====================================================
+
+    private CancellationTokenSource _previousMedicineSearchCts = new();
+
+    [ObservableProperty] private ObservableCollection<PreviousMedicineRow> previousMedicines = new();
+    [ObservableProperty] private ObservableCollection<MedicineDto> previousMedicineResults = new();
+    [ObservableProperty] private string previousMedicineSearchText = string.Empty;
+    [ObservableProperty] private bool showPreviousMedicineDropdown;
+
+    partial void OnPreviousMedicineSearchTextChanged(string value) => DebouncePreviousMedicineSearch(value);
+
+    private async void DebouncePreviousMedicineSearch(string query)
+    {
+        _previousMedicineSearchCts?.Cancel();
+        _previousMedicineSearchCts?.Dispose();
+        _previousMedicineSearchCts=new CancellationTokenSource();
+        var token = _previousMedicineSearchCts.Token;
+
+        if(string.IsNullOrWhiteSpace(query))
+        {
+            PreviousMedicineResults.Clear();
+            ShowPreviousMedicineDropdown=false;
+            return;
+        }
+
+        try
+        {
+            await Task.Delay(400, token);
+            if(token.IsCancellationRequested) return;
+
+            var results = await _patientService.SearchMedicinesAsync(query);
+            if(token.IsCancellationRequested) return;
+
+            PreviousMedicineResults=new ObservableCollection<MedicineDto>(results);
+            ShowPreviousMedicineDropdown=results.Count>0;
+        }
+        catch(OperationCanceledException) { }
+        catch(Exception ex) { Debug.WriteLine(ex); }
+    }
+
+    [RelayCommand]
+    private void AddPreviousMedicine(MedicineDto medicine)
+    {
+        if(medicine==null||!CanEditPatient) return;
+
+        var dto = new PatientMedicineDto
+        {
+            Id=Guid.Empty,
+            PatientId=Patient.Id,
+            MedicineId=medicine.Id,
+            MedicineName=medicine.Name,
+            Dosage=medicine.DefaultDosage,
+            DosesFrequency=DosesFrequency.Other,
+            StartDate=DateTime.Today.AddMonths(-6),
+            EndDate=DateTime.Today,
+            PharmaceuticalReference=string.Empty,
+            ApplicationRegimeId=null,
+            ApplicationRegime=string.Empty,
+            Quantity=1,
+            IsActive=false
+        };
+
+        PreviousMedicines.Add(new PreviousMedicineRow(dto));
+
+        PreviousMedicineSearchText=string.Empty;
+        PreviousMedicineResults.Clear();
+        ShowPreviousMedicineDropdown=false;
+    }
+
+    [RelayCommand]
+    private void RemovePreviousMedicine(PreviousMedicineRow row)
+    {
+        if(row==null||!CanEditPatient) return;
+        if(row.PatientMedicine.Id!=Guid.Empty) _deletedMedicineIds.Add(row.PatientMedicine.Id);
+        PreviousMedicines.Remove(row);
     }
 
     // =====================================================
@@ -1142,7 +1250,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [RelayCommand]
     private async Task UploadDocumentAsync()
     {
-        if(!CanEditPatient || IsUploadingDocument) return;
+        if(!CanEditPatient||IsUploadingDocument) return;
 
         try
         {
@@ -1177,7 +1285,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
             };
 
             Documents.Add(newDoc);
-            SelectedDocumentPreview=newDoc; // веднаш го покажуваме во преглед-панелот
+            SelectedDocumentPreview=newDoc;
         }
         catch(Exception ex)
         {
@@ -1192,7 +1300,7 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
     [RelayCommand]
     private void RemoveDocument(PatientDocumentDto document)
     {
-        if(document==null || !CanEditPatient) return;
+        if(document==null||!CanEditPatient) return;
         if(document.Id!=Guid.Empty) _deletedDocumentIds.Add(document.Id);
         if(SelectedDocumentPreview==document) SelectedDocumentPreview=null;
         Documents.Remove(document);
@@ -1273,9 +1381,42 @@ public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Pat
         _mkbSearchCts.Dispose();
         _medicineSearchCts.Cancel();
         _medicineSearchCts.Dispose();
+        _previousMedicineSearchCts.Cancel();
+        _previousMedicineSearchCts.Dispose();
+        ScoreEditor.Dispose();
         GC.SuppressFinalize(this);
     }
+}
 
+public partial class PreviousMedicineRow : ObservableObject
+{
+    public PreviousMedicineRow(PatientMedicineDto medicine) => PatientMedicine=medicine;
+
+    public PatientMedicineDto PatientMedicine
+    {
+        get;
+    }
+    public string MedicineName => PatientMedicine.MedicineName;
+
+    public DateTime StartDate
+    {
+        get => PatientMedicine.StartDate;
+        set
+        {
+            PatientMedicine.StartDate=value;
+            OnPropertyChanged();
+        }
+    }
+
+    public DateTime EndDate
+    {
+        get => PatientMedicine.EndDate??DateTime.Today;
+        set
+        {
+            PatientMedicine.EndDate=value;
+            OnPropertyChanged();
+        }
+    }
 }
 
 public partial class MkbAlphabetSection : ObservableObject

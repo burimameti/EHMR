@@ -36,6 +36,7 @@ public class PatientService : IPatientService
 
         return entities.Select(MapToDto).ToList();
     }
+
     public async Task<List<Patient>> GetAllBaseAsync(CancellationToken ct = default)
     {
         await using var db = await _factory.CreateDbContextAsync(ct);
@@ -43,13 +44,11 @@ public class PatientService : IPatientService
         return await db.Patients
             .AsNoTracking()
             .Include(p => p.Doctor)
-            .Include(p => p.PatientMedicines)
-                .ThenInclude(pm => pm.Medicine)
+            .Include(p => p.PatientMedicines).ThenInclude(pm => pm.Medicine)
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync(ct);
-
-  
     }
+
     public async Task<(List<PatientDto> Items, int TotalCount)> GetPagedAsync(
         int page, int pageSize, string? searchTerm = null, CancellationToken ct = default)
     {
@@ -64,15 +63,7 @@ public class PatientService : IPatientService
             .AsQueryable();
 
         if(!string.IsNullOrWhiteSpace(searchTerm))
-        {
-            var term = searchTerm.Trim();
-            query=query.Where(p =>
-                p.FirstName.Contains(term)||
-                p.LastName.Contains(term)||
-                (p.NationalId!=null&&p.NationalId.Contains(term))||
-                p.SzboNumber.Contains(term)||
-                p.Phone.Contains(term));
-        }
+            query=ApplySearch(query, searchTerm.Trim());
 
         var totalCount = await query.CountAsync(ct);
 
@@ -90,19 +81,11 @@ public class PatientService : IPatientService
         if(string.IsNullOrWhiteSpace(term))
             return [];
 
-        term=term.Trim();
-
         await using var db = await _factory.CreateDbContextAsync(ct);
 
-        var entities = await db.Patients
-            .AsNoTracking()
-            .Include(p => p.Doctor)
-            .Where(p =>
-                p.FirstName.Contains(term)||
-                p.LastName.Contains(term)||
-                (p.NationalId!=null&&p.NationalId.Contains(term))||
-                p.SzboNumber.Contains(term)||
-                p.Phone.Contains(term))
+        var entities = await ApplySearch(
+                db.Patients.AsNoTracking().Include(p => p.Doctor),
+                term.Trim())
             .OrderBy(p => p.LastName)
             .ThenBy(p => p.FirstName)
             .Take(50)
@@ -150,6 +133,14 @@ public class PatientService : IPatientService
         return await db.Patients.CountAsync(ct);
     }
 
+    private static IQueryable<Patient> ApplySearch(IQueryable<Patient> query, string term)
+        => query.Where(p =>
+            p.FirstName.Contains(term)||
+            p.LastName.Contains(term)||
+            (p.NationalId!=null&&p.NationalId.Contains(term))||
+            p.SzboNumber.Contains(term)||
+            p.Phone.Contains(term));
+
     // =====================================================
     // WRITE (scalar-only, no child collections)
     // =====================================================
@@ -172,7 +163,7 @@ public class PatientService : IPatientService
     }
 
     /// <summary>
-    /// Updates only scalar fields on the tracked entity, so any navigation properties
+    /// Updates only scalar fields on the tracked entity, so navigation properties
     /// (Doctor, Diagnoses, etc.) are never touched or re-inserted by mistake.
     /// </summary>
     public async Task UpdatePatientAsync(PatientEditDto dto, CancellationToken ct = default)
@@ -181,10 +172,8 @@ public class PatientService : IPatientService
 
         await using var db = await _factory.CreateDbContextAsync(ct);
 
-        var existing = await db.Patients.FirstOrDefaultAsync(p => p.Id==dto.Id, ct);
-
-        if(existing==null)
-            throw new KeyNotFoundException($"Patient {dto.Id} not found.");
+        var existing = await db.Patients.FirstOrDefaultAsync(p => p.Id==dto.Id, ct)
+            ??throw new KeyNotFoundException($"Patient {dto.Id} not found.");
 
         CopyScalarFields(dto, existing);
 
@@ -200,7 +189,6 @@ public class PatientService : IPatientService
         await using var db = await _factory.CreateDbContextAsync(ct);
 
         var existing = await db.Patients.FirstOrDefaultAsync(p => p.Id==id, ct);
-
         if(existing==null)
             return false;
 
@@ -223,12 +211,11 @@ public class PatientService : IPatientService
 
         await using var db = await _factory.CreateDbContextAsync(ct);
 
-        // IsActive is a computed / not-mapped property, so it cannot be translated
-        // to SQL. Filter using the mapped Status column first, then match the
-        // computed FullName in memory.
+        // IsActive is computed / not mapped, so filter on the mapped Status column
+        // first, then match the computed FullName in memory.
         var data = await db.Doctors
             .Include(d => d.User)
-            .Where(d => d.Status == Domain.Entities.Status.Active)
+            .Where(d => d.Status==Domain.Entities.Status.Active)
             .ToListAsync(ct);
 
         return data
@@ -251,22 +238,21 @@ public class PatientService : IPatientService
         string? descriptionTerm = null)
     {
         codeTerm=NormalizeMkbCodeTerm(codeTerm);
-        descriptionTerm=(descriptionTerm ?? string.Empty).Trim();
+        descriptionTerm=(descriptionTerm??string.Empty).Trim();
 
         if(string.IsNullOrWhiteSpace(codeTerm)
-            && string.IsNullOrWhiteSpace(descriptionTerm)
-            && string.IsNullOrWhiteSpace(section))
+            &&string.IsNullOrWhiteSpace(descriptionTerm)
+            &&string.IsNullOrWhiteSpace(section))
             return [];
 
         await using var db = await _factory.CreateDbContextAsync(ct);
 
-        var query=db.Mkb10Codes.AsQueryable();
+        var query = db.Mkb10Codes.AsQueryable();
 
-        // The selected A-Z section is always the primary scope. Typing a code
-        // or description only narrows results inside that section.
+        // The selected A-Z section is the primary scope; code/description only narrow inside it.
         if(!string.IsNullOrWhiteSpace(section))
         {
-            var prefix=NormalizeMkbCodeTerm(section);
+            var prefix = NormalizeMkbCodeTerm(section);
             query=query.Where(x => x.Code.StartsWith(prefix));
         }
 
@@ -275,10 +261,10 @@ public class PatientService : IPatientService
 
         if(!string.IsNullOrWhiteSpace(descriptionTerm))
         {
-            var cyrillicDescription=MacedonianTransliterator.ToCyrillic(descriptionTerm);
+            var cyrillicDescription = MacedonianTransliterator.ToCyrillic(descriptionTerm);
             query=query.Where(x =>
                 x.Description.Contains(descriptionTerm)
-                || x.Description.Contains(cyrillicDescription));
+                ||x.Description.Contains(cyrillicDescription));
         }
 
         return await query
@@ -293,27 +279,48 @@ public class PatientService : IPatientService
             .ToListAsync(ct);
     }
 
+    // MKB-10 codes are Latin; accept Macedonian Cyrillic input so M06.9 and м06.9 behave the same.
+    private static readonly Dictionary<char, char> CyrillicToLatin = new()
+    {
+        ['А']='A',
+        ['Б']='B',
+        ['В']='V',
+        ['Г']='G',
+        ['Д']='D',
+        ['Е']='E',
+        ['Ж']='Z',
+        ['З']='Z',
+        ['Ѕ']='D',
+        ['И']='I',
+        ['Ј']='J',
+        ['К']='K',
+        ['Л']='L',
+        ['М']='M',
+        ['Н']='N',
+        ['О']='O',
+        ['П']='P',
+        ['Р']='R',
+        ['С']='S',
+        ['Т']='T',
+        ['Ќ']='K',
+        ['У']='U',
+        ['Ф']='F',
+        ['Х']='H',
+        ['Ц']='C',
+        ['Ч']='C',
+        ['Џ']='D',
+        ['Ш']='S'
+    };
+
     private static string NormalizeMkbCodeTerm(string? value)
     {
         if(string.IsNullOrWhiteSpace(value))
             return string.Empty;
 
-        var text=value.Trim().ToUpperInvariant();
+        var chars = value.Trim().ToUpperInvariant()
+            .Select(c => CyrillicToLatin.TryGetValue(c, out var latin) ? latin : c)
+            .ToArray();
 
-        // MKB-10 codes are Latin alphanumeric codes. Accept Macedonian
-        // Cyrillic input for the first letter as well, so M06.9 and м06.9
-        // behave identically.
-        var map=new Dictionary<char,char>
-        {
-            ['А']='A', ['Б']='B', ['В']='V', ['Г']='G', ['Д']='D',
-            ['Е']='E', ['Ж']='Z', ['З']='Z', ['Ѕ']='D', ['И']='I',
-            ['Ј']='J', ['К']='K', ['Л']='L', ['М']='M', ['Н']='N',
-            ['О']='O', ['П']='P', ['Р']='R', ['С']='S', ['Т']='T',
-            ['Ќ']='K', ['У']='U', ['Ф']='F', ['Х']='H', ['Ц']='C',
-            ['Ч']='C', ['Џ']='D', ['Ш']='S'
-        };
-
-        var chars=text.Select(c => map.TryGetValue(c, out var latin) ? latin : c).ToArray();
         return new string(chars);
     }
 
@@ -329,11 +336,9 @@ public class PatientService : IPatientService
         return await db.Medicines
             .Where(m =>
                 m.IsActive&&
-                (
-                    m.Name.Contains(term)||
-                    m.GenericName.Contains(term)||
-                    m.Code.Contains(term)
-                ))
+                (m.Name.Contains(term)||
+                 m.GenericName.Contains(term)||
+                 m.Code.Contains(term)))
             .OrderBy(m => m.Name)
             .Take(20)
             .Select(m => new MedicineDto
@@ -352,9 +357,14 @@ public class PatientService : IPatientService
             .ToListAsync(ct);
     }
 
+    // =====================================================
+    // APPLICATION REGIMES
+    // =====================================================
+
     public async Task<List<ApplicationRegimeDto>> GetApplicationRegimesAsync(CancellationToken ct = default)
     {
         await using var db = await _factory.CreateDbContextAsync(ct);
+
         return await db.ApplicationRegimes
             .AsNoTracking()
             .Where(x => x.IsActive)
@@ -368,6 +378,31 @@ public class PatientService : IPatientService
             .ToListAsync(ct);
     }
 
+    public async Task<ApplicationRegimeDto> AddApplicationRegimeAsync(string regime, CancellationToken ct = default)
+    {
+        regime=(regime??string.Empty).Trim();
+        if(string.IsNullOrWhiteSpace(regime))
+            throw new ArgumentException("Режимот на апликација е задолжителен.", nameof(regime));
+
+        await using var db = await _factory.CreateDbContextAsync(ct);
+
+        var existing = await db.ApplicationRegimes.FirstOrDefaultAsync(x => x.Regime==regime, ct);
+        if(existing!=null)
+            return ToDto(existing);
+
+        var entity = new ApplicationRegime
+        {
+            Id=Guid.NewGuid(),
+            Regime=regime,
+            IsActive=true
+        };
+
+        db.ApplicationRegimes.Add(entity);
+        await db.SaveChangesAsync(ct);
+
+        return ToDto(entity);
+    }
+
     public async Task<ApplicationRegimeDto> UpdateApplicationRegimeAsync(Guid id, string regime, CancellationToken ct = default)
     {
         regime=(regime??string.Empty).Trim();
@@ -377,24 +412,17 @@ public class PatientService : IPatientService
             throw new ArgumentException("Режимот на апликација е задолжителен.", nameof(regime));
 
         await using var db = await _factory.CreateDbContextAsync(ct);
-        var entity=await db.ApplicationRegimes.FirstOrDefaultAsync(x => x.Id==id, ct);
-        if(entity==null)
-            throw new KeyNotFoundException("Режимот на апликација не постои.");
 
-        var duplicate=await db.ApplicationRegimes.AnyAsync(
-            x => x.Id!=id && x.Regime==regime, ct);
-        if(duplicate)
+        var entity = await db.ApplicationRegimes.FirstOrDefaultAsync(x => x.Id==id, ct)
+            ??throw new KeyNotFoundException("Режимот на апликација не постои.");
+
+        if(await db.ApplicationRegimes.AnyAsync(x => x.Id!=id&&x.Regime==regime, ct))
             throw new InvalidOperationException("Веќе постои режим со истиот назив.");
 
         entity.Regime=regime;
         await db.SaveChangesAsync(ct);
 
-        return new ApplicationRegimeDto
-        {
-            Id=entity.Id,
-            Regime=entity.Regime,
-            IsActive=entity.IsActive
-        };
+        return ToDto(entity);
     }
 
     public async Task<bool> DeleteApplicationRegimeAsync(Guid id, CancellationToken ct = default)
@@ -403,40 +431,23 @@ public class PatientService : IPatientService
             return false;
 
         await using var db = await _factory.CreateDbContextAsync(ct);
-        var entity=await db.ApplicationRegimes.FirstOrDefaultAsync(x => x.Id==id, ct);
+
+        var entity = await db.ApplicationRegimes.FirstOrDefaultAsync(x => x.Id==id, ct);
         if(entity==null)
             return false;
 
-        // Soft-delete the lookup value so existing patient/encounter history
-        // keeps its original application method.
+        // Soft-delete so existing patient/encounter history keeps its application method.
         entity.IsActive=false;
         await db.SaveChangesAsync(ct);
         return true;
     }
-    public async Task<ApplicationRegimeDto> AddApplicationRegimeAsync(string regime, CancellationToken ct = default)
+
+    private static ApplicationRegimeDto ToDto(ApplicationRegime e) => new()
     {
-        regime=(regime??string.Empty).Trim();
-        if(string.IsNullOrWhiteSpace(regime))
-            throw new ArgumentException("Режимот на апликација е задолжителен.", nameof(regime));
-
-        await using var db = await _factory.CreateDbContextAsync(ct);
-        var existing=await db.ApplicationRegimes
-            .FirstOrDefaultAsync(x => x.Regime==regime, ct);
-
-        if(existing!=null)
-            return new ApplicationRegimeDto { Id=existing.Id, Regime=existing.Regime, IsActive=existing.IsActive };
-
-        var entity=new ApplicationRegime
-        {
-            Id=Guid.NewGuid(),
-            Regime=regime,
-            IsActive=true
-        };
-        db.ApplicationRegimes.Add(entity);
-        await db.SaveChangesAsync(ct);
-
-        return new ApplicationRegimeDto { Id=entity.Id, Regime=entity.Regime, IsActive=entity.IsActive };
-    }
+        Id=e.Id,
+        Regime=e.Regime,
+        IsActive=e.IsActive
+    };
 
     // =====================================================
     // AGGREGATE SAVE (patient + diagnoses + medicines + documents)
@@ -454,7 +465,7 @@ public class PatientService : IPatientService
 
         if(!string.IsNullOrWhiteSpace(patientDto.SzboNumber))
         {
-            var szboExists=await db.Patients
+            var szboExists = await db.Patients
                 .AnyAsync(x => x.SzboNumber==patientDto.SzboNumber&&x.Id!=patientDto.Id, ct);
             if(szboExists)
                 throw new InvalidOperationException("Веќе постои пациент со овој ЕЗБО број.");
@@ -462,278 +473,17 @@ public class PatientService : IPatientService
 
         try
         {
-            // =====================================================
-            // INSERT NEW PATIENT
-            // =====================================================
-
             if(model.IsNewPatient)
             {
-                var patient = new Patient
-                {
-                    Id=patientDto.Id==Guid.Empty ? Guid.NewGuid() : patientDto.Id
-                };
-                patient.Id=patient.Id==Guid.Empty
-                   ? Guid.NewGuid()
-                   : patient.Id;
-                patientDto.Id=patient.Id;
-
-                if(string.IsNullOrWhiteSpace(patient.PatientNumber))
-                {
-                    patient.PatientNumber=
-                        await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Patient, "PAT");
-                }
-                CopyScalarFields(patientDto, patient);
-
-                patient.CreatedAt=DateTime.UtcNow;
-                patient.RegistrationDate=DateTime.UtcNow;
-
-                foreach(var vm in model.Diagnoses)
-                {
-                    patient.Diagnoses.Add(new Diagnosis
-                    {
-                        Id=Guid.NewGuid(),
-                        PatientId=patient.Id,
-                        // Patient-level diagnosis: never bind it to an Encounter.
-                        EncounterId=null,
-                        Mkb10CodeId=vm.Mkb10CodeId,
-                        DiagnosedAt=vm.DiagnosedAt,
-                        IsPrimary=vm.IsPrimary,
-                        Severity=vm.Severity,
-                        ClinicalDescription=vm.ClinicalDescription,
-                        Status=vm.Status
-                    });
-                }
-
-                foreach(var vm in model.Medicines)
-                {
-                    // Build the PatientMedicine (Patient<->Medicine link) fully populated,
-                    // pointing at the existing Medicine.Id chosen via SearchMedicinesAsync.
-                    var patientMedicine = new PatientMedicine
-                    {
-                        Id=Guid.NewGuid(),
-                        PatientId=patient.Id,
-                        MedicineId=vm.MedicineId,
-                        Dosage=vm.Dosage,
-                        DosesFrequency=vm.DosesFrequency,
-                        StartDate=vm.StartDate,
-                        EndDate=vm.EndDate,
-                        Notes=vm.Notes,
-                        PharmaceuticalReference=vm.PharmaceuticalReference,
-                        ApplicationRegimeId=vm.ApplicationRegimeId,
-                        Quantity=vm.Quantity,
-                        IsActive=vm.IsActive
-                    };
-
-                    patient.PatientMedicines.Add(patientMedicine);
-                }
-
-                foreach(var vm in model.Documents)
-                {
-                    patient.Documents.Add(new PatientDocument
-                    {
-                        Id=Guid.NewGuid(),
-                        PatientId=patient.Id,
-                        DocumentType=vm.DocumentType,
-                        Title=vm.Title,
-                        Description=vm.Description,
-                        FileName=vm.FileName,
-                        StoredPath=vm.StoredPath,
-                        ContentType=vm.ContentType,
-                        UploadedAt=vm.UploadedAt
-                    });
-                }
-
-                await db.Patients.AddAsync(patient, ct);
-                await db.SaveChangesAsync(ct);
-
+                await InsertPatientAggregateAsync(db, model, ct);
                 return;
             }
 
-            // =====================================================
-            // UPDATE EXISTING PATIENT
-            // =====================================================
-
-            var existing = await db.Patients
-                .Include(x => x.Diagnoses)
-                .Include(x => x.PatientMedicines)
-                .Include(x => x.Documents)
-                .FirstOrDefaultAsync(x => x.Id==patientDto.Id, ct);
-
-            if(existing==null)
-                throw new KeyNotFoundException($"Patient {patientDto.Id} not found.");
-
-            if(existing.Status==PatientStatus.Inactive &&
-               patientDto.Status==PatientStatus.Active &&
-               !_authorizationService.HasRole(UserRole.Admin) &&
-               !_authorizationService.HasRole(UserRole.SuperAdmin))
-            {
-                throw new UnauthorizedAccessException(
-                    "Само администратор може да реактивира неактивен пациент.");
-            }
-
-            CopyScalarFields(patientDto, existing);
-
-            // ---- diagnosis delete ----
-
-            // ---- diagnosis upsert ----
-            // Mkb10CodeId is always an existing Mkb10Code.Id, picked via SearchMkb10CodesAsync.
-            foreach(var vm in model.Diagnoses.Where(x => !model.DeletedDiagnosisIds.Contains(x.Id)))
-            {
-                // Guard: never re-touch an id that was just marked for deletion above —
-                // writing to a Deleted entity flips it to Modified and causes exactly
-                // the "Modified but DB row is NULL" concurrency exception.
-            
-
-                var entity = existing.Diagnoses.FirstOrDefault(x => x.Id==vm.Id);
-
-                if(entity==null)
-                {
-                    entity=new Diagnosis
-                    {
-                        Id=Guid.NewGuid(),
-                        PatientId=existing.Id,
-                        // Patient-level diagnosis: never bind it to an Encounter.
-                        EncounterId=null,
-                        Mkb10CodeId=vm.Mkb10CodeId,
-                        DiagnosedAt=vm.DiagnosedAt,
-                        IsPrimary=vm.IsPrimary,
-                        Severity=vm.Severity,
-                        ClinicalDescription=vm.ClinicalDescription,
-                        Status=vm.Status
-                    };
-                    try
-                    {
-                        db.Diagnoses.Add(entity);
-                        db.SaveChanges();
-                    }
-                    catch(Exception ex)
-                    {
-
-                        Debug.WriteLine(new Exception($"{ex.Message}", ex));
-                        throw;
-                    }
-                    existing.Diagnoses.Add(entity);
-                }
-                else
-                {
-                    // Patient form owns this diagnosis; keep it independent of Encounter.
-                    entity.EncounterId=null;
-                    entity.Mkb10CodeId=vm.Mkb10CodeId;
-                    entity.DiagnosedAt=vm.DiagnosedAt;
-                    entity.IsPrimary=vm.IsPrimary;
-                    entity.Severity=vm.Severity;
-                    entity.ClinicalDescription=vm.ClinicalDescription;
-                    entity.Status=vm.Status;
-                }
-            }
-
-            // ---- medicine history ----
-            // Therapy is never physically deleted. Removing/changing an active
-            // therapy closes it and keeps the row for the clinical history.
-            foreach(var id in model.DeletedMedicineIds)
-            {
-                var entity = existing.PatientMedicines.FirstOrDefault(x => x.Id==id);
-                if(entity!=null)
-                {
-                    entity.IsActive=false;
-                    entity.EndDate ??= DateTime.UtcNow;
-                }
-            }
-
-            // ---- medicine upsert ----
-            // Patient -> PatientMedicine -> Medicine.
-            // MedicineId is always an existing Medicine.Id, picked via SearchMedicinesAsync —
-            // the Medicine catalog itself is never created or modified here.
-            // For a NEW link: build the full PatientMedicine entity first, then attach it.
-            // For an EXISTING link: just update its fields in place.
-            foreach(var vm in model.Medicines.Where(x => !model.DeletedMedicineIds.Contains(x.Id))) 
-            {     
-
-                var entity = existing.PatientMedicines.FirstOrDefault(x => x.Id==vm.Id);
-
-                if(entity==null)
-                {
-                    var patientMedicine = new PatientMedicine
-                    {
-                        Id=Guid.NewGuid(),
-                        PatientId=existing.Id,
-                        MedicineId=vm.MedicineId,
-                        Dosage=vm.Dosage,
-                        DosesFrequency=vm.DosesFrequency,
-                        StartDate=vm.StartDate,
-                        EndDate=vm.EndDate,
-                        Notes=vm.Notes,
-                        PharmaceuticalReference=vm.PharmaceuticalReference,
-                        ApplicationRegimeId=vm.ApplicationRegimeId,
-                        Quantity=vm.Quantity,
-                        IsActive=vm.IsActive
-                    };
-                    try
-                    {
-                        db.PatientMedicines.Add(patientMedicine);
-                        db.SaveChanges();
-                    }
-                    catch(Exception ex )
-                    {
-                 
-                        Debug.WriteLine(new Exception($"{ex.Message}",ex));
-                        throw;
-                    }
-            
-                   
-                
-                    existing.PatientMedicines.Add(patientMedicine);
-                }
-                else
-                {
-                    entity.MedicineId=vm.MedicineId;
-                    entity.Dosage=vm.Dosage;
-                    entity.DosesFrequency=vm.DosesFrequency;
-                    entity.StartDate=vm.StartDate;
-                    entity.EndDate=vm.EndDate;
-                    entity.Notes=vm.Notes;
-                    entity.PharmaceuticalReference=vm.PharmaceuticalReference;
-                    entity.ApplicationRegimeId=vm.ApplicationRegimeId;
-                    entity.Quantity=vm.Quantity;
-                    entity.IsActive=vm.IsActive;
-                }
-            }
-
-            // ---- document delete ----
-            foreach(var id in model.DeletedDocumentIds)
-            {
-                var entity = existing.Documents.FirstOrDefault(x => x.Id==id);
-                if(entity!=null)
-                    db.Remove(entity);
-            }
-
-            // ---- document insert (documents are immutable once uploaded) ----
-            foreach(var vm in model.Documents)
-            {
-                if(vm.Id!=Guid.Empty)
-                    continue;
-
-                existing.Documents.Add(new PatientDocument
-                {
-                    Id=Guid.NewGuid(),
-                    PatientId=existing.Id,
-                    DocumentType=vm.DocumentType,
-                    Title=vm.Title,
-                    Description=vm.Description,
-                    FileName=vm.FileName,
-                    StoredPath=vm.StoredPath,
-                    ContentType=vm.ContentType,
-                    UploadedAt=vm.UploadedAt
-                });
-            }
-
-            await db.SaveChangesAsync(ct);
+            await UpdatePatientAggregateAsync(db, model, ct);
         }
         catch(DbUpdateConcurrencyException ex)
         {
-            // Inspect ex.Entries here, while db is still alive — never let these
-            // EntityEntry objects escape this scope, or the caller will hit a
-            // disposed context the moment GetDatabaseValuesAsync runs.
+            // Inspect entries while db is still alive — never let EntityEntry escape this scope.
             foreach(var entry in ex.Entries)
             {
                 var dbValues = await entry.GetDatabaseValuesAsync(ct);
@@ -746,6 +496,186 @@ public class PatientService : IPatientService
             throw;
         }
     }
+
+    private async Task InsertPatientAggregateAsync(DesktopTherapyDbContext db, PatientSaveModel model, CancellationToken ct)
+    {
+        var patientDto = model.Patient;
+
+        var patient = new Patient
+        {
+            Id=patientDto.Id==Guid.Empty ? Guid.NewGuid() : patientDto.Id
+        };
+        patientDto.Id=patient.Id;
+
+        patient.PatientNumber=await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Patient, "PAT");
+
+        CopyScalarFields(patientDto, patient);
+
+        patient.CreatedAt=DateTime.UtcNow;
+        patient.RegistrationDate=DateTime.UtcNow;
+
+        foreach(var vm in model.Diagnoses)
+            patient.Diagnoses.Add(NewDiagnosis(patient.Id, vm));
+
+        foreach(var vm in model.Medicines)
+            patient.PatientMedicines.Add(NewPatientMedicine(patient.Id, vm));
+
+        foreach(var vm in model.Documents)
+            patient.Documents.Add(NewDocument(patient.Id, vm));
+
+        await db.Patients.AddAsync(patient, ct);
+        await db.SaveChangesAsync(ct);
+    }
+
+    private async Task UpdatePatientAggregateAsync(DesktopTherapyDbContext db, PatientSaveModel model, CancellationToken ct)
+    {
+        var patientDto = model.Patient;
+
+        var existing = await db.Patients
+            .Include(x => x.Diagnoses)
+            .Include(x => x.PatientMedicines)
+            .Include(x => x.Documents)
+            .FirstOrDefaultAsync(x => x.Id==patientDto.Id, ct)
+            ??throw new KeyNotFoundException($"Patient {patientDto.Id} not found.");
+
+        if(existing.Status==PatientStatus.Inactive&&
+            patientDto.Status==PatientStatus.Active&&
+            !_authorizationService.HasRole(UserRole.Admin)&&
+            !_authorizationService.HasRole(UserRole.SuperAdmin))
+        {
+            throw new UnauthorizedAccessException(
+                "Само администратор може да реактивира неактивен пациент.");
+        }
+
+        CopyScalarFields(patientDto, existing);
+
+        // NOTE: new children are added through db.<Set>.Add (not existing.<Nav>.Add).
+        // They have client-generated Guid keys, so adding via the navigation of a tracked
+        // parent makes EF mark them Modified instead of Added -> "DB row is NULL" concurrency error.
+
+        // ---- diagnoses: delete ----
+        foreach(var id in model.DeletedDiagnosisIds)
+        {
+            var entity = existing.Diagnoses.FirstOrDefault(x => x.Id==id);
+            if(entity!=null)
+                db.Remove(entity);
+        }
+
+        // ---- diagnoses: upsert (skip ids just deleted) ----
+        foreach(var vm in model.Diagnoses.Where(x => !model.DeletedDiagnosisIds.Contains(x.Id)))
+        {
+            var entity = existing.Diagnoses.FirstOrDefault(x => x.Id==vm.Id);
+
+            if(entity==null)
+            {
+                db.Diagnoses.Add(NewDiagnosis(existing.Id, vm));
+                continue;
+            }
+
+            // Patient form owns this diagnosis; keep it independent of Encounter.
+            entity.EncounterId=null;
+            entity.Mkb10CodeId=vm.Mkb10CodeId;
+            entity.DiagnosedAt=vm.DiagnosedAt;
+            entity.IsPrimary=vm.IsPrimary;
+            entity.Severity=vm.Severity;
+            entity.ClinicalDescription=vm.ClinicalDescription;
+            entity.Status=vm.Status;
+        }
+
+        // ---- medicines: close, never delete (clinical history) ----
+        foreach(var id in model.DeletedMedicineIds)
+        {
+            var entity = existing.PatientMedicines.FirstOrDefault(x => x.Id==id);
+            if(entity!=null)
+            {
+                entity.IsActive=false;
+                entity.EndDate??=DateTime.UtcNow;
+            }
+        }
+
+        // ---- medicines: upsert ----
+        // MedicineId is always an existing Medicine.Id; the catalog itself is never modified here.
+        foreach(var vm in model.Medicines.Where(x => !model.DeletedMedicineIds.Contains(x.Id)))
+        {
+            var entity = existing.PatientMedicines.FirstOrDefault(x => x.Id==vm.Id);
+
+            if(entity==null)
+            {
+                db.PatientMedicines.Add(NewPatientMedicine(existing.Id, vm));
+                continue;
+            }
+
+            entity.MedicineId=vm.MedicineId;
+            entity.Dosage=vm.Dosage;
+            entity.DosesFrequency=vm.DosesFrequency;
+            entity.StartDate=vm.StartDate;
+            entity.EndDate=vm.EndDate;
+            entity.Notes=vm.Notes;
+            entity.PharmaceuticalReference=vm.PharmaceuticalReference;
+            entity.ApplicationRegimeId=vm.ApplicationRegimeId;
+            entity.Quantity=vm.Quantity;
+            entity.IsActive=vm.IsActive;
+        }
+
+        // ---- documents: delete ----
+        foreach(var id in model.DeletedDocumentIds)
+        {
+            var entity = existing.Documents.FirstOrDefault(x => x.Id==id);
+            if(entity!=null)
+                db.Remove(entity);
+        }
+
+        // ---- documents: insert only (immutable once uploaded) ----
+        foreach(var vm in model.Documents.Where(x => x.Id==Guid.Empty))
+            db.PatientDocuments.Add(NewDocument(existing.Id, vm));
+
+        await db.SaveChangesAsync(ct);
+    }
+
+    // ---- save-model -> new entity ----
+
+    private static Diagnosis NewDiagnosis(Guid patientId, DiagnosisSaveModel vm) => new()
+    {
+        Id=Guid.NewGuid(),
+        PatientId=patientId,
+        // Patient-level diagnosis: never bind it to an Encounter.
+        EncounterId=null,
+        Mkb10CodeId=vm.Mkb10CodeId,
+        DiagnosedAt=vm.DiagnosedAt,
+        IsPrimary=vm.IsPrimary,
+        Severity=vm.Severity,
+        ClinicalDescription=vm.ClinicalDescription,
+        Status=vm.Status
+    };
+
+    private static PatientMedicine NewPatientMedicine(Guid patientId, PatientMedicineSaveModel vm) => new()
+    {
+        Id=Guid.NewGuid(),
+        PatientId=patientId,
+        MedicineId=vm.MedicineId,
+        Dosage=vm.Dosage,
+        DosesFrequency=vm.DosesFrequency,
+        StartDate=vm.StartDate,
+        EndDate=vm.EndDate,
+        Notes=vm.Notes,
+        PharmaceuticalReference=vm.PharmaceuticalReference,
+        ApplicationRegimeId=vm.ApplicationRegimeId,
+        Quantity=vm.Quantity,
+        IsActive=vm.IsActive
+    };
+
+    private static PatientDocument NewDocument(Guid patientId, PatientDocumentSaveModel vm) => new()
+    {
+        Id=Guid.NewGuid(),
+        PatientId=patientId,
+        DocumentType=vm.DocumentType,
+        Title=vm.Title,
+        Description=vm.Description,
+        FileName=vm.FileName,
+        StoredPath=vm.StoredPath,
+        ContentType=vm.ContentType,
+        UploadedAt=vm.UploadedAt
+    };
 
     // =====================================================
     // MAPPING: entity -> dto
@@ -880,6 +810,24 @@ public class PatientService : IPatientService
         target.EmergencyRelationship=source.EmergencyRelationship;
     }
 
+    // =====================================================
+    // SAVE MODELS
+    // =====================================================
+
+    public class PatientScoreSaveModel
+    {
+        public Guid Id
+        {
+            get; set;
+        }
+        public string Description { get; set; } = "";
+        public string Number { get; set; } = "";
+        public DateTime RecordedAt
+        {
+            get; set;
+        }
+    }
+
     public sealed class PatientSaveModel
     {
         public required PatientEditDto Patient
@@ -894,9 +842,11 @@ public class PatientService : IPatientService
         public List<DiagnosisSaveModel> Diagnoses { get; init; } = [];
         public List<PatientMedicineSaveModel> Medicines { get; init; } = [];
         public List<PatientDocumentSaveModel> Documents { get; init; } = [];
+        public List<PatientScoreSaveModel> Scores { get; init; } = [];
 
         public List<Guid> DeletedDiagnosisIds { get; init; } = [];
         public List<Guid> DeletedMedicineIds { get; init; } = [];
         public List<Guid> DeletedDocumentIds { get; init; } = [];
+        public List<Guid> DeletedScoreIds { get; init; } = [];
     }
 }

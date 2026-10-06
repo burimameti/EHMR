@@ -114,6 +114,9 @@
 	  <MauiXaml Update="Components\Search\SearchFilterBarView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Resources\Controls\ScoreEditor.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Resources\Controls\SparkDataGridView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
