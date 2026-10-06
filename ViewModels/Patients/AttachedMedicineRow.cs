@@ -27,7 +27,20 @@ namespace EHMR.ViewModels
         public decimal Quantity => PatientMedicine.Quantity;
         public string Dosage => PatientMedicine.Dosage;
         public bool IsActive => PatientMedicine.IsActive;
+        public bool CanDelete { get; private set; } = false;
         public Guid? ResolutionDocumentId => PatientMedicine.ResolutionDocumentId;
+
+        public void MarkNew()
+        {
+            CanDelete=true;
+            OnPropertyChanged(nameof(CanDelete));
+        }
+
+        public void MarkPersisted()
+        {
+            CanDelete=false;
+            OnPropertyChanged(nameof(CanDelete));
+        }
 
         public string RegimeDisplay =>
             string.IsNullOrWhiteSpace(PatientMedicine.ApplicationRegime)
