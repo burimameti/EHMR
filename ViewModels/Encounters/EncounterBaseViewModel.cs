@@ -107,8 +107,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             return;
         }
         var value=await UserDialogService.ShowPromptAsync(
-            "Нов начин на апликација",
-            "Внесете нов начин на апликација за лекот.",
+            "Нов режим на апликација",
+            "Внесете нов режим на апликација за лекот.",
             "Додај",
             "Откажи",
             "Пример: Поткожно");
@@ -129,12 +129,12 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
             await UserDialogService.ShowAlertAsync(
                 "Успешно",
-                $"Начинот „{regime.Regime}“ е додаден и достапен во изборот.",
+                $"Режимот „{regime.Regime}“ е додаден и достапен во изборот.",
                 "ОК");
         }
         catch(Exception ex)
         {
-            await UserDialogService.ShowAlertAsync("Грешка", $"Начинот не може да се зачува: {ex.Message}", "ОК");
+            await UserDialogService.ShowAlertAsync("Грешка", $"Режимот не може да се зачува: {ex.Message}", "ОК");
         }
     }
 
@@ -142,20 +142,20 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     public async Task EditApplicationRegimeAsync(ApplicationRegime? regime)
     {
         if(!CanUpdate || regime is null) return;
-        var value=await UserDialogService.ShowPromptAsync("Уреди начин на апликација","Изменете го начинот на апликација.","Зачувај","Откажи",regime.Regime);
+        var value=await UserDialogService.ShowPromptAsync("Уреди режим на апликација","Изменете го режимот на апликација.","Зачувај","Откажи",regime.Regime);
         if(string.IsNullOrWhiteSpace(value) || string.Equals(value.Trim(), regime.Regime, StringComparison.OrdinalIgnoreCase)) return;
         try { await EncounterService.UpdateApplicationRegimeAsync(regime.Id, value.Trim()); await LoadApplicationRegimesAsync(); }
-        catch(Exception ex) { await UserDialogService.ShowAlertAsync("Грешка", $"Начинот не може да се измени: {ex.Message}", "ОК"); }
+        catch(Exception ex) { await UserDialogService.ShowAlertAsync("Грешка", $"Режимот не може да се измени: {ex.Message}", "ОК"); }
     }
 
     [RelayCommand]
     public async Task DeleteApplicationRegimeAsync(ApplicationRegime? regime)
     {
         if(!CanUpdate || regime is null) return;
-        var confirmed=await UserDialogService.ShowConfirmationAsync("Избриши начин на апликација",$"Дали сте сигурни дека сакате да го избришете „{regime.Regime}“?","Избриши","Откажи");
+        var confirmed=await UserDialogService.ShowConfirmationAsync("Избриши режим на апликација",$"Дали сте сигурни дека сакате да го избришете „{regime.Regime}“?","Избриши","Откажи");
         if(!confirmed) return;
         try { await EncounterService.DeactivateApplicationRegimeAsync(regime.Id); await LoadApplicationRegimesAsync(); }
-        catch(Exception ex) { await UserDialogService.ShowAlertAsync("Грешка", $"Начинот не може да се избрише: {ex.Message}", "ОК"); }
+        catch(Exception ex) { await UserDialogService.ShowAlertAsync("Грешка", $"Режимот не може да се избрише: {ex.Message}", "ОК"); }
     }
 
     public ObservableCollection<string> ScoreOptions { get; } = new();
