@@ -14,6 +14,7 @@ public class PatientScore
     /// without forcing a numeric interpretation.
     /// </summary>
     public string ScoreText { get; set; } = string.Empty;
+    public string Number { get; set; } = string.Empty;
 
     public DateTime RecordedAt { get; set; } = DateTime.UtcNow;
 
