@@ -47,15 +47,16 @@ namespace EHMR.Services
                     return;
                 }
 
-                // Shell root pages must use absolute routes; registered detail/create/edit
-                // pages remain relative so they stay inside the current Shell stack.
-                 var cleanRoute = route.Split('?', 2)[0].Trim('/');
+                // Dashboard/Login are Shell hierarchy roots. All other EHMR
+                // pages are registered with Routing.RegisterRoute(), so they MUST
+                // remain relative routes. Using // for those global routes causes
+                // Shell to reject/ignore the navigation on some menu entries.
+                var cleanRoute = route.Split('?', 2)[0].Trim('/');
                 normalizedRoute = cleanRoute switch
                 {
                     "dashboard" => "//dashboard",
                     "login" => "//login",
-                    _ when IsModuleRootRoute(cleanRoute) => $"//{cleanRoute}",
-                    _ => route
+                    _ => route.TrimStart('/')
                 };
 
                 // Menu navigation should be a single Shell operation. The previous
@@ -76,29 +77,6 @@ namespace EHMR.Services
 
             _navEvents.NotifyRouteChanged(normalizedRoute);
             Debug.WriteLine($"Route called - on navService{DateTime.Now}", route);
-        }
-
-        private static bool IsModuleRootRoute(string route)
-        {
-            var cleanRoute=route.Split('?', 2)[0].Trim('/');
-            return cleanRoute.Equals(AppRoutes.Calendar, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.CalendarPage, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Patients.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Doctors.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Medicines.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.ApplicationRegimes.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Prescriptions.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Appointments.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Encounters.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Therapy.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Protocols.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Mkb10.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Mkb10Codes.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Reports.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Users.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Alerts.List, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Backup.Dashboard, StringComparison.OrdinalIgnoreCase)
-                || cleanRoute.Equals(AppRoutes.Admin.AdminPanel, StringComparison.OrdinalIgnoreCase);
         }
 
         public async Task GoBackAsync()
