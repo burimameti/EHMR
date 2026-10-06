@@ -22,15 +22,6 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
     [RelayCommand]
     private async Task NewMedicineAsync()
     {
-        if(!CanCreate)
-        {
-            await UserDialogService.ShowAlertAsync(
-                "Пристапот е одбиен",
-                PermissionDeniedMessage,
-                "ОК");
-            return;
-        }
-
         SelectedItemService.SelectedItem=default;
         SelectedItemService.OpenInEditMode=true;
         await NavigationService.GoToAsync(DetailRoute);
@@ -191,7 +182,7 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
         ApplicationRegimes=new ObservableCollection<ApplicationRegime>(await db.Set<ApplicationRegime>().AsNoTracking().Where(x=>x.IsActive).OrderBy(x=>x.Regime).ToListAsync());
         ApplicationRegimeColumns=new ObservableCollection<SparkGridColumn>
         {
-            new(){Header="НАЧИН НА АПЛИКАЦИЈА",Key="Regime",Width=new GridLength(3,GridUnitType.Star)},
+            new(){Header="РЕЖИМ НА АПЛИКАЦИЈА",Key="Regime",Width=new GridLength(3,GridUnitType.Star)},
             new(){Header="ОПЦИИ",Key="Actions",CellType=SparkGridCellType.Actions,Width=GridLength.Auto}
         };
         var rows=new ObservableCollection<SparkGridRow>();
@@ -237,8 +228,7 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
     [RelayCommand]
     private async Task AddApplicationRegimeAsync()
     {
-        if(!CanCreate) return;
-        var value=await UserDialogService.ShowPromptAsync("Нов начин на апликација","Внесете начин на апликација.","Додај","Откажи","Пример: Поткожно");
+        var value=await UserDialogService.ShowPromptAsync("Нов режим на апликација","Внесете режим на апликација.","Додај","Откажи","Пример: Поткожно");
         if(string.IsNullOrWhiteSpace(value)) return;
         value=value.Trim();
         await using var db=await _dbFactory.CreateDbContextAsync();
@@ -254,15 +244,15 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
     [RelayCommand]
     private async Task PreviewApplicationRegimeAsync(ApplicationRegime? item)
     {
-        if(item is null || !CanView) return;
+        if(item is null) return;
         await UserDialogService.ShowAlertAsync("Преглед — начин на апликација",$"Начин на апликација:\n\n{item.Regime}","Затвори");
     }
 
     [RelayCommand]
     private async Task EditApplicationRegimeAsync(ApplicationRegime? item)
     {
-        if(item is null || !CanUpdate) return;
-        var value=await UserDialogService.ShowPromptAsync("Уреди начин на апликација","Изменете го начинот на апликација.","Зачувај","Откажи","",item.Regime);
+        if(item is null) return;
+        var value=await UserDialogService.ShowPromptAsync("Уреди режим на апликација","Изменете го режимот на апликација.","Зачувај","Откажи","",item.Regime);
         if(string.IsNullOrWhiteSpace(value)) return;
         value=value.Trim();
         await using var db=await _dbFactory.CreateDbContextAsync();
@@ -280,8 +270,8 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
     [RelayCommand]
     private async Task DeleteApplicationRegimeAsync(ApplicationRegime? item)
     {
-        if(item is null || !CanDelete) return;
-        if(!await UserDialogService.ShowConfirmationAsync("Избриши начин на апликација",$"Дали сте сигурни дека сакате да го избришете „{item.Regime}“?","Избриши","Откажи")) return;
+        if(item is null) return;
+        if(!await UserDialogService.ShowConfirmationAsync("Избриши режим на апликација",$"Дали сте сигурни дека сакате да го избришете режимот „{item.Regime}“?","Избриши","Откажи")) return;
         await using var db=await _dbFactory.CreateDbContextAsync();
         var entity=await db.Set<ApplicationRegime>().FirstOrDefaultAsync(x=>x.Id==item.Id);
         if(entity is null) return;
