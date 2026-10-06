@@ -533,7 +533,8 @@ public class PatientService : IPatientService
 
         var existing = await db.Patients
             .Include(x => x.Diagnoses)
-            .Include(x => x.PatientMedicines)
+             .Include(x => x.PatientMedicines)
+            .ThenInclude(x => x.ResolutionDocument)
             .Include(x => x.Documents)
             .FirstOrDefaultAsync(x => x.Id==patientDto.Id, ct)
             ??throw new KeyNotFoundException($"Patient {patientDto.Id} not found.");
@@ -613,6 +614,7 @@ public class PatientService : IPatientService
             entity.Notes=vm.Notes;
             entity.PharmaceuticalReference=vm.PharmaceuticalReference;
             entity.ApplicationRegimeId=vm.ApplicationRegimeId;
+            entity.ResolutionDocumentId=vm.ResolutionDocumentId;
             entity.Quantity=vm.Quantity;
             entity.IsActive=vm.IsActive;
         }
@@ -660,13 +662,14 @@ public class PatientService : IPatientService
         Notes=vm.Notes,
         PharmaceuticalReference=vm.PharmaceuticalReference,
         ApplicationRegimeId=vm.ApplicationRegimeId,
+        ResolutionDocumentId=vm.ResolutionDocumentId,
         Quantity=vm.Quantity,
         IsActive=vm.IsActive
     };
 
     private static PatientDocument NewDocument(Guid patientId, PatientDocumentSaveModel vm) => new()
     {
-        Id=Guid.NewGuid(),
+        Id=vm.Id==Guid.Empty ? Guid.NewGuid() : vm.Id,
         PatientId=patientId,
         DocumentType=vm.DocumentType,
         Title=vm.Title,
@@ -747,6 +750,7 @@ public class PatientService : IPatientService
         MedicineId=pm.MedicineId,
         MedicineName=pm.Medicine?.Name??"",
         ApplicationRegimeId=pm.ApplicationRegimeId,
+        ResolutionDocumentId=pm.ResolutionDocumentId,
         ApplicationRegime=pm.ApplicationRegime?.Regime??"",
         GenericName=pm.Medicine?.GenericName??"",
         Code=pm.Medicine?.Code??"",
