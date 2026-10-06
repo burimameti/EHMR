@@ -428,7 +428,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     public IEnumerable<PatientMedicine> PreviousMedicines =>
         PatientMedicines
             .Where(x => !x.IsActive && x.EncounterId==null)
-            .OrderByDescending(x => x.EndDate ?? x.StartDate);
+            .OrderByDescending(x => x.IsActive);
 
     public IEnumerable<Appointment> FilteredAppointments => AppointmentTab switch
     {
