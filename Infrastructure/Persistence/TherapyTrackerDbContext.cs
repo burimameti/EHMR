@@ -444,6 +444,11 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
                 .HasForeignKey(x => x.ApplicationRegimeId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            entity.HasOne(x => x.ResolutionDocument)
+                .WithMany()
+                .HasForeignKey(x => x.ResolutionDocumentId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             entity.HasOne(x => x.Medicine)
                 .WithMany()
                 .HasForeignKey(x => x.MedicineId)
@@ -452,6 +457,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             entity.HasIndex(x => x.PatientId);
             entity.HasIndex(x => x.MedicineId);
             entity.HasIndex(x => x.ApplicationRegimeId);
+            entity.HasIndex(x => x.ResolutionDocumentId);
             entity.HasIndex(x => x.EncounterId);
             entity.HasIndex(x => new { x.PatientId, x.MedicineId, x.IsActive });
         });
