@@ -234,7 +234,7 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
         await using var db=await _dbFactory.CreateDbContextAsync();
         if(await db.Set<ApplicationRegime>().AnyAsync(x=>x.IsActive&&x.Regime.ToLower()==value.ToLower()))
         {
-            await UserDialogService.ShowAlertAsync("Постои запис",$"Начинот „{value}“ веќе постои.","ОК"); return;
+            await UserDialogService.ShowAlertAsync("Постои запис",$"Режимот „{value}“ веќе постои.","ОК"); return;
         }
         db.Set<ApplicationRegime>().Add(new ApplicationRegime{Id=Guid.NewGuid(),Regime=value,IsActive=true});
         await db.SaveChangesAsync();
