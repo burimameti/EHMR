@@ -424,15 +424,38 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     {
         if(string.IsNullOrWhiteSpace(search)) return query;
 
-        var term = search.Trim();
-        var cyrillicTerm = UseCyrillicSearch ? EHMR.Helpers.MacedonianTransliterator.ToCyrillic(term) : term;
+        var term=search.Trim();
+        var tokens=term.Split(' ', StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries);
+        var firstToken=tokens[0];
+        var lastToken=tokens.Length>1 ? tokens[1] : null;
+        var firstAlternates=GetSearchVariants(firstToken);
+        var lastAlternates=lastToken is null ? Array.Empty<string>() : GetSearchVariants(lastToken);
+
         return query.Where(x =>
-            (x.EncounterNumber??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
-            (x.Patient!=null&&((x.Patient.FirstName).Contains(term, StringComparison.OrdinalIgnoreCase)||
-                                 (x.Patient.LastName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)||
-                                     (x.Patient.FirstName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)||
-                                            (x.Patient.LastName).Contains(term, StringComparison.OrdinalIgnoreCase)||
-                                 x.Patient.SzboNumber.Contains(term, StringComparison.OrdinalIgnoreCase)))
+            (x.EncounterNumber??"").Contains(term, StringComparison.OrdinalIgnoreCase) ||
+            (x.Patient!=null &&
+                StartsWithAny(x.Patient.FirstName, firstAlternates) &&
+                (lastToken is null || StartsWithAny(x.Patient.LastName, lastAlternates))) ||
+            (x.Patient!=null && x.Patient.SzboNumber.Contains(term, StringComparison.OrdinalIgnoreCase)));
+
+        static string[] GetSearchVariants(string value)
+        {
+            var variants=new[]
+            {
+                value,
+                EHMR.Helpers.MacedonianTransliterator.ToCyrillic(value),
+                EHMR.Helpers.MacedonianTransliterator.ToLatin(value)
+            };
+
+            return variants
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
+
+        static bool StartsWithAny(string? value, IEnumerable<string> variants)
+            => !string.IsNullOrWhiteSpace(value)
+                && variants.Any(v => value.StartsWith(v, StringComparison.OrdinalIgnoreCase))
         //(x.Doctor!=null&&((x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(term, StringComparison.OrdinalIgnoreCase)||
         //                    (x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)))||
         //(x.ChiefComplaint??"").Contains(term, StringComparison.OrdinalIgnoreCase)||
