@@ -7,7 +7,7 @@
 	<Color x:Key="SparkSidebarBg">#3B4A56</Color>
 	<!--  was #32404D — slightly deeper, reads as "premium dark" not "washed navy"  -->
 	<Color x:Key="SparkSidebarBgHover">#465762</Color>
-	<Color x:Key="SparkSidebarActiveBg">#1F9D6F</Color>
+	<Color x:Key="SparkSidebarActiveBg">#6BD1E1</Color>
 	<!--  aligned to the refined accent teal below, was a mismatched #4CC3D9  -->
 	<Color x:Key="SparkSidebarText">#96A5B5</Color>
 	<Color x:Key="SparkSidebarTextActive">#FFFFFF</Color>
@@ -34,7 +34,7 @@
 	<!--  Tailwind slate-500, replaces the slightly muddy #718096  -->
 	<Color x:Key="SparkTextMuted">#9AA6AD</Color>
 	<!--  slate-400  -->
-	<Color x:Key="SparkLink">#1F9D6F</Color>
+	<Color x:Key="SparkLink">#6BD1E1</Color>
 	<!--  cleaner, more standard SaaS link blue than #2F8FE0  -->
 
 	<!--  ============================================================  -->
@@ -45,21 +45,21 @@
 	<!--  ============================================================  -->
 	<!--  BUTTONS & INTERACTIVE ELEMENTS  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkButtonPrimaryBg"> #1F9D6F</Color>
-	<Color x:Key="SparkButtonPrimaryBgPressed">#177A57</Color>
+	<Color x:Key="SparkButtonPrimaryBg"> #6BD1E1</Color>
+	<Color x:Key="SparkButtonPrimaryBgPressed">#4FAAB7</Color>
 	<Color x:Key="SparkButtonPrimaryText">#FFFFFF</Color>
 
-	<Color x:Key="SparkButtonSecondaryBg">#5B6973</Color>
+	<Color x:Key="SparkButtonSecondaryBg">#FFFFFF</Color>
 	<!--  slate-600, was #5B6B79 — cooler, matches sidebar family  -->
-	<Color x:Key="SparkButtonSecondaryBgPressed">#4A5963</Color>
-	<Color x:Key="SparkButtonSecondaryBorder">#D5DDE2</Color>
-	<Color x:Key="SparkButtonSecondaryText">#FFFFFF</Color>
+	<Color x:Key="SparkButtonSecondaryBgPressed">#E2E8F0</Color>
+	<Color x:Key="SparkButtonSecondaryBorder">#CBD5E1</Color>
+	<Color x:Key="SparkButtonSecondaryText">#334155</Color>
 
 	<!--  ============================================================  -->
 	<!--  TABS CONFIGURATION  -->
 	<!--  ============================================================  -->
 	<Color x:Key="SparkTabActiveBg">#F0F7F5</Color>
-	<Color x:Key="SparkTabActiveBorder"> #1F9D6F</Color>
+	<Color x:Key="SparkTabActiveBorder"> #6BD1E1</Color>
 	<Color x:Key="SparkTabActiveText">#FFFFFF</Color>
 	<Color x:Key="SparkTabInactiveText">#7C8798</Color>
 	<Color x:Key="SparkTabHoverBg">#F1F5F8</Color>
