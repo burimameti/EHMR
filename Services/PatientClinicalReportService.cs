@@ -275,6 +275,34 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
         column.Item().Padding(4).Text(text).FontSize(8).FontColor("#64748B");
     }
 
+    private static string BuildMedicineDetails(Domain.Entities.PatientMedicine medicine)
+    {
+        var parts=new List<string>();
+
+        if(!string.IsNullOrWhiteSpace(medicine.Dosage))
+            parts.Add($"Доза: {medicine.Dosage}");
+
+        if(medicine.Quantity>0)
+            parts.Add($"Количина: {FormatDecimal(medicine.Quantity)}");
+
+        if(!string.IsNullOrWhiteSpace(medicine.ApplicationRegime?.Regime))
+            parts.Add($"Режим: {medicine.ApplicationRegime.Regime}");
+
+        return string.Join(" · ", parts);
+    }
+
+    private static string MaskNationalId(string? nationalId)
+    {
+        if(string.IsNullOrWhiteSpace(nationalId))
+            return "—";
+
+        var value=new string(nationalId.Where(char.IsLetterOrDigit).ToArray());
+        if(value.Length<=4)
+            return new string('•', value.Length);
+
+        return new string('•', value.Length-4)+value[^4..];
+    }
+
     private static string JoinAddress(string? address, string? city, string? postal)
         => string.Join(", ", new[] { address, city, postal }.Where(x => !string.IsNullOrWhiteSpace(x)));
 
