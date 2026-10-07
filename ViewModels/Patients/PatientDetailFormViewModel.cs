@@ -985,6 +985,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [ObservableProperty] private string newApplicationRegimeText = string.Empty;
 
     [ObservableProperty] private ObservableCollection<AttachedMedicineRow> attachedMedicines = new();
+    [ObservableProperty] private ObservableCollection<PreviousMedicineRow> previousMedicines = new();
     [ObservableProperty] private ObservableCollection<MedicineDto> medicineResults = new();
     [ObservableProperty] private string medicineSearchText = string.Empty;
     [ObservableProperty] private bool showMedicineDropdown;
