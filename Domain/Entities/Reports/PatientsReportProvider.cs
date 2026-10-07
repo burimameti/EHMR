@@ -460,9 +460,7 @@ namespace EHMR.Domain.Entities.Reports
                 _selectedMedicineTotalQuantity = _selectedMedicineId.HasValue
                     ? patients
                         .SelectMany(x => x.PatientMedicines)
-                        .Where(pm => pm.MedicineId==_selectedMedicineId.Value
-                                     &&pm.StartDate<=to
-                                     &&(!pm.EndDate.HasValue||pm.EndDate.Value>=from))
+                        .Where(pm => pm.MedicineId==_selectedMedicineId.Value)
                         .Sum(pm => pm.Quantity)
                     : null;
 
@@ -552,10 +550,7 @@ namespace EHMR.Domain.Entities.Reports
                 ? patients.AsEnumerable()
                 : patients.Where(x =>
                     (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
-                    x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to)||
-                    x.PatientMedicines.Any(pm =>
-                        pm.StartDate<=to &&
-                        (!pm.EndDate.HasValue||pm.EndDate.Value>=from)));
+                    x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to));
 
             if(_selectedStatusFilter!="Сите")
             {
@@ -599,15 +594,11 @@ namespace EHMR.Domain.Entities.Reports
 
             if(_selectedMedicineFilter!="Сите")
             {
-                // A medicine belongs to the report when its patient-specific
-                // prescription window overlaps the selected report period.
-                // This is intentionally not limited to the patient's current
-                // active medicine list.
+                // PatientMedicine no longer has StartDate/EndDate.
+                // The medicine filter matches the recorded patient-medicine association.
                 query=query.Where(x =>
                     x.PatientMedicines.Any(pm =>
-                        pm.MedicineId==_selectedMedicineId &&
-                        pm.StartDate<=to &&
-                        (!pm.EndDate.HasValue||pm.EndDate.Value>=from)));
+                        pm.MedicineId==_selectedMedicineId));
 
                 Debug.WriteLine($"[Patients]   - Medicine filter: {_selectedMedicineFilter} ({from:dd.MM.yyyy} - {to:dd.MM.yyyy})");
             }
@@ -690,10 +681,7 @@ namespace EHMR.Domain.Entities.Reports
                 return "Нема лекови";
 
             var medicines = patient.PatientMedicines
-                .Where(x =>
-                    x.Medicine!=null &&
-                    x.StartDate<=to &&
-                    (!x.EndDate.HasValue||x.EndDate.Value>=from))
+                .Where(x => x.Medicine!=null)
                 .GroupBy(x => x.Medicine!.Name)
                 .Select(group =>
                 {
