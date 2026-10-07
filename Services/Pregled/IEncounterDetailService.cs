@@ -12,6 +12,8 @@ public interface IEncounterDetailService
 {
 
     Task<List<Medicine>> SearchMedicines(string term, CancellationToken ct = default);
+    Task<List<string>> GetScoreSuggestionsAsync(CancellationToken ct = default);
+
     Task<List<ApplicationRegime>> GetApplicationRegimesAsync(CancellationToken ct = default);
     Task<ApplicationRegime> AddApplicationRegimeAsync(string regime, CancellationToken ct = default);
     Task<ApplicationRegime> UpdateApplicationRegimeAsync(Guid id, string regime, CancellationToken ct = default);
