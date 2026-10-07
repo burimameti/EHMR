@@ -6,9 +6,9 @@
 	x:Name="Root">
 
 	<Grid
-		Padding="16,12"
+		Padding="12,8"
 		ColumnDefinitions="*,Auto"
-		ColumnSpacing="20">
+		ColumnSpacing="12">
 
 		<!--  LEFT  -->
 		<Label
@@ -30,11 +30,11 @@
 
 			<Border
 				Padding="12,6"
-				Background="#2563EB"
+				Background="#0EA5B8"
 				StrokeThickness="0">
 
 				<Border.StrokeShape>
-					<RoundRectangle CornerRadius="8" />
+					<RoundRectangle CornerRadius="6" />
 				</Border.StrokeShape>
 
 				<Label
