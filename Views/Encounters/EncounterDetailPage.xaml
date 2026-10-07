@@ -25,11 +25,7 @@
 					StrokeShape="RoundRectangle 8"
 					StrokeThickness="1">
 					<Grid ColumnDefinitions="1.4*,1*,1.35*,0.8*" ColumnSpacing="1">
-						<Label
-							Padding="10,9"
-							FontSize="12"
-							Text="{Binding Medicine.Name, TargetNullValue='—'}"
-							TextColor="{StaticResource SparkTextPrimary}" />
+						<Label Padding="10,6" FontSize="11.5" Text="{Binding Medicine.BilingualName, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" LineBreakMode="TailTruncation" />
 						<Label
 							Grid.Column="1"
 							Padding="10,9"
