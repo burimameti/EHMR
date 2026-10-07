@@ -31,16 +31,16 @@
 	<Color x:Key="CardBg">#FFFFFF</Color>
 
 	<!--  Primary  -->
-	<Color x:Key="EpicPrimary">#1F9D6F</Color>
+	<Color x:Key="EpicPrimary">#6BD1E1</Color>
 	<Color x:Key="EpicPrimaryDark">#177A57</Color>
 	<Color x:Key="EpicPrimaryLight">#BFE8D6</Color>
 
 	<!--  Canonical CRUD accent tokens; Colors.xaml is merged first.  -->
-	<Color x:Key="SparkAccentTeal">#1F9D6F</Color>
+	<Color x:Key="SparkAccentTeal">#6BD1E1</Color>
 	<Color x:Key="SparkAccentTealDark">#177A57</Color>
 	<Color x:Key="SparkAccentTealLight">#BFE8D6</Color>
 	<Color x:Key="SparkAccentTealBg">#E3F6EC</Color>
-	<Color x:Key="SidebarActiveBg">#1F9D6F</Color>
+	<Color x:Key="SidebarActiveBg">#6BD1E1</Color>
 
 	<!--  Secondary  -->
 	<Color x:Key="EpicSecondary">#1E40AF</Color>
@@ -63,7 +63,7 @@
 	<Color x:Key="TextPlaceholder">#AFC2C5</Color>
 
 	<!--  Semantic / Status colors (clinical-friendly, not neon)  -->
-	<Color x:Key="StatusActive">#1F9D6F</Color>
+	<Color x:Key="StatusActive">#6BD1E1</Color>
 	<Color x:Key="StatusActiveBg">#E3F6EC</Color>
 	<Color x:Key="StatusInactive">#D64545</Color>
 	<Color x:Key="StatusInactiveBg">#FBE7E7</Color>
@@ -85,14 +85,14 @@
 
 	<!--  Danger / Success / Warning / Info  -->
 	<Color x:Key="Danger">#D64545</Color>
-	<Color x:Key="Success">#1F9D6F</Color>
+	<Color x:Key="Success">#6BD1E1</Color>
 	<Color x:Key="Warning">#D98E2B</Color>
 
 
 	<!--  Stat card accents (soft tinted backgrounds, dark-enough text accent color)  -->
 	<Color x:Key="StatBlue">#2B6CB0</Color>
 	<Color x:Key="StatBlueBg">#E5EEF8</Color>
-	<Color x:Key="StatGreen">#1F9D6F</Color>
+	<Color x:Key="StatGreen">#6BD1E1</Color>
 	<Color x:Key="StatGreenBg">#E3F6EC</Color>
 	<Color x:Key="StatTeal">#0E8C8C</Color>
 	<Color x:Key="StatTealBg">#DEF1F1</Color>
