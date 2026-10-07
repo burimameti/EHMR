@@ -102,23 +102,43 @@
 						<!--  LEFT COLUMN  -->
 						<VerticalStackLayout Spacing="0">
 
-							<!--  Report controls bar: standard Spark header + period/date filters  -->
+							<!--  Report controls  -->
 							<sc:FFSectionCard Margin="0">
-								<VerticalStackLayout Spacing="8">
-									<!-- Standard SparkExplorerHeader: search stays on the left, action buttons stay right-aligned. -->
+								<VerticalStackLayout Spacing="10">
+
+									<!-- Report type stays visible instead of the old report tabs. -->
+									<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+										<VerticalStackLayout Spacing="1">
+											<Label
+												FontAttributes="Bold"
+												FontSize="15"
+												Text="Тип на извештај"
+												TextColor="{StaticResource SparkTextMuted}" />
+											<Label
+												FontAttributes="Bold"
+												FontSize="18"
+												Text="{Binding ActiveReportTitle}"
+												TextColor="{StaticResource SparkTextPrimary}" />
+										</VerticalStackLayout>
+									</Grid>
+
+									<!-- Search + normal report pickers. Tabs are intentionally hidden. -->
 									<sc:SparkExplorerHeaderView
-										Buttons="{Binding Buttons}"
 										Pickers="{Binding Pickers}"
 										SearchPlaceholder="Пребарување на пациенти..."
 										SearchText="{Binding ScorePatientSearchText, Mode=TwoWay}"
 										SelectedSuggestion="{Binding SelectedScorePatientSuggestion, Mode=TwoWay}"
 										ShowSuggestions="{Binding ShowScorePatientSuggestions}"
-										Suggestions="{Binding ScorePatientSuggestions}"
-										Tabs="{Binding Tabs}"
-										>
+										Suggestions="{Binding ScorePatientSuggestions}">
 										<sc:SparkExplorerHeaderView.SuggestionTemplate>
 											<DataTemplate x:DataType="{x:Null}">
-												<Border Margin="2" Padding="12,8" BackgroundColor="{StaticResource Gray100}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 2" StrokeThickness="1.2">
+												<Border
+													Margin="2"
+													Padding="12,8"
+													BackgroundColor="{StaticResource Gray100}"
+													Stroke="{StaticResource SparkBorderSubtle}"
+													StrokeShape="RoundRectangle 2"
+													StrokeThickness="1.2">
 													<Grid ColumnDefinitions="1.7*,1.1*,1.1*" ColumnSpacing="14">
 														<VerticalStackLayout Spacing="1">
 															<Label FontSize="10" Text="Име и презиме" TextColor="{StaticResource SparkAccentTealDark}" />
@@ -138,29 +158,57 @@
 										</sc:SparkExplorerHeaderView.SuggestionTemplate>
 									</sc:SparkExplorerHeaderView>
 
-									<Grid ColumnDefinitions="Auto,*,*,Auto" ColumnSpacing="22" VerticalOptions="Center">
-										<HorizontalStackLayout Grid.Column="0" Spacing="22" VerticalOptions="Center">
-											<Label Style="{StaticResource SparkTabTitleLabelStyle}" Text="Периодичен" VerticalOptions="Center" />
-											<sc:FFPicker ItemsSource="{Binding PeriodTypeOptions}" Label="" SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" />
+									<!-- Medicine mode + actions are kept together on one line. -->
+									<Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12" VerticalOptions="Center">
+										<HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+											<CheckBox
+												Color="{StaticResource SparkAccentTeal}"
+												IsChecked="{Binding IsMedicineSearchEnabled, Mode=TwoWay}"
+												VerticalOptions="Center" />
+											<Label
+												FontAttributes="Bold"
+												Text="Пребарување по лек"
+												TextColor="{StaticResource SparkTextPrimary}"
+												VerticalOptions="Center" />
 										</HorizontalStackLayout>
-										<HorizontalStackLayout Grid.Column="1" VerticalOptions="Center">
-											<Label Style="{StaticResource SparkTabTitleLabelStyle}" Text="ОД" VerticalOptions="Center" />
-											<sc:FFDatePicker HasLabel="False" SelectedDate="{Binding StartDate, Mode=TwoWay}" />
-										</HorizontalStackLayout>
-										<HorizontalStackLayout Grid.Column="2" VerticalOptions="Center">
-											<Label Style="{StaticResource SparkTabTitleLabelStyle}" Text="ДО" VerticalOptions="Center" />
-											<sc:FFDatePicker HasLabel="False" SelectedDate="{Binding EndDate, Mode=TwoWay}" />
-										</HorizontalStackLayout>
-									</Grid>
-								</VerticalStackLayout>
-							</sc:FFSectionCard>
 
-							<!--  Medicine filter toggle  -->
-							<sc:FFSectionCard Margin="0,2,-5,0">
-								<Grid ColumnDefinitions="Auto,*" ColumnSpacing="0">
-									<Label Text="Пребарување по лек" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
-									<CheckBox Grid.Column="1" Margin="22,0,0,0" IsChecked="{Binding IsMedicineSearchEnabled, Mode=TwoWay}" />
-								</Grid>
+										<HorizontalStackLayout Grid.Column="2" Spacing="8">
+											<sc:FFButton
+												ButtonKind="Secondary"
+												Command="{Binding ApplyPeriodAndRegenerateCommand}"
+												ContentPadding="16,0"
+												HeightRequestEx="42"
+												IsEnabled="{Binding CanCreate}"
+												Text="Освежи" />
+											<sc:FFButton
+												ButtonKind="Primary"
+												Command="{Binding ExecuteReportGenerationCommand}"
+												ContentPadding="16,0"
+												HeightRequestEx="42"
+												IsEnabled="{Binding CanCreate}"
+												Text="Генерирај" />
+									</HorizontalStackLayout>
+									</Grid>
+
+									<!-- Medicine picker appears only after the checkbox is selected. -->
+									<HorizontalStackLayout
+										IsVisible="{Binding IsMedicineSearchEnabled}"
+										Spacing="8"
+										VerticalOptions="Center">
+										<Label
+											FontAttributes="Bold"
+											Text="По лек"
+											TextColor="{StaticResource SparkTextPrimary}"
+											VerticalOptions="Center" />
+										<sc:FFPicker
+											HorizontalOptions="Fill"
+											ItemsSource="{Binding MedicinePicker.Items}"
+											Label=""
+											SelectedItem="{Binding MedicinePicker.SelectedItem, Mode=TwoWay}"
+											WidthRequest="280" />
+									</HorizontalStackLayout>
+
+								</VerticalStackLayout>
 							</sc:FFSectionCard>
 
 							<!--  Data grid  -->
