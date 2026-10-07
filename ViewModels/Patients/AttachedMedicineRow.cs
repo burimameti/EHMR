@@ -17,6 +17,8 @@ namespace EHMR.ViewModels
         }
 
         public string MedicineName => PatientMedicine.MedicineName;
+    public string MedicineNameBilingual =>
+        EHMR.Helpers.MacedonianTransliterator.ToBilingual(MedicineName);
         public string GenericName => PatientMedicine.GenericName;
         public string Code => PatientMedicine.Code;
         public string DosageForm => PatientMedicine.DosageForm;
