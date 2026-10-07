@@ -527,6 +527,19 @@
 											WidthRequestEx="112" />
 									</Grid>
 
+									<controls:FFSearchBox Placeholder="Пребарај скор..." Text="{Binding ScoreSearchText, Mode=TwoWay}" />
+									<Border Padding="4" BackgroundColor="White" IsVisible="{Binding ShowScoreSuggestions}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
+										<CollectionView HeightRequest="150" ItemsSource="{Binding ScoreSuggestions}">
+											<CollectionView.ItemTemplate>
+												<DataTemplate x:DataType="x:String">
+													<Border Padding="9,6" StrokeThickness="0" BackgroundColor="Transparent">
+														<Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectScoreSuggestionCommand}" CommandParameter="{Binding .}" /></Border.GestureRecognizers>
+														<Label Text="{Binding .}" FontSize="12" TextColor="{StaticResource SparkTextPrimary}" />
+													</Border>
+												</DataTemplate>
+											</CollectionView.ItemTemplate>
+										</CollectionView>
+									</Border>
 									<Border
 										BackgroundColor="White"
 										Stroke="{StaticResource SparkBorderSubtle}"
