@@ -452,6 +452,8 @@ namespace EHMR.Domain.Entities.Reports
                         .ThenInclude(x => x!.User)
                     .Include(x => x.PatientMedicines)
                         .ThenInclude(x => x.Medicine)
+                    .Include(x => x.PatientMedicines)
+                        .ThenInclude(x => x.Encounter)
                     .Include(x => x.Diagnoses)
                         .ThenInclude(x => x.Mkb10Code)
                     .Include(x => x.TherapyCycles)
@@ -496,7 +498,8 @@ namespace EHMR.Domain.Entities.Reports
                     ? patients
                         .SelectMany(x => x.PatientMedicines)
                         .Where(pm => pm.MedicineId==_selectedMedicineId.Value
-                                   )
+                                   && pm.Encounter != null
+                                   && IsWithinReportPeriod(pm.Encounter.EncounterDate, from, to))
                         .Sum(pm => pm.Quantity)
                     : null;
 
@@ -588,8 +591,8 @@ namespace EHMR.Domain.Entities.Reports
                     (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
                     x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to)||
                     x.PatientMedicines.Any(pm =>
-                        pm.StartDate<=to &&
-                        (!pm.EndDate.HasValue||pm.EndDate.Value>=from)));
+                        pm.Encounter != null &&
+                        IsWithinReportPeriod(pm.Encounter.EncounterDate, from, to)));
 
             if(_selectedStatusFilter!="Сите")
             {
@@ -633,13 +636,13 @@ namespace EHMR.Domain.Entities.Reports
 
             if(_selectedMedicineFilter!="Сите")
             {
-                // PatientMedicine no longer has StartDate/EndDate.
-                // The medicine filter matches the recorded patient-medicine association.
+                // Medicine filtering is encounter-based: only medicines recorded on
+                // encounters inside the selected report period are included.
                 query=query.Where(x =>
                     x.PatientMedicines.Any(pm =>
                         pm.MedicineId==_selectedMedicineId &&
-                        pm.StartDate<=to &&
-                        (!pm.EndDate.HasValue||pm.EndDate.Value>=from)));
+                        pm.Encounter != null &&
+                        IsWithinReportPeriod(pm.Encounter.EncounterDate, from, to)));
 
                 Debug.WriteLine($"[Patients]   - Medicine filter: {_selectedMedicineFilter} ({from:dd.MM.yyyy} - {to:dd.MM.yyyy})");
             }
@@ -724,8 +727,8 @@ namespace EHMR.Domain.Entities.Reports
             var medicines = patient.PatientMedicines
                 .Where(x =>
                     x.Medicine!=null &&
-                    x.StartDate<=to &&
-                    (!x.EndDate.HasValue||x.EndDate.Value>=from))
+                    x.Encounter != null &&
+                    IsWithinReportPeriod(x.Encounter.EncounterDate, from, to))
                 .GroupBy(x => x.Medicine!.Name)
                 .Select(group =>
                 {
