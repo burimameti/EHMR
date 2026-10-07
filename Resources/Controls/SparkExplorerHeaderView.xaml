@@ -18,17 +18,18 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				Padding="0"
-				ColumnDefinitions="*,Auto,Auto"
-				ColumnSpacing="2"
-				MinimumHeightRequest="64"
+				ColumnDefinitions="*,Auto"
+				ColumnSpacing="8"
+				MinimumHeightRequest="0"
 				MinimumWidthRequest="0"
-				RowDefinitions="Auto">
+				RowDefinitions="Auto,Auto"
+				RowSpacing="8">
 
 				<!--  COL 2: action buttons (Освежи + dynamic ones)  -->
 				<HorizontalStackLayout
 					x:Name="ActionLayout"
 					Grid.Row="0"
-					Grid.Column="2"
+					Grid.Column="1"
 					Margin="0,0,0,0"
 					HorizontalOptions="End"
 					Spacing="8"
@@ -76,8 +77,9 @@
 
 				<!--  COL 0: search + suggestions  -->
 				<VerticalStackLayout
-					Grid.Row="0"
+					Grid.Row="1"
 					Grid.Column="0"
+					Grid.ColumnSpan="1"
 					HorizontalOptions="FillAndExpand"
 					MinimumWidthRequest="0"
 					Spacing="4"
@@ -159,7 +161,7 @@
 				<!--  COL 1: pickers  -->
 				<ScrollView
 					x:Name="PickerScroll"
-					Grid.Row="0"
+					Grid.Row="1"
 					Grid.Column="1"
 					HorizontalOptions="Fill"
 					HorizontalScrollBarVisibility="Never"
