@@ -18,7 +18,7 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				Padding="0"
-				ColumnDefinitions="*,Auto"
+				ColumnDefinitions="2*,3*"
 				ColumnSpacing="8"
 				MinimumHeightRequest="0"
 				MinimumWidthRequest="0"
