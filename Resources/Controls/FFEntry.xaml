@@ -23,15 +23,15 @@
 			x:Name="InputBorder"
 			Padding="0"
 			BackgroundColor="White"
-			MinimumHeightRequest="46"
-			Stroke="#E2E8F0"
+			MinimumHeightRequest="36"
+			Stroke="#CBD5E1"
 			StrokeThickness="1">
 			<Border.StrokeShape>
-				<RoundRectangle CornerRadius="10" />
+				<RoundRectangle CornerRadius="8" />
 			</Border.StrokeShape>
 
 			<Grid
-				Padding="14,0"
+				Padding="12,0"
 				ColumnDefinitions="Auto,*,Auto"
 				ColumnSpacing="0">
 
@@ -53,8 +53,8 @@
 					BackgroundColor="Transparent"
 					Focused="OnEntryFocused"
 					FontFamily="Sans"
-					FontSize="14"
-					HeightRequest="46"
+					FontSize="13"
+					HeightRequest="36"
 					IsEnabled="{Binding IsEnabled, Source={x:Reference Root}}"
 					IsPassword="{Binding IsPassword, Source={x:Reference Root}}"
 					Keyboard="{Binding Keyboard, Source={x:Reference Root}}"
