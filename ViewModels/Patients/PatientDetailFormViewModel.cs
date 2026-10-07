@@ -266,8 +266,11 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         }
         catch(Exception ex)
         {
-            Debug.WriteLine(ex.ToString());
-            throw;
+            Debug.WriteLine($"[PatientDetail] Failed to load patient {patientId}: {ex}");
+            await _userDialogService.ShowAlertAsync(
+                "Грешка",
+                $"Податоците за пациентот не може да се вчитаат: {ex.Message}",
+                "ОК");
         }
     }
 
