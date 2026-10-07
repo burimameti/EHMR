@@ -798,7 +798,7 @@
 													<Label
 														FontAttributes="Bold"
 														FontSize="12.5"
-														Text="{Binding Medicine.Name, TargetNullValue='—'}"
+														Text="{Binding Medicine.BilingualName, TargetNullValue='—'}"
 														TextColor="{StaticResource SparkTextPrimary}" />
 													<Label
 														FontSize="10"
