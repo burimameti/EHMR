@@ -550,7 +550,8 @@ namespace EHMR.Domain.Entities.Reports
                 ? patients.AsEnumerable()
                 : patients.Where(x =>
                     (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
-                    x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to));
+                    x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<to)||
+                    x.PatientMedicines.Any(pm => IsWithinReportPeriod(pm.CreatedAt, from, to)));
 
             if(_selectedStatusFilter!="Сите")
             {
@@ -598,7 +599,8 @@ namespace EHMR.Domain.Entities.Reports
                 // The medicine filter matches the recorded patient-medicine association.
                 query=query.Where(x =>
                     x.PatientMedicines.Any(pm =>
-                        pm.MedicineId==_selectedMedicineId));
+                        pm.MedicineId==_selectedMedicineId &&
+                        IsWithinReportPeriod(pm.CreatedAt, from, to)));
 
                 Debug.WriteLine($"[Patients]   - Medicine filter: {_selectedMedicineFilter} ({from:dd.MM.yyyy} - {to:dd.MM.yyyy})");
             }
@@ -681,7 +683,7 @@ namespace EHMR.Domain.Entities.Reports
                 return "Нема лекови";
 
             var medicines = patient.PatientMedicines
-                .Where(x => x.Medicine!=null)
+                .Where(x => x.Medicine!=null && IsWithinReportPeriod(x.CreatedAt, from, to))
                 .GroupBy(x => x.Medicine!.Name)
                 .Select(group =>
                 {
@@ -692,6 +694,14 @@ namespace EHMR.Domain.Entities.Reports
             var result=string.Join(", ", medicines);
 
             return string.IsNullOrWhiteSpace(result) ? "Нема лекови" : result;
+        }
+
+        private static bool IsWithinReportPeriod(DateTime value, DateTime from, DateTime to)
+        {
+            if(from==DateTime.MinValue && to==DateTime.MaxValue)
+                return true;
+
+            return value>=from && value<to;
         }
 
         private static string BuildDiagnosisInfo(Patient patient)
