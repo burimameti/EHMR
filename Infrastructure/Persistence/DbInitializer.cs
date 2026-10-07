@@ -89,6 +89,12 @@ public class DatabaseMigrationService
             BEGIN
                 ALTER TABLE dbo.PatientMedicines
                 ADD PharmaceuticalReference nvarchar(200) NOT NULL CONSTRAINT DF_PatientMedicines_PharmaceuticalReference DEFAULT '';
+            END;
+
+            IF COL_LENGTH('dbo.PatientMedicines', 'ResolutionDocumentId') IS NULL
+            BEGIN
+                ALTER TABLE dbo.PatientMedicines
+                ADD ResolutionDocumentId uniqueidentifier NULL;
             END
             """;
 
