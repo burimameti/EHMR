@@ -4,16 +4,11 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	Margin="0"
-	Padding="16"
-	StrokeShape="RoundRectangle 16">
-
-	<!--<Border.Shadow>
-		<Shadow
-            Brush="Black"
-            Opacity="0.08"
-            Radius="18"
-            Offset="0,6" />
-	</Border.Shadow>-->
+	Padding="14"
+	BackgroundColor="{StaticResource SparkBackground}"
+	Stroke="{StaticResource SparkBorder}"
+	StrokeThickness="1"
+	StrokeShape="RoundRectangle 8">
 
 	<ContentPresenter />
 </Border>
