@@ -18,7 +18,7 @@
 					Color="{Binding IconColor, Source={x:Reference Root}}" />
 			</Button.ImageSource>
 		</Button>
-		<BoxView x:Name="PressedOverlay" BackgroundColor="Black" InputTransparent="True" Opacity="0" />
+		<BoxView x:Name="PressedOverlay" BackgroundColor="{StaticResource SparkTextPrimary}" InputTransparent="True" Opacity="0" />
 	</Grid>
 	<VisualStateManager.VisualStateGroups>
 		<VisualStateGroup Name="CommonStates">
