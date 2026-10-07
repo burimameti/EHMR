@@ -374,11 +374,7 @@ public sealed class BarcodeTemplate : SparkTemplateBase
     {
         return new Border
         {
-            StrokeShape =
-                new RoundRectangle
-                {
-                    CornerRadius = 8
-                },
+            StrokeShape = new Rectangle(),
 
             Content = new Label
             {
@@ -397,11 +393,7 @@ public sealed class QrCodeTemplate : SparkTemplateBase
     {
         return new Border
         {
-            StrokeShape =
-                new RoundRectangle
-                {
-                    CornerRadius = 8
-                },
+            StrokeShape = new Rectangle(),
 
             Content = new Label
             {
@@ -440,11 +432,7 @@ public sealed class BadgeTemplate : SparkTemplateBase
     {
         return new Border
         {
-            StrokeShape =
-                new RoundRectangle
-                {
-                    CornerRadius = 12
-                },
+            StrokeShape = new Rectangle(),
 
             Padding = 8,
 
