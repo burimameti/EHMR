@@ -16,7 +16,7 @@
 
 			<Grid
 				x:Name="ExplorerGrid"
-				Padding="12,12,6,1"
+				Padding="8,8,6,1"
 				ColumnSpacing="0">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
@@ -34,7 +34,7 @@
 					Grid.Column="0"
 					HorizontalScrollBarVisibility="Never"
 					Orientation="Both">
-					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Tabs, Source={x:Reference Root}}" Spacing="10">
+					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Tabs, Source={x:Reference Root}}" Spacing="6">
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkTabItem">
 								<!--
@@ -46,8 +46,8 @@
 									нема повеќе BoxView divider по секој таб.
 								-->
 								<Border
-									Padding="16,10"
-									HeightRequest="44"
+									Padding="12,0"
+									HeightRequest="36"
 									StrokeThickness="1">
 									<Border.StrokeShape>
 										<RoundRectangle CornerRadius="6" />
@@ -170,7 +170,7 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				ColumnSpacing="8"
-				MinimumHeightRequest="48">
+				MinimumHeightRequest="40">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
 					<!--  0: search  -->
@@ -183,15 +183,15 @@
 				<!--  ============ 0: SEARCH ============  -->
 				<Border
 					Grid.Column="0"
-					Margin="8,42,8,8"
+					Margin="8,6,8,6"
 					Padding="16,0"
 					BackgroundColor="White"
-					HeightRequest="44"
+					HeightRequest="36"
 					HorizontalOptions="Fill"
 					Stroke="{StaticResource Gray400}"
 					StrokeThickness="1">
 					<Border.StrokeShape>
-						<RoundRectangle CornerRadius="12" />
+						<RoundRectangle CornerRadius="6" />
 					</Border.StrokeShape>
 					<Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
 						<HorizontalStackLayout
@@ -222,11 +222,11 @@
 						<Entry
 							Grid.Column="2"
 							BackgroundColor="Transparent"
-							FontSize="14"
-							HeightRequest="44"
+							FontSize="13"
+							HeightRequest="36"
 							HorizontalOptions="Fill"
 							Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
-							PlaceholderColor="{StaticResource SparkSidebarBg}"
+							PlaceholderColor="{StaticResource SparkTextMuted}"
 							Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}"
 							TextColor="{StaticResource SparkTextPrimary}"
 							VerticalOptions="Center" />
@@ -235,7 +235,7 @@
 							Padding="0"
 							Style="{StaticResource PageHeaderCardStyle1}">
 							<Border.StrokeShape>
-								<RoundRectangle CornerRadius="16" />
+								<RoundRectangle CornerRadius="6" />
 							</Border.StrokeShape>
 							<Label
 								FontSize="11"
@@ -256,29 +256,29 @@
 					VerticalOptions="Center">
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkPickerItem">
-							<VerticalStackLayout MinimumWidthRequest="140" Spacing="20">
+							<VerticalStackLayout MinimumWidthRequest="112" Spacing="3">
 								<Label
 									Grid.Row="0"
-									FontSize="12"
-									HorizontalOptions="Center"
+									FontSize="10"
+									HorizontalOptions="Start"
 									LineBreakMode="NoWrap"
 									Text="{Binding Placeholder}"
-									TextColor="{StaticResource SparkAccentTeal}" />
+									TextColor="{StaticResource SparkTextSecondary}" />
 								<Border
-									Padding="12,1"
+									Padding="8,0"
 									BackgroundColor="{StaticResource SparkBackground}"
-									HeightRequest="44"
-									Stroke="{StaticResource Gray400}"
+									HeightRequest="36"
+									Stroke="{StaticResource SparkBorder}"
 									StrokeThickness="1">
 									<Border.StrokeShape>
-										<RoundRectangle CornerRadius="12" />
+										<RoundRectangle CornerRadius="6" />
 									</Border.StrokeShape>
 									<Picker
 										Grid.Row="1"
 										Margin="1,0,0,0"
 										FontSize="13"
-										HeightRequest="36"
-										HorizontalTextAlignment="Center"
+										HeightRequest="34"
+										HorizontalTextAlignment="Start"
 										ItemsSource="{Binding Items}"
 										SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
 										TextColor="{StaticResource SparkTextPrimary}"
@@ -292,15 +292,15 @@
 				<!--  ============ 2: BUTTONS ============  -->
 				<HorizontalStackLayout
 					Grid.Column="2"
-					Margin="10,36,8,8"
+					Margin="8,6,8,6"
 					BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}"
 					Spacing="8"
 					VerticalOptions="Center">
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkButtonItem">
 							<Border
-								Padding="22,0"
-								HeightRequest="44"
+								Padding="14,0"
+								HeightRequest="36"
 								StrokeThickness="0">
 								<Border.StrokeShape>
 									<RoundRectangle CornerRadius="16" />
@@ -328,7 +328,9 @@
 										Binding="{Binding IsPrimary}"
 										TargetType="Border"
 										Value="False">
-										<Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTeal}" />
+										<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+										<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+										<Setter Property="StrokeThickness" Value="1" />
 									</DataTrigger>
 								</Border.Triggers>
 								<HorizontalStackLayout
@@ -359,7 +361,7 @@
 									</Path>
 									<Label
 										FontAttributes="Bold"
-										FontSize="15"
+										FontSize="12"
 										Text="{Binding Label}"
 										VerticalOptions="Center">
 										<!--
