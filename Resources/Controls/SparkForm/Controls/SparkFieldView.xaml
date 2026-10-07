@@ -5,54 +5,36 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-	<VerticalStackLayout x:Name="PART_FieldHost" Spacing="6">
-
-		<!--  Label  -->
+	<VerticalStackLayout x:Name="PART_FieldHost" Spacing="5">
 
 		<Label
 			FontAttributes="Bold"
-			FontSize="14"
-			Text="{Binding Field.Label}" />
-
-
-
-		<!--  Generated Control  -->
+			FontSize="13"
+			Text="{Binding Field.Label}"
+			TextColor="{StaticResource SparkTextPrimary}" />
 
 		<ContentView x:Name="PART_ControlHost" />
-
-
-
-		<!--  Required  -->
 
 		<Label
 			x:Name="PART_RequiredLabel"
 			FontSize="11"
 			IsVisible="False"
-			Opacity="0.65"
+			TextColor="{StaticResource SparkTextSecondary}"
 			Text="* Required" />
-
-
-
-		<!--  Help  -->
 
 		<Label
 			x:Name="PART_HelpLabel"
 			FontSize="11"
 			IsVisible="False"
 			LineBreakMode="WordWrap"
-			Opacity="0.75" />
-
-
-
-		<!--  Validation  -->
+			TextColor="{StaticResource SparkTextSecondary}" />
 
 		<Label
 			x:Name="PART_ErrorLabel"
-			FontSize="12"
+			FontSize="11"
 			IsVisible="False"
 			LineBreakMode="WordWrap"
-			TextColor="Red" />
+			TextColor="{StaticResource SparkDanger}" />
 
 	</VerticalStackLayout>
-
 </ContentView>
