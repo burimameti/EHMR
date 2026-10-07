@@ -27,7 +27,7 @@
 			Padding="0"
 			BackgroundColor="{StaticResource White}"
 			HeightRequest="36"
-			Stroke="{StaticResource BorderDefaultStrong}"
+			Stroke="#CBD5E1"
 			StrokeShape="RoundRectangle 8"
 			StrokeThickness="1">
 			<Border.GestureRecognizers>
@@ -53,7 +53,7 @@
 					x:Name="ValueLabel"
 					Grid.Column="0"
 					Margin="12,0,2,0"
-					FontAttributes="Bold"
+					FontAttributes="None"
 					FontSize="13"
 					InputTransparent="True"
 					LineBreakMode="TailTruncation"
