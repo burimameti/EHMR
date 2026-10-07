@@ -1024,7 +1024,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         var confirmed=await UserDialogService.ShowConfirmationAsync(
             "Генерирање извештај",
-            "Генерирањето на извештајот може да трае до 30 секунди. По истекот на периодот автоматски ќе се генерираат PDF и Excel датотеките. Ве молиме не ја затворајте страницата додека трае процесот.",
+            "Извештајот може да потрае зависно од количината на податоци. Ве молиме не ја затворајте страницата додека трае процесот.",
             "Генерирај",
             "Откажи");
 
@@ -1033,8 +1033,6 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         await ExecuteSafeAsync(async () =>
         {
-            await Task.Delay(TimeSpan.FromSeconds(30));
-
             if(_activeProvider==null)
                 return;
 
