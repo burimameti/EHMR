@@ -70,14 +70,15 @@
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="6" />
                                 </Border.StrokeShape>
-                                <Grid RowDefinitions="Auto,36" RowSpacing="4">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10" VerticalOptions="Center">
                                     <Label
                                         FontAttributes="Bold"
                                         FontSize="10"
                                         Text="ТИП НА ИЗВЕШТАЈ"
-                                        TextColor="{StaticResource White}" />
+                                        TextColor="{StaticResource White}"
+                                        VerticalOptions="Center" />
                                     <Border
-                                        Grid.Row="1"
+                                        Grid.Column="1"
                                         Padding="6,0"
                                         BackgroundColor="{StaticResource White}"
                                         Stroke="{StaticResource SparkBorder}"
@@ -107,7 +108,7 @@
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="6" />
                                 </Border.StrokeShape>
-                                <Grid ColumnDefinitions="Auto,150,*,*" ColumnSpacing="8">
+                                <Grid ColumnDefinitions="Auto,150,*,*" ColumnSpacing="8" VerticalOptions="Center">
                                     <Label
                                         FontAttributes="Bold"
                                         FontSize="10"
@@ -118,12 +119,14 @@
                                         Grid.Column="1"
                                         ItemsSource="{Binding PeriodTypeOptions}"
                                         SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" />
-                                    <sc:FFDatePicker
-                                        Grid.Column="2"
-                                        SelectedDate="{Binding StartDate, Mode=TwoWay}" />
-                                    <sc:FFDatePicker
-                                        Grid.Column="3"
-                                        SelectedDate="{Binding EndDate, Mode=TwoWay}" />
+                                    <VerticalStackLayout Grid.Column="2" Spacing="2">
+                                        <Label FontSize="9" Text="ОД" TextColor="{StaticResource SparkTextMuted}" />
+                                        <sc:FFDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="3" Spacing="2">
+                                        <Label FontSize="9" Text="ДО" TextColor="{StaticResource SparkTextMuted}" />
+                                        <sc:FFDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}" />
+                                    </VerticalStackLayout>
                                 </Grid>
                             </Border>
 
@@ -132,12 +135,13 @@
                                 Grid.Column="2"
                                 Padding="10,8"
                                 BackgroundColor="{StaticResource SparkAccentTealBg}"
+                                IsVisible="{Binding IsPatientsReport}"
                                 Stroke="{StaticResource SparkBorder}"
                                 StrokeThickness="1">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="6" />
                                 </Border.StrokeShape>
-                                <Grid ColumnDefinitions="Auto,*,*" ColumnSpacing="8" VerticalOptions="Center">
+                                <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8" VerticalOptions="Center">
                                     <Label
                                         FontAttributes="Bold"
                                         FontSize="10"
