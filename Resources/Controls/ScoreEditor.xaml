@@ -19,7 +19,7 @@
 			<Border
 				Grid.Column="1"
 				Padding="6,0"
-				BackgroundColor="White"
+				BackgroundColor="{StaticResource SparkBackground}"
 				HeightRequest="46"
 				Stroke="{StaticResource SparkBorderSubtle}"
 				StrokeShape="RoundRectangle 7"
@@ -44,7 +44,7 @@
 		<!--  Предлози (најупотребените најгоре)  -->
 		<Border
 			Padding="4"
-			BackgroundColor="White"
+			BackgroundColor="{StaticResource SparkBackground}"
 			IsVisible="{Binding ShowSuggestions}"
 			Stroke="{StaticResource SparkBorderSubtle}"
 			StrokeShape="RoundRectangle 8"
@@ -81,7 +81,7 @@
 		<Grid ColumnDefinitions="*,90,44" ColumnSpacing="1">
 			<Border
 				Padding="8,6"
-				BackgroundColor="{StaticResource Gray300}"
+				BackgroundColor="{StaticResource SparkSurfaceAlt}"
 				StrokeThickness="0">
 				<Label
 					FontAttributes="Bold"
@@ -113,7 +113,7 @@
 					<Grid ColumnDefinitions="*,90,44" ColumnSpacing="1">
 						<Border
 							Padding="4,0"
-							BackgroundColor="White"
+							BackgroundColor="{StaticResource SparkBackground}"
 							HeightRequest="46"
 							Stroke="{StaticResource SparkBorderSubtle}"
 							StrokeThickness="1">
@@ -128,7 +128,7 @@
 						<Border
 							Grid.Column="1"
 							Padding="4,0"
-							BackgroundColor="White"
+							BackgroundColor="{StaticResource SparkBackground}"
 							HeightRequest="46"
 							Stroke="{StaticResource SparkBorderSubtle}"
 							StrokeThickness="1">
@@ -143,7 +143,7 @@
 						</Border>
 						<Border
 							Grid.Column="2"
-							BackgroundColor="White"
+							BackgroundColor="{StaticResource SparkBackground}"
 							HeightRequest="46"
 							Stroke="{StaticResource SparkBorderSubtle}"
 							StrokeThickness="1">
