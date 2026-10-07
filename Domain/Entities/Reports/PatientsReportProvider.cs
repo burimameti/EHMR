@@ -470,7 +470,7 @@ namespace EHMR.Domain.Entities.Reports
                 _loadedPatients=patients;
 
                 Debug.WriteLine($"[Patients] [6] Refreshing pickers...");
-                RefreshPickers(patients);
+                RefreshPickers(patients, from, to);
 
                 Debug.WriteLine($"[Patients] [7] Applying filters...");
                 var filtered = ApplyFilters(patients, from, to);
@@ -527,7 +527,7 @@ namespace EHMR.Domain.Entities.Reports
             }
         }
 
-        private void RefreshPickers(List<Patient> patients)
+        private void RefreshPickers(List<Patient> patients, DateTime from, DateTime to)
         {
             Debug.WriteLine($"[Patients]   - Status picker...");
             RefreshPicker(_statusPicker,
@@ -554,7 +554,10 @@ namespace EHMR.Domain.Entities.Reports
             _medicineIdsByDisplay.Clear();
             var medicineOptions=patients
                 .SelectMany(x => x.PatientMedicines)
-                .Where(x => x.Medicine!=null)
+                .Where(x =>
+                    x.Medicine!=null &&
+                    x.Encounter!=null &&
+                    IsWithinReportPeriod(x.Encounter.EncounterDate, from, to))
                 .GroupBy(x => x.Medicine!.Id)
                 .Select(g => g.First().Medicine!)
                 .OrderBy(x => x.Name)
