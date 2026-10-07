@@ -599,6 +599,14 @@
 											</Border>
 										</VerticalStackLayout>
 
+<!--  ═══ 3. СКОРОВИ — на иста линија со МКБ ═══  -->
+									<VerticalStackLayout Grid.Column="2" Spacing="10">
+										<controls:CrudSectionHeader
+											Title="СКОРОВИ"
+											LineColor="{StaticResource White}"
+											Style="{StaticResource SectionHeaderStyle}" />
+										<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
+									</VerticalStackLayout>
 									</Grid>
 								</VerticalStackLayout>
 
@@ -1213,14 +1221,7 @@
 
 
 
-									<!--  ═══ 3. СКОРОВИ — на иста линија со МКБ ═══  -->
-									<VerticalStackLayout Grid.Column="2" Spacing="10">
-										<controls:CrudSectionHeader
-											Title="СКОРОВИ"
-											LineColor="{StaticResource White}"
-											Style="{StaticResource SectionHeaderStyle}" />
-										<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
-									</VerticalStackLayout>
+									
 								</Grid>
 								<!--  ═══ 5. ДОСИЕ | СТАТУС НА ПАЦИЕНТ | ЗАБЕЛЕШКА ═══  -->
 								<Grid ColumnDefinitions="*,*,*" ColumnSpacing="14">
