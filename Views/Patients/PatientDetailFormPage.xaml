@@ -1190,9 +1190,9 @@
 															Stroke="{StaticResource SparkBorderSubtle}"
 															Style="{StaticResource TableCellBorderStyle}">
 															<Label
-																FontSize="11.5"
+																FontSize="10.8"
 																LineBreakMode="TailTruncation"
-																Text="{Binding MedicineName}"
+																Text="{Binding MedicineNameBilingual}"
 																TextColor="{StaticResource SparkTextPrimary}"
 																VerticalOptions="Center" />
 														</Border>
