@@ -28,7 +28,7 @@
 				Денешниот е бел во полна сина значка, останатите се сив број.
 			-->
 			<Border
-				BackgroundColor="#0284C7"
+				BackgroundColor="{StaticResource SparkAccentTeal}"
 				HeightRequest="28"
 				IsVisible="{Binding IsToday}"
 				StrokeShape="RoundRectangle 7"
@@ -48,14 +48,14 @@
 				FontSize="17"
 				IsVisible="{Binding IsNotToday}"
 				Text="{Binding DayNumber}"
-				TextColor="#94A3B8"
+				TextColor="{StaticResource SparkTextSecondary}"
 				VerticalOptions="Center" />
 
 			<Label
 				FontAttributes="Bold"
 				FontSize="11"
 				Text="{Binding DayNameShort}"
-				TextColor="#334155"
+				TextColor="{StaticResource SparkTextPrimary}"
 				VerticalOptions="Center" />
 		</HorizontalStackLayout>
 
@@ -69,6 +69,6 @@
 			HeightRequest="2"
 			HorizontalOptions="Fill"
 			IsVisible="{Binding IsSelected}"
-			Color="#0284C7" />
+			Color="{StaticResource SparkAccentTeal}" />
 	</VerticalStackLayout>
 </ContentView>
