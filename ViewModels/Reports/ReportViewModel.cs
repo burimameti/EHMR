@@ -76,6 +76,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     public bool IsPatientsReport => _activeReport?.Type==ReportType.Patients;
 
+    public SparkPickerItem? MedicinePicker => (_activeProvider as PatientsReportProvider)?.MedicinePicker;
+
     [ObservableProperty]
     private DateTime startDate = DateTime.Today.AddMonths(-1);
 
@@ -736,10 +738,12 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     {
         if(_activeProvider==null)
             return;
+
         BuildSparkTabs();
         BuildSparkPickers();
         BuildSparkButtons();
         BuildSparkGridColumns();
+        OnPropertyChanged(nameof(MedicinePicker));
     }
     private void BuildSparkTabs()
     {
