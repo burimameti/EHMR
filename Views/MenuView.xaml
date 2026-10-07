@@ -330,8 +330,8 @@
 				Grid.Row="3"
 				Margin="12,8,12,16"
 				Padding="12,10"
-				BackgroundColor="#4A5863"
-				StrokeShape="RoundRectangle 12"
+				BackgroundColor="{StaticResource SidebarSurface}"
+				StrokeShape="Rectangle"
 				StrokeThickness="0">
 
 				<Grid ColumnDefinitions="34,*,Auto" ColumnSpacing="10">
