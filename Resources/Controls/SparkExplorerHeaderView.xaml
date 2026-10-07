@@ -9,7 +9,10 @@
 	<VerticalStackLayout>
 
 		<!--  ============ ROW 1: TABS + TRAILING ============  -->
-		<Border BackgroundColor="{StaticResource SparkBackgroundAlt}" StrokeShape="RoundRectangle 0">
+		<Border
+			BackgroundColor="{StaticResource SparkBackgroundAlt}"
+			IsVisible="{Binding Tabs, Source={x:Reference Root}, Converter={StaticResource SparkCollectionNotEmptyConverter}}"
+			StrokeShape="RoundRectangle 0">
 
 			<Grid
 				x:Name="ExplorerGrid"
