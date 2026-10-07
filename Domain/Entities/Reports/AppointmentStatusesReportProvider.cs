@@ -140,7 +140,7 @@ namespace EHMR.Domain.Entities.Reports
                 .Include(x => x.Patient)
                 .Include(x => x.Doctor)
                 .AsNoTracking()
-                .Where(x => x.ScheduledStart>=from&&x.ScheduledStart<=to)
+                .Where(x => x.ScheduledStart>=from&&x.ScheduledStart<to)
                 .OrderByDescending(x => x.ScheduledStart)
                 .ToListAsync();
 
