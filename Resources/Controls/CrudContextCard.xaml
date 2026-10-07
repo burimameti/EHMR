@@ -6,15 +6,15 @@
     xmlns:controls="clr-namespace:EHMR.Resources.Controls"
     x:Name="Root"
     x:DataType="controls:CrudContextCard">
-    <Border Padding="14,12" BackgroundColor="{StaticResource SparkContentBackground}" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1">
+    <Border Padding="14,10" BackgroundColor="{StaticResource SparkContentBackground}" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-            <Border BackgroundColor="{Binding IconBackgroundColor, Source={x:Reference Root}}" HeightRequest="38" StrokeShape="RoundRectangle 19" StrokeThickness="0" WidthRequest="38">
+            <Border BackgroundColor="{Binding IconBackgroundColor, Source={x:Reference Root}}" HeightRequest="36" StrokeShape="RoundRectangle 18" StrokeThickness="0" WidthRequest="36">
                 <Label FontFamily="FASolid" FontSize="14" HorizontalOptions="Center" Text="{Binding IconGlyph, Source={x:Reference Root}}" TextColor="{Binding IconColor, Source={x:Reference Root}}" VerticalOptions="Center" />
             </Border>
             <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                <Label FontSize="11.5" Text="{Binding Caption, Source={x:Reference Root}}" TextColor="{StaticResource SparkTextSecondary}" />
+                <Label FontSize="11" Text="{Binding Caption, Source={x:Reference Root}}" TextColor="{StaticResource SparkTextSecondary}" />
                 <Label FontAttributes="Bold" FontSize="14" LineBreakMode="TailTruncation" Text="{Binding Value, Source={x:Reference Root}}" TextColor="{Binding ValueColor, Source={x:Reference Root}}" />
-                <Label FontSize="12.5" IsVisible="{Binding Detail1, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}" Text="{Binding Detail1, Source={x:Reference Root}}" TextColor="{StaticResource SparkTextSecondary}" />
+                <Label FontSize="12" IsVisible="{Binding Detail1, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}" Text="{Binding Detail1, Source={x:Reference Root}}" TextColor="{StaticResource SparkTextSecondary}" />
                 <Label FontSize="12.5" IsVisible="{Binding Detail2, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}" Text="{Binding Detail2, Source={x:Reference Root}}" TextColor="{StaticResource SparkTextSecondary}" />
             </VerticalStackLayout>
         </Grid>
