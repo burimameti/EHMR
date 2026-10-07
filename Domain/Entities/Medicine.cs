@@ -31,5 +31,8 @@ public class Medicine : BaseEntity
         ? Name
         : $"{Name} {Strength}{Unit}".Trim();
 
+    public string BilingualName =>
+        EHMR.Helpers.MacedonianTransliterator.ToBilingual(Name);
+
     public override string ToString() => FullName;
 }
