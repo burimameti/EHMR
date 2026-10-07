@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Collections;
 using System.Windows.Input;
 
 
@@ -28,15 +27,6 @@ namespace EHMR.Resources.Controls
         public SparkExplorerHeaderView()
         {
             InitializeComponent();
-        }
-
-        public static readonly BindableProperty TabsVisibleProperty =
-            BindableProperty.Create(nameof(TabsVisible), typeof(bool), typeof(SparkExplorerHeaderView), true);
-
-        public bool TabsVisible
-        {
-            get => (bool)GetValue(TabsVisibleProperty);
-            set => SetValue(TabsVisibleProperty, value);
         }
 
         #region Tabs
@@ -129,29 +119,6 @@ namespace EHMR.Resources.Controls
 
         #region Search
 
-        public static readonly BindableProperty ShowCyrillicToggleProperty =
-            BindableProperty.Create(nameof(ShowCyrillicToggle), typeof(bool), typeof(SparkExplorerHeaderView), true);
-
-        public bool ShowCyrillicToggle
-        {
-            get => (bool)GetValue(ShowCyrillicToggleProperty);
-            set => SetValue(ShowCyrillicToggleProperty, value);
-        }
-
-        public static readonly BindableProperty UseCyrillicInputProperty =
-            BindableProperty.Create(
-                nameof(UseCyrillicInput),
-                typeof(bool),
-                typeof(SparkExplorerHeaderView),
-                true,
-                BindingMode.TwoWay);
-
-        public bool UseCyrillicInput
-        {
-            get => (bool)GetValue(UseCyrillicInputProperty);
-            set => SetValue(UseCyrillicInputProperty, value);
-        }
-
 
        
 
@@ -231,93 +198,6 @@ namespace EHMR.Resources.Controls
             {
                 // expected on rapid typing — ignore
             }
-        }
-        #endregion
-
-        #region Suggestions
-        public static readonly BindableProperty SuggestionsProperty =
-            BindableProperty.Create(nameof(Suggestions), typeof(IEnumerable), typeof(SparkExplorerHeaderView));
-
-        public IEnumerable? Suggestions
-        {
-            get => (IEnumerable?)GetValue(SuggestionsProperty);
-            set => SetValue(SuggestionsProperty, value);
-        }
-
-        public static readonly BindableProperty SuggestionTemplateProperty =
-            BindableProperty.Create(nameof(SuggestionTemplate), typeof(DataTemplate), typeof(SparkExplorerHeaderView));
-
-        public DataTemplate? SuggestionTemplate
-        {
-            get => (DataTemplate?)GetValue(SuggestionTemplateProperty);
-            set => SetValue(SuggestionTemplateProperty, value);
-        }
-
-        public static readonly BindableProperty ShowSuggestionsProperty =
-            BindableProperty.Create(nameof(ShowSuggestions), typeof(bool), typeof(SparkExplorerHeaderView), false);
-
-        public bool ShowSuggestions
-        {
-            get => (bool)GetValue(ShowSuggestionsProperty);
-            set => SetValue(ShowSuggestionsProperty, value);
-        }
-
-        public static readonly BindableProperty SelectedSuggestionProperty =
-            BindableProperty.Create(nameof(SelectedSuggestion), typeof(object), typeof(SparkExplorerHeaderView), null, BindingMode.TwoWay);
-
-        public object? SelectedSuggestion
-        {
-            get => GetValue(SelectedSuggestionProperty);
-            set => SetValue(SelectedSuggestionProperty, value);
-        }
-
-        private double _suggestionThumbStartY;
-
-        private int SuggestionCount => Suggestions?.Cast<object>().Count() ?? 0;
-
-        private void OnSuggestionListScrolled(object? sender, ItemsViewScrolledEventArgs e)
-            => UpdateSuggestionScrollThumb(e.FirstVisibleItemIndex, e.LastVisibleItemIndex);
-
-        private void UpdateSuggestionScrollThumb(int firstVisibleIndex, int lastVisibleIndex)
-        {
-            var count = SuggestionCount;
-            var railHeight = SuggestionScrollRail.Height;
-            if(count <= 0 || railHeight <= 0)
-                return;
-
-            var visibleCount = Math.Max(1, lastVisibleIndex - firstVisibleIndex + 1);
-            var thumbHeight = count <= visibleCount
-                ? railHeight
-                : Math.Max(30, railHeight * visibleCount / count);
-            var maxTravel = Math.Max(0, railHeight - thumbHeight);
-
-            SuggestionScrollThumb.HeightRequest = thumbHeight;
-            var maxFirst = Math.Max(1, count - visibleCount);
-            SuggestionScrollThumb.TranslationY =
-                maxTravel * Math.Clamp(firstVisibleIndex / (double)maxFirst, 0, 1);
-        }
-
-        private void OnSuggestionThumbPanUpdated(object? sender, PanUpdatedEventArgs e)
-        {
-            var count = SuggestionCount;
-            var maxTravel = Math.Max(0, SuggestionScrollRail.Height - SuggestionScrollThumb.Height);
-            if(count <= 1 || maxTravel <= 0)
-                return;
-
-            if(e.StatusType == GestureStatus.Started)
-            {
-                _suggestionThumbStartY = SuggestionScrollThumb.TranslationY;
-                return;
-            }
-
-            if(e.StatusType != GestureStatus.Running)
-                return;
-
-            var y = Math.Clamp(_suggestionThumbStartY + e.TotalY, 0, maxTravel);
-            SuggestionScrollThumb.TranslationY = y;
-
-            var targetIndex = (int)Math.Round((y / maxTravel) * (count - 1));
-            SuggestionList.ScrollTo(targetIndex, position: ScrollToPosition.Start, animate: false);
         }
         #endregion
     }
