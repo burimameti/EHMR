@@ -169,39 +169,38 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         if(string.IsNullOrWhiteSpace(search)) return query;
 
         var tokens=search.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries);
-        var s=search.Trim();
-        var cyrillicSearch=UseCyrillicSearch
-            ? MacedonianTransliterator.ToCyrillic(s)
-            : s;
-        var cyrTokens=UseCyrillicSearch
-            ? tokens.Select(MacedonianTransliterator.ToCyrillic).ToArray()
-            : tokens;
+        var firstToken=tokens[0];
+        var lastToken=tokens.Length>1 ? tokens[1] : null;
+
+        // Patient name search is positional:
+        // "Sara" => first name only
+        // "Sara Andre" => first name + last name
+        // Never match a single token against the surname.
+        var firstAlternates=GetSearchVariants(firstToken);
+        var lastAlternates=lastToken is null ? Array.Empty<string>() : GetSearchVariants(lastToken);
 
         return query.Where(x =>
+            StartsWithAny(x.FirstName, firstAlternates) &&
+            (lastToken is null || StartsWithAny(x.LastName, lastAlternates)));
+
+        static string[] GetSearchVariants(string value)
         {
-            var first=x.FirstName??string.Empty;
-            var last=x.LastName??string.Empty;
-            var full=$"{first} {last}".Trim();
-
-            if(tokens.Length>1)
+            var variants=new[]
             {
-                return StartsWith(first,tokens[0],cyrTokens[0])
-                    &&StartsWith(last,tokens[1],cyrTokens[1]);
-            }
+                value,
+                MacedonianTransliterator.ToCyrillic(value),
+                MacedonianTransliterator.ToLatin(value)
+            };
 
-            return StartsWith(first,s,cyrillicSearch)
-                ||StartsWith(last,s,cyrillicSearch)
-                ||StartsWith(full,s,cyrillicSearch)
-                ||StartsWith(x.NationalId,s,cyrillicSearch)
-                ||StartsWith(x.SzboNumber,s,cyrillicSearch)
-                ||StartsWith(x.Phone,s,cyrillicSearch)
-                ||StartsWith(x.City,s,cyrillicSearch);
-        });
+            return variants
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
 
-        static bool StartsWith(string? value,string latin,string alternate)
+        static bool StartsWithAny(string? value, IEnumerable<string> variants)
             => !string.IsNullOrWhiteSpace(value)
-                &&(value.StartsWith(latin,StringComparison.OrdinalIgnoreCase)
-                   ||value.StartsWith(alternate,StringComparison.OrdinalIgnoreCase));
+                && variants.Any(v => value.StartsWith(v, StringComparison.OrdinalIgnoreCase));
     }
 
     partial void OnUseCyrillicSearchChanged(bool value) => ApplyPipeline();
