@@ -208,17 +208,52 @@ namespace EHMR.Domain.Entities.Reports
 
             tab.IsSelected=true;
             _selectedStatusFilter=value;
+            _selectedAllergyFilter="Сите";
+            if(_allergyTab is not null)
+                _allergyTab.IsSelected=false;
+
+            if(_statusPicker is not null)
+            {
+                _refreshingPickers=true;
+                try
+                {
+                    _statusPicker.SelectedItem=value switch
+                    {
+                        "Active" => "Активни",
+                        "Inactive" => "Неактивни",
+                        _ => "Сите"
+                    };
+                }
+                finally
+                {
+                    _refreshingPickers=false;
+                }
+            }
 
             FiltersChanged?.Invoke();
         }
 
         private void SelectAllergyFilter(SparkTabItem tab, string value)
         {
-            foreach(var t in new[] { _allergyTab })
+            foreach(var t in new[] { _allTab, _activeTab, _inactiveTab, _allergyTab })
                 if(t!=null) t.IsSelected=false;
 
             tab.IsSelected=true;
             _selectedAllergyFilter=value;
+            _selectedStatusFilter="Сите";
+
+            if(_statusPicker is not null)
+            {
+                _refreshingPickers=true;
+                try
+                {
+                    _statusPicker.SelectedItem="Сите";
+                }
+                finally
+                {
+                    _refreshingPickers=false;
+                }
+            }
 
             FiltersChanged?.Invoke();
         }
@@ -552,7 +587,9 @@ namespace EHMR.Domain.Entities.Reports
                 : patients.Where(x =>
                     (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
                     x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to)||
-                    x.PatientMedicines.Any());
+                    x.PatientMedicines.Any(pm =>
+                        pm.StartDate<=to &&
+                        (!pm.EndDate.HasValue||pm.EndDate.Value>=from)));
 
             if(_selectedStatusFilter!="Сите")
             {
@@ -596,14 +633,13 @@ namespace EHMR.Domain.Entities.Reports
 
             if(_selectedMedicineFilter!="Сите")
             {
-                // A medicine belongs to the report when its patient-specific
-                // prescription window overlaps the selected report period.
-                // This is intentionally not limited to the patient's current
-                // active medicine list.
+                // PatientMedicine no longer has StartDate/EndDate.
+                // The medicine filter matches the recorded patient-medicine association.
                 query=query.Where(x =>
                     x.PatientMedicines.Any(pm =>
-                        pm.MedicineId==_selectedMedicineId 
-                    ));
+                        pm.MedicineId==_selectedMedicineId &&
+                        pm.StartDate<=to &&
+                        (!pm.EndDate.HasValue||pm.EndDate.Value>=from)));
 
                 Debug.WriteLine($"[Patients]   - Medicine filter: {_selectedMedicineFilter} ({from:dd.MM.yyyy} - {to:dd.MM.yyyy})");
             }
@@ -687,8 +723,9 @@ namespace EHMR.Domain.Entities.Reports
 
             var medicines = patient.PatientMedicines
                 .Where(x =>
-                    x.Medicine!=null
-                    )
+                    x.Medicine!=null &&
+                    x.StartDate<=to &&
+                    (!x.EndDate.HasValue||x.EndDate.Value>=from))
                 .GroupBy(x => x.Medicine!.Name)
                 .Select(group =>
                 {
@@ -699,6 +736,14 @@ namespace EHMR.Domain.Entities.Reports
             var result=string.Join(", ", medicines);
 
             return string.IsNullOrWhiteSpace(result) ? "Нема лекови" : result;
+        }
+
+        private static bool IsWithinReportPeriod(DateTime value, DateTime from, DateTime to)
+        {
+            if(from==DateTime.MinValue && to==DateTime.MaxValue)
+                return true;
+
+            return value>=from && value<to;
         }
 
         private static string BuildDiagnosisInfo(Patient patient)
