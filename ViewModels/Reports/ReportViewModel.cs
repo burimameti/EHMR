@@ -468,9 +468,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         IsShowingDetails=true;
 
-        // Generate first so the provider can load the real filter values from DB,
-        // then rebuild the bound picker items. This prevents the detail page from
-        // opening with only the initial "Сите" option.
+        // Load the report once first so all picker values are populated from the
+        // provider, then rebuild the controls so the initialized selections are visible.
         await GenerateReportAsync();
         InitializeSparkControls();
     }
