@@ -360,11 +360,6 @@
 
 			</Grid>
 
-			<!--  bottom rule — same BoxView stand-in as row 1, same SparkBorder token  -->
-			<BoxView
-				BackgroundColor="{StaticResource Transparent}"
-				HeightRequest="1"
-				VerticalOptions="End" />
 		</Grid>
 		<!--  ============ SUGGESTIONS DROPDOWN ============  -->
 		<Border
