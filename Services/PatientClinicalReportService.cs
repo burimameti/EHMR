@@ -169,8 +169,8 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
                             var value=string.IsNullOrWhiteSpace(score.Number) ? "—" : score.Number;
                             Row(
                                 column,
-                                score.ScoreText,
-                                $"{value} · {score.RecordedAt:dd.MM.yyyy}");
+                                $"{score.ScoreText} - {value}",
+                                $"{score.RecordedAt:dd.MM.yyyy}");
                         }
                     });
                 });
