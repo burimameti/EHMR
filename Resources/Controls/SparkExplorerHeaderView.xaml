@@ -50,7 +50,7 @@
 									HeightRequest="36"
 									StrokeThickness="1">
 									<Border.StrokeShape>
-										<RoundRectangle CornerRadius="6" />
+										<Rectangle />
 									</Border.StrokeShape>
 									<Border.GestureRecognizers>
 										<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
@@ -181,15 +181,26 @@
 				</Grid.ColumnDefinitions>
 
 				<!--  ============ 0: SEARCH ============  -->
-				<Border
+				<VerticalStackLayout
 					Grid.Column="0"
-					Margin="8,6,8,6"
-					Padding="16,0"
-					BackgroundColor="White"
-					HeightRequest="36"
-					HorizontalOptions="Fill"
-					Stroke="{StaticResource SparkBorder}"
-					StrokeThickness="1">
+					Margin="8,4,8,4"
+					Spacing="3"
+					HorizontalOptions="Fill">
+					<Label
+						FontAttributes="Bold"
+						FontSize="10"
+						Text="Пребарај"
+						TextColor="{StaticResource SparkTextSecondary}" />
+					<Border
+						Padding="16,0"
+						BackgroundColor="White"
+						HeightRequest="36"
+						HorizontalOptions="Fill"
+						Stroke="{StaticResource SparkBorder}"
+						StrokeThickness="1">
+						<Border.StrokeShape>
+							<Rectangle />
+						</Border.StrokeShape>
 					<Border.StrokeShape>
 						<RoundRectangle CornerRadius="6" />
 					</Border.StrokeShape>
@@ -303,7 +314,7 @@
 								HeightRequest="36"
 								StrokeThickness="0">
 								<Border.StrokeShape>
-									<RoundRectangle CornerRadius="7" />
+									<Rectangle />
 								</Border.StrokeShape>
 								<Border.GestureRecognizers>
 									<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
@@ -409,7 +420,7 @@
 			Stroke="{StaticResource Transparent}"
 			StrokeThickness="0">
 			<Border.StrokeShape>
-				<RoundRectangle CornerRadius="2" />
+				<Rectangle />
 			</Border.StrokeShape>
 			<CollectionView
 				ItemTemplate="{Binding SuggestionTemplate, Source={x:Reference Root}}"
