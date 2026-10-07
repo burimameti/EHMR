@@ -6,14 +6,12 @@
 	xmlns:sc="clr-namespace:EHMR.Resources.Controls"
 	x:Name="Root">
 
-	<!--  Dark navy container, rounded, matches sidebar/toolbar tone  -->
 	<Border
 		Padding="0"
-		BackgroundColor="{StaticResource SparkSidebarBg}"
-		Stroke="Transparent"
-		StrokeShape="RoundRectangle 12"
-		StrokeThickness="0">
-
+		BackgroundColor="{StaticResource SparkBackground}"
+		Stroke="{StaticResource SparkBorder}"
+		StrokeShape="RoundRectangle 8"
+		StrokeThickness="1">
 		<ScrollView
 			HorizontalScrollBarVisibility="Never"
 			Orientation="Horizontal"
@@ -21,38 +19,18 @@
 			<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Tabs, Source={x:Reference Root}}" Spacing="0">
 				<BindableLayout.ItemTemplate>
 					<DataTemplate x:DataType="sc:SparkTabItem">
-
-						<!--
-							Each tab: tall enough to breathe (56), minimum width so
-							short week labels don't feel cramped. Vertical divider
-							between tabs via right border simulation using a BoxView
-							injected via ColumnDefinitions below.
-						-->
-						<Grid
-							HeightRequest="56"
-							MinimumWidthRequest="160"
-							RowDefinitions="*,3">
+						<Grid HeightRequest="40" MinimumWidthRequest="120" RowDefinitions="*,2">
 							<Grid.GestureRecognizers>
 								<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
 							</Grid.GestureRecognizers>
-
-							<!--  Background: selected = slightly lighter dark; unselected = base dark  -->
 							<Grid.Triggers>
-								<DataTrigger
-									Binding="{Binding IsSelected}"
-									TargetType="Grid"
-									Value="True">
-									<Setter Property="BackgroundColor" Value="{StaticResource SparkBackgroundAlt}" />
+								<DataTrigger Binding="{Binding IsSelected}" TargetType="Grid" Value="True">
+									<Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTealBg}" />
 								</DataTrigger>
-								<DataTrigger
-									Binding="{Binding IsSelected}"
-									TargetType="Grid"
-									Value="False">
-									<Setter Property="BackgroundColor" Value="{StaticResource SparkSidebarBg}" />
+								<DataTrigger Binding="{Binding IsSelected}" TargetType="Grid" Value="False">
+									<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
 								</DataTrigger>
 							</Grid.Triggers>
-
-							<!--  Label: teal + bold when selected, muted gray when not  -->
 							<Label
 								Grid.Row="0"
 								FontSize="13"
@@ -66,42 +44,27 @@
 									</FormattedString>
 								</Label.FormattedText>
 								<Label.Triggers>
-									<DataTrigger
-										Binding="{Binding IsSelected}"
-										TargetType="Label"
-										Value="True">
-										<Setter Property="TextColor" Value="{StaticResource SparkAccentTeal}" />
+									<DataTrigger Binding="{Binding IsSelected}" TargetType="Label" Value="True">
+										<Setter Property="TextColor" Value="{StaticResource SparkAccentTealDark}" />
 										<Setter Property="FontAttributes" Value="Bold" />
 									</DataTrigger>
-									<DataTrigger
-										Binding="{Binding IsSelected}"
-										TargetType="Label"
-										Value="False">
+									<DataTrigger Binding="{Binding IsSelected}" TargetType="Label" Value="False">
 										<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
 										<Setter Property="FontAttributes" Value="None" />
 									</DataTrigger>
 								</Label.Triggers>
 							</Label>
-
-							<!--  Teal bottom indicator — 3px, only on selected  -->
 							<BoxView Grid.Row="1" HorizontalOptions="Fill">
 								<BoxView.Triggers>
-									<DataTrigger
-										Binding="{Binding IsSelected}"
-										TargetType="BoxView"
-										Value="True">
+									<DataTrigger Binding="{Binding IsSelected}" TargetType="BoxView" Value="True">
 										<Setter Property="Color" Value="{StaticResource SparkAccentTeal}" />
 									</DataTrigger>
-									<DataTrigger
-										Binding="{Binding IsSelected}"
-										TargetType="BoxView"
-										Value="False">
+									<DataTrigger Binding="{Binding IsSelected}" TargetType="BoxView" Value="False">
 										<Setter Property="Color" Value="Transparent" />
 									</DataTrigger>
 								</BoxView.Triggers>
 							</BoxView>
 						</Grid>
-
 					</DataTemplate>
 				</BindableLayout.ItemTemplate>
 			</HorizontalStackLayout>
