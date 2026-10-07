@@ -208,17 +208,52 @@ namespace EHMR.Domain.Entities.Reports
 
             tab.IsSelected=true;
             _selectedStatusFilter=value;
+            _selectedAllergyFilter="Сите";
+            if(_allergyTab is not null)
+                _allergyTab.IsSelected=false;
+
+            if(_statusPicker is not null)
+            {
+                _refreshingPickers=true;
+                try
+                {
+                    _statusPicker.SelectedItem=value switch
+                    {
+                        "Active" => "Активни",
+                        "Inactive" => "Неактивни",
+                        _ => "Сите"
+                    };
+                }
+                finally
+                {
+                    _refreshingPickers=false;
+                }
+            }
 
             FiltersChanged?.Invoke();
         }
 
         private void SelectAllergyFilter(SparkTabItem tab, string value)
         {
-            foreach(var t in new[] { _allergyTab })
+            foreach(var t in new[] { _allTab, _activeTab, _inactiveTab, _allergyTab })
                 if(t!=null) t.IsSelected=false;
 
             tab.IsSelected=true;
             _selectedAllergyFilter=value;
+            _selectedStatusFilter="Сите";
+
+            if(_statusPicker is not null)
+            {
+                _refreshingPickers=true;
+                try
+                {
+                    _statusPicker.SelectedItem="Сите";
+                }
+                finally
+                {
+                    _refreshingPickers=false;
+                }
+            }
 
             FiltersChanged?.Invoke();
         }
@@ -460,7 +495,9 @@ namespace EHMR.Domain.Entities.Reports
                 _selectedMedicineTotalQuantity = _selectedMedicineId.HasValue
                     ? patients
                         .SelectMany(x => x.PatientMedicines)
-                        .Where(pm => pm.MedicineId==_selectedMedicineId.Value)
+                        .Where(pm =>
+                            pm.MedicineId==_selectedMedicineId.Value &&
+                            IsWithinReportPeriod(pm.CreatedAt, from, to))
                         .Sum(pm => pm.Quantity)
                     : null;
 
