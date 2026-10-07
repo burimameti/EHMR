@@ -301,8 +301,8 @@
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
-				<RoundRectangle CornerRadius="6" />
-			</Setter.Value>
+			<Rectangle />
+		</Setter.Value>
 		</Setter>
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
 		<Setter Property="Padding" Value="0" />
@@ -321,8 +321,8 @@
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
-				<RoundRectangle CornerRadius="6" />
-			</Setter.Value>
+			<Rectangle />
+		</Setter.Value>
 		</Setter>
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
 		<Setter Property="Padding" Value="8,0" />
