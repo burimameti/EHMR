@@ -7,9 +7,9 @@
 	SizeChanged="OnGridSizeChanged">
 	<Border
 		Background="White"
-		Stroke="#D8DEE8"
-		StrokeShape="RoundRectangle 0"
-		StrokeThickness="3">
+		Stroke="{StaticResource SparkBorder}"
+		StrokeShape="RoundRectangle 8"
+		StrokeThickness="1">
 
 		<Grid RowDefinitions="*, Auto">
 			<ScrollView
@@ -29,7 +29,7 @@
 				x:Name="PagerContainer"
 				Grid.Row="1"
 				Padding="16,12"
-				Background="{StaticResource SparkPageBackground2}"
+				Background="White"
 				ColumnDefinitions="*,Auto"
 				IsClippedToBounds="True"
 				IsVisible="True">
