@@ -232,8 +232,9 @@ namespace EHMR.Domain.Entities.Reports
                             .ThenInclude(pm => pm.Medicine)
                     .AsNoTracking()
                     .Where(x => x.Status==TherapyStatus.Missed
-                        &&x.StartDate>=from
-                        &&(x.EndDate==null||x.EndDate<=to))
+                        &&x.EndDate.HasValue
+                        &&x.EndDate.Value>=from
+                        &&x.EndDate.Value<to)
                     .OrderByDescending(x => x.EndDate)
                     .ToListAsync();
 
