@@ -890,7 +890,6 @@
 											Style="{StaticResource SectionHeaderStyle}" />
 										<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
 									</VerticalStackLayout>
-								</Grid>
 										<!--  РЕД 3 ЛЕВО — ТЕКОВНИ ТЕРАПИИ (Активна)  -->
 
 									</Grid>
