@@ -404,7 +404,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
         Buttons.Add(new SparkButtonItem
         {
             Label="Освежи",
-            IsPrimary=true,
+            IsPrimary=false,
             Command=ClearFiltersCommand
         });
     }
