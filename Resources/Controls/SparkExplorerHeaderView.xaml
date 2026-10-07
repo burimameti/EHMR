@@ -103,7 +103,7 @@
 												Binding="{Binding IsSelected}"
 												TargetType="Label"
 												Value="False">
-												<Setter Property="TextColor" Value="{StaticResource White}" />
+												<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 												<Setter Property="FontAttributes" Value="None" />
 											</DataTrigger>
 										</Label.Triggers>
@@ -188,7 +188,7 @@
 					BackgroundColor="White"
 					HeightRequest="36"
 					HorizontalOptions="Fill"
-					Stroke="{StaticResource Gray400}"
+					Stroke="{StaticResource SparkBorder}"
 					StrokeThickness="1">
 					<Border.StrokeShape>
 						<RoundRectangle CornerRadius="6" />
@@ -303,7 +303,7 @@
 								HeightRequest="36"
 								StrokeThickness="0">
 								<Border.StrokeShape>
-									<RoundRectangle CornerRadius="16" />
+									<RoundRectangle CornerRadius="7" />
 								</Border.StrokeShape>
 								<Border.GestureRecognizers>
 									<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
