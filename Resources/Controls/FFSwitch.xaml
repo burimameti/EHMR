@@ -6,9 +6,9 @@
 	<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
 		<!--  LABEL  -->
 		<Label
-			FontSize="14"
+			FontSize="13"
 			Text="{Binding Label, Source={x:Reference This}}"
-			TextColor="#374151"
+			TextColor="{StaticResource SparkTextPrimary}"
 			VerticalOptions="Center" />
 		<!--  SWITCH  -->
 		<Switch
@@ -19,7 +19,7 @@
 		<Label
 			FontSize="12"
 			Text="{Binding StatusText, Source={x:Reference This}}"
-			TextColor="#6B7280"
+			TextColor="{StaticResource SparkTextSecondary}"
 			VerticalOptions="Center" />
 	</HorizontalStackLayout>
 </ContentView>
