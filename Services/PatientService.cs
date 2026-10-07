@@ -331,6 +331,8 @@ public class PatientService : IPatientService
             return [];
 
         term=term.Trim();
+        var cyrillic=MacedonianTransliterator.ToCyrillic(term);
+        var latin=MacedonianTransliterator.ToLatin(term);
 
         await using var db = await _factory.CreateDbContextAsync(ct);
 
@@ -338,7 +340,11 @@ public class PatientService : IPatientService
             .Where(m =>
                 m.IsActive&&
                 (m.Name.Contains(term)||
+                 m.Name.Contains(cyrillic)||
+                 m.Name.Contains(latin)||
                  m.GenericName.Contains(term)||
+                 m.GenericName.Contains(cyrillic)||
+                 m.GenericName.Contains(latin)||
                  m.Code.Contains(term)))
             .OrderBy(m => m.Name)
             .Take(20)
