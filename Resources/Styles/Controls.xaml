@@ -7,7 +7,7 @@
 	<Style x:Key="BaseButtonStyle" TargetType="Button">
 
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="CornerRadius" Value="12" />
+		<Setter Property="CornerRadius" Value="0" />
 		<Setter Property="BorderWidth" Value="0" />
 
 	</Style>
@@ -152,7 +152,7 @@
 
 		<Setter Property="BackgroundColor" Value="{StaticResource InputBg}" />
 		<Setter Property="Stroke" Value="{StaticResource InputBorder}" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="Padding" Value="10,0" />
 		<Setter Property="HeightRequest" Value="36" />
 
@@ -164,7 +164,7 @@
 		TargetType="Border">
 
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 10" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="Padding" Value="20" />
 
 	</Style>
@@ -184,7 +184,7 @@
 	<Style x:Key="StatusPillStyle" TargetType="Border">
 
 		<Setter Property="StrokeThickness" Value="0" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="Padding" Value="10,3" />
 		<Setter Property="HorizontalOptions" Value="Start" />
 		<Setter Property="VerticalOptions" Value="Center" />
