@@ -429,13 +429,14 @@
 												Text="ЕМБГ" />
 											<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
 												<Entry
+													IsPassword="True"
 													Placeholder="Матичен број"
 													Style="{StaticResource FieldEntryStyle}"
 													Text="{Binding Patient.NationalId}" />
 											</Border>
 											<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
 												<Label Style="{StaticResource ReadHintStyle}" Text="ЕМБГ:" />
-												<Label Style="{StaticResource ReadValueBoldStyle}" Text="{Binding Patient.NationalId}" />
+												<Label Style="{StaticResource ReadValueBoldStyle}" Text="{Binding MaskedNationalId}" />
 											</VerticalStackLayout>
 										</VerticalStackLayout>
 
@@ -968,7 +969,7 @@
 										</Border>
 
 										<!--  Заглавие на табелата (се крие кога нема лекови)  -->
-										<Grid ColumnDefinitions="1.25*,1.15*,1.05*,0.65*,1.1*,56" ColumnSpacing="1">
+										<Grid ColumnDefinitions="1.25*,1.15*,1.05*,0.65*,1.1*,92" ColumnSpacing="1">
 											<Border Style="{StaticResource TableHeaderBorderStyle}">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" />
 											</Border>
@@ -991,7 +992,7 @@
 										<VerticalStackLayout BindableLayout.ItemsSource="{Binding AttachedMedicines}" Spacing="0">
 											<BindableLayout.ItemTemplate>
 												<DataTemplate>
-													<Grid ColumnDefinitions="1.35*,1.25*,1.15*,0.65*,56" ColumnSpacing="1">
+													<Grid ColumnDefinitions="1.35*,1.25*,1.15*,0.65*,1.1*,92" ColumnSpacing="1">
 														<Border
 															Padding="8,0"
 															Stroke="{StaticResource SparkBorderSubtle}"
@@ -1579,6 +1580,13 @@
 				StrokeShape="RoundRectangle 8"
 				StrokeThickness="1">
 				<Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+					<Label
+						FontAttributes="Bold"
+						FontSize="10"
+						IsVisible="{Binding HasMissingMedicineResolutions}"
+						Text="За секој активен или неактивен лек мора да биде внесено решение пред зачувување."
+						TextColor="#DC2626"
+						VerticalOptions="Center" />
 					<controls:FFButton
 						Grid.Column="1"
 						ButtonKind="Secondary"
@@ -1593,7 +1601,7 @@
 						ButtonKind="Primary"
 						Command="{Binding SaveCommand}"
 						HeightRequestEx="42"
-						IsEnabled="{Binding CanSavePatient}"
+						IsEnabled="{Binding CanSavePatientForm}"
 						IsVisible="{Binding IsEditMode}"
 						Text="Зачувај"
 						TextColorEx="White"
