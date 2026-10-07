@@ -30,6 +30,15 @@ namespace EHMR.Resources.Controls
             InitializeComponent();
         }
 
+        public static readonly BindableProperty TabsVisibleProperty =
+            BindableProperty.Create(nameof(TabsVisible), typeof(bool), typeof(SparkExplorerHeaderView), true);
+
+        public bool TabsVisible
+        {
+            get => (bool)GetValue(TabsVisibleProperty);
+            set => SetValue(TabsVisibleProperty, value);
+        }
+
         #region Tabs
         public static readonly BindableProperty SearchVisibleProperty =
     BindableProperty.Create(
@@ -119,6 +128,15 @@ namespace EHMR.Resources.Controls
         #endregion
 
         #region Search
+
+        public static readonly BindableProperty ShowCyrillicToggleProperty =
+            BindableProperty.Create(nameof(ShowCyrillicToggle), typeof(bool), typeof(SparkExplorerHeaderView), true);
+
+        public bool ShowCyrillicToggle
+        {
+            get => (bool)GetValue(ShowCyrillicToggleProperty);
+            set => SetValue(ShowCyrillicToggleProperty, value);
+        }
 
         public static readonly BindableProperty UseCyrillicInputProperty =
             BindableProperty.Create(
