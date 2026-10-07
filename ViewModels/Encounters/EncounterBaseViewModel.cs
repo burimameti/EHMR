@@ -211,12 +211,14 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             return;
         }
 
-        var value=await UserDialogService.ShowPromptAsync(
-            "Нов скор",
-            "Внесете вредност на скор.",
-            "Додај",
-            "Откажи",
-            "Пример: 7.5");
+        var value=string.IsNullOrWhiteSpace(ScoreSearchText)
+            ? await UserDialogService.ShowPromptAsync(
+                "Нов скор",
+                "Внесете вредност на скор.",
+                "Додај",
+                "Откажи",
+                "Пример: 7.5")
+            : ScoreSearchText;
 
         if(string.IsNullOrWhiteSpace(value))
             return;
@@ -224,6 +226,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         value=value.Trim();
         EncounterScores.Add(value);
         ScoreText=string.Join(" | ", EncounterScores);
+        ScoreSearchText=string.Empty;
+        ShowScoreSuggestions=false;
     }
 
     [RelayCommand]
