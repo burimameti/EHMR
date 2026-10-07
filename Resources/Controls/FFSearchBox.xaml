@@ -29,10 +29,10 @@
 			x:Name="SearchBorder"
 			Grid.Row="1"
 			Padding="0"
-			BackgroundColor="{StaticResource SparkBackgroundAlt}"
+			BackgroundColor="{StaticResource White}"
 			HeightRequest="36"
 			HorizontalOptions="Fill"
-			Stroke="{StaticResource BorderDefaultStrong}"
+			Stroke="#CBD5E1"
 			StrokeShape="RoundRectangle 8"
 			StrokeThickness="1"
 			VerticalOptions="Center">
