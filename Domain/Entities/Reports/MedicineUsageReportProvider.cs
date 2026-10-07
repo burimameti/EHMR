@@ -81,7 +81,10 @@ public sealed class MedicineUsageReportProvider : IReportProvider
         var medicines=await db.PatientMedicines
             .AsNoTracking()
             .Include(x => x.Medicine)
-            .Where(x => x.Medicine!=null)
+            .Where(x =>
+                x.Medicine!=null &&
+                (from==DateTime.MinValue && to==DateTime.MaxValue
+                    || (x.CreatedAt>=from && x.CreatedAt<to)))
             .ToListAsync();
 
         var grouped=medicines
