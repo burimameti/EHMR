@@ -1,40 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
 <ContentView
 	x:Class="EHMR.Resources.Controls.SparkForms.Controls.SparkFieldView"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
-
-	<VerticalStackLayout x:Name="PART_FieldHost" Spacing="5">
-
-		<Label
-			FontAttributes="Bold"
-			FontSize="13"
-			Text="{Binding Field.Label}"
-			TextColor="{StaticResource SparkTextPrimary}" />
-
+	<VerticalStackLayout x:Name="PART_FieldHost" Spacing="4">
+		<Label FontAttributes="Bold" FontSize="13" Text="{Binding Field.Label}" TextColor="{StaticResource SparkTextPrimary}" />
 		<ContentView x:Name="PART_ControlHost" />
-
-		<Label
-			x:Name="PART_RequiredLabel"
-			FontSize="11"
-			IsVisible="False"
-			TextColor="{StaticResource SparkTextSecondary}"
-			Text="* Required" />
-
-		<Label
-			x:Name="PART_HelpLabel"
-			FontSize="11"
-			IsVisible="False"
-			LineBreakMode="WordWrap"
-			TextColor="{StaticResource SparkTextSecondary}" />
-
-		<Label
-			x:Name="PART_ErrorLabel"
-			FontSize="11"
-			IsVisible="False"
-			LineBreakMode="WordWrap"
-			TextColor="{StaticResource SparkDanger}" />
-
+		<Label x:Name="PART_RequiredLabel" FontSize="11" IsVisible="False" Text="* Required" TextColor="{StaticResource SparkTextSecondary}" />
+		<Label x:Name="PART_HelpLabel" FontSize="11" IsVisible="False" LineBreakMode="WordWrap" TextColor="{StaticResource SparkTextSecondary}" />
+		<Label x:Name="PART_ErrorLabel" FontSize="11" IsVisible="False" LineBreakMode="WordWrap" TextColor="{StaticResource SparkDanger}" />
 	</VerticalStackLayout>
 </ContentView>
