@@ -736,7 +736,7 @@ namespace EHMR.Resources.Controls
                 Background=new SolidColorBrush(color),
                 Stroke=new SolidColorBrush(color),
                 StrokeThickness=1,
-                StrokeShape=new RoundRectangle { CornerRadius=12 },
+                StrokeShape=new Rectangle(),
                 HorizontalOptions=LayoutOptions.Center,
                 VerticalOptions=LayoutOptions.Center,
                 MinimumWidthRequest=R(90),
@@ -863,7 +863,7 @@ namespace EHMR.Resources.Controls
                 Stroke=Colors.Transparent,
                 Padding=new Thickness(R(8), R(3)),
                 HorizontalOptions=LayoutOptions.Center,
-                StrokeShape=new RoundRectangle { CornerRadius=10 }
+                StrokeShape=new Rectangle()
             };
             pill.Content=new Label
             {
@@ -890,7 +890,7 @@ namespace EHMR.Resources.Controls
                 WidthRequest=R(26),
                 HeightRequest=R(26),
                 Padding=0,
-                StrokeShape=new RoundRectangle { CornerRadius=R(13) },
+                StrokeShape=new Rectangle(),
                 HorizontalOptions=LayoutOptions.Start
             };
             circle.Content=new Label
@@ -949,7 +949,7 @@ namespace EHMR.Resources.Controls
                 WidthRequest=R(34),
                 HeightRequest=R(34),
                 Padding=0,
-                StrokeShape=new RoundRectangle { CornerRadius=8 },
+                StrokeShape=new Rectangle(),
                 Background=new SolidColorBrush(Colors.White),
                 Stroke=new SolidColorBrush(PagerBorderColor),
                 StrokeThickness=1,
@@ -991,7 +991,7 @@ namespace EHMR.Resources.Controls
             {
                 WidthRequest=34,
                 HeightRequest=34,
-                StrokeShape=new RoundRectangle { CornerRadius=8 },
+                StrokeShape=new Rectangle(),
                 Stroke=active ? PagerActiveBg : PagerBorder,
                 StrokeThickness=1,
                 Background=new SolidColorBrush(active ? PagerActiveBg : Colors.White),
