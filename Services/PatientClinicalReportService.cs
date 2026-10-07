@@ -44,7 +44,7 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
             .Include(x => x.ApplicationRegime)
             .Where(x => x.PatientId==patientId)
             .OrderByDescending(x => x.IsActive)
-            .ThenByDescending(x => x.StartDate)
+          
             .ToListAsync();
 
         var scores=await db.PatientScores
@@ -158,7 +158,7 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
                         foreach(var m in active)
                             Row(column,
                                 m.Medicine?.Name ?? "Непознат лек",
-                                $"Доза: {m.Dosage} · Количина: {FormatDecimal(m.Quantity)} · Режим: {m.ApplicationRegime?.Regime ?? "—"} · Од: {m.StartDate:dd.MM.yyyy}");
+                                $"Доза: {m.Dosage} · Количина: {FormatDecimal(m.Quantity)} · Режим: {m.ApplicationRegime?.Regime ?? "—"} ");
                     });
 
                     Section(column, "ПРЕТХОДНИ ЛЕКОВИ / ТЕРАПИИ", () =>
@@ -168,7 +168,7 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
                         foreach(var m in previous)
                             Row(column,
                                 m.Medicine?.Name ?? "Непознат лек",
-                                $"Доза: {m.Dosage} · Количина: {FormatDecimal(m.Quantity)} · Режим: {m.ApplicationRegime?.Regime ?? "—"} · Од: {m.StartDate:dd.MM.yyyy} · До: {(m.EndDate.HasValue ? m.EndDate.Value.ToString("dd.MM.yyyy") : "—")}");
+                                $"Доза: {m.Dosage} · Количина: {FormatDecimal(m.Quantity)} · Режим: {m.ApplicationRegime?.Regime ?? "—"} ");
                     });
 
                     Section(column, "ПРЕТХОДНИ ТЕРАПЕВТСКИ ЦИКЛУСИ", () =>

@@ -50,7 +50,7 @@ public partial class DashboardViewModel
 
             CurrentMedicines=patient.PatientMedicines
                 .Where(x => x.IsActive&&x.Medicine!=null)
-                .OrderByDescending(x => x.StartDate)
+               
                 .Select(x =>
                     string.IsNullOrWhiteSpace(x.Dosage)
                         ? x.Medicine!.FullName

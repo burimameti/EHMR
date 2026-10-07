@@ -1163,15 +1163,25 @@
 										</Border>
 
 										<Grid ColumnDefinitions="1.25*,1.15*,1.05*,0.65*,1.1*,56" ColumnSpacing="1">
-							<Border Style="{StaticResource TableHeaderBorderStyle}"><Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" /></Border>
-							<Border Grid.Column="1" Style="{StaticResource TableHeaderBorderStyle}"><Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕЖИМ НА АПЛИКАЦИЈА" /></Border>
-							<Border Grid.Column="2" Style="{StaticResource TableHeaderBorderStyle}"><Label Style="{StaticResource TableHeaderLabelStyle}" Text="СТАНДАРДНА ДОЗА" /></Border>
-							<Border Grid.Column="3" Style="{StaticResource TableHeaderBorderStyle}"><Label Style="{StaticResource TableHeaderLabelStyle}" Text="КОЛИЧИНА" /></Border>
-							<Border Grid.Column="4" Style="{StaticResource TableHeaderBorderStyle}"><Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕШЕНИЕ" /></Border>
-							<Border Grid.Column="5" Style="{StaticResource TableHeaderBorderStyle}" />
-						</Grid>
+											<Border Style="{StaticResource TableHeaderBorderStyle}">
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" />
+											</Border>
+											<Border Grid.Column="1" Style="{StaticResource TableHeaderBorderStyle}">
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕЖИМ НА АПЛИКАЦИЈА" />
+											</Border>
+											<Border Grid.Column="2" Style="{StaticResource TableHeaderBorderStyle}">
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="СТАНДАРДНА ДОЗА" />
+											</Border>
+											<Border Grid.Column="3" Style="{StaticResource TableHeaderBorderStyle}">
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="КОЛИЧИНА" />
+											</Border>
+											<Border Grid.Column="4" Style="{StaticResource TableHeaderBorderStyle}">
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕШЕНИЕ" />
+											</Border>
+											<Border Grid.Column="5" Style="{StaticResource TableHeaderBorderStyle}" />
+										</Grid>
 
-						<VerticalStackLayout BindableLayout.ItemsSource="{Binding PreviousMedicines}" Spacing="0">
+										<VerticalStackLayout BindableLayout.ItemsSource="{Binding PreviousMedicines}" Spacing="0">
 											<BindableLayout.ItemTemplate>
 												<DataTemplate>
 													<Grid ColumnDefinitions="1.35*,1.25*,1.15*,0.65*,1.1*,56" ColumnSpacing="1">
@@ -1187,29 +1197,38 @@
 																VerticalOptions="Center" />
 														</Border>
 														<Border
-									Grid.Column="1"
-									Padding="4,0"
-									Stroke="{StaticResource SparkBorderSubtle}"
-									Style="{StaticResource TableCellBorderStyle}">
-									<controls:FFPicker
-										ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
-										Placeholder="Избери режим"
-										SelectedItem="{Binding PatientMedicine.ApplicationRegime, Mode=TwoWay}" />
-								</Border>
+															Grid.Column="1"
+															Padding="4,0"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															Style="{StaticResource TableCellBorderStyle}">
+															<controls:FFPicker
+																ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
+																Placeholder="Избери режим"
+																SelectedItem="{Binding PatientMedicine.ApplicationRegime, Mode=TwoWay}" />
+														</Border>
 														<Border
-									Grid.Column="2"
-									Padding="8,0"
-									Stroke="{StaticResource SparkBorderSubtle}"
-									Style="{StaticResource TableCellBorderStyle}">
-									<Label FontSize="11.5" LineBreakMode="TailTruncation" Text="{Binding PatientMedicine.DefaultDosage}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
-								</Border>
-								<Border
-									Grid.Column="3"
-									Padding="4,0"
-									Stroke="{StaticResource SparkBorderSubtle}"
-									Style="{StaticResource TableCellBorderStyle}">
-									<Entry IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" Keyboard="Numeric" Style="{StaticResource TableCellEntryStyle}" Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" />
-								</Border>
+															Grid.Column="2"
+															Padding="8,0"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															Style="{StaticResource TableCellBorderStyle}">
+															<Label
+																FontSize="11.5"
+																LineBreakMode="TailTruncation"
+																Text="{Binding PatientMedicine.DefaultDosage}"
+																TextColor="{StaticResource SparkTextPrimary}"
+																VerticalOptions="Center" />
+														</Border>
+														<Border
+															Grid.Column="3"
+															Padding="4,0"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															Style="{StaticResource TableCellBorderStyle}">
+															<Entry
+																IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
+																Keyboard="Numeric"
+																Style="{StaticResource TableCellEntryStyle}"
+																Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" />
+														</Border>
 														<Border
 															Grid.Column="4"
 															Stroke="{StaticResource SparkBorderSubtle}"

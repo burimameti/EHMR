@@ -236,7 +236,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
         // as preselected current therapy.
         foreach(var medicine in PatientMedicines
             .Where(x => x.IsActive && x.EncounterId==null)
-            .OrderBy(x => x.StartDate))
+           )
         {
             EncounterMedicines.Add(new PatientMedicine
             {
@@ -250,8 +250,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                 Quantity=0,
                 Dosage=medicine.Dosage,
                 DosesFrequency=medicine.DosesFrequency,
-                StartDate=DateTime.Now,
-                EndDate=null,
+         
                 Notes=medicine.Notes,
                 PharmaceuticalReference=medicine.PharmaceuticalReference,
                 IsActive=true

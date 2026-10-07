@@ -177,8 +177,8 @@ public sealed class FunctionalCoverageSeeder : IEntitySeeder
             DosesFrequency = frequency,
             Dosage = dosage,
             Quantity = quantity,
-            StartDate = DateTime.UtcNow.AddMonths(-3),
-            EndDate = active ? null : DateTime.UtcNow.AddDays(-7),
+    
+           
             Notes = "Демо запис за функционално тестирање.",
             PharmaceuticalReference = $"COVERAGE-{index + 1:000}",
             IsActive = active

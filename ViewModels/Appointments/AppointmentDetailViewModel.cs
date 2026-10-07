@@ -190,7 +190,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [ObservableProperty] private ObservableCollection<PatientMedicine> patientMedicinesHistory = new();
 
     public IEnumerable<PatientMedicine> PreviousMedicinesHistory =>
-        PatientMedicinesHistory.Where(x => !x.IsActive).OrderByDescending(x => x.StartDate);
+        PatientMedicinesHistory.Where(x => !x.IsActive);
 
     // =========================
     // UI STATE
@@ -796,7 +796,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             PatientId=SelectedPatientForAppointment?.Id??Guid.Empty,
             Dosage="1", // matches Encounter convention: Dosage doubles as quantity
             DosesFrequency=DosesFrequency.Other,
-            StartDate=DateTime.Now,
+      
             IsActive=true
         });
 

@@ -48,7 +48,7 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
             // EXISTING ENCOUNTER — unchanged path
             await LoadForViewAsync(selectedEncounter.Id, "Не е избран преглед за прикажување.");
             EncounterMedicines=new ObservableCollection<PatientMedicine>(
-                PatientMedicines.Where(x => x.EncounterId==Encounter.Id).OrderByDescending(x => x.StartDate));
+                PatientMedicines.Where(x => x.EncounterId==Encounter.Id));
             _selectedItemService.SelectedItem=null;
             OnPropertyChanged(nameof(CanEditEncounter));
             return;   // ← излегува тука, не стигнува до "нов" делот подолу

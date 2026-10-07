@@ -461,8 +461,7 @@ namespace EHMR.Domain.Entities.Reports
                     ? patients
                         .SelectMany(x => x.PatientMedicines)
                         .Where(pm => pm.MedicineId==_selectedMedicineId.Value
-                                     &&pm.StartDate<=to
-                                     &&(!pm.EndDate.HasValue||pm.EndDate.Value>=from))
+                                   )
                         .Sum(pm => pm.Quantity)
                     : null;
 
@@ -553,9 +552,7 @@ namespace EHMR.Domain.Entities.Reports
                 : patients.Where(x =>
                     (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
                     x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to)||
-                    x.PatientMedicines.Any(pm =>
-                        pm.StartDate<=to &&
-                        (!pm.EndDate.HasValue||pm.EndDate.Value>=from)));
+                    x.PatientMedicines.Any());
 
             if(_selectedStatusFilter!="Сите")
             {
@@ -605,9 +602,8 @@ namespace EHMR.Domain.Entities.Reports
                 // active medicine list.
                 query=query.Where(x =>
                     x.PatientMedicines.Any(pm =>
-                        pm.MedicineId==_selectedMedicineId &&
-                        pm.StartDate<=to &&
-                        (!pm.EndDate.HasValue||pm.EndDate.Value>=from)));
+                        pm.MedicineId==_selectedMedicineId 
+                    ));
 
                 Debug.WriteLine($"[Patients]   - Medicine filter: {_selectedMedicineFilter} ({from:dd.MM.yyyy} - {to:dd.MM.yyyy})");
             }
@@ -691,9 +687,8 @@ namespace EHMR.Domain.Entities.Reports
 
             var medicines = patient.PatientMedicines
                 .Where(x =>
-                    x.Medicine!=null &&
-                    x.StartDate<=to &&
-                    (!x.EndDate.HasValue||x.EndDate.Value>=from))
+                    x.Medicine!=null
+                    )
                 .GroupBy(x => x.Medicine!.Name)
                 .Select(group =>
                 {

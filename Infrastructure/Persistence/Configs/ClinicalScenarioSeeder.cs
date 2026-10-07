@@ -257,8 +257,7 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         ApplicationRegimeId=applicationRegimeId,
         DosesFrequency=frequency,
         Dosage=dosage,
-        StartDate=start,
-        EndDate=end,
+      
         IsActive=active,
         Notes=notes,
         CreatedAt=start

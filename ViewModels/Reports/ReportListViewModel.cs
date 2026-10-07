@@ -559,15 +559,18 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             .OrderByDescending(s => s.RecordedAt)
             .ToListAsync();
 
-        var medicines=await db.PatientMedicines
-            .AsNoTracking()
-            .Include(pm => pm.Medicine)
-            .Include(pm => pm.ApplicationRegime)
-            .Where(pm => pm.PatientId==patientId &&
-                         ((pm.EncounterId.HasValue && encounterIds.Contains(pm.EncounterId.Value)) ||
-                          (!pm.EncounterId.HasValue && pm.IsActive)))
-            .OrderByDescending(pm => pm.StartDate)
-            .ToListAsync();
+        var medicines = await db.PatientMedicines
+           .AsNoTracking()
+           .Include(pm => pm.Medicine)
+           .Include(pm => pm.ApplicationRegime)
+           .Where(pm =>
+               pm.PatientId==patientId&&
+               (
+                   pm.EncounterId==null
+                       ? pm.IsActive
+                       : encounterIds.Contains(pm.EncounterId.Value)
+               ))
+           .ToListAsync();
 
         var rows=new List<GenericReportRow>(encounters.Count);
 
@@ -704,10 +707,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             .Include(pm => pm.Patient).ThenInclude(p => p.Diagnoses).ThenInclude(d => d.Mkb10Code)
             .AsNoTracking()
             .Where(pm => (!patientId.HasValue || pm.PatientId==patientId.Value)
-                         &&(!medicineId.HasValue || pm.MedicineId==medicineId.Value)
-                         &&pm.StartDate<=endRange
-                         &&(!pm.EndDate.HasValue || pm.EndDate.Value>=startRange))
-            .ToListAsync();
+                         &&(!medicineId.HasValue || pm.MedicineId==medicineId.Value)).ToListAsync();
 
         var grouped=data
             .GroupBy(pm => pm.Medicine?.FullName??pm.Medicine?.Name??"Непознат лек")

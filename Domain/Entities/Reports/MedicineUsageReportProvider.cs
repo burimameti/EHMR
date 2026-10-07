@@ -82,9 +82,7 @@ public sealed class MedicineUsageReportProvider : IReportProvider
             .AsNoTracking()
             .Include(x => x.Medicine)
             .Where(x =>
-                x.Medicine!=null &&
-                x.StartDate<to &&
-                (!x.EndDate.HasValue||x.EndDate.Value>=from))
+                x.Medicine!=null)
             .ToListAsync();
 
         var grouped=medicines

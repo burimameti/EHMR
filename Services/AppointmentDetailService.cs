@@ -409,8 +409,7 @@ namespace EHMR.Services
                         entity.EncounterId=encounterForMedicines?.Id??entity.EncounterId;
                         entity.Dosage=m.Dosage;
                         entity.DosesFrequency=m.DosesFrequency;
-                        entity.StartDate=m.StartDate;
-                        entity.EndDate=m.EndDate;
+                        
                         entity.Notes=m.Notes;
                         entity.IsActive=m.IsActive;
                     }
@@ -424,8 +423,7 @@ namespace EHMR.Services
                             MedicineId=m.MedicineId,
                             Dosage=m.Dosage,
                             DosesFrequency=m.DosesFrequency,
-                            StartDate=m.StartDate,
-                            EndDate=m.EndDate,
+                          
                             Notes=m.Notes,
                             IsActive=m.IsActive,
                         });
