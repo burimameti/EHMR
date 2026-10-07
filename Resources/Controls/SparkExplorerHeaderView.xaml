@@ -244,6 +244,57 @@
 					</Grid>
 				</Border>
 
+				<!--  SEARCH SUGGESTIONS  -->
+				<Border
+					Grid.Column="0"
+					Margin="8,88,8,0"
+					Padding="1"
+					BackgroundColor="White"
+					HeightRequest="200"
+					HorizontalOptions="Fill"
+					IsVisible="{Binding ShowSuggestions, Source={x:Reference Root}}"
+					Stroke="{StaticResource SparkOverlay}"
+					StrokeShape="RoundRectangle 2"
+					StrokeThickness="0.5"
+					ZIndex="10">
+					<Grid ColumnDefinitions="*,12" ColumnSpacing="4">
+						<CollectionView
+							x:Name="SuggestionList"
+							Grid.Column="0"
+							HeightRequest="200"
+							ItemTemplate="{Binding SuggestionTemplate, Source={x:Reference Root}}"
+							ItemsSource="{Binding Suggestions, Source={x:Reference Root}}"
+							Scrolled="OnSuggestionListScrolled"
+							SelectedItem="{Binding SelectedSuggestion, Source={x:Reference Root}, Mode=TwoWay}"
+							SelectionMode="Single"
+							VerticalScrollBarVisibility="Never" />
+
+						<Border
+							x:Name="SuggestionScrollRail"
+							Grid.Column="1"
+							Margin="2,4"
+							BackgroundColor="#E2E8F0"
+							StrokeThickness="1">
+							<Border.StrokeShape>
+								<RoundRectangle CornerRadius="4" />
+							</Border.StrokeShape>
+							<Border
+								x:Name="SuggestionScrollThumb"
+								BackgroundColor="{StaticResource SidebarActiveBg}"
+								HeightRequest="38"
+								StrokeThickness="0"
+								VerticalOptions="Start">
+								<Border.StrokeShape>
+									<RoundRectangle CornerRadius="1" />
+								</Border.StrokeShape>
+								<Border.GestureRecognizers>
+									<PanGestureRecognizer PanUpdated="OnSuggestionThumbPanUpdated" />
+								</Border.GestureRecognizers>
+							</Border>
+						</Border>
+					</Grid>
+				</Border>
+
 
 				<!--  ============ 1: PICKERS ============  -->
 				<HorizontalStackLayout
