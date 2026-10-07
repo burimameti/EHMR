@@ -13,22 +13,11 @@ public partial class EncounterCreatePage : ContentPage
     private readonly MenuView _menu;
     public EncounterCreatePage(EncounterCreateViewModel viewModel, MenuView menu)
     {
-
-        try
-        {
-        
         InitializeComponent();
-            _viewModel=viewModel;
-            _menu=menu;
-            BindingContext=_viewModel;
-            MenuHost.Content=_menu;
-        }
-        catch(Exception ex)
-        {
-
-            throw new Exception("",ex);
-        }
-     
+        _viewModel=viewModel;
+        _menu=menu;
+        BindingContext=_viewModel;
+        MenuHost.Content=_menu;
     }
     protected override async void OnAppearing()
     {
