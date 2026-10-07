@@ -91,7 +91,7 @@
 					Padding="20"
 					BackgroundColor="White"
 					Stroke="{StaticResource BorderColor}"
-					StrokeShape="RoundRectangle 12"
+					StrokeShape="Rectangle"
 					StrokeThickness="1">
 
 					<VerticalStackLayout>
@@ -119,7 +119,7 @@
 					Padding="20"
 					BackgroundColor="White"
 					Stroke="{StaticResource BorderColor}"
-					StrokeShape="RoundRectangle 12"
+					StrokeShape="Rectangle"
 					StrokeThickness="1">
 
 					<VerticalStackLayout>
@@ -147,7 +147,7 @@
 					Padding="20"
 					BackgroundColor="White"
 					Stroke="{StaticResource BorderColor}"
-					StrokeShape="RoundRectangle 12"
+					StrokeShape="Rectangle"
 					StrokeThickness="1">
 
 					<VerticalStackLayout>
