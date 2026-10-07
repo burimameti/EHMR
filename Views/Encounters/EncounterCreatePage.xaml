@@ -431,12 +431,9 @@
 														HeightRequest="46"
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
-														<Label
-															FontSize="11.5"
-															LineBreakMode="TailTruncation"
-															Text="{Binding Medicine.Name}"
-															TextColor="{StaticResource SparkTextPrimary}"
-															VerticalOptions="Center" />
+														<VerticalStackLayout Padding="8,3" Spacing="0" VerticalOptions="Center">
+															<Label FontSize="11" Text="{Binding Medicine.BilingualName}" TextColor="{StaticResource SparkTextPrimary}" LineBreakMode="TailTruncation" />
+														</VerticalStackLayout>
 													</Border>
 													<Border
 														Grid.Column="1"
