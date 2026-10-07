@@ -1099,7 +1099,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void AddMedicine(MedicineDto medicine)
     {
-        if(medicine==null||!CanEditPatient) return;
+        if(medicine==null||!IsEditMode||!CanSavePatient) return;
 
         if(AttachedMedicines.Any(r => r.PatientMedicine.MedicineId==medicine.Id&&r.PatientMedicine.IsActive))
             return;
