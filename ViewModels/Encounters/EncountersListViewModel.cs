@@ -455,7 +455,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
 
         static bool StartsWithAny(string? value, IEnumerable<string> variants)
             => !string.IsNullOrWhiteSpace(value)
-                && variants.Any(v => value.StartsWith(v, StringComparison.OrdinalIgnoreCase))
+                && variants.Any(v => value.StartsWith(v, StringComparison.OrdinalIgnoreCase)
         //(x.Doctor!=null&&((x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(term, StringComparison.OrdinalIgnoreCase)||
         //                    (x.Doctor.User.FirstName+" "+x.Doctor.User.LastName).Contains(cyrillicTerm, StringComparison.OrdinalIgnoreCase)))||
         //(x.ChiefComplaint??"").Contains(term, StringComparison.OrdinalIgnoreCase)||

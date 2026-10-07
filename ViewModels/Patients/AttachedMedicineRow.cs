@@ -27,7 +27,7 @@ namespace EHMR.ViewModels
         public string Manufacturer => PatientMedicine.Manufacturer;
         public string? ApplicationRegime => PatientMedicine?.ApplicationRegime;
         public bool HasResolution => PatientMedicine.ResolutionDocumentId.HasValue;
-    public bool HasResolution => PatientMedicine.ResolutionDocumentId.HasValue;
+
         public decimal Quantity => PatientMedicine.Quantity;
         public string Dosage => PatientMedicine.Dosage;
         public bool IsActive => PatientMedicine.IsActive;
