@@ -80,3 +80,49 @@ public static class MacedonianTransliterator
             .Replace("\u0434\u0437", "\u0455", StringComparison.OrdinalIgnoreCase);
     }
 }
+
+        public static string ToLatin(string value)
+    {
+        if(string.IsNullOrEmpty(value))
+            return value;
+
+        var map = new Dictionary<char, string>
+        {
+            ['а']="a",['б']="b",['в']="v",['г']="g",['д']="d",['ѓ']="gj",['е']="e",
+            ['ж']="zh",['з']="z",['ѕ']="dz",['и']="i",['ј']="j",['к']="k",['л']="l",
+            ['љ']="lj",['м']="m",['н']="n",['њ']="nj",['о']="o",['п']="p",['р']="r",
+            ['с']="s",['т']="t",['ќ']="kj",['у']="u",['ф']="f",['х']="h",['ц']="c",
+            ['ч']="ch",['џ']="dzh",['ш']="sh"
+        };
+
+        var result=new StringBuilder(value.Length);
+        foreach(var character in value)
+        {
+            var lower=char.ToLowerInvariant(character);
+            if(!map.TryGetValue(lower, out var converted))
+            {
+                result.Append(character);
+                continue;
+            }
+
+            result.Append(char.IsUpper(character)
+                ? converted.Length==1
+                    ? converted.ToUpperInvariant()
+                    : char.ToUpperInvariant(converted[0])+converted[1..]
+                : converted);
+        }
+
+        return result.ToString();
+    }
+
+    public static string ToBilingual(string value)
+    {
+        if(string.IsNullOrWhiteSpace(value))
+            return string.Empty;
+
+        var hasCyrillic=value.Any(c => c is >= '\u0400' and <= '\u04FF');
+        var first=hasCyrillic ? value : ToLatin(value);
+        var second=hasCyrillic ? ToLatin(value) : ToCyrillic(value);
+
+        return $"{first}\n{second}";
+    }
