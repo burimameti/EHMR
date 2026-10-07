@@ -28,6 +28,7 @@ public partial class ReportHistoryViewModel
     public ObservableCollection<string> FormatFilters { get; } = ["All", "PDF", "Excel"];
     public ObservableCollection<string> StatusFilters { get; } = ["All", "Success", "Failed"];
     public ObservableCollection<string> UserFilters { get; } = new();
+
     private static readonly Dictionary<string, string> FormatLabels = new()
     {
         ["All"]="Сите",
@@ -220,20 +221,20 @@ public partial class ReportHistoryViewModel
     {
         Pickers.Clear();
 
-        _formatPicker=MakeLocalizedPicker(
-            "Формат", FormatFilters, SelectedFormat,
-            s => SelectedFormat=s,
-            FormatLabels);
+        //_formatPicker=MakeLocalizedPicker(
+        //    "Формат", FormatFilters, SelectedFormat,
+        //    s => SelectedFormat=s,
+        //    FormatLabels);
 
         _statusPicker=MakeLocalizedPicker(
             "Статус", StatusFilters, SelectedStatus,
             s => { SelectedStatus=s; ApplyPipeline(); },
             StatusLabels);
 
-        _userPicker=MakeLocalizedPicker(
-            "Генериран од", UserFilters, SelectedUser,
-            s => { SelectedUser=s; ApplyPipeline(); },
-            UserLabels);
+        //_userPicker=MakeLocalizedPicker(
+        //    "Генериран од", UserFilters, SelectedUser,
+        //    s => { SelectedUser=s; ApplyPipeline(); },
+        //    UserLabels);
 
         Pickers.Add(_formatPicker);
         Pickers.Add(_statusPicker);
@@ -263,8 +264,8 @@ public partial class ReportHistoryViewModel
    
                 { new() { Header = "БРОЈ", Key = "ReportNumber", Width = new GridLength(1.3, GridUnitType.Star) },
             new() { Header="ИЗВЕШТАЈ", Key="Report", Width=new GridLength(2.5, GridUnitType.Star) },
-            new() { Header="ФОРМАТ", Key="Format", Width=new GridLength(1, GridUnitType.Star) },
-            new() { Header="КОРИСНИК", Key="GeneratedBy", Width=new GridLength(1.5, GridUnitType.Star) },
+            //new() { Header="ФОРМАТ", Key="Format", Width=new GridLength(1, GridUnitType.Star) },
+            //new() { Header="КОРИСНИК", Key="GeneratedBy", Width=new GridLength(1.5, GridUnitType.Star) },
             new() { Header="ДАТУМ ГЕНЕРИРАН", Key="GeneratedOn", Width=new GridLength(1.5, GridUnitType.Star) },
             new() { Header="ГОЛЕМИНА", Key="FileSize", Width=new GridLength(1, GridUnitType.Star) },
             new() { Header="СТАТУС", Key="Status", CellType=SparkGridCellType.Badge, Width=new GridLength(1, GridUnitType.Star) },
@@ -284,15 +285,15 @@ public partial class ReportHistoryViewModel
             var row = new SparkGridRow { Tag=report };
             row["ReportNumber"]=report.ReportNumber;
             row["Report"]=report.ReportTitle;
-            row["Format"]=report.Format;
-            row["GeneratedBy"]=report.GeneratedBy;
+            //row["Format"]=report.Format;
+            //row["GeneratedBy"]=report.GeneratedBy;
             row["GeneratedOn"]=report.GeneratedOn.ToString("dd.MM.yyyy");
             row["FileSize"]=$"{report.FileSize/1024d:0.##} KB";
             row["Status"]=new SparkBadgeValue(report.Success ? "Успешно" : "Не успешно", StatusToTone(report.Success));
 
             row["Actions"]=new List<SparkButtonItem>
             {
-                new SparkButtonItem { IsPrimary=true, IconGlyph="📂", Label="Отвори", Command=OpenCommand, CommandParameter=report },
+               // new SparkButtonItem { IsPrimary=true, IconGlyph="📂", Label="Отвори", Command=OpenCommand, CommandParameter=report },
                 new SparkButtonItem { IconGlyph="⬇", Label="Превземи", Command=DownloadCommand, CommandParameter=report },
                 new SparkButtonItem { IconGlyph="🗑", Label="Избриши", Command=DeleteCommand, CommandParameter=report, IsPrimary=false }
             };

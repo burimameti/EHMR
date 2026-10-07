@@ -25,7 +25,7 @@
 			x:Name="PickerBorder"
 			Grid.Row="1"
 			Padding="0"
-			BackgroundColor="{StaticResource SparkBackgroundAlt}"
+			BackgroundColor="{StaticResource White}"
 			HeightRequest="36"
 			Stroke="{StaticResource BorderDefaultStrong}"
 			StrokeShape="RoundRectangle 8"

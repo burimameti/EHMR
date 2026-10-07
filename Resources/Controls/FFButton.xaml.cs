@@ -109,7 +109,7 @@ public partial class FFButton : ContentView
         BindableProperty.Create(nameof(IsLoading), typeof(bool), typeof(FFButton), false);
 
     public static readonly BindableProperty HeightRequestExProperty =
-        BindableProperty.Create(nameof(HeightRequestEx), typeof(double), typeof(FFButton), 42d,
+        BindableProperty.Create(nameof(HeightRequestEx), typeof(double), typeof(FFButton), 40d,
             propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumHeightRequest=(double)v);
 
     public static readonly BindableProperty WidthRequestExProperty =
@@ -309,7 +309,7 @@ public partial class FFButton : ContentView
                 BackgroundColorEx=Color.FromArgb("#32B9AA");
                 TextColorEx=Colors.White;
                 BorderColor=Color.FromArgb("#15803D");
-                BorderThickness=0;
+                BorderThickness=2;
                 break;
 
             // Destructive action: Delete, Cancel therapy
@@ -317,7 +317,7 @@ public partial class FFButton : ContentView
                 BackgroundColorEx=Color.FromArgb("#B42318");
                 TextColorEx=Colors.White;
                 BorderColor=Color.FromArgb("#B42318");
-                BorderThickness=0;
+                BorderThickness=2;
                 break;
 
             // Quiet action: Close, Clear filters

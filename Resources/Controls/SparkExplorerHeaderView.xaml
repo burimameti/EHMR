@@ -10,7 +10,7 @@
 
 		<!--  ============ ROW 1: TABS + TRAILING ============  -->
 		<Border
-			BackgroundColor="{StaticResource SparkBackgroundAlt}"
+			BackgroundColor="White"
 			IsVisible="{Binding Tabs, Source={x:Reference Root}, Converter={StaticResource SparkCollectionNotEmptyConverter}}"
 			StrokeShape="RoundRectangle 0">
 
@@ -118,7 +118,7 @@
 				<BoxView
 					Grid.Column="1"
 					Margin="10,10"
-					BackgroundColor="{StaticResource SparkAccentTeal}"
+					BackgroundColor="{StaticResource White}"
 					WidthRequest="1" />
 
 				<!--  ============ 2: SPACER ============  -->
@@ -165,7 +165,7 @@
 		</Border>
 
 		<!--  ============ ROW 2: SEARCH + BUTTONS + PICKERS ============  -->
-		<Grid BackgroundColor="{StaticResource SparkBackgroundAlt}" IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
+		<Grid BackgroundColor="{StaticResource White}" IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
 
 			<Grid
 				x:Name="SecondaryToolbarGrid"
@@ -393,21 +393,21 @@
 
 			<!--  bottom rule — same BoxView stand-in as row 1, same SparkBorder token  -->
 			<BoxView
-				BackgroundColor="{StaticResource SparkSidebarBgHover}"
+				BackgroundColor="{StaticResource Transparent}"
 				HeightRequest="1"
 				VerticalOptions="End" />
 		</Grid>
 		<!--  ============ SUGGESTIONS DROPDOWN ============  -->
 		<Border
 			Margin="8,0,8,8"
-			Padding="4"
-			BackgroundColor="{StaticResource SparkBackground}"
+			Padding="16,12"
+			BackgroundColor="{StaticResource White}"
 			IsVisible="{Binding ShowSuggestions, Source={x:Reference Root}}"
 			MaximumHeightRequest="240"
-			Stroke="{StaticResource SparkBorder}"
-			StrokeThickness="1">
+			Stroke="{StaticResource Transparent}"
+			StrokeThickness="0">
 			<Border.StrokeShape>
-				<RoundRectangle CornerRadius="12" />
+				<RoundRectangle CornerRadius="2" />
 			</Border.StrokeShape>
 			<CollectionView
 				ItemTemplate="{Binding SuggestionTemplate, Source={x:Reference Root}}"

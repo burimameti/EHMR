@@ -43,12 +43,23 @@
 
 					<controls:FFPageHeader Title="Историја на извештаи" Subtitle="Преглед, пребарување и превземање на генерирани извештаи">
 						<controls:FFPageHeader.HeaderContent>
-							<controls:FFButton
-								ButtonKind="Secondary"
-								Command="{Binding GoBackCommand}"
-								HeightRequestEx="40"
-								Text="Назад"
-								WidthRequestEx="130" />
+							<HorizontalStackLayout Margin="1,0,1,0" Spacing="20">
+								<controls:FFButton
+									ButtonKind="Secondary"
+									Command="{Binding GoBackCommand}"
+									HeightRequestEx="40"
+									Text="Назад"
+									WidthRequestEx="130" />
+
+
+								<controls:FFButton
+									ButtonKind="Primary"
+									Command="{Binding NavigateToReportCommand}"
+									HeightRequestEx="40"
+									IsVisible="{Binding CanCreate}"
+									Text="Нов извештај"
+									WidthRequestEx="130" />
+							</HorizontalStackLayout>
 						</controls:FFPageHeader.HeaderContent>
 					</controls:FFPageHeader>
 
@@ -65,14 +76,6 @@
 							Text="Искисти"
 							WidthRequest="130" />-->
 
-						<controls:FFButton
-							ButtonKind="Primary"
-							Command="{Binding NavigateToReportCommand}"
-							ContentPadding="18,0"
-							HeightRequestEx="42"
-							IsVisible="{Binding CanCreate}"
-							Text="Нов извештај"
-							WidthRequestEx="150" />
 
 					</HorizontalStackLayout>
 

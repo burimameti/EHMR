@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+
 <ContentPage
 	x:Class="EHMR.Views.Reports.ReportsListPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -7,73 +8,111 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Reports"
 	x:DataType="viewModels:ReportListViewModel">
 
+
 	<Grid ColumnDefinitions="260,*">
 
+
 		<!--  ================= LEFT MENU =================  -->
+
 		<Border Grid.Column="0" StrokeThickness="0">
+
 			<ContentView x:Name="MenuHost" />
+
 		</Border>
 
+
+
 		<!--  ================= MAIN =================  -->
+
 		<Grid
 			Grid.Column="1"
 			Padding="0"
 			BackgroundColor="{StaticResource PageBackground}"
-			RowDefinitions="Auto,Auto,*"
-			RowSpacing="16">
+			RowDefinitions="Auto,Auto,Auto,*"
+			RowSpacing="0">
+
+
 
 			<!--  HEADER  -->
-			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<controls:FFPageHeader Title="Извештаи" Subtitle="Анализа, следење и системски извештаи">
-					<controls:FFPageHeader.HeaderContent>
-						<Grid ColumnDefinitions="Auto,Auto" ColumnSpacing="12">
-							<controls:FFButton
-								Grid.Column="0"
-								ButtonKind="Secondary"
-								Command="{Binding GoBackCommand}"
-								HeightRequestEx="40"
-								Text="Назад"
-								WidthRequestEx="130" />
 
-							<controls:FFButton
-								Grid.Column="1"
-								ButtonKind="Primary"
-								Command="{Binding NewReportCommand}"
-								HeightRequestEx="40"
-								IsEnabled="{Binding CanCreate}"
-								Text="Нов извештај"
-								WidthRequestEx="150" />
-						</Grid>
-					</controls:FFPageHeader.HeaderContent>
-				</controls:FFPageHeader>
+			<Border Style="{StaticResource PageCardStyleDashboard}">
+
+				<Grid ColumnDefinitions="*,Auto">
+
+
+					<controls:FFPageHeader
+    Title="Извештаи"
+    Subtitle="Анализа, следење и системски извештаи" >
+				<controls:FFPageHeader.HeaderContent>
+<controls:FFButton
+						ButtonKind="Secondary"
+						Command="{Binding GoBackCommand}"
+						HeightRequestEx="40"
+						Text="Назад"
+						WidthRequestEx="130" />
+			</controls:FFPageHeader.HeaderContent>
+		</controls:FFPageHeader>
+
+<controls:FFButton
+    Grid.Column="1"
+    ButtonKind="Primary"
+    Command="{Binding NewReportCommand}"
+    HeightRequestEx="42"
+    IsEnabled="{Binding CanCreate}"
+    Text="Нов извештај"
+    WidthRequestEx="150" />
+
+
+					<!--<Button
+						Grid.Column="1"
+						Command="{Binding GenerateReportCommand}"
+						HeightRequest="42"
+						Style="{StaticResource TabButtonActiveStyle}"
+						Text="Генерирај Pdf"
+						WidthRequest="140" />-->
+
+
+				</Grid>
+
 			</Border>
 
+
+
 			<!--  METRICS  -->
+
 			<Grid
 				Grid.Row="1"
 				Margin="16,0"
 				ColumnDefinitions="*,*,*"
 				ColumnSpacing="16">
 
+
 				<Border
-					Grid.Column="0"
 					Padding="20"
 					BackgroundColor="White"
 					Stroke="{StaticResource BorderColor}"
 					StrokeShape="RoundRectangle 12"
 					StrokeThickness="1">
+
 					<VerticalStackLayout>
+
 						<Label
 							FontSize="13"
 							Text="{Binding Metric1Title}"
 							TextColor="{StaticResource SparkTextSecondary}" />
+
+
 						<Label
 							FontAttributes="Bold"
 							FontSize="28"
 							Text="{Binding Metric1Value}"
 							TextColor="{StaticResource SparkTextPrimary}" />
+
 					</VerticalStackLayout>
+
 				</Border>
+
+
 
 				<Border
 					Grid.Column="1"
@@ -82,18 +121,26 @@
 					Stroke="{StaticResource BorderColor}"
 					StrokeShape="RoundRectangle 12"
 					StrokeThickness="1">
+
 					<VerticalStackLayout>
+
 						<Label
 							FontSize="13"
 							Text="{Binding Metric2Title}"
 							TextColor="{StaticResource SparkTextSecondary}" />
+
+
 						<Label
 							FontAttributes="Bold"
 							FontSize="28"
 							Text="{Binding Metric2Value}"
 							TextColor="{StaticResource SparkDanger}" />
+
 					</VerticalStackLayout>
+
 				</Border>
+
+
 
 				<Border
 					Grid.Column="2"
@@ -102,59 +149,79 @@
 					Stroke="{StaticResource BorderColor}"
 					StrokeShape="RoundRectangle 12"
 					StrokeThickness="1">
+
 					<VerticalStackLayout>
+
 						<Label
 							FontSize="13"
 							Text="{Binding Metric3Title}"
 							TextColor="{StaticResource SparkTextSecondary}" />
+
+
 						<Label
 							FontAttributes="Bold"
 							FontSize="28"
 							Text="{Binding Metric3ValueText}"
 							TextColor="{StaticResource SparkAccentTeal}" />
+
 					</VerticalStackLayout>
+
 				</Border>
+
+
 			</Grid>
 
+
+
+
+
 			<!--  GRID  -->
-			<controls:FFSectionCard Grid.Row="2">
-				<Grid RowDefinitions="Auto,*" RowSpacing="10">
 
-					<!--  Patient history action appears only after a patient is selected.  -->
-					<Grid
-						Grid.Row="0"
-						ColumnDefinitions="*,Auto"
-						IsVisible="{Binding IsPatientHistoryMode}">
-						<Label
-							Grid.Column="0"
-							FontAttributes="Bold"
-							FontSize="12"
-							Text="{Binding SelectedPatientLabel, StringFormat='ИСТОРИЈА НА ПАЦИЕНТ: {0}'}"
-							TextColor="{StaticResource SparkAccentTealDark}"
-							VerticalOptions="Center" />
+			<controls:FFSectionCard Grid.Row="3">
 
-						<controls:FFButton
-							Grid.Column="1"
-							ButtonKind="Primary"
-							Command="{Binding GeneratePatientHistoryReportCommand}"
-							HeightRequestEx="42"
-							IsEnabled="{Binding CanExport}"
-							Text="Генерирај извештај – Историја на Скор" />
-					</Grid>
+				<!--  Patient history action appears only after a patient is selected.  -->
+				<Grid
+					Margin="0,0,0,10"
+					ColumnDefinitions="*,Auto"
+					IsVisible="{Binding IsPatientHistoryMode}">
 
-					<controls:SparkDataGridView
-						Grid.Row="1"
-						Columns="{Binding GridColumns}"
-						CurrentPage="{Binding CurrentPage}"
-						NextPageCommand="{Binding NextPageCommand}"
-						PageChangedCommand="{Binding PageChangedCommand}"
-						PreviousPageCommand="{Binding PreviousPageCommand}"
-						Rows="{Binding GridRows}"
-						TotalPages="{Binding TotalPages}" />
+					<Label
+						FontAttributes="Bold"
+						FontSize="12"
+						Text="{Binding SelectedPatientLabel, StringFormat='ИСТОРИЈА НА ПАЦИЕНТ: {0}'}"
+						TextColor="{StaticResource SparkAccentTealDark}"
+						VerticalOptions="Center" />
+
+					<controls:FFButton
+						Grid.Column="1"
+						ButtonKind="Primary"
+						Command="{Binding GeneratePatientHistoryReportCommand}"
+						IsEnabled="{Binding CanExport}"
+						HeightRequestEx="42"
+						Text="Генерирај извештај – Историја на Скор" />
 				</Grid>
+
+
+				<controls:SparkDataGridView
+					Columns="{Binding GridColumns}"
+					CurrentPage="{Binding CurrentPage}"
+					NextPageCommand="{Binding NextPageCommand}"
+					PageChangedCommand="{Binding PageChangedCommand}"
+					PreviousPageCommand="{Binding PreviousPageCommand}"
+					Rows="{Binding GridRows}"
+					TotalPages="{Binding TotalPages}" />
+
+
 			</controls:FFSectionCard>
 
+
+
+
 		</Grid>
+
+
+
 	</Grid>
+
 
 </ContentPage>
