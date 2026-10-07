@@ -6,7 +6,7 @@
 	x:Name="Root"
 	SizeChanged="OnGridSizeChanged">
 	<Border
-		Background="White"
+		Background="{StaticResource SparkBackground}"
 		Stroke="{StaticResource SparkBorder}"
 		StrokeShape="RoundRectangle 8"
 		StrokeThickness="1">
@@ -29,7 +29,7 @@
 				x:Name="PagerContainer"
 				Grid.Row="1"
 				Padding="16,12"
-				Background="White"
+				Background="{StaticResource SparkBackground}"
 				ColumnDefinitions="*,Auto"
 				IsClippedToBounds="True"
 				IsVisible="True">
