@@ -36,7 +36,7 @@
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
 		<Setter Property="Stroke" Value="#CBD5E1" />
 		<Setter Property="StrokeThickness" Value="1.2" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="Shadow" Value="{x:Null}" />
 	</Style>
 	<Style x:Key="DetailValueSurfaceStyle" TargetType="Border">
@@ -45,7 +45,7 @@
 		<Setter Property="BackgroundColor" Value="#F1F5F9" />
 		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
 		<Setter Property="StrokeThickness" Value="1.2" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 4" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="Shadow" Value="{x:Null}" />
 	</Style>
 	<Style
@@ -59,7 +59,7 @@
 		<Setter Property="Padding" Value="0,0" />
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkContentBackground}" />
 		<Setter Property="Stroke" Value="#FFFFFF" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 0" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Shadow" Value="{x:Null}" />
 	</Style>
@@ -75,7 +75,7 @@
 		<Setter Property="Padding" Value="16,18" />
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkContentBackground}" />
 		<Setter Property="Stroke" Value="#DCE5EE" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 14" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Shadow" Value="{x:Null}" />
 	</Style>
@@ -84,7 +84,7 @@
 		<Setter Property="HeightRequest" Value="54" />
 		<Setter Property="WidthRequest" Value="54" />
 		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 27" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="StrokeThickness" Value="1" />
 	</Style>
 	<Style x:Key="AvatarGlyphStyle" TargetType="Label">
@@ -104,7 +104,7 @@
 		<Setter Property="Padding" Value="12" />
 		<Setter Property="BackgroundColor" Value="#F3F6FA" />
 		<Setter Property="Stroke" Value="#E2E8F0" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 16" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Shadow" Value="{StaticResource SoftCardShadow}" />
 	</Style>
@@ -166,7 +166,7 @@
 		<Setter Property="HeightRequest" Value="40" />
 		<Setter Property="Stroke" Value="#CBD5E1" />
 		<Setter Property="StrokeThickness" Value="1.2" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 4" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="Shadow" Value="{x:Null}" />
 	</Style>
 	<Style
@@ -208,7 +208,7 @@
 		<Setter Property="BackgroundColor" Value="White" />
 		<Setter Property="HorizontalOptions" Value="Start" />
 		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 20" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="StrokeThickness" Value="1" />
 	</Style>
 	<Style x:Key="InfoPillIconStyle" TargetType="Label">
@@ -226,7 +226,7 @@
 		<Setter Property="BackgroundColor" Value="#F3F6FA" />
 		<Setter Property="MaximumHeightRequest" Value="200" />
 		<Setter Property="Stroke" Value="#E2E8F0" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 14" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Shadow" Value="{StaticResource SoftCardShadow}" />
 	</Style>
@@ -234,7 +234,7 @@
 		<Setter Property="Padding" Value="12,6" />
 		<Setter Property="BackgroundColor" Value="#4A5863" />
 		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 20" />
+		<Setter Property="StrokeShape" Value="Rectangle" />
 		<Setter Property="StrokeThickness" Value="1" />
 	</Style>
 	<Style x:Key="SparkFieldLabelStyle" TargetType="Label">
