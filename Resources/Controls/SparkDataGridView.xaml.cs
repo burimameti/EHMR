@@ -199,12 +199,12 @@ namespace EHMR.Resources.Controls
         #endregion
 
         #region Build
-        private static readonly Color HeaderBg = Color.FromArgb("#334155");
+        private static readonly Color HeaderBg = Color.FromArgb("#50616D");
         private static readonly Color HeaderTextColor = Color.FromArgb("#FFFFFF");
-        private static readonly Color RowMutedTextColor = Color.FromArgb("#64748B");
-        private static readonly Color RowTextColor = Color.FromArgb("#1E293B");
-        private static readonly Color BorderColor = Color.FromArgb("#E2E8F0");
-        private static readonly Color RowAltBg = Color.FromArgb("#F8FAFC");
+        private static readonly Color RowMutedTextColor = Color.FromArgb("#6B7881");
+        private static readonly Color RowTextColor = Color.FromArgb("#33414A");
+        private static readonly Color BorderColor = Color.FromArgb("#DCE2E6");
+        private static readonly Color RowAltBg = Color.FromArgb("#FAFBFC");
         private static readonly Color RowBg = Colors.White;
 
         private static readonly Color BadgeNeutralBg = Color.FromArgb("#F1F5F9");
@@ -214,9 +214,9 @@ namespace EHMR.Resources.Controls
         private static readonly Color BadgeDangerBg = Color.FromArgb("#FEF2F2");
         private static readonly Color BadgeDangerText = Color.FromArgb("#DC2626");
 
-        private static readonly Color HyperlinkColor = Color.FromArgb("#0F766E");
-        private static readonly Color AccentColor = Color.FromArgb("#0F766E");
-        private static readonly Color AccentColorMuted = Color.FromArgb("#64748B");
+        private static readonly Color HyperlinkColor = Color.FromArgb("#35AEB9");
+        private static readonly Color AccentColor = Color.FromArgb("#35AEB9");
+        private static readonly Color AccentColorMuted = Color.FromArgb("#6B7881");
         private readonly Dictionary<string, bool> _sortAscending = new(StringComparer.OrdinalIgnoreCase);
 
         private void BuildGrid()
@@ -238,7 +238,7 @@ namespace EHMR.Resources.Controls
             foreach(var column in Columns)
                 GridRoot.ColumnDefinitions.Add(new ColumnDefinition { Width=ResponsiveColumnWidth(column.Width) });
 
-            GridRoot.RowDefinitions.Add(new RowDefinition { Height=new GridLength(R(44)) });
+            GridRoot.RowDefinitions.Add(new RowDefinition { Height=new GridLength(R(40)) });
             if(ShowCheckboxColumn) AddCheckboxHeaderCell(checkboxColumnIndex);
             if(ShowRowNumbers) AddRowNumberHeaderCell(rowNumberColumnIndex);
             for(int c = 0; c<Columns.Count; c++)
@@ -303,7 +303,7 @@ namespace EHMR.Resources.Controls
                 BackgroundColor=rowBg,
                 StrokeThickness=0,
                 Padding=new Thickness(4, 0),
-                HeightRequest=R(44)
+                HeightRequest=R(40)
             };
             var checkbox = new CheckBox
             {
@@ -328,7 +328,7 @@ namespace EHMR.Resources.Controls
         {
             var border = new Border
             {
-                Background=new SolidColorBrush(Color.FromArgb("#5B6B79")),
+                Background=new SolidColorBrush(Color.FromArgb("#5E6E79")),
                 Stroke=Colors.Transparent,
                 Padding=new Thickness(4, 0)
             };
@@ -352,7 +352,7 @@ namespace EHMR.Resources.Controls
                 BackgroundColor=rowBg,
                 StrokeThickness=0,
                 Padding=new Thickness(4, 0),
-                HeightRequest=44
+                HeightRequest=40
             };
             border.Content=new Label
             {
@@ -399,9 +399,9 @@ namespace EHMR.Resources.Controls
         {
             var border = new Border
             {
-                Background=new SolidColorBrush(Color.FromArgb("#5B6B79")),
+                Background=new SolidColorBrush(Color.FromArgb("#5E6E79")),
                 Stroke=Colors.Transparent,
-                Padding=new Thickness(R(12), 0),
+                Padding=new Thickness(R(10), 0),
                 HorizontalOptions=LayoutOptions.Fill
             };
             var row = new HorizontalStackLayout
@@ -419,7 +419,7 @@ namespace EHMR.Resources.Controls
             {
                 Text=column.Header,
                 TextColor=HeaderTextColor,
-                FontSize=12,
+                FontSize=R(11),
                 VerticalOptions=LayoutOptions.Center
             });
             var isSortable = column.Sortable
@@ -610,7 +610,7 @@ namespace EHMR.Resources.Controls
             {
                 Text = "🔍",
                 FontSize = R(16),
-                TextColor = Color.FromArgb("#0F766E"),
+                TextColor = Color.FromArgb("#35AEB9"),
                 BackgroundColor = Colors.Transparent,
                 BorderWidth = 0,
                 Padding = new Thickness(6, 0),
@@ -757,7 +757,7 @@ namespace EHMR.Resources.Controls
             border.IsEnabled = true;
 
             var normalBackground = color;
-            var hoverBackground = Color.FromArgb("#64748B");
+            var hoverBackground = Color.FromArgb("#6B7881");
             var pointer = new PointerGestureRecognizer();
             pointer.PointerEntered += (_, _) =>
             {
@@ -814,8 +814,8 @@ namespace EHMR.Resources.Controls
             {
                 Text=text,
                 TextColor=RowTextColor,
-                FontSize=R(13),
-                Margin=new Thickness(R(4), 0, 0, 0),
+                FontSize=R(12),
+                Margin=new Thickness(R(8), 0, 0, 0),
                 HorizontalOptions=LayoutOptions.Fill,
                 VerticalOptions=LayoutOptions.Center,
                 HorizontalTextAlignment=TextAlignment.Start,
@@ -844,7 +844,7 @@ namespace EHMR.Resources.Controls
             get => (int)GetValue(SelectedRowIndexProperty);
             set => SetValue(SelectedRowIndexProperty, value);
         }
-        private static readonly Color SelectedRowBg = Color.FromArgb("#E6F4F3");
+        private static readonly Color SelectedRowBg = Color.FromArgb("#E8F7F8");
 
         #endregion
 
@@ -869,7 +869,7 @@ namespace EHMR.Resources.Controls
             {
                 Text=badge.Text,
                 TextColor=fg,
-                FontSize=12,
+                FontSize=11,
                 FontAttributes=FontAttributes.Bold,
                 HorizontalTextAlignment=TextAlignment.Center
             };
@@ -885,7 +885,7 @@ namespace EHMR.Resources.Controls
 
             var circle = new Border
             {
-                BackgroundColor=Color.FromArgb("#E2E8F0"),
+                BackgroundColor=Color.FromArgb("#DCE2E6"),
                 Stroke=Colors.Transparent,
                 WidthRequest=R(26),
                 HeightRequest=R(26),
@@ -896,7 +896,7 @@ namespace EHMR.Resources.Controls
             circle.Content=new Label
             {
                 Text=initials,
-                TextColor=Color.FromArgb("#334155"),
+                TextColor=Color.FromArgb("#50616D"),
                 FontSize=R(11),
                 FontAttributes=FontAttributes.Bold,
                 HorizontalTextAlignment=TextAlignment.Center,
@@ -914,15 +914,15 @@ namespace EHMR.Resources.Controls
 
         #endregion
 
-        private static readonly Color PagerActiveBg = Color.FromArgb("#4DD9C7");
+        private static readonly Color PagerActiveBg = Color.FromArgb("#4CC9D4");
         private static readonly Color PagerActiveText = Colors.White;
-        private static readonly Color PagerInactiveText = Color.FromArgb("#334155");
-        public static Color PagerBackground => Color.FromArgb("#E2E8F0");
-        public static Color PagerBorder => Color.FromArgb("#E2E8F0");
-        public static Color PagerBorderColor => Color.FromArgb("#E2E8F0");
-        public static Color PagerActiveBackground => Color.FromArgb("#4DD9C7");
+        private static readonly Color PagerInactiveText = Color.FromArgb("#50616D");
+        public static Color PagerBackground => Color.FromArgb("#DCE2E6");
+        public static Color PagerBorder => Color.FromArgb("#DCE2E6");
+        public static Color PagerBorderColor => Color.FromArgb("#DCE2E6");
+        public static Color PagerActiveBackground => Color.FromArgb("#4CC9D4");
         public static Color PagerActiveForeground => Colors.White;
-        public static Color PagerForeground => Color.FromArgb("#334155");
+        public static Color PagerForeground => Color.FromArgb("#50616D");
         public static Color PagerDisabledForeground => Color.FromArgb("#CBD5E1");
 
         private void BuildPager()
