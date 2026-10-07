@@ -318,7 +318,7 @@
 										ShowSuggestions="{Binding ShowPatientSuggestions}"
 										Suggestions="{Binding PatientSuggestions}"
 										Tabs="{Binding Tabs}"
-										TabsVisible="{Binding ShowTabs}"
+										
 										UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}">
 										<controls:SparkExplorerHeaderView.SuggestionTemplate>
 											<DataTemplate x:DataType="{x:Null}">

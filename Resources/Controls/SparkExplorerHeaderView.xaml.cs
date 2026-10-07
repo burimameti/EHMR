@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows.Input;
 
 
@@ -223,13 +224,37 @@ namespace EHMR.Resources.Controls
         }
 
         public static readonly BindableProperty SuggestionsProperty =
-            BindableProperty.Create(nameof(Suggestions), typeof(IEnumerable), typeof(SparkExplorerHeaderView));
+     BindableProperty.Create(nameof(Suggestions), typeof(IEnumerable), typeof(SparkExplorerHeaderView),
+         propertyChanged: (b, o, n) => ((SparkExplorerHeaderView)b).OnSuggestionsChanged(o as IEnumerable, n as IEnumerable));
 
         public IEnumerable? Suggestions
         {
             get => (IEnumerable?)GetValue(SuggestionsProperty);
             set => SetValue(SuggestionsProperty, value);
         }
+
+        void OnSuggestionsChanged(IEnumerable? oldList, IEnumerable? newList)
+        {
+            if(oldList is INotifyCollectionChanged oc) oc.CollectionChanged-=OnSuggestionsCollectionChanged;
+            if(newList is INotifyCollectionChanged nc) nc.CollectionChanged+=OnSuggestionsCollectionChanged;
+            RefreshSuggestionsVisibility();
+        }
+
+        void OnSuggestionsCollectionChanged(object? s, NotifyCollectionChangedEventArgs e) => RefreshSuggestionsVisibility();
+
+        void RefreshSuggestionsVisibility()
+        {
+            ShowSuggestions=!string.IsNullOrWhiteSpace(SearchText)
+                            &&Suggestions?.GetEnumerator().MoveNext()==true;
+        }
+
+        public static readonly BindableProperty SelectedSuggestionProperty =
+            BindableProperty.Create(nameof(SelectedSuggestion), typeof(object), typeof(SparkExplorerHeaderView), null,
+                BindingMode.TwoWay,
+                propertyChanged: (b, o, n) =>
+                {
+                    if(n is not null) ((SparkExplorerHeaderView)b).ShowSuggestions=false;
+                });
 
         public static readonly BindableProperty SuggestionTemplateProperty =
             BindableProperty.Create(nameof(SuggestionTemplate), typeof(DataTemplate), typeof(SparkExplorerHeaderView));
@@ -257,9 +282,7 @@ namespace EHMR.Resources.Controls
             set => SetValue(ShowSuggestionsProperty, value);
         }
 
-        public static readonly BindableProperty SelectedSuggestionProperty =
-            BindableProperty.Create(nameof(SelectedSuggestion), typeof(object), typeof(SparkExplorerHeaderView), null, BindingMode.TwoWay);
-
+       
         public object? SelectedSuggestion
         {
             get => GetValue(SelectedSuggestionProperty);

@@ -25,12 +25,11 @@
 			x:Name="PickerBorder"
 			Grid.Row="1"
 			Padding="0"
-			BackgroundColor="{StaticResource SparkContentBackground}"
+			BackgroundColor="{StaticResource SparkBackgroundAlt}"
 			HeightRequest="36"
-			Stroke="{StaticResource SparkBorder}"
+			Stroke="{StaticResource BorderDefaultStrong}"
 			StrokeShape="RoundRectangle 8"
 			StrokeThickness="1">
-
 			<Border.GestureRecognizers>
 				<PointerGestureRecognizer PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" />
 			</Border.GestureRecognizers>
@@ -42,7 +41,7 @@
 					x:Name="InnerPicker"
 					Title=""
 					Grid.ColumnSpan="2"
-					BackgroundColor="Transparent"
+					BackgroundColor="{StaticResource Transparent}"
 					HorizontalOptions="Fill"
 					Opacity="0.01"
 					TextColor="Transparent"
@@ -75,7 +74,10 @@
 
 			</Grid>
 			<Border.Triggers>
-				<DataTrigger Binding="{Binding IsPointerOver, Source={x:Reference Root}}" TargetType="Border" Value="True">
+				<DataTrigger
+					Binding="{Binding IsPointerOver, Source={x:Reference Root}}"
+					TargetType="Border"
+					Value="True">
 					<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
 					<Setter Property="StrokeThickness" Value="1.5" />
 				</DataTrigger>

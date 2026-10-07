@@ -325,7 +325,7 @@
 										Binding="{Binding IsPrimary}"
 										TargetType="Border"
 										Value="False">
-										<Setter Property="BackgroundColor" Value="{StaticResource SparkButtonSecondaryBg}" />
+										<Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTeal}" />
 									</DataTrigger>
 								</Border.Triggers>
 								<HorizontalStackLayout
@@ -350,7 +350,7 @@
 												Binding="{Binding IsPrimary}"
 												TargetType="Path"
 												Value="False">
-												<Setter Property="Stroke" Value="{StaticResource SparkTextSecondary}" />
+												<Setter Property="Stroke" Value="{StaticResource AppointmentBlue}" />
 											</DataTrigger>
 										</Path.Triggers>
 									</Path>
@@ -394,7 +394,24 @@
 				HeightRequest="1"
 				VerticalOptions="End" />
 		</Grid>
-
+		<!--  ============ SUGGESTIONS DROPDOWN ============  -->
+		<Border
+			Margin="8,0,8,8"
+			Padding="4"
+			BackgroundColor="{StaticResource SparkBackground}"
+			IsVisible="{Binding ShowSuggestions, Source={x:Reference Root}}"
+			MaximumHeightRequest="240"
+			Stroke="{StaticResource SparkBorder}"
+			StrokeThickness="1">
+			<Border.StrokeShape>
+				<RoundRectangle CornerRadius="12" />
+			</Border.StrokeShape>
+			<CollectionView
+				ItemTemplate="{Binding SuggestionTemplate, Source={x:Reference Root}}"
+				ItemsSource="{Binding Suggestions, Source={x:Reference Root}}"
+				SelectedItem="{Binding SelectedSuggestion, Source={x:Reference Root}, Mode=TwoWay}"
+				SelectionMode="Single" />
+		</Border>
 		<!--  ============ ROW 3: DATA GRID HEADER COLUMNS ============  -->
 		<Grid
 			x:Name="DataGridHeaderGrid"

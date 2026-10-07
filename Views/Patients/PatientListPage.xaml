@@ -30,58 +30,61 @@
 						Grid.Column="0"
 						Subtitle="Преглед, пребарување и управување со пациенти">
 						<controls:FFPageHeader.HeaderContent>
-							<controls:FFButton ButtonKind="Secondary" Command="{Binding GoBackCommand}" HeightRequestEx="40" Text="Назад" WidthRequestEx="130" />
+							<controls:FFButton
+								ButtonKind="Secondary"
+								Command="{Binding GoBackCommand}"
+								HeightRequestEx="40"
+								Text="Назад"
+								WidthRequestEx="130" />
 						</controls:FFPageHeader.HeaderContent>
 					</controls:FFPageHeader>
 
-					
+
 				</Grid>
 			</Border>
 
-			<!--  MAIN CONTENT / GRID  -->
-			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-				<VerticalStackLayout Spacing="8">
+			<Border
+				Grid.Row="1"
+				BackgroundColor="{StaticResource PageBackground}"
+				StrokeThickness="0">
+				<ScrollView VerticalScrollBarVisibility="Never">
+					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
+						<controls:FFSectionCard>
+							<Grid ColumnSpacing="5" RowSpacing="0">
+								<VerticalStackLayout Spacing="20">
+									<controls:SparkExplorerHeaderView
+										Buttons="{Binding Buttons}"
+										Pickers="{Binding Pickers}"
+										SearchCommand="{Binding SearchCommand}"
+										SearchPlaceholder="Пребарување на пациенти..."
+										SearchText="{Binding SearchText}"
+										Tabs="{Binding Tabs}"
+										UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}" />
 
-					<Border Style="{StaticResource PageHeaderCardStyle}">
-						<Grid ColumnSpacing="5" RowSpacing="20">
-							<VerticalStackLayout Spacing="10">
+								</VerticalStackLayout>
+							</Grid>
+						</controls:FFSectionCard>
 
-								<!--  SEARCH & FILTERS  -->
-								<controls:SparkExplorerHeaderView
-									Buttons="{Binding Buttons}"
-									Pickers="{Binding Pickers}"
-									SearchCommand="{Binding SearchCommand}"
-									SearchPlaceholder="Пребарување на пациенти..."
-									SearchText="{Binding SearchText}"
-									UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}"
-									Tabs="{Binding Tabs}" />
-
-								<!--  DATA GRID  -->
-								<Border Padding="0">
-									<controls:SparkDataGridView
-										x:Name="PatientGrid"
-										AutoSelectFirstRow="False"
-										Columns="{Binding GridColumns}"
-										CurrentPage="{Binding CurrentPage}"
-										EditRowCommand="{Binding EditCommand}"
-										NextPageCommand="{Binding NextPageCommand}"
-										PageChangedCommand="{Binding PageChangedCommand}"
-										PageInfoText="{Binding PageInfoText}"
-										PreviousPageCommand="{Binding PreviousPageCommand}"
-										RowTappedCommand="{Binding SelectCommand}"
-										Rows="{Binding GridRows}"
-										ShowPagination="True"
-										ShowRowNumbers="True"
-										TotalPages="{Binding TotalPages}" />
-								</Border>
-
-							</VerticalStackLayout>
-						</Grid>
-					</Border>
-
-				</VerticalStackLayout>
-			</ScrollView>
-
+						<controls:FFSectionCard>
+							<controls:SparkDataGridView
+								x:Name="PatientGrid"
+								AutoSelectFirstRow="False"
+								Columns="{Binding GridColumns}"
+								CurrentPage="{Binding CurrentPage}"
+								EditRowCommand="{Binding EditCommand}"
+								NextPageCommand="{Binding NextPageCommand}"
+								PageChangedCommand="{Binding PageChangedCommand}"
+								PageInfoText="{Binding PageInfoText}"
+								PreviousPageCommand="{Binding PreviousPageCommand}"
+								RowTappedCommand="{Binding SelectCommand}"
+								Rows="{Binding GridRows}"
+								ShowPagination="True"
+								ShowRowNumbers="True"
+								TotalPages="{Binding TotalPages}" />
+						</controls:FFSectionCard>
+					</VerticalStackLayout>
+				</ScrollView>
+			</Border>
 		</Grid>
 
 		<!--  LOADING OVERLAY  -->

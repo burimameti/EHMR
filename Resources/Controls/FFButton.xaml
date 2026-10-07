@@ -13,17 +13,15 @@
 		MinimumHeightRequest="{Binding HeightRequestEx, Source={x:Reference Root}}"
 		MinimumWidthRequest="{Binding WidthRequestEx, Source={x:Reference Root}}"
 		Stroke="{Binding BorderColor, Source={x:Reference Root}}"
+		StrokeShape="RoundRectangle 8"
 		StrokeThickness="{Binding BorderThickness, Source={x:Reference Root}}"
 		VerticalOptions="End">
 		<Border.Shadow>
 			<Shadow
-				Brush="#18412A2A"
+				Brush="#14293441"
 				Radius="4"
 				Offset="0,1" />
 		</Border.Shadow>
-		<!--<Border.StrokeShape>
-			<RoundRectangle CornerRadius="{Binding CornerRadius, Source={x:Reference Root}}" />
-		</Border.StrokeShape>-->
 		<Border.GestureRecognizers>
 			<TapGestureRecognizer Tapped="OnTapped" />
 		</Border.GestureRecognizers>
