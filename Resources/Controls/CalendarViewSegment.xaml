@@ -13,21 +13,14 @@
 	<Grid BackgroundColor="Transparent">
 		<!--  Активен: бела подлога со сенка.  -->
 		<Border
-			BackgroundColor="#FFFFFF"
+			BackgroundColor="{StaticResource SparkBackground}"
 			IsVisible="{Binding IsActive, Source={x:Reference Root}}"
 			StrokeShape="RoundRectangle 7"
 			StrokeThickness="0">
-			<Border.Shadow>
-				<Shadow
-					Brush="Black"
-					Opacity="0.10"
-					Radius="4"
-					Offset="0,1" />
-			</Border.Shadow>
-		</Border>
+Border>
 
 		<Label
-			Padding="18,7"
+			Padding="14,6"
 			FontAttributes="Bold"
 			FontSize="12"
 			HorizontalTextAlignment="Center"
