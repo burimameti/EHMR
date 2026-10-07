@@ -286,22 +286,41 @@ public partial class DashboardViewModel : ObservableObject
             return;
         }
 
-        var cyrillicQuery = UseCyrillicSearch
-            ? MacedonianTransliterator.ToCyrillic(query)
-            : query;
+        var tokens=query.Split(' ', StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries);
+        var firstToken=tokens[0];
+        var lastToken=tokens.Length>1 ? tokens[1] : null;
+        var firstAlternates=GetSearchVariants(firstToken);
+        var lastAlternates=lastToken is null ? Array.Empty<string>() : GetSearchVariants(lastToken);
 
         PatientSuggestions=new ObservableCollection<DashboardPatientAggregate>(
             _allPatients
                 .Where(x =>
-                    x.Patient.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)||
-                    x.Patient.FullName.Contains(cyrillicQuery, StringComparison.OrdinalIgnoreCase)||
-                    x.Patient.PatientNumber.Contains(query, StringComparison.OrdinalIgnoreCase)||
-                    (!string.IsNullOrWhiteSpace(x.Patient.NationalId)&&x.Patient.NationalId.Contains(query, StringComparison.OrdinalIgnoreCase))||
-                    x.Patient.SzboNumber.Contains(query, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(x => x.Patient.FullName)
+                    StartsWithAny(x.Patient.FirstName, firstAlternates) &&
+                    (lastToken is null || StartsWithAny(x.Patient.LastName, lastAlternates)))
+                .OrderBy(x => x.Patient.LastName)
+                .ThenBy(x => x.Patient.FirstName)
                 .Take(8));
         ShowPatientSuggestions=PatientSuggestions.Count>0;
     }
+
+    static string[] GetSearchVariants(string value)
+    {
+        var variants=new[]
+        {
+            value,
+            MacedonianTransliterator.ToCyrillic(value),
+            MacedonianTransliterator.ToLatin(value)
+        };
+
+        return variants
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    static bool StartsWithAny(string? value, IEnumerable<string> variants)
+        => !string.IsNullOrWhiteSpace(value)
+            && variants.Any(v => value.StartsWith(v, StringComparison.OrdinalIgnoreCase));
 
     partial void OnSelectedPatientSuggestionChanged(DashboardPatientAggregate? value)
     {
