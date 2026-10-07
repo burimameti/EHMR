@@ -165,7 +165,7 @@
 		</Border>
 
 		<!--  ============ ROW 2: SEARCH + BUTTONS + PICKERS ============  -->
-		<Grid BackgroundColor="{StaticResource SparkBackgroundAlt}" IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
+		<Grid BackgroundColor="{StaticResource White}" IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
 
 			<Grid
 				x:Name="SecondaryToolbarGrid"
