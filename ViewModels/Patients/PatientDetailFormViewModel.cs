@@ -1225,7 +1225,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     private void RemovePreviousMedicine(PreviousMedicineRow row)
     {
         if(row==null||!CanEditPatient||!row.CanDelete) return;
-
         PreviousMedicines.Remove(row);
         OnPropertyChanged(nameof(HasMissingMedicineResolutions));
         OnPropertyChanged(nameof(CanSavePatientForm));
