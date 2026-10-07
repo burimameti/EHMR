@@ -170,7 +170,7 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				ColumnSpacing="8"
-				MinimumHeightRequest="40">
+				MinimumHeightRequest="52">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
 					<!--  0: search  -->
@@ -181,13 +181,9 @@
 				</Grid.ColumnDefinitions>
 
 				<!--  ============ 0: SEARCH ============  -->
-				<VerticalStackLayout
+				<Border
 					Grid.Column="0"
-					Margin="8,6,8,6"
-					HorizontalOptions="Fill"
-					VerticalOptions="Center">
-					<Border
-					Padding="12,0"
+					Margin="8"
 					BackgroundColor="White"
 					HeightRequest="36"
 					HorizontalOptions="Fill"
@@ -207,7 +203,6 @@
 						TextColor="{StaticResource SparkTextPrimary}"
 						VerticalOptions="Center" />
 				</Border>
-				</VerticalStackLayout>
 				<!--  ============ 1: PICKERS ============  -->
 				<HorizontalStackLayout
 					Grid.Column="1"
