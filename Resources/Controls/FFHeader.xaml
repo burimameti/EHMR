@@ -78,7 +78,6 @@
 					BorderColor="{StaticResource SparkBorder}"
 					BorderWidth="1"
 					Command="{Binding SecondaryButtonCommand, Source={x:Reference Root}}"
-					CornerRadius="7"
 					HeightRequest="36"
 					IsVisible="{Binding ShowSecondaryButton, Source={x:Reference Root}}"
 					Style="{StaticResource TabButtonStyle}"
