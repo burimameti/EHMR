@@ -521,8 +521,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             return;
         }
 
-        var medicineWithoutResolution = AttachedMedicines.FirstOrDefault(x => x.PatientMedicine.ResolutionDocumentId is null)?.PatientMedicine;
-        medicineWithoutResolution ??= PreviousMedicines.FirstOrDefault(x => x.PatientMedicine.ResolutionDocumentId is null)?.PatientMedicine;
+        var medicineWithoutResolution = AttachedMedicines.FirstOrDefault(x => !x.HasResolution)?.PatientMedicine;
+        medicineWithoutResolution ??= PreviousMedicines.FirstOrDefault(x => !x.HasResolution)?.PatientMedicine;
         if(medicineWithoutResolution is not null)
         {
             var medicineName=medicineWithoutResolution.MedicineName;
