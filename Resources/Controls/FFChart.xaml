@@ -1,44 +1,26 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
 <ContentView
 	x:Class="EHMR.Resources.Controls.FFChart"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-
 	<Border
-		Padding="20"
-		BackgroundColor="{StaticResource Gray100}"
-		StrokeShape="RoundRectangle 16"
-		StrokeThickness="0">
-
-
-		<Grid RowDefinitions="Auto,*" RowSpacing="16">
-
-
-			<!--  TITLE  -->
-
+		Padding="14"
+		BackgroundColor="{StaticResource SparkBackground}"
+		Stroke="{StaticResource SparkBorder}"
+		StrokeShape="RoundRectangle 8"
+		StrokeThickness="1">
+		<Grid RowDefinitions="Auto,*" RowSpacing="10">
 			<Label
 				x:Name="TitleLabel"
 				FontAttributes="Bold"
-				FontSize="18"
+				FontSize="14"
 				Text="Chart"
-				TextColor="{StaticResource Gray900}" />
-
-
-
-			<!--  CHART AREA  -->
-
+				TextColor="{StaticResource SparkTextPrimary}" />
 			<GraphicsView
 				x:Name="ChartView"
 				Grid.Row="1"
-				HeightRequest="240" />
-
-
+				HeightRequest="220" />
 		</Grid>
-
-
 	</Border>
-
-
 </ContentView>
