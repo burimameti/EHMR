@@ -40,18 +40,12 @@
 				<Grid ColumnDefinitions="*,Auto">
 
 
-					<controls:FFPageHeader
-    Title="Извештаи"
-    Subtitle="Анализа, следење и системски извештаи" >
-				<controls:FFPageHeader.HeaderContent>
-<controls:FFButton
-						ButtonKind="Secondary"
-						Command="{Binding GoBackCommand}"
-						HeightRequestEx="40"
-						Text="Назад"
-						WidthRequestEx="130" />
-			</controls:FFPageHeader.HeaderContent>
-		</controls:FFPageHeader>
+                    <controls:FFPageHeader
+                        Title="Извештаи"
+                        Subtitle="Анализа, следење и системски извештаи"
+                        SecondaryButtonText="Назад"
+                        SecondaryButtonCommand="{Binding GoBackCommand}"
+                        ShowSecondaryButton="True" />
 
 <controls:FFButton
     Grid.Column="1"
