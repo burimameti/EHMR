@@ -120,6 +120,20 @@ namespace EHMR.Resources.Controls
 
         #region Search
 
+        public static readonly BindableProperty UseCyrillicInputProperty =
+            BindableProperty.Create(
+                nameof(UseCyrillicInput),
+                typeof(bool),
+                typeof(SparkExplorerHeaderView),
+                true,
+                BindingMode.TwoWay);
+
+        public bool UseCyrillicInput
+        {
+            get => (bool)GetValue(UseCyrillicInputProperty);
+            set => SetValue(UseCyrillicInputProperty, value);
+        }
+
 
        
 
