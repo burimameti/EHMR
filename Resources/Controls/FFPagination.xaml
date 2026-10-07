@@ -6,9 +6,9 @@
 	x:Name="Root">
 
 	<Grid
-		Padding="12,8"
+		Padding="10,5"
 		ColumnDefinitions="*,Auto"
-		ColumnSpacing="12">
+		ColumnSpacing="10">
 
 		<!--  LEFT  -->
 		<Label
@@ -20,7 +20,7 @@
 		<HorizontalStackLayout
 			Grid.Column="1"
 			HorizontalOptions="End"
-			Spacing="6">
+			Spacing="5">
 
 			<Button
 				Command="{Binding PrevCommand, Source={x:Reference Root}}"
