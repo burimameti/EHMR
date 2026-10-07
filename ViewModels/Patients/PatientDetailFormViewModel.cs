@@ -1128,6 +1128,15 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         if(row is null || !CanEditPatient || !IsEditMode || IsUploadingDocument)
             return;
 
+        if(!row.HasResolution)
+        {
+            await _userDialogService.ShowAlertAsync(
+                "Недостасува решение",
+                $"За активниот лек „{row.MedicineName}“ прво внесете решение. Лекот не може да се премести во неактивни без постоечко решение за активната терапија.",
+                "ОК");
+            return;
+        }
+
         var confirmed = await _userDialogService.ShowConfirmationAsync(
             "Преместување на неактивен лек",
             $"Лекот „{row.MedicineName}“ ќе биде преместен во неактивни лекови. Потребно е да прикачите решение за неактивност. Дали сакате да продолжите?",
