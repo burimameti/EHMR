@@ -410,7 +410,7 @@
 														FontAttributes="Bold"
 														FontSize="11.5"
 														LineBreakMode="WordWrap"
-														Text="{Binding Medicine.Name, TargetNullValue='—'}"
+														Text="{Binding Medicine.BilingualName, TargetNullValue='—'}"
 														TextColor="{StaticResource SparkTextPrimary}" />
 												</DataTemplate>
 											</BindableLayout.ItemTemplate>
@@ -491,7 +491,7 @@
 													<Label
 														Padding="10,9"
 														FontSize="12"
-														Text="{Binding Medicine.Name, TargetNullValue='—'}"
+														Text="{Binding Medicine.BilingualName, TargetNullValue='—'}"
 														TextColor="{StaticResource SparkTextPrimary}" />
 													<Label
 														Grid.Column="1"
