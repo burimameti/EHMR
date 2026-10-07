@@ -1,11 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
 	<Style x:Key="FFIconButtonStyle" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="#69CFDD" />
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkAccentTeal}" />
 		<Setter Property="TextColor" Value="White" />
-		<Setter Property="CornerRadius" Value="6" />
+		<Setter Property="CornerRadius" Value="7" />
 		<Setter Property="Padding" Value="0" />
-		<Setter Property="HeightRequest" Value="44" />
-		<Setter Property="WidthRequest" Value="44" />
+		<Setter Property="HeightRequest" Value="36" />
+		<Setter Property="WidthRequest" Value="36" />
 	</Style>
 </ResourceDictionary>
