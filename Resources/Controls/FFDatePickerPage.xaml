@@ -28,7 +28,7 @@
 			StrokeThickness="1">
 
 			<Border.StrokeShape>
-				<RoundRectangle CornerRadius="8" />
+				<Rectangle />
 			</Border.StrokeShape>
 <Border.GestureRecognizers>
 				<TapGestureRecognizer Tapped="OnBorderTapped" />
@@ -91,7 +91,7 @@
 					WidthRequest="30">
 
 					<Border.StrokeShape>
-						<RoundRectangle CornerRadius="6" />
+						<Rectangle />
 					</Border.StrokeShape>
 
 					<Label
