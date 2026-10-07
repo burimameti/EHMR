@@ -443,7 +443,20 @@
 									</Grid>
 								</VerticalStackLayout>
 
-								<!--  ═══ 2. КОНТАКТ ИНФОРМАЦИИ ═══  -->
+				<!--  ═══ 3. СКОРОВИ — на иста линија со МКБ ═══  -->
+									<VerticalStackLayout Grid.Column="2" Spacing="10">
+										<controls:CrudSectionHeader
+											Title="СКОРОВИ"
+											LineColor="{StaticResource White}"
+											Style="{StaticResource SectionHeaderStyle}" />
+										<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
+									</VerticalStackLayout>
+									</Grid>
+								</VerticalStackLayout>
+
+												<Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+				<VerticalStackLayout Grid.Column="0" Spacing="10">
+				<!--  ═══ 2. КОНТАКТ ИНФОРМАЦИИ ═══  -->
 								<VerticalStackLayout Spacing="10">
 
 									<controls:CrudSectionHeader
@@ -599,18 +612,7 @@
 											</Border>
 										</VerticalStackLayout>
 
-<!--  ═══ 3. СКОРОВИ — на иста линија со МКБ ═══  -->
-									<VerticalStackLayout Grid.Column="2" Spacing="10">
-										<controls:CrudSectionHeader
-											Title="СКОРОВИ"
-											LineColor="{StaticResource White}"
-											Style="{StaticResource SectionHeaderStyle}" />
-										<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
-									</VerticalStackLayout>
-									</Grid>
-								</VerticalStackLayout>
-
-								<!--  ═══ 3. МАТИЧЕН РЕУМАТОЛОГ / МКБ / ТЕРАПИИ ═══  -->
+<!--  ═══ 3. МАТИЧЕН РЕУМАТОЛОГ / МКБ / ТЕРАПИИ ═══  -->
 								<VerticalStackLayout Spacing="10">
 
 									<controls:CrudSectionHeader
@@ -1223,7 +1225,10 @@
 
 									
 								</Grid>
-								<!--  ═══ 5. ДОСИЕ | СТАТУС НА ПАЦИЕНТ | ЗАБЕЛЕШКА ═══  -->
+								</VerticalStackLayout>
+				</Grid>
+
+				<!--  ═══ 5. ДОСИЕ | СТАТУС НА ПАЦИЕНТ | ЗАБЕЛЕШКА ═══  -->
 								<Grid ColumnDefinitions="*,*,*" ColumnSpacing="14">
 
 									<!--  ДОСИЕ  -->
