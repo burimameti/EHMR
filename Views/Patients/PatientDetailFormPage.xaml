@@ -1101,49 +1101,6 @@
 											</Border>
 										</Grid>
 
-										<controls:FFSearchBox
-											IsVisible="{Binding IsEditMode}"
-											Placeholder="Додај лек во претходни терапии..."
-											Text="{Binding PreviousMedicineSearchText, Mode=TwoWay}" />
-
-										<Border
-											Padding="4"
-											BackgroundColor="White"
-											IsVisible="{Binding ShowPreviousMedicineDropdown}"
-											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeShape="RoundRectangle 8"
-											StrokeThickness="1"
-											VerticalOptions="Start">
-											<CollectionView
-												HeightRequest="140"
-												ItemsSource="{Binding PreviousMedicineResults}"
-												SelectionMode="None">
-												<CollectionView.ItemTemplate>
-													<DataTemplate x:DataType="dto:MedicineDto">
-														<Border
-															Padding="9,6"
-															BackgroundColor="Transparent"
-															StrokeThickness="0">
-															<Border.GestureRecognizers>
-																<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddPreviousMedicineCommand}" CommandParameter="{Binding .}" />
-															</Border.GestureRecognizers>
-															<VerticalStackLayout Spacing="1">
-																<Label
-																	FontAttributes="Bold"
-																	FontSize="11.5"
-																	Text="{Binding Name}"
-																	TextColor="{StaticResource SparkAccentTealDark}" />
-																<Label
-																	FontSize="10"
-																	Text="{Binding GenericName}"
-																	TextColor="{StaticResource SparkTextSecondary}" />
-															</VerticalStackLayout>
-														</Border>
-													</DataTemplate>
-												</CollectionView.ItemTemplate>
-											</CollectionView>
-										</Border>
-
 										<Grid ColumnDefinitions="1.25*,1.15*,1.05*,0.65*,1.1*,92" ColumnSpacing="1">
 											<Border Style="{StaticResource TableHeaderBorderStyle}">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" />
