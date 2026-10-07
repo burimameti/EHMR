@@ -1041,46 +1041,34 @@
 															Grid.Column="4"
 															Stroke="{StaticResource SparkBorderSubtle}"
 															Style="{StaticResource TableCellBorderStyle}">
-															<HorizontalStackLayout
-																HorizontalOptions="Center"
-																Spacing="4"
-																VerticalOptions="Center">
-																<controls:FFButton
-																	ButtonKind="Secondary"
-																	Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.UploadMedicineResolutionCommand}"
-																	CommandParameter="{Binding .}"
-																	HeightRequestEx="30"
-																	IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
-																	Text="Прикачи"
-																	WidthRequestEx="68" />
-																<Label
-																	FontFamily="FASolid"
-																	FontSize="13"
-																	Text="&#xf06e;"
-																	TextColor="{StaticResource SparkAccentTealDark}"
-																	VerticalOptions="Center">
-																	<Label.GestureRecognizers>
-																		<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding PatientMedicine.ResolutionDocument}" />
-																	</Label.GestureRecognizers>
-																</Label>
-															</HorizontalStackLayout>
+															<VerticalStackLayout HorizontalOptions="Center" Spacing="1" VerticalOptions="Center">
+											<HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+												<controls:FFButton ButtonKind="Secondary" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.UploadMedicineResolutionCommand}" CommandParameter="{Binding .}" HeightRequestEx="28" IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" Text="Прикачи" WidthRequestEx="68" />
+												<Label FontFamily="FASolid" FontSize="13" Text="&#xf06e;" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center">
+													<Label.GestureRecognizers>
+														<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding PatientMedicine.ResolutionDocument}" />
+													</Label.GestureRecognizers>
+												</Label>
+											</HorizontalStackLayout>
+											<Label FontAttributes="Bold" FontSize="8" HorizontalOptions="Center" Text="Недостасува решение" TextColor="#DC2626">
+												<Label.Triggers>
+													<DataTrigger Binding="{Binding HasResolution}" TargetType="Label" Value="True">
+														<Setter Property="IsVisible" Value="False" />
+													</DataTrigger>
+												</Label.Triggers>
+											</Label>
+										</VerticalStackLayout>
 														</Border>
 														<Border
-															Grid.Column="5"
-															Stroke="{StaticResource SparkBorderSubtle}"
-															Style="{StaticResource TableCellBorderStyle}">
-															<controls:FFButton
-																ButtonKind="Danger"
-																Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}"
-																CommandParameter="{Binding .}"
-																HeightRequestEx="32"
-																HorizontalOptions="Center"
-																IsEnabled="{Binding CanDelete}"
-																IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
-																Text=" X "
-																VerticalOptions="Center"
-																WidthRequestEx="44" />
-														</Border>
+											Grid.Column="5"
+											Padding="2"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											Style="{StaticResource TableCellBorderStyle}">
+											<VerticalStackLayout HorizontalOptions="Center" Spacing="2">
+												<controls:FFButton ButtonKind="Secondary" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.MoveMedicineToInactiveCommand}" CommandParameter="{Binding .}" HeightRequestEx="25" IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" Text="Неактивен" WidthRequestEx="82" />
+												<controls:FFButton ButtonKind="Danger" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" HeightRequestEx="25" HorizontalOptions="Center" IsEnabled="{Binding CanDelete}" IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" Text=" X " WidthRequestEx="44" />
+											</VerticalStackLayout>
+										</Border>
 													</Grid>
 												</DataTemplate>
 											</BindableLayout.ItemTemplate>
@@ -1227,29 +1215,23 @@
 															Grid.Column="4"
 															Stroke="{StaticResource SparkBorderSubtle}"
 															Style="{StaticResource TableCellBorderStyle}">
-															<HorizontalStackLayout
-																HorizontalOptions="Center"
-																Spacing="4"
-																VerticalOptions="Center">
-																<controls:FFButton
-																	ButtonKind="Secondary"
-																	Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.UploadMedicineResolutionCommand}"
-																	CommandParameter="{Binding .}"
-																	HeightRequestEx="30"
-																	IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
-																	Text="Прикачи"
-																	WidthRequestEx="68" />
-																<Label
-																	FontFamily="FASolid"
-																	FontSize="13"
-																	Text="&#xf06e;"
-																	TextColor="{StaticResource SparkAccentTealDark}"
-																	VerticalOptions="Center">
-																	<Label.GestureRecognizers>
-																		<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding PatientMedicine.ResolutionDocument}" />
-																	</Label.GestureRecognizers>
-																</Label>
-															</HorizontalStackLayout>
+															<VerticalStackLayout HorizontalOptions="Center" Spacing="1" VerticalOptions="Center">
+											<HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+												<controls:FFButton ButtonKind="Secondary" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.UploadMedicineResolutionCommand}" CommandParameter="{Binding .}" HeightRequestEx="28" IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" Text="Прикачи" WidthRequestEx="68" />
+												<Label FontFamily="FASolid" FontSize="13" Text="&#xf06e;" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center">
+													<Label.GestureRecognizers>
+														<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding PatientMedicine.ResolutionDocument}" />
+													</Label.GestureRecognizers>
+												</Label>
+											</HorizontalStackLayout>
+											<Label FontAttributes="Bold" FontSize="8" HorizontalOptions="Center" Text="Недостасува решение" TextColor="#DC2626">
+												<Label.Triggers>
+													<DataTrigger Binding="{Binding HasResolution}" TargetType="Label" Value="True">
+														<Setter Property="IsVisible" Value="False" />
+													</DataTrigger>
+												</Label.Triggers>
+											</Label>
+										</VerticalStackLayout>
 														</Border>
 														<Border
 															Grid.Column="5"
