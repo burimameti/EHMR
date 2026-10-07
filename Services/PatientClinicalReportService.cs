@@ -195,33 +195,29 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
     private static void BuildHeader(
         QuestPDF.Infrastructure.IContainer container,
         string title,
-        Domain.Entities.Patient patient,
-        Domain.Entities.Encounter? focusEncounter,
-        Domain.Entities.Appointment? focusAppointment,
-        string? generatedBy)
+        Domain.Entities.Encounter? focusEncounter)
     {
         container
-            .Border(1)
-            .BorderColor("#CBD5E1")
-            .Padding(10)
-            .Column(c =>
+            .PaddingBottom(7)
+            .BorderBottom(1)
+            .BorderColor("#111827")
+            .Row(row =>
             {
-                c.Item().Text(title).Bold().FontSize(16).FontColor("#000000");
-               // c.Item().PaddingTop(2).Text(patient.FullName).Bold().FontSize(12);
-                //c.Item().PaddingTop(2).Text(
-                //    $"ЕЗБО: {patient.SzboNumber} · ЕМБГ: {patient.NationalId} · " +
-                //    $"Реуматолог: {patient.Doctor?.FullName ?? "—"}").FontSize(9);
-                c.Item().PaddingTop(2).Text(
-                    $"Датум: {DateTime.Now:dd.MM.yyyy HH:mm} · " );
-                   
-                //if(focusEncounter is not null)
-                //    c.Item().PaddingTop(4).Text(
-                //        $"Фокусиран преглед: {focusEncounter.EncounterNumber} · {focusEncounter.EncounterDate:dd.MM.yyyy HH:mm}")
-                //        .Bold().FontSize(9);
-                //if(focusAppointment is not null)
-                //    c.Item().PaddingTop(2).Text(
-                //        $"Фокусиран термин: {focusAppointment.AppointmentNumber} · {focusAppointment.ScheduledStart:dd.MM.yyyy HH:mm}")
-                //        .Bold().FontSize(9);
+                row.ConstantItem(62)
+                    .AlignLeft()
+                    .AlignMiddle()
+                    .Text("EHMR")
+                    .Bold()
+                    .FontSize(14)
+                    .FontColor("#0F766E");
+
+                row.RelativeItem()
+                    .AlignRight()
+                    .AlignMiddle()
+                    .Text(title)
+                    .Bold()
+                    .FontSize(11)
+                    .FontColor("#111827");
             });
     }
 
@@ -230,17 +226,17 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
         string title,
         Action content)
     {
-        column.Item().PaddingTop(10).Column(section =>
+        column.Item().PaddingTop(7).Column(section =>
         {
             section.Item()
-                .Background("#E6FFFB")
-                .BorderBottom(2)
-                .BorderColor("#AAAAAA")
-                .Padding(6)
+                .BorderBottom(1)
+                .BorderColor("#111827")
+                .PaddingBottom(3)
                 .Text(title)
                 .Bold()
-                .FontSize(10)
-                .FontColor("#0F172A");
+                .FontSize(9)
+                .FontColor("#111827");
+
             content();
         });
     }
