@@ -5,74 +5,52 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls">
 	<Style x:Key="ShadowFieldCardStyle" TargetType="Border">
-
-		<Setter Property="Background" Value="White" />
+		<Setter Property="Background" Value="{StaticResource SparkBackground}" />
 		<Setter Property="Padding" Value="12" />
-		<Setter Property="Stroke" Value="#E5E7EB" />
+		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
 		<Setter Property="StrokeThickness" Value="1" />
-
 		<Setter Property="StrokeShape">
 			<Setter.Value>
-				<RoundRectangle CornerRadius="12" />
+				<RoundRectangle CornerRadius="8" />
 			</Setter.Value>
 		</Setter>
-
-		<Setter Property="Shadow">
-			<Shadow
-				Brush="Black"
-				Opacity="0.08"
-				Radius="10"
-				Offset="0,2" />
-		</Setter>
 	</Style>
-
-	<!--  LABEL STYLE  -->
 	<Style x:Key="ShadowFieldLabelStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="#6B7280" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 	</Style>
-
-	<!--  INPUT AREA WRAPPER  -->
 	<Style x:Key="ShadowFieldContainerStackStyle" TargetType="VerticalStackLayout">
 		<Setter Property="Spacing" Value="4" />
 	</Style>
-	<!--  =====================================================  -->
-	<!--  FFCard presets  -->
-	<!--  =====================================================  -->
-
 	<Style x:Key="FFCardDefaultStyle" TargetType="controls:FFCard">
 		<Setter Property="Variant" Value="Default" />
-		<Setter Property="CardPadding" Value="16" />
-		<Setter Property="CardCornerRadius" Value="16" />
-		<Setter Property="HasShadow" Value="True" />
+		<Setter Property="CardPadding" Value="14" />
+		<Setter Property="CardCornerRadius" Value="8" />
+		<Setter Property="HasShadow" Value="False" />
 	</Style>
-
 	<Style x:Key="FFCardElevatedStyle" TargetType="controls:FFCard">
 		<Setter Property="Variant" Value="Elevated" />
-		<Setter Property="CardPadding" Value="18" />
-		<Setter Property="CardCornerRadius" Value="18" />
-		<Setter Property="HasShadow" Value="True" />
+		<Setter Property="CardPadding" Value="14" />
+		<Setter Property="CardCornerRadius" Value="8" />
+		<Setter Property="HasShadow" Value="False" />
 	</Style>
-
 	<Style x:Key="FFCardOutlinedStyle" TargetType="controls:FFCard">
 		<Setter Property="Variant" Value="Outlined" />
-		<Setter Property="CardPadding" Value="16" />
-		<Setter Property="CardCornerRadius" Value="16" />
+		<Setter Property="CardPadding" Value="14" />
+		<Setter Property="CardCornerRadius" Value="8" />
 		<Setter Property="HasShadow" Value="False" />
 	</Style>
-
 	<Style x:Key="FFCardFlatStyle" TargetType="controls:FFCard">
 		<Setter Property="Variant" Value="Flat" />
-		<Setter Property="CardPadding" Value="16" />
-		<Setter Property="CardCornerRadius" Value="16" />
+		<Setter Property="CardPadding" Value="14" />
+		<Setter Property="CardCornerRadius" Value="8" />
 		<Setter Property="HasShadow" Value="False" />
 	</Style>
-
 	<Style x:Key="FFCardSoftStyle" TargetType="controls:FFCard">
 		<Setter Property="Variant" Value="Soft" />
-		<Setter Property="CardPadding" Value="16" />
-		<Setter Property="CardCornerRadius" Value="16" />
-		<Setter Property="HasShadow" Value="True" />
+		<Setter Property="CardPadding" Value="14" />
+		<Setter Property="CardCornerRadius" Value="8" />
+		<Setter Property="HasShadow" Value="False" />
 	</Style>
 </ResourceDictionary>
