@@ -117,11 +117,11 @@ public partial class FFButton : ContentView
             propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumWidthRequest=(double)v);
 
     public static readonly BindableProperty ContentPaddingProperty =
-        BindableProperty.Create(nameof(ContentPadding), typeof(Thickness), typeof(FFButton), new Thickness(20, 0),
+        BindableProperty.Create(nameof(ContentPadding), typeof(Thickness), typeof(FFButton), new Thickness(16, 0),
             propertyChanged: (b, _, v) => ((FFButton)b).Container.Padding=(Thickness)v);
 
     public static readonly BindableProperty CornerRadiusProperty =
-        BindableProperty.Create(nameof(CornerRadius), typeof(float), typeof(FFButton), 10f);
+        BindableProperty.Create(nameof(CornerRadius), typeof(float), typeof(FFButton), 7f);
 
     public static readonly BindableProperty FontSizeExProperty =
         BindableProperty.Create(nameof(FontSizeEx), typeof(double), typeof(FFButton), 13d);
@@ -279,9 +279,9 @@ public partial class FFButton : ContentView
 
         if(IsBlue)
         {
-            BackgroundColorEx=Color.FromArgb("#32B9AA");
+            BackgroundColorEx=Color.FromArgb("#0EA5B8");
             TextColorEx=Colors.White;
-            BorderColor=Color.FromArgb("#2563EB");
+            BorderColor=Color.FromArgb("#0EA5B8");
             BorderThickness=0;
             return;
         }
@@ -290,26 +290,26 @@ public partial class FFButton : ContentView
         {
             // Main action: Save, Create, Confirm
             case FFButtonKind.Primary:
-                BackgroundColorEx=Color.FromArgb("#32B9AA");
+                BackgroundColorEx=Color.FromArgb("#0EA5B8");
                 TextColorEx=Colors.White;
-                BorderColor=Color.FromArgb("#DC2626");
+                BorderColor=Color.FromArgb("#0EA5B8");
                 BorderThickness=0;
                 break;
 
             // Supporting action: Edit, Preview, Back
             case FFButtonKind.Secondary:
-                BackgroundColorEx=Color.FromArgb("#64748B");
-                TextColorEx=Colors.White;
-                BorderColor=Color.FromArgb("#B91C1C");
-                BorderThickness=0;
+                BackgroundColorEx=Colors.White;
+                TextColorEx=Color.FromArgb("#334155");
+                BorderColor=Color.FromArgb("#CBD5E1");
+                BorderThickness=1;
                 break;
 
             // Positive clinical action: Complete, Approve
             case FFButtonKind.Green:
-                BackgroundColorEx=Color.FromArgb("#32B9AA");
+                BackgroundColorEx=Color.FromArgb("#0EA5B8");
                 TextColorEx=Colors.White;
-                BorderColor=Color.FromArgb("#15803D");
-                BorderThickness=2;
+                BorderColor=Color.FromArgb("#0EA5B8");
+                BorderThickness=0;
                 break;
 
             // Destructive action: Delete, Cancel therapy
