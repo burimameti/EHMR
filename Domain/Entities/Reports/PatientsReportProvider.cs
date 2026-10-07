@@ -90,6 +90,8 @@ namespace EHMR.Domain.Entities.Reports
         public void SetMedicineFilterEnabled(bool enabled)
         {
             IsMedicineFilterEnabled=enabled;
+            if(_medicinePicker is not null && !enabled)
+                _medicinePicker.SelectedItem="Сите";
             if(!enabled)
             {
                 _selectedMedicineFilter="Сите";
@@ -258,6 +260,8 @@ namespace EHMR.Domain.Entities.Reports
             FiltersChanged?.Invoke();
         }
 
+        public SparkPickerItem? MedicinePicker => _medicinePicker;
+
         public IEnumerable<SparkPickerItem> BuildPickers()
         {
             _statusPicker=CreatePicker(
@@ -335,15 +339,17 @@ namespace EHMR.Domain.Entities.Reports
                     IsScoreSearchEnabled=false;
                 });
 
+            // Medicine is intentionally rendered below the "Пребарување по лек"
+            // checkbox on the patient-report page. Score filtering is no longer part
+            // of this dashboard UI.
+            _medicinePicker.SelectedItem=_selectedMedicineFilter;
             var pickers = new List<SparkPickerItem>
             {
                 _statusPicker,
                 _cityPicker,
                 _rheumatologistPicker,
                 _diagnosisPicker,
-                _medicinePicker,
-                _genderPicker,
-                _scorePicker
+                _genderPicker
             };
 
             return pickers;
