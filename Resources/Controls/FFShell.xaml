@@ -6,17 +6,12 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	x:Name="Root">
 
-	<Grid ColumnDefinitions="240,*" RowDefinitions="60,*">
+	<Grid ColumnDefinitions="224,*" RowDefinitions="56,*">
 
-		<!--  ================= SIDEBAR =================  -->
 		<Border Grid.RowSpan="2" Style="{StaticResource FFShellSidebarStyle}">
-
-			<VerticalStackLayout Spacing="6">
-
-				<!--  BRAND  -->
+			<VerticalStackLayout Spacing="4">
 				<Label Style="{StaticResource FFShellBrandStyle}" Text="{Binding AppTitle, Source={x:Reference Root}}" />
 
-				<!--  MENU  -->
 				<CollectionView ItemsSource="{Binding MenuItems, Source={x:Reference Root}}">
 					<CollectionView.ItemTemplate>
 						<DataTemplate>
@@ -31,26 +26,29 @@
 			</VerticalStackLayout>
 		</Border>
 
-		<!--  ================= TOP BAR =================  -->
 		<Border Grid.Column="1" Style="{StaticResource FFShellTopBarStyle}">
-
 			<Grid ColumnDefinitions="*,Auto">
+				<SearchBar
+					BackgroundColor="Transparent"
+					Placeholder="Search..."
+					VerticalOptions="Center" />
 
-				<SearchBar BackgroundColor="Transparent" Placeholder="Search..." />
-
-				<HorizontalStackLayout Grid.Column="1" Spacing="10">
-
-					<Label Text="{Binding UserName, Source={x:Reference Root}}" VerticalOptions="Center" />
-
+				<HorizontalStackLayout
+					Grid.Column="1"
+					Spacing="8"
+					VerticalOptions="Center">
+					<Label
+						Text="{Binding UserName, Source={x:Reference Root}}"
+						TextColor="{StaticResource SparkTextPrimary}"
+						VerticalOptions="Center" />
 					<Image
-						HeightRequest="32"
+						HeightRequest="30"
 						Source="user.png"
-						WidthRequest="32" />
+						WidthRequest="30" />
 				</HorizontalStackLayout>
 			</Grid>
 		</Border>
 
-		<!--  ================= CONTENT =================  -->
 		<ContentView
 			Grid.Row="1"
 			Grid.Column="1"
