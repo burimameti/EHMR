@@ -92,10 +92,10 @@ namespace EHMR.Services
 
                 return newAlerts.Count;
             }
-            catch(Exception ex )
+            catch(Exception ex)
             {
-
-                throw new Exception($"ERROR OCCURED ON ALERT : Service {ex.ToString()}", ex);
+                System.Diagnostics.Debug.WriteLine($"[AlertService] Daily sweep failed: {ex}");
+                throw;
             }
            
         }
