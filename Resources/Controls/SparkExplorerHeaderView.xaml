@@ -50,7 +50,7 @@
 									HeightRequest="36"
 									StrokeThickness="1">
 									<Border.StrokeShape>
-										<Rectangle />
+										<RoundRectangle CornerRadius="6" />
 									</Border.StrokeShape>
 									<Border.GestureRecognizers>
 										<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
@@ -134,7 +134,7 @@
 					VerticalOptions="Center"
 					WidthRequest="34">
 					<Border.StrokeShape>
-						<Rectangle />
+						<RoundRectangle CornerRadius="6" />
 					</Border.StrokeShape>
 					<Border.GestureRecognizers>
 						<TapGestureRecognizer Command="{Binding TrailingButton.Command, Source={x:Reference Root}}" CommandParameter="{Binding TrailingButton.CommandParameter, Source={x:Reference Root}}" />
@@ -199,7 +199,7 @@
 					Stroke="{StaticResource SparkBorder}"
 					StrokeThickness="1">
 					<Border.StrokeShape>
-						<Rectangle />
+						<RoundRectangle CornerRadius="6" />
 					</Border.StrokeShape>
 					<Entry
 						BackgroundColor="Transparent"
@@ -238,7 +238,7 @@
 									Stroke="{StaticResource SparkBorder}"
 									StrokeThickness="1">
 									<Border.StrokeShape>
-										<Rectangle />
+										<RoundRectangle CornerRadius="6" />
 									</Border.StrokeShape>
 									<Picker
 										Grid.Row="1"
@@ -270,7 +270,7 @@
 								HeightRequest="36"
 								StrokeThickness="0">
 								<Border.StrokeShape>
-									<Rectangle />
+									<RoundRectangle CornerRadius="6" />
 								</Border.StrokeShape>
 								<Border.GestureRecognizers>
 									<TapGestureRecognizer Command="{Binding Command}" CommandParameter="{Binding CommandParameter}" />
@@ -371,7 +371,7 @@
 			Stroke="{StaticResource Transparent}"
 			StrokeThickness="0">
 			<Border.StrokeShape>
-				<Rectangle />
+				<RoundRectangle CornerRadius="6" />
 			</Border.StrokeShape>
 			<CollectionView
 				ItemTemplate="{Binding SuggestionTemplate, Source={x:Reference Root}}"
