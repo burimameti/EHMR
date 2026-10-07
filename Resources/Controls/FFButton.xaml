@@ -13,7 +13,7 @@
 		MinimumHeightRequest="{Binding HeightRequestEx, Source={x:Reference Root}}"
 		MinimumWidthRequest="{Binding WidthRequestEx, Source={x:Reference Root}}"
 		Stroke="{Binding BorderColor, Source={x:Reference Root}}"
-		StrokeShape="RoundRectangle 8"
+		StrokeShape="Rectangle"
 		StrokeThickness="{Binding BorderThickness, Source={x:Reference Root}}"
 		VerticalOptions="End">
 		<Border.GestureRecognizers>
