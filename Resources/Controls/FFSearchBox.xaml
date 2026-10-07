@@ -33,7 +33,7 @@
 			HeightRequest="36"
 			HorizontalOptions="Fill"
 			Stroke="#CBD5E1"
-			StrokeShape="Rectangle"
+			StrokeShape="RoundRectangle 6"
 			StrokeThickness="1"
 			VerticalOptions="Center">
 
