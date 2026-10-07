@@ -13,22 +13,20 @@
 		StrokeThickness="0">
 		<Grid
 			Padding="0"
-			ColumnDefinitions="4,Auto,*,Auto"
+			ColumnDefinitions="Auto,*,Auto"
 			ColumnSpacing="0">
-			<BoxView Grid.Column="0" Color="{StaticResource SidebarActiveBg}" />
-
 			<Border
-				Grid.Column="1"
-				Margin="12,12,12,16"
+				Grid.Column="0"
+				Margin="12,10,10,10"
 				BackgroundColor="{StaticResource SparkAccentTealBg}"
-				HeightRequest="44"
+				HeightRequest="38"
 				Stroke="{StaticResource SparkAccentTeal}"
-				StrokeShape="RoundRectangle 10"
+				StrokeShape="RoundRectangle 8"
 				StrokeThickness="1"
-				WidthRequest="44">
+				WidthRequest="38">
 				<Label
 					FontFamily="FASolid"
-					FontSize="16"
+					FontSize="14"
 					HorizontalOptions="Center"
 					Text="&#xf15c;"
 					TextColor="{StaticResource SparkAccentTealDark}"
@@ -36,8 +34,8 @@
 			</Border>
 
 			<VerticalStackLayout
-				Grid.Column="2"
-				Spacing="3"
+				Grid.Column="1"
+				Spacing="1"
 				VerticalOptions="Center">
 				<Label
 					FontSize="11"
@@ -46,7 +44,7 @@
 					TextColor="{StaticResource SparkTextSecondary}" />
 				<Label
 					FontAttributes="Bold"
-					FontSize="22"
+					FontSize="20"
 					Text="{Binding Title, Source={x:Reference Root}}"
 					TextColor="{StaticResource SparkTextPrimary}" />
 				<Label
@@ -56,45 +54,42 @@
 					MaxLines="1"
 					Text="{Binding Subtitle, Source={x:Reference Root}}"
 					TextColor="{StaticResource SparkTextSecondary}" />
-				<BoxView
-					Margin="0,2,0,0"
-					HeightRequest="2"
-					HorizontalOptions="Start"
-					WidthRequest="54"
-					Color="{StaticResource SidebarActiveBg}" />
 			</VerticalStackLayout>
 
 			<HorizontalStackLayout
-				Grid.Column="3"
-				Margin="22,22,22,22"
-				Spacing="10"
+				Grid.Column="2"
+				Margin="12,10,16,10"
+				Spacing="8"
 				VerticalOptions="Center">
 				<ContentView Content="{Binding HeaderContent, Source={x:Reference Root}}" />
 				<Button
-					BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
+					BackgroundColor="{StaticResource SparkButtonPrimaryBg}"
 					Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
-					HeightRequest="42"
+					HeightRequest="36"
 					IsEnabled="{Binding PrimaryButtonIsEnabled, Source={x:Reference Root}}"
 					IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
 					Style="{StaticResource TabButtonActiveStyle}"
 					Text="{Binding PrimaryButtonText, Source={x:Reference Root}}"
 					TextColor="White"
-					WidthRequest="150" />
+					WidthRequest="140" />
 				<Button
-					BackgroundColor="#475569"
+					BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
+					BorderColor="{StaticResource SparkBorder}"
+					BorderWidth="1"
 					Command="{Binding SecondaryButtonCommand, Source={x:Reference Root}}"
-					HeightRequest="42"
+					CornerRadius="7"
+					HeightRequest="36"
 					IsVisible="{Binding ShowSecondaryButton, Source={x:Reference Root}}"
 					Style="{StaticResource TabButtonStyle}"
 					Text="{Binding SecondaryButtonText, Source={x:Reference Root}}"
-					TextColor="White"
-					WidthRequest="150" />
+					TextColor="{StaticResource SparkTextPrimary}"
+					WidthRequest="140" />
 				<Button
 					Command="{Binding RefreshCommand, Source={x:Reference Root}}"
-					HeightRequest="42"
+					HeightRequest="36"
 					IsVisible="{Binding ShowRefreshButton, Source={x:Reference Root}}"
 					Style="{StaticResource EhmrIconButton}"
-					WidthRequest="42" />
+					WidthRequest="36" />
 			</HorizontalStackLayout>
 		</Grid>
 	</Border>
