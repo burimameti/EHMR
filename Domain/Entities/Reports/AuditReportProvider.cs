@@ -131,7 +131,7 @@ namespace EHMR.Domain.Entities.Reports
 
             var logs = await db.AuditLogs
                 .AsNoTracking()
-                .Where(x => x.Timestamp>=from&&x.Timestamp<=to)
+                .Where(x => x.Timestamp>=from&&x.Timestamp<to)
                 .OrderByDescending(x => x.Timestamp)
                 .ToListAsync();
 
