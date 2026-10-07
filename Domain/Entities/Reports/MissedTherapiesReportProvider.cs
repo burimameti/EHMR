@@ -227,6 +227,9 @@ namespace EHMR.Domain.Entities.Reports
                     .Include(x => x.Patient)
                         .ThenInclude(p => p.Diagnoses)
                             .ThenInclude(d => d.Mkb10Code)
+                    .Include(x => x.Patient)
+                        .ThenInclude(p => p.PatientMedicines)
+                            .ThenInclude(pm => pm.Medicine)
                     .AsNoTracking()
                     .Where(x => x.Status==TherapyStatus.Missed
                         &&x.StartDate>=from
@@ -262,7 +265,8 @@ namespace EHMR.Domain.Entities.Reports
 
                 Debug.WriteLine($"[MissedTherapies]   - Medicine picker...");
                 RefreshPicker(_medicinePicker,
-                    data.SelectMany(x => x.Patient!.PatientMedicines)
+                    data.SelectMany(x => x.Patient?.PatientMedicines ?? [])
+                        .Where(x => x.Medicine != null)
                         .Select(x => x.Medicine!.Name));
 
                 Debug.WriteLine($"[MissedTherapies]   - Cycle picker...");
@@ -318,7 +322,7 @@ namespace EHMR.Domain.Entities.Reports
 
                 if(_selectedMedicineFilter!="Сите")
                     filtered=filtered.Where(x =>
-                        x.Patient!.PatientMedicines.Any(pm => pm.Medicine!.Name==_selectedMedicineFilter));
+                        x.Patient!.PatientMedicines.Any(pm => pm.Medicine != null && pm.Medicine.Name==_selectedMedicineFilter));
 
                 Debug.WriteLine($"[MissedTherapies] [9] Building report rows...");
                 var filtered_list = filtered.ToList();
