@@ -78,11 +78,18 @@ public sealed class MedicineUsageReportProvider : IReportProvider
     {
         await using var db=await _dbFactory.CreateDbContextAsync();
 
+        var allPeriod=from==DateTime.MinValue && to==DateTime.MaxValue;
+
         var medicines=await db.PatientMedicines
             .AsNoTracking()
             .Include(x => x.Medicine)
+            .Include(x => x.Encounter)
             .Where(x =>
-                x.Medicine!=null)
+                x.Medicine!=null &&
+                x.Encounter!=null &&
+                (allPeriod ||
+                    (x.Encounter.EncounterDate>=from &&
+                     x.Encounter.EncounterDate<to)))
             .ToListAsync();
 
         var grouped=medicines
