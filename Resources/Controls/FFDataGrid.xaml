@@ -92,7 +92,7 @@
 						HeightRequest="28"
 						StrokeThickness="0"
 						WidthRequest="28">
-						<Border.StrokeShape><RoundRectangle CornerRadius="6" /></Border.StrokeShape>
+						<Border.StrokeShape><Rectangle /></Border.StrokeShape>
 						<Label FontFamily="FASolid" HorizontalOptions="Center" Text="&#xf104;" TextColor="{Binding SecondaryTextColor, Source={x:Reference Root}}" VerticalOptions="Center">
 							<Label.GestureRecognizers><TapGestureRecognizer Command="{Binding PrevPageCommand, Source={x:Reference Root}}" /></Label.GestureRecognizers>
 						</Label>
@@ -107,7 +107,7 @@
 									HeightRequest="28"
 									StrokeThickness="0"
 									WidthRequest="28">
-									<Border.StrokeShape><RoundRectangle CornerRadius="6" /></Border.StrokeShape>
+									<Border.StrokeShape><Rectangle /></Border.StrokeShape>
 									<Label FontSize="12" HorizontalTextAlignment="Center" Text="{Binding Number}" TextColor="{Binding SecondaryTextColor, Source={x:Reference Root}}" VerticalTextAlignment="Center" />
 								</Border>
 							</DataTemplate>
@@ -119,7 +119,7 @@
 						HeightRequest="28"
 						StrokeThickness="0"
 						WidthRequest="28">
-						<Border.StrokeShape><RoundRectangle CornerRadius="6" /></Border.StrokeShape>
+						<Border.StrokeShape><Rectangle /></Border.StrokeShape>
 						<Label FontFamily="FASolid" HorizontalOptions="Center" Text="&#xf105;" TextColor="{Binding SecondaryTextColor, Source={x:Reference Root}}" VerticalOptions="Center">
 							<Label.GestureRecognizers><TapGestureRecognizer Command="{Binding NextPageCommand, Source={x:Reference Root}}" /></Label.GestureRecognizers>
 						</Label>
