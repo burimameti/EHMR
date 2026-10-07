@@ -43,7 +43,7 @@
 					Grid.Column="1"
 					CharacterSpacing="0.9"
 					FontAttributes="Bold"
-					FontSize="9"
+					FontSize="11"
 					LineBreakMode="TailTruncation"
 					MaxLines="1"
 					Text="{Binding Title, Source={x:Reference Root}}"
