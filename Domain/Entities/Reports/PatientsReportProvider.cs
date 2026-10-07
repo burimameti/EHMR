@@ -591,8 +591,8 @@ namespace EHMR.Domain.Entities.Reports
             var query = allPeriod
                 ? patients.AsEnumerable()
                 : patients.Where(x =>
-                    (x.RegistrationDate>=from&&x.RegistrationDate<=to)||
-                    x.Scores.Any(s => s.RecordedAt>=from&&s.RecordedAt<=to)||
+                    IsWithinReportPeriod(x.RegistrationDate, from, to)||
+                    x.Scores.Any(s => IsWithinReportPeriod(s.RecordedAt, from, to))||
                     x.PatientMedicines.Any(pm =>
                         pm.Encounter != null &&
                         IsWithinReportPeriod(pm.Encounter.EncounterDate, from, to)));
