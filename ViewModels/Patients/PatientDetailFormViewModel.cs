@@ -1163,35 +1163,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    private void AddPreviousMedicine(MedicineDto medicine)
-    {
-        if(medicine==null||!CanEditPatient) return;
-
-        var dto = new PatientMedicineDto
-        {
-            Id=Guid.Empty,
-            PatientId=Patient.Id,
-            MedicineId=medicine.Id,
-            MedicineName=medicine.Name,
-            Dosage=medicine.DefaultDosage,
-            DosesFrequency=DosesFrequency.Other,
-            PharmaceuticalReference=string.Empty,
-            ApplicationRegimeId=null,
-            ApplicationRegime=string.Empty,
-            Quantity=1,
-            IsActive=false
-        };
-
-        var row = new PreviousMedicineRow(dto);
-        row.MarkNew();
-        PreviousMedicines.Add(row);
-
-        PreviousMedicineSearchText=string.Empty;
-        PreviousMedicineResults.Clear();
-        ShowPreviousMedicineDropdown=false;
-    }
-
-    [RelayCommand]
     private void RemovePreviousMedicine(PreviousMedicineRow row)
     {
         if(row==null||!CanEditPatient||!row.CanDelete) return;
