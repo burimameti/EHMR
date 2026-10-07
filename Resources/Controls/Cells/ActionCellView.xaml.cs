@@ -23,7 +23,7 @@ public class ActionCellView : ContentView
                 WidthRequest=34,
                 HeightRequest=34,
                 StrokeThickness=0,
-                StrokeShape=new RoundRectangle { CornerRadius=17 }
+                StrokeShape=new Rectangle()
             };
 
             var label = new Label
