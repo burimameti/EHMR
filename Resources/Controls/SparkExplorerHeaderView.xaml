@@ -12,7 +12,7 @@
 		<Border
 			BackgroundColor="White"
 			IsVisible="{Binding Tabs, Source={x:Reference Root}, Converter={StaticResource SparkCollectionNotEmptyConverter}}"
-			StrokeShape="RoundRectangle 0">
+			StrokeShape="Rectangle">
 
 			<Grid
 				x:Name="ExplorerGrid"
@@ -214,6 +214,7 @@
 				</Border>
 
 
+				</VerticalStackLayout>
 				<!--  ============ 1: PICKERS ============  -->
 				<HorizontalStackLayout
 					Grid.Column="1"
@@ -237,7 +238,7 @@
 									Stroke="{StaticResource SparkBorder}"
 									StrokeThickness="1">
 									<Border.StrokeShape>
-										<RoundRectangle CornerRadius="6" />
+										<Rectangle />
 									</Border.StrokeShape>
 									<Picker
 										Grid.Row="1"
