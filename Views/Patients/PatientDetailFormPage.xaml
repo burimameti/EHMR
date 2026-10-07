@@ -444,6 +444,15 @@
 								</VerticalStackLayout>
 
 								
+				<!--  ═══ 3. СКОРОВИ ═══  -->
+				<VerticalStackLayout Spacing="10">
+					<controls:CrudSectionHeader
+						Title="СКОРОВИ"
+						LineColor="{StaticResource White}"
+						Style="{StaticResource SectionHeaderStyle}" />
+					<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
+				</VerticalStackLayout>
+
 				<Grid ColumnDefinitions="*,*" ColumnSpacing="12">
 					<VerticalStackLayout Grid.Column="0" Spacing="10"><!--  ═══ 2. КОНТАКТ ИНФОРМАЦИИ ═══  -->
 								<VerticalStackLayout Spacing="10">
