@@ -55,7 +55,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     public bool CanDeletePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Delete);
     public bool CanActivatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Activate);
     public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Deactivate);
-    public bool CanPrintPatientReport => _authorizationService.CanPerform(Modules.Reports, ModuleAction.Print);
     public bool CanManageAdministration => _authorizationService.CanPerform(Modules.Administration, ModuleAction.Manage);
     public bool CanSavePatient => _isNewPatientMode ? CanCreatePatient : CanEditPatient;
 
@@ -430,35 +429,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     // ------------------------------------------------------------------ //
     // Commands
     // ------------------------------------------------------------------ //
-    [RelayCommand]
-    private async Task GenerateClinicalReportAsync()
-    {
-        if(!CanPrintPatientReport||Patient.Id==Guid.Empty)
-        {
-            await _userDialogService.ShowAlertAsync("Недозволена акција", "Немате авторизација за печатење / PDF извештај.", "ОК");
-            return;
-        }
-
-        try
-        {
-            var path = await _clinicalReportService.GeneratePdfAsync(
-                Patient.Id, null, null,
-                $"Детален извештај - {Patient.FirstName} {Patient.LastName}");
-
-            await Launcher.Default.OpenAsync(new OpenFileRequest(
-                Path.GetFileName(path),
-                new ReadOnlyFile(path)));
-        }
-        catch(Exception ex)
-        {
-            Debug.WriteLine(ex);
-            await _userDialogService.ShowAlertAsync(
-                "Извештај",
-                $"PDF извештајот не може да се генерира: {ex.Message}",
-                "ОК");
-        }
-    }
-
     [RelayCommand]
     private async Task ToggleEditModeAsync()
     {
