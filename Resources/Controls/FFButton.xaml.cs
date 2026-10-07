@@ -35,7 +35,7 @@ public partial class FFButton : ContentView
 
             if(IsBlue)
             {
-                BackgroundColorEx=Color.FromArgb("#258F84");
+                BackgroundColorEx=Color.FromArgb("#59B9C8");
                 return;
             }
 
@@ -73,10 +73,7 @@ public partial class FFButton : ContentView
         var horizontalPadding = Math.Max(8, 20 * scale);
         Container.Padding = new Thickness(horizontalPadding, 0);
         Container.MinimumHeightRequest = Math.Max(32, HeightRequestEx * scale);
-        Container.StrokeShape = new RoundRectangle
-        {
-            CornerRadius = CornerRadius
-        };
+        Container.StrokeShape = new Rectangle();
 
         if (width < 145)
         {
@@ -109,7 +106,7 @@ public partial class FFButton : ContentView
         BindableProperty.Create(nameof(IsLoading), typeof(bool), typeof(FFButton), false);
 
     public static readonly BindableProperty HeightRequestExProperty =
-        BindableProperty.Create(nameof(HeightRequestEx), typeof(double), typeof(FFButton), 40d,
+        BindableProperty.Create(nameof(HeightRequestEx), typeof(double), typeof(FFButton), 36d,
             propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumHeightRequest=(double)v);
 
     public static readonly BindableProperty WidthRequestExProperty =
@@ -121,7 +118,7 @@ public partial class FFButton : ContentView
             propertyChanged: (b, _, v) => ((FFButton)b).Container.Padding=(Thickness)v);
 
     public static readonly BindableProperty CornerRadiusProperty =
-        BindableProperty.Create(nameof(CornerRadius), typeof(float), typeof(FFButton), 7f);
+        BindableProperty.Create(nameof(CornerRadius), typeof(float), typeof(FFButton), 0f);
 
     public static readonly BindableProperty FontSizeExProperty =
         BindableProperty.Create(nameof(FontSizeEx), typeof(double), typeof(FFButton), 13d);
@@ -279,7 +276,7 @@ public partial class FFButton : ContentView
 
         if(IsBlue)
         {
-            BackgroundColorEx=Color.FromArgb("#0EA5B8");
+            BackgroundColorEx=Color.FromArgb("#6BD1E1");
             TextColorEx=Colors.White;
             BorderColor=Color.FromArgb("#0EA5B8");
             BorderThickness=0;
