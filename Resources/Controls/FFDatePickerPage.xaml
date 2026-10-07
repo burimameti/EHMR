@@ -15,7 +15,7 @@
 			FontSize="11"
 			IsVisible="{Binding HasLabel, Source={x:Reference Root}}"
 			Text="{Binding Label, Source={x:Reference Root}}"
-			TextColor="{StaticResource SparkTextPrimary}" />
+			TextColor="{StaticResource SparkTextSecondary}" />
 
 		<!--  Date field  -->
 		<Border
@@ -55,7 +55,7 @@
 					x:Name="DisplayLabel"
 					Grid.Column="1"
 					FontAttributes="None"
-					FontSize="13.5"
+					FontSize="13"
 					InputTransparent="True"
 					LineBreakMode="TailTruncation"
 					MaxLines="1"
