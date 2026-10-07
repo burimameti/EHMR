@@ -27,7 +27,7 @@ public class BadgeCellView : ContentView
         label.SetBinding(Label.TextProperty, new Binding(nameof(Text), source: this));
         label.SetBinding(Label.TextColorProperty, new Binding(nameof(TextColor), source: this));
 
-        border.StrokeShape=new RoundRectangle { CornerRadius=12 };
+        border.StrokeShape=new Rectangle();
 
         Content=border;
     }
