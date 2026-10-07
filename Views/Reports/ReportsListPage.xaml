@@ -177,7 +177,7 @@
 
 			<!--  GRID  -->
 
-			<controls:FFSectionCard Grid.Row="3">
+			<Border Grid.Row="3" Style="{StaticResource PageCardStyleDashboard}">
 
 				<!--  Patient history action appears only after a patient is selected.  -->
 				<Grid
@@ -212,7 +212,7 @@
 					TotalPages="{Binding TotalPages}" />
 
 
-			</controls:FFSectionCard>
+			</Border>
 
 
 
