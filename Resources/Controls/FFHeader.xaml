@@ -69,6 +69,7 @@
 					IsEnabled="{Binding PrimaryButtonIsEnabled, Source={x:Reference Root}}"
 					IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
 					Style="{StaticResource TabButtonActiveStyle}"
+					CornerRadius="6"
 					Text="{Binding PrimaryButtonText, Source={x:Reference Root}}"
 					TextColor="White"
 					WidthRequest="140" />
@@ -81,6 +82,7 @@
 					HeightRequest="36"
 					IsVisible="{Binding ShowSecondaryButton, Source={x:Reference Root}}"
 					Style="{StaticResource TabButtonStyle}"
+					CornerRadius="6"
 					Text="{Binding SecondaryButtonText, Source={x:Reference Root}}"
 					TextColor="{StaticResource SparkTextPrimary}"
 					WidthRequest="140" />
@@ -89,6 +91,7 @@
 					HeightRequest="36"
 					IsVisible="{Binding ShowRefreshButton, Source={x:Reference Root}}"
 					Style="{StaticResource EhmrIconButton}"
+					CornerRadius="6"
 					WidthRequest="36" />
 			</HorizontalStackLayout>
 		</Grid>
