@@ -57,6 +57,10 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Deactivate);
     public bool CanManageAdministration => _authorizationService.CanPerform(Modules.Administration, ModuleAction.Manage);
     public bool CanSavePatient => _isNewPatientMode ? CanCreatePatient : CanEditPatient;
+    public bool HasMissingMedicineResolutions =>
+        AttachedMedicines.Any(x => !x.HasResolution) || PreviousMedicines.Any(x => !x.HasResolution);
+    public bool CanSavePatientForm => CanSavePatient && !HasMissingMedicineResolutions;
+    public string MaskedNationalId => MaskNationalId(Patient.NationalId);
 
     public bool CanReactivatePatient => CanActivatePatient&&!_isNewPatientMode&&Patient.Status==PatientStatus.Inactive;
     public bool CanShowActiveStatusOption => _isNewPatientMode||Patient.Status!=PatientStatus.Inactive||CanActivatePatient;
@@ -219,6 +223,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(IsNewPatient));
         OnPropertyChanged(nameof(HeaderTitle));
         OnPropertyChanged(nameof(HeaderSubtitle));
+        OnPropertyChanged(nameof(MaskedNationalId));
+        OnPropertyChanged(nameof(HasMissingMedicineResolutions));
+        OnPropertyChanged(nameof(CanSavePatientForm));
     }
 
     private async Task LoadPatientAsync(Guid patientId)
@@ -251,6 +258,9 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                 full.Medicines
                     .Where(m => !m.IsActive)
                     .Select(m => new PreviousMedicineRow(m)));
+            OnPropertyChanged(nameof(HasMissingMedicineResolutions));
+            OnPropertyChanged(nameof(CanSavePatientForm));
+            OnPropertyChanged(nameof(MaskedNationalId));
 
             Documents=new ObservableCollection<PatientDocumentDto>(full.Documents);
             SelectedDocumentPreview=null;
@@ -685,6 +695,14 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         {
             IsSaving=false;
         }
+    }
+
+    private static string MaskNationalId(string? nationalId)
+    {
+        if(string.IsNullOrWhiteSpace(nationalId)) return "—";
+        var value=new string(nationalId.Where(char.IsLetterOrDigit).ToArray());
+        if(value.Length<=4) return new string('•', value.Length);
+        return new string('•', value.Length-4)+value[^4..];
     }
 
     private PatientMedicineSaveModel ToMedicineSave(PatientMedicineDto m, bool active) => new()
