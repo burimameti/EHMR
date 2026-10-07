@@ -7,7 +7,6 @@
 	xmlns:search="clr-namespace:EHMR.Domain.Search"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Appointments"
 	x:Name="PageRoot"
-	x:DataType="viewModels:AppointmentListViewModel"
 	BackgroundColor="{StaticResource PageBackground}">
 	<Grid ColumnDefinitions="285,*">
 
