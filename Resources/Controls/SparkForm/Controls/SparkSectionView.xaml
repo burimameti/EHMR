@@ -6,29 +6,26 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	x:Name="Root">
 
+	<Border
+		Padding="14"
+		BackgroundColor="{StaticResource SparkContentBackground}"
+		Stroke="{StaticResource SparkCardBorder}"
+		StrokeShape="RoundRectangle 8"
+		StrokeThickness="1">
 
-	<Border Padding="18" BackgroundColor="{StaticResource SparkContentBackground}" Stroke="{StaticResource SparkCardBorder}" StrokeShape="RoundRectangle 14" StrokeThickness="1"><Border.Shadow><Shadow Brush="#000000" Opacity="0.05" Radius="10" Offset="0,3" /></Border.Shadow>
+		<VerticalStackLayout Spacing="10">
 
-
-		<VerticalStackLayout Spacing="15">
-
-
-			<Border Style="{StaticResource SectionPillBorderStyle}">
-				<Label Style="{StaticResource SectionPillLabelStyle}" Text="{Binding Section.Header, Source={x:Reference Root}}" />
-			</Border>
-
-
+			<Label
+				FontAttributes="Bold"
+				FontSize="14"
+				Text="{Binding Section.Header, Source={x:Reference Root}}"
+				TextColor="{StaticResource SparkTextPrimary}" />
 
 			<Grid
 				x:Name="PART_FieldGrid"
-				ColumnSpacing="15"
-				RowSpacing="15" />
-
+				ColumnSpacing="12"
+				RowSpacing="12" />
 
 		</VerticalStackLayout>
-
-
 	</Border>
-
-
 </ContentView>
