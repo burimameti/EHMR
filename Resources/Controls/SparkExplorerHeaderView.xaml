@@ -183,14 +183,9 @@
 				<!--  ============ 0: SEARCH ============  -->
 				<VerticalStackLayout
 					Grid.Column="0"
-					Margin="8,4,8,4"
-					Spacing="3"
-					HorizontalOptions="Fill">
-					<Label
-						FontAttributes="Bold"
-						FontSize="10"
-						Text="Пребарај"
-						TextColor="{StaticResource SparkTextSecondary}" />
+					Margin="8,6,8,6"
+					HorizontalOptions="Fill"
+					VerticalOptions="Center">
 					<Border
 					Padding="12,0"
 					BackgroundColor="White"
@@ -212,8 +207,6 @@
 						TextColor="{StaticResource SparkTextPrimary}"
 						VerticalOptions="Center" />
 				</Border>
-
-
 				</VerticalStackLayout>
 				<!--  ============ 1: PICKERS ============  -->
 				<HorizontalStackLayout
