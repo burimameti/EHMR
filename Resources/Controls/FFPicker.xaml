@@ -28,7 +28,7 @@
 			BackgroundColor="{StaticResource White}"
 			HeightRequest="36"
 			Stroke="#CBD5E1"
-			StrokeShape="RoundRectangle 8"
+			StrokeShape="Rectangle"
 			StrokeThickness="1">
 			<Border.GestureRecognizers>
 				<PointerGestureRecognizer PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" />
