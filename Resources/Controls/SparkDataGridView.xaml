@@ -8,7 +8,7 @@
 	<Border
 		Background="{StaticResource SparkBackground}"
 		Stroke="{StaticResource SparkBorder}"
-		StrokeShape="RoundRectangle 8"
+		StrokeShape="Rectangle"
 		StrokeThickness="1">
 
 		<Grid RowDefinitions="*, Auto">
