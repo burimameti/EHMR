@@ -145,8 +145,8 @@ namespace EHMR.Domain.Entities.Reports
             if(_selectedUserFilter!="Сите")
             {
                 filtered=_selectedUserFilter=="SYSTEM"
-                    ? filtered.Where(x => x.UserId==null)
-                    : filtered.Where(x => x.UserId.ToString()==null &&x.UserId.ToString()==_selectedUserFilter);
+                    ? filtered.Where(x => x.UserId==Guid.Empty)
+                    : filtered.Where(x => x.UserId.ToString()==_selectedUserFilter);
             }
 
             return filtered.Select(x =>
