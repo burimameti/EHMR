@@ -497,14 +497,36 @@ public class EncounterDetailService : IEncounterDetailService
         if(string.IsNullOrWhiteSpace(term)) return [];
         term=term.Trim();
 
+        var cyrillic=MacedonianTransliterator.ToCyrillic(term);
+        var latin=MacedonianTransliterator.ToLatin(term);
+
         await using var db = await _factory.CreateDbContextAsync(ct);
         return await db.Medicines
             .AsNoTracking()
             .Where(m => m.IsActive&&(
                 m.Name.Contains(term)||
+                m.Name.Contains(cyrillic)||
+                m.Name.Contains(latin)||
                 m.GenericName.Contains(term)||
+                m.GenericName.Contains(cyrillic)||
+                m.GenericName.Contains(latin)||
                 m.Code.Contains(term)))
             .OrderBy(m => m.Name)
+            .Take(20)
+            .ToListAsync(ct);
+    }
+
+    public async Task<List<string>> GetScoreSuggestionsAsync(CancellationToken ct = default)
+    {
+        await using var db=await _factory.CreateDbContextAsync(ct);
+
+        return await db.PatientScores
+            .AsNoTracking()
+            .Where(x => !string.IsNullOrWhiteSpace(x.ScoreText))
+            .GroupBy(x => x.ScoreText)
+            .OrderByDescending(g => g.Select(x => x.PatientId).Distinct().Count())
+            .ThenBy(g => g.Key)
+            .Select(g => g.Key)
             .Take(20)
             .ToListAsync(ct);
     }
