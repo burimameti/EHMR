@@ -1455,6 +1455,7 @@ public partial class PreviousMedicineRow : ObservableObject
         get;
     }
     public string MedicineName => PatientMedicine.MedicineName;
+    public string MedicineNameBilingual => EHMR.Helpers.MacedonianTransliterator.ToBilingual(MedicineName);
 
 }
 
