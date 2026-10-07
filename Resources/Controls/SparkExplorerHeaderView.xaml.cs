@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -238,6 +239,14 @@ namespace EHMR.Resources.Controls
             get => (DataTemplate?)GetValue(SuggestionTemplateProperty);
             set => SetValue(SuggestionTemplateProperty, value);
         }
+
+        // Supports <SparkExplorerHeaderView.SuggestionTemplate>...</...>
+        // in page XAML while keeping the same BindableProperty and design.
+        public static DataTemplate? GetSuggestionTemplate(BindableObject obj) =>
+            (DataTemplate?)obj.GetValue(SuggestionTemplateProperty);
+
+        public static void SetSuggestionTemplate(BindableObject obj, DataTemplate? value) =>
+            obj.SetValue(SuggestionTemplateProperty, value);
 
         public static readonly BindableProperty ShowSuggestionsProperty =
             BindableProperty.Create(nameof(ShowSuggestions), typeof(bool), typeof(SparkExplorerHeaderView), false);
