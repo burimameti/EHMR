@@ -736,7 +736,7 @@ namespace EHMR.Resources.Controls
                 Background=new SolidColorBrush(color),
                 Stroke=new SolidColorBrush(color),
                 StrokeThickness=1,
-                StrokeShape=new Rectangle(),
+                StrokeShape=new RoundRectangle { CornerRadius=6 },
                 HorizontalOptions=LayoutOptions.Center,
                 VerticalOptions=LayoutOptions.Center,
                 MinimumWidthRequest=R(90),
