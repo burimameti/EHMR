@@ -11,8 +11,8 @@
 		<Entry
 			BackgroundColor="Transparent"
 			Placeholder="{Binding Placeholder, Source={x:Reference Root}}"
-			PlaceholderColor="#9CA3AF"
+			PlaceholderColor="{StaticResource SparkTextMuted}"
 			Text="{Binding Text, Source={x:Reference Root}, Mode=TwoWay}"
-			TextColor="#111827" />
+			TextColor="{StaticResource SparkTextPrimary}" />
 	</controls:ShadowFieldContainer.FieldContent>
 </controls:ShadowFieldContainer>
