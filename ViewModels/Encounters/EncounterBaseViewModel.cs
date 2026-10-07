@@ -156,6 +156,40 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     public ObservableCollection<string> ScoreOptions { get; } = new();
 
+    [ObservableProperty]
+    private string scoreSearchText = string.Empty;
+
+    [ObservableProperty]
+    private ObservableCollection<string> scoreSuggestions = new();
+
+    [ObservableProperty]
+    private bool showScoreSuggestions;
+
+    partial void OnScoreSearchTextChanged(string value)
+    {
+        var query=value?.Trim()??string.Empty;
+        if(string.IsNullOrWhiteSpace(query))
+        {
+            ScoreSuggestions=new ObservableCollection<string>(ScoreOptions.Take(8));
+            ShowScoreSuggestions=ScoreSuggestions.Count>0;
+            return;
+        }
+
+        ScoreSuggestions=new ObservableCollection<string>(
+            ScoreOptions
+                .Where(x => x.Contains(query,StringComparison.OrdinalIgnoreCase))
+                .Take(8));
+        ShowScoreSuggestions=ScoreSuggestions.Count>0;
+    }
+
+    [RelayCommand]
+    protected void SelectScoreSuggestion(string? score)
+    {
+        if(string.IsNullOrWhiteSpace(score)) return;
+        ScoreSearchText=score;
+        ShowScoreSuggestions=false;
+    }
+
     [RelayCommand]
     public async Task EditScoreAsync(string? score)
     {
@@ -1172,6 +1206,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             {
                 await LoadLookupsAsync();
                 await LoadApplicationRegimesAsync();
+                ScoreOptions.Clear();
+                foreach(var score in await EncounterService.GetScoreSuggestionsAsync())
+                    ScoreOptions.Add(score);
                 await SearchMkbAsync(string.Empty);
 
                 // ── NEW ENCOUNTER — early exit, no DB call needed ────────────
