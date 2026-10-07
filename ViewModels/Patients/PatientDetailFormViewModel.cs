@@ -1103,6 +1103,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         var row = new AttachedMedicineRow(patientMedicine);
         row.MarkNew();
         AttachedMedicines.Add(row);
+        OnPropertyChanged(nameof(HasMissingMedicineResolutions));
+        OnPropertyChanged(nameof(CanSavePatientForm));
 
         if(ApplicationRegimeOptions.Count==0)
             _=EnsureApplicationRegimeExistsAsync();
@@ -1118,6 +1120,74 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         if(row==null||!CanEditPatient||!row.CanDelete) return;
 
         AttachedMedicines.Remove(row);
+    }
+
+    [RelayCommand]
+    private async Task MoveMedicineToInactiveAsync(AttachedMedicineRow row)
+    {
+        if(row is null || !CanEditPatient || !IsEditMode || IsUploadingDocument)
+            return;
+
+        var confirmed = await _userDialogService.ShowConfirmationAsync(
+            "Преместување на неактивен лек",
+            $"Лекот „{row.MedicineName}“ ќе биде преместен во неактивни лекови. Потребно е да прикачите решение за неактивност. Дали сакате да продолжите?",
+            "Продолжи",
+            "Откажи");
+        if(!confirmed)
+            return;
+
+        try
+        {
+            IsUploadingDocument=true;
+            var file=await FilePicker.Default.PickAsync(new PickOptions { PickerTitle="Прикачи решение за неактивност" });
+            if(file is null)
+                return;
+
+            var patientFolder=Path.Combine(FileSystem.AppDataDirectory,"patient-documents",Patient.Id.ToString());
+            Directory.CreateDirectory(patientFolder);
+            var storedPath=Path.Combine(patientFolder,$"{Guid.NewGuid()}_{file.FileName}");
+            await using(var source=await file.OpenReadAsync())
+            await using(var dest=File.Create(storedPath))
+                await source.CopyToAsync(dest);
+
+            var medicine=row.PatientMedicine;
+            medicine.IsActive=false;
+            var newDoc=new PatientDocumentDto
+            {
+                Id=Guid.NewGuid(),
+                PatientId=Patient.Id,
+                DocumentType=PatientDocumentType.Resenie,
+                Title="Решение за неактивност на лек",
+                Description=$"Решение за неактивност на лек „{medicine.MedicineName}“",
+                FileName=file.FileName,
+                StoredPath=storedPath,
+                ContentType=file.ContentType,
+                UploadedAt=DateTime.UtcNow
+            };
+
+            Documents.Add(newDoc);
+            medicine.ResolutionDocumentId=newDoc.Id;
+            medicine.ResolutionDocument=newDoc;
+            AttachedMedicines.Remove(row);
+
+            var previous=new PreviousMedicineRow(medicine);
+            if(row.CanDelete)
+                previous.MarkNew();
+            else
+                previous.MarkPersisted();
+            PreviousMedicines.Insert(0,previous);
+            SelectedDocumentPreview=newDoc;
+            OnPropertyChanged(nameof(HasMissingMedicineResolutions));
+            OnPropertyChanged(nameof(CanSavePatientForm));
+        }
+        catch(Exception ex)
+        {
+            await _userDialogService.ShowAlertAsync("Грешка",$"Преместувањето на лекот не успеа: {ex.Message}","ОК");
+        }
+        finally
+        {
+            IsUploadingDocument=false;
+        }
     }
 
     // =====================================================
@@ -1168,6 +1238,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         if(row==null||!CanEditPatient||!row.CanDelete) return;
 
         PreviousMedicines.Remove(row);
+        OnPropertyChanged(nameof(HasMissingMedicineResolutions));
+        OnPropertyChanged(nameof(CanSavePatientForm));
     }
 
     // =====================================================
@@ -1215,7 +1287,13 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             Documents.Add(newDoc);
             medicine.ResolutionDocumentId=newDoc.Id;
             medicine.ResolutionDocument=newDoc;
+            if(target is AttachedMedicineRow activeRow)
+                activeRow.RefreshResolution();
+            else if(target is PreviousMedicineRow previousRow)
+                previousRow.RefreshResolution();
             SelectedDocumentPreview=newDoc;
+            OnPropertyChanged(nameof(HasMissingMedicineResolutions));
+            OnPropertyChanged(nameof(CanSavePatientForm));
         }
         catch(Exception ex){ await _userDialogService.ShowAlertAsync("Грешка",$"Прикачувањето на решението не успеа: {ex.Message}","OK"); }
         finally{ IsUploadingDocument=false; }
