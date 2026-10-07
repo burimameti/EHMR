@@ -16,12 +16,6 @@
 		StrokeShape="RoundRectangle 8"
 		StrokeThickness="{Binding BorderThickness, Source={x:Reference Root}}"
 		VerticalOptions="End">
-		<Border.Shadow>
-			<Shadow
-				Brush="#14293441"
-				Radius="4"
-				Offset="0,1" />
-		</Border.Shadow>
 		<Border.GestureRecognizers>
 			<TapGestureRecognizer Tapped="OnTapped" />
 		</Border.GestureRecognizers>
