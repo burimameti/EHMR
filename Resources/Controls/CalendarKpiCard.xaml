@@ -12,10 +12,10 @@
 	-->
 	<!--  Потенка од порано: помал внатрешен простор, за да не зема висина од гридот.  -->
 	<Border
-		Padding="14,9"
-		BackgroundColor="#FFFFFF"
-		Stroke="#E9EDF2"
-		StrokeShape="RoundRectangle 10"
+		Padding="14,10"
+		BackgroundColor="{StaticResource SparkBackground}"
+		Stroke="{StaticResource SparkBorder}"
+		StrokeShape="RoundRectangle 8"
 		StrokeThickness="1">
 		<Border.GestureRecognizers>
 			<TapGestureRecognizer Command="{Binding Command, Source={x:Reference Root}}" CommandParameter="{Binding CommandParameter, Source={x:Reference Root}}" />
@@ -27,18 +27,18 @@
 				<Label
 					FontSize="11"
 					Text="{Binding Title, Source={x:Reference Root}}"
-					TextColor="#475569" />
+					TextColor="{StaticResource SparkTextSecondary}" />
 				<Label
 					FontSize="10"
 					Text="ⓘ"
-					TextColor="#CBD5E1"
+					TextColor="{StaticResource SparkTextMuted}"
 					VerticalOptions="Center" />
 			</HorizontalStackLayout>
 
 			<Label
 				FontSize="9"
 				Text="{Binding PeriodText, Source={x:Reference Root}}"
-				TextColor="#94A3B8" />
+				TextColor="{StaticResource SparkTextSecondary}" />
 
 			<Grid
 				Margin="0,4,0,0"
@@ -48,7 +48,7 @@
 					FontAttributes="Bold"
 					FontSize="21"
 					Text="{Binding Value, Source={x:Reference Root}}"
-					TextColor="#0F172A"
+					TextColor="{StaticResource SparkTextPrimary}"
 					VerticalOptions="Center" />
 
 				<Border
