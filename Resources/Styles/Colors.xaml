@@ -7,7 +7,7 @@
 	<Color x:Key="OffBlack">#0F172A</Color>
 
 	<!--  Legacy Accent  -->
-	<Color x:Key="Magenta">#4DD9C7</Color>
+	<Color x:Key="Magenta">#4CC9D4</Color>
 
 	<!--  Primary Blues  -->
 	<Color x:Key="MidnightBlue">#1E3A8A</Color>
@@ -31,16 +31,16 @@
 	<Color x:Key="CardBg">#FFFFFF</Color>
 
 	<!--  Primary  -->
-	<Color x:Key="EpicPrimary">#4DD9C7</Color>
-	<Color x:Key="EpicPrimaryDark">#32B9AA</Color>
-	<Color x:Key="EpicPrimaryLight">#82E7DB</Color>
+	<Color x:Key="EpicPrimary">#4CC9D4</Color>
+	<Color x:Key="EpicPrimaryDark">#35AEB9</Color>
+	<Color x:Key="EpicPrimaryLight">#8ADFE6</Color>
 
 	<!--  Canonical CRUD accent tokens; Colors.xaml is merged first.  -->
-	<Color x:Key="SparkAccentTeal">#4DD9C7</Color>
-	<Color x:Key="SparkAccentTealDark">#32B9AA</Color>
-	<Color x:Key="SparkAccentTealLight">#82E7DB</Color>
+	<Color x:Key="SparkAccentTeal">#4CC9D4</Color>
+	<Color x:Key="SparkAccentTealDark">#35AEB9</Color>
+	<Color x:Key="SparkAccentTealLight">#8ADFE6</Color>
 	<Color x:Key="SparkAccentTealBg">#F0F7F5</Color>
-	<Color x:Key="SidebarActiveBg">#32B9AA</Color>
+	<Color x:Key="SidebarActiveBg">#35AEB9</Color>
 
 	<!--  Secondary  -->
 	<Color x:Key="EpicSecondary">#1E40AF</Color>
@@ -49,9 +49,9 @@
 	<Color x:Key="EpicSecondaryLight">#93C5FD</Color>
 
 	<!--  Primary Text  -->
-	<Color x:Key="EpicPrimaryText">#4DD9C7</Color>
-	<Color x:Key="EpicPrimaryDarkText">#32B9AA</Color>
-	<Color x:Key="EpicPrimaryLightText">#82E7DB</Color>
+	<Color x:Key="EpicPrimaryText">#4CC9D4</Color>
+	<Color x:Key="EpicPrimaryDarkText">#35AEB9</Color>
+	<Color x:Key="EpicPrimaryLightText">#8ADFE6</Color>
 
 	<!--  Secondary Text  -->
 	<Color x:Key="EpicSecondaryText">#1E40AF</Color>
@@ -142,7 +142,7 @@
 	</Color>
 
 	<Color x:Key="InputFocus">
-		#4DD9C7
+		#4CC9D4
 	</Color>
 
 	<Color x:Key="InputDisabled">
@@ -156,13 +156,13 @@
 	</Color>
 
 	<Color x:Key="TabActive">
-		#4DD9C7
+		#4CC9D4
 	</Color>
 
 
 	<!--  Blue clinical  -->
 	<Color x:Key="MedicalBlue">
-		#4DD9C7
+		#4CC9D4
 	</Color>
 
 	<Color x:Key="MedicalBlueSoft">
