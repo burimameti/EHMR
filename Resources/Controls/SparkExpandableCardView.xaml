@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
 <ContentView
 	x:Class="EHMR.Resources.Controls.SparkExpandableCard"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -10,224 +9,66 @@
 		x:Name="CardBorder"
 		Margin="0"
 		Padding="0"
-		BackgroundColor="#FFFFAA"
+		BackgroundColor="{StaticResource SparkBackground}"
 		Stroke="{StaticResource SparkBorder}"
-		StrokeShape="RoundRectangle 12"
+		StrokeShape="RoundRectangle 8"
 		StrokeThickness="1">
 
 		<Grid RowSpacing="0">
-
 			<Grid.RowDefinitions>
-				<RowDefinition Height="56" />
+				<RowDefinition Height="48" />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<!--  HEADER  -->
-
-			<Grid
-				x:Name="HeaderGrid"
-				Grid.Row="0"
-				Padding="14,0,18,0"
-				BackgroundColor="{Binding CardBackgroundColor, Source={x:Reference Root}}"
-				ColumnSpacing="12">
-
-				<Grid.GestureRecognizers>
-					<TapGestureRecognizer Tapped="ExpandTapped" />
-				</Grid.GestureRecognizers>
-
+			<Grid x:Name="HeaderGrid" Grid.Row="0" Padding="12,0,14,0" BackgroundColor="{Binding CardBackgroundColor, Source={x:Reference Root}}" ColumnSpacing="10">
+				<Grid.GestureRecognizers><TapGestureRecognizer Tapped="ExpandTapped" /></Grid.GestureRecognizers>
 				<Grid.ColumnDefinitions>
-
-					<ColumnDefinition Width="32" />
-
+					<ColumnDefinition Width="30" />
 					<ColumnDefinition Width="*" />
-
 					<ColumnDefinition Width="Auto" />
-
-					<ColumnDefinition Width="32" />
-
+					<ColumnDefinition Width="30" />
 				</Grid.ColumnDefinitions>
 
-				<!--  icon  -->
-
-				<Border
-					Grid.Column="0"
-					BackgroundColor="{StaticResource SparkAccentTealBg}"
-					HeightRequest="30"
-					StrokeShape="RoundRectangle 15"
-					StrokeThickness="0"
-					VerticalOptions="Center"
-					WidthRequest="30">
-					<Label
-						FontSize="15"
-						HorizontalOptions="Center"
-						HorizontalTextAlignment="Center"
-						Text="{Binding Icon, Source={x:Reference Root}}"
-						TextColor="{StaticResource SparkAccentTealDark}"
-						VerticalOptions="Center"
-						VerticalTextAlignment="Center" />
+				<Border Grid.Column="0" BackgroundColor="{StaticResource SparkAccentTealBg}" HeightRequest="28" StrokeShape="RoundRectangle 14" StrokeThickness="0" VerticalOptions="Center" WidthRequest="28">
+					<Label FontSize="14" HorizontalOptions="Center" Text="{Binding Icon, Source={x:Reference Root}}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
 				</Border>
 
-				<!--  title  -->
-
-				<VerticalStackLayout
-					Grid.Column="1"
-					Spacing="0"
-					VerticalOptions="Center">
-
-					<Label
-						FontAttributes="Bold"
-						FontSize="16"
-						LineBreakMode="TailTruncation"
-						Text="{Binding Title, Source={x:Reference Root}}"
-						TextColor="{Binding HeaderTextColor, Source={x:Reference Root}}" />
-
-					<Label
-						FontSize="13"
-						IsVisible="{Binding HasSubtitle, Source={x:Reference Root}}"
-						LineBreakMode="TailTruncation"
-						Text="{Binding Subtitle, Source={x:Reference Root}}"
-						TextColor="{Binding HeaderTextColor, Source={x:Reference Root}}" />
-
+				<VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+					<Label FontAttributes="Bold" FontSize="14" LineBreakMode="TailTruncation" Text="{Binding Title, Source={x:Reference Root}}" TextColor="{Binding HeaderTextColor, Source={x:Reference Root}}" />
+					<Label FontSize="12" IsVisible="{Binding HasSubtitle, Source={x:Reference Root}}" LineBreakMode="TailTruncation" Text="{Binding Subtitle, Source={x:Reference Root}}" TextColor="{Binding HeaderTextColor, Source={x:Reference Root}}" />
 				</VerticalStackLayout>
 
-				<!--  count  -->
-
-				<Border
-					x:Name="CountBorder"
-					Grid.Column="2"
-					Padding="6,2"
-					BackgroundColor="{StaticResource SparkSurfaceAlt}"
-					IsVisible="{Binding ShowCount, Source={x:Reference Root}}"
-					Stroke="{StaticResource SparkBorder}"
-					StrokeShape="RoundRectangle 6"
-					StrokeThickness="0"
-					VerticalOptions="Center">
-
-					<Label
-						FontAttributes="Bold"
-						FontSize="16"
-						HorizontalTextAlignment="Center"
-						Text="{Binding ItemCount, Source={x:Reference Root}}"
-						TextColor="{StaticResource SparkAccentTeal}" />
-
+				<Border x:Name="CountBorder" Grid.Column="2" Padding="6,2" BackgroundColor="{StaticResource SparkSurfaceAlt}" IsVisible="{Binding ShowCount, Source={x:Reference Root}}" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 6" StrokeThickness="1" VerticalOptions="Center">
+					<Label FontAttributes="Bold" FontSize="13" HorizontalTextAlignment="Center" Text="{Binding ItemCount, Source={x:Reference Root}}" TextColor="{StaticResource SparkAccentTeal}" />
 				</Border>
 
-				<!--  expand  -->
-
-				<Border
-					Grid.Column="3"
-					BackgroundColor="{StaticResource SparkAccentTealBg}"
-					HeightRequest="30"
-					StrokeShape="RoundRectangle 15"
-					StrokeThickness="0"
-					WidthRequest="30">
-					<Label
-						x:Name="ExpandIcon"
-						FontAttributes="Bold"
-						FontSize="18"
-						HorizontalOptions="Center"
-						HorizontalTextAlignment="Center"
-						Text="&#x25BC;"
-						TextColor="{StaticResource SparkAccentTealDark}"
-						VerticalOptions="Center"
-						VerticalTextAlignment="Center" />
+				<Border Grid.Column="3" BackgroundColor="{StaticResource SparkAccentTealBg}" HeightRequest="28" StrokeShape="RoundRectangle 14" StrokeThickness="0" WidthRequest="28">
+					<Label x:Name="ExpandIcon" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center" Text="&#x25BC;" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
 				</Border>
-
 			</Grid>
 
-			<!--  separator  -->
+			<BoxView Grid.Row="0" HeightRequest="1" VerticalOptions="End" Color="{StaticResource SparkBorder}" />
 
-			<BoxView
-				Grid.Row="0"
-				HeightRequest="1"
-				VerticalOptions="End"
-				Color="{StaticResource SparkBorder}" />
-
-			<!--  CONTENT  -->
-
-			<Grid
-				x:Name="ExpandableArea"
-				Grid.Row="1"
-				BackgroundColor="#F8FAFC"
-				IsVisible="False"
-				Opacity="0">
-
+			<Grid x:Name="ExpandableArea" Grid.Row="1" BackgroundColor="{StaticResource SparkBackground}" IsVisible="False" Opacity="0">
 				<Grid.RowDefinitions>
-
 					<RowDefinition Height="Auto" />
-
 					<RowDefinition Height="*" />
-
 					<RowDefinition Height="Auto" />
-
 				</Grid.RowDefinitions>
-
-				<!--  search slot  -->
-
-				<ContentPresenter
-					x:Name="SearchHost"
-					Margin="12,12,12,0"
-					IsVisible="False" />
-
-				<!--  body  -->
-
-				<Border
-					Grid.Row="1"
-					Margin="12"
-					Padding="8"
-					BackgroundColor="#F1F5F9"
-					Stroke="#E2E8F0"
-					StrokeShape="RoundRectangle 10"
-					StrokeThickness="1">
+				<ContentPresenter x:Name="SearchHost" Margin="12,12,12,0" IsVisible="False" />
+				<Border Grid.Row="1" Margin="12" Padding="8" BackgroundColor="{StaticResource SparkSurfaceAlt}" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
 					<Grid>
-
-						<!--  custom content  -->
-
 						<ContentPresenter x:Name="ContentHost" />
-
-						<!--  autogenerated collection  -->
-
-						<CollectionView
-							x:Name="ItemsHost"
-							IsVisible="False"
-							SelectionMode="Single"
-							VerticalScrollBarVisibility="Never" />
-
-						<!--  empty  -->
-
+						<CollectionView x:Name="ItemsHost" IsVisible="False" SelectionMode="Single" VerticalScrollBarVisibility="Never" />
 						<Grid x:Name="EmptyHost" IsVisible="False">
-
-							<Label
-								FontSize="12"
-								HorizontalOptions="Center"
-								Text="{Binding EmptyViewText, Source={x:Reference Root}}"
-								TextColor="{Binding HeaderTextColor, Source={x:Reference Root}}"
-								VerticalOptions="Center" />
-
+							<Label FontSize="12" HorizontalOptions="Center" Text="{Binding EmptyViewText, Source={x:Reference Root}}" TextColor="{Binding HeaderTextColor, Source={x:Reference Root}}" VerticalOptions="Center" />
 						</Grid>
-
 					</Grid>
 				</Border>
-
-				<!--  footer  -->
-
-				<Grid
-					x:Name="FooterGrid"
-					Grid.Row="2"
-					Padding="12,8"
-					IsVisible="False">
-
-					<Label
-						x:Name="FooterLabel"
-						FontSize="11"
-						TextColor="{Binding HeaderTextColor, Source={x:Reference Root}}" />
-
+				<Grid x:Name="FooterGrid" Grid.Row="2" Padding="12,8" IsVisible="False">
+					<Label x:Name="FooterLabel" FontSize="11" TextColor="{Binding HeaderTextColor, Source={x:Reference Root}}" />
 				</Grid>
-
 			</Grid>
-
 		</Grid>
-
 	</Border>
-
 </ContentView>
