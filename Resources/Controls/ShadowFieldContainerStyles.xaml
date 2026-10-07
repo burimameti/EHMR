@@ -11,7 +11,7 @@
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
-				<RoundRectangle CornerRadius="8" />
+				<Rectangle />
 			</Setter.Value>
 		</Setter>
 	</Style>
@@ -26,31 +26,31 @@
 	<Style x:Key="FFCardDefaultStyle" TargetType="controls:FFCard">
 		<Setter Property="Variant" Value="Default" />
 		<Setter Property="CardPadding" Value="14" />
-		<Setter Property="CardCornerRadius" Value="8" />
+		<Setter Property="CardCornerRadius" Value="0" />
 		<Setter Property="HasShadow" Value="False" />
 	</Style>
 	<Style x:Key="FFCardElevatedStyle" TargetType="controls:FFCard">
 		<Setter Property="Variant" Value="Elevated" />
 		<Setter Property="CardPadding" Value="14" />
-		<Setter Property="CardCornerRadius" Value="8" />
+		<Setter Property="CardCornerRadius" Value="0" />
 		<Setter Property="HasShadow" Value="False" />
 	</Style>
 	<Style x:Key="FFCardOutlinedStyle" TargetType="controls:FFCard">
 		<Setter Property="Variant" Value="Outlined" />
 		<Setter Property="CardPadding" Value="14" />
-		<Setter Property="CardCornerRadius" Value="8" />
+		<Setter Property="CardCornerRadius" Value="0" />
 		<Setter Property="HasShadow" Value="False" />
 	</Style>
 	<Style x:Key="FFCardFlatStyle" TargetType="controls:FFCard">
 		<Setter Property="Variant" Value="Flat" />
 		<Setter Property="CardPadding" Value="14" />
-		<Setter Property="CardCornerRadius" Value="8" />
+		<Setter Property="CardCornerRadius" Value="0" />
 		<Setter Property="HasShadow" Value="False" />
 	</Style>
 	<Style x:Key="FFCardSoftStyle" TargetType="controls:FFCard">
 		<Setter Property="Variant" Value="Soft" />
 		<Setter Property="CardPadding" Value="14" />
-		<Setter Property="CardCornerRadius" Value="8" />
+		<Setter Property="CardCornerRadius" Value="0" />
 		<Setter Property="HasShadow" Value="False" />
 	</Style>
 </ResourceDictionary>
