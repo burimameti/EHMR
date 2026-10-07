@@ -157,7 +157,7 @@ namespace EHMR.Domain.Entities.Reports
                 {
                     Cells=
                     [
-                        x.UserId.ToString()==null ? x.UserId.ToString() : "SYSTEM",
+                        x.UserId==Guid.Empty ? "SYSTEM" : x.UserId.ToString(),
                         x.Action ?? "-",
                         x.EntityName ?? "-",
                         x.Timestamp.ToString("dd.MM.yyyy"),
