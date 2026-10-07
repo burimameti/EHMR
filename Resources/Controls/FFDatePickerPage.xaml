@@ -23,23 +23,14 @@
 			Grid.Row="1"
 			Padding="0"
 			BackgroundColor="{StaticResource White}"
-			HeightRequest="46"
-			Stroke="#D7DEE8"
+			HeightRequest="36"
+			Stroke="#CBD5E1"
 			StrokeThickness="1">
 
 			<Border.StrokeShape>
-				<RoundRectangle CornerRadius="7" />
+				<RoundRectangle CornerRadius="8" />
 			</Border.StrokeShape>
-
-			<Border.Shadow>
-				<Shadow
-					Brush="#12000000"
-					Opacity="0.08"
-					Radius="3"
-					Offset="0,1" />
-			</Border.Shadow>
-
-			<Border.GestureRecognizers>
+<Border.GestureRecognizers>
 				<TapGestureRecognizer Tapped="OnBorderTapped" />
 				<PointerGestureRecognizer PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" />
 			</Border.GestureRecognizers>
@@ -92,7 +83,7 @@
 				<Border
 					Grid.Column="2"
 					Padding="0"
-					BackgroundColor="#F1F5F9"
+					BackgroundColor="#F8FAFC"
 					HeightRequest="30"
 					HorizontalOptions="End"
 					StrokeThickness="0"
