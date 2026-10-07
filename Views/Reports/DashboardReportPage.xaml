@@ -93,102 +93,62 @@
 					<Grid x:Name="DetailsGrid" IsVisible="True">
 						<VerticalStackLayout Spacing="0">
 
-							<!--  ============ FILTER + EXPLORER HEADER (one block) ============  -->
-							<VerticalStackLayout Spacing="12">
-
-								<!--  Row 1: report type (left) + actions (right)  -->
-								<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-									<VerticalStackLayout
-										Grid.Column="0"
-										Spacing="1"
-										VerticalOptions="Center">
-										<Label
-											FontAttributes="Bold"
-											FontSize="13"
-											Text="Тип на извештај"
-											TextColor="{StaticResource SparkTextMuted}" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="18"
-											Text="{Binding ActiveReportTitle}"
-											TextColor="{StaticResource SparkTextPrimary}" />
+							<!--  SPARK REPORT HEADER  -->
+							<Border
+								BackgroundColor="{StaticResource White}"
+								Padding="16,12"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeThickness="1">
+								<Border.StrokeShape>
+									<RoundRectangle CornerRadius="12" />
+								</Border.StrokeShape>
+								<Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="10" VerticalOptions="Center">
+									<VerticalStackLayout Grid.Column="0" Spacing="1" VerticalOptions="Center">
+										<Label FontAttributes="Bold" FontSize="11" Text="Тип на извештај" TextColor="{StaticResource SparkTextMuted}" />
+										<Label FontAttributes="Bold" FontSize="18" Text="{Binding ActiveReportTitle}" TextColor="{StaticResource SparkTextPrimary}" />
 									</VerticalStackLayout>
 
-									<HorizontalStackLayout
-										Grid.Column="1"
-										Spacing="10"
-										VerticalOptions="Center">
-										<sc:FFButton
-											ButtonKind="Secondary"
-											Command="{Binding ApplyPeriodAndRegenerateCommand}"
-											ContentPadding="14,0"
-											HeightRequestEx="42"
-											Text="Освежи" />
-										<sc:FFButton
-											ButtonKind="Primary"
-											Command="{Binding ExecuteReportGenerationCommand}"
-											ContentPadding="14,0"
-											HeightRequestEx="42"
-											Text="Генерирај" />
-									</HorizontalStackLayout>
-								</Grid>
+									<VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+										<Label FontSize="10" Text="Период" TextColor="{StaticResource SparkTextMuted}" />
+										<sc:FFPicker ItemsSource="{Binding PeriodTypeOptions}" SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" WidthRequest="145" />
+									</VerticalStackLayout>
 
-								<!--  Row 2: period + medicine search  -->
-								<Grid
-									ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,*"
-									ColumnSpacing="10"
-									VerticalOptions="Center">
+									<VerticalStackLayout Grid.Column="2" Spacing="3" VerticalOptions="Center">
+										<Label FontSize="10" Text="Од" TextColor="{StaticResource SparkTextMuted}" />
+										<sc:FFDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}" WidthRequest="125" />
+									</VerticalStackLayout>
 
-									<Label
-										Grid.Column="0"
-										Style="{StaticResource FilterLabel}"
-										Text="Од:" />
-									<sc:FFDatePicker
-										Grid.Column="1"
-										SelectedDate="{Binding FromDate, Mode=TwoWay}"
-										WidthRequest="125" />
+									<VerticalStackLayout Grid.Column="3" Spacing="3" VerticalOptions="Center">
+										<Label FontSize="10" Text="До" TextColor="{StaticResource SparkTextMuted}" />
+										<sc:FFDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}" WidthRequest="125" />
+									</VerticalStackLayout>
 
-									<Label
-										Grid.Column="2"
-										Style="{StaticResource FilterLabel}"
-										Text="До:" />
-									<sc:FFDatePicker
-										Grid.Column="3"
-										SelectedDate="{Binding ToDate, Mode=TwoWay}"
-										WidthRequest="125" />
-
-									<HorizontalStackLayout
-										Grid.Column="4"
-										Margin="12,0,0,0"
-										Spacing="6"
-										VerticalOptions="Center">
-										<CheckBox IsChecked="{Binding IsMedicineSearchEnabled, Mode=TwoWay}" Color="{StaticResource SparkAccentTeal}" />
-										<Label Style="{StaticResource FilterLabel}" Text="Пребарување по лек" />
-									</HorizontalStackLayout>
-
-									<HorizontalStackLayout
+									<sc:FFButton
 										Grid.Column="5"
-										IsVisible="{Binding IsMedicineSearchEnabled}"
-										Spacing="8"
-										VerticalOptions="Center">
-										<Label Style="{StaticResource FilterLabel}" Text="По лек:" />
-										<sc:FFPicker
-											ItemsSource="{Binding MedicinePicker.Items}"
-											Label=""
-											SelectedItem="{Binding MedicinePicker.SelectedItem, Mode=TwoWay}"
-											WidthRequest="320" />
-									</HorizontalStackLayout>
+										ButtonKind="Secondary"
+										Command="{Binding ApplyPeriodAndRegenerateCommand}"
+										ContentPadding="14,0"
+										HeightRequestEx="42"
+										Text="Освежи" />
+									<sc:FFButton
+										Grid.Column="6"
+										ButtonKind="Primary"
+										Command="{Binding ExecuteReportGenerationCommand}"
+										ContentPadding="14,0"
+										HeightRequestEx="42"
+										Text="Генерирај" />
 								</Grid>
+							</Border>
 
-								<!--  Row 3: pickers + patient search  -->
-								<sc:SparkExplorerHeaderView
-									Pickers="{Binding Pickers}"
-									SearchPlaceholder="Пребарување на пациенти..."
-									SearchText="{Binding ScorePatientSearchText, Mode=TwoWay}"
-									SelectedSuggestion="{Binding SelectedScorePatientSuggestion, Mode=TwoWay}"
-									ShowSuggestions="{Binding ShowScorePatientSuggestions}"
-									Suggestions="{Binding ScorePatientSuggestions}" />
-							</VerticalStackLayout>
+							<!--  SECOND ROW: EXPLORER PICKERS / PATIENT SEARCH  -->
+							<sc:SparkExplorerHeaderView
+								Margin="0,10,0,0"
+								Pickers="{Binding Pickers}"
+								SearchPlaceholder="Пребарување на пациенти..."
+								SearchText="{Binding ScorePatientSearchText, Mode=TwoWay}"
+								SelectedSuggestion="{Binding SelectedScorePatientSuggestion, Mode=TwoWay}"
+								ShowSuggestions="{Binding ShowScorePatientSuggestions}"
+								Suggestions="{Binding ScorePatientSuggestions}" />
 
 							<!--  Data grid  -->
 							<sc:FFSectionCard Margin="0,12,0,0" ContentPadding="0">
