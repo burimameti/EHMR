@@ -39,6 +39,9 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     public ObservableCollection<ReportDefinition> AvailableReports { get; } = new();
 
+    [ObservableProperty]
+    private ReportDefinition? selectedReportDefinition;
+
     public ObservableCollection<string> CategoryOptions { get; } = new();
 
     public ObservableCollection<string> TypeOptions { get; } = new();
@@ -329,6 +332,14 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         await SelectReport(patientReport);
     }
 
+    partial void OnSelectedReportDefinitionChanged(ReportDefinition? value)
+    {
+        if(value is null || ReferenceEquals(value, _activeReport))
+            return;
+
+        _=SelectReport(value);
+    }
+
     // =====================================================
     // REPORT HUB
     // =====================================================
@@ -448,6 +459,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         ClearReportState();
 
         _activeReport=report;
+        SelectedReportDefinition=report;
         _activeProvider=_registry.Resolve(report.Key);
 
         if(_activeProvider is null)
