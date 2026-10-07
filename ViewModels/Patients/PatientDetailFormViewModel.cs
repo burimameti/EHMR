@@ -1203,44 +1203,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     // ПРЕТХОДНИ ТЕРАПИИ (рачно, status = неактивен)
     // =====================================================
 
-    private CancellationTokenSource _previousMedicineSearchCts = new();
-
-    [ObservableProperty] private ObservableCollection<PreviousMedicineRow> previousMedicines = new();
-    [ObservableProperty] private ObservableCollection<MedicineDto> previousMedicineResults = new();
-    [ObservableProperty] private string previousMedicineSearchText = string.Empty;
-    [ObservableProperty] private bool showPreviousMedicineDropdown;
-
-    partial void OnPreviousMedicineSearchTextChanged(string value) => DebouncePreviousMedicineSearch(value);
-
-    private async void DebouncePreviousMedicineSearch(string query)
-    {
-        _previousMedicineSearchCts?.Cancel();
-        _previousMedicineSearchCts?.Dispose();
-        _previousMedicineSearchCts=new CancellationTokenSource();
-        var token = _previousMedicineSearchCts.Token;
-
-        if(string.IsNullOrWhiteSpace(query))
-        {
-            PreviousMedicineResults.Clear();
-            ShowPreviousMedicineDropdown=false;
-            return;
-        }
-
-        try
-        {
-            await Task.Delay(400, token);
-            if(token.IsCancellationRequested) return;
-
-            var results = await _patientService.SearchMedicinesAsync(query);
-            if(token.IsCancellationRequested) return;
-
-            PreviousMedicineResults=new ObservableCollection<MedicineDto>(results);
-            ShowPreviousMedicineDropdown=results.Count>0;
-        }
-        catch(OperationCanceledException) { }
-        catch(Exception ex) { Debug.WriteLine(ex); }
-    }
-
     [RelayCommand]
     private void RemovePreviousMedicine(PreviousMedicineRow row)
     {
@@ -1453,8 +1415,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         _mkbSearchCts.Dispose();
         _medicineSearchCts.Cancel();
         _medicineSearchCts.Dispose();
-        _previousMedicineSearchCts.Cancel();
-        _previousMedicineSearchCts.Dispose();
         ScoreEditor.Dispose();
         GC.SuppressFinalize(this);
     }
