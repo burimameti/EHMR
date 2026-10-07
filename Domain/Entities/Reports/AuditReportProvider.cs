@@ -90,7 +90,7 @@ namespace EHMR.Domain.Entities.Reports
             if(_userPicker==null) return;
 
             var users = logs
-                .Select(x => x.UserId.ToString()==null ? x.UserId.ToString() : "SYSTEM")
+                .Select(x => x.UserId == Guid.Empty ? "SYSTEM" : x.UserId.ToString())
                 .Distinct()
                 .OrderBy(x => x)
                 .ToList();
