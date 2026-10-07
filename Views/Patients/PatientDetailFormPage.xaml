@@ -124,7 +124,7 @@
 							Grid.Column="2"
 							Padding="6,2"
 							BackgroundColor="{Binding Status, Converter={StaticResource StatusBgConverter}}"
-							StrokeShape="Rectangle"
+							StrokeShape="RoundRectangle 4"
 							StrokeThickness="0"
 							VerticalOptions="Center">
 							<Label
@@ -636,7 +636,7 @@
 													BackgroundColor="White"
 													IsVisible="{Binding ShowDoctorDropdown}"
 													Stroke="{StaticResource SparkBorderSubtle}"
-													StrokeShape="Rectangle"
+													StrokeShape="RoundRectangle 8"
 													StrokeThickness="1">
 													<CollectionView
 														HeightRequest="150"
@@ -647,9 +647,9 @@
 																<Border
 																	Margin="0,2"
 																	Padding="8,6"
-																	BackgroundColor="{StaticResource SparkBackground}"
+																	BackgroundColor="#F8FAFC"
 																	Stroke="{StaticResource SparkBorderSubtle}"
-																	StrokeShape="Rectangle"
+																	StrokeShape="RoundRectangle 7"
 																	StrokeThickness="1">
 																	<Border.GestureRecognizers>
 																		<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectDoctorCommand}" CommandParameter="{Binding .}" />
@@ -717,9 +717,9 @@
 												TextColor="{StaticResource SparkTextSecondary}" />
 											<Border
 												Padding="6,5"
-												BackgroundColor="{StaticResource SparkBackground}"
+												BackgroundColor="#F4F7FA"
 												Stroke="{StaticResource SparkBorderSubtle}"
-												StrokeShape="Rectangle"
+												StrokeShape="RoundRectangle 9"
 												StrokeThickness="1">
 												<ScrollView HorizontalScrollBarVisibility="Never" Orientation="Horizontal">
 													<FlexLayout
@@ -733,7 +733,7 @@
 																	Margin="1"
 																	Padding="2"
 																	HeightRequest="30"
-																	StrokeShape="Rectangle"
+																	StrokeShape="RoundRectangle 6"
 																	StrokeThickness="1"
 																	WidthRequest="28">
 																	<Border.Triggers>
@@ -815,7 +815,7 @@
 																Padding="9,6"
 																BackgroundColor="White"
 																Stroke="{StaticResource SparkBorderSubtle}"
-																StrokeShape="Rectangle"
+																StrokeShape="RoundRectangle 8"
 																StrokeThickness="1">
 																<Border.GestureRecognizers>
 																	<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMkbCommand}" CommandParameter="{Binding .}" />
@@ -847,7 +847,7 @@
 															Padding="10,7"
 															BackgroundColor="{StaticResource SparkTabActiveBg}"
 															Stroke="{StaticResource SparkBorderSubtle}"
-															StrokeShape="Rectangle"
+															StrokeShape="RoundRectangle 8"
 															StrokeThickness="1">
 															<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
 																<Label
@@ -882,14 +882,6 @@
 											</VerticalStackLayout>
 										</Grid>
 
-									<!--  ═══ 3. СКОРОВИ — на иста линија со МКБ ═══  -->
-									<VerticalStackLayout Grid.Row="2" Grid.Column="2" Spacing="10">
-										<controls:CrudSectionHeader
-											Title="СКОРОВИ"
-											LineColor="{StaticResource White}"
-											Style="{StaticResource SectionHeaderStyle}" />
-										<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
-									</VerticalStackLayout>
 										<!--  РЕД 3 ЛЕВО — ТЕКОВНИ ТЕРАПИИ (Активна)  -->
 
 									</Grid>
@@ -914,7 +906,7 @@
 												Grid.Column="0"
 												Padding="6,2"
 												BackgroundColor="{StaticResource SparkAccentTealBg}"
-												StrokeShape="Rectangle"
+												StrokeShape="RoundRectangle 4"
 												StrokeThickness="0"
 												VerticalOptions="Center">
 												<Label
@@ -943,7 +935,7 @@
 											BackgroundColor="White"
 											IsVisible="{Binding ShowMedicineDropdown}"
 											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeShape="Rectangle"
+											StrokeShape="RoundRectangle 8"
 											StrokeThickness="1"
 											VerticalOptions="Start">
 											<CollectionView
@@ -1098,7 +1090,7 @@
 												Grid.Column="1"
 												Padding="6,2"
 												BackgroundColor="{StaticResource Gray300}"
-												StrokeShape="Rectangle"
+												StrokeShape="RoundRectangle 4"
 												StrokeThickness="0"
 												VerticalOptions="Center">
 												<Label
@@ -1221,6 +1213,15 @@
 
 
 
+									<!--  ═══ 3. СКОРОВИ — на иста линија со МКБ ═══  -->
+									<VerticalStackLayout Grid.Column="2" Spacing="10">
+										<controls:CrudSectionHeader
+											Title="СКОРОВИ"
+											LineColor="{StaticResource White}"
+											Style="{StaticResource SectionHeaderStyle}" />
+										<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
+									</VerticalStackLayout>
+								</Grid>
 								<!--  ═══ 5. ДОСИЕ | СТАТУС НА ПАЦИЕНТ | ЗАБЕЛЕШКА ═══  -->
 								<Grid ColumnDefinitions="*,*,*" ColumnSpacing="14">
 
@@ -1234,7 +1235,7 @@
 											Padding="14"
 											BackgroundColor="White"
 											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeShape="Rectangle"
+											StrokeShape="RoundRectangle 10"
 											StrokeThickness="1">
 											<VerticalStackLayout Spacing="12">
 												<Grid
@@ -1275,7 +1276,7 @@
 																Padding="10,8"
 																BackgroundColor="{StaticResource SparkTabActiveBg}"
 																Stroke="{StaticResource SparkBorderSubtle}"
-																StrokeShape="Rectangle"
+																StrokeShape="RoundRectangle 10"
 																StrokeThickness="1">
 																<Border.GestureRecognizers>
 																	<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding .}" />
@@ -1284,7 +1285,7 @@
 																	<Border
 																		BackgroundColor="{StaticResource SparkAccentTealBg}"
 																		HeightRequest="40"
-																		StrokeShape="Rectangle"
+																		StrokeShape="RoundRectangle 8"
 																		StrokeThickness="0"
 																		WidthRequest="36">
 																		<Grid>
@@ -1515,7 +1516,7 @@
 				Padding="16,10"
 				BackgroundColor="White"
 				Stroke="{StaticResource SparkBorderSubtle}"
-				StrokeShape="Rectangle"
+				StrokeShape="RoundRectangle 8"
 				StrokeThickness="1">
 				<Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
 					<Label
