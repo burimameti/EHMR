@@ -271,14 +271,7 @@
 								HeightRequestEx="40"
 								Text="Назад"
 								WidthRequestEx="130" />
-							<controls:FFButton
-								ButtonKind="Secondary"
-								Command="{Binding GenerateClinicalReportCommand}"
-								ContentPadding="16,0"
-								HeightRequestEx="40"
-								IsEnabled="{Binding CanPrintPatientReport}"
-								IsVisible="{Binding IsNewPatient, Converter={StaticResource InverseBoolConverter}}"
-								Text="Печати / PDF" />
+
 						</HorizontalStackLayout>
 					</controls:FFPageHeader.HeaderContent>
 				</controls:FFPageHeader>
