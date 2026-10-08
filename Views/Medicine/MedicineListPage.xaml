@@ -41,25 +41,39 @@
 				</Grid>
 			</Border>
 
-			<!--  MAIN CONTENT / GRID  -->
+			<!--  MAIN CONTENT / TIMELINE TABS  -->
 			<Border Grid.Row="1" BackgroundColor="{StaticResource PageBackground}" StrokeThickness="0">
 				<ScrollView VerticalScrollBarVisibility="Never">
-					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
+					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}" Spacing="14">
+						<!-- Catalog timeline tabs -->
 						<controls:FFSectionCard>
+							<HorizontalStackLayout Padding="4,0" Spacing="8">
+								<controls:FFButton Text="Лекови" Command="{Binding SelectCatalogTabCommand}" CommandParameter="1" ButtonKind="Secondary" HeightRequestEx="40" ContentPadding="20,0">
+									<controls:FFButton.Triggers>
+										<DataTrigger TargetType="controls:FFButton" Binding="{Binding IsMedicineTabActive}" Value="True"><Setter Property="ButtonKind" Value="Primary" /></DataTrigger>
+									</controls:FFButton.Triggers>
+								</controls:FFButton>
+								<controls:FFButton Text="Начини на апликација" Command="{Binding SelectCatalogTabCommand}" CommandParameter="2" ButtonKind="Secondary" HeightRequestEx="40" ContentPadding="20,0">
+									<controls:FFButton.Triggers>
+										<DataTrigger TargetType="controls:FFButton" Binding="{Binding IsApplicationRegimeTabActive}" Value="True"><Setter Property="ButtonKind" Value="Primary" /></DataTrigger>
+									</controls:FFButton.Triggers>
+								</controls:FFButton>
+								<controls:FFButton Text="Скорови" Command="{Binding SelectCatalogTabCommand}" CommandParameter="3" ButtonKind="Secondary" HeightRequestEx="40" ContentPadding="20,0">
+									<controls:FFButton.Triggers>
+										<DataTrigger TargetType="controls:FFButton" Binding="{Binding IsScoreTabActive}" Value="True"><Setter Property="ButtonKind" Value="Primary" /></DataTrigger>
+									</controls:FFButton.Triggers>
+								</controls:FFButton>
+							</HorizontalStackLayout>
+						</controls:FFSectionCard>
+
+						<!-- Medicines tab -->
+						<controls:FFSectionCard IsVisible="{Binding IsMedicineTabActive}">
 							<Grid ColumnDefinitions="*,Auto" Padding="4,0,4,10">
 								<VerticalStackLayout Spacing="3">
 									<Label FontAttributes="Bold" FontSize="16" Text="Лекови" TextColor="{StaticResource SparkTextPrimary}" />
 									<Label FontSize="12" Text="Регистар на лекови и нивните стандардни дози." TextColor="{StaticResource SparkTextSecondary}" />
 								</VerticalStackLayout>
-								<controls:FFButton
-									Grid.Column="1"
-									ButtonKind="Primary"
-									BackgroundColorEx="{StaticResource SidebarActiveBg}"
-									TextColorEx="White"
-									Command="{Binding NewMedicineCommand}"
-									ContentPadding="18,0"
-									HeightRequestEx="40"
-									Text="Нов лек" />
+								<controls:FFButton Grid.Column="1" ButtonKind="Primary" BackgroundColorEx="{StaticResource SidebarActiveBg}" TextColorEx="White" Command="{Binding NewMedicineCommand}" ContentPadding="18,0" HeightRequestEx="40" Text="+ Нов лек" />
 							</Grid>
 							<controls:SparkExplorerHeaderView
 								Buttons="{Binding Buttons}"
@@ -68,48 +82,46 @@
 								SearchPlaceholder="Пребарување по назив, генеричко име или форма..."
 								SearchText="{Binding SearchText}"
 								Tabs="{Binding Tabs}" />
-						</controls:FFSectionCard>
-						<controls:FFSectionCard>
 							<controls:SparkDataGridView
-									x:Name="MedicineGrid"
-									Columns="{Binding GridColumns}"
-									CurrentPage="{Binding CurrentPage}"
-									EditRowCommand="{Binding EditCommand}"
-									NextPageCommand="{Binding NextPageCommand}"
-									PageChangedCommand="{Binding PageChangedCommand}"
-									PreviousPageCommand="{Binding PreviousPageCommand}"
-									RowTappedCommand="{Binding SelectCommand}"
-									Rows="{Binding GridRows}"
-									ShowPagination="True"
-									ShowRowNumbers="True"
-									TotalPages="{Binding TotalPages}" />
+								Columns="{Binding GridColumns}"
+								CurrentPage="{Binding CurrentPage}"
+								EditRowCommand="{Binding EditCommand}"
+								NextPageCommand="{Binding NextPageCommand}"
+								PageChangedCommand="{Binding PageChangedCommand}"
+								PreviousPageCommand="{Binding PreviousPageCommand}"
+								RowTappedCommand="{Binding SelectCommand}"
+								Rows="{Binding GridRows}"
+								ShowPagination="True"
+								ShowRowNumbers="True"
+								TotalPages="{Binding TotalPages}" />
 						</controls:FFSectionCard>
 
-						<controls:FFSectionCard>
+						<!-- Application methods tab -->
+						<controls:FFSectionCard IsVisible="{Binding IsApplicationRegimeTabActive}">
+							<Grid ColumnDefinitions="*,Auto" Padding="4,0,4,10">
+								<VerticalStackLayout Spacing="3">
+									<Label FontAttributes="Bold" FontSize="16" Text="Начини на апликација" TextColor="{StaticResource SparkTextPrimary}" />
+									<Label FontSize="12" Text="Регистар на начини на апликација што се користат кај терапијата." TextColor="{StaticResource SparkTextSecondary}" />
+								</VerticalStackLayout>
+								<controls:FFButton Grid.Column="1" ButtonKind="Primary" BackgroundColorEx="{StaticResource SidebarActiveBg}" TextColorEx="White" Command="{Binding AddApplicationRegimeCommand}" Text="+ Нов начин на апликација" HeightRequestEx="40" ContentPadding="18,0" />
+							</Grid>
+							<controls:SparkDataGridView Columns="{Binding ApplicationRegimeColumns}" Rows="{Binding ApplicationRegimeRows}" ShowPagination="False" ShowRowNumbers="True" />
+						</controls:FFSectionCard>
+
+						<!-- Clinical scores tab -->
+						<controls:FFSectionCard IsVisible="{Binding IsScoreTabActive}">
 							<Grid ColumnDefinitions="*,Auto" Padding="4,0,4,10">
 								<VerticalStackLayout Spacing="3">
 									<Label FontAttributes="Bold" FontSize="16" Text="Скорови" TextColor="{StaticResource SparkTextPrimary}" />
 									<Label FontSize="12" Text="Регистар на клинички скорови достапни во прегледите." TextColor="{StaticResource SparkTextSecondary}" />
 								</VerticalStackLayout>
-								<controls:FFButton Grid.Column="1" ButtonKind="Primary" BackgroundColorEx="{StaticResource SidebarActiveBg}" TextColorEx="White" Command="{Binding AddScoreDefinitionCommand}" IsEnabled="{Binding CanCreate}" Text="+ Нов скор" HeightRequestEx="40" ContentPadding="18,0" />
+								<controls:FFButton Grid.Column="1" ButtonKind="Primary" BackgroundColorEx="{StaticResource SidebarActiveBg}" TextColorEx="White" Command="{Binding AddScoreDefinitionCommand}" IsEnabled="{Binding CanCreate}" Text="+ Додади скор" HeightRequestEx="40" ContentPadding="18,0" />
 							</Grid>
 							<controls:SparkDataGridView Columns="{Binding ScoreColumns}" Rows="{Binding ScoreRows}" ShowPagination="False" ShowRowNumbers="True" />
-						</controls:FFSectionCard>
-
-						<controls:FFSectionCard>
-							<Grid ColumnDefinitions="*,Auto" Padding="4,0,4,10">
-								<VerticalStackLayout Spacing="3">
-									<Label FontAttributes="Bold" FontSize="16" Text="Режим на апликација" TextColor="{StaticResource SparkTextPrimary}" />
-									<Label FontSize="12" Text="Регистар на режими на апликација што се користат кај терапијата." TextColor="{StaticResource SparkTextSecondary}" />
-								</VerticalStackLayout>
-								<controls:FFButton Grid.Column="1" ButtonKind="Primary" BackgroundColorEx="{StaticResource SidebarActiveBg}" TextColorEx="White" Command="{Binding AddApplicationRegimeCommand}" Text="Додади начин" HeightRequestEx="40" ContentPadding="18,0" />
-							</Grid>
-							<controls:SparkDataGridView Columns="{Binding ApplicationRegimeColumns}" Rows="{Binding ApplicationRegimeRows}" ShowPagination="False" ShowRowNumbers="True" />
 						</controls:FFSectionCard>
 					</VerticalStackLayout>
 				</ScrollView>
 			</Border>
-
 		</Grid>
 
 		<!--  LOADING OVERLAY  -->
