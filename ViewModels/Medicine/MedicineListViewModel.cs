@@ -32,6 +32,26 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
         get;
     }
 
+    [ObservableProperty] private int activeCatalogTab = 1;
+
+    public bool IsMedicineTabActive => ActiveCatalogTab == 1;
+    public bool IsApplicationRegimeTabActive => ActiveCatalogTab == 2;
+    public bool IsScoreTabActive => ActiveCatalogTab == 3;
+
+    partial void OnActiveCatalogTabChanged(int value)
+    {
+        OnPropertyChanged(nameof(IsMedicineTabActive));
+        OnPropertyChanged(nameof(IsApplicationRegimeTabActive));
+        OnPropertyChanged(nameof(IsScoreTabActive));
+    }
+
+    [RelayCommand]
+    private void SelectCatalogTab(string? tab)
+    {
+        if (int.TryParse(tab, out var index) && index >= 1 && index <= 3)
+            ActiveCatalogTab = index;
+    }
+
     [ObservableProperty] private ObservableCollection<Medicine> filteredMedicines = new();
 
     public MedicineListViewModel(
