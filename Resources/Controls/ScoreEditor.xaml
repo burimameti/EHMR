@@ -17,7 +17,7 @@
 				FontSize="10"
 				Text="ПРЕБАРУВАЊЕ НА СКОР"
 				TextColor="{StaticResource SparkTextSecondary}" />
-			<Grid ColumnDefinitions="*,82,Auto,Auto" ColumnSpacing="6">
+			<Grid ColumnDefinitions="*,82" ColumnSpacing="6">
 				<Border
 					Padding="8,0"
 					BackgroundColor="{StaticResource SparkBackground}"
@@ -28,7 +28,7 @@
 					<Entry
 						BackgroundColor="Transparent"
 						FontSize="12"
-						Placeholder="Пребарај или внеси опис (пр. DAS28)"
+						Placeholder="Пребарај скор (пр. DAS28)"
 						PlaceholderColor="{StaticResource SparkTextSecondary}"
 						Text="{Binding DescriptionText, Mode=TwoWay}"
 						TextColor="{StaticResource SparkTextPrimary}"
@@ -52,21 +52,21 @@
 						TextColor="{StaticResource SparkTextPrimary}"
 						VerticalOptions="Center" />
 				</Border>
+			</Grid>
+			<HorizontalStackLayout HorizontalOptions="End" Spacing="6">
 				<controls:FFButton
-					Grid.Column="2"
 					ButtonKind="Primary"
 					Command="{Binding AddCommand}"
 					HeightRequestEx="38"
-					Text="+ Додади"
-					WidthRequestEx="96" />
+					Text="Додади во листа"
+					WidthRequestEx="132" />
 				<controls:FFButton
-					Grid.Column="3"
 					ButtonKind="Secondary"
 					Command="{Binding AddNewScoreDefinitionCommand}"
 					HeightRequestEx="38"
 					Text="+ Додади нов скор"
 					WidthRequestEx="150" />
-			</Grid>
+			</HorizontalStackLayout>
 		</VerticalStackLayout>
 
 		<!--  Предлози (најупотребените најгоре)  -->
