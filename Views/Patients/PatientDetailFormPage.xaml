@@ -820,49 +820,31 @@
 														</ScrollView>
 													</Border>
 												</VerticalStackLayout>
-												<Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+												<Grid ColumnDefinitions="220,220,*" ColumnSpacing="10">
 
-													<VerticalStackLayout Spacing="8">
-														<VerticalStackLayout
-															Spacing="4"
-															IsVisible="{Binding IsEditMode}">
-															<controls:FFSearchBox MinimumWidthRequest="0" Placeholder="M06.9" Text="{Binding MkbCodeSearchText, Mode=TwoWay}" />
-															<controls:FFSearchBox MinimumWidthRequest="0" Placeholder="Опис на дијагноза" Text="{Binding MkbDescriptionSearchText, Mode=TwoWay}" />
-														</VerticalStackLayout>
+											<VerticalStackLayout
+												Grid.Column="0"
+												IsVisible="{Binding IsEditMode}"
+												Spacing="2">
+												<controls:FFSearchBox
+													HorizontalOptions="Fill"
+													MinimumWidthRequest="0"
+													Label="Пребарување по код"
+													Placeholder="M06.9"
+													Text="{Binding MkbCodeSearchText, Mode=TwoWay}" />
+											</VerticalStackLayout>
 
-														<CollectionView
-															HeightRequest="130"
-															IsVisible="{Binding ShowMkbDropdown}"
-															ItemsSource="{Binding MkbResults}"
-															SelectionMode="None">
-															<CollectionView.ItemTemplate>
-																<DataTemplate x:DataType="dto:Mkb10CodeDto">
-																	<Border
-																		Margin="0,2"
-																		Padding="9,6"
-																		BackgroundColor="White"
-																		Stroke="{StaticResource SparkBorderSubtle}"
-																		StrokeShape="RoundRectangle 8"
-																		StrokeThickness="1">
-																		<Border.GestureRecognizers>
-																			<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMkbCommand}" CommandParameter="{Binding .}" />
-																		</Border.GestureRecognizers>
-																		<VerticalStackLayout Spacing="1">
-																			<Label
-																				FontAttributes="Bold"
-																				FontSize="11.5"
-																				Text="{Binding Code}"
-																				TextColor="{StaticResource SparkAccentTealDark}" />
-																			<Label
-																				FontSize="10.5"
-																				Text="{Binding Description}"
-																				TextColor="{StaticResource SparkTextSecondary}" />
-																		</VerticalStackLayout>
-																	</Border>
-																</DataTemplate>
-															</CollectionView.ItemTemplate>
-														</CollectionView>
-													</VerticalStackLayout>
+											<VerticalStackLayout
+												Grid.Column="1"
+												IsVisible="{Binding IsEditMode}"
+												Spacing="2">
+												<controls:FFSearchBox
+													HorizontalOptions="Fill"
+													MinimumWidthRequest="0"
+													Label="Пребарување по опис"
+													Placeholder="Опис на дијагноза"
+													Text="{Binding MkbDescriptionSearchText, Mode=TwoWay}" />
+											</VerticalStackLayout>
 
 													<VerticalStackLayout BindableLayout.ItemsSource="{Binding Diagnoses}" Spacing="4">
 														<BindableLayout.ItemTemplate>
