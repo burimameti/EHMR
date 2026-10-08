@@ -1,7 +1,9 @@
+using CommunityToolkit.Maui.Views;
 using EHMR.Infrastructure.Persistence;
 using EHMR.ViewModels;
 using EHMR.Views.Popups;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Input;
 
 namespace EHMR.Resources.Controls;
