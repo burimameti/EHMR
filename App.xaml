@@ -76,6 +76,7 @@
 			<converters:PageActiveConverter x:Key="PageActiveConverter" />
 			<converters:LayoutStyleToTemplateConverter x:Key="LayoutStyleToTemplateConverter" />
 			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Resources/Styles/EhmrDesignSystem.xaml" />
 
 				<ResourceDictionary Source="Resources/Styles/Colors.xaml" />
 				<ResourceDictionary Source="Resources/Styles/CalendarStyle.xaml" />
