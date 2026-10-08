@@ -139,8 +139,9 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
             "Опис на скор",
             "Внесете опис (опционално):",
             "Зачувај",
-            "Прескокни",
-            "Опис на клиничкиот скор") ?? string.Empty;
+            "Откажи",
+            "Опис на клиничкиот скор");
+        if(description is null) return;
 
         try
         {
