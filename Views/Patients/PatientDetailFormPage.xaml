@@ -1099,7 +1099,6 @@
 													<Border
 														Padding="10,8"
 														BackgroundColor="{StaticResource SparkSurfaceAlt}"
-														IsVisible="False"
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
 														<Border.Triggers>
@@ -1265,7 +1264,6 @@
 													<Border
 														Padding="10,8"
 														BackgroundColor="{StaticResource SparkSurfaceAlt}"
-														IsVisible="False"
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
 														<Border.Triggers>
