@@ -1279,6 +1279,19 @@
 															</DataTemplate>
 														</BindableLayout.ItemTemplate>
 													</VerticalStackLayout>
+													<Border
+														Padding="10,8"
+														BackgroundColor="{StaticResource SparkSurfaceAlt}"
+														IsVisible="False"
+														Stroke="{StaticResource SparkBorderSubtle}"
+														StrokeThickness="1">
+														<Border.Triggers>
+															<DataTrigger Binding="{Binding PreviousMedicines.Count}" TargetType="Border" Value="0">
+																<Setter Property="IsVisible" Value="True" />
+															</DataTrigger>
+														</Border.Triggers>
+														<Label FontSize="10" HorizontalOptions="Center" Text="Нема неактивни лекови." TextColor="{StaticResource SparkTextMuted}" />
+													</Border>
 												</VerticalStackLayout>
 											</VerticalStackLayout>
 										</Grid>
