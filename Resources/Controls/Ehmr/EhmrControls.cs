@@ -128,7 +128,20 @@ public sealed class EhmrCard : ContentView
     public EhmrCard()
     {
         var host=new ContentView();
-        host.SetBinding(ContentView.ContentProperty,new Binding(napublic sealed class EhmrFormControl : ContentView
+        host.SetBinding(ContentView.ContentProperty,new Binding(nameof(Body),source:this));
+        Content=new Border
+        {
+            Content=host,
+            BackgroundColor=Colors.White,
+            Stroke=(Color)Application.Current!.Resources["EhmrBorder"],
+            StrokeThickness=1,
+            StrokeShape=new RoundRectangle{CornerRadius=8},
+            Padding=16
+        };
+    }
+}
+
+public sealed class EhmrFormControl : ContentView
 {
     public static readonly BindableProperty TitleProperty=BindableProperty.Create(nameof(Title),typeof(string),typeof(EhmrFormControl),"");
     public static readonly BindableProperty BodyProperty=BindableProperty.Create(nameof(Body),typeof(View),typeof(EhmrFormControl));
