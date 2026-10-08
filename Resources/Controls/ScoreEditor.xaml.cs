@@ -30,7 +30,8 @@ public partial class ScoreEditor : ContentView
         var factory=MauiProgram.ServiceProvider.GetRequiredService<IDbContextFactory<DesktopTherapyDbContext>>();
         var popupViewModel=new ScoreEditorViewModel(factory) { IsReadOnly=false };
         var popup=new AddPatientScorePopup(popupViewModel);
-        if(Shell.Current is null)
+        var mainPage=Application.Current?.Windows.FirstOrDefault()?.Page??Application.Current?.MainPage;
+        if(mainPage is null)
         {
             popupViewModel.Dispose();
             return;
@@ -38,7 +39,7 @@ public partial class ScoreEditor : ContentView
 
         try
         {
-            await Shell.Current.CurrentPage.ShowPopupAsync(popup);
+            await mainPage.ShowPopupAsync(popup);
             if(popup.ScoreResult is ScoreRow row)
                 editor.Items.Insert(0,row);
         }
