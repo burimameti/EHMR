@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="EHMR.Views.Popups.AddPatientScorePopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Name="Root">
+
+    <Border
+        Padding="18"
+        BackgroundColor="{StaticResource SparkBackground}"
+        Stroke="{StaticResource SparkBorder}"
+        StrokeShape="RoundRectangle 12"
+        StrokeThickness="1"
+        WidthRequest="480">
+        <VerticalStackLayout Spacing="14">
+            <VerticalStackLayout Spacing="2">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="17"
+                    Text="Додади скор"
+                    TextColor="{StaticResource SparkTextPrimary}" />
+                <Label
+                    FontSize="11"
+                    Text="Внесете опис и бројка за новиот скор."
+                    TextColor="{StaticResource SparkTextSecondary}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="11"
+                    Text="ОПИС НА СКОР"
+                    TextColor="{StaticResource SparkTextSecondary}" />
+                <controls:FFSearchBox
+                    Placeholder="Пр. DAS28"
+                    Text="{Binding DescriptionText, Mode=TwoWay}" />
+            </VerticalStackLayout>
+
+            <Border
+                BackgroundColor="{StaticResource SparkBackground}"
+                HeightRequest="36"
+                Stroke="{StaticResource SparkBorder}"
+                StrokeShape="RoundRectangle 6"
+                StrokeThickness="1">
+                <Entry
+                    BackgroundColor="Transparent"
+                    FontSize="13"
+                    Keyboard="Numeric"
+                    Placeholder="Бројка"
+                    Text="{Binding NumberText, Mode=TwoWay}"
+                    TextColor="{StaticResource SparkTextPrimary}" />
+            </Border>
+
+            <Border
+                Padding="4"
+                BackgroundColor="White"
+                IsVisible="{Binding ShowSuggestions}"
+                Stroke="{StaticResource SparkBorderSubtle}"
+                StrokeShape="RoundRectangle 8"
+                StrokeThickness="1">
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Suggestions}" Spacing="0">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ScoreSuggestion" xmlns:vm="clr-namespace:EHMR.ViewModels">
+                            <Border Padding="9,7" BackgroundColor="Transparent" StrokeThickness="0">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={x:Reference Root}, Path=BindingContext.SelectSuggestionCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontSize="12"
+                                        Text="{Binding Text}"
+                                        TextColor="{StaticResource SparkAccentTealDark}" />
+                                    <Label
+                                        Grid.Column="1"
+                                        FontSize="10"
+                                        Text="{Binding UsageCount, StringFormat='×{0}'}"
+                                        TextColor="{StaticResource SparkTextSecondary}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </Border>
+
+            <HorizontalStackLayout HorizontalOptions="End" Spacing="8">
+                <controls:FFButton
+                    ButtonKind="Secondary"
+                    Command="{Binding Source={x:Reference Root}, Path=CancelCommand}"
+                    HeightRequestEx="36"
+                    Text="Откажи"
+                    WidthRequestEx="100" />
+                <controls:FFButton
+                    ButtonKind="Primary"
+                    Command="{Binding Source={x:Reference Root}, Path=SaveCommand}"
+                    HeightRequestEx="36"
+                    Text="Додади"
+                    WidthRequestEx="100" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </Border>
+</toolkit:Popup>
