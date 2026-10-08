@@ -14,7 +14,7 @@
 		<HorizontalStackLayout IsVisible="{Binding IsEditable}" Spacing="8">
 			<controls:FFButton
 				ButtonKind="Primary"
-				Command="{Binding Source={x:Reference Root}, Path=OpenAddScoreCommand}"
+				Clicked="OnAddScoreClicked"
 				HeightRequestEx="36"
 				Text="+ Додади скор"
 				WidthRequestEx="130" />
@@ -91,14 +91,15 @@
 				<DataTemplate x:DataType="vm:ScoreRow">
 					<Grid ColumnDefinitions="*,90,44" ColumnSpacing="1">
 						<Border
-							Padding="4,0"
+							Padding="8,0"
 							BackgroundColor="{StaticResource SparkBackground}"
-							HeightRequest="46"
+							HeightRequest="42"
 							Stroke="{StaticResource SparkBorderSubtle}"
 							StrokeThickness="1">
 							<Entry
 								BackgroundColor="Transparent"
 								FontSize="11.5"
+								HeightRequest="36"
 								IsEnabled="{Binding Source={x:Reference Root}, Path=BindingContext.IsEditable}"
 								Text="{Binding Description, Mode=TwoWay}"
 								TextColor="{StaticResource SparkTextPrimary}"
