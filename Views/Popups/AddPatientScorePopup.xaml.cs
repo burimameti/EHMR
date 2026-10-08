@@ -21,6 +21,8 @@ public partial class AddPatientScorePopup : Popup
     public ICommand SaveCommand { get; }
     public ICommand CancelCommand { get; }
 
+    public ScoreRow? ScoreResult { get; private set; }
+
     private async Task SaveAsync()
     {
         if(string.IsNullOrWhiteSpace(_viewModel.DescriptionText))
@@ -29,6 +31,8 @@ public partial class AddPatientScorePopup : Popup
         _viewModel.AddCommand.Execute(null);
         var row=_viewModel.Items.FirstOrDefault();
         if(row is not null)
-            await CloseAsync(row);
+            ScoreResult=row;
+
+        await CloseAsync();
     }
 }
