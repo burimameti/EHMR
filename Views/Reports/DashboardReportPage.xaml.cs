@@ -24,6 +24,10 @@ namespace EHMR.Views.Reports
 
             if(!_vm.IsShowingDetails)
                 await _vm.OpenPatientsReportAsync();
+
+            // Rebuild provider-backed picker items after report initialization,
+            // including when the page is revisited with an existing ViewModel.
+            _vm.RefreshReportControls();
         }
 
     }
