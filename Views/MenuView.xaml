@@ -66,19 +66,6 @@
 									<RoundRectangle CornerRadius="12" />
 								</Border.StrokeShape>
 
-								<VisualStateManager.VisualStateGroups>
-									<VisualStateGroupList>
-										<VisualStateGroup x:Name="PointerStates">
-											<VisualState x:Name="Normal" />
-											<VisualState x:Name="PointerOver">
-												<VisualState.Setters>
-													<Setter Property="BackgroundColor" Value="#566471" />
-												</VisualState.Setters>
-											</VisualState>
-										</VisualStateGroup>
-									</VisualStateGroupList>
-								</VisualStateManager.VisualStateGroups>
-
 								<Border.Triggers>
 									<DataTrigger
 										Binding="{Binding IsActive}"
@@ -208,6 +195,19 @@
 										</Label.Triggers>
 									</Label>
 								</Grid>
+
+								<VisualStateManager.VisualStateGroups>
+									<VisualStateGroupList>
+										<VisualStateGroup x:Name="PointerStates">
+											<VisualState x:Name="Normal" />
+											<VisualState x:Name="PointerOver">
+												<VisualState.Setters>
+													<Setter Property="BackgroundColor" Value="#566471" />
+												</VisualState.Setters>
+											</VisualState>
+										</VisualStateGroup>
+									</VisualStateGroupList>
+								</VisualStateManager.VisualStateGroups>
 							</Border>
 
 							<!--  ================= CHILDREN =================  -->
@@ -229,21 +229,7 @@
 											ColumnDefinitions="16,*"
 											ColumnSpacing="10"
 											HeightRequest="32">
-
-											<VisualStateManager.VisualStateGroups>
-											<VisualStateGroupList>
-												<VisualStateGroup x:Name="PointerStates">
-													<VisualState x:Name="Normal" />
-													<VisualState x:Name="PointerOver">
-														<VisualState.Setters>
-															<Setter Property="BackgroundColor" Value="#333F4D" />
-														</VisualState.Setters>
-													</VisualState>
-												</VisualStateGroup>
-											</VisualStateGroupList>
-										</VisualStateManager.VisualStateGroups>
-
-										<Grid.Triggers>
+											<Grid.Triggers>
 												<DataTrigger
 													Binding="{Binding IsActive}"
 													TargetType="Grid"
@@ -316,6 +302,19 @@
 													</DataTrigger>
 												</Label.Triggers>
 											</Label>
+
+											<VisualStateManager.VisualStateGroups>
+												<VisualStateGroupList>
+													<VisualStateGroup x:Name="PointerStates">
+														<VisualState x:Name="Normal" />
+														<VisualState x:Name="PointerOver">
+															<VisualState.Setters>
+																<Setter Property="BackgroundColor" Value="#333F4D" />
+															</VisualState.Setters>
+														</VisualState>
+													</VisualStateGroup>
+												</VisualStateGroupList>
+											</VisualStateManager.VisualStateGroups>
 										</Grid>
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>

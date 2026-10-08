@@ -11,13 +11,13 @@
 	<VerticalStackLayout Spacing="8">
 
 		<!--  Додавање на скор се отвора во popup за да остане секцијата компактна.  -->
-		<HorizontalStackLayout Spacing="8" IsVisible="{Binding IsEditable}">
+		<HorizontalStackLayout IsVisible="{Binding IsEditable}" Spacing="8">
 			<controls:FFButton
 				ButtonKind="Primary"
+				Command="{Binding Source={x:Reference Root}, Path=OpenAddScoreCommand}"
 				HeightRequestEx="36"
 				Text="+ Додади скор"
-				WidthRequestEx="130"
-				Command="{Binding Source={x:Reference Root}, Path=OpenAddScoreCommand}" />
+				WidthRequestEx="130" />
 		</HorizontalStackLayout>
 
 		<!--  Предлози (најупотребените најгоре)  -->

@@ -75,15 +75,15 @@
 
 	<Style x:Key="PageCardStyleDashboard" TargetType="Border">
 
-		<Setter Property="BackgroundColor" Value="White" />
+		<Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
 
-		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="StrokeThickness" Value="0" />
 		<Setter Property="Padding" Value="0" />
 
 		<Setter Property="Shadow" Value="{x:Null}" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
-				<RoundRectangle CornerRadius="11" />
+				<RoundRectangle CornerRadius="0" />
 			</Setter.Value>
 		</Setter>
 	</Style>
