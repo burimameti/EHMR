@@ -700,7 +700,8 @@
 														Style="{StaticResource InfoPillBorderStyle}">
 														<Grid
 															Padding="10,7"
-															ColumnDefinitions="*,Auto"															ColumnSpacing="8">
+															ColumnDefinitions="*,Auto"
+															ColumnSpacing="8">
 															<VerticalStackLayout Spacing="1">
 																<Label
 																	FontSize="9"
@@ -741,9 +742,9 @@
 
 										<Grid
 											ColumnDefinitions="*"
+											HorizontalOptions="Fill"
 											RowDefinitions="Auto,Auto,Auto"
-											RowSpacing="16"
-											HorizontalOptions="Fill">
+											RowSpacing="16">
 											<VerticalStackLayout
 												Grid.Row="0"
 												Grid.Column="0"
@@ -822,64 +823,87 @@
 														</ScrollView>
 													</Border>
 												</VerticalStackLayout>
-												<Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="6">
+												<Grid
+													ColumnDefinitions="*,*"
+													ColumnSpacing="10"
+													RowDefinitions="Auto,Auto,Auto"
+													RowSpacing="6">
 
-											<VerticalStackLayout
-												Grid.Column="0"
-												IsVisible="{Binding IsEditMode}"
-												Spacing="2">
-												<controls:FFSearchBox
-													HorizontalOptions="Fill"
-													MinimumWidthRequest="0"
-													Label="Пребарување по код"
-													Placeholder="M06.9"
-													Text="{Binding MkbCodeSearchText, Mode=TwoWay}" />
-											</VerticalStackLayout>
+													<VerticalStackLayout
+														Grid.Column="0"
+														IsVisible="{Binding IsEditMode}"
+														Spacing="2">
+														<controls:FFSearchBox
+															HorizontalOptions="Fill"
+															Label="Пребарување по код"
+															MinimumWidthRequest="0"
+															Placeholder="M06.9"
+															Text="{Binding MkbCodeSearchText, Mode=TwoWay}" />
+													</VerticalStackLayout>
 
-											<VerticalStackLayout
-												Grid.Column="1"
-												IsVisible="{Binding IsEditMode}"
-												Spacing="2">
-												<controls:FFSearchBox
-													HorizontalOptions="Fill"
-													MinimumWidthRequest="0"
-													Label="Пребарување по опис"
-													Placeholder="Опис на дијагноза"
-													Text="{Binding MkbDescriptionSearchText, Mode=TwoWay}" />
-											</VerticalStackLayout>
+													<VerticalStackLayout
+														Grid.Column="1"
+														IsVisible="{Binding IsEditMode}"
+														Spacing="2">
+														<controls:FFSearchBox
+															HorizontalOptions="Fill"
+															Label="Пребарување по опис"
+															MinimumWidthRequest="0"
+															Placeholder="Опис на дијагноза"
+															Text="{Binding MkbDescriptionSearchText, Mode=TwoWay}" />
+													</VerticalStackLayout>
 
 													<Border
-												Grid.Row="1"
-												Grid.ColumnSpan="2"
-												Padding="4"
-												BackgroundColor="{StaticResource White}"
-												IsVisible="{Binding ShowMkbDropdown}"
-												Stroke="{StaticResource SparkBorder}"
-												StrokeShape="RoundRectangle 8"
-												StrokeThickness="1"
-												ZIndex="20">
-												<CollectionView
-													HeightRequest="180"
-													ItemsSource="{Binding MkbResults}"
-													SelectionMode="None"
-													VerticalScrollBarVisibility="Always">
-													<CollectionView.ItemTemplate>
-														<DataTemplate x:DataType="dto:Mkb10CodeDto">
-														<Border Padding="8,6" BackgroundColor="{StaticResource White}" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="0">
-															<Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-																<Label FontAttributes="Bold" FontSize="11" Text="{Binding Code}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
-																<Label Grid.Column="1" FontSize="11" LineBreakMode="WordWrap" Text="{Binding Description}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
-															</Grid>
-															<Border.GestureRecognizers>
-																<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMkbCommand}" CommandParameter="{Binding .}" />
-															</Border.GestureRecognizers>
-														</Border>
-													</DataTemplate>
-												</CollectionView.ItemTemplate>
-											</CollectionView>
-										</Border>
+														Grid.Row="1"
+														Grid.ColumnSpan="2"
+														Padding="4"
+														BackgroundColor="{StaticResource White}"
+														IsVisible="{Binding ShowMkbDropdown}"
+														Stroke="{StaticResource SparkBorder}"
+														StrokeShape="RoundRectangle 8"
+														StrokeThickness="1"
+														ZIndex="20">
+														<CollectionView
+															HeightRequest="180"
+															ItemsSource="{Binding MkbResults}"
+															SelectionMode="None"
+															VerticalScrollBarVisibility="Always">
+															<CollectionView.ItemTemplate>
+																<DataTemplate x:DataType="dto:Mkb10CodeDto">
+																	<Border
+																		Padding="8,6"
+																		BackgroundColor="{StaticResource White}"
+																		Stroke="{StaticResource SparkBorderSubtle}"
+																		StrokeThickness="0">
+																		<Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+																			<Label
+																				FontAttributes="Bold"
+																				FontSize="11"
+																				Text="{Binding Code}"
+																				TextColor="{StaticResource SparkAccentTealDark}"
+																				VerticalOptions="Center" />
+																			<Label
+																				Grid.Column="1"
+																				FontSize="11"
+																				LineBreakMode="WordWrap"
+																				Text="{Binding Description}"
+																				TextColor="{StaticResource SparkTextPrimary}"
+																				VerticalOptions="Center" />
+																		</Grid>
+																		<Border.GestureRecognizers>
+																			<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMkbCommand}" CommandParameter="{Binding .}" />
+																		</Border.GestureRecognizers>
+																	</Border>
+																</DataTemplate>
+															</CollectionView.ItemTemplate>
+														</CollectionView>
+													</Border>
 
-													<VerticalStackLayout Grid.Row="2" Grid.ColumnSpan="2" BindableLayout.ItemsSource="{Binding Diagnoses}" Spacing="4">
+													<VerticalStackLayout
+														Grid.Row="2"
+														Grid.ColumnSpan="2"
+														BindableLayout.ItemsSource="{Binding Diagnoses}"
+														Spacing="4">
 														<BindableLayout.ItemTemplate>
 															<DataTemplate x:DataType="dto:DiagnosisDto">
 																<Border
@@ -996,19 +1020,39 @@
 													<!--  Заглавие на табелата (се крие кога нема лекови)  -->
 													<Grid ColumnDefinitions="1.2*,1.1*,1*,0.7*,1*,0.9*" ColumnSpacing="1">
 														<Border Style="{StaticResource TableHeaderBorderStyle}">
-															<Label Style="{StaticResource TableHeaderLabelStyle}" LineBreakMode="WordWrap" MaxLines="2" Text="ЛЕК" />
+															<Label
+																LineBreakMode="WordWrap"
+																MaxLines="2"
+																Style="{StaticResource TableHeaderLabelStyle}"
+																Text="ЛЕК" />
 														</Border>
 														<Border Style="{StaticResource TableHeaderBorderStyle}">
-															<Label Style="{StaticResource TableHeaderLabelStyle}" LineBreakMode="WordWrap" MaxLines="2" Text="РЕЖИМ НА АПЛ." />
+															<Label
+																LineBreakMode="WordWrap"
+																MaxLines="2"
+																Style="{StaticResource TableHeaderLabelStyle}"
+																Text="РЕЖИМ НА АПЛ." />
 														</Border>
 														<Border Style="{StaticResource TableHeaderBorderStyle}">
-															<Label Style="{StaticResource TableHeaderLabelStyle}" LineBreakMode="WordWrap" MaxLines="2" Text="СТАНД. ДОЗА" />
+															<Label
+																LineBreakMode="WordWrap"
+																MaxLines="2"
+																Style="{StaticResource TableHeaderLabelStyle}"
+																Text="СТАНД. ДОЗА" />
 														</Border>
 														<Border Style="{StaticResource TableHeaderBorderStyle}">
-															<Label Style="{StaticResource TableHeaderLabelStyle}" LineBreakMode="WordWrap" MaxLines="2" Text="КОЛИЧ." />
+															<Label
+																LineBreakMode="WordWrap"
+																MaxLines="2"
+																Style="{StaticResource TableHeaderLabelStyle}"
+																Text="КОЛИЧ." />
 														</Border>
 														<Border Style="{StaticResource TableHeaderBorderStyle}">
-															<Label Style="{StaticResource TableHeaderLabelStyle}" LineBreakMode="WordWrap" MaxLines="2" Text="РЕШЕНИЕ" />
+															<Label
+																LineBreakMode="WordWrap"
+																MaxLines="2"
+																Style="{StaticResource TableHeaderLabelStyle}"
+																Text="РЕШЕНИЕ" />
 														</Border>
 														<Border Style="{StaticResource TableHeaderBorderStyle}" />
 													</Grid>
@@ -1082,7 +1126,8 @@
 																					<Label.GestureRecognizers>
 																						<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding PatientMedicine.ResolutionDocument}" />
 																					</Label.GestureRecognizers>
-																				</Label>																			</HorizontalStackLayout>
+																				</Label>																			
+																			</HorizontalStackLayout>
 																			<Label
 																				FontAttributes="Bold"
 																				FontSize="8"
@@ -1130,13 +1175,16 @@
 														</BindableLayout.ItemTemplate>
 													</VerticalStackLayout>
 													<Border
-														IsVisible="False"
 														Padding="10,8"
 														BackgroundColor="{StaticResource SparkSurfaceAlt}"
+														IsVisible="False"
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
 														<Border.Triggers>
-															<DataTrigger Binding="{Binding AttachedMedicines.Count}" TargetType="Border" Value="0">
+															<DataTrigger
+																Binding="{Binding AttachedMedicines.Count}"
+																TargetType="Border"
+																Value="0">
 																<Setter Property="IsVisible" Value="True" />
 															</DataTrigger>
 														</Border.Triggers>
@@ -1298,17 +1346,24 @@
 														</BindableLayout.ItemTemplate>
 													</VerticalStackLayout>
 													<Border
-														IsVisible="False"
 														Padding="10,8"
 														BackgroundColor="{StaticResource SparkSurfaceAlt}"
+														IsVisible="False"
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
 														<Border.Triggers>
-															<DataTrigger Binding="{Binding PreviousMedicines.Count}" TargetType="Border" Value="0">
+															<DataTrigger
+																Binding="{Binding PreviousMedicines.Count}"
+																TargetType="Border"
+																Value="0">
 																<Setter Property="IsVisible" Value="True" />
 															</DataTrigger>
 														</Border.Triggers>
-														<Label FontSize="10" HorizontalOptions="Center" Text="Нема неактивни лекови." TextColor="{StaticResource SparkTextMuted}" />
+														<Label
+															FontSize="10"
+															HorizontalOptions="Center"
+															Text="Нема неактивни лекови."
+															TextColor="{StaticResource SparkTextMuted}" />
 													</Border>
 												</VerticalStackLayout>
 											</VerticalStackLayout>
@@ -1433,7 +1488,8 @@
 																		Text="&#xf019;"
 																		TextColor="{StaticResource SparkAccentTealDark}"
 																		VerticalOptions="Center">
-																		<Label.GestureRecognizers />																	</Label>
+																		<Label.GestureRecognizers />																	
+																	</Label>
 																	<Label
 																		Grid.Column="3"
 																		FontFamily="FASolid"

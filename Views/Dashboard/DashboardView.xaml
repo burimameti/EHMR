@@ -318,7 +318,6 @@
 										ShowSuggestions="{Binding ShowPatientSuggestions}"
 										Suggestions="{Binding PatientSuggestions}"
 										Tabs="{Binding Tabs}"
-										
 										UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}">
 										<controls:SparkExplorerHeaderView.SuggestionTemplate>
 											<DataTemplate x:DataType="{x:Null}">
@@ -424,10 +423,10 @@
 
 									<Grid RowDefinitions="Auto,*" RowSpacing="6">
 										<ActivityIndicator
+											HeightRequest="18"
 											HorizontalOptions="End"
 											IsRunning="{Binding IsBusy}"
 											IsVisible="{Binding IsBusy}"
-											HeightRequest="18"
 											WidthRequest="18"
 											Color="{StaticResource SparkAccentTeal}" />
 										<controls:SparkDataGridView

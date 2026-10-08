@@ -10,7 +10,7 @@
 
 	<VerticalStackLayout Spacing="8">
 
-		<!-- Search and inline add: no popup. -->
+		<!--  Search and inline add: no popup.  -->
 		<VerticalStackLayout IsVisible="{Binding IsEditable}" Spacing="4">
 			<Label
 				FontAttributes="Bold"

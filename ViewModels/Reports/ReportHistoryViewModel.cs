@@ -236,9 +236,9 @@ public partial class ReportHistoryViewModel
         //    s => { SelectedUser=s; ApplyPipeline(); },
         //    UserLabels);
 
-        Pickers.Add(_formatPicker);
+       // Pickers.Add(_formatPicker);
         Pickers.Add(_statusPicker);
-        Pickers.Add(_userPicker);
+        //Pickers.Add(_userPicker);
     }
 
     protected override void SyncSparkPickersFromFilters()
