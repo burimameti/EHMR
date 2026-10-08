@@ -33,7 +33,22 @@
 					FontSize="11"
 					Text="ОПИС НА СКОР"
 					TextColor="{StaticResource SparkTextSecondary}" />
-				<controls:FFSearchBox Placeholder="Пр. DAS28" Text="{Binding DescriptionText, Mode=TwoWay}" />
+				<Border
+					BackgroundColor="{StaticResource SparkBackground}"
+					HeightRequest="40"
+					Stroke="{StaticResource SparkBorder}"
+					StrokeShape="RoundRectangle 6"
+					StrokeThickness="1">
+					<Entry
+						BackgroundColor="Transparent"
+						FontSize="13"
+						HeightRequest="38"
+						Placeholder="Пр. DAS28"
+						PlaceholderColor="{StaticResource SparkTextSecondary}"
+						Text="{Binding DescriptionText, Mode=TwoWay}"
+						TextColor="{StaticResource SparkTextPrimary}"
+						VerticalOptions="Center" />
+				</Border>
 			</VerticalStackLayout>
 
 			<Border
