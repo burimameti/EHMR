@@ -96,11 +96,14 @@ public sealed class EhmrSearchControl : ContentView
     public string Placeholder { get=>(string)GetValue(PlaceholderProperty);set=>SetValue(PlaceholderProperty,value); }
     public EhmrSearchControl()
     {
-        var s=new SearchBar{HeightRequest=34,FontSize=13,BackgroundColor=Colors.Transparent,CancelButtonColor=Colors.Transparent};
-        s.SetDynamicResource(SearchBar.TextColorProperty,"EhmrTextPrimary"); s.SetDynamicResource(SearchBar.PlaceholderColorProperty,"EhmrTextMuted");
-        s.SetBinding(SearchBar.TextProperty,new Binding(nameof(Text),source:this,mode=BindingMode.TwoWay)); s.SetBinding(SearchBar.PlaceholderProperty,new Binding(nameof(Placeholder),source:this));
-        Content=new Border{Content=s,Padding=new Thickness(8,0),BackgroundColor=Colors.White,Stroke=(Color)Application.Current!.Resources["EhmrBorder"],StrokeThickness=1,StrokeShape=new RoundRectangle{CornerRadius=6}};
+        var e=new Entry{HeightRequest=34,FontSize=13,BackgroundColor=Colors.Transparent,ClearButtonVisibility=ClearButtonVisibility.WhileEditing};
+        e.SetDynamicResource(Entry.TextColorProperty,"EhmrTextPrimary");
+        e.SetDynamicResource(Entry.PlaceholderColorProperty,"EhmrTextMuted");
+        e.SetBinding(Entry.TextProperty,new Binding(nameof(Text),source:this,mode=BindingMode.TwoWay));
+        e.SetBinding(Entry.PlaceholderProperty,new Binding(nameof(Placeholder),source:this));
+        Content=FieldFrame(e);
     }
+    static Border FieldFrame(View v)=>new(){Content=v,Padding=new Thickness(8,0),BackgroundColor=Colors.White,Stroke=(Color)Application.Current!.Resources["EhmrBorder"],StrokeThickness=1,StrokeShape=new RoundRectangle{CornerRadius=6}};
 }
 
 public sealed class EhmrHeader : ContentView
@@ -120,24 +123,25 @@ public sealed class EhmrHeader : ContentView
 
 public sealed class EhmrCard : ContentView
 {
-    public EhmrCard(){ContentChanged();}
-    void ContentChanged()
+    public static readonly BindableProperty BodyProperty=BindableProperty.Create(nameof(Body),typeof(View),typeof(EhmrCard));
+    public View? Body { get=>(View?)GetValue(BodyProperty);set=>SetValue(BodyProperty,value); }
+    public EhmrCard()
     {
-        var inner=Content;
-        if(inner is Border) return;
-        Content=new Border{Content=inner,BackgroundColor=Colors.White,Stroke=(Color)Application.Current!.Resources["EhmrBorder"],StrokeThickness=1,StrokeShape=new RoundRectangle{CornerRadius=8},Padding=16};
-    }
-}
-
-public sealed class EhmrFormControl : ContentView
+        var host=new ContentView();
+        host.SetBinding(ContentView.ContentProperty,new Binding(napublic sealed class EhmrFormControl : ContentView
 {
     public static readonly BindableProperty TitleProperty=BindableProperty.Create(nameof(Title),typeof(string),typeof(EhmrFormControl),"");
+    public static readonly BindableProperty BodyProperty=BindableProperty.Create(nameof(Body),typeof(View),typeof(EhmrFormControl));
     public string Title { get=>(string)GetValue(TitleProperty);set=>SetValue(TitleProperty,value); }
+    public View? Body { get=>(View?)GetValue(BodyProperty);set=>SetValue(BodyProperty,value); }
     public EhmrFormControl()
     {
-        var title=new Label{FontSize=14,FontAttributes=FontAttributes.Bold}; title.SetDynamicResource(Label.TextColorProperty,"EhmrTextPrimary"); title.SetBinding(Label.TextProperty,new Binding(nameof(Title),source:this));
-        var contentHost=new ContentView(); contentHost.SetBinding(ContentView.ContentProperty,new Binding(nameof(Content),source:this));
-        Content=new VerticalStackLayout{Spacing=10,Children={title,contentHost}};
+        var title=new Label{FontSize=14,FontAttributes=FontAttributes.Bold};
+        title.SetDynamicResource(Label.TextColorProperty,"EhmrTextPrimary");
+        title.SetBinding(Label.TextProperty,new Binding(nameof(Title),source:this));
+        var host=new ContentView();
+        host.SetBinding(ContentView.ContentProperty,new Binding(nameof(Body),source:this));
+        Content=new Border{Content=new VerticalStackLayout{Spacing=10,Children={title,host}},BackgroundColor=Colors.White,Stroke=(Color)Application.Current!.Resources["EhmrBorder"],StrokeThickness=1,StrokeShape=new RoundRectangle{CornerRadius=8},Padding=16};
     }
 }
 
@@ -163,7 +167,12 @@ public sealed class EhmrMenu : ContentView
     {
         var list=new CollectionView{SelectionMode=SelectionMode.None};
         list.SetBinding(CollectionView.ItemsSourceProperty,new Binding(nameof(ItemsSource),source:this));
-        list.ItemTemplate=new DataTemplate(()=>new EhmrMenuItem());
+        list.ItemTemplate=new DataTemplate(()=>{
+            var item=new EhmrMenuItem();
+            item.SetBinding(EhmrMenuItem.TextProperty,"Text");
+            item.SetBinding(EhmrMenuItem.CommandProperty,"Command");
+            return item;
+        });
         Content=new Border{Content=list,BackgroundColor=(Color)Application.Current!.Resources["EhmrSidebar"],StrokeThickness=0,Padding=new Thickness(8,12)};
     }
 }
@@ -177,7 +186,9 @@ public sealed class EhmrMenuItem : ContentView
     public EhmrMenuItem()
     {
         var b=new Button{BackgroundColor=Colors.Transparent,Padding=new Thickness(12,8),HorizontalOptions=LayoutOptions.Fill,HorizontalContentAlignment=TextAlignment.Start,HeightRequest=38};
-        b.SetDynamicResource(Button.TextColorProperty,"EhmrSurface"); b.SetBinding(Button.TextProperty,new Binding(nameof(Text),source:this)); b.SetBinding(Button.CommandProperty,new Binding(nameof(Command),source:this));
+        b.SetDynamicResource(Button.TextColorProperty,"EhmrSurface");
+        b.SetBinding(Button.TextProperty,new Binding(nameof(Text),source:this));
+        b.SetBinding(Button.CommandProperty,new Binding(nameof(Command),source:this));
         Content=b;
     }
 }
