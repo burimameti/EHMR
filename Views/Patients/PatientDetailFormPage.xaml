@@ -619,13 +619,8 @@
 											LineColor="{StaticResource White}"
 											Style="{StaticResource SectionHeaderStyle}" />
 
-										<!--  ── РЕД 1: лево Реуматолог + МКБ  |  десно Скорови ──  -->
-										<Grid ColumnDefinitions="*,*" ColumnSpacing="16">
-
-											<!--  ЛЕВО  -->
-											<VerticalStackLayout Grid.Column="0" Spacing="10">
-
-												<!--  Матичен реуматолог  -->
+										<!--  Матичен реуматолог: цела ширина над биолошкиот 2x2 grid  -->
+										<!--  Матичен реуматолог  -->
 												<VerticalStackLayout Spacing="8">
 													<Label
 														FontAttributes="Bold"
@@ -715,6 +710,11 @@
 													</VerticalStackLayout>
 												</VerticalStackLayout>
 
+
+
+										<!--  РЕД 1: МКБ | СКОРОВИ  -->
+										<Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+											<VerticalStackLayout Grid.Column="0" Spacing="10">
 												<!--  МКБ секција  -->
 												<VerticalStackLayout Spacing="8">
 
@@ -887,9 +887,8 @@
 															</BindableLayout.ItemTemplate>
 														</VerticalStackLayout>
 													</Grid>
-												</VerticalStackLayout>
+	
 											</VerticalStackLayout>
-
 											<!--  ДЕСНО — СКОРОВИ  -->
 											<VerticalStackLayout Grid.Column="1" Spacing="8">
 												<Label
@@ -903,7 +902,11 @@
 
 										<BoxView HeightRequest="1" Color="{StaticResource SparkBorderSubtle}" />
 
-										<!--  ── РЕД 2: Активни лекови (лево)  |  Неактивни лекови (десно) ──  -->
+
+										</Grid>
+
+										<!--  РЕД 2: Активни | Неактивни  -->
+<!--  ── РЕД 2: Активни лекови (лево)  |  Неактивни лекови (десно) ──  -->
 										<Grid ColumnDefinitions="*,*" ColumnSpacing="16">
 
 											<!--  АКТИВНИ ЛЕКОВИ  -->
