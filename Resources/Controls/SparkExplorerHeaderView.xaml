@@ -170,7 +170,7 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				ColumnSpacing="8"
-				MinimumHeightRequest="60">
+				MinimumHeightRequest="68">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
 					<!--  0: search  -->
@@ -183,7 +183,7 @@
 				<!--  ============ 0: SEARCH ============  -->
 				<Border
 					Grid.Column="0"
-					Margin="10,10,8,10"
+					Margin="12,12,8,12"
 					BackgroundColor="White"
 					HeightRequest="36"
 					HorizontalOptions="Fill"
