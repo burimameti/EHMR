@@ -820,7 +820,7 @@
 														</ScrollView>
 													</Border>
 												</VerticalStackLayout>
-												<Grid ColumnDefinitions="1.2*,*" ColumnSpacing="12">
+												<Grid ColumnDefinitions="*,*" ColumnSpacing="12">
 
 													<VerticalStackLayout Spacing="8">
 														<Grid
