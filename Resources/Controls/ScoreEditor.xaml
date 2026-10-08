@@ -10,36 +10,15 @@
 
 	<VerticalStackLayout Spacing="8">
 
-		<!--  Внес: опис (со предлози) + бројка + додади  -->
-		<Grid
-			ColumnDefinitions="*,90,116"
-			ColumnSpacing="8"
-			IsVisible="{Binding IsEditable}">
-			<controls:FFSearchBox Placeholder="Опис на скор (пр. DAS28)..." Text="{Binding DescriptionText, Mode=TwoWay}" />
-			<Border
-				Grid.Column="1"
-				Padding="6,0"
-				BackgroundColor="{StaticResource SparkBackground}"
-				HeightRequest="46"
-				Stroke="{StaticResource SparkBorderSubtle}"
-				StrokeShape="RoundRectangle 7"
-				StrokeThickness="1">
-				<Entry
-					BackgroundColor="Transparent"
-					FontSize="12"
-					Keyboard="Numeric"
-					Placeholder="Бројка"
-					Text="{Binding NumberText, Mode=TwoWay}"
-					VerticalOptions="Center" />
-			</Border>
+		<!--  Додавање на скор се отвора во popup за да остане секцијата компактна.  -->
+		<HorizontalStackLayout Spacing="8" IsVisible="{Binding IsEditable}">
 			<controls:FFButton
-				Grid.Column="2"
-				ButtonKind="Secondary"
-				Command="{Binding AddCommand}"
-				HeightRequestEx="46"
-				Text="Додади Скор"
-				WidthRequestEx="116" />
-		</Grid>
+				ButtonKind="Primary"
+				HeightRequestEx="36"
+				Text="+ Додади скор"
+				WidthRequestEx="130"
+				Clicked="OnAddScoreClicked" />
+		</HorizontalStackLayout>
 
 		<!--  Предлози (најупотребените најгоре)  -->
 		<Border
