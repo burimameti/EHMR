@@ -628,7 +628,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         return rows;
     }
 
-    private static async Task<List<GenericReportRow>> LoadPatientsAsync(
+    public static async Task<List<GenericReportRow>> LoadPatientsAsync(
         DesktopTherapyDbContext db, DateTime startRange, DateTime endRange, Guid? patientId)
     {
         var data = await db.Patients

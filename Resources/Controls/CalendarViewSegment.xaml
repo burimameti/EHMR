@@ -16,8 +16,7 @@
 			BackgroundColor="{StaticResource SparkBackground}"
 			IsVisible="{Binding IsActive, Source={x:Reference Root}}"
 			StrokeShape="RoundRectangle 7"
-			StrokeThickness="0">
-Border>
+			StrokeThickness="0" />
 
 		<Label
 			Padding="14,6"

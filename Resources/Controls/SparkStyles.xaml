@@ -45,7 +45,7 @@
 	<!--  ============================================================  -->
 	<!--  BUTTONS & INTERACTIVE ELEMENTS  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkButtonPrimaryBg"> #6BD1E1</Color>
+	<Color x:Key="SparkButtonPrimaryBg">#6BD1E1</Color>
 	<Color x:Key="SparkButtonPrimaryBgPressed">#4FAAB7</Color>
 	<Color x:Key="SparkButtonPrimaryText">#FFFFFF</Color>
 
@@ -59,7 +59,7 @@
 	<!--  TABS CONFIGURATION  -->
 	<!--  ============================================================  -->
 	<Color x:Key="SparkTabActiveBg">#F0F7F5</Color>
-	<Color x:Key="SparkTabActiveBorder"> #6BD1E1</Color>
+	<Color x:Key="SparkTabActiveBorder">#6BD1E1</Color>
 	<Color x:Key="SparkTabActiveText">#FFFFFF</Color>
 	<Color x:Key="SparkTabInactiveText">#7C8798</Color>
 	<Color x:Key="SparkTabHoverBg">#F1F5F8</Color>
@@ -301,8 +301,8 @@
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
-			<RoundRectangle CornerRadius="6" />
-		</Setter.Value>
+				<RoundRectangle CornerRadius="6" />
+			</Setter.Value>
 		</Setter>
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
 		<Setter Property="Padding" Value="0" />
@@ -321,8 +321,8 @@
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
-			<Rectangle />
-		</Setter.Value>
+				<Rectangle />
+			</Setter.Value>
 		</Setter>
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
 		<Setter Property="Padding" Value="8,0" />

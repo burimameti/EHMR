@@ -10,11 +10,11 @@
 		HorizontalOptions="Fill"
 		MinimumWidthRequest="220"
 		RowDefinitions="Auto,Auto"
-		RowSpacing="5"
+		RowSpacing="22"
 		VerticalOptions="Center">
 
 		<Label
-			Margin="2,0,0,0"
+			Margin="0,0,0,0"
 			CharacterSpacing=".4"
 			FontAttributes="Bold"
 			FontSize="11"
@@ -28,11 +28,12 @@
 		<Border
 			x:Name="SearchBorder"
 			Grid.Row="1"
+			Margin="10,10,10,10"
 			Padding="0"
 			BackgroundColor="{StaticResource White}"
 			HeightRequest="36"
 			HorizontalOptions="Fill"
-			Stroke="#CBD5E1"
+			Stroke="#91959B"
 			StrokeShape="RoundRectangle 6"
 			StrokeThickness="1"
 			VerticalOptions="Center">
@@ -42,7 +43,7 @@
 			</Border.GestureRecognizers>
 
 			<Grid
-				Padding="12,0,10,0"
+				Padding="12,0,0,0"
 				ColumnDefinitions="22,*,Auto"
 				ColumnSpacing="0"
 				HorizontalOptions="Fill"

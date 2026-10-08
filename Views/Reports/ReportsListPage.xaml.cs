@@ -20,8 +20,8 @@ namespace EHMR.Views.Reports
         {
             base.OnAppearing();
 
-            if(BindingContext is ReportListViewModel vm)
-                Dispatcher.Dispatch(() => _ = vm.LoadAsync());
+            //if(BindingContext is ReportListViewModel vm)
+            //    Dispatcher.Dispatch(() => _ = vm.LoadAsync());
         }
     }
 }
