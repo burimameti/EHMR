@@ -58,8 +58,22 @@ public partial class AppShell : Shell
     // =========================
     private async void OnAuthStateChanged(object? sender, EventArgs e)
     {
+        // LoginViewModel navigates to Dashboard after SetUser().
+        // Navigating here as well caused two overlapping GoToAsync calls,
+        // which could make Shell switch pages unexpectedly.
+        if(_auth.IsAuthenticated)
+            return;
+
         await MainThread.InvokeOnMainThreadAsync(async () =>
         {
+            var currentRoute = CurrentState?.Location.OriginalString?.TrimEnd('/');
+            if(string.Equals(currentRoute, "//login", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(currentRoute, "login", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            if(_isNavigating)
+                return;
+
             await HandleAuthChangedAsync();
         });
     }
