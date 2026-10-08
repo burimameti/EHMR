@@ -1,126 +1,110 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <toolkit:Popup
-	x:Class="EHMR.Views.Popups.AddPatientScorePopup"
-	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
-	xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-	x:Name="Root">
+    x:Class="EHMR.Views.Popups.AddPatientScorePopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Name="Root">
 
-	<Border
-		Padding="12"
-		BackgroundColor="{StaticResource SparkBackground}"
-		Stroke="{StaticResource SparkBorder}"
-		StrokeShape="RoundRectangle 8"
-		StrokeThickness="1"
-		WidthRequest="380">
-		<VerticalStackLayout Spacing="8">
-			<VerticalStackLayout Spacing="2">
-				<Label
-					FontAttributes="Bold"
-					FontSize="15"
-					Text="Додади скор"
-					TextColor="{StaticResource SparkTextPrimary}" />
-				<Label
-					FontSize="10"
-					Text="Внесете опис и бројка за новиот скор."
-					TextColor="{StaticResource SparkTextSecondary}" />
-			</VerticalStackLayout>
+    <Border
+        Padding="12"
+        BackgroundColor="{StaticResource SparkBackground}"
+        Stroke="{StaticResource SparkBorder}"
+        StrokeShape="RoundRectangle 8"
+        StrokeThickness="1"
+        WidthRequest="380">
+        <VerticalStackLayout Spacing="8">
+            <VerticalStackLayout Spacing="2">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="15"
+                    Text="Избери постоечки скор"
+                    TextColor="{StaticResource SparkTextPrimary}" />
+                <Label
+                    FontSize="10"
+                    Text="Пребарај по опис и избери резултат од табелата."
+                    TextColor="{StaticResource SparkTextSecondary}" />
+            </VerticalStackLayout>
 
-			<VerticalStackLayout Spacing="3">
-				<Label
-					FontAttributes="Bold"
-					FontSize="10"
-					Text="ОПИС НА СКОР"
-					TextColor="{StaticResource SparkTextSecondary}" />
-				<Border
-					BackgroundColor="{StaticResource SparkBackground}"
-					HeightRequest="34"
-					Stroke="{StaticResource SparkBorder}"
-					StrokeShape="RoundRectangle 6"
-					StrokeThickness="1">
-					<Entry
-						BackgroundColor="Transparent"
-						FontSize="13"
-						HeightRequest="32"
-						Placeholder="Пр. DAS28"
-						PlaceholderColor="{StaticResource SparkTextSecondary}"
-						Text="{Binding DescriptionText, Mode=TwoWay}"
-						TextColor="{StaticResource SparkTextPrimary}"
-						VerticalOptions="Center" />
-				</Border>
-			</VerticalStackLayout>
+            <Label
+                FontAttributes="Bold"
+                FontSize="10"
+                Text="ПРЕБАРУВАЊЕ"
+                TextColor="{StaticResource SparkTextSecondary}" />
+            <Border
+                BackgroundColor="{StaticResource SparkBackground}"
+                HeightRequest="34"
+                Stroke="{StaticResource SparkBorder}"
+                StrokeShape="RoundRectangle 6"
+                StrokeThickness="1">
+                <Entry
+                    BackgroundColor="Transparent"
+                    FontSize="13"
+                    HeightRequest="32"
+                    Placeholder="Пр. DAS28"
+                    PlaceholderColor="{StaticResource SparkTextSecondary}"
+                    Text="{Binding DescriptionText, Mode=TwoWay}"
+                    TextColor="{StaticResource SparkTextPrimary}"
+                    VerticalOptions="Center" />
+            </Border>
 
-			<Border
-				Padding="2"
-				BackgroundColor="White"
-				IsVisible="{Binding ShowSuggestions}"
-				Stroke="{StaticResource SparkBorderSubtle}"
-				StrokeShape="RoundRectangle 8"
-				StrokeThickness="1">
-				<VerticalStackLayout BindableLayout.ItemsSource="{Binding Suggestions}" Spacing="0">
-					<BindableLayout.ItemTemplate>
-						<DataTemplate>
-							<Border
-								Padding="7,5"
-								BackgroundColor="Transparent"
-								StrokeThickness="0">
-								<Border.GestureRecognizers>
-									<TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.SelectSuggestionCommand}" CommandParameter="{Binding .}" />
-								</Border.GestureRecognizers>
-								<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-									<Label
-										FontAttributes="Bold"
-										FontSize="12"
-										Text="{Binding Text}"
-										TextColor="{StaticResource SparkAccentTealDark}" />
-									<Label
-										Grid.Column="1"
-										FontSize="10"
-										Text="{Binding UsageCount, StringFormat='×{0}'}"
-										TextColor="{StaticResource SparkTextSecondary}" />
-								</Grid>
-							</Border>
-						</DataTemplate>
-					</BindableLayout.ItemTemplate>
-				</VerticalStackLayout>
-			</Border>
-			<Border
-				BackgroundColor="{StaticResource SparkBackground}"
-				HeightRequest="32"
-				Stroke="{StaticResource SparkBorder}"
-				StrokeShape="RoundRectangle 6"
-				StrokeThickness="1">
-				<Entry
-					BackgroundColor="Transparent"
-					FontSize="13"
-					Keyboard="Numeric"
-					Placeholder="Бројка"
-					Text="{Binding NumberText, Mode=TwoWay}"
-					TextColor="{StaticResource SparkTextPrimary}" />
-			</Border>
+            <Label
+                FontSize="11"
+                IsVisible="{Binding ShowNoResults}"
+                Text="Нема пронајдени скорови."
+                TextColor="{StaticResource SparkTextSecondary}" />
 
+            <Border
+                Padding="2"
+                BackgroundColor="White"
+                IsVisible="{Binding ShowSuggestions}"
+                Stroke="{StaticResource SparkBorderSubtle}"
+                StrokeShape="RoundRectangle 8"
+                StrokeThickness="1">
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Suggestions}" Spacing="0">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Padding="8,6"
+                                BackgroundColor="Transparent"
+                                Stroke="{StaticResource SparkBorderSubtle}"
+                                StrokeThickness="0">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={x:Reference Root}, Path=BindingContext.SelectSuggestionCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontSize="12"
+                                        Text="{Binding Text}"
+                                        TextColor="{StaticResource SparkAccentTealDark}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Column="1"
+                                        FontSize="12"
+                                        Text="{Binding Number}"
+                                        TextColor="{StaticResource SparkTextPrimary}"
+                                        VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </Border>
 
-			<HorizontalStackLayout HorizontalOptions="End" Spacing="8">
-				<Button
-					Clicked="OnCancelClicked"
-					BackgroundColor="{StaticResource SparkSurfaceAlt}"
-					BorderColor="{StaticResource SparkBorder}"
-					BorderWidth="1"
-					CornerRadius="6"
-					HeightRequest="32"
-					Text="Откажи"
-					TextColor="{StaticResource SparkTextPrimary}"
-					WidthRequest="86" />
-				<Button
-					Clicked="OnSaveClicked"
-					BackgroundColor="{StaticResource SparkAccentTeal}"
-					CornerRadius="6"
-					HeightRequest="32"
-					Text="Додади"
-					TextColor="White"
-					WidthRequest="100" />
-				</HorizontalStackLayout>
-		</VerticalStackLayout>
-	</Border>
+            <Button
+                HorizontalOptions="End"
+                Clicked="OnCancelClicked"
+                BackgroundColor="{StaticResource SparkSurfaceAlt}"
+                BorderColor="{StaticResource SparkBorder}"
+                BorderWidth="1"
+                CornerRadius="6"
+                HeightRequest="32"
+                Text="Откажи"
+                TextColor="{StaticResource SparkTextPrimary}"
+                WidthRequest="86" />
+        </VerticalStackLayout>
+    </Border>
 </toolkit:Popup>
