@@ -1128,12 +1128,12 @@
 														</BindableLayout.ItemTemplate>
 													</VerticalStackLayout>
 													<Border
+														IsVisible="False"
 														Padding="10,8"
 														BackgroundColor="{StaticResource SparkSurfaceAlt}"
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
-														<Border
-														IsVisible="False".Triggers>
+														<Border.Triggers>
 															<DataTrigger Binding="{Binding AttachedMedicines.Count}" TargetType="Border" Value="0">
 																<Setter Property="IsVisible" Value="True" />
 															</DataTrigger>
@@ -1294,12 +1294,12 @@
 														</BindableLayout.ItemTemplate>
 													</VerticalStackLayout>
 													<Border
+														IsVisible="False"
 														Padding="10,8"
 														BackgroundColor="{StaticResource SparkSurfaceAlt}"
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
-														<Border
-														IsVisible="False".Triggers>
+														<Border.Triggers>
 															<DataTrigger Binding="{Binding PreviousMedicines.Count}" TargetType="Border" Value="0">
 																<Setter Property="IsVisible" Value="True" />
 															</DataTrigger>
