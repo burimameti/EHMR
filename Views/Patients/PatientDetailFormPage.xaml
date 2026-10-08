@@ -822,7 +822,7 @@
 														</ScrollView>
 													</Border>
 												</VerticalStackLayout>
-												<Grid ColumnDefinitions="220,220,*" ColumnSpacing="10">
+												<Grid ColumnDefinitions="220,220,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="4">
 
 											<VerticalStackLayout
 												Grid.Column="0"
@@ -848,7 +848,38 @@
 													Text="{Binding MkbDescriptionSearchText, Mode=TwoWay}" />
 											</VerticalStackLayout>
 
-													<VerticalStackLayout BindableLayout.ItemsSource="{Binding Diagnoses}" Spacing="4">
+													<Border
+												Grid.Row="1"
+												Grid.ColumnSpan="2"
+												Padding="4"
+												BackgroundColor="{StaticResource White}"
+												IsVisible="{Binding ShowMkbDropdown}"
+												Stroke="{StaticResource SparkBorder}"
+												StrokeShape="RoundRectangle 8"
+												StrokeThickness="1"
+												ZIndex="20">
+												<CollectionView
+													HeightRequest="180"
+													ItemsSource="{Binding MkbResults}"
+													SelectionMode="None"
+													VerticalScrollBarVisibility="Always">
+													<CollectionView.ItemTemplate>
+														<DataTemplate x:DataType="dto:Mkb10CodeDto">
+														<Border Padding="8,6" BackgroundColor="{StaticResource White}" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="0">
+															<Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+																<Label FontAttributes="Bold" FontSize="11" Text="{Binding Code}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
+																<Label Grid.Column="1" FontSize="11" LineBreakMode="WordWrap" Text="{Binding Description}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+															</Grid>
+															<Border.GestureRecognizers>
+																<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMkbCommand}" CommandParameter="{Binding .}" />
+															</Border.GestureRecognizers>
+														</Border>
+													</DataTemplate>
+												</CollectionView.ItemTemplate>
+											</CollectionView>
+										</Border>
+
+													<VerticalStackLayout Grid.Column="2" Grid.RowSpan="2" BindableLayout.ItemsSource="{Binding Diagnoses}" Spacing="4">
 														<BindableLayout.ItemTemplate>
 															<DataTemplate x:DataType="dto:DiagnosisDto">
 																<Border
@@ -1101,7 +1132,8 @@
 														BackgroundColor="{StaticResource SparkSurfaceAlt}"
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
-														<Border.Triggers>
+														<Border
+														IsVisible="False".Triggers>
 															<DataTrigger Binding="{Binding AttachedMedicines.Count}" TargetType="Border" Value="0">
 																<Setter Property="IsVisible" Value="True" />
 															</DataTrigger>
@@ -1266,7 +1298,8 @@
 														BackgroundColor="{StaticResource SparkSurfaceAlt}"
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
-														<Border.Triggers>
+														<Border
+														IsVisible="False".Triggers>
 															<DataTrigger Binding="{Binding PreviousMedicines.Count}" TargetType="Border" Value="0">
 																<Setter Property="IsVisible" Value="True" />
 															</DataTrigger>
