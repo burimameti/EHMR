@@ -980,19 +980,19 @@
 													<!--  Заглавие на табелата (се крие кога нема лекови)  -->
 													<Grid ColumnDefinitions="1.25*,1.15*,1.05*,0.65*,1.1*,92" ColumnSpacing="1">
 														<Border Style="{StaticResource TableHeaderBorderStyle}">
-															<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" />
+															<Label Style="{StaticResource TableHeaderLabelStyle}" LineBreakMode="WordWrap" MaxLines="2" Text="ЛЕК" />
 														</Border>
 														<Border Style="{StaticResource TableHeaderBorderStyle}">
-															<Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕЖИМ НА АПЛИКАЦИЈА" />
+															<Label Style="{StaticResource TableHeaderLabelStyle}" LineBreakMode="WordWrap" MaxLines="2" Text="РЕЖИМ НА АПЛИКАЦИЈА" />
 														</Border>
 														<Border Style="{StaticResource TableHeaderBorderStyle}">
-															<Label Style="{StaticResource TableHeaderLabelStyle}" Text="СТАНДАРДНА ДОЗА" />
+															<Label Style="{StaticResource TableHeaderLabelStyle}" LineBreakMode="WordWrap" MaxLines="2" Text="СТАНДАРДНА ДОЗА" />
 														</Border>
 														<Border Style="{StaticResource TableHeaderBorderStyle}">
-															<Label Style="{StaticResource TableHeaderLabelStyle}" Text="КОЛИЧИНА" />
+															<Label Style="{StaticResource TableHeaderLabelStyle}" LineBreakMode="WordWrap" MaxLines="2" Text="КОЛИЧИНА" />
 														</Border>
 														<Border Style="{StaticResource TableHeaderBorderStyle}">
-															<Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕШЕНИЕ" />
+															<Label Style="{StaticResource TableHeaderLabelStyle}" LineBreakMode="WordWrap" MaxLines="2" Text="РЕШЕНИЕ" />
 														</Border>
 														<Border Style="{StaticResource TableHeaderBorderStyle}" />
 													</Grid>
