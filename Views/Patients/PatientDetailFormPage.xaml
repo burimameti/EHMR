@@ -348,7 +348,6 @@
 													<Label Style="{StaticResource ReadValueBoldStyle}" Text="{Binding Patient.LastName}" />
 												</VerticalStackLayout>
 											</VerticalStackLayout>
-
 											<!--  Датум на раѓање  -->
 											<VerticalStackLayout Grid.Column="2" Spacing="4">
 												<Label
@@ -697,8 +696,7 @@
 														Style="{StaticResource InfoPillBorderStyle}">
 														<Grid
 															Padding="10,7"
-															ColumnDefinitions="*,Auto"
-															ColumnSpacing="8">
+															ColumnDefinitions="*,Auto"															ColumnSpacing="8">
 															<VerticalStackLayout Spacing="1">
 																<Label
 																	FontSize="9"
@@ -900,7 +898,7 @@
 
 														<Label
 															FontAttributes="Bold"
-															FontSize="10"
+															FontSize="11"
 															Text="АКТИВНИ ЛЕКОВИ"
 															TextColor="{StaticResource SparkAccentTealDark}"
 															VerticalOptions="Center" />
@@ -959,7 +957,7 @@
 													</Border>
 
 													<!--  Заглавие на табелата (се крие кога нема лекови)  -->
-													<Grid ColumnDefinitions="1.1*,1.15*,1*,0.65*,0.95*,0.85*" ColumnSpacing="1">
+													<Grid ColumnDefinitions="1.35*,1.05*,1.05*,0.65*,0.9*,0.8*" ColumnSpacing="1">
 														<Border Style="{StaticResource TableHeaderBorderStyle}">
 															<Label Style="{StaticResource TableHeaderLabelStyle}" LineBreakMode="WordWrap" MaxLines="2" Text="ЛЕК" />
 														</Border>
@@ -1047,8 +1045,7 @@
 																					<Label.GestureRecognizers>
 																						<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding PatientMedicine.ResolutionDocument}" />
 																					</Label.GestureRecognizers>
-																				</Label>
-																			</HorizontalStackLayout>
+																				</Label>																			</HorizontalStackLayout>
 																			<Label
 																				FontAttributes="Bold"
 																				FontSize="8"
@@ -1127,7 +1124,7 @@
 
 														<Border
 															Padding="6,2"
-															BackgroundColor="{StaticResource Gray300}"
+															BackgroundColor="{StaticResource SparkSurfaceAlt}"
 															StrokeShape="RoundRectangle 4"
 															StrokeThickness="0"
 															VerticalOptions="Center">
@@ -1139,7 +1136,7 @@
 														</Border>
 													</Grid>
 
-													<Grid ColumnDefinitions="1.25*,1.15*,1.05*,0.65*,1.1*,92" ColumnSpacing="1">
+													<Grid ColumnDefinitions="1.35*,1.05*,1.05*,0.65*,0.9*,0.8*" ColumnSpacing="1">
 														<Border Style="{StaticResource TableHeaderBorderStyle}">
 															<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" />
 														</Border>
@@ -1161,7 +1158,7 @@
 													<VerticalStackLayout BindableLayout.ItemsSource="{Binding PreviousMedicines}" Spacing="0">
 														<BindableLayout.ItemTemplate>
 															<DataTemplate>
-																<Grid ColumnDefinitions="1.35*,1.25*,1.15*,0.65*,1.1*,92" ColumnSpacing="1">
+																<Grid ColumnDefinitions="1.35*,1.05*,1.05*,0.65*,0.9*,0.8*" ColumnSpacing="1">
 																	<Border
 																		Padding="8,0"
 																		Stroke="{StaticResource SparkBorderSubtle}"
@@ -1397,8 +1394,7 @@
 																		Text="&#xf019;"
 																		TextColor="{StaticResource SparkAccentTealDark}"
 																		VerticalOptions="Center">
-																		<Label.GestureRecognizers />
-																	</Label>
+																		<Label.GestureRecognizers />																	</Label>
 																	<Label
 																		Grid.Column="3"
 																		FontFamily="FASolid"
