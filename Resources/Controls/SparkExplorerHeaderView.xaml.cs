@@ -1,15 +1,12 @@
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Windows.Input;
 
 
 namespace EHMR.Resources.Controls
 {
     /// <summary>
-    /// Reusable, fully data-driven header: N tabs (with count badges) + a search bar
-    /// + N pickers + N action buttons, all in one row — matching the "Sparked"
-    /// Customer Explorer screens.
+    /// Reusable, data-driven header: search bar
+    /// + N pickers + N action buttons, all consistently styled and responsive.
     ///
     /// Usage from a page/dashboard definition:
     ///
@@ -18,32 +15,119 @@ namespace EHMR.Resources.Controls
     ///       Pickers="{Binding ExplorerPickers}"
     ///       Buttons="{Binding ExplorerButtons}"
     ///       SearchText="{Binding SearchText}"
-    ///       SearchPlaceholder="Show columns by search status" /&gt;
+    ///       SearchPlaceholder="Show columns by search status"
+    ///       ShowCyrillicToggle="True"
+    ///       UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}" /&gt;
     ///
-    /// Each Tab/Picker/Button item carries its own Title/Value/Command, so the
-    /// number of tabs (4, 5, 6, ...) and buttons is entirely driven by the
-    /// view model / dashboard definition — nothing is hardcoded in XAML.
+    /// Pickers and buttons are driven by the view model. Tabs are intentionally not rendered.
+    ///
+    /// ⚠️ NOTE: Grid column headers should bind to SparkDataGridView.Columns directly,
+    /// NOT to SparkExplorerHeaderView. This view only handles the search/filter toolbar.
     /// </summary>
     public partial class SparkExplorerHeaderView : ContentView
     {
+        private double _responsiveScale = 1d;
+        private double _lastResponsiveWidth = -1;
+
         public SparkExplorerHeaderView()
         {
             InitializeComponent();
         }
 
-        #region Tabs
-        public static readonly BindableProperty SearchVisibleProperty =
+        private void OnHeaderSizeChanged(object? sender, EventArgs e)
+        {
+            ApplyResponsiveLayout();
+        }
+
+        private void ApplyResponsiveLayout()
+        {
+            var width = Width;
+            if (width <= 0 || Math.Abs(width - _lastResponsiveWidth) < 2)
+                return;
+
+            _lastResponsiveWidth = width;
+            _responsiveScale = width >= 1500 ? 1d
+                : width >= 1250 ? 0.94d
+                : width >= 1050 ? 0.88d
+                : width >= 900 ? 0.82d
+                : 0.76d;
+
+            var s = _responsiveScale;            SecondaryToolbarGrid.Padding = new Thickness(10 * s);
+            SecondaryToolbarGrid.ColumnSpacing = 8 * s;
+            SecondaryToolbarGrid.MinimumHeightRequest = 64 * s;
+
+            // FFSearchBox contains its own label + field and must keep its natural height.
+            // Setting the ContentView height to 42 clips the control vertically in the header.
+            HeaderSearchBox.HorizontalOptions = LayoutOptions.Fill;
+            HeaderSearchBox.MinimumWidthRequest = 0;
+            HeaderSearchBox.Margin = new Thickness(0);
+
+            CyrillicToggleLayout.WidthRequest = 100 * s;
+            CyrillicToggleLayout.Spacing = 4 * s;
+            CyrillicToggleLayout.IsVisible = ShowCyrillicToggle && width >= 900;
+
+            PickerLayout.Spacing = 8 * s;
+            ActionLayout.Spacing = 4 * s;
+
+            foreach (var child in PickerLayout.Children.OfType<FFPicker>())
+            {
+                child.MinimumWidthRequest = Math.Max(100, 110 * s);
+                // FFPicker contains a label + picker field; do not constrain the outer control
+                // to the field height or its contents will be clipped vertically.
+            }
+
+            foreach (var child in ActionLayout.Children.SelectMany(v => v is HorizontalStackLayout h ? h.Children : Array.Empty<IView>()))
+            {
+                if (child is FFButton button)
+                {
+                    button.HeightRequest = 44 * s;
+                    button.ContentPadding = new Thickness(16 * s, 0);
+                }
+            }
+
+            // Dense desktop widths: keep the toolbar on one line and let the
+            // search area absorb the available space rather than stacking controls.
+            SecondaryToolbarGrid.ColumnDefinitions.Clear();
+            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            if (CyrillicToggleLayout.IsVisible)
+                SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            else
+                SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0) });
+            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        }
+
+        #region Search Visibility
+        public static readonly BindableProperty TabsVisibleProperty =
     BindableProperty.Create(
-        nameof(SearchVisible),
+        nameof(TabsVisible),
         typeof(bool),
         typeof(SparkExplorerHeaderView),
         true); // default = visible
+
+        /// <summary>Show/hide the entire tab strip (Row 1).</summary>
+        public bool TabsVisible
+        {
+            get => (bool)GetValue(TabsVisibleProperty);
+            set => SetValue(TabsVisibleProperty, value);
+        }
+        public static readonly BindableProperty SearchVisibleProperty =
+            BindableProperty.Create(
+                nameof(SearchVisible),
+                typeof(bool),
+                typeof(SparkExplorerHeaderView),
+                true); // default = visible
 
         public bool SearchVisible
         {
             get => (bool)GetValue(SearchVisibleProperty);
             set => SetValue(SearchVisibleProperty, value);
         }
+
+        #endregion
+
+        #region Tabs
+
         public static readonly BindableProperty TabsProperty =
             BindableProperty.Create(
                 nameof(Tabs),
@@ -69,7 +153,7 @@ namespace EHMR.Resources.Controls
                 typeof(SparkExplorerHeaderView),
                 defaultValueCreator: _ => new ObservableCollection<SparkPickerItem>());
 
-        /// <summary>Dropdowns shown after the search bar (e.g. "Prioritized Searches"). Any count, including zero.</summary>
+        /// <summary>Dropdowns shown after the search bar (e.g. "Status", "Gender", etc.). Any count, including zero.</summary>
         public ObservableCollection<SparkPickerItem> Pickers
         {
             get => (ObservableCollection<SparkPickerItem>)GetValue(PickersProperty);
@@ -79,29 +163,6 @@ namespace EHMR.Resources.Controls
         #endregion
 
         #region Buttons
-        public ObservableCollection<SparkGridColumn> HeaderColumns
-        {
-            get => (ObservableCollection<SparkGridColumn>)GetValue(HeaderColumnsProperty);
-            set => SetValue(HeaderColumnsProperty, value);
-        }
-
-        public static readonly BindableProperty HeaderColumnsProperty =
-            BindableProperty.Create(
-                nameof(HeaderColumns),
-                typeof(ObservableCollection<SparkGridColumn>),
-                typeof(SparkExplorerHeaderView),
-                propertyChanged: (b, o, n) =>
-                {
-                    ((SparkExplorerHeaderView)b).BuildHeaderColumns();
-                });
-        private void BuildHeaderColumns()
-        {
-            if(DataGridHeaderGrid==null) return; // guard if not present in this view
-
-            DataGridHeaderGrid.ColumnDefinitions.Clear();
-            foreach(var column in HeaderColumns)
-                DataGridHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(column.Width));
-        }
 
         public static readonly BindableProperty ButtonsProperty =
             BindableProperty.Create(
@@ -110,7 +171,7 @@ namespace EHMR.Resources.Controls
                 typeof(SparkExplorerHeaderView),
                 defaultValueCreator: _ => new ObservableCollection<SparkButtonItem>());
 
-        /// <summary>Action buttons on the right (e.g. "Search", "New", funnel icon). Any count.</summary>
+        /// <summary>Action buttons on the right (e.g. "Clear Filters", "New"). Any count.</summary>
         public ObservableCollection<SparkButtonItem> Buttons
         {
             get => (ObservableCollection<SparkButtonItem>)GetValue(ButtonsProperty);
@@ -121,8 +182,34 @@ namespace EHMR.Resources.Controls
 
         #region Search
 
+        public static readonly BindableProperty ShowCyrillicToggleProperty =
+      BindableProperty.Create(
+          nameof(ShowCyrillicToggle),
+          typeof(bool),
+          typeof(SparkExplorerHeaderView),
+          true); // default = visible — Cyrillic toggle shows unless explicitly turned off
 
-       
+        /// <summary>Show/hide the Cyrillic input toggle checkbox. Defaults to true.</summary>
+        public bool ShowCyrillicToggle
+        {
+            get => (bool)GetValue(ShowCyrillicToggleProperty);
+            set => SetValue(ShowCyrillicToggleProperty, value);
+        }
+
+        public static readonly BindableProperty UseCyrillicInputProperty =
+            BindableProperty.Create(
+                nameof(UseCyrillicInput),
+                typeof(bool),
+                typeof(SparkExplorerHeaderView),
+                true,
+                BindingMode.TwoWay);
+
+        /// <summary>Whether Cyrillic transliteration is enabled for the search input.</summary>
+        public bool UseCyrillicInput
+        {
+            get => (bool)GetValue(UseCyrillicInputProperty);
+            set => SetValue(UseCyrillicInputProperty, value);
+        }
 
         public static readonly BindableProperty SearchPlaceholderProperty =
             BindableProperty.Create(
@@ -131,6 +218,7 @@ namespace EHMR.Resources.Controls
                 typeof(SparkExplorerHeaderView),
                 "Пребарување...");
 
+        /// <summary>Placeholder text shown inside the search bar.</summary>
         public string SearchPlaceholder
         {
             get => (string)GetValue(SearchPlaceholderProperty);
@@ -143,19 +231,131 @@ namespace EHMR.Resources.Controls
                 typeof(ICommand),
                 typeof(SparkExplorerHeaderView));
 
-        /// <summary>Fired when the user presses Enter/Search on the search bar (in addition to the "Search" button, if present).</summary>
+        /// <summary>Fired when the user types in the search bar (debounced).</summary>
         public ICommand SearchCommand
         {
             get => (ICommand)GetValue(SearchCommandProperty);
             set => SetValue(SearchCommandProperty, value);
         }
+
+        public static readonly BindableProperty SuggestionsProperty =
+            BindableProperty.Create(
+                nameof(Suggestions),
+                typeof(System.Collections.IEnumerable),
+                typeof(SparkExplorerHeaderView));
+
+        public System.Collections.IEnumerable? Suggestions
+        {
+            get => (System.Collections.IEnumerable?)GetValue(SuggestionsProperty);
+            set => SetValue(SuggestionsProperty, value);
+        }
+
+        public static readonly BindableProperty SuggestionTemplateProperty =
+            BindableProperty.Create(
+                nameof(SuggestionTemplate),
+                typeof(DataTemplate),
+                typeof(SparkExplorerHeaderView));
+
+        public DataTemplate? SuggestionTemplate
+        {
+            get => (DataTemplate?)GetValue(SuggestionTemplateProperty);
+            set => SetValue(SuggestionTemplateProperty, value);
+        }
+
+        public static readonly BindableProperty ShowSuggestionsProperty =
+            BindableProperty.Create(
+                nameof(ShowSuggestions),
+                typeof(bool),
+                typeof(SparkExplorerHeaderView),
+                false,
+                propertyChanged: (bindable, _, value) =>
+                {
+                    if(value is true)
+                        ((SparkExplorerHeaderView)bindable).ShowSuggestionScrollbar();
+                });
+
+        public bool ShowSuggestions
+        {
+            get => (bool)GetValue(ShowSuggestionsProperty);
+            set => SetValue(ShowSuggestionsProperty, value);
+        }
+
+        private double _suggestionThumbStartY;
+
+        private int SuggestionCount => Suggestions?.Cast<object>().Count()??0;
+
+        private void ShowSuggestionScrollbar()
+        {
+            Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(80), () =>
+                UpdateSuggestionScrollThumb(0, Math.Min(Math.Max(0, SuggestionCount-1), 2)));
+        }
+
+        private void OnSuggestionListScrolled(object? sender, ItemsViewScrolledEventArgs e)
+        {
+            UpdateSuggestionScrollThumb(e.FirstVisibleItemIndex, e.LastVisibleItemIndex);
+        }
+
+        private void UpdateSuggestionScrollThumb(int firstVisibleIndex, int lastVisibleIndex)
+        {
+            var count=SuggestionCount;
+            var railHeight=SuggestionScrollRail.Height;
+            if(count<=0||railHeight<=0)
+                return;
+
+            var visibleCount=Math.Max(1, lastVisibleIndex-firstVisibleIndex+1);
+            var thumbHeight=count<=visibleCount
+                ? railHeight
+                : Math.Max(30, railHeight*visibleCount/count);
+            var maxTravel=Math.Max(0, railHeight-thumbHeight);
+            var maxFirst=Math.Max(1, count-visibleCount);
+
+            SuggestionScrollThumb.HeightRequest=thumbHeight;
+            SuggestionScrollThumb.TranslationY=maxTravel*Math.Clamp(firstVisibleIndex/(double)maxFirst, 0, 1);
+        }
+
+        private void OnSuggestionThumbPanUpdated(object? sender, PanUpdatedEventArgs e)
+        {
+            var count=SuggestionCount;
+            var maxTravel=Math.Max(0, SuggestionScrollRail.Height-SuggestionScrollThumb.Height);
+            if(count<=1||maxTravel<=0)
+                return;
+
+            if(e.StatusType==GestureStatus.Started)
+            {
+                _suggestionThumbStartY=SuggestionScrollThumb.TranslationY;
+                return;
+            }
+
+            if(e.StatusType!=GestureStatus.Running)
+                return;
+
+            var y=Math.Clamp(_suggestionThumbStartY+e.TotalY, 0, maxTravel);
+            SuggestionScrollThumb.TranslationY=y;
+            var targetIndex=(int)Math.Round((y/maxTravel)*(count-1));
+            SuggestionList.ScrollTo(targetIndex, position: ScrollToPosition.Start, animate: false);
+        }
+
+        public static readonly BindableProperty SelectedSuggestionProperty =
+            BindableProperty.Create(
+                nameof(SelectedSuggestion),
+                typeof(object),
+                typeof(SparkExplorerHeaderView),
+                null,
+                BindingMode.TwoWay);
+
+        public object? SelectedSuggestion
+        {
+            get => GetValue(SelectedSuggestionProperty);
+            set => SetValue(SelectedSuggestionProperty, value);
+        }
+
         public static readonly BindableProperty TrailingButtonProperty =
             BindableProperty.Create(
-          nameof(TrailingButton),
-        typeof(SparkButtonItem),
-        typeof(SparkExplorerHeaderView));
+                nameof(TrailingButton),
+                typeof(SparkButtonItem),
+                typeof(SparkExplorerHeaderView));
 
-        /// <summary>Single icon-only action after the pickers (e.g. export/share), per the mock.</summary>
+        /// <summary>Single icon-only action button (e.g. export), if needed.</summary>
         public SparkButtonItem TrailingButton
         {
             get => (SparkButtonItem)GetValue(TrailingButtonProperty);
@@ -176,6 +376,7 @@ namespace EHMR.Resources.Controls
                     ((SparkExplorerHeaderView)b).OnSearchTextChanged((string)n);
                 });
 
+        /// <summary>The current search query text. Two-way binding.</summary>
         public string SearchText
         {
             get => (string)GetValue(SearchTextProperty);
@@ -201,95 +402,20 @@ namespace EHMR.Resources.Controls
                 // expected on rapid typing — ignore
             }
         }
-        #endregion
-
-        #region Compatibility / Suggestions
-
-        public static readonly BindableProperty ShowCyrillicToggleProperty =
-            BindableProperty.Create(nameof(ShowCyrillicToggle), typeof(bool), typeof(SparkExplorerHeaderView), true);
-
-        public bool ShowCyrillicToggle
-        {
-            get => (bool)GetValue(ShowCyrillicToggleProperty);
-            set => SetValue(ShowCyrillicToggleProperty, value);
-        }
-
-        public static readonly BindableProperty UseCyrillicInputProperty =
-            BindableProperty.Create(nameof(UseCyrillicInput), typeof(bool), typeof(SparkExplorerHeaderView), true, BindingMode.TwoWay);
-
-        public bool UseCyrillicInput
-        {
-            get => (bool)GetValue(UseCyrillicInputProperty);
-            set => SetValue(UseCyrillicInputProperty, value);
-        }
-
-        public static readonly BindableProperty SuggestionsProperty =
-     BindableProperty.Create(nameof(Suggestions), typeof(IEnumerable), typeof(SparkExplorerHeaderView),
-         propertyChanged: (b, o, n) => ((SparkExplorerHeaderView)b).OnSuggestionsChanged(o as IEnumerable, n as IEnumerable));
-
-        public IEnumerable? Suggestions
-        {
-            get => (IEnumerable?)GetValue(SuggestionsProperty);
-            set => SetValue(SuggestionsProperty, value);
-        }
-
-        void OnSuggestionsChanged(IEnumerable? oldList, IEnumerable? newList)
-        {
-            if(oldList is INotifyCollectionChanged oc) oc.CollectionChanged-=OnSuggestionsCollectionChanged;
-            if(newList is INotifyCollectionChanged nc) nc.CollectionChanged+=OnSuggestionsCollectionChanged;
-            RefreshSuggestionsVisibility();
-        }
-
-        void OnSuggestionsCollectionChanged(object? s, NotifyCollectionChangedEventArgs e) => RefreshSuggestionsVisibility();
-
-        void RefreshSuggestionsVisibility()
-        {
-            ShowSuggestions=!string.IsNullOrWhiteSpace(SearchText)
-                            &&Suggestions?.GetEnumerator().MoveNext()==true;
-        }
-
-        public static readonly BindableProperty SelectedSuggestionProperty =
-            BindableProperty.Create(nameof(SelectedSuggestion), typeof(object), typeof(SparkExplorerHeaderView), null,
-                BindingMode.TwoWay,
-                propertyChanged: (b, o, n) =>
-                {
-                    if(n is not null) ((SparkExplorerHeaderView)b).ShowSuggestions=false;
-                });
-
-        public static readonly BindableProperty SuggestionTemplateProperty =
-            BindableProperty.Create(nameof(SuggestionTemplate), typeof(DataTemplate), typeof(SparkExplorerHeaderView));
-
-        public DataTemplate? SuggestionTemplate
-        {
-            get => (DataTemplate?)GetValue(SuggestionTemplateProperty);
-            set => SetValue(SuggestionTemplateProperty, value);
-        }
-
-        // Supports <SparkExplorerHeaderView.SuggestionTemplate>...</...>
-        // in page XAML while keeping the same BindableProperty and design.
-        public static DataTemplate? GetSuggestionTemplate(BindableObject obj) =>
-            (DataTemplate?)obj.GetValue(SuggestionTemplateProperty);
-
-        public static void SetSuggestionTemplate(BindableObject obj, DataTemplate? value) =>
-            obj.SetValue(SuggestionTemplateProperty, value);
-
-        public static readonly BindableProperty ShowSuggestionsProperty =
-            BindableProperty.Create(nameof(ShowSuggestions), typeof(bool), typeof(SparkExplorerHeaderView), false);
-
-        public bool ShowSuggestions
-        {
-            get => (bool)GetValue(ShowSuggestionsProperty);
-            set => SetValue(ShowSuggestionsProperty, value);
-        }
-
-       
-        public object? SelectedSuggestion
-        {
-            get => GetValue(SelectedSuggestionProperty);
-            set => SetValue(SelectedSuggestionProperty, value);
-        }
 
         #endregion
 
+        // ═══════════════════════════════════════════════════════════════════
+        // REMOVED: HeaderColumns property and BuildHeaderColumns() method
+        //
+        // Reason: The SparkExplorerHeaderView should ONLY handle the search/
+        // filter toolbar (tabs, search, pickers, buttons). It should NOT
+        // manage data grid column headers — that's the job of SparkDataGridView.
+        //
+        // The grid columns should bind directly to:
+        //   <controls:SparkDataGridView Columns="{Binding GridColumns}" ... />
+        //
+        // NOT to SparkExplorerHeaderView.
+        // ═══════════════════════════════════════════════════════════════════
     }
 }
