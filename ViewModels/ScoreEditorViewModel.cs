@@ -83,31 +83,28 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
             await Task.Delay(250, token);
 
             await using var db = await _dbFactory.CreateDbContextAsync(token);
-            var all = await db.PatientScores
+            var q = query.Trim();
+            var definitions = await db.Set<ClinicalScoreDefinition>()
                 .AsNoTracking()
-                .Where(x => x.ScoreText != null && x.ScoreText != "")
-                .GroupBy(x => new { x.ScoreText, x.Number })
-                .Select(g => new { Text = g.Key.ScoreText!, Number = g.Key.Number ?? string.Empty, Count = g.Count() })
+                .Where(x => x.IsActive &&
+                    ((x.Name != null && x.Name.Contains(q)) ||
+                     (x.Description != null && x.Description.Contains(q))))
+                .OrderBy(x => x.Name)
+                .Take(30)
                 .ToListAsync(token);
 
-            var q = query.Trim();
-            var result = all
-                .Where(x => x.Text.Contains(q, StringComparison.CurrentCultureIgnoreCase))
-                .Select(x => new
-                {
-                    x.Text,
-                    x.Number,
-                    x.Count,
-                    Exact = string.Equals(x.Text.Trim(), q, StringComparison.CurrentCultureIgnoreCase),
-                    StartsWith = x.Text.StartsWith(q, StringComparison.CurrentCultureIgnoreCase)
-                })
-                .OrderByDescending(x => x.Exact)
-                .ThenByDescending(x => x.StartsWith)
-                .ThenByDescending(x => x.Count)
-                .ThenBy(x => x.Text)
-                .ThenBy(x => x.Number)
-                .Take(12)
-                .Select(x => new ScoreSuggestion(x.Text, x.Number, x.Count))
+            var names = definitions.Select(x => x.Name).ToList();
+            var usage = await db.PatientScores.AsNoTracking()
+                .Where(x => names.Contains(x.ScoreText))
+                .GroupBy(x => x.ScoreText)
+                .Select(g => new { Text = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.Text, x => x.Count, token);
+
+            var result = definitions
+                .Select(x => new ScoreSuggestion(
+                    x.Name,
+                    string.Empty,
+                    usage.TryGetValue(x.Name, out var count) ? count : 0))
                 .ToList();
 
             if(token.IsCancellationRequested) return;
@@ -115,14 +112,74 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
                 if(token.IsCancellationRequested) return;
-
                 Suggestions.Clear();
-                foreach(var r in result) Suggestions.Add(r);
+                foreach(var item in result) Suggestions.Add(item);
                 ShowSuggestions=Suggestions.Count>0;
             });
         }
         catch(OperationCanceledException) { }
         catch(Exception ex) { Debug.WriteLine(ex); }
+    }
+
+    [RelayCommand]
+    private async Task AddNewScoreDefinitionAsync()
+    {
+        if(IsReadOnly) return;
+
+        var name = await Shell.Current.DisplayPromptAsync(
+            "Додади нов скор",
+            "Внесете го називот на новиот скор:",
+            "Зачувај",
+            "Откажи",
+            "Пример: DAS28");
+        if(string.IsNullOrWhiteSpace(name)) return;
+        name=name.Trim();
+
+        var description = await Shell.Current.DisplayPromptAsync(
+            "Опис на скор",
+            "Внесете опис (опционално):",
+            "Зачувај",
+            "Прескокни",
+            "Опис на клиничкиот скор") ?? string.Empty;
+
+        try
+        {
+            await using var db = await _dbFactory.CreateDbContextAsync();
+            var duplicate = await db.Set<ClinicalScoreDefinition>()
+                .AnyAsync(x => x.IsActive && x.Name.ToLower() == name.ToLower());
+            if(duplicate)
+            {
+                await Shell.Current.DisplayAlert("Постои скор",
+                    $"Скорот „{name}“ веќе постои во регистарот. Пребарајте го и изберете го.",
+                    "ОК");
+                _suppressSearch=true;
+                DescriptionText=name;
+                _suppressSearch=false;
+                await DebounceSearchAsync(name);
+                return;
+            }
+
+            db.Set<ClinicalScoreDefinition>().Add(new ClinicalScoreDefinition
+            {
+                Id=Guid.NewGuid(),
+                Name=name,
+                Description=description.Trim(),
+                IsActive=true
+            });
+            await db.SaveChangesAsync();
+
+            _suppressSearch=true;
+            DescriptionText=name;
+            _suppressSearch=false;
+            NumberText=string.Empty;
+            await DebounceSearchAsync(name);
+        }
+        catch(Exception ex)
+        {
+            Debug.WriteLine(ex);
+            await Shell.Current.DisplayAlert("Грешка",
+                $"Новиот скор не може да се зачува: {ex.Message}", "ОК");
+        }
     }
 
     [RelayCommand]
