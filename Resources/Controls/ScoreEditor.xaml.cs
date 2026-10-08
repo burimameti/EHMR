@@ -33,8 +33,8 @@ public partial class ScoreEditor : ContentView
 
         try
         {
-            var result=await page.ShowPopupAsync(popup);
-            if(result is ScoreRow row)
+            await page.ShowPopupAsync(popup);
+            if(popup.ScoreResult is ScoreRow row)
                 editor.Items.Insert(0,row);
         }
         finally
