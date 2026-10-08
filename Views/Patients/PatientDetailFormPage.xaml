@@ -904,6 +904,7 @@
 																											
 															
 							</VerticalStackLayout>
+											</VerticalStackLayout>
 <!--  ДЕСНО — СКОРОВИ  -->
 																									<VerticalStackLayout Grid.Column="1" Spacing="8">
 																										<Label
