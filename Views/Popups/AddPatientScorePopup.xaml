@@ -8,41 +8,41 @@
 	x:Name="Root">
 
 	<Border
-		Padding="18"
+		Padding="12"
 		BackgroundColor="{StaticResource SparkBackground}"
 		Stroke="{StaticResource SparkBorder}"
-		StrokeShape="RoundRectangle 12"
+		StrokeShape="RoundRectangle 8"
 		StrokeThickness="1"
-		WidthRequest="480">
-		<VerticalStackLayout Spacing="14">
+		WidthRequest="380">
+		<VerticalStackLayout Spacing="8">
 			<VerticalStackLayout Spacing="2">
 				<Label
 					FontAttributes="Bold"
-					FontSize="17"
+					FontSize="15"
 					Text="Додади скор"
 					TextColor="{StaticResource SparkTextPrimary}" />
 				<Label
-					FontSize="11"
+					FontSize="10"
 					Text="Внесете опис и бројка за новиот скор."
 					TextColor="{StaticResource SparkTextSecondary}" />
 			</VerticalStackLayout>
 
-			<VerticalStackLayout Spacing="6">
+			<VerticalStackLayout Spacing="3">
 				<Label
 					FontAttributes="Bold"
-					FontSize="11"
+					FontSize="10"
 					Text="ОПИС НА СКОР"
 					TextColor="{StaticResource SparkTextSecondary}" />
 				<Border
 					BackgroundColor="{StaticResource SparkBackground}"
-					HeightRequest="40"
+					HeightRequest="34"
 					Stroke="{StaticResource SparkBorder}"
 					StrokeShape="RoundRectangle 6"
 					StrokeThickness="1">
 					<Entry
 						BackgroundColor="Transparent"
 						FontSize="13"
-						HeightRequest="38"
+						HeightRequest="32"
 						Placeholder="Пр. DAS28"
 						PlaceholderColor="{StaticResource SparkTextSecondary}"
 						Text="{Binding DescriptionText, Mode=TwoWay}"
@@ -52,7 +52,7 @@
 			</VerticalStackLayout>
 
 			<Border
-				Padding="4"
+				Padding="2"
 				BackgroundColor="White"
 				IsVisible="{Binding ShowSuggestions}"
 				Stroke="{StaticResource SparkBorderSubtle}"
@@ -62,7 +62,7 @@
 					<BindableLayout.ItemTemplate>
 						<DataTemplate>
 							<Border
-								Padding="9,7"
+								Padding="7,5"
 								BackgroundColor="Transparent"
 								StrokeThickness="0">
 								<Border.GestureRecognizers>
@@ -87,7 +87,7 @@
 			</Border>
 			<Border
 				BackgroundColor="{StaticResource SparkBackground}"
-				HeightRequest="36"
+				HeightRequest="32"
 				Stroke="{StaticResource SparkBorder}"
 				StrokeShape="RoundRectangle 6"
 				StrokeThickness="1">
@@ -108,15 +108,15 @@
 					BorderColor="{StaticResource SparkBorder}"
 					BorderWidth="1"
 					CornerRadius="6"
-					HeightRequest="36"
+					HeightRequest="32"
 					Text="Откажи"
 					TextColor="{StaticResource SparkTextPrimary}"
-					WidthRequest="100" />
+					WidthRequest="86" />
 				<Button
 					Clicked="OnSaveClicked"
 					BackgroundColor="{StaticResource SparkAccentTeal}"
 					CornerRadius="6"
-					HeightRequest="36"
+					HeightRequest="32"
 					Text="Додади"
 					TextColor="White"
 					WidthRequest="100" />
