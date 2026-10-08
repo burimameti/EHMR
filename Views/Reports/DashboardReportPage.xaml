@@ -191,12 +191,24 @@
                     </Border>
 
                     <!-- PROVIDER STATUS TABS -->
-                    <sc:SparkExplorerHeaderView
+                    <Border
                         Margin="0"
-                        Buttons="{Binding Buttons}"
-                        Pickers="{Binding Pickers}"
-                        SearchVisible="False"
-                        Tabs="{Binding Tabs}" />
+                        Padding="8,4"
+                        BackgroundColor="{StaticResource White}"
+                        Stroke="{StaticResource SparkBorder}"
+                        StrokeThickness="1">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="6" />
+                        </Border.StrokeShape>
+                        <sc:SparkExplorerHeaderView
+                            Margin="0"
+                            Buttons="{Binding Buttons}"
+                            Pickers="{Binding Pickers}"
+                            SearchPlaceholder="Пребарување во извештај..."
+                            SearchText="{Binding SearchText, Mode=TwoWay}"
+                            SearchVisible="True"
+                            Tabs="{Binding Tabs}" />
+                    </Border>
 
                     <!-- SCORE PATIENT SEARCH — kept functional, but separated from the filter tabs -->
                     <Border
