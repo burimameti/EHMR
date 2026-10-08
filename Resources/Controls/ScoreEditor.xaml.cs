@@ -19,6 +19,9 @@ public partial class ScoreEditor : ContentView
 
     public ICommand OpenAddScoreCommand { get; }
 
+    private async void OnAddScoreClicked(object? sender, EventArgs e)
+        => await OpenAddScoreAsync();
+
     private async Task OpenAddScoreAsync()
     {
         if(BindingContext is not ScoreEditorViewModel editor || !editor.IsEditable)
@@ -27,8 +30,7 @@ public partial class ScoreEditor : ContentView
         var factory=MauiProgram.ServiceProvider.GetRequiredService<IDbContextFactory<DesktopTherapyDbContext>>();
         var popupViewModel=new ScoreEditorViewModel(factory) { IsReadOnly=false };
         var popup=new AddPatientScorePopup(popupViewModel);
-        var page=Shell.Current?.CurrentPage;
-        if(page is null)
+        if(Shell.Current is null)
         {
             popupViewModel.Dispose();
             return;
@@ -36,7 +38,7 @@ public partial class ScoreEditor : ContentView
 
         try
         {
-            await page.ShowPopupAsync(popup);
+            await Shell.Current.ShowPopupAsync(popup);
             if(popup.ScoreResult is ScoreRow row)
                 editor.Items.Insert(0,row);
         }
