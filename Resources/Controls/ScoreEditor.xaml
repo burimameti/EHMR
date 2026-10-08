@@ -17,7 +17,7 @@
 				HeightRequestEx="36"
 				Text="+ Додади скор"
 				WidthRequestEx="130"
-				Clicked="OnAddScoreClicked" />
+				Command="{Binding Source={x:Reference Root}, Path=OpenAddScoreCommand}" />
 		</HorizontalStackLayout>
 
 		<!--  Предлози (најупотребените најгоре)  -->
