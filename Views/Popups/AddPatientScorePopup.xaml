@@ -48,12 +48,6 @@
                     VerticalOptions="Center" />
             </Border>
 
-            <Label
-                FontSize="11"
-                IsVisible="{Binding ShowNoResults}"
-                Text="Нема пронајдени скорови."
-                TextColor="{StaticResource SparkTextSecondary}" />
-
             <Border
                 Padding="2"
                 BackgroundColor="White"
