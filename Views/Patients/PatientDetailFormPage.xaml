@@ -742,7 +742,7 @@
 										<Grid
 											ColumnDefinitions="*,*"
 											ColumnSpacing="16"
-											RowDefinitions="Auto,Auto"
+											RowDefinitions="Auto,Auto,Auto"
 											RowSpacing="16">
 											<VerticalStackLayout
 												Grid.Row="0"
@@ -923,6 +923,7 @@
 											<VerticalStackLayout
 												Grid.Row="1"
 												Grid.Column="0"
+												Grid.ColumnSpan="2"
 												Spacing="8">
 												<VerticalStackLayout Spacing="8">
 
@@ -1147,8 +1148,9 @@
 												</VerticalStackLayout>
 											</VerticalStackLayout>
 											<VerticalStackLayout
-												Grid.Row="1"
-												Grid.Column="1"
+												Grid.Row="2"
+												Grid.Column="0"
+												Grid.ColumnSpan="2"
 												Spacing="8">
 												<VerticalStackLayout Spacing="8">
 
