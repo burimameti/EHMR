@@ -92,8 +92,18 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
             var q = query.Trim();
             var result = all
                 .Where(x => x.Text.Contains(q, StringComparison.CurrentCultureIgnoreCase))
-                .OrderByDescending(x => x.Count) // најупотребениот најгоре
-                .ThenByDescending(x => x.Text.StartsWith(q, StringComparison.CurrentCultureIgnoreCase))
+                .Select(x => new
+                {
+                    x.Text,
+                    x.Count,
+                    Exact = string.Equals(x.Text.Trim(), q, StringComparison.CurrentCultureIgnoreCase),
+                    StartsWith = x.Text.StartsWith(q, StringComparison.CurrentCultureIgnoreCase)
+                })
+                // Најдобриот кандидат секогаш е прв:
+                // exact match → starts with → contains, па употреба.
+                .OrderByDescending(x => x.Exact)
+                .ThenByDescending(x => x.StartsWith)
+                .ThenByDescending(x => x.Count)
                 .ThenBy(x => x.Text)
                 .Take(8)
                 .Select(x => new ScoreSuggestion(x.Text, x.Count))
