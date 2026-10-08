@@ -73,7 +73,7 @@ public partial class FFButton : ContentView
         var horizontalPadding = Math.Max(8, 20 * scale);
         Container.Padding = new Thickness(horizontalPadding, 0);
         Container.MinimumHeightRequest = Math.Max(32, HeightRequestEx * scale);
-        Container.StrokeShape = new Rectangle();
+        Container.StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(6) };
 
         if (width < 145)
         {
