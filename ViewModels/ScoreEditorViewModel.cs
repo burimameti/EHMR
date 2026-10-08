@@ -111,9 +111,14 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
 
             if(token.IsCancellationRequested) return;
 
-            Suggestions.Clear();
-            foreach(var r in result) Suggestions.Add(r);
-            ShowSuggestions=Suggestions.Count>0;
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                if(token.IsCancellationRequested) return;
+
+                Suggestions.Clear();
+                foreach(var r in result) Suggestions.Add(r);
+                ShowSuggestions=Suggestions.Count>0;
+            });
         }
         catch(OperationCanceledException) { }
         catch(Exception ex) { Debug.WriteLine(ex); }
