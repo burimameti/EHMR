@@ -599,9 +599,7 @@
 											</Border>
 										</VerticalStackLayout>
 
-text="{Binding ScoreEditor}" />
-									</VerticalStackLayout>
-									</Grid>
+</Grid>
 								</VerticalStackLayout>
 
 												<!--  ═══ 3. БИОЛОШКА ТЕРАПИЈА ═══  -->
