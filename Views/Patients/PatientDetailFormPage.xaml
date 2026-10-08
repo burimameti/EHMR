@@ -913,26 +913,22 @@
 												<VerticalStackLayout Spacing="8">
 
 													<Grid
-														ColumnDefinitions="Auto,Auto,*,Auto"
+														ColumnDefinitions="Auto,*,Auto"
 														ColumnSpacing="8"
 														HeightRequest="34">
 
-														<Border
-															Padding="6,2"
-															BackgroundColor="{StaticResource SparkAccentTealBg}"
-															StrokeShape="RoundRectangle 4"
-															StrokeThickness="0"
-															VerticalOptions="Center">
-															<Label
-																FontAttributes="Bold"
-																FontSize="9"
-																Text="АКТИВНИ ЛЕКОВИ"
-																TextColor="{StaticResource SparkAccentTealDark}" />
-														</Border>
+														<Label
+															FontAttributes="Bold"
+															FontSize="10"
+															Text="АКТИВНИ ЛЕКОВИ"
+															TextColor="{StaticResource SparkAccentTealDark}"
+															VerticalOptions="Center" />
 														<controls:FFButton
-															ButtonKind="Secondary"
+															Grid.Column="2"
+															ButtonKind="Primary"
 															Command="{Binding AddApplicationRegimeCommand}"
 															HeightRequestEx="34"
+															HorizontalOptions="End"
 															IsVisible="{Binding IsEditMode}"
 															Text="+ Нов режим"
 															WidthRequestEx="116" />
