@@ -745,6 +745,11 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     // =====================================================
     // SPARK INITIALIZATION (Detail)
     // =====================================================
+    public void RefreshReportControls()
+    {
+        InitializeSparkControls();
+    }
+
     private void InitializeSparkControls()
     {
         if(_activeProvider==null)
