@@ -15,9 +15,9 @@
 			<Label
 				FontAttributes="Bold"
 				FontSize="10"
-				Text="ПРЕБАРУВАЊЕ ПО ОПИС / НОВ СКОР"
+				Text="ПРЕБАРУВАЊЕ НА СКОР"
 				TextColor="{StaticResource SparkTextSecondary}" />
-			<Grid ColumnDefinitions="*,82,Auto" ColumnSpacing="6">
+			<Grid ColumnDefinitions="*,82,Auto,Auto" ColumnSpacing="6">
 				<Border
 					Padding="8,0"
 					BackgroundColor="{StaticResource SparkBackground}"
@@ -59,6 +59,13 @@
 					HeightRequestEx="38"
 					Text="+ Додади"
 					WidthRequestEx="96" />
+				<controls:FFButton
+					Grid.Column="3"
+					ButtonKind="Secondary"
+					Command="{Binding AddNewScoreDefinitionCommand}"
+					HeightRequestEx="38"
+					Text="+ Додади нов скор"
+					WidthRequestEx="150" />
 			</Grid>
 		</VerticalStackLayout>
 
