@@ -871,7 +871,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
     public ObservableCollection<MkbAlphabetSection> MkbAlphabetSections { get; } = new();
 
-    [ObservableProperty] private string selectedMkbSection = "A";
+    [ObservableProperty] private string selectedMkbSection = string.Empty;
 
     partial void OnMkbCodeSearchTextChanged(string value) => DebounceSearchMkb10();
     partial void OnMkbDescriptionSearchTextChanged(string value) => DebounceSearchMkb10();
@@ -905,6 +905,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         if(section==null)
             return;
 
+        _mkbSearchCts.Cancel();
         SelectedMkbSection=section.Letter;
         foreach(var item in MkbAlphabetSections)
             item.IsSelected=item.Letter==SelectedMkbSection;
@@ -915,7 +916,15 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task SearchMkbAsync(CancellationToken token = default)
     {
-        if(string.IsNullOrWhiteSpace(SelectedMkbSection))
+        var codeTerm = MkbCodeSearchText?.Trim() ?? string.Empty;
+        var descriptionTerm = MacedonianTransliterator.ToCyrillic(MkbDescriptionSearchText?.Trim() ?? string.Empty);
+        var hasTextSearch = !string.IsNullOrWhiteSpace(codeTerm)
+            || !string.IsNullOrWhiteSpace(descriptionTerm);
+
+        // A-Z is a browse filter only. When the user types a code or description,
+        // ignore the previously selected letter (e.g. searching M05 while A was selected).
+        var sectionFilter = hasTextSearch ? null : SelectedMkbSection;
+        if(!hasTextSearch && string.IsNullOrWhiteSpace(sectionFilter))
         {
             MkbResults.Clear();
             ShowMkbDropdown=false;
@@ -925,10 +934,10 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         try
         {
             var results = await _patientService.SearchMkb10CodesAsync(
-                MkbCodeSearchText??string.Empty,
+                codeTerm,
                 token,
-                SelectedMkbSection,
-                MacedonianTransliterator.ToCyrillic(MkbDescriptionSearchText??string.Empty));
+                sectionFilter,
+                descriptionTerm);
 
             if(token.IsCancellationRequested) return;
 
