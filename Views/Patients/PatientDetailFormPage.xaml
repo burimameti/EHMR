@@ -820,15 +820,15 @@
 														</ScrollView>
 													</Border>
 												</VerticalStackLayout>
-												<Grid ColumnDefinitions="*,*,0.7*" ColumnSpacing="12">
+												<Grid ColumnDefinitions="1.2*,*" ColumnSpacing="12">
 
 													<VerticalStackLayout Spacing="8">
 														<Grid
 															ColumnDefinitions="*,*"
 															ColumnSpacing="8"
 															IsVisible="{Binding IsEditMode}">
-															<controls:FFSearchBox Placeholder="M06.9" Text="{Binding MkbCodeSearchText, Mode=TwoWay}" />
-															<controls:FFSearchBox Placeholder="Опис на дијагноза" Text="{Binding MkbDescriptionSearchText, Mode=TwoWay}" />
+															<controls:FFSearchBox MinimumWidthRequest="0" Placeholder="M06.9" Text="{Binding MkbCodeSearchText, Mode=TwoWay}" />
+															<controls:FFSearchBox MinimumWidthRequest="0" Placeholder="Опис на дијагноза" Text="{Binding MkbDescriptionSearchText, Mode=TwoWay}" />
 														</Grid>
 
 														<CollectionView
