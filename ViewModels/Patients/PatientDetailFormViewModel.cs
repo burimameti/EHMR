@@ -861,6 +861,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     // =====================================================
 
     private CancellationTokenSource _mkbSearchCts = new();
+    private int _mkbSearchVersion;
 
     [ObservableProperty] private ObservableCollection<DiagnosisDto> diagnoses = new();
     [ObservableProperty] private ObservableCollection<Mkb10CodeDto> mkbResults = new();
@@ -873,30 +874,48 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] private string selectedMkbSection = string.Empty;
 
-    partial void OnMkbCodeSearchTextChanged(string value) => DebounceSearchMkb10();
-    partial void OnMkbDescriptionSearchTextChanged(string value) => DebounceSearchMkb10();
+    partial void OnMkbCodeSearchTextChanged(string value) => _ = DebounceSearchMkb10Async();
+    partial void OnMkbDescriptionSearchTextChanged(string value) => _ = DebounceSearchMkb10Async();
 
-    private async void DebounceSearchMkb10()
+    private async Task DebounceSearchMkb10Async()
     {
-        _mkbSearchCts?.Cancel();
-        _mkbSearchCts?.Dispose();
-        _mkbSearchCts=new CancellationTokenSource();
-        var token = _mkbSearchCts.Token;
+        var version = ++_mkbSearchVersion;
+        var previous = _mkbSearchCts;
+        var current = new CancellationTokenSource();
+        _mkbSearchCts = current;
+        previous.Cancel();
+        previous.Dispose();
+        var token = current.Token;
 
-        if(string.IsNullOrWhiteSpace(MkbCodeSearchText)&&string.IsNullOrWhiteSpace(MkbDescriptionSearchText))
+        if(string.IsNullOrWhiteSpace(MkbCodeSearchText) &&
+           string.IsNullOrWhiteSpace(MkbDescriptionSearchText))
         {
             MkbResults.Clear();
-            ShowMkbDropdown=false;
+            ShowMkbDropdown = false;
             return;
         }
 
         try
         {
-            await Task.Delay(300, token);
-            if(token.IsCancellationRequested) return;
+            await Task.Delay(180, token);
+            if(token.IsCancellationRequested || version != _mkbSearchVersion)
+                return;
+
             await SearchMkbAsync(token);
         }
-        catch(OperationCanceledException) { }
+        catch(OperationCanceledException)
+        {
+            // Expected when the user continues typing.
+        }
+        catch(Exception ex)
+        {
+            Debug.WriteLine($"MKB search failed: {ex}");
+            if(version == _mkbSearchVersion)
+            {
+                MkbResults.Clear();
+                ShowMkbDropdown = false;
+            }
+        }
     }
 
     [RelayCommand]
