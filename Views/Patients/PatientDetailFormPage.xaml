@@ -822,7 +822,7 @@
 														</ScrollView>
 													</Border>
 												</VerticalStackLayout>
-												<Grid ColumnDefinitions="220,220,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="4">
+												<Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="6">
 
 											<VerticalStackLayout
 												Grid.Column="0"
@@ -879,7 +879,7 @@
 											</CollectionView>
 										</Border>
 
-													<VerticalStackLayout Grid.Column="2" Grid.RowSpan="2" BindableLayout.ItemsSource="{Binding Diagnoses}" Spacing="4">
+													<VerticalStackLayout Grid.Row="2" Grid.ColumnSpan="2" BindableLayout.ItemsSource="{Binding Diagnoses}" Spacing="4">
 														<BindableLayout.ItemTemplate>
 															<DataTemplate x:DataType="dto:DiagnosisDto">
 																<Border
