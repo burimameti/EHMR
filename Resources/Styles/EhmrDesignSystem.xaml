@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- EHMR reference system: light canvas, white surfaces, teal action accent,
+         dark slate navigation, square compact controls, 1px borders, no shadows. -->
+
+    <Color x:Key="EhmrBackground">#F1F5F9</Color>
+    <Color x:Key="EhmrSurface">#FFFFFF</Color>
+    <Color x:Key="EhmrSurfaceAlt">#F8FAFC</Color>
+    <Color x:Key="EhmrPrimary">#6BD1E1</Color>
+    <Color x:Key="EhmrPrimaryPressed">#55BCCB</Color>
+    <Color x:Key="EhmrPrimarySoft">#E3F6F8</Color>
+    <Color x:Key="EhmrTextPrimary">#1E293B</Color>
+    <Color x:Key="EhmrTextSecondary">#52696E</Color>
+    <Color x:Key="EhmrTextMuted">#8AA0A4</Color>
+    <Color x:Key="EhmrBorder">#D7E3E6</Color>
+    <Color x:Key="EhmrDivider">#E2E8F0</Color>
+    <Color x:Key="EhmrSidebar">#243447</Color>
+    <Color x:Key="EhmrSidebarHover">#31455B</Color>
+    <Color x:Key="EhmrSuccess">#3D9B72</Color>
+    <Color x:Key="EhmrWarning">#D98E2B</Color>
+    <Color x:Key="EhmrDanger">#D64545</Color>
+    <Color x:Key="EhmrInfo">#3D6FB4</Color>
+
+    <x:Double x:Key="EhmrControlHeight">36</x:Double>
+    <x:Double x:Key="EhmrCompactHeight">32</x:Double>
+    <x:Double x:Key="EhmrCardRadius">8</x:Double>
+    <x:Double x:Key="EhmrControlRadius">6</x:Double>
+
+    <Style x:Key="EhmrButtonPrimaryStyle" TargetType="Button">
+        <Setter Property="HeightRequest" Value="36"/>
+        <Setter Property="Padding" Value="14,0"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="BackgroundColor" Value="{StaticResource EhmrPrimary}"/>
+        <Setter Property="TextColor" Value="White"/>
+        <Setter Property="BorderWidth" Value="0"/>
+    </Style>
+
+    <Style x:Key="EhmrButtonSecondaryStyle" TargetType="Button">
+        <Setter Property="HeightRequest" Value="36"/>
+        <Setter Property="Padding" Value="14,0"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="BackgroundColor" Value="{StaticResource EhmrSurface}"/>
+        <Setter Property="TextColor" Value="{StaticResource EhmrTextPrimary}"/>
+        <Setter Property="BorderColor" Value="{StaticResource EhmrBorder}"/>
+        <Setter Property="BorderWidth" Value="1"/>
+    </Style>
+
+    <Style x:Key="EhmrFieldLabelStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="TextColor" Value="{StaticResource EhmrTextSecondary}"/>
+        <Setter Property="Margin" Value="0,0,0,4"/>
+    </Style>
+
+    <Style x:Key="EhmrInputStyle" TargetType="Entry">
+        <Setter Property="HeightRequest" Value="36"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="TextColor" Value="{StaticResource EhmrTextPrimary}"/>
+        <Setter Property="PlaceholderColor" Value="{StaticResource EhmrTextMuted}"/>
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+    </Style>
+
+    <Style x:Key="EhmrPickerStyle" TargetType="Picker">
+        <Setter Property="HeightRequest" Value="34"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="TextColor" Value="{StaticResource EhmrTextPrimary}"/>
+        <Setter Property="TitleColor" Value="{StaticResource EhmrTextMuted}"/>
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+    </Style>
+
+    <Style x:Key="EhmrDatePickerStyle" TargetType="DatePicker">
+        <Setter Property="HeightRequest" Value="34"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="TextColor" Value="{StaticResource EhmrTextPrimary}"/>
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+    </Style>
+
+    <Style x:Key="EhmrCardBorderStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource EhmrSurface}"/>
+        <Setter Property="Stroke" Value="{StaticResource EhmrBorder}"/>
+        <Setter Property="StrokeThickness" Value="1"/>
+        <Setter Property="StrokeShape">
+            <Setter.Value><RoundRectangle CornerRadius="8"/></Setter.Value>
+        </Setter>
+        <Setter Property="Padding" Value="16"/>
+    </Style>
+
+    <Style x:Key="EhmrDividerStyle" TargetType="BoxView">
+        <Setter Property="HeightRequest" Value="1"/>
+        <Setter Property="BackgroundColor" Value="{StaticResource EhmrDivider}"/>
+        <Setter Property="HorizontalOptions" Value="Fill"/>
+    </Style>
+
+</ResourceDictionary>
