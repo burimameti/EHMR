@@ -102,19 +102,25 @@
 			</Border>
 
 			<HorizontalStackLayout HorizontalOptions="End" Spacing="8">
-				<controls:FFButton
-					ButtonKind="Secondary"
-					Command="{Binding Source={x:Reference Root}, Path=CancelCommand}"
-					HeightRequestEx="36"
+				<Button
+					Clicked="OnCancelClicked"
+					BackgroundColor="{StaticResource SparkSurfaceAlt}"
+					BorderColor="{StaticResource SparkBorder}"
+					BorderWidth="1"
+					CornerRadius="6"
+					HeightRequest="36"
 					Text="Откажи"
-					WidthRequestEx="100" />
-				<controls:FFButton
-					ButtonKind="Primary"
-					Command="{Binding Source={x:Reference Root}, Path=SaveCommand}"
-					HeightRequestEx="36"
+					TextColor="{StaticResource SparkTextPrimary}"
+					WidthRequest="100" />
+				<Button
+					Clicked="OnSaveClicked"
+					BackgroundColor="{StaticResource SparkAccentTeal}"
+					CornerRadius="6"
+					HeightRequest="36"
 					Text="Додади"
-					WidthRequestEx="100" />
-			</HorizontalStackLayout>
+					TextColor="White"
+					WidthRequest="100" />
+				</HorizontalStackLayout>
 		</VerticalStackLayout>
 	</Border>
 </toolkit:Popup>
