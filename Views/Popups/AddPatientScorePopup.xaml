@@ -52,21 +52,6 @@
 			</VerticalStackLayout>
 
 			<Border
-				BackgroundColor="{StaticResource SparkBackground}"
-				HeightRequest="36"
-				Stroke="{StaticResource SparkBorder}"
-				StrokeShape="RoundRectangle 6"
-				StrokeThickness="1">
-				<Entry
-					BackgroundColor="Transparent"
-					FontSize="13"
-					Keyboard="Numeric"
-					Placeholder="Бројка"
-					Text="{Binding NumberText, Mode=TwoWay}"
-					TextColor="{StaticResource SparkTextPrimary}" />
-			</Border>
-
-			<Border
 				Padding="4"
 				BackgroundColor="White"
 				IsVisible="{Binding ShowSuggestions}"
@@ -100,6 +85,21 @@
 					</BindableLayout.ItemTemplate>
 				</VerticalStackLayout>
 			</Border>
+			<Border
+				BackgroundColor="{StaticResource SparkBackground}"
+				HeightRequest="36"
+				Stroke="{StaticResource SparkBorder}"
+				StrokeShape="RoundRectangle 6"
+				StrokeThickness="1">
+				<Entry
+					BackgroundColor="Transparent"
+					FontSize="13"
+					Keyboard="Numeric"
+					Placeholder="Бројка"
+					Text="{Binding NumberText, Mode=TwoWay}"
+					TextColor="{StaticResource SparkTextPrimary}" />
+			</Border>
+
 
 			<HorizontalStackLayout HorizontalOptions="End" Spacing="8">
 				<Button
