@@ -177,7 +177,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 
         // MKB10 A-Z sections, исто као во EncounterBaseViewModel.
         for(var letter = 'A'; letter<='Z'; letter++)
-            MkbAlphabetSections.Add(new MkbAlphabetSection(letter.ToString(), letter=='A'));
+            MkbAlphabetSections.Add(new MkbAlphabetSection(letter.ToString(), false));
 
         ScoreEditor=new ScoreEditorViewModel(dbFactory);
 
