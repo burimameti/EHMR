@@ -17,7 +17,7 @@ public partial class ScoreRow : ObservableObject
     [ObservableProperty] private string number = string.Empty;
 }
 
-public sealed record ScoreSuggestion(string Text, int UsageCount);
+public sealed record ScoreSuggestion(string Text, string Number, int UsageCount);
 
 public partial class ScoreEditorViewModel : ObservableObject, IDisposable
 {
@@ -31,6 +31,7 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
 
     public ObservableCollection<ScoreRow> Items { get; } = new();
     public ObservableCollection<ScoreSuggestion> Suggestions { get; } = new();
+    public ScoreRow? SelectedScore { get; private set; }
     public IReadOnlyList<Guid> DeletedIds => _deletedIds;
 
     [ObservableProperty]
@@ -84,9 +85,9 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
             await using var db = await _dbFactory.CreateDbContextAsync(token);
             var all = await db.PatientScores
                 .AsNoTracking()
-                .Where(x => x.ScoreText!="")
-                .GroupBy(x => x.ScoreText)
-                .Select(g => new { Text = g.Key, Count = g.Count() })
+                .Where(x => x.ScoreText != null && x.ScoreText != "")
+                .GroupBy(x => new { x.ScoreText, x.Number })
+                .Select(g => new { Text = g.Key.ScoreText!, Number = g.Key.Number ?? string.Empty, Count = g.Count() })
                 .ToListAsync(token);
 
             var q = query.Trim();
@@ -95,18 +96,18 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
                 .Select(x => new
                 {
                     x.Text,
+                    x.Number,
                     x.Count,
                     Exact = string.Equals(x.Text.Trim(), q, StringComparison.CurrentCultureIgnoreCase),
                     StartsWith = x.Text.StartsWith(q, StringComparison.CurrentCultureIgnoreCase)
                 })
-                // Најдобриот кандидат секогаш е прв:
-                // exact match → starts with → contains, па употреба.
                 .OrderByDescending(x => x.Exact)
                 .ThenByDescending(x => x.StartsWith)
                 .ThenByDescending(x => x.Count)
                 .ThenBy(x => x.Text)
-                .Take(8)
-                .Select(x => new ScoreSuggestion(x.Text, x.Count))
+                .ThenBy(x => x.Number)
+                .Take(12)
+                .Select(x => new ScoreSuggestion(x.Text, x.Number, x.Count))
                 .ToList();
 
             if(token.IsCancellationRequested) return;
@@ -127,12 +128,17 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void SelectSuggestion(ScoreSuggestion? suggestion)
     {
-        if(suggestion==null) return;
-        _suppressSearch=true;
-        DescriptionText=suggestion.Text;
-        _suppressSearch=false;
+        if (suggestion is null) return;
+
+        SelectedScore = new ScoreRow
+        {
+            Description = suggestion.Text,
+            Number = suggestion.Number,
+            RecordedAt = DateTime.UtcNow
+        };
+        OnPropertyChanged(nameof(SelectedScore));
         Suggestions.Clear();
-        ShowSuggestions=false;
+        ShowSuggestions = false;
     }
 
     [RelayCommand]
