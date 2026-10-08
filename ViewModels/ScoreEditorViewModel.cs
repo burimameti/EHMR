@@ -130,12 +130,21 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
     {
         if (suggestion is null) return;
 
-        SelectedScore = new ScoreRow
+        var selected = new ScoreRow
         {
             Description = suggestion.Text,
             Number = suggestion.Number,
             RecordedAt = DateTime.UtcNow
         };
+
+        // In the patient form, selecting a suggestion fills the inline fields.
+        // Keep SelectedScore for the legacy popup consumer, if it is used elsewhere.
+        _suppressSearch = true;
+        DescriptionText = selected.Description;
+        NumberText = selected.Number;
+        _suppressSearch = false;
+
+        SelectedScore = selected;
         OnPropertyChanged(nameof(SelectedScore));
         Suggestions.Clear();
         ShowSuggestions = false;
