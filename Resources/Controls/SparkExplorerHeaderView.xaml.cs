@@ -101,11 +101,10 @@ namespace EHMR.Resources.Controls
                 }
             }
 
-            // Row 0: search (star) | cyrillic (auto / 0) | buttons (auto)
+            // Row 0: search fills the available space; filters stay adjacent; actions remain at the far right.
+            // Auto-sizing the search column squeezed the search and caused inline pickers/buttons to collide.
             SecondaryToolbarGrid.ColumnDefinitions.Clear();
-            // Keep search and conditional pickers adjacent from the left.
-            // A star-sized search column left a large visual gap before the inline picker.
-            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Auto });
+            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Star });
             SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Auto });
             SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition
             {
