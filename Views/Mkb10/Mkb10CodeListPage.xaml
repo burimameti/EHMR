@@ -6,14 +6,15 @@
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Mkb10"
 	x:Name="PageRoot"
-	x:DataType="viewModels:Mkb10CodeListViewModel">
+	x:DataType="viewModels:Mkb10CodeListViewModel"
+	BackgroundColor="{StaticResource PageBackground}">
 
 	<Grid ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
 		<Border
 			Grid.Column="0"
-			BackgroundColor="{StaticResource Gray200}"
+			BackgroundColor="{StaticResource PageBackground}
 			StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
