@@ -26,7 +26,7 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				Padding="0"
-				ColumnDefinitions="*,Auto,Auto,Auto"
+				ColumnDefinitions="*,*,Auto,Auto"
 				ColumnSpacing="14"
 				MinimumHeightRequest="0"
 				MinimumWidthRequest="0"
@@ -105,8 +105,8 @@
 					x:Name="CyrillicToggleLayout"
 					Grid.Row="0"
 					Grid.Column="2"
-					Margin="0,20,0,0"
-					Padding="8,0,12,0"
+					Margin="0,15,0,0"
+					Padding="0,0,10,0"
 					BackgroundColor="{StaticResource SparkAccentTealBg}"
 					HeightRequest="38"
 					IsVisible="{Binding ShowCyrillicToggle, Source={x:Reference Root}}"
@@ -133,7 +133,10 @@
 					Margin="0,0,0,0"
 					Spacing="4"
 					VerticalOptions="Center">
-					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}" Spacing="10" VerticalOptions="Center">
+					<HorizontalStackLayout
+						BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}"
+						Spacing="10"
+						VerticalOptions="Center">
 
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkButtonItem">
@@ -163,7 +166,7 @@
 				</VerticalStackLayout>
 
 
-				<!-- Conditional filters (for example, the medicine picker) stay inline beside search. -->
+				<!--  Conditional filters (for example, the medicine picker) stay inline beside search.  -->
 				<FlexLayout
 					x:Name="InlinePickerLayout"
 					Grid.Row="0"
@@ -201,9 +204,9 @@
 										VerticalOptions="Center" />
 									<CheckBox
 										Margin="0"
+										HorizontalOptions="Start"
 										IsChecked="{Binding IsChecked, Mode=TwoWay}"
 										IsEnabled="{Binding IsEnabled}"
-										HorizontalOptions="Start"
 										VerticalOptions="Center"
 										Color="{StaticResource Gray500}" />
 								</VerticalStackLayout>
@@ -266,6 +269,7 @@
 			<BoxView
 				BackgroundColor="{StaticResource Transparent}"
 				HeightRequest="10"
+				InputTransparent="True"
 				VerticalOptions="End" />
 		</Grid>
 	</VerticalStackLayout>

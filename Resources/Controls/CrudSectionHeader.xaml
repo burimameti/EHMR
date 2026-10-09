@@ -7,18 +7,25 @@
 	x:Name="Root"
 	x:DataType="controls:CrudSectionHeader">
 
-	<Grid RowDefinitions="Auto,1" RowSpacing="6">
-		<Label
-			CharacterSpacing="0.7"
-			FontAttributes="Bold"
-			FontSize="12"
-			Text="{Binding Title, Source={x:Reference Root}}"
-			TextColor="{Binding TextColor, Source={x:Reference Root}}"
-			VerticalOptions="Center" />
-		<BoxView
-			Grid.Row="1"
-			BackgroundColor="{Binding LineColor, Source={x:Reference Root}}"
-			HeightRequest="1"
-			HorizontalOptions="Fill" />
-	</Grid>
+	<Border
+		Margin="0,6,6,0"
+		Padding="4"
+		Stroke="AliceBlue"
+		StrokeShape="RoundRectangle 6">
+		<Grid RowDefinitions="Auto,1" RowSpacing="6">
+			<Label
+				CharacterSpacing="0.7"
+				FontAttributes="Bold"
+				FontSize="12"
+				Text="{Binding Title, Source={x:Reference Root}}"
+				TextColor="{Binding TextColor, Source={x:Reference Root}}"
+				VerticalOptions="Center" />
+			<BoxView
+				Grid.Row="1"
+				BackgroundColor="{Binding LineColor, Source={x:Reference Root}}"
+				HeightRequest="1"
+				HorizontalOptions="Fill" />
+		</Grid>
+	</Border>
+
 </ContentView>

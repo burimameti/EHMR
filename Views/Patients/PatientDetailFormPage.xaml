@@ -23,7 +23,8 @@
 			<!--  ═══ СТИЛОВИ ЗА ОВАА СТРАНА ═══  -->
 
 			<Style x:Key="SectionHeaderStyle" TargetType="controls:CrudSectionHeader">
-				<Setter Property="Padding" Value="8,5" />
+
+
 				<Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
 				<Setter Property="TextColor" Value="{StaticResource Gray800}" />
 			</Style>
@@ -90,7 +91,13 @@
 				<Setter Property="HorizontalOptions" Value="Center" />
 				<Setter Property="VerticalOptions" Value="Center" />
 			</Style>
-
+			<Style x:Key="SectionCardStyle" TargetType="Border">
+				<Setter Property="Padding" Value="14" />
+				<Setter Property="BackgroundColor" Value="#F8FAFC" />
+				<Setter Property="Stroke" Value="#DCE3EA" />
+				<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+				<Setter Property="StrokeThickness" Value="1" />
+			</Style>
 			<!--  ═══ ШАБЛОНИ ЗА ИСТОРИЈА НА ПАЦИЕНТОТ ═══  -->
 
 			<DataTemplate x:Key="PatientDiagnosisRowTemplate" x:DataType="dto:DiagnosisDto">
@@ -304,10 +311,10 @@
 								<!--  ═══ 1. ЛИЧНИ ПОДАТОЦИ ═══  -->
 								<Border
 									Padding="14"
-									Background="{StaticResource ExpandCardBackground}"
 									Stroke="#DCE3EA"
 									StrokeShape="RoundRectangle 6"
-									StrokeThickness="1">
+									StrokeThickness="1"
+									Style="{StaticResource SectionCardStyle}">
 									<VerticalStackLayout Spacing="10">
 
 										<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
@@ -470,7 +477,8 @@
 									Padding="14"
 									Stroke="#DCE3EA"
 									StrokeShape="RoundRectangle 12"
-									StrokeThickness="1">
+									StrokeThickness="1"
+									Style="{StaticResource SectionCardStyle}">
 									<VerticalStackLayout Spacing="10">
 
 										<controls:CrudSectionHeader
@@ -625,7 +633,8 @@
 									Padding="14"
 									Stroke="#DCE3EA"
 									StrokeShape="RoundRectangle 12"
-									StrokeThickness="1">
+									StrokeThickness="1"
+									Style="{StaticResource SectionCardStyle}">
 									<VerticalStackLayout Spacing="14">
 										<controls:CrudSectionHeader
 											Title="БИОЛОШКА ТЕРАПИЈА"
@@ -946,6 +955,18 @@
 												<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
 											</VerticalStackLayout>
 
+											<!--<VerticalStackLayout
+												Grid.Row="0"
+												Grid.Column="1"
+												Spacing="8"
+												VerticalOptions="Start">
+												<controls:CrudSectionHeader
+													Title=""
+													LineColor="{StaticResource White}"
+													Style="{StaticResource SectionHeaderStyle}" />
+												<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
+											</VerticalStackLayout>-->
+
 											<!--  ─── АКТИВНИ | НЕАКТИВНИ ЛЕКОВИ (една линија) ───  -->
 											<Grid
 												Grid.Row="1"
@@ -1206,6 +1227,7 @@
 															ColumnSpacing="8">
 															<Label
 																Grid.Column="0"
+																Margin="10,0,0,0"
 																Style="{StaticResource TableHeaderLabelStyle}"
 																Text="ЛЕК" />
 															<Label
@@ -1355,22 +1377,23 @@
 											StrokeThickness="1">
 											<VerticalStackLayout Spacing="12">
 												<Grid
-													ColumnDefinitions="*,Auto"
+													ColumnDefinitions="Аuto,Auto"
 													ColumnSpacing="10"
 													IsVisible="{Binding IsEditMode}">
+
+													<controls:FFButton
+														ButtonKind="Secondary"
+														Command="{Binding UploadDocumentCommand}"
+														ContentPadding="10,0"
+														HeightRequestEx="36"
+														IsEnabled="{Binding IsUploadingDocument, Converter={StaticResource InvertedBoolConverter}}"
+														Text="📎 Прикачи документ" />
 													<Label
+														Grid.Column="1"
 														FontSize="12"
 														Text="{Binding Documents.Count, StringFormat='Вкупно документи: {0}'}"
 														TextColor="{StaticResource SparkTextSecondary}"
 														VerticalOptions="Center" />
-													<controls:FFButton
-														Grid.Column="1"
-														ButtonKind="Secondary"
-														Command="{Binding UploadDocumentCommand}"
-														ContentPadding="16,0"
-														HeightRequestEx="36"
-														IsEnabled="{Binding IsUploadingDocument, Converter={StaticResource InvertedBoolConverter}}"
-														Text="📎 Прикачи документ" />
 													<ActivityIndicator
 														Grid.Column="1"
 														IsRunning="{Binding IsUploadingDocument}"
@@ -1378,13 +1401,7 @@
 														Color="{StaticResource SparkAccentTeal}" />
 												</Grid>
 												<CollectionView ItemsSource="{Binding Documents}" SelectionMode="None">
-													<CollectionView.EmptyView>
-														<Label
-															Padding="0,6"
-															FontSize="12"
-															Text="Нема прикачени документи."
-															TextColor="{StaticResource SparkTextSecondary}" />
-													</CollectionView.EmptyView>
+
 													<CollectionView.ItemTemplate>
 														<DataTemplate x:DataType="dto:PatientDocumentDto">
 															<Border

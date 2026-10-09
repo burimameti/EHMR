@@ -8,169 +8,174 @@
 	x:Name="Root"
 	x:DataType="vm:ScoreEditorViewModel">
 
+	<ContentView.Resources>
+		<ResourceDictionary>
+
+			<Style x:Key="ScoreFrameStyle" TargetType="Border">
+				<Setter Property="Padding" Value="0" />
+				<Setter Property="BackgroundColor" Value="White" />
+				<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
+				<Setter Property="StrokeShape" Value="RoundRectangle 8" />
+				<Setter Property="StrokeThickness" Value="1" />
+			</Style>
+
+			<Style x:Key="ScoreHeaderLabelStyle" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="9" />
+				<Setter Property="LineBreakMode" Value="TailTruncation" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+				<Setter Property="VerticalOptions" Value="Center" />
+			</Style>
+
+			<Style x:Key="ScoreCellEntryStyle" TargetType="Entry">
+				<Setter Property="BackgroundColor" Value="Transparent" />
+				<Setter Property="FontSize" Value="11" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+				<Setter Property="VerticalOptions" Value="Center" />
+			</Style>
+
+		</ResourceDictionary>
+	</ContentView.Resources>
+
 	<VerticalStackLayout Spacing="8">
 
-		<!--  Search and inline add: no popup.  -->
-		<VerticalStackLayout IsVisible="{Binding IsEditable}" Spacing="4">
+		<!--  Наслов (иста висина како „АКТИВНИ ЛЕКОВИ")  -->
+		<Grid HeightRequest="34">
 			<Label
 				FontAttributes="Bold"
-				FontSize="10"
-				Text="ПРЕБАРУВАЊЕ НА СКОР"
-				TextColor="{StaticResource SparkTextSecondary}" />
+				FontSize="11"
+				Text="СКОРОВИ"
+				TextColor="{StaticResource SparkAccentTealDark}"
+				VerticalOptions="Center" />
+		</Grid>
+
+		<!--  Пребарување + предлози  -->
+		<VerticalStackLayout IsVisible="{Binding IsEditable}" Spacing="4">
+			<controls:FFSearchBox Placeholder="Пребарај скор (пр. DAS28)..." Text="{Binding DescriptionText, Mode=TwoWay}" />
+
 			<Border
-				Padding="8,0"
-				BackgroundColor="{StaticResource SparkBackground}"
-				HeightRequest="38"
-				Stroke="{StaticResource SparkBorder}"
-				StrokeShape="RoundRectangle 7"
+				Padding="4"
+				BackgroundColor="White"
+				IsVisible="{Binding ShowSuggestions}"
+				Stroke="{StaticResource SparkBorderSubtle}"
+				StrokeShape="RoundRectangle 8"
 				StrokeThickness="1">
-				<Entry
-					BackgroundColor="Transparent"
-					FontSize="12"
-					Placeholder="Пребарај скор (пр. DAS28)"
-					PlaceholderColor="{StaticResource SparkTextSecondary}"
-					Text="{Binding DescriptionText, Mode=TwoWay}"
-					TextColor="{StaticResource SparkTextPrimary}"
-					VerticalOptions="Center" />
+				<VerticalStackLayout Spacing="0">
+					<Label
+						Padding="8,7"
+						FontSize="11"
+						IsVisible="{Binding HasSearchStatus}"
+						Text="{Binding SearchStatusText}"
+						TextColor="{StaticResource SparkTextSecondary}" />
+					<VerticalStackLayout
+						BindableLayout.ItemsSource="{Binding Suggestions}"
+						IsVisible="{Binding HasSuggestions}"
+						Spacing="0">
+						<BindableLayout.ItemTemplate>
+							<DataTemplate x:DataType="vm:ScoreSuggestion">
+								<Border
+									Padding="9,6"
+									BackgroundColor="Transparent"
+									StrokeThickness="0">
+									<Border.GestureRecognizers>
+										<TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.SelectSuggestionCommand}" CommandParameter="{Binding .}" />
+									</Border.GestureRecognizers>
+									<Grid ColumnDefinitions="*,Auto">
+										<Label
+											FontAttributes="Bold"
+											FontSize="11.5"
+											Text="{Binding Text}"
+											TextColor="{StaticResource SparkAccentTealDark}" />
+										<Label
+											Grid.Column="1"
+											FontSize="10"
+											Text="{Binding UsageCount, StringFormat='×{0}'}"
+											TextColor="{StaticResource SparkTextSecondary}" />
+									</Grid>
+								</Border>
+							</DataTemplate>
+						</BindableLayout.ItemTemplate>
+					</VerticalStackLayout>
+				</VerticalStackLayout>
 			</Border>
-			<Label
-				FontSize="10"
-				Text="Изберете резултат од пребарувањето за да го додадете во табелата; бројката се внесува директно во редот."
-				TextColor="{StaticResource SparkTextSecondary}" />
 		</VerticalStackLayout>
 
-		<!--  Предлози (најупотребените најгоре)  -->
-		<Border
-			Padding="4"
-			BackgroundColor="{StaticResource SparkBackground}"
-			IsVisible="{Binding ShowSuggestions}"
-			Stroke="{StaticResource SparkBorderSubtle}"
-			StrokeShape="RoundRectangle 8"
-			StrokeThickness="1">
+		<!--  Табела (ист дизајн како лековите)  -->
+		<Border Style="{StaticResource ScoreFrameStyle}" VerticalOptions="Start">
 			<VerticalStackLayout Spacing="0">
-				<Label
-					Padding="8,7"
-					FontSize="11"
-					IsVisible="{Binding HasSearchStatus}"
-					Text="{Binding SearchStatusText}"
-					TextColor="{StaticResource SparkTextSecondary}" />
-				<VerticalStackLayout
-					BindableLayout.ItemsSource="{Binding Suggestions}"
-					IsVisible="{Binding HasSuggestions}"
-					Spacing="0">
+
+				<Grid
+					Padding="10,8"
+					BackgroundColor="{StaticResource SparkSurfaceAlt}"
+					ColumnDefinitions="*,90,44"
+					ColumnSpacing="8">
+					<Label
+						Grid.Column="0"
+						Style="{StaticResource ScoreHeaderLabelStyle}"
+						Text="СКОР" />
+					<Label
+						Grid.Column="1"
+						Style="{StaticResource ScoreHeaderLabelStyle}"
+						Text="БРОЈКА" />
+					<Label
+						Grid.Column="2"
+						HorizontalTextAlignment="Center"
+						Style="{StaticResource ScoreHeaderLabelStyle}"
+						Text="АКЦИИ" />
+				</Grid>
+
+				<VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" Spacing="0">
+					<BindableLayout.EmptyView>
+						<Label
+							Padding="12"
+							FontSize="11"
+							HorizontalOptions="Center"
+							Text="Нема внесени скорови."
+							TextColor="{StaticResource SparkTextMuted}" />
+					</BindableLayout.EmptyView>
 					<BindableLayout.ItemTemplate>
-						<DataTemplate x:DataType="vm:ScoreSuggestion">
-							<Border
-								Padding="9,7"
-								BackgroundColor="Transparent"
-								StrokeThickness="0">
-								<Border.GestureRecognizers>
-									<TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.SelectSuggestionCommand}" CommandParameter="{Binding .}" />
-								</Border.GestureRecognizers>
-								<Grid ColumnDefinitions="*,Auto">
-									<Label
-										FontAttributes="Bold"
-										FontSize="12"
-										Text="{Binding Text}"
-										TextColor="{StaticResource SparkAccentTealDark}" />
-									<Label
+						<DataTemplate x:DataType="vm:ScoreRow">
+							<Grid RowDefinitions="Auto,1">
+								<Grid
+									Padding="10,6"
+									ColumnDefinitions="*,90,44"
+									ColumnSpacing="8">
+									<Entry
+										Grid.Column="0"
+										IsEnabled="{Binding Source={x:Reference Root}, Path=BindingContext.IsEditable}"
+										Style="{StaticResource ScoreCellEntryStyle}"
+										Text="{Binding Description, Mode=TwoWay}" />
+									<Entry
 										Grid.Column="1"
-										FontSize="10"
-										Text="{Binding UsageCount, StringFormat='×{0}'}"
-										TextColor="{StaticResource SparkTextSecondary}" />
+										IsEnabled="{Binding Source={x:Reference Root}, Path=BindingContext.IsEditable}"
+										Keyboard="Numeric"
+										Placeholder="0.0"
+										Style="{StaticResource ScoreCellEntryStyle}"
+										Text="{Binding Number, Mode=TwoWay}" />
+									<Label
+										Grid.Column="2"
+										FontFamily="FASolid"
+										FontSize="13"
+										HorizontalOptions="Center"
+										IsVisible="{Binding Source={x:Reference Root}, Path=BindingContext.IsEditable}"
+										Text="&#xf1f8;"
+										TextColor="#DC2626"
+										VerticalOptions="Center">
+										<Label.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.RemoveCommand}" CommandParameter="{Binding .}" />
+										</Label.GestureRecognizers>
+									</Label>
 								</Grid>
-							</Border>
+								<BoxView
+									Grid.Row="1"
+									HeightRequest="1"
+									Color="{StaticResource SparkBorderSubtle}" />
+							</Grid>
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
 				</VerticalStackLayout>
+
 			</VerticalStackLayout>
 		</Border>
-
-		<!--  Заглавие  -->
-		<Grid ColumnDefinitions="*,90,44" ColumnSpacing="1">
-			<Border
-				Padding="8,6"
-				BackgroundColor="{StaticResource SparkSurfaceAlt}"
-				StrokeThickness="0">
-				<Label
-					FontAttributes="Bold"
-					FontSize="9"
-					Text="СКОР"
-					TextColor="{StaticResource SparkTextPrimary}" />
-			</Border>
-			<Border
-				Grid.Column="1"
-				Padding="8,6"
-				BackgroundColor="{StaticResource Gray300}"
-				StrokeThickness="0">
-				<Label
-					FontAttributes="Bold"
-					FontSize="9"
-					Text="БРОЈКА"
-					TextColor="{StaticResource SparkTextPrimary}" />
-			</Border>
-			<Border
-				Grid.Column="2"
-				BackgroundColor="{StaticResource Gray300}"
-				StrokeThickness="0" />
-		</Grid>
-
-		<!--  Редови  -->
-		<VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" Spacing="0">
-			<BindableLayout.ItemTemplate>
-				<DataTemplate x:DataType="vm:ScoreRow">
-					<Grid ColumnDefinitions="*,90,44" ColumnSpacing="1">
-						<Border
-							Padding="8,0"
-							BackgroundColor="{StaticResource SparkBackground}"
-							HeightRequest="42"
-							Stroke="{StaticResource SparkBorderSubtle}"
-							StrokeThickness="1">
-							<Entry
-								BackgroundColor="Transparent"
-								FontSize="11.5"
-								HeightRequest="36"
-								IsEnabled="{Binding Source={x:Reference Root}, Path=BindingContext.IsEditable}"
-								Text="{Binding Description, Mode=TwoWay}"
-								TextColor="{StaticResource SparkTextPrimary}"
-								VerticalOptions="Center" />
-						</Border>
-						<Border
-							Grid.Column="1"
-							Padding="4,0"
-							BackgroundColor="{StaticResource SparkBackground}"
-							HeightRequest="46"
-							Stroke="{StaticResource SparkBorderSubtle}"
-							StrokeThickness="1">
-							<Entry
-								BackgroundColor="Transparent"
-								FontSize="11.5"
-								IsEnabled="{Binding Source={x:Reference Root}, Path=BindingContext.IsEditable}"
-								Keyboard="Numeric"
-								Text="{Binding Number, Mode=TwoWay}"
-								TextColor="{StaticResource SparkTextPrimary}"
-								VerticalOptions="Center" />
-						</Border>
-						<Border
-							Grid.Column="2"
-							BackgroundColor="{StaticResource SparkBackground}"
-							HeightRequest="46"
-							Stroke="{StaticResource SparkBorderSubtle}"
-							StrokeThickness="1">
-							<controls:FFButton
-								ButtonKind="Danger"
-								Command="{Binding Source={x:Reference Root}, Path=BindingContext.RemoveCommand}"
-								CommandParameter="{Binding .}"
-								HeightRequestEx="32"
-								HorizontalOptions="Center"
-								IsVisible="{Binding Source={x:Reference Root}, Path=BindingContext.IsEditable}"
-								Text="X"
-								VerticalOptions="Center"
-								WidthRequestEx="36" />
-						</Border>
-					</Grid>
-				</DataTemplate>
-			</BindableLayout.ItemTemplate>
-		</VerticalStackLayout>
 	</VerticalStackLayout>
 </ContentView>

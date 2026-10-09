@@ -166,7 +166,7 @@
 		<Setter Property="HeightRequest" Value="40" />
 		<Setter Property="Stroke" Value="#CBD5E1" />
 		<Setter Property="StrokeThickness" Value="1.2" />
-		<Setter Property="StrokeShape" Value="Rectangle" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
 		<Setter Property="Shadow" Value="{x:Null}" />
 	</Style>
 	<Style

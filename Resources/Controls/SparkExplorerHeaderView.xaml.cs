@@ -58,13 +58,13 @@ namespace EHMR.Resources.Controls
             SecondaryToolbarGrid.ColumnSpacing=8*s;
             SecondaryToolbarGrid.RowSpacing=3*s;
             SecondaryToolbarGrid.MinimumHeightRequest=0;
-
-            HeaderSearchBox.HorizontalOptions=LayoutOptions.Start;
+            HeaderSearchBox.HorizontalOptions=LayoutOptions.Fill;
             HeaderSearchBox.MinimumWidthRequest=0;
             HeaderSearchBox.Margin=new Thickness(0);
-            HeaderSearchBox.WidthRequest = SearchWidthRatio > 0
-                ? Math.Max(220, width * SearchWidthRatio)
-                : -1;
+            HeaderSearchBox.WidthRequest=-1;
+            HeaderSearchBox.MaximumWidthRequest=SearchWidthRatio is >0 and <1
+                ? Math.Max(220, width*SearchWidthRatio)
+                : double.PositiveInfinity;
 
             CyrillicToggleLayout.WidthRequest=100*s;
             CyrillicToggleLayout.Spacing=4*s;
@@ -232,7 +232,11 @@ namespace EHMR.Resources.Controls
                 typeof(SparkExplorerHeaderView),
                 1d,
                 propertyChanged: (bindable, _, _) =>
-                    ((SparkExplorerHeaderView)bindable).ApplyResponsiveLayout());
+                {
+                    var view = (SparkExplorerHeaderView)bindable;
+                    view._lastResponsiveWidth=-1;
+                    view.ApplyResponsiveLayout();
+                });
 
         public double SearchWidthRatio
         {
