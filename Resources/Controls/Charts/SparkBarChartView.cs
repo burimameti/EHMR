@@ -12,6 +12,14 @@ namespace EHMR.Resources.Controls.Charts;
 /// </summary>
 public class SparkBarChartView : ContentView
 {
+    private static Color ResolveBrandAccent()
+    {
+        if (Application.Current?.Resources.TryGetValue("BrandAccent", out var value) == true && value is Color color)
+            return color;
+
+        return Color.FromArgb("#2AEBE7");
+    }
+
     readonly GraphicsView _graphicsView;
     readonly Label _emptyLabel;
     readonly BarChartDrawable _drawable;
@@ -45,7 +53,7 @@ public class SparkBarChartView : ContentView
         nameof(BarColor),
         typeof(Color),
         typeof(SparkBarChartView),
-        Color.FromArgb("#21B6C4"),
+        ResolveBrandAccent(),
         propertyChanged: (b, _, _) => ((SparkBarChartView)b).Refresh());
 
     public Color BarColor
