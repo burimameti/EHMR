@@ -870,7 +870,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             {
                 ControlType = SparkFilterControlType.CheckBox,
                 Placeholder = "Пребарување по лек",
-                IsChecked = IsMedicineSearchEnabled
+                IsChecked = IsMedicineSearchEnabled,
+                IsInlineWithSearch = true
             };
             medicineToggle.PropertyChanged += (_, e) =>
             {
@@ -884,6 +885,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                patientsProvider.MedicinePicker is { } medicinePicker)
             {
                 medicinePicker.IsVisible = IsMedicineSearchEnabled;
+                medicinePicker.IsInlineWithSearch = true;
                 Pickers.Add(medicinePicker);
             }
         }
