@@ -113,6 +113,11 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             periodPicker.SelectedItem = value;
 
         RecalculatePeriodRange();
+
+        // Changing the preset period updates both dates while their individual
+        // change handlers are intentionally suppressed; regenerate once here.
+        if(_activeProvider is not null)
+            _ = GenerateReportDebouncedAsync();
     }
 
     private void RecalculatePeriodRange()
