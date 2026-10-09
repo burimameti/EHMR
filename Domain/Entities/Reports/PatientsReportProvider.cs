@@ -174,19 +174,37 @@ namespace EHMR.Domain.Entities.Reports
         // Selecting a patient only narrows the rows; it must never replace the
         // original columns with a 3-column score-history grid.
         public IEnumerable<SparkGridColumn> Columns =>
-            [
-                new() { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
-                new() { Header = "ЕЗБО", Key = "Szbo", Width = new GridLength(1.2, GridUnitType.Star) },
-                new() { Header = "СТАТУС", Key = "Status", Width = new GridLength(1.1, GridUnitType.Star) },
-                new() { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.9, GridUnitType.Star) },
-                new() { Header = "РЕУМАТОЛОГ", Key = "Rheumatologist", Width = new GridLength(1.5, GridUnitType.Star) },
-                new() { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.3, GridUnitType.Star) },
-                new() { Header = "ПОСЛ. СКОР", Key = "Score", Width = new GridLength(1.1, GridUnitType.Star) },
-                new() { Header = "АДРЕСА", Key = "Address", Width = new GridLength(1.7, GridUnitType.Star) },
-                new() { Header = "ГРАД", Key = "City", Width = new GridLength(1.1, GridUnitType.Star) },
-                new() { Header = "ЛЕК", Key = "Medicine", Width = new GridLength(1.7, GridUnitType.Star) },
-                new() { Header = "ДИЈАГНОЗА", Key = "Diagnosis", Width = new GridLength(1.7, GridUnitType.Star) }
-            ];
+            _selectedScorePatientId.HasValue
+                ? new[]
+                {
+                    new SparkGridColumn { Header = "ДАТУМ НА ПРЕГЛЕД", Key = "EncounterDate", Width = new GridLength(1.2, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "БРОЈ НА ПРЕГЛЕД", Key = "EncounterNumber", Width = new GridLength(1.2, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ТИП", Key = "EncounterType", Width = new GridLength(1, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "СТАТУС", Key = "EncounterStatus", Width = new GridLength(1, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ЛЕКАР", Key = "EncounterDoctor", Width = new GridLength(1.4, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ПРИЧИНА ЗА ПРЕГЛЕД", Key = "ChiefComplaint", Width = new GridLength(1.8, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "АНАМНЕЗА", Key = "History", Width = new GridLength(2, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "НАОД / ПРОЦЕНА", Key = "Assessment", Width = new GridLength(2, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ПЛАН", Key = "Plan", Width = new GridLength(2, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "СКОР", Key = "Score", Width = new GridLength(1.2, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ЛЕКОВИ", Key = "Medicine", Width = new GridLength(1.7, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ДИЈАГНОЗИ", Key = "Diagnosis", Width = new GridLength(1.7, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ЗАБЕЛЕШКИ", Key = "Notes", Width = new GridLength(2, GridUnitType.Star) }
+                }
+                : new[]
+                {
+                    new SparkGridColumn { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(2, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ЕЗБО", Key = "Szbo", Width = new GridLength(1.2, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "СТАТУС", Key = "Status", Width = new GridLength(1.1, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ПОЛ", Key = "Gender", Width = new GridLength(0.9, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "РЕУМАТОЛОГ", Key = "Rheumatologist", Width = new GridLength(1.5, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ТЕЛЕФОН", Key = "Phone", Width = new GridLength(1.3, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ПОСЛ. СКОР", Key = "Score", Width = new GridLength(1.1, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "АДРЕСА", Key = "Address", Width = new GridLength(1.7, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ГРАД", Key = "City", Width = new GridLength(1.1, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ЛЕК", Key = "Medicine", Width = new GridLength(1.7, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "ДИЈАГНОЗА", Key = "Diagnosis", Width = new GridLength(1.7, GridUnitType.Star) }
+                };
 
         public IEnumerable<SparkTabItem> BuildTabs()
         {
@@ -463,6 +481,11 @@ namespace EHMR.Domain.Entities.Reports
                     .Include(x => x.Diagnoses)
                         .ThenInclude(x => x.Mkb10Code)
                     .Include(x => x.TherapyCycles)
+                    .Include(x => x.Encounters)
+                        .ThenInclude(x => x.Doctor)
+                            .ThenInclude(x => x!.User)
+                    .Include(x => x.Encounters)
+                        .ThenInclude(x => x.PatientScore)
                     .Include(x => x.Scores)
                         .ThenInclude(x => x.Encounter)
                             .ThenInclude(x => x.Doctor)
@@ -487,13 +510,12 @@ namespace EHMR.Domain.Entities.Reports
                 List<DynamicReportRow> rows;
                 if(_selectedScorePatientId.HasValue)
                 {
-                    // Patient search is a row filter only. Preserve every original
-                    // patient-grid field and show the complete record for the
-                    // selected patient.
+                    // In patient-history mode the grid and exports are encounter-based:
+                    // one row per visit inside the selected date range.
                     var selectedPatient=patients.FirstOrDefault(x => x.Id==_selectedScorePatientId.Value);
                     rows=selectedPatient is null
                         ? []
-                        : [CreateRow(selectedPatient, from, to, includeScoreHistory:true)];
+                        : CreateEncounterHistoryRows(selectedPatient, from, to);
                 }
                 else
                 {
@@ -673,6 +695,51 @@ namespace EHMR.Domain.Entities.Reports
             }
 
             return query;
+        }
+
+        private static List<DynamicReportRow> CreateEncounterHistoryRows(
+            Patient patient,
+            DateTime from,
+            DateTime to)
+        {
+            var encounters = (patient.Encounters ?? [])
+                .Where(encounter => IsWithinReportPeriod(encounter.EncounterDate, from, to))
+                .OrderByDescending(encounter => encounter.EncounterDate)
+                .ThenByDescending(encounter => encounter.EncounterNumber)
+                .ToList();
+
+            return encounters.Select(encounter =>
+            {
+                var score = encounter.PatientScore
+                    ?? patient.Scores.FirstOrDefault(x => x.EncounterId == encounter.Id);
+                var doctor = encounter.Doctor?.FullName
+                    ?? encounter.Doctor?.User?.FullName
+                    ?? patient.Doctor?.FullName
+                    ?? "-";
+
+                return new DynamicReportRow
+                {
+                    Cells =
+                    [
+                        encounter.EncounterDate.ToString("dd.MM.yyyy HH:mm"),
+                        string.IsNullOrWhiteSpace(encounter.EncounterNumber) ? "-" : encounter.EncounterNumber,
+                        string.IsNullOrWhiteSpace(encounter.EncounterType) ? "-" : encounter.EncounterType,
+                        encounter.Status.ToString(),
+                        doctor,
+                        encounter.ChiefComplaint ?? encounter.ReasonForVisit ?? "-",
+                        encounter.HistoryOfPresentIllness ?? "-",
+                        encounter.Assessment ?? "-",
+                        encounter.Plan ?? "-",
+                        score is null
+                            ? "Нема скор"
+                            : string.IsNullOrWhiteSpace(score.Number) ? score.ScoreText : $"{score.ScoreText}: {score.Number}",
+                        BuildMedicinesInfo(patient, encounter.EncounterDate.Date, encounter.EncounterDate.Date.AddDays(1)),
+                        BuildDiagnosisInfo(patient),
+                        encounter.Notes ?? encounter.ClinicalNotes ?? "-"
+                    ],
+                    IsAlertSeverity = false
+                };
+            }).ToList();
         }
 
         private static DynamicReportRow CreateRow(
