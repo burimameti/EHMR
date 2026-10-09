@@ -114,6 +114,27 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
     [ObservableProperty] private ObservableCollection<ApplicationRegime> applicationRegimes = new();
     [ObservableProperty] private ObservableCollection<SparkGridColumn> applicationRegimeColumns = new();
     [ObservableProperty] private ObservableCollection<SparkGridRow> applicationRegimeRows = new();
+    [ObservableProperty] private ObservableCollection<ClinicalScoreDefinition> clinicalScores = new();
+    [ObservableProperty] private ObservableCollection<SparkGridColumn> scoreColumns = new();
+    [ObservableProperty] private ObservableCollection<SparkGridRow> scoreRows = new();
+    [ObservableProperty] private string regimeSearchText = string.Empty;
+    [ObservableProperty] private string scoreSearchText = string.Empty;
+    [ObservableProperty] private bool isMedicinesTabActive = true;
+    [ObservableProperty] private bool isRegimesTabActive;
+    [ObservableProperty] private bool isScoresTabActive;
+
+    partial void OnRegimeSearchTextChanged(string value) => RefreshApplicationRegimeRows();
+    partial void OnScoreSearchTextChanged(string value) => RefreshScoreRows();
+
+    [RelayCommand]
+    private void ShowMedicinesTab() { IsMedicinesTabActive=true; IsRegimesTabActive=false; IsScoresTabActive=false; }
+
+    [RelayCommand]
+    private void ShowRegimesTab() { IsMedicinesTabActive=false; IsRegimesTabActive=true; IsScoresTabActive=false; }
+
+    [RelayCommand]
+    private void ShowScoresTab() { IsMedicinesTabActive=false; IsRegimesTabActive=false; IsScoresTabActive=true; }
+
 
     private void BuildSparkGridColumns()
     {
@@ -170,6 +191,7 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
     private async Task LoadCatalogsAsync()
     {
         await LoadApplicationRegimesAsync();
+        await LoadClinicalScoresAsync();
     }
 
     private async Task LoadApplicationRegimesAsync()
@@ -181,8 +203,19 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
             new(){Header="РЕЖИМ НА АПЛИКАЦИЈА",Key="Regime",Width=new GridLength(3,GridUnitType.Star)},
             new(){Header="ОПЦИИ",Key="Actions",CellType=SparkGridCellType.Actions,Width=GridLength.Auto}
         };
+        RefreshApplicationRegimeRows();
+    }
+
+    private void RefreshApplicationRegimeRows()
+    {
+        var query=ApplicationRegimes.AsEnumerable();
+        if(!string.IsNullOrWhiteSpace(RegimeSearchText))
+        {
+            var search=RegimeSearchText.Trim();
+            query=query.Where(x=>x.Regime.Contains(search,StringComparison.OrdinalIgnoreCase));
+        }
         var rows=new ObservableCollection<SparkGridRow>();
-        foreach(var item in ApplicationRegimes)
+        foreach(var item in query)
         {
             var row=new SparkGridRow{Tag=item}; row["Regime"]=item.Regime;
             row["Actions"]=new List<SparkButtonItem>
@@ -194,6 +227,94 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
             rows.Add(row);
         }
         ApplicationRegimeRows=rows;
+    }
+
+
+    private async Task LoadClinicalScoresAsync()
+    {
+        await using var db=await _dbFactory.CreateDbContextAsync();
+        ClinicalScores=new ObservableCollection<ClinicalScoreDefinition>(
+            await db.Set<ClinicalScoreDefinition>().AsNoTracking().Where(x=>x.IsActive).OrderBy(x=>x.Name).ToListAsync());
+        ScoreColumns=new ObservableCollection<SparkGridColumn>
+        {
+            new(){Header="СКОР",Key="Name",Width=new GridLength(1.5,GridUnitType.Star)},
+            new(){Header="ОПИС",Key="Description",Width=new GridLength(3,GridUnitType.Star)},
+            new(){Header="ОПЦИИ",Key="Actions",CellType=SparkGridCellType.Actions,Width=GridLength.Auto}
+        };
+        RefreshScoreRows();
+    }
+
+    private void RefreshScoreRows()
+    {
+        var query=ClinicalScores.AsEnumerable();
+        if(!string.IsNullOrWhiteSpace(ScoreSearchText))
+        {
+            var search=ScoreSearchText.Trim();
+            query=query.Where(x=>x.Name.Contains(search,StringComparison.OrdinalIgnoreCase) ||
+                x.Description.Contains(search,StringComparison.OrdinalIgnoreCase));
+        }
+        var rows=new ObservableCollection<SparkGridRow>();
+        foreach(var item in query)
+        {
+            var row=new SparkGridRow{Tag=item};
+            row["Name"]=item.Name;
+            row["Description"]=item.Description;
+            row["Actions"]=new List<SparkButtonItem>
+            {
+                new(){IconGlyph="\\uf044",Label="Уреди",Command=EditClinicalScoreCommand,CommandParameter=item,IsEnabled=CanUpdate},
+                new(){IconGlyph="\\uf1f8",Label="Деактивирај",Command=DeleteClinicalScoreCommand,CommandParameter=item,IsEnabled=CanDelete}
+            };
+            rows.Add(row);
+        }
+        ScoreRows=rows;
+    }
+
+    [RelayCommand]
+    private async Task AddClinicalScoreAsync()
+    {
+        var name=await UserDialogService.ShowPromptAsync("Нов скор","Внесете назив на клиничкиот скор.","Додај","Откажи","Пример: DAS28");
+        if(string.IsNullOrWhiteSpace(name)) return;
+        name=name.Trim();
+        var description=await UserDialogService.ShowPromptAsync("Опис на скор","Внесете опис (опционално).","Зачувај","Откажи","Опис");
+        if(description is null) return;
+        await using var db=await _dbFactory.CreateDbContextAsync();
+        if(await db.Set<ClinicalScoreDefinition>().AnyAsync(x=>x.IsActive&&x.Name.ToLower()==name.ToLower()))
+        {
+            await UserDialogService.ShowAlertAsync("Постои скор",$"Скорот „{name}“ веќе постои.","ОК");
+            return;
+        }
+        db.Set<ClinicalScoreDefinition>().Add(new ClinicalScoreDefinition{Id=Guid.NewGuid(),Name=name,Description=description.Trim(),IsActive=true});
+        await db.SaveChangesAsync();
+        await LoadClinicalScoresAsync();
+    }
+
+    [RelayCommand]
+    private async Task EditClinicalScoreAsync(ClinicalScoreDefinition? item)
+    {
+        if(item is null) return;
+        var name=await UserDialogService.ShowPromptAsync("Уреди скор","Изменете го називот на скорот.","Зачувај","Откажи","",item.Name);
+        if(string.IsNullOrWhiteSpace(name)) return;
+        var description=await UserDialogService.ShowPromptAsync("Опис на скор","Изменете го описот.","Зачувај","Откажи","",item.Description);
+        if(description is null) return;
+        await using var db=await _dbFactory.CreateDbContextAsync();
+        var entity=await db.Set<ClinicalScoreDefinition>().FirstOrDefaultAsync(x=>x.Id==item.Id);
+        if(entity is null) return;
+        entity.Name=name.Trim(); entity.Description=description.Trim(); entity.UpdatedAt=DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        await LoadClinicalScoresAsync();
+    }
+
+    [RelayCommand]
+    private async Task DeleteClinicalScoreAsync(ClinicalScoreDefinition? item)
+    {
+        if(item is null) return;
+        if(!await UserDialogService.ShowConfirmationAsync("Деактивирај скор",$"Дали сакате да го деактивирате скорот „{item.Name}“?","Деактивирај","Откажи")) return;
+        await using var db=await _dbFactory.CreateDbContextAsync();
+        var entity=await db.Set<ClinicalScoreDefinition>().FirstOrDefaultAsync(x=>x.Id==item.Id);
+        if(entity is null) return;
+        entity.IsActive=false; entity.UpdatedAt=DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        await LoadClinicalScoresAsync();
     }
 
     [RelayCommand]
