@@ -45,7 +45,49 @@
 			<Border Grid.Row="1" BackgroundColor="{StaticResource PageBackground}" StrokeThickness="0">
 				<ScrollView VerticalScrollBarVisibility="Never">
 					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
-<controls:FFSectionCard>
+						<controls:FFSectionCard>
+							<Grid ColumnDefinitions="*,Auto" Padding="4,0,4,10">
+								<VerticalStackLayout Spacing="3">
+									<Label FontAttributes="Bold" FontSize="16" Text="Лекови" TextColor="{StaticResource SparkTextPrimary}" />
+									<Label FontSize="12" Text="Регистар на лекови и нивните стандардни дози." TextColor="{StaticResource SparkTextSecondary}" />
+								</VerticalStackLayout>
+								<controls:FFButton
+									Grid.Column="1"
+									ButtonKind="Primary"
+									BackgroundColorEx="{StaticResource SidebarActiveBg}"
+									TextColorEx="White"
+									Command="{Binding NewMedicineCommand}"
+									ContentPadding="18,0"
+									HeightRequestEx="40"
+									Text="Нов лек" />
+							</Grid>
+							<controls:SparkExplorerHeaderView
+								Buttons="{Binding Buttons}"
+								Pickers="{Binding Pickers}"
+								SearchCommand="{Binding SearchCommand}"
+								SearchPlaceholder="Пребарување по назив, генеричко име или форма..."
+								SearchText="{Binding SearchText}"
+								Tabs="{Binding Tabs}" />
+						</controls:FFSectionCard>
+						<controls:FFSectionCard>
+							<controls:SparkDataGridView
+								x:Name="MedicineGrid"
+								Columns="{Binding GridColumns}"
+								CurrentPage="{Binding CurrentPage}"
+								EditRowCommand="{Binding EditCommand}"
+								NextPageCommand="{Binding NextPageCommand}"
+								PageChangedCommand="{Binding PageChangedCommand}"
+								PreviousPageCommand="{Binding PreviousPageCommand}"
+								RowTappedCommand="{Binding SelectCommand}"
+								Rows="{Binding GridRows}"
+								ShowPagination="True"
+								ShowRowNumbers="True"
+								TotalPages="{Binding TotalPages}" />
+						</controls:FFSectionCard>
+
+						
+
+						<controls:FFSectionCard>
 							<Grid ColumnDefinitions="*,Auto" Padding="4,0,4,10">
 								<VerticalStackLayout Spacing="3">
 									<Label FontAttributes="Bold" FontSize="16" Text="Режим на апликација" TextColor="{StaticResource SparkTextPrimary}" />
