@@ -1683,5 +1683,62 @@
 			</Border>
 
 		</Grid>
+		<Grid
+			Grid.ColumnSpan="2"
+			BackgroundColor="#990F172A"
+			IsVisible="{Binding HasDocumentPreview}"
+			ZIndex="1000">
+			<Border
+				Padding="16"
+				BackgroundColor="White"
+				HorizontalOptions="Center"
+				MaximumHeightRequest="850"
+				MaximumWidthRequest="1200"
+				Stroke="{StaticResource SparkBorder}"
+				StrokeShape="RoundRectangle 12"
+				StrokeThickness="1"
+				VerticalOptions="Center">
+				<Grid RowDefinitions="Auto,*,Auto" RowSpacing="12">
+					<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+						<Label
+							FontAttributes="Bold"
+							FontSize="14"
+							LineBreakMode="TailTruncation"
+							Text="{Binding SelectedDocumentPreview.FileName}"
+							TextColor="{StaticResource SparkTextPrimary}"
+							VerticalOptions="Center" />
+						<controls:FFButton
+							Grid.Column="1"
+							ButtonKind="Secondary"
+							Command="{Binding ClosePreviewCommand}"
+							HeightRequestEx="34"
+							Text="Затвори"
+							WidthRequestEx="100" />
+					</Grid>
+					<ScrollView Grid.Row="1" MaximumHeightRequest="700">
+						<Grid>
+							<Image
+								Aspect="AspectFit"
+								HorizontalOptions="Center"
+								IsVisible="{Binding SelectedDocumentPreview, Converter={StaticResource DocumentIsImageConverter}}"
+								Source="{Binding SelectedDocumentPreview.StoredPath}"
+								VerticalOptions="Center" />
+							<Label
+								HorizontalOptions="Center"
+								IsVisible="{Binding SelectedDocumentPreview, Converter={StaticResource DocumentIsImageConverter}, ConverterParameter=Invert}"
+								Text="Документот е отворен со стандардната апликација."
+								TextColor="{StaticResource SparkTextSecondary}"
+								VerticalOptions="Center" />
+						</Grid>
+					</ScrollView>
+					<Label
+						Grid.Row="2"
+						FontSize="11"
+						HorizontalTextAlignment="Center"
+						Text="Преглед на прикаченото решение"
+						TextColor="{StaticResource SparkTextSecondary}" />
+				</Grid>
+			</Border>
+		</Grid>
 	</Grid>
 </ContentPage>
