@@ -80,7 +80,7 @@ namespace EHMR.Resources.Controls
             {
                 if (child is FFButton button)
                 {
-                    button.HeightRequest = 44 * s;
+                    button.HeightRequest = 40 * s;
                     button.ContentPadding = new Thickness(16 * s, 0);
                 }
             }
