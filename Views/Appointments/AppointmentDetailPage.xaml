@@ -12,6 +12,10 @@
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
+			<Style x:Key="SectionHeaderStyle" TargetType="controls:CrudSectionHeader">
+				<Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
+				<Setter Property="TextColor" Value="{StaticResource Gray800}" />
+			</Style>
 
 			<DataTemplate x:Key="AppointmentDiagnosisHistoryRowTemplate" x:DataType="entities:Diagnosis">
 				<Border
@@ -172,13 +176,8 @@
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="12">
 
-								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label
-										CharacterSpacing="0.5"
-										FontAttributes="Bold"
-										FontSize="12"
-										Style="{StaticResource SectionPillLabelStyle}"
-										Text="ПАЦИЕНТ И РЕУМАТОЛОГ" />
+								<controls:CrudSectionHeader Title="ПАЦИЕНТ И РЕУМАТОЛОГ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+<!--/>
 								</Border>
 
 								<!--  Locked panels — existing appointment (view + edit mode)  -->
@@ -417,13 +416,8 @@
 							<!--  2. ТЕРМИН  -->
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="12">
-								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label
-										CharacterSpacing="0.5"
-										FontAttributes="Bold"
-										FontSize="12"
-										Style="{StaticResource SectionPillLabelStyle}"
-										Text="ТЕРМИН" />
+								<controls:CrudSectionHeader Title="ТЕРМИН" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+<!--/>
 								</Border>
 								<Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="14">
 
@@ -487,13 +481,8 @@
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="14">
 
-								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label
-										CharacterSpacing="0.5"
-										FontAttributes="Bold"
-										FontSize="12"
-										Style="{StaticResource SectionPillLabelStyle}"
-										Text="МКБ-10 ДИЈАГНОЗИ" />
+								<controls:CrudSectionHeader Title="МКБ-10 ДИЈАГНОЗИ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+<!--/>
 								</Border>
 
 								<!--  ═══ EDIT MODE: alphabet + dual search + compact assigned list ═══  -->
@@ -809,13 +798,8 @@
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="12">
 
-								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label
-										CharacterSpacing="0.5"
-										FontAttributes="Bold"
-										FontSize="12"
-										Style="{StaticResource SectionPillLabelStyle}"
-										Text="ЛЕКОВИ" />
+								<controls:CrudSectionHeader Title="ЛЕКОВИ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+<!--/>
 								</Border>
 
 								<!--  ═══ EDIT MODE: search + compact assigned list side-by-side ═══  -->
@@ -1103,13 +1087,8 @@
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="12">
 
-								<Border Style="{StaticResource SectionPillBorderStyle}">
-									<Label
-										CharacterSpacing="0.5"
-										FontAttributes="Bold"
-										FontSize="12"
-										Style="{StaticResource SectionPillLabelStyle}"
-										Text="ЗАБЕЛЕШКА" />
+								<controls:CrudSectionHeader Title="ЗАБЕЛЕШКА" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+<!--/>
 								</Border>
 
 								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
@@ -1183,13 +1162,8 @@
 					<controls:FFSectionCard Margin="0" ContentPadding="18">
 						<VerticalStackLayout Padding="14" Spacing="12">
 
-							<Border Style="{StaticResource SectionPillBorderStyle}">
-								<Label
-									CharacterSpacing="0.5"
-									FontAttributes="Bold"
-									FontSize="11"
-									Style="{StaticResource SectionPillLabelStyle}"
-									Text="ИСТОРИЈА НА ПАЦИЕНТОТ" />
+							<controls:CrudSectionHeader Title="ИСТОРИЈА НА ПАЦИЕНТОТ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+<!--/>
 							</Border>
 
 							<controls:SparkExpandableCard
