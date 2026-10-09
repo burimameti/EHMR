@@ -24,6 +24,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
 {
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
     private readonly IAuthorizationService _authorizationService;
+    private readonly ISelectedItemService<Encounter> _selectedItemService;
 
     private string _pendingSearch = string.Empty;
     private string _pendingStatus = string.Empty;
@@ -119,6 +120,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
 
 
             new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1.3, GridUnitType.Star) },
+            new() { Header = "PREVIEW", Key = "QuickPreview", CellType = SparkGridCellType.QuickPreview, Width = new GridLength(0.75, GridUnitType.Star), Sortable = false },
             new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
@@ -135,6 +137,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
             row["DoctorName"]=e.Doctor?.User!=null ? $"{e.Doctor.User.FirstName} {e.Doctor.User.LastName}" : "";
 
             row["Date"]=(e.ScheduledStart??e.EncounterDate).ToString("dd.MM.yyyy");
+            row["QuickPreview"]="Preview";
             // Select goes to Detail (view), Edit goes to a different route (Edit) —
             // can't use AddDefaultActions here since both actions use base commands
             // that point at the same DetailRoute; these navigate to different routes.
@@ -160,6 +163,16 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     }
 
 
+
+    [RelayCommand]
+    private async Task Preview(Encounter? encounter)
+    {
+        if(encounter is null)
+            return;
+
+        _selectedItemService.SelectedItem=encounter;
+        await NavigationService.GoToAsync(AppRoutes.Encounters.Preview);
+    }
 
     private static SparkBadgeTone StatusToTone(EncounterStatus status) => status switch
     {
@@ -286,6 +299,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     {
         _dbFactory=dbFactory;
         _authorizationService=authService;
+        _selectedItemService=selectedItemService;
 
         PageSize=10;
         EvaluatePermissions();
