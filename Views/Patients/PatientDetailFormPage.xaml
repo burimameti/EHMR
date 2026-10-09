@@ -312,7 +312,7 @@
 								<Border
 									Padding="14"
 									Stroke="#DCE3EA"
-									StrokeShape="RoundRectangle 6"
+									StrokeShape="RoundRectangle 12"
 									StrokeThickness="1"
 									Style="{StaticResource SectionCardStyle}">
 									<VerticalStackLayout Spacing="10">
@@ -768,7 +768,7 @@
 																			Margin="1"
 																			Padding="2"
 																			HeightRequest="30"
-																			StrokeShape="RoundRectangle 6"
+																			StrokeShape="RoundRectangle 12"
 																			StrokeThickness="1"
 																			WidthRequest="28">
 																			<Border.Triggers>
