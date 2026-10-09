@@ -26,7 +26,7 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				Padding="0"
-				ColumnDefinitions="*,Auto,Auto"
+				ColumnDefinitions="*,Auto,Auto,Auto"
 				ColumnSpacing="14"
 				MinimumHeightRequest="0"
 				MinimumWidthRequest="0"
@@ -104,7 +104,7 @@
 				<HorizontalStackLayout
 					x:Name="CyrillicToggleLayout"
 					Grid.Row="0"
-					Grid.Column="1"
+					Grid.Column="2"
 					Margin="0,20,0,0"
 					Padding="8,0,12,0"
 					BackgroundColor="{StaticResource SparkAccentTealBg}"
@@ -129,7 +129,7 @@
 				<VerticalStackLayout
 					x:Name="ActionLayout"
 					Grid.Row="0"
-					Grid.Column="2"
+					Grid.Column="3"
 					Margin="0,0,0,0"
 					Spacing="4"
 					VerticalOptions="Start">
@@ -162,6 +162,54 @@
 					</HorizontalStackLayout>
 				</VerticalStackLayout>
 
+
+				<!-- Conditional filters (for example, the medicine picker) stay inline beside search. -->
+				<FlexLayout
+					x:Name="InlinePickerLayout"
+					Grid.Row="0"
+					Grid.Column="1"
+					AlignItems="Center"
+					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
+					Direction="Row"
+					JustifyContent="Start"
+					Wrap="NoWrap">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate x:DataType="sc:SparkPickerItem">
+							<HorizontalStackLayout
+								Margin="0,0,8,0"
+								IsVisible="{Binding IsInlineVisible}"
+								Spacing="6"
+								VerticalOptions="Center">
+								<sc:FFPicker
+									IsVisible="{Binding IsPicker}"
+									ItemsSource="{Binding Items}"
+									Label="{Binding Placeholder}"
+									MinimumWidthRequest="150"
+									SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+								<sc:FFDatePicker
+									IsVisible="{Binding IsDatePicker}"
+									Label="{Binding Placeholder}"
+									SelectedDate="{Binding SelectedDate, Mode=TwoWay}" />
+								<HorizontalStackLayout
+									IsVisible="{Binding IsCheckBox}"
+									Spacing="3"
+									VerticalOptions="Center">
+									<CheckBox
+										IsChecked="{Binding IsChecked, Mode=TwoWay}"
+										IsEnabled="{Binding IsEnabled}"
+										VerticalOptions="Center"
+										Color="{StaticResource Gray500}" />
+									<Label
+										FontSize="12"
+										Text="{Binding Placeholder}"
+										TextColor="{StaticResource SparkTextPrimary}"
+										VerticalOptions="Center" />
+								</HorizontalStackLayout>
+							</HorizontalStackLayout>
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
+				</FlexLayout>
+
 				<!--  Pickers (Статус / Град / Реуматолог / Дијагноза / Пол…) – wrap grid како на огласник  -->
 				<FlexLayout
 					x:Name="PickerLayout"
@@ -179,7 +227,7 @@
 								Margin="0,0,8,8"
 								FlexLayout.Basis="20%"
 								FlexLayout.Grow="0"
-								IsVisible="{Binding IsVisible}"
+								IsVisible="{Binding IsFilterRowVisible}"
 								MinimumWidthRequest="112">
 								<sc:FFPicker
 									HorizontalOptions="Fill"
