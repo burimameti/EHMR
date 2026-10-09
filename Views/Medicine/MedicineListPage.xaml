@@ -46,6 +46,7 @@
 				<ScrollView VerticalScrollBarVisibility="Never">
 					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
 						<controls:FFSectionCard>
+							<VerticalStackLayout Spacing="14">
 							<Grid ColumnDefinitions="*,Auto" Padding="4,0,4,10">
 								<VerticalStackLayout Spacing="3">
 									<Label FontAttributes="Bold" FontSize="16" Text="Лекови" TextColor="{StaticResource SparkTextPrimary}" />
@@ -68,6 +69,7 @@
 								SearchPlaceholder="Пребарување по назив, генеричко име или форма..."
 								SearchText="{Binding SearchText}"
 								Tabs="{Binding Tabs}" />
+							</VerticalStackLayout>
 						</controls:FFSectionCard>
 						<controls:FFSectionCard>
 							<controls:SparkDataGridView
@@ -88,6 +90,7 @@
 						
 
 						<controls:FFSectionCard>
+							<VerticalStackLayout Spacing="14">
 							<Grid ColumnDefinitions="*,Auto" Padding="4,0,4,10">
 								<VerticalStackLayout Spacing="3">
 									<Label FontAttributes="Bold" FontSize="16" Text="Режим на апликација" TextColor="{StaticResource SparkTextPrimary}" />
@@ -96,6 +99,7 @@
 								<controls:FFButton Grid.Column="1" ButtonKind="Primary" BackgroundColorEx="{StaticResource SidebarActiveBg}" TextColorEx="White" Command="{Binding AddApplicationRegimeCommand}" Text="Додади начин" HeightRequestEx="40" ContentPadding="18,0" />
 							</Grid>
 							<controls:SparkDataGridView Columns="{Binding ApplicationRegimeColumns}" Rows="{Binding ApplicationRegimeRows}" ShowPagination="False" ShowRowNumbers="True" />
+							</VerticalStackLayout>
 						</controls:FFSectionCard>
 					</VerticalStackLayout>
 				</ScrollView>
