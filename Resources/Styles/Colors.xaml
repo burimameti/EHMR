@@ -6,8 +6,14 @@
 	<Color x:Key="Black">#000000</Color>
 	<Color x:Key="OffBlack">#0F172A</Color>
 
-	<!--  Legacy Accent  -->
-	<Color x:Key="Magenta">#4CC9D4</Color>
+	<!--  Canonical EHMR brand accent: keep primary UI accents linked to this token.  -->
+	<Color x:Key="BrandAccent">#2AEBE7</Color>
+	<Color x:Key="BrandAccentHover">#21D6D2</Color>
+	<Color x:Key="BrandAccentPressed">#17B8B4</Color>
+	<Color x:Key="BrandAccentLight">#D9FBFA</Color>
+
+	<!--  Legacy alias  -->
+	<Color x:Key="Magenta" >{StaticResource BrandAccent}</Color>
 
 	<!--  Primary Blues  -->
 	<Color x:Key="MidnightBlue">#1E3A8A</Color>
@@ -31,16 +37,16 @@
 	<Color x:Key="CardBg">#FFFFFF</Color>
 
 	<!--  Primary  -->
-	<Color x:Key="EpicPrimary">#6BD1E1</Color>
+	<Color x:Key="EpicPrimary">{StaticResource BrandAccent}</Color>
 	<Color x:Key="EpicPrimaryDark">#177A57</Color>
 	<Color x:Key="EpicPrimaryLight">#BFE8D6</Color>
 
 	<!--  Canonical CRUD accent tokens; Colors.xaml is merged first.  -->
-	<Color x:Key="SparkAccentTeal">#6BD1E1</Color>
+	<Color x:Key="SparkAccentTeal">{StaticResource BrandAccent}</Color>
 	<Color x:Key="SparkAccentTealDark">#177A57</Color>
 	<Color x:Key="SparkAccentTealLight">#BFE8D6</Color>
 	<Color x:Key="SparkAccentTealBg">#E3F6EC</Color>
-	<Color x:Key="SidebarActiveBg">#6BD1E1</Color>
+	<Color x:Key="SidebarActiveBg">{StaticResource BrandAccent}</Color>
 
 	<!--  Secondary  -->
 	<Color x:Key="EpicSecondary">#1E40AF</Color>
@@ -49,7 +55,7 @@
 	<Color x:Key="EpicSecondaryLight">#93C5FD</Color>
 
 	<!--  Primary Text  -->
-	<Color x:Key="EpicPrimaryText">#4CC9D4</Color>
+	<Color x:Key="EpicPrimaryText">{StaticResource BrandAccent}</Color>
 	<Color x:Key="EpicPrimaryDarkText">#35AEB9</Color>
 	<Color x:Key="EpicPrimaryLightText">#8ADFE6</Color>
 
@@ -142,7 +148,7 @@
 	</Color>
 
 	<Color x:Key="InputFocus">
-		#4CC9D4
+		{StaticResource BrandAccent}
 	</Color>
 
 	<Color x:Key="InputDisabled">
@@ -156,13 +162,13 @@
 	</Color>
 
 	<Color x:Key="TabActive">
-		#4CC9D4
+		{StaticResource BrandAccent}
 	</Color>
 
 
 	<!--  Blue clinical  -->
 	<Color x:Key="MedicalBlue">
-		#4CC9D4
+		{StaticResource BrandAccent}
 	</Color>
 
 	<Color x:Key="MedicalBlueSoft">
