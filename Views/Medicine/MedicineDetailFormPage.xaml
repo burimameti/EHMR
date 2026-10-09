@@ -121,7 +121,7 @@
 
                                     <controls:CrudSectionHeader
                                         Title="ОСНОВНИ ПОДАТОЦИ"
-                                        LineColor="{StaticResource Gray600}"
+                                        LineColor="{StaticResource Primary}"
                                         Style="{StaticResource SectionHeaderStyle}" />
 
                                     <Grid
@@ -180,7 +180,7 @@
 
                                     <controls:CrudSectionHeader
                                         Title="ДОПОЛНИТЕЛНИ ИНФОРМАЦИИ"
-                                        LineColor="{StaticResource Gray600}"
+                                        LineColor="{StaticResource Primary}"
                                         Style="{StaticResource SectionHeaderStyle}" />
 
                                     <Grid
@@ -261,7 +261,7 @@
 
                                     <controls:CrudSectionHeader
                                         Title="СИСТЕМСКИ ИНФОРМАЦИИ"
-                                        LineColor="{StaticResource Gray600}"
+                                        LineColor="{StaticResource Primary}"
                                         Style="{StaticResource SectionHeaderStyle}" />
 
                                     <Grid
