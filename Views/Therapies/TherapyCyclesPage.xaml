@@ -9,7 +9,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Therapies"
 	x:Name="PageRoot"
 	x:DataType="viewModels:TherapyCycleListViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
+	BackgroundColor="{StaticResource PageBackground}">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
