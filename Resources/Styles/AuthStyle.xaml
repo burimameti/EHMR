@@ -201,8 +201,8 @@
 	<Color x:Key="LoginText">#FFFFFF</Color>
 	<Color x:Key="LoginMuted">#9CA3AF</Color>
 
-	<Color x:Key="LoginPrimary">#06B6D4</Color>
-	<Color x:Key="LoginAccent">#0891B2</Color>
+	<Color x:Key="LoginPrimary">{StaticResource BrandAccent}</Color>
+	<Color x:Key="LoginAccent">{StaticResource BrandAccent}</Color>
 
 	<Color x:Key="LoginBorder">#374151</Color>
 	<Color x:Key="LoginCardAlt">#111827</Color>
