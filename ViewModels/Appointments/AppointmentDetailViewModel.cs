@@ -551,6 +551,12 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             : null;
         _suppressPatientSelection=false;
 
+        // When opened from a patient's context, keep the same selected-patient
+        // state as the encounter form: populate the search field and load context.
+        PatientSearchText=SelectedPatientForAppointment?.FullName??string.Empty;
+        PatientSuggestions.Clear();
+        ShowPatientSuggestions=false;
+
         Appointment.PatientId=SelectedPatientForAppointment?.Id??Guid.Empty;
         SelectedDiagnoses=new ObservableCollection<Diagnosis>();
 
@@ -595,6 +601,9 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         Appointment.PatientId=patient.Id;
         SelectedDoctorForAppointment=DoctorsList.FirstOrDefault(x => x.Id==patient.DoctorId);
         Appointment.DoctorId=SelectedDoctorForAppointment?.Id??Guid.Empty;
+        PatientSearchText=patient.FullName;
+        PatientSuggestions.Clear();
+        ShowPatientSuggestions=false;
 
         var ctx = await _service.GetPatientContext(patient.Id);
 
