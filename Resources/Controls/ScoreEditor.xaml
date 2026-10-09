@@ -81,7 +81,7 @@
 				<Label
 					Padding="8,7"
 					FontSize="11"
-					IsVisible="{Binding SearchStatusText, Converter={StaticResource StringNotEmptyConverter}}"
+					IsVisible="{Binding HasSearchStatus}"
 					Text="{Binding SearchStatusText}"
 					TextColor="{StaticResource SparkTextSecondary}" />
 				<VerticalStackLayout
