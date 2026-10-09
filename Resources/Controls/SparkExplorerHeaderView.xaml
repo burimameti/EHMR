@@ -17,8 +17,8 @@
 
 	<VerticalStackLayout
 		Margin="0"
-		Padding="12,10"
-		BackgroundColor="White"
+		Padding="0"
+		BackgroundColor="Transparent"
 		Spacing="0">
 
 		<!--  ============ SEARCH + FILTERS + BUTTONS ============  -->
@@ -28,10 +28,10 @@
 				Padding="0"
 				ColumnDefinitions="*,Auto,Auto"
 				ColumnSpacing="14"
-				MinimumHeightRequest="64"
+				MinimumHeightRequest="0"
 				MinimumWidthRequest="0"
 				RowDefinitions="Auto,Auto"
-				RowSpacing="8">
+				RowSpacing="3">
 
 				<!--  Search – ги зазема сите преостанати колони  -->
 				<VerticalStackLayout
@@ -39,12 +39,17 @@
 					Grid.Column="0"
 					HorizontalOptions="Fill"
 					MinimumWidthRequest="0"
-					Spacing="4"
+					Spacing="2"
 					VerticalOptions="Start">
+					<Label
+						FontAttributes="Bold"
+						FontSize="11"
+						Text="Пребарување"
+						TextColor="{StaticResource SparkTextSecondary}" />
 					<sc:FFSearchBox
 						x:Name="HeaderSearchBox"
 						HorizontalOptions="Fill"
-						Label="Пребарување"
+						Label=""
 						Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
 						SearchCommand="{Binding SearchCommand, Source={x:Reference Root}}"
 						Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}"
