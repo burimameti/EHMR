@@ -22,7 +22,7 @@
 		<!--  MAIN  -->
 		<Border
 			Grid.Column="1"
-			BackgroundColor="{StaticResource Gray200}"
+			BackgroundColor="{StaticResource PageBackground}"
 			StrokeThickness="0">
 			<Grid>
 
