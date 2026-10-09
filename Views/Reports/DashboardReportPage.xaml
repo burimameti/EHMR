@@ -93,10 +93,9 @@
 			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
 				<VerticalStackLayout Spacing="12" Style="{StaticResource ListPageContentStackStyle}">
 
-					<!--  ═══ ЕДИНСТВЕНА КАРТИЧКА ЗА ПЕРИОД И СИТЕ ФИЛТРИ ═══  -->
+					<!-- All report filters are rendered by Spark from ViewModel definitions. -->
 					<Border Style="{StaticResource ReportCardStyle}">
-						<VerticalStackLayout Padding="14,12,14,14" Spacing="12">
-
+						<VerticalStackLayout Padding="14,10,14,12" Spacing="8">
 							<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
 								<BoxView Style="{StaticResource ReportSectionAccentStyle}" />
 								<Label
@@ -104,59 +103,6 @@
 									Style="{StaticResource ReportSectionTitleStyle}"
 									Text="ПЕРИОД И ФИЛТРИ НА ИЗВЕШТАЈОТ" />
 							</Grid>
-
-							<!-- Периодот и пребарувањето по лек се во истата картичка со останатите филтри. -->
-							<Grid ColumnDefinitions="1.75*,1.55*" ColumnSpacing="12">
-
-								<Border Grid.Column="0" Style="{StaticResource ReportFieldGroupStyle}">
-									<Grid ColumnDefinitions="170,*,*" ColumnSpacing="12">
-										<VerticalStackLayout Grid.Column="0" Spacing="4">
-											<Label Style="{StaticResource ReportFieldCaptionStyle}" Text="ТИП НА ПЕРИОД" />
-											<sc:FFPicker ItemsSource="{Binding PeriodTypeOptions}" SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" />
-										</VerticalStackLayout>
-										<VerticalStackLayout Grid.Column="1" Spacing="4">
-											<Label Style="{StaticResource ReportFieldCaptionStyle}" Text="ОД" />
-											<sc:FFDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}" />
-										</VerticalStackLayout>
-										<VerticalStackLayout Grid.Column="2" Spacing="4">
-											<Label Style="{StaticResource ReportFieldCaptionStyle}" Text="ДО" />
-											<sc:FFDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}" />
-										</VerticalStackLayout>
-									</Grid>
-								</Border>
-
-								<Border
-									Grid.Column="1"
-									IsVisible="{Binding IsPatientsReport}"
-									Style="{StaticResource ReportFieldGroupStyle}">
-									<VerticalStackLayout Spacing="4">
-										<Label Style="{StaticResource ReportFieldCaptionStyle}" Text="ПРЕБАРУВАЊЕ ПО ЛЕК" />
-										<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" MinimumHeightRequest="38">
-											<CheckBox
-												HorizontalOptions="Start"
-												IsChecked="{Binding IsMedicineSearchEnabled, Mode=TwoWay}"
-												VerticalOptions="Center"
-												Color="{StaticResource SparkAccentTeal}" />
-											<sc:FFPicker
-												Grid.Column="1"
-												IsVisible="{Binding IsMedicineSearchEnabled}"
-												ItemsSource="{Binding MedicinePicker.Items}"
-												SelectedItem="{Binding MedicinePicker.SelectedItem, Mode=TwoWay}" />
-										</Grid>
-									</VerticalStackLayout>
-								</Border>
-							</Grid>
-
-							<BoxView HeightRequest="1" BackgroundColor="{StaticResource SparkBorderSubtle}" />
-
-							<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-								<BoxView Style="{StaticResource ReportSectionAccentStyle}" />
-								<Label
-									Grid.Column="1"
-									Style="{StaticResource ReportSectionTitleStyle}"
-									Text="ПРЕБАРУВАЊЕ И ФИЛТРИ" />
-							</Grid>
-
 							<sc:SparkExplorerHeaderView
 								Margin="0"
 								Buttons="{Binding Buttons}"
