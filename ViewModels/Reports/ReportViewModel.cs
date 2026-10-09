@@ -795,8 +795,12 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         if(_activeProvider is null)
             return;
 
-        // Do not recreate provider picker models on page appearance: their
-        // option collections are populated during GenerateAsync and must persist.
+        // Recreate picker definitions only when the collection was cleared or
+        // never initialized. During normal re-entry, keep the provider-bound picker
+        // instances because GenerateAsync populates their option collections.
+        if(Pickers.Count == 0)
+            BuildSparkPickers();
+
         BuildSparkTabs();
         BuildSparkButtons();
         BuildSparkGridColumns();
