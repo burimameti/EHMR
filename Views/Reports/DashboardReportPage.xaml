@@ -94,8 +94,8 @@
 				<VerticalStackLayout Margin="0" Padding="0" Spacing="6">
 
 					<!-- All report filters are rendered by Spark from ViewModel definitions. -->
-					<Border Margin="0" Style="{StaticResource ReportCardStyle}">
-						<VerticalStackLayout Padding="10,8,10,8" Spacing="4">
+					<Border Margin="0" BackgroundColor="#F9FAFB" Style="{StaticResource ReportCardStyle}">
+						<VerticalStackLayout Padding="8,4,8,4" Spacing="3">
 							<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
 								<BoxView Style="{StaticResource ReportSectionAccentStyle}" />
 								<Label
