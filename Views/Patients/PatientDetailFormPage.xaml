@@ -1106,7 +1106,7 @@
 																	TextColor="{StaticResource SparkTextMuted}" />
 															</BindableLayout.EmptyView>
 															<BindableLayout.ItemTemplate>
-																<DataTemplate>
+																<DataTemplate x:DataType="viewModels:AttachedMedicineRow">
 																	<Grid RowDefinitions="Auto,1">
 																		<Grid
 																			Padding="10,6"
@@ -1125,7 +1125,7 @@
 																			<Label
 																				Grid.Column="2"
 																				Style="{StaticResource TableCellLabelStyle}"
-																				Text="{Binding PatientMedicine.Dosage}" />
+																				Text="{Binding DefaultDosage}" />
 																			<Entry
 																				Grid.Column="3"
 																				IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
@@ -1264,7 +1264,7 @@
 																	TextColor="{StaticResource SparkTextMuted}" />
 															</BindableLayout.EmptyView>
 															<BindableLayout.ItemTemplate>
-																<DataTemplate>
+																<DataTemplate x:DataType="viewModels:PreviousMedicineRow">
 																	<Grid RowDefinitions="Auto,1">
 																		<Grid
 																			Padding="10,6"
@@ -1283,7 +1283,7 @@
 																			<Label
 																				Grid.Column="2"
 																				Style="{StaticResource TableCellLabelStyle}"
-																				Text="{Binding PatientMedicine.Dosage}" />
+																				Text="{Binding DefaultDosage}" />
 																			<Entry
 																				Grid.Column="3"
 																				IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
