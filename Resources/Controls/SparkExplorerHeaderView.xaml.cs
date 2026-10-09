@@ -72,11 +72,20 @@ namespace EHMR.Resources.Controls
             // 4 pickers per row on wide screens, 3 on narrower ones
             var basis = new FlexBasis(width>=1100 ? 0.23f : 0.31f, true);
 
-            foreach(var child in PickerLayout.Children.OfType<FFPicker>())
+            foreach(var child in PickerLayout.Children)
             {
-                child.MinimumWidthRequest=Math.Max(100, 110*s);
-                child.Margin=new Thickness(0, 0, 12*s, 8*s);
-                FlexLayout.SetBasis(child, basis);
+                if(child is not Grid filterCell)
+                    continue;
+
+                filterCell.MinimumWidthRequest=Math.Max(112, 118*s);
+                filterCell.Margin=new Thickness(0, 0, 10*s, 8*s);
+                FlexLayout.SetBasis(filterCell, basis);
+
+                foreach(var picker in filterCell.Children.OfType<FFPicker>())
+                {
+                    picker.MinimumWidthRequest=0;
+                    picker.HorizontalOptions=LayoutOptions.Fill;
+                }
             }
 
             foreach(var child in ActionLayout.Children.SelectMany(v => v is HorizontalStackLayout h ? h.Children : Array.Empty<IView>()))
