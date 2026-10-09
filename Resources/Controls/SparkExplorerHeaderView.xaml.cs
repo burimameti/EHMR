@@ -54,26 +54,19 @@ namespace EHMR.Resources.Controls
                 : 0.76d;
 
             var s = _responsiveScale;
-            SecondaryToolbarGrid.Padding=new Thickness(0);
-            SecondaryToolbarGrid.ColumnSpacing=8*s;
-            SecondaryToolbarGrid.RowSpacing=3*s;
-            SecondaryToolbarGrid.MinimumHeightRequest=0;
+            SecondaryToolbarGrid.ColumnSpacing=12*s;
+            SecondaryToolbarGrid.RowSpacing=4*s;
+
+            // Search takes all the remaining width; only capped if a page sets a ratio below 1.
             HeaderSearchBox.HorizontalOptions=LayoutOptions.Fill;
             HeaderSearchBox.MinimumWidthRequest=0;
-            HeaderSearchBox.Margin=new Thickness(0);
             HeaderSearchBox.WidthRequest=-1;
             HeaderSearchBox.MaximumWidthRequest=SearchWidthRatio is >0 and <1
                 ? Math.Max(220, width*SearchWidthRatio)
                 : double.PositiveInfinity;
 
-            CyrillicToggleLayout.WidthRequest=100*s;
-            CyrillicToggleLayout.Spacing=4*s;
-            CyrillicToggleLayout.IsVisible=ShowCyrillicToggle&&width>=900;
-
             ActionLayout.Spacing=4*s;
 
-            // Fit the patient-report period/date/medicine controls on one row
-            // on wide layouts; fall back to three columns on narrower windows.
             var basis = new FlexBasis(width>=1100 ? 0.18f : 0.31f, true);
 
             foreach(var child in PickerLayout.Children)
@@ -96,21 +89,10 @@ namespace EHMR.Resources.Controls
             {
                 if(child is FFButton button)
                 {
-                    button.HeightRequest=36*s;
+                    button.HeightRequest=38*s;
                     button.ContentPadding=new Thickness(16*s, 0);
                 }
             }
-
-            // Row 0: search fills the available space; filters stay adjacent; actions remain at the far right.
-            // Auto-sizing the search column squeezed the search and caused inline pickers/buttons to collide.
-            SecondaryToolbarGrid.ColumnDefinitions.Clear();
-            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Star });
-            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Auto });
-            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition
-            {
-                Width=CyrillicToggleLayout.IsVisible ? GridLength.Auto : new GridLength(0)
-            });
-            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Auto });
         }
         #region Search Visibility
         public static readonly BindableProperty TabsVisibleProperty =

@@ -3,9 +3,9 @@
 	x:Class="EHMR.Views.Reports.DashboardReportPage"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:models="clr-namespace:EHMR.Domain.Entities.Reports"
 	xmlns:sc="clr-namespace:EHMR.Resources.Controls"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
-	xmlns:models="clr-namespace:EHMR.Domain.Entities.Reports"
 	x:Name="PageRoot"
 	x:DataType="viewModels:ReportViewModel"
 	BackgroundColor="{StaticResource White}"
@@ -14,13 +14,28 @@
 	<ContentPage.Resources>
 		<ResourceDictionary>
 			<DataTemplate x:Key="PatientSuggestionTemplate" x:DataType="models:ReportPatientSuggestion">
-				<Border Padding="8,6" BackgroundColor="White" StrokeThickness="0">
+				<Border
+					Padding="8,6"
+					BackgroundColor="White"
+					StrokeThickness="0">
 					<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
 						<VerticalStackLayout Spacing="2">
-							<Label FontAttributes="Bold" FontSize="12" Text="{Binding FullName}" TextColor="{StaticResource SparkTextPrimary}" />
-							<Label FontSize="10" Text="{Binding SzboNumber}" TextColor="{StaticResource SparkTextSecondary}" />
+							<Label
+								FontAttributes="Bold"
+								FontSize="12"
+								Text="{Binding FullName}"
+								TextColor="{StaticResource SparkTextPrimary}" />
+							<Label
+								FontSize="10"
+								Text="{Binding SzboNumber}"
+								TextColor="{StaticResource SparkTextSecondary}" />
 						</VerticalStackLayout>
-						<Label Grid.Column="1" FontSize="10" Text="{Binding NationalId}" TextColor="{StaticResource SparkTextMuted}" VerticalOptions="Center" />
+						<Label
+							Grid.Column="1"
+							FontSize="10"
+							Text="{Binding NationalId}"
+							TextColor="{StaticResource SparkTextMuted}"
+							VerticalOptions="Center" />
 					</Grid>
 				</Border>
 			</DataTemplate>
@@ -31,7 +46,7 @@
 				<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
 				<Setter Property="StrokeThickness" Value="1" />
 				<Setter Property="StrokeShape" Value="RoundRectangle 12" />
-				<Setter Property="Padding" Value="0" />
+				<Setter Property="Padding" Value="10" />
 			</Style>
 
 			<!--  Наслов на секција (лента + текст)  -->
@@ -125,16 +140,16 @@
 								Margin="0"
 								Buttons="{Binding Buttons}"
 								Pickers="{Binding Pickers}"
-								SearchPlaceholder="Пребарување пациент по име, ЕЗБО или матичен број..."
 								SearchCommand="{Binding SearchPatientCommand}"
+								SearchPlaceholder="Пребарување пациент по име, ЕЗБО или матичен број..."
 								SearchText="{Binding ScorePatientSearchText, Mode=TwoWay}"
-								Suggestions="{Binding ScorePatientSuggestions}"
-								SuggestionTemplate="{StaticResource PatientSuggestionTemplate}"
-								ShowSuggestions="{Binding ShowScorePatientSuggestions}"
-								SelectedSuggestion="{Binding SelectedScorePatientSuggestion, Mode=TwoWay}"
 								SearchVisible="True"
 								SearchWidthRatio="0.55"
+								SelectedSuggestion="{Binding SelectedScorePatientSuggestion, Mode=TwoWay}"
 								ShowCyrillicToggle="False"
+								ShowSuggestions="{Binding ShowScorePatientSuggestions}"
+								SuggestionTemplate="{StaticResource PatientSuggestionTemplate}"
+								Suggestions="{Binding ScorePatientSuggestions}"
 								Tabs="{Binding Tabs}" />
 						</VerticalStackLayout>
 					</Border>
