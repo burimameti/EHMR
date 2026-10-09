@@ -177,8 +177,7 @@
 							<VerticalStackLayout Spacing="12">
 
 								<controls:CrudSectionHeader Title="ПАЦИЕНТ И РЕУМАТОЛОГ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-<!--/>
-								</Border>
+
 
 								<!--  Locked panels — existing appointment (view + edit mode)  -->
 								<Grid
@@ -417,8 +416,7 @@
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="12">
 								<controls:CrudSectionHeader Title="ТЕРМИН" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-<!--/>
-								</Border>
+
 								<Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="14">
 
 									<!--  Scheduling horizon + auto slot (new only)  -->
@@ -482,8 +480,7 @@
 							<VerticalStackLayout Spacing="14">
 
 								<controls:CrudSectionHeader Title="МКБ-10 ДИЈАГНОЗИ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-<!--/>
-								</Border>
+
 
 								<!--  ═══ EDIT MODE: alphabet + dual search + compact assigned list ═══  -->
 								<Grid
@@ -799,8 +796,7 @@
 							<VerticalStackLayout Spacing="12">
 
 								<controls:CrudSectionHeader Title="ЛЕКОВИ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-<!--/>
-								</Border>
+
 
 								<!--  ═══ EDIT MODE: search + compact assigned list side-by-side ═══  -->
 								<Grid
@@ -1088,8 +1084,7 @@
 							<VerticalStackLayout Spacing="12">
 
 								<controls:CrudSectionHeader Title="ЗАБЕЛЕШКА" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-<!--/>
-								</Border>
+
 
 								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
 									<Label Style="{StaticResource EditFieldLabelStyle}" Text="Забелешка (опционално)" />
@@ -1163,8 +1158,7 @@
 						<VerticalStackLayout Padding="14" Spacing="12">
 
 							<controls:CrudSectionHeader Title="ИСТОРИЈА НА ПАЦИЕНТОТ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-<!--/>
-							</Border>
+
 
 							<controls:SparkExpandableCard
 								Title="Термини"
