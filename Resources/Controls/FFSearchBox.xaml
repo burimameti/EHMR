@@ -10,7 +10,7 @@
 		HorizontalOptions="Fill"
 		MinimumWidthRequest="0"
 		RowDefinitions="Auto,Auto"
-		RowSpacing="6"
+		RowSpacing="2"
 		VerticalOptions="Center">
 
 		<Label
@@ -28,7 +28,7 @@
 		<Border
 			x:Name="SearchBorder"
 			Grid.Row="1"
-			Margin="0,4,0,4"
+			Margin="0"
 			Padding="0"
 			BackgroundColor="{StaticResource White}"
 			HeightRequest="36"
