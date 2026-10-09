@@ -137,6 +137,14 @@ namespace EHMR.Resources.Controls
             set => SetValue(EditRowCommandProperty, value);
         }
 
+        public static readonly BindableProperty QuickPreviewCommandProperty =
+            BindableProperty.Create(nameof(QuickPreviewCommand), typeof(ICommand), typeof(SparkDataGridView));
+        public ICommand QuickPreviewCommand
+        {
+            get => (ICommand)GetValue(QuickPreviewCommandProperty);
+            set => SetValue(QuickPreviewCommandProperty, value);
+        }
+
         public static readonly BindableProperty HyperlinkCommandProperty =
             BindableProperty.Create(nameof(HyperlinkCommand), typeof(ICommand), typeof(SparkDataGridView));
         public ICommand HyperlinkCommand
@@ -548,7 +556,7 @@ namespace EHMR.Resources.Controls
                 SparkGridCellType.Avatar => BuildAvatar(value?.ToString()),
                 SparkGridCellType.Actions => BuildActions(row),
                 SparkGridCellType.Button => BuildSingleButton(value as SparkButtonItem, row),
-                SparkGridCellType.QuickPreview => BuildQuickPreview(value?.ToString()),
+                SparkGridCellType.QuickPreview => BuildQuickPreview(value?.ToString(), row),
                 SparkGridCellType.Hyperlink => BuildHyperlink(value?.ToString(), row, rowIndex-1),
                 _ => BuildText(value?.ToString()??string.Empty, false)
             };
@@ -604,7 +612,7 @@ namespace EHMR.Resources.Controls
             return string.IsNullOrWhiteSpace(text) ? null : text;
         }
 
-        private View BuildQuickPreview(string? tooltip)
+        private View BuildQuickPreview(string? tooltip, SparkGridRow row)
         {
             var button = new Button
             {
@@ -622,6 +630,13 @@ namespace EHMR.Resources.Controls
 
             if(!string.IsNullOrWhiteSpace(tooltip))
                 ToolTipProperties.SetText(button, tooltip);
+
+            button.Clicked += (_, _) =>
+            {
+                var parameter = row.Tag ?? row;
+                if(QuickPreviewCommand?.CanExecute(parameter) == true)
+                    QuickPreviewCommand.Execute(parameter);
+            };
 
             return button;
         }
