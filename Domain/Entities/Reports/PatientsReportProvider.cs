@@ -486,6 +486,9 @@ namespace EHMR.Domain.Entities.Reports
                             .ThenInclude(x => x!.User)
                     .Include(x => x.Encounters)
                         .ThenInclude(x => x.PatientScore)
+                    .Include(x => x.Encounters)
+                        .ThenInclude(x => x.Diagnoses)
+                            .ThenInclude(x => x.Mkb10Code)
                     .Include(x => x.Scores)
                         .ThenInclude(x => x.Encounter)
                             .ThenInclude(x => x.Doctor)
@@ -732,8 +735,8 @@ namespace EHMR.Domain.Entities.Reports
                         score is null
                             ? "Нема скор"
                             : string.IsNullOrWhiteSpace(score.Number) ? score.ScoreText : $"{score.ScoreText}: {score.Number}",
-                        BuildMedicinesInfo(patient, encounter.EncounterDate.Date, encounter.EncounterDate.Date.AddDays(1)),
-                        BuildDiagnosisInfo(patient),
+                        BuildEncounterMedicinesInfo(patient, encounter.Id),
+                        BuildEncounterDiagnosisInfo(encounter),
                         encounter.Notes ?? encounter.ClinicalNotes ?? "-"
                     ],
                     IsAlertSeverity = false
@@ -797,6 +800,28 @@ namespace EHMR.Domain.Entities.Reports
                         ? $"{score.ScoreText} — {date}"
                         : $"{score.ScoreText} — {date} ({encounter})";
                 }));
+        }
+
+        private static string BuildEncounterMedicinesInfo(Patient patient, Guid encounterId)
+        {
+            var medicines = patient.PatientMedicines
+                .Where(item => item.Medicine != null && item.Encounter?.Id == encounterId)
+                .GroupBy(item => item.Medicine!.Name)
+                .Select(group => $"{group.Key} — количина: {group.Sum(item => item.Quantity):0.################}")
+                .ToList();
+
+            return medicines.Count == 0 ? "Нема лекови за прегледот" : string.Join(", ", medicines);
+        }
+
+        private static string BuildEncounterDiagnosisInfo(Encounter encounter)
+        {
+            var diagnoses = (encounter.Diagnoses ?? [])
+                .Where(item => item.Mkb10Code != null)
+                .Select(item => item.Mkb10Code!.Code)
+                .Distinct()
+                .ToList();
+
+            return diagnoses.Count == 0 ? "Нема дијагноза за прегледот" : string.Join(", ", diagnoses);
         }
 
         private static string BuildMedicinesInfo(
