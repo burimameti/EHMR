@@ -91,11 +91,11 @@
 			</Border>
 
 			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-				<VerticalStackLayout Spacing="12" Style="{StaticResource ListPageContentStackStyle}">
+				<VerticalStackLayout Margin="0" Padding="0" Spacing="6">
 
 					<!-- All report filters are rendered by Spark from ViewModel definitions. -->
-					<Border Style="{StaticResource ReportCardStyle}">
-						<VerticalStackLayout Padding="14,10,14,12" Spacing="8">
+					<Border Margin="0" Style="{StaticResource ReportCardStyle}">
+						<VerticalStackLayout Padding="10,8,10,8" Spacing="4">
 							<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
 								<BoxView Style="{StaticResource ReportSectionAccentStyle}" />
 								<Label
@@ -110,6 +110,8 @@
 								SearchPlaceholder="Пребарување во извештај..."
 								SearchText="{Binding SearchText, Mode=TwoWay}"
 								SearchVisible="True"
+								SearchWidthRatio="0.5"
+								ShowCyrillicToggle="False"
 								Tabs="{Binding Tabs}" />
 						</VerticalStackLayout>
 					</Border>
