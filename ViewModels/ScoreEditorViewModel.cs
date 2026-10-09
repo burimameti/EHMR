@@ -43,6 +43,9 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
     [ObservableProperty] private string descriptionText = string.Empty;
     [ObservableProperty] private string numberText = string.Empty;
     [ObservableProperty] private bool showSuggestions;
+    [ObservableProperty] private bool hasSuggestions;
+    [ObservableProperty] private bool isSearching;
+    [ObservableProperty] private string searchStatusText = string.Empty;
 
     public void Load(IEnumerable<PatientScore> scores)
     {
@@ -69,56 +72,86 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
         _cts.Cancel();
         _cts.Dispose();
         _cts=new CancellationTokenSource();
-        var token = _cts.Token;
+        var token=_cts.Token;
 
         if(string.IsNullOrWhiteSpace(query))
         {
-            Suggestions.Clear();
-            ShowSuggestions=false;
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Suggestions.Clear();
+                HasSuggestions=false;
+                ShowSuggestions=false;
+                IsSearching=false;
+                SearchStatusText=string.Empty;
+            });
             return;
         }
 
+        await MainThread.InvokeOnMainThreadAsync(() =>
+        {
+            ShowSuggestions=true;
+            IsSearching=true;
+            SearchStatusText="Пребарување...";
+            HasSuggestions=false;
+            Suggestions.Clear();
+        });
+
         try
         {
-            await Task.Delay(250, token);
-
-            await using var db = await _dbFactory.CreateDbContextAsync(token);
-            var q = query.Trim();
-            var definitions = await db.Set<ClinicalScoreDefinition>()
+            await Task.Delay(250,token);
+            await using var db=await _dbFactory.CreateDbContextAsync(token);
+            var q=query.Trim();
+            var definitions=await db.Set<ClinicalScoreDefinition>()
                 .AsNoTracking()
-                .Where(x => x.IsActive &&
-                    ((x.Name != null && x.Name.Contains(q)) ||
-                     (x.Description != null && x.Description.Contains(q))))
-                .OrderBy(x => x.Name)
+                .Where(x=>x.IsActive &&
+                    ((x.Name!=null && x.Name.Contains(q)) ||
+                     (x.Description!=null && x.Description.Contains(q))))
+                .OrderBy(x=>x.Name)
                 .Take(30)
                 .ToListAsync(token);
 
-            var names = definitions.Select(x => x.Name).ToList();
-            var usage = await db.PatientScores.AsNoTracking()
-                .Where(x => names.Contains(x.ScoreText))
-                .GroupBy(x => x.ScoreText)
-                .Select(g => new { Text = g.Key, Count = g.Count() })
-                .ToDictionaryAsync(x => x.Text, x => x.Count, token);
+            var names=definitions.Select(x=>x.Name).ToList();
+            var usage=names.Count==0
+                ? new Dictionary<string,int>()
+                : await db.PatientScores.AsNoTracking()
+                    .Where(x=>names.Contains(x.ScoreText))
+                    .GroupBy(x=>x.ScoreText)
+                    .Select(g=>new { Text=g.Key, Count=g.Count() })
+                    .ToDictionaryAsync(x=>x.Text,x=>x.Count,token);
 
-            var result = definitions
-                .Select(x => new ScoreSuggestion(
-                    x.Name,
-                    string.Empty,
-                    usage.TryGetValue(x.Name, out var count) ? count : 0))
-                .ToList();
+            var result=definitions.Select(x=>new ScoreSuggestion(
+                x.Name,
+                string.Empty,
+                usage.TryGetValue(x.Name,out var count)?count:0)).ToList();
 
             if(token.IsCancellationRequested) return;
-
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
                 if(token.IsCancellationRequested) return;
                 Suggestions.Clear();
                 foreach(var item in result) Suggestions.Add(item);
-                ShowSuggestions=Suggestions.Count>0;
+                HasSuggestions=Suggestions.Count>0;
+                SearchStatusText=HasSuggestions
+                    ? string.Empty
+                    : "Нема совпаѓања. Изберете „+ Додади нов скор“ за да креирате нов.";
+                IsSearching=false;
+                ShowSuggestions=true;
             });
         }
         catch(OperationCanceledException) { }
-        catch(Exception ex) { Debug.WriteLine(ex); }
+        catch(Exception ex)
+        {
+            Debug.WriteLine($"[ScoreEditor] Search failed: {ex}");
+            if(token.IsCancellationRequested) return;
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Suggestions.Clear();
+                HasSuggestions=false;
+                IsSearching=false;
+                ShowSuggestions=true;
+                SearchStatusText="Пребарувањето не успеа. Проверете ја врската со базата и обидете се повторно.";
+            });
+        }
     }
 
     [RelayCommand]
