@@ -190,21 +190,23 @@
 									IsVisible="{Binding IsDatePicker}"
 									Label="{Binding Placeholder}"
 									SelectedDate="{Binding SelectedDate, Mode=TwoWay}" />
-								<HorizontalStackLayout
+								<VerticalStackLayout
 									IsVisible="{Binding IsCheckBox}"
-									Spacing="3"
+									Spacing="2"
 									VerticalOptions="Center">
-									<CheckBox
-										IsChecked="{Binding IsChecked, Mode=TwoWay}"
-										IsEnabled="{Binding IsEnabled}"
-										VerticalOptions="Center"
-										Color="{StaticResource Gray500}" />
 									<Label
 										FontSize="12"
 										Text="{Binding Placeholder}"
 										TextColor="{StaticResource SparkTextPrimary}"
 										VerticalOptions="Center" />
-								</HorizontalStackLayout>
+									<CheckBox
+										Margin="0"
+										IsChecked="{Binding IsChecked, Mode=TwoWay}"
+										IsEnabled="{Binding IsEnabled}"
+										HorizontalOptions="Start"
+										VerticalOptions="Center"
+										Color="{StaticResource Gray500}" />
+								</VerticalStackLayout>
 							</HorizontalStackLayout>
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
