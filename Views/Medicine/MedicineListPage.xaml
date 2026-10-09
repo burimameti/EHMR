@@ -49,7 +49,7 @@
                         <controls:FFSectionCard>
                             <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
                                 <controls:FFButton
-                                    ButtonKind="{Binding IsMedicinesTabActive, Converter={StaticResource BooleanToButtonKindConverter}}"
+                                    ButtonKind="Secondary"
                                     Command="{Binding ShowMedicinesTabCommand}"
                                     HeightRequestEx="40"
                                     Text="Лекови" />
