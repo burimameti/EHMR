@@ -7,7 +7,7 @@
 	<Color x:Key="OffBlack">#0F172A</Color>
 
 	<!--  Canonical EHMR brand accent: keep primary UI accents linked to this token.  -->
-	<Color x:Key="BrandAccent">#2AEBE7</Color>
+	<Color x:Key="BrandAccent">#0D9488</Color>
 	<Color x:Key="BrandAccentHover">#21D6D2</Color>
 	<Color x:Key="BrandAccentPressed">#17B8B4</Color>
 	<Color x:Key="BrandAccentLight">#D9FBFA</Color>

@@ -17,7 +17,7 @@ public class SparkBarChartView : ContentView
         if (Application.Current?.Resources.TryGetValue("BrandAccent", out var value) == true && value is Color color)
             return color;
 
-        return Color.FromArgb("#2AEBE7");
+        return Color.FromArgb("#0D9488");
     }
 
     readonly GraphicsView _graphicsView;

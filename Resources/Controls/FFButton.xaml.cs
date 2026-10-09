@@ -276,9 +276,9 @@ public partial class FFButton : ContentView
 
         if(IsBlue)
         {
-            BackgroundColorEx=ResolveColorResource("BrandAccent", "#2AEBE7");
+            BackgroundColorEx=ResolveColorResource("BrandAccent", "#0D9488");
             TextColorEx=Colors.White;
-            BorderColor=ResolveColorResource("BrandAccent", "#2AEBE7");
+            BorderColor=ResolveColorResource("BrandAccent", "#0D9488");
             BorderThickness=0;
             return;
         }
@@ -287,9 +287,9 @@ public partial class FFButton : ContentView
         {
             // Main action: Save, Create, Confirm
             case FFButtonKind.Primary:
-                BackgroundColorEx=ResolveColorResource("BrandAccent", "#2AEBE7");
+                BackgroundColorEx=ResolveColorResource("BrandAccent", "#0D9488");
                 TextColorEx=Colors.White;
-                BorderColor=ResolveColorResource("BrandAccent", "#2AEBE7");
+                BorderColor=ResolveColorResource("BrandAccent", "#0D9488");
                 BorderThickness=0;
                 break;
 
@@ -303,9 +303,9 @@ public partial class FFButton : ContentView
 
             // Positive clinical action: Complete, Approve
             case FFButtonKind.Green:
-                BackgroundColorEx=ResolveColorResource("BrandAccent", "#2AEBE7");
+                BackgroundColorEx=ResolveColorResource("BrandAccent", "#0D9488");
                 TextColorEx=Colors.White;
-                BorderColor=ResolveColorResource("BrandAccent", "#2AEBE7");
+                BorderColor=ResolveColorResource("BrandAccent", "#0D9488");
                 BorderThickness=0;
                 break;
 
