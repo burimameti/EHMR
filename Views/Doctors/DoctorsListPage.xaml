@@ -59,15 +59,19 @@
 				StrokeThickness="0">
 				<ScrollView VerticalScrollBarVisibility="Never">
 					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
-						<controls:FFSectionCard>
-							<controls:SparkExplorerHeaderView
+						<Border BackgroundColor="#F9FAFB" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 12" StrokeThickness="1" Padding="8,4">
+								<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Margin="0,0,0,3">
+									<BoxView WidthRequest="4" HeightRequest="16" CornerRadius="2" Color="{StaticResource SparkAccentTeal}" VerticalOptions="Center" />
+									<Label Grid.Column="1" FontAttributes="Bold" FontSize="11" Text="ПРЕБАРУВАЊЕ И ФИЛТРИ" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+								</Grid>
+<controls:SparkExplorerHeaderView
 								Buttons="{Binding Buttons}"
 								Pickers="{Binding Pickers}"
 								SearchCommand="{Binding SearchCommand}"
 								SearchPlaceholder="Пребарување на реуматолози..."
 								SearchText="{Binding DoctorSearchText}"
 								Tabs="{Binding Tabs}" />
-						</controls:FFSectionCard>
+							</Border>
 						<controls:FFSectionCard>
 							<controls:SparkDataGridView
 								x:Name="DoctorGrid"
