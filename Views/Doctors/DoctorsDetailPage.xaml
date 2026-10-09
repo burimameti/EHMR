@@ -144,7 +144,7 @@
 						<!--  BASIC INFORMATION  -->
 						<!--  =====================================  -->
 
-						<controls:CrudSectionHeader Title="ОСНОВНИ ИНФОРМАЦИИ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+						<controls:CrudSectionHeader Title="ОСНОВНИ ИНФОРМАЦИИ" LineColor="{StaticResource Primary}" Style="{StaticResource SectionHeaderStyle}" />
 
 						<!--  NAME  -->
 
@@ -297,7 +297,7 @@
 						<!--  CONTACT  -->
 						<!--  =====================================  -->
 
-						<controls:CrudSectionHeader Title="КОНТАКТ ИНФОРМАЦИИ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+						<controls:CrudSectionHeader Title="КОНТАКТ ИНФОРМАЦИИ" LineColor="{StaticResource Primary}" Style="{StaticResource SectionHeaderStyle}" />
 
 						<!--  PHONE  -->
 
