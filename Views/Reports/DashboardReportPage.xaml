@@ -116,7 +116,7 @@
 								SearchPlaceholder="Пребарување во извештај..."
 								SearchText="{Binding SearchText, Mode=TwoWay}"
 								SearchVisible="True"
-								SearchWidthRatio="0.5"
+								SearchWidthRatio="0.36"
 								ShowCyrillicToggle="False"
 								Tabs="{Binding Tabs}" />
 						</VerticalStackLayout>
