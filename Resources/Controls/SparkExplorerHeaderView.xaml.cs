@@ -104,6 +104,7 @@ namespace EHMR.Resources.Controls
             // Row 0: search (star) | cyrillic (auto / 0) | buttons (auto)
             SecondaryToolbarGrid.ColumnDefinitions.Clear();
             SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Star });
+            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Auto });
             SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition
             {
                 Width=CyrillicToggleLayout.IsVisible ? GridLength.Auto : new GridLength(0)
