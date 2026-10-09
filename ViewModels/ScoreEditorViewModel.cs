@@ -124,9 +124,12 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
                     .ToDictionaryAsync(x=>x.Text,x=>x.Count,token);
 
             var result=definitions.Select(x=>new ScoreSuggestion(
-                x.Name,
-                string.Empty,
-                usage.TryGetValue(x.Name,out var count)?count:0)).ToList();
+                    x.Name,
+                    string.Empty,
+                    usage.TryGetValue(x.Name,out var count)?count:0))
+                .OrderByDescending(x=>x.UsageCount)
+                .ThenBy(x=>x.Text)
+                .ToList();
 
             if(token.IsCancellationRequested) return;
             await MainThread.InvokeOnMainThreadAsync(() =>
@@ -242,7 +245,9 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
         SelectedScore = selected;
         OnPropertyChanged(nameof(SelectedScore));
         Suggestions.Clear();
-        ShowSuggestions = false;
+        HasSuggestions=false;
+        ShowSuggestions=false;
+        SearchStatusText=string.Empty;
     }
 
     [RelayCommand]
@@ -262,7 +267,9 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
         _suppressSearch=false;
         NumberText=string.Empty;
         Suggestions.Clear();
+        HasSuggestions=false;
         ShowSuggestions=false;
+        SearchStatusText=string.Empty;
     }
 
     [RelayCommand]
