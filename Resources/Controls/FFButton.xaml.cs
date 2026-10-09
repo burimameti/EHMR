@@ -42,7 +42,7 @@ public partial class FFButton : ContentView
             BackgroundColorEx = ButtonKind switch
             {
                 FFButtonKind.Primary => Color.FromArgb("#258F84"),
-                FFButtonKind.Secondary => Color.FromArgb("#1E293B"),
+                FFButtonKind.Secondary => Color.FromArgb("#334155"),
                 FFButtonKind.Green => Color.FromArgb("#258F84"),
                 FFButtonKind.Danger => Color.FromArgb("#991B1B"),
                 FFButtonKind.Ghost => Color.FromArgb("#E2E8F0"),
@@ -295,10 +295,10 @@ public partial class FFButton : ContentView
 
             // Supporting action: Edit, Preview, Back
             case FFButtonKind.Secondary:
-                BackgroundColorEx=Colors.White;
-                TextColorEx=Color.FromArgb("#334155");
-                BorderColor=Color.FromArgb("#CBD5E1");
-                BorderThickness=1;
+                BackgroundColorEx=Color.FromArgb("#475569");
+                TextColorEx=Colors.White;
+                BorderColor=Color.FromArgb("#475569");
+                BorderThickness=0;
                 break;
 
             // Positive clinical action: Complete, Approve
