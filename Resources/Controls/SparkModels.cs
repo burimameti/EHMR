@@ -139,6 +139,13 @@ namespace EHMR.Resources.Controls
     /// <summary>
     /// One dropdown/picker placed after the search box, e.g. "Prioritized Searches".
     /// </summary>
+    public enum SparkFilterControlType
+    {
+        Picker,
+        DatePicker,
+        CheckBox
+    }
+
     public class SparkPickerItem : SparkBindableBase
     {
         private string _placeholder;
@@ -146,6 +153,11 @@ namespace EHMR.Resources.Controls
         private int _selectedIndex = -1;
         private string _selectedItem;
         private bool _syncing;
+        private SparkFilterControlType _controlType = SparkFilterControlType.Picker;
+        private DateTime _selectedDate = DateTime.Today;
+        private bool _isChecked;
+        private bool _isVisible = true;
+        private bool _isEnabled = true;
 
         public string Placeholder
         {
@@ -157,6 +169,46 @@ namespace EHMR.Resources.Controls
         {
             get => _items;
             set => Set(ref _items, value);
+        }
+
+        public SparkFilterControlType ControlType
+        {
+            get => _controlType;
+            set
+            {
+                if(!Set(ref _controlType, value)) return;
+                OnPropertyChanged(nameof(IsPicker));
+                OnPropertyChanged(nameof(IsDatePicker));
+                OnPropertyChanged(nameof(IsCheckBox));
+            }
+        }
+
+        public bool IsPicker => ControlType == SparkFilterControlType.Picker;
+        public bool IsDatePicker => ControlType == SparkFilterControlType.DatePicker;
+        public bool IsCheckBox => ControlType == SparkFilterControlType.CheckBox;
+
+        public DateTime SelectedDate
+        {
+            get => _selectedDate;
+            set => Set(ref _selectedDate, value);
+        }
+
+        public bool IsChecked
+        {
+            get => _isChecked;
+            set => Set(ref _isChecked, value);
+        }
+
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set => Set(ref _isVisible, value);
+        }
+
+        public bool IsEnabled
+        {
+            get => _isEnabled;
+            set => Set(ref _isEnabled, value);
         }
 
         public int SelectedIndex
