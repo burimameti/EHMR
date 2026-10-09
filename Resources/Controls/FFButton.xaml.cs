@@ -35,15 +35,15 @@ public partial class FFButton : ContentView
 
             if(IsBlue)
             {
-                BackgroundColorEx=Color.FromArgb("#59B9C8");
+                BackgroundColorEx=ResolveColorResource("BrandAccentHover", "#21D6D2");
                 return;
             }
 
             BackgroundColorEx = ButtonKind switch
             {
-                FFButtonKind.Primary => Color.FromArgb("#258F84"),
+                FFButtonKind.Primary => ResolveColorResource("BrandAccentHover", "#21D6D2"),
                 FFButtonKind.Secondary => Color.FromArgb("#334155"),
-                FFButtonKind.Green => Color.FromArgb("#258F84"),
+                FFButtonKind.Green => ResolveColorResource("BrandAccentHover", "#21D6D2"),
                 FFButtonKind.Danger => Color.FromArgb("#991B1B"),
                 FFButtonKind.Ghost => Color.FromArgb("#E2E8F0"),
                 _ => BackgroundColorEx
@@ -276,9 +276,9 @@ public partial class FFButton : ContentView
 
         if(IsBlue)
         {
-            BackgroundColorEx=Color.FromArgb("#6BD1E1");
+            BackgroundColorEx=ResolveColorResource("BrandAccent", "#2AEBE7");
             TextColorEx=Colors.White;
-            BorderColor=Color.FromArgb("#0EA5B8");
+            BorderColor=ResolveColorResource("BrandAccent", "#2AEBE7");
             BorderThickness=0;
             return;
         }
@@ -287,9 +287,9 @@ public partial class FFButton : ContentView
         {
             // Main action: Save, Create, Confirm
             case FFButtonKind.Primary:
-                BackgroundColorEx=Color.FromArgb("#0EA5B8");
+                BackgroundColorEx=ResolveColorResource("BrandAccent", "#2AEBE7");
                 TextColorEx=Colors.White;
-                BorderColor=Color.FromArgb("#0EA5B8");
+                BorderColor=ResolveColorResource("BrandAccent", "#2AEBE7");
                 BorderThickness=0;
                 break;
 
@@ -303,9 +303,9 @@ public partial class FFButton : ContentView
 
             // Positive clinical action: Complete, Approve
             case FFButtonKind.Green:
-                BackgroundColorEx=Color.FromArgb("#0EA5B8");
+                BackgroundColorEx=ResolveColorResource("BrandAccent", "#2AEBE7");
                 TextColorEx=Colors.White;
-                BorderColor=Color.FromArgb("#0EA5B8");
+                BorderColor=ResolveColorResource("BrandAccent", "#2AEBE7");
                 BorderThickness=0;
                 break;
 
