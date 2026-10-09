@@ -272,7 +272,7 @@
 									FontSize="15"
 									HorizontalOptions="Center"
 									Text="Влези во систем"
-									TextColor="White"
+									TextColor="{StaticResource OffBlack}"
 									VerticalOptions="Center" />
 
 							</Grid>
