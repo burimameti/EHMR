@@ -163,6 +163,7 @@ namespace EHMR.Resources.Controls
         private bool _isChecked;
         private bool _isVisible = true;
         private bool _isEnabled = true;
+        private bool _isInlineWithSearch;
 
         public string Placeholder
         {
@@ -207,8 +208,28 @@ namespace EHMR.Resources.Controls
         public bool IsVisible
         {
             get => _isVisible;
-            set => Set(ref _isVisible, value);
+            set
+            {
+                if(!Set(ref _isVisible, value)) return;
+                OnPropertyChanged(nameof(IsFilterRowVisible));
+                OnPropertyChanged(nameof(IsInlineVisible));
+            }
         }
+
+        /// <summary>Renders this filter beside the search field instead of in the wrapped filter row.</summary>
+        public bool IsInlineWithSearch
+        {
+            get => _isInlineWithSearch;
+            set
+            {
+                if(!Set(ref _isInlineWithSearch, value)) return;
+                OnPropertyChanged(nameof(IsFilterRowVisible));
+                OnPropertyChanged(nameof(IsInlineVisible));
+            }
+        }
+
+        public bool IsFilterRowVisible => IsVisible && !IsInlineWithSearch;
+        public bool IsInlineVisible => IsVisible && IsInlineWithSearch;
 
         public bool IsEnabled
         {
