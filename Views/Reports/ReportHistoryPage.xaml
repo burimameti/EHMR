@@ -7,33 +7,8 @@
 	xmlns:converters="clr-namespace:EHMR.ViewModels.Reports"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Reports"
 	x:Name="PageRoot"
-	x:DataType="viewModels:ReportHistoryViewModel"
-	BackgroundColor="{StaticResource PageBackground}">
+	x:DataType="viewModels:ReportHistoryViewModel">
 
-	<ContentPage.Resources>
-		<ResourceDictionary>
-			<Style x:Key="ReportHistoryCardStyle" TargetType="Border">
-				<Setter Property="BackgroundColor" Value="{StaticResource White}" />
-				<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
-				<Setter Property="StrokeThickness" Value="1" />
-				<Setter Property="StrokeShape" Value="RoundRectangle 12" />
-				<Setter Property="Padding" Value="0" />
-			</Style>
-			<Style x:Key="ReportHistorySectionTitleStyle" TargetType="Label">
-				<Setter Property="FontAttributes" Value="Bold" />
-				<Setter Property="FontSize" Value="11" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-				<Setter Property="VerticalOptions" Value="Center" />
-			</Style>
-			<Style x:Key="ReportHistorySectionAccentStyle" TargetType="BoxView">
-				<Setter Property="WidthRequest" Value="4" />
-				<Setter Property="HeightRequest" Value="16" />
-				<Setter Property="CornerRadius" Value="2" />
-				<Setter Property="Color" Value="{StaticResource SparkAccentTeal}" />
-				<Setter Property="VerticalOptions" Value="Center" />
-			</Style>
-		</ResourceDictionary>
-	</ContentPage.Resources>
 
 	<Grid ColumnDefinitions="260,*">
 
@@ -124,59 +99,38 @@
 						<!--  SEARCH / FILTER BAR  -->
 						<!--  =====================================================  -->
 
-						<Border
-							BackgroundColor="#F9FAFB"
-							Style="{StaticResource ReportHistoryCardStyle}">
-							<VerticalStackLayout Padding="8,4,8,4" Spacing="3">
-								<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-									<BoxView Style="{StaticResource ReportHistorySectionAccentStyle}" />
-									<Label
-										Grid.Column="1"
-										Style="{StaticResource ReportHistorySectionTitleStyle}"
-										Text="ПРЕБАРУВАЊЕ И ФИЛТРИ" />
-								</Grid>
-								<controls:SparkExplorerHeaderView
-									Margin="0"
-									Buttons="{Binding Buttons}"
-									Pickers="{Binding Pickers}"
-									SearchCommand="{Binding SearchCommand}"
-									SearchPlaceholder="Пребарување ..."
-									SearchText="{Binding ReportSearchText, Mode=TwoWay}"
-									SearchVisible="True"
-									SearchWidthRatio="0.36"
-									ShowCyrillicToggle="False"
-									Tabs="{Binding Tabs}" />
-							</VerticalStackLayout>
-						</Border>
+						<controls:FFSectionCard>
+
+							<controls:SparkExplorerHeaderView
+								Buttons="{Binding Buttons}"
+								Pickers="{Binding Pickers}"
+								SearchCommand="{Binding SearchCommand}"
+								SearchPlaceholder="Пребарување ..."
+								SearchText="{Binding ReportSearchText}"
+								Tabs="{Binding Tabs}" />
+
+						</controls:FFSectionCard>
 
 						<!--  =====================================================  -->
 						<!--  REPORT GRID  -->
 						<!--  =====================================================  -->
 
-						<Border Style="{StaticResource ReportHistoryCardStyle}">
-							<VerticalStackLayout Spacing="0">
-								<Grid Margin="14,12,14,8" ColumnDefinitions="Auto,*" ColumnSpacing="8">
-									<BoxView Style="{StaticResource ReportHistorySectionAccentStyle}" />
-									<Label
-										Grid.Column="1"
-										Style="{StaticResource ReportHistorySectionTitleStyle}"
-										Text="РЕЗУЛТАТИ" />
-								</Grid>
-								<controls:FFSectionCard Margin="0" ContentPadding="0">
-									<controls:SparkDataGridView
-										x:Name="ReportHistoryGrid"
-										Columns="{Binding GridColumns}"
-										CurrentPage="{Binding CurrentPage}"
-										EditRowCommand="{Binding OpenCommand}"
-										NextPageCommand="{Binding NextPageCommand}"
-										PageChangedCommand="{Binding PageChangedCommand}"
-										PreviousPageCommand="{Binding PreviousPageCommand}"
-										RowTappedCommand="{Binding SelectCommand}"
-										Rows="{Binding GridRows}"
-										TotalPages="{Binding TotalPages}" />
-								</controls:FFSectionCard>
-							</VerticalStackLayout>
-						</Border>
+						<controls:FFSectionCard>
+
+							<controls:SparkDataGridView
+																	x:Name="ReportHistoryGrid"
+																	Columns="{Binding GridColumns}"
+																	CurrentPage="{Binding CurrentPage}"
+																	EditRowCommand="{Binding OpenCommand}"
+																	NextPageCommand="{Binding NextPageCommand}"
+																	PageChangedCommand="{Binding PageChangedCommand}"
+																	PreviousPageCommand="{Binding PreviousPageCommand}"
+																	RowTappedCommand="{Binding SelectCommand}"
+																	Rows="{Binding GridRows}"
+																	TotalPages="{Binding TotalPages}" />
+															
+
+						</controls:FFSectionCard>
 
 						<!--  Empty state  -->
 						<Border
