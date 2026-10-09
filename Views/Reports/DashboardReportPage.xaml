@@ -133,7 +133,7 @@
 								ShowSuggestions="{Binding ShowScorePatientSuggestions}"
 								SelectedSuggestion="{Binding SelectedScorePatientSuggestion, Mode=TwoWay}"
 								SearchVisible="True"
-								SearchWidthRatio="0.36"
+								SearchWidthRatio="1"
 								ShowCyrillicToggle="False"
 								Tabs="{Binding Tabs}" />
 						</VerticalStackLayout>
