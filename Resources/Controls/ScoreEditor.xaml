@@ -140,14 +140,16 @@
 									Padding="10,6"
 									ColumnDefinitions="*,90,44"
 									ColumnSpacing="8">
-									<Entry
+									<Label
 										Grid.Column="0"
-										IsEnabled="{Binding Source={x:Reference Root}, Path=BindingContext.IsEditable}"
-										Style="{StaticResource ScoreCellEntryStyle}"
-										Text="{Binding Description, Mode=TwoWay}" />
+										FontSize="11"
+										LineBreakMode="WordWrap"
+										Text="{Binding Description}"
+										TextColor="{StaticResource SparkTextPrimary}"
+										VerticalOptions="Center" />
 									<Entry
 										Grid.Column="1"
-										IsEnabled="{Binding Source={x:Reference Root}, Path=BindingContext.IsEditable}"
+										IsEnabled="{Binding IsNew}"
 										Keyboard="Numeric"
 										Placeholder="0.0"
 										Style="{StaticResource ScoreCellEntryStyle}"
