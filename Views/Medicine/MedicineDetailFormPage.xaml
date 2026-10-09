@@ -10,6 +10,11 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <Style x:Key="SectionHeaderStyle" TargetType="controls:CrudSectionHeader">
+                <Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
+                <Setter Property="TextColor" Value="{StaticResource Gray800}" />
+            </Style>
+
             <Style x:Key="FieldEntryStyle" TargetType="Entry">
                 <Setter Property="BackgroundColor" Value="Transparent" />
                 <Setter Property="FontSize" Value="13" />
@@ -116,7 +121,7 @@
 
                                     <controls:CrudSectionHeader
                                         Title="ОСНОВНИ ПОДАТОЦИ"
-                                        LineColor="{StaticResource SparkAccentTeal}"
+                                        LineColor="{StaticResource Gray600}"
                                         Style="{StaticResource SectionHeaderStyle}" />
 
                                     <Grid
@@ -175,7 +180,7 @@
 
                                     <controls:CrudSectionHeader
                                         Title="ДОПОЛНИТЕЛНИ ИНФОРМАЦИИ"
-                                        LineColor="{StaticResource SparkAccentTeal}"
+                                        LineColor="{StaticResource Gray600}"
                                         Style="{StaticResource SectionHeaderStyle}" />
 
                                     <Grid
@@ -256,7 +261,7 @@
 
                                     <controls:CrudSectionHeader
                                         Title="СИСТЕМСКИ ИНФОРМАЦИИ"
-                                        LineColor="{StaticResource SparkAccentTeal}"
+                                        LineColor="{StaticResource Gray600}"
                                         Style="{StaticResource SectionHeaderStyle}" />
 
                                     <Grid
