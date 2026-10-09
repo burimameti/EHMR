@@ -28,7 +28,7 @@
 				<Ellipse
 					AbsoluteLayout.LayoutBounds="0.08,0.25,420,420"
 					AbsoluteLayout.LayoutFlags="PositionProportional"
-					Fill="#0B6E99"
+					Fill="{StaticResource LoginAccent}"
 					Opacity="0.35" />
 
 				<Ellipse
