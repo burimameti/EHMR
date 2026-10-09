@@ -26,11 +26,11 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				Padding="10"
-				ColumnDefinitions="*,*,Auto,Auto"
-				ColumnSpacing="14"
+				ColumnDefinitions="*,Auto,Auto,Auto"
+				ColumnSpacing="8"
 				MinimumHeightRequest="0"
 				MinimumWidthRequest="0"
-				RowDefinitions="Auto,*"
+				RowDefinitions="Auto,Auto"
 				RowSpacing="3">
 
 				<!--  Search – ги зазема сите преостанати колони  -->
@@ -220,7 +220,7 @@
 					x:Name="PickerLayout"
 					Grid.Row="1"
 					Grid.Column="0"
-					Grid.ColumnSpan="3"
+					Grid.ColumnSpan="4"
 					AlignItems="Start"
 					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
 					Direction="Row"
