@@ -49,6 +49,7 @@
             public const string Create = "encounterscreate";
             public const string Edit = "encountersedit";
             public const string Detail = "encountersdetail";
+            public const string Preview = "encounterspreview";
         }
         public static class Protocols
         {
