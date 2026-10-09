@@ -692,7 +692,7 @@ namespace EHMR.Domain.Entities.Reports
                     patient.Doctor?.FullName ?? "-",
                     patient.Phone ?? "-",
                     includeScoreHistory
-                        ? BuildScoreHistory(patient)
+                        ? BuildScoreHistory(patient, from, to)
                         : patient.Scores
                             .OrderByDescending(x => x.RecordedAt)
                             .Select(x => x.ScoreText)
@@ -706,23 +706,31 @@ namespace EHMR.Domain.Entities.Reports
             };
         }
 
-        private static string BuildScoreHistory(Patient patient)
+        private static string BuildScoreHistory(Patient patient, DateTime from, DateTime to)
         {
             if(patient.Scores==null||patient.Scores.Count==0)
                 return "Нема историја";
 
-            return string.Join(" | ",
-                patient.Scores
-                    .OrderByDescending(x => x.RecordedAt)
-                    .Select(score =>
-                    {
-                        var date=score.RecordedAt.ToString("dd.MM.yyyy");
-                        var encounter=score.Encounter?.EncounterNumber;
+            // The selected patient's history must obey the same inclusive-from,
+            // exclusive-to period as the report query and medicine history.
+            var periodScores=patient.Scores
+                .Where(score => IsWithinReportPeriod(score.RecordedAt, from, to))
+                .OrderByDescending(score => score.RecordedAt)
+                .ToList();
 
-                        return string.IsNullOrWhiteSpace(encounter)
-                            ? $"{score.ScoreText} — {date}"
-                            : $"{score.ScoreText} — {date} ({encounter})";
-                    }));
+            if(periodScores.Count==0)
+                return "Нема историја во избраниот период";
+
+            return string.Join(" | ",
+                periodScores.Select(score =>
+                {
+                    var date=score.RecordedAt.ToString("dd.MM.yyyy");
+                    var encounter=score.Encounter?.EncounterNumber;
+
+                    return string.IsNullOrWhiteSpace(encounter)
+                        ? $"{score.ScoreText} — {date}"
+                        : $"{score.ScoreText} — {date} ({encounter})";
+                }));
         }
 
         private static string BuildMedicinesInfo(
