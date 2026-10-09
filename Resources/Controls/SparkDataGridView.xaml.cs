@@ -222,8 +222,8 @@ namespace EHMR.Resources.Controls
         private static Color BadgeDangerBg => ResolveColorResource("SparkBadgeDangerBg", "#FEF2F2");
         private static Color BadgeDangerText => ResolveColorResource("SparkBadgeDangerText", "#DC2626");
 
-        private static Color HyperlinkColor => ResolveColorResource("SparkAccentTeal", "#0EA5B8");
-        private static Color AccentColor => ResolveColorResource("SparkAccentTeal", "#0EA5B8");
+        private static Color HyperlinkColor => ResolveColorResource("BrandAccent", "#2AEBE7");
+        private static Color AccentColor => ResolveColorResource("BrandAccent", "#2AEBE7");
         private static Color AccentColorMuted => ResolveColorResource("SparkTextSecondary", "#64748B");
         private readonly Dictionary<string, bool> _sortAscending = new(StringComparer.OrdinalIgnoreCase);
 
@@ -929,13 +929,13 @@ namespace EHMR.Resources.Controls
 
         #endregion
 
-        private static Color PagerActiveBg => ResolveColorResource("SparkAccentTeal", "#0EA5B8");
+        private static Color PagerActiveBg => ResolveColorResource("BrandAccent", "#2AEBE7");
         private static Color PagerActiveText => ResolveColorResource("SparkBackground", "#FFFFFF");
         private static Color PagerInactiveText => ResolveColorResource("SparkTextSecondary", "#64748B");
         public static Color PagerBackground => ResolveColorResource("SparkSurfaceAlt", "#F8FAFC");
         public static Color PagerBorder => ResolveColorResource("SparkBorder", "#CBD5E1");
         public static Color PagerBorderColor => ResolveColorResource("SparkBorder", "#CBD5E1");
-        public static Color PagerActiveBackground => ResolveColorResource("SparkAccentTeal", "#0EA5B8");
+        public static Color PagerActiveBackground => ResolveColorResource("BrandAccent", "#2AEBE7");
         public static Color PagerActiveForeground => Colors.White;
         public static Color PagerForeground => ResolveColorResource("SparkTextSecondary", "#64748B");
         public static Color PagerDisabledForeground => Color.FromArgb("#CBD5E1");
