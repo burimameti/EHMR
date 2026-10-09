@@ -600,6 +600,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             SelectedScorePatientSuggestion=null;
             ScorePatientSuggestions.Clear();
             ShowScorePatientSuggestions=false;
+            BuildSparkGridColumns();
         }
 
         _filterDebounce?.Cancel();
