@@ -120,7 +120,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
 
 
             new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1.3, GridUnitType.Star) },
-            new() { Header = "PREVIEW", Key = "QuickPreview", CellType = SparkGridCellType.QuickPreview, Width = new GridLength(0.75, GridUnitType.Star), Sortable = false },
+            new() { Header = "Preview", Key = "QuickPreview", CellType = SparkGridCellType.QuickPreview, Width = new GridLength(0.75, GridUnitType.Star), Sortable = false },
             new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
