@@ -427,6 +427,7 @@ namespace EHMR
             services.AddTransient<EncounterEditViewModel>();
 
             services.AddTransient<EncounterDetailPage>();
+            services.AddTransient<EncounterQuickPreviewPage>();
             services.AddTransient<EncounterListPage>();
             services.AddTransient<EncounterCreatePage>();
             services.AddTransient<EncounterEditPage>();
