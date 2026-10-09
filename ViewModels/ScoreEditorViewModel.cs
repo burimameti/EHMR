@@ -140,7 +140,7 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
                 HasSuggestions=Suggestions.Count>0;
                 SearchStatusText=HasSuggestions
                     ? string.Empty
-                    : "Нема совпаѓања. Изберете „+ Додади нов скор“ за да креирате нов.";
+                    : "Нема совпаѓања за пребарувањето.";
                 IsSearching=false;
                 ShowSuggestions=true;
             });
@@ -228,22 +228,34 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
     {
         if (suggestion is null) return;
 
+        // Selecting a catalog suggestion adds it directly to the grid.
+        // The clinical value is entered in the numeric cell of that row.
+        if(Items.Any(x=>string.Equals(x.Description,suggestion.Text,StringComparison.OrdinalIgnoreCase)))
+        {
+            _suppressSearch=true;
+            DescriptionText=string.Empty;
+            _suppressSearch=false;
+            NumberText=string.Empty;
+            Suggestions.Clear();
+            HasSuggestions=false;
+            ShowSuggestions=false;
+            SearchStatusText="Овој скор веќе е додаден во табелата.";
+            return;
+        }
+
         var selected = new ScoreRow
         {
             Description = suggestion.Text,
-            Number = suggestion.Number,
+            Number = string.Empty,
             RecordedAt = DateTime.UtcNow
         };
-
-        // In the patient form, selecting a suggestion fills the inline fields.
-        // Keep SelectedScore for the legacy popup consumer, if it is used elsewhere.
-        _suppressSearch = true;
-        DescriptionText = selected.Description;
-        NumberText = selected.Number;
-        _suppressSearch = false;
-
+        Items.Insert(0, selected);
         SelectedScore = selected;
         OnPropertyChanged(nameof(SelectedScore));
+        _suppressSearch = true;
+        DescriptionText = string.Empty;
+        _suppressSearch = false;
+        NumberText = string.Empty;
         Suggestions.Clear();
         HasSuggestions=false;
         ShowSuggestions=false;
