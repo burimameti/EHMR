@@ -491,14 +491,22 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         if(_activeProvider is PatientsReportProvider patientsProvider)
         {
             patientsProvider.SetMedicineFilterEnabled(value);
-            InitializeSparkControls();
+
+            var medicinePicker = Pickers.FirstOrDefault(x =>
+                x.Placeholder == "Лек" &&
+                x.ControlType == SparkFilterControlType.Picker);
+            if(medicinePicker is not null)
+                medicinePicker.IsVisible = value;
+
+            var toggle = Pickers.FirstOrDefault(x =>
+                x.ControlType == SparkFilterControlType.CheckBox);
+            if(toggle is not null && toggle.IsChecked != value)
+                toggle.IsChecked = value;
+
             if(value && string.Equals(patientsProvider.SelectedMedicineForExport, null, StringComparison.Ordinal))
-            {
-                // The medicine filter is a required mode: generation waits until
-                // a concrete medicine is selected.
                 return;
-            }
-            _=GenerateReportAsync();
+
+            _ = GenerateReportAsync();
         }
     }
 
@@ -778,6 +786,83 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         if(_activeProvider==null)
             return;
+
+        // Report-specific controls are described here in the ViewModel.
+        // SparkExplorerHeaderView only renders these definitions; the page has
+        // no hand-authored period/date/medicine controls.
+        if(_activeProvider.Type == ReportType.Patients)
+        {
+            var periodPicker = new SparkPickerItem
+            {
+                Placeholder = "Тип на период",
+                SelectedItem = SelectedPeriodTypeLabel
+            };
+            foreach(var option in PeriodTypeOptions)
+                periodPicker.Items.Add(option);
+            periodPicker.SelectedItem = SelectedPeriodTypeLabel;
+            periodPicker.PropertyChanged += (_, e) =>
+            {
+                if(e.PropertyName == nameof(SparkPickerItem.SelectedItem) &&
+                   periodPicker.SelectedItem is string selected &&
+                   SelectedPeriodTypeLabel != selected)
+                    SelectedPeriodTypeLabel = selected;
+            };
+            Pickers.Add(periodPicker);
+
+            var fromDate = new SparkPickerItem
+            {
+                ControlType = SparkFilterControlType.DatePicker,
+                Placeholder = "Од",
+                SelectedDate = StartDate
+            };
+            fromDate.PropertyChanged += (_, e) =>
+            {
+                if(e.PropertyName == nameof(SparkPickerItem.SelectedDate) &&
+                   StartDate != fromDate.SelectedDate)
+                    StartDate = fromDate.SelectedDate;
+            };
+            Pickers.Add(fromDate);
+
+            var toDate = new SparkPickerItem
+            {
+                ControlType = SparkFilterControlType.DatePicker,
+                Placeholder = "До",
+                SelectedDate = EndDate
+            };
+            toDate.PropertyChanged += (_, e) =>
+            {
+                if(e.PropertyName == nameof(SparkPickerItem.SelectedDate) &&
+                   EndDate != toDate.SelectedDate)
+                    EndDate = toDate.SelectedDate;
+            };
+            Pickers.Add(toDate);
+
+            var medicineToggle = new SparkPickerItem
+            {
+                ControlType = SparkFilterControlType.CheckBox,
+                Placeholder = "Пребарување по лек",
+                IsChecked = IsMedicineSearchEnabled
+            };
+            medicineToggle.PropertyChanged += (_, e) =>
+            {
+                if(e.PropertyName == nameof(SparkPickerItem.IsChecked) &&
+                   IsMedicineSearchEnabled != medicineToggle.IsChecked)
+                    IsMedicineSearchEnabled = medicineToggle.IsChecked;
+            };
+            Pickers.Add(medicineToggle);
+
+            if(_activeProvider is PatientsReportProvider patientsProvider &&
+               patientsProvider.MedicinePicker is { } medicinePicker)
+            {
+                medicinePicker.IsVisible = IsMedicineSearchEnabled;
+                medicinePicker.PropertyChanged += (_, e) =>
+                {
+                    if(e.PropertyName == nameof(SparkPickerItem.SelectedItem))
+                        _ = GenerateReportDebouncedAsync();
+                };
+                Pickers.Add(medicinePicker);
+            }
+        }
 
         foreach(var picker in _activeProvider.BuildPickers())
             Pickers.Add(picker);
