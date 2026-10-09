@@ -528,6 +528,16 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         }
     }
 
+    [RelayCommand]
+    private void SearchPatient(string? query)
+    {
+        // SparkExplorerHeaderView already updates the two-way bound text.
+        // Keep its debounced command aligned with the patient-autocomplete mode.
+        query ??= string.Empty;
+        if(!string.Equals(ScorePatientSearchText, query, StringComparison.Ordinal))
+            ScorePatientSearchText = query;
+    }
+
     partial void OnScorePatientSearchTextChanged(string value)
     {
         if(_activeProvider is not PatientsReportProvider patientsProvider)
