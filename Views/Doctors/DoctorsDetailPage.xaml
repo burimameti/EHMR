@@ -10,6 +10,15 @@
 	x:DataType="vm:DoctorsDetailViewModel"
 	BackgroundColor="{StaticResource PageBackground}">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="SectionHeaderStyle" TargetType="controls:CrudSectionHeader">
+                <Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
+                <Setter Property="TextColor" Value="{StaticResource Gray800}" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
 	<Grid ColumnDefinitions="260,*">
 
 		<!--  =====================================================  -->
@@ -33,7 +42,7 @@
 			Grid.Column="1"
 			Padding="0"
 			RowDefinitions="Auto,*,Auto"
-			RowSpacing="16">
+			RowSpacing="0">
 
 			<!--  =================================================  -->
 			<!--  HEADER  -->
@@ -116,25 +125,26 @@
 			<!--  =================================================  -->
 
 			<Border
-				Grid.Row="1"
-				Padding="40,36"
-				BackgroundColor="#F3F6FA"
-				Stroke="#DCE5EE"
-				StrokeThickness="1">
+                Grid.Row="1"
+                Margin="0"
+                Padding="24,20"
+                BackgroundColor="White"
+                Stroke="{StaticResource SparkBorderSubtle}"
+                StrokeThickness="1">
 
 				<Border.StrokeShape>
-					<RoundRectangle CornerRadius="0" />
+					<RoundRectangle CornerRadius="12" />
 				</Border.StrokeShape>
 
 				<ScrollView>
 
-					<VerticalStackLayout MaximumWidthRequest="600" Spacing="28">
+					<VerticalStackLayout MaximumWidthRequest="900" Spacing="16">
 
 						<!--  =====================================  -->
 						<!--  BASIC INFORMATION  -->
 						<!--  =====================================  -->
 
-						<controls:CrudSectionHeader Title="👤 Основни информации" />
+						<controls:CrudSectionHeader Title="ОСНОВНИ ИНФОРМАЦИИ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
 						<!--  NAME  -->
 
@@ -287,7 +297,7 @@
 						<!--  CONTACT  -->
 						<!--  =====================================  -->
 
-						<controls:CrudSectionHeader Title="📞 Контакт информации" />
+						<controls:CrudSectionHeader Title="КОНТАКТ ИНФОРМАЦИИ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
 						<!--  PHONE  -->
 
