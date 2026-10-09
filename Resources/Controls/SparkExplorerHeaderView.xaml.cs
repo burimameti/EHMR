@@ -69,8 +69,9 @@ namespace EHMR.Resources.Controls
 
             ActionLayout.Spacing=4*s;
 
-            // 4 pickers per row on wide screens, 3 on narrower ones
-            var basis = new FlexBasis(width>=1100 ? 0.23f : 0.31f, true);
+            // Fit the patient-report period/date/medicine controls on one row
+            // on wide layouts; fall back to three columns on narrower windows.
+            var basis = new FlexBasis(width>=1100 ? 0.18f : 0.31f, true);
 
             foreach(var child in PickerLayout.Children)
             {
