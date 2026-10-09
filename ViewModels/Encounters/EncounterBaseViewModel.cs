@@ -1569,18 +1569,27 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     // =====================================================
 
     [RelayCommand]
-    protected void AddMedicine(Medicine medicine)
+    protected async Task AddMedicine(Medicine medicine)
     {
-        if(!CanUpdate) return;
-        if(medicine==null) return;
+        if(!CanUpdate || medicine is null) return;
 
         if(EncounterMedicines.Any(x => x.MedicineId==medicine.Id&&x.IsActive))
             return;
 
-        // Multiple medicines are allowed in the current encounter.
-        // Historical/inactive medicines are never automatically added here.
+        // New encounters may only use medicines already active on the patient.
+        // Adding a new medicine (which requires its resolution/decision) belongs
+        // to the patient record, not to the encounter editor.
         var previous=PatientMedicines
             .FirstOrDefault(x => x.MedicineId==medicine.Id&&x.IsActive&&x.EncounterId==null);
+
+        if(previous is null)
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Лекот не е активен кај пациентот",
+                "Нов преглед може да користи само лек што веќе е активен кај пациентот. Вратете се во картонот на пациентот и додајте го лекот со соодветното решение.",
+                "Во ред");
+            return;
+        }
 
         var patientMedicine = new PatientMedicine
         {
@@ -1591,11 +1600,11 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             EncounterId=Encounter.Id==Guid.Empty ? null : Encounter.Id,
             MedicineId=medicine.Id,
             Medicine=medicine,
-            Dosage=previous?.Dosage??"1",
-            ApplicationRegimeId=previous?.ApplicationRegimeId,
-            ApplicationRegime=previous?.ApplicationRegime,
-            Quantity=previous?.Quantity??1,
-            DosesFrequency=previous?.DosesFrequency??DosesFrequency.Other,
+            Dosage=previous.Dosage,
+            ApplicationRegimeId=previous.ApplicationRegimeId,
+            ApplicationRegime=previous.ApplicationRegime,
+            Quantity=previous.Quantity,
+            DosesFrequency=previous.DosesFrequency,
             IsActive=true
         };
 
