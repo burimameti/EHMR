@@ -451,8 +451,9 @@
 
 						</Grid>
 
-						<!--  ── Термини по датум ────────────────────────────  -->
-						<controls:FFSectionCard>
+						<!--  Термини по датум и денешни прегледи: два еднакви панели на ист ред  -->
+						<Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+						<controls:FFSectionCard Grid.Column="0">
 							<VerticalStackLayout Padding="0">
 
 								<Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="10">
@@ -813,7 +814,73 @@
 							</VerticalStackLayout>
 						</controls:FFSectionCard>
 
-
+						<controls:FFSectionCard Grid.Column="1">
+							<VerticalStackLayout Padding="0" Spacing="10">
+								<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+									<Label
+										FontAttributes="Bold"
+										FontSize="16"
+										Text="Денешни прегледи"
+										TextColor="{StaticResource TitleColor}"
+										VerticalOptions="Center" />
+									<Border
+										Grid.Column="1"
+										Padding="8,3"
+										Style="{StaticResource DashboardCardCountBadge}">
+										<Label Style="{StaticResource DashboardCardCountLabel}" Text="{Binding State.DailyEncounters.Count}" />
+									</Border>
+								</Grid>
+								<CollectionView
+									HeightRequest="300"
+									ItemsSource="{Binding State.DailyEncounters}"
+									SelectionMode="None"
+									VerticalOptions="Start">
+									<CollectionView.EmptyView>
+										<Label
+											Padding="16"
+											Style="{StaticResource DashboardEmptyStateLabel}"
+											Text="Нема евидентирани прегледи за денес." />
+									</CollectionView.EmptyView>
+									<CollectionView.ItemTemplate>
+										<DataTemplate x:DataType="dash:DashboardEncounterItem">
+											<Border Style="{StaticResource AppointmentRowStyle}">
+												<Grid Padding="10,9" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+													<Label
+													FontAttributes="Bold"
+													FontSize="13"
+													Text="{Binding Time}"
+													TextColor="{StaticResource SparkAccentTealDark}"
+													VerticalOptions="Center" />
+													<Label
+													Grid.Column="1"
+													FontSize="12"
+													LineBreakMode="TailTruncation"
+													Text="{Binding PatientName}"
+													TextColor="{StaticResource SparkTextPrimary}"
+													VerticalOptions="Center" />
+													<Border
+													Grid.Column="2"
+													Padding="8,4"
+													BackgroundColor="{Binding StatusColor}"
+													StrokeThickness="0"
+													VerticalOptions="Center">
+														<Border.StrokeShape>
+															<RoundRectangle CornerRadius="10" />
+														</Border.StrokeShape>
+														<Label
+															FontAttributes="Bold"
+															FontSize="9"
+															Text="{Binding StatusText}"
+															TextColor="White" />
+													</Border>
+												</Grid>
+											</Border>
+										</DataTemplate>
+									</CollectionView.ItemTemplate>
+								</CollectionView>
+							</VerticalStackLayout>
+						</controls:FFSectionCard>
+						</Grid>
 
 					</VerticalStackLayout>
 				</ScrollView>
