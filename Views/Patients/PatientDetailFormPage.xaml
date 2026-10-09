@@ -1125,7 +1125,7 @@
 																			<Label
 																				Grid.Column="2"
 																				Style="{StaticResource TableCellLabelStyle}"
-																				Text="{Binding DefaultDosage}" />
+																				Text="{Binding Dosage}" />
 																			<Entry
 																				Grid.Column="3"
 																				IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
@@ -1283,7 +1283,7 @@
 																			<Label
 																				Grid.Column="2"
 																				Style="{StaticResource TableCellLabelStyle}"
-																				Text="{Binding DefaultDosage}" />
+																				Text="{Binding Dosage}" />
 																			<Entry
 																				Grid.Column="3"
 																				IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
