@@ -557,6 +557,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             SelectedScorePatientSuggestion=null;
             IsScoreSearchEnabled=false;
             patientsProvider.SelectScorePatient(null);
+            BuildSparkGridColumns();
             return;
         }
 
@@ -577,8 +578,9 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         IsScoreSearchEnabled=true;
         patientsProvider.SetScoreSearchEnabled(true);
         patientsProvider.SelectScorePatient(value.PatientId);
-        // Keep the existing picker instances and their loaded options; only
-        // report rows need refreshing for a selected patient.
+        // The selected-patient mode has encounter-specific columns and one row
+        // per visit, so rebuild columns before generating the matching rows.
+        BuildSparkGridColumns();
         _=GenerateReportAsync();
     }
 
