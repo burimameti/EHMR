@@ -14,7 +14,7 @@
 		<!--  LEFT MENU  -->
 		<Border
 			Grid.Column="0"
-			BackgroundColor="{StaticResource PageBackground}
+			BackgroundColor="{StaticResource PageBackground}"
 			StrokeThickness="0">
 			<ContentView x:Name="MenuHost" />
 		</Border>
