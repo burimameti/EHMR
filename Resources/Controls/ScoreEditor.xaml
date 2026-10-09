@@ -58,30 +58,30 @@
 					BindableLayout.ItemsSource="{Binding Suggestions}"
 					IsVisible="{Binding HasSuggestions}"
 					Spacing="0">
-				<BindableLayout.ItemTemplate>
-					<DataTemplate x:DataType="vm:ScoreSuggestion">
-						<Border
-							Padding="9,7"
-							BackgroundColor="Transparent"
-							StrokeThickness="0">
-							<Border.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.SelectSuggestionCommand}" CommandParameter="{Binding .}" />
-							</Border.GestureRecognizers>
-							<Grid ColumnDefinitions="*,Auto">
-								<Label
-									FontAttributes="Bold"
-									FontSize="12"
-									Text="{Binding Text}"
-									TextColor="{StaticResource SparkAccentTealDark}" />
-								<Label
-									Grid.Column="1"
-									FontSize="10"
-									Text="{Binding UsageCount, StringFormat='×{0}'}"
-									TextColor="{StaticResource SparkTextSecondary}" />
-							</Grid>
-						</Border>
-					</DataTemplate>
-				</BindableLayout.ItemTemplate>
+					<BindableLayout.ItemTemplate>
+						<DataTemplate x:DataType="vm:ScoreSuggestion">
+							<Border
+								Padding="9,7"
+								BackgroundColor="Transparent"
+								StrokeThickness="0">
+								<Border.GestureRecognizers>
+									<TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.SelectSuggestionCommand}" CommandParameter="{Binding .}" />
+								</Border.GestureRecognizers>
+								<Grid ColumnDefinitions="*,Auto">
+									<Label
+										FontAttributes="Bold"
+										FontSize="12"
+										Text="{Binding Text}"
+										TextColor="{StaticResource SparkAccentTealDark}" />
+									<Label
+										Grid.Column="1"
+										FontSize="10"
+										Text="{Binding UsageCount, StringFormat='×{0}'}"
+										TextColor="{StaticResource SparkTextSecondary}" />
+								</Grid>
+							</Border>
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
 				</VerticalStackLayout>
 			</VerticalStackLayout>
 		</Border>

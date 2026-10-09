@@ -1,3 +1,4 @@
+using Microsoft.Maui.Layouts;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -42,61 +43,60 @@ namespace EHMR.Resources.Controls
         private void ApplyResponsiveLayout()
         {
             var width = Width;
-            if (width <= 0 || Math.Abs(width - _lastResponsiveWidth) < 2)
+            if(width<=0||Math.Abs(width-_lastResponsiveWidth)<2)
                 return;
 
-            _lastResponsiveWidth = width;
-            _responsiveScale = width >= 1500 ? 1d
-                : width >= 1250 ? 0.94d
-                : width >= 1050 ? 0.88d
-                : width >= 900 ? 0.82d
+            _lastResponsiveWidth=width;
+            _responsiveScale=width>=1500 ? 1d
+                : width>=1250 ? 0.94d
+                : width>=1050 ? 0.88d
+                : width>=900 ? 0.82d
                 : 0.76d;
 
-            var s = _responsiveScale;            SecondaryToolbarGrid.Padding = new Thickness(10 * s);
-            SecondaryToolbarGrid.ColumnSpacing = 8 * s;
-            SecondaryToolbarGrid.MinimumHeightRequest = 64 * s;
+            var s = _responsiveScale;
+            SecondaryToolbarGrid.Padding=new Thickness(10*s);
+            SecondaryToolbarGrid.ColumnSpacing=8*s;
+            SecondaryToolbarGrid.RowSpacing=8*s;
+            SecondaryToolbarGrid.MinimumHeightRequest=64*s;
 
-            // FFSearchBox contains its own label + field and must keep its natural height.
-            // Setting the ContentView height to 42 clips the control vertically in the header.
-            HeaderSearchBox.HorizontalOptions = LayoutOptions.Fill;
-            HeaderSearchBox.MinimumWidthRequest = 0;
-            HeaderSearchBox.Margin = new Thickness(0);
+            HeaderSearchBox.HorizontalOptions=LayoutOptions.Fill;
+            HeaderSearchBox.MinimumWidthRequest=0;
+            HeaderSearchBox.Margin=new Thickness(0);
 
-            CyrillicToggleLayout.WidthRequest = 100 * s;
-            CyrillicToggleLayout.Spacing = 4 * s;
-            CyrillicToggleLayout.IsVisible = ShowCyrillicToggle && width >= 900;
+            CyrillicToggleLayout.WidthRequest=100*s;
+            CyrillicToggleLayout.Spacing=4*s;
+            CyrillicToggleLayout.IsVisible=ShowCyrillicToggle&&width>=900;
 
-            PickerLayout.Spacing = 8 * s;
-            ActionLayout.Spacing = 4 * s;
+            ActionLayout.Spacing=4*s;
 
-            foreach (var child in PickerLayout.Children.OfType<FFPicker>())
+            // 4 pickers per row on wide screens, 3 on narrower ones
+            var basis = new FlexBasis(width>=1100 ? 0.23f : 0.31f, true);
+
+            foreach(var child in PickerLayout.Children.OfType<FFPicker>())
             {
-                child.MinimumWidthRequest = Math.Max(100, 110 * s);
-                // FFPicker contains a label + picker field; do not constrain the outer control
-                // to the field height or its contents will be clipped vertically.
+                child.MinimumWidthRequest=Math.Max(100, 110*s);
+                child.Margin=new Thickness(0, 0, 12*s, 8*s);
+                FlexLayout.SetBasis(child, basis);
             }
 
-            foreach (var child in ActionLayout.Children.SelectMany(v => v is HorizontalStackLayout h ? h.Children : Array.Empty<IView>()))
+            foreach(var child in ActionLayout.Children.SelectMany(v => v is HorizontalStackLayout h ? h.Children : Array.Empty<IView>()))
             {
-                if (child is FFButton button)
+                if(child is FFButton button)
                 {
-                    button.HeightRequest = 40 * s;
-                    button.ContentPadding = new Thickness(16 * s, 0);
+                    button.HeightRequest=40*s;
+                    button.ContentPadding=new Thickness(16*s, 0);
                 }
             }
 
-            // Dense desktop widths: keep the toolbar on one line and let the
-            // search area absorb the available space rather than stacking controls.
+            // Row 0: search (star) | cyrillic (auto / 0) | buttons (auto)
             SecondaryToolbarGrid.ColumnDefinitions.Clear();
-            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-            if (CyrillicToggleLayout.IsVisible)
-                SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            else
-                SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0) });
-            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Star });
+            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition
+            {
+                Width=CyrillicToggleLayout.IsVisible ? GridLength.Auto : new GridLength(0)
+            });
+            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Auto });
         }
-
         #region Search Visibility
         public static readonly BindableProperty TabsVisibleProperty =
     BindableProperty.Create(

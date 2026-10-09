@@ -1,176 +1,227 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="EHMR.Views.Reports.DashboardReportPage"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:sc="clr-namespace:EHMR.Resources.Controls"
-    xmlns:viewModels="clr-namespace:EHMR.ViewModels"
-    x:Name="PageRoot"
-    x:DataType="viewModels:ReportViewModel"
-    BackgroundColor="{StaticResource White}"
-    Shell.PresentationMode="NotAnimated">
+	x:Class="EHMR.Views.Reports.DashboardReportPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:sc="clr-namespace:EHMR.Resources.Controls"
+	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
+	x:Name="PageRoot"
+	x:DataType="viewModels:ReportViewModel"
+	BackgroundColor="{StaticResource White}"
+	Shell.PresentationMode="NotAnimated">
 
-    <Grid ColumnDefinitions="260,*">
+	<ContentPage.Resources>
+		<ResourceDictionary>
 
-        <Border Grid.Column="0" StrokeThickness="0">
-            <ContentView x:Name="MenuHost" />
-        </Border>
+			<!--  Картичка (секција)  -->
+			<Style x:Key="ReportCardStyle" TargetType="Border">
+				<Setter Property="BackgroundColor" Value="{StaticResource White}" />
+				<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+				<Setter Property="StrokeThickness" Value="1" />
+				<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+				<Setter Property="Padding" Value="0" />
+			</Style>
 
-        <Grid
-            Grid.Column="1"
-            RowDefinitions="Auto,*"
-            RowSpacing="0"
-            Style="{StaticResource ListPageRootGridStyle}">
+			<!--  Наслов на секција (лента + текст)  -->
+			<Style x:Key="ReportSectionTitleStyle" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="11" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+				<Setter Property="VerticalOptions" Value="Center" />
+			</Style>
 
-            <Border
-                Grid.Row="0"
-                Margin="0"
-                Style="{StaticResource PageCardStyleDashboard}">
-                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-                    <sc:FFPageHeader
-                        Grid.Column="0"
-                        Title="Извештаи за пациенти"
-                        Subtitle="Преглед, филтрирање и генерирање извештаи за пациенти" />
-                    <sc:FFButton
-                        Grid.Column="1"
-                        Margin="0,0,33,0"
-                        ButtonKind="Secondary"
-                        Command="{Binding GoBackCommand}"
-                        HeightRequestEx="36"
-                        Text="Назад"
-                        WidthRequestEx="120" />
-                </Grid>
-            </Border>
+			<Style x:Key="ReportSectionAccentStyle" TargetType="BoxView">
+				<Setter Property="WidthRequest" Value="4" />
+				<Setter Property="HeightRequest" Value="16" />
+				<Setter Property="CornerRadius" Value="2" />
+				<Setter Property="Color" Value="{StaticResource SparkAccentTeal}" />
+				<Setter Property="VerticalOptions" Value="Center" />
+			</Style>
 
-            <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-                <VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}" Spacing="10">
+			<!--  Мал caption над поле  -->
+			<Style x:Key="ReportFieldCaptionStyle" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="9.5" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+			</Style>
 
-                    <!-- REPORT FILTER HEADER: period and optional medicine filter -->
-                    <Border
-                        Padding="8"
-                        BackgroundColor="{StaticResource White}"
-                        Stroke="{StaticResource SparkBorder}"
-                        StrokeThickness="1">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="6" />
-                        </Border.StrokeShape>
+			<!--  Внатрешна „плочка" за група полиња  -->
+			<Style x:Key="ReportFieldGroupStyle" TargetType="Border">
+				<Setter Property="BackgroundColor" Value="#F8FAFC" />
+				<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
+				<Setter Property="StrokeThickness" Value="1" />
+				<Setter Property="StrokeShape" Value="RoundRectangle 10" />
+				<Setter Property="Padding" Value="12,10" />
+			</Style>
 
-                        <Grid
-                            ColumnDefinitions="1.75*,1.55*"
-                            ColumnSpacing="8"
-                            VerticalOptions="Center">
+		</ResourceDictionary>
+	</ContentPage.Resources>
 
-                            <!-- PERIOD -->
-                            <Border
-                                Grid.Column="0"
-                                Padding="10,8"
-                                BackgroundColor="{StaticResource White}"
-                                Stroke="{StaticResource SparkBorder}"
-                                StrokeThickness="1">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="6" />
-                                </Border.StrokeShape>
-                                <Grid ColumnDefinitions="Auto,150,*,*" ColumnSpacing="8" VerticalOptions="Center">
-                                    <Label
-                                        FontAttributes="Bold"
-                                        FontSize="10"
-                                        Text="ПЕРИОД"
-                                        TextColor="{StaticResource SparkTextPrimary}"
-                                        VerticalOptions="Center" />
-                                    <sc:FFPicker
-                                        Grid.Column="1"
-                                        ItemsSource="{Binding PeriodTypeOptions}"
-                                        SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" />
-                                    <VerticalStackLayout Grid.Column="2" Spacing="2">
-                                        <Label FontSize="9" Text="ОД" TextColor="{StaticResource SparkTextMuted}" />
-                                        <sc:FFDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}" />
-                                    </VerticalStackLayout>
-                                    <VerticalStackLayout Grid.Column="3" Spacing="2">
-                                        <Label FontSize="9" Text="ДО" TextColor="{StaticResource SparkTextMuted}" />
-                                        <sc:FFDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}" />
-                                    </VerticalStackLayout>
-                                </Grid>
-                            </Border>
+	<Grid ColumnDefinitions="260,*">
 
-                            <!-- OPTIONAL MEDICINE FILTER -->
-                            <Border
-                                Grid.Column="1"
-                                Padding="10,8"
-                                BackgroundColor="{StaticResource White}"
-                                IsVisible="{Binding IsPatientsReport}"
-                                Stroke="{StaticResource SparkBorder}"
-                                StrokeThickness="1">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="6" />
-                                </Border.StrokeShape>
-                                <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8" VerticalOptions="Center">
-                                    <Label
-                                        FontAttributes="Bold"
-                                        FontSize="10"
-                                        Text="ПРЕБАРУВАЊЕ ПО ЛЕК"
-                                        TextColor="{StaticResource SparkTextPrimary}"
-                                        VerticalOptions="Center" />
-                                    <CheckBox
-                                        Grid.Column="1"
-                                        HorizontalOptions="Start"
-                                        IsChecked="{Binding IsMedicineSearchEnabled, Mode=TwoWay}"
-                                        VerticalOptions="Center" />
-                                    <sc:FFPicker
-                                        Grid.Column="2"
-                                        IsVisible="{Binding IsMedicineSearchEnabled}"
-                                        ItemsSource="{Binding MedicinePicker.Items}"
-                                        SelectedItem="{Binding MedicinePicker.SelectedItem, Mode=TwoWay}" />
-                                </Grid>
-                            </Border>
-                        </Grid>
-                    </Border>
+		<Border Grid.Column="0" StrokeThickness="0">
+			<ContentView x:Name="MenuHost" />
+		</Border>
 
-                    <!-- PROVIDER STATUS TABS -->
-                    <Border
-                        Margin="0"
-                        Padding="8,4"
-                        BackgroundColor="{StaticResource White}"
-                        Stroke="{StaticResource SparkBorder}"
-                        StrokeThickness="1">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="6" />
-                        </Border.StrokeShape>
-                        <sc:SparkExplorerHeaderView
-                            Margin="0"
-                            Buttons="{Binding Buttons}"
-                            Pickers="{Binding Pickers}"
-                            SearchPlaceholder="Пребарување во извештај..."
-                            SearchText="{Binding SearchText, Mode=TwoWay}"
-                            SearchVisible="True"
-                            Tabs="{Binding Tabs}" />
-                    </Border>
+		<Grid
+			Grid.Column="1"
+			RowDefinitions="Auto,*"
+			RowSpacing="0"
+			Style="{StaticResource ListPageRootGridStyle}">
 
-                    <sc:FFSectionCard Margin="0" ContentPadding="0">
-                        <Grid RowDefinitions="Auto,*">
-                            <ActivityIndicator
-                                Grid.Row="0"
-                                Margin="2"
-                                HeightRequest="50"
-                                HorizontalOptions="Center"
-                                IsRunning="{Binding IsBusy}"
-                                IsVisible="{Binding IsBusy}"
-                                VerticalOptions="Center"
-                                Color="{StaticResource SparkAccentTeal}" />
-                            <sc:SparkDataGridView
-                                Grid.Row="1"
-                                Margin="2"
-                                Columns="{Binding GridColumns}"
-                                CurrentPage="{Binding CurrentPage}"
-                                NextPageCommand="{Binding NextPageCommand}"
-                                PageChangedCommand="{Binding PageChangedCommand}"
-                                PreviousPageCommand="{Binding PreviousPageCommand}"
-                                Rows="{Binding GridRows}"
-                                TotalPages="{Binding TotalPages}" />
-                        </Grid>
-                    </sc:FFSectionCard>
+			<!--  ═══ HEADER ═══  -->
+			<Border
+				Grid.Row="0"
+				Margin="0"
+				Style="{StaticResource PageCardStyleDashboard}">
+				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+					<sc:FFPageHeader
+						Title="Извештаи за пациенти"
+						Grid.Column="0"
+						Subtitle="Преглед, филтрирање и генерирање извештаи за пациенти" />
+					<sc:FFButton
+						Grid.Column="1"
+						Margin="0,0,33,0"
+						ButtonKind="Secondary"
+						Command="{Binding GoBackCommand}"
+						HeightRequestEx="36"
+						Text="Назад"
+						WidthRequestEx="120" />
+				</Grid>
+			</Border>
 
-                </VerticalStackLayout>
-            </ScrollView>
-        </Grid>
-    </Grid>
+			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+				<VerticalStackLayout Spacing="12" Style="{StaticResource ListPageContentStackStyle}">
+
+					<!--  ═══ 1. ПЕРИОД И ЛЕК ═══  -->
+					<Border Style="{StaticResource ReportCardStyle}">
+						<VerticalStackLayout Padding="14,12,14,14" Spacing="12">
+
+							<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+								<BoxView Style="{StaticResource ReportSectionAccentStyle}" />
+								<Label
+									Grid.Column="1"
+									Style="{StaticResource ReportSectionTitleStyle}"
+									Text="ПЕРИОД И ОПСЕГ НА ИЗВЕШТАЈОТ" />
+							</Grid>
+
+							<Grid ColumnDefinitions="1.75*,1.55*" ColumnSpacing="12">
+
+								<!--  ПЕРИОД  -->
+								<Border Grid.Column="0" Style="{StaticResource ReportFieldGroupStyle}">
+									<Grid ColumnDefinitions="170,*,*" ColumnSpacing="12">
+										<VerticalStackLayout Grid.Column="0" Spacing="4">
+											<Label Style="{StaticResource ReportFieldCaptionStyle}" Text="ТИП НА ПЕРИОД" />
+											<sc:FFPicker ItemsSource="{Binding PeriodTypeOptions}" SelectedItem="{Binding SelectedPeriodTypeLabel, Mode=TwoWay}" />
+										</VerticalStackLayout>
+										<VerticalStackLayout Grid.Column="1" Spacing="4">
+											<Label Style="{StaticResource ReportFieldCaptionStyle}" Text="ОД" />
+											<sc:FFDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}" />
+										</VerticalStackLayout>
+										<VerticalStackLayout Grid.Column="2" Spacing="4">
+											<Label Style="{StaticResource ReportFieldCaptionStyle}" Text="ДО" />
+											<sc:FFDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}" />
+										</VerticalStackLayout>
+									</Grid>
+								</Border>
+
+								<!--  ПРЕБАРУВАЊЕ ПО ЛЕК (опционално)  -->
+								<Border
+									Grid.Column="1"
+									IsVisible="{Binding IsPatientsReport}"
+									Style="{StaticResource ReportFieldGroupStyle}">
+									<VerticalStackLayout Spacing="4">
+										<Label Style="{StaticResource ReportFieldCaptionStyle}" Text="ПРЕБАРУВАЊЕ ПО ЛЕК" />
+										<Grid
+											ColumnDefinitions="Auto,*"
+											ColumnSpacing="8"
+											MinimumHeightRequest="38">
+											<CheckBox
+												HorizontalOptions="Start"
+												IsChecked="{Binding IsMedicineSearchEnabled, Mode=TwoWay}"
+												VerticalOptions="Center"
+												Color="{StaticResource SparkAccentTeal}" />
+											<sc:FFPicker
+												Grid.Column="1"
+												IsVisible="{Binding IsMedicineSearchEnabled}"
+												ItemsSource="{Binding MedicinePicker.Items}"
+												SelectedItem="{Binding MedicinePicker.SelectedItem, Mode=TwoWay}" />
+										</Grid>
+									</VerticalStackLayout>
+								</Border>
+							</Grid>
+						</VerticalStackLayout>
+					</Border>
+
+					<!--  ═══ 2. ПРЕБАРУВАЊЕ И ФИЛТРИ ═══  -->
+					<Border Style="{StaticResource ReportCardStyle}">
+						<VerticalStackLayout Padding="2,12,2,2" Spacing="0">
+
+							<Grid
+								Margin="12,0,12,0"
+								ColumnDefinitions="Auto,*"
+								ColumnSpacing="8">
+								<BoxView Style="{StaticResource ReportSectionAccentStyle}" />
+								<Label
+									Grid.Column="1"
+									Style="{StaticResource ReportSectionTitleStyle}"
+									Text="ПРЕБАРУВАЊЕ И ФИЛТРИ" />
+							</Grid>
+
+							<sc:SparkExplorerHeaderView
+								Margin="0"
+								Buttons="{Binding Buttons}"
+								Pickers="{Binding Pickers}"
+								SearchPlaceholder="Пребарување во извештај..."
+								SearchText="{Binding SearchText, Mode=TwoWay}"
+								SearchVisible="True"
+								Tabs="{Binding Tabs}" />
+						</VerticalStackLayout>
+					</Border>
+
+					<!--  ═══ 3. РЕЗУЛТАТИ ═══  -->
+					<Border Style="{StaticResource ReportCardStyle}">
+						<VerticalStackLayout Spacing="0">
+
+							<Grid
+								Margin="14,12,14,8"
+								ColumnDefinitions="Auto,*"
+								ColumnSpacing="8">
+								<BoxView Style="{StaticResource ReportSectionAccentStyle}" />
+								<Label
+									Grid.Column="1"
+									Style="{StaticResource ReportSectionTitleStyle}"
+									Text="РЕЗУЛТАТИ" />
+							</Grid>
+
+							<sc:FFSectionCard Margin="0" ContentPadding="0">
+								<Grid RowDefinitions="Auto,*">
+									<ActivityIndicator
+										Grid.Row="0"
+										Margin="2"
+										HeightRequest="50"
+										HorizontalOptions="Center"
+										IsRunning="{Binding IsBusy}"
+										IsVisible="{Binding IsBusy}"
+										VerticalOptions="Center"
+										Color="{StaticResource SparkAccentTeal}" />
+									<sc:SparkDataGridView
+										Grid.Row="1"
+										Margin="2"
+										Columns="{Binding GridColumns}"
+										CurrentPage="{Binding CurrentPage}"
+										NextPageCommand="{Binding NextPageCommand}"
+										PageChangedCommand="{Binding PageChangedCommand}"
+										PreviousPageCommand="{Binding PreviousPageCommand}"
+										Rows="{Binding GridRows}"
+										TotalPages="{Binding TotalPages}" />
+								</Grid>
+							</sc:FFSectionCard>
+						</VerticalStackLayout>
+					</Border>
+
+				</VerticalStackLayout>
+			</ScrollView>
+		</Grid>
+	</Grid>
 </ContentPage>

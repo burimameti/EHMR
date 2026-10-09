@@ -8,9 +8,16 @@
 	SizeChanged="OnHeaderSizeChanged"
 	ZIndex="100">
 
+	<!--
+		РЕДИЗАЈН (само визуелно):
+		• Ред 1: Пребарување (fill) | Кирилица | Копчиња
+		• Ред 2: Pickers во wrap-grid (4 по ред, 3 на потесни ширини)
+		Сите x:Name, bindings и event handlers се непроменети.
+	-->
+
 	<VerticalStackLayout
 		Margin="0"
-		Padding="10"
+		Padding="12,10"
 		BackgroundColor="White"
 		Spacing="0">
 
@@ -19,18 +26,21 @@
 			<Grid
 				x:Name="SecondaryToolbarGrid"
 				Padding="0"
-				ColumnDefinitions="*,Auto,Auto,Auto"
-				ColumnSpacing="8"
+				ColumnDefinitions="*,Auto,Auto"
+				ColumnSpacing="14"
 				MinimumHeightRequest="64"
-				MinimumWidthRequest="0">
+				MinimumWidthRequest="0"
+				RowDefinitions="Auto,Auto"
+				RowSpacing="8">
 
-				<!--  Search uses all remaining horizontal space.  -->
+				<!--  Search – ги зазема сите преостанати колони  -->
 				<VerticalStackLayout
+					Grid.Row="0"
 					Grid.Column="0"
 					HorizontalOptions="Fill"
 					MinimumWidthRequest="0"
 					Spacing="4"
-					VerticalOptions="Fill">
+					VerticalOptions="Start">
 					<sc:FFSearchBox
 						x:Name="HeaderSearchBox"
 						HorizontalOptions="Fill"
@@ -38,14 +48,14 @@
 						Placeholder="{Binding SearchPlaceholder, Source={x:Reference Root}}"
 						SearchCommand="{Binding SearchCommand, Source={x:Reference Root}}"
 						Text="{Binding SearchText, Source={x:Reference Root}, Mode=TwoWay}"
-						VerticalOptions="Fill" />
+						VerticalOptions="Start" />
 
 					<Border
 						Padding="4"
 						BackgroundColor="White"
 						IsVisible="{Binding ShowSuggestions, Source={x:Reference Root}}"
 						Stroke="{StaticResource SparkBorderSubtle}"
-						StrokeShape="RoundRectangle 8"
+						StrokeShape="RoundRectangle 10"
 						StrokeThickness="1">
 						<Grid ColumnDefinitions="*,12" ColumnSpacing="4">
 							<CollectionView
@@ -84,57 +94,41 @@
 						</Grid>
 					</Border>
 				</VerticalStackLayout>
+
+				<!--  Кирилица – checkbox + текст, порамнет со полето  -->
 				<HorizontalStackLayout
 					x:Name="CyrillicToggleLayout"
+					Grid.Row="0"
 					Grid.Column="1"
+					Margin="0,20,0,0"
+					Padding="8,0,12,0"
+					BackgroundColor="{StaticResource SparkAccentTealBg}"
+					HeightRequest="38"
 					IsVisible="{Binding ShowCyrillicToggle, Source={x:Reference Root}}"
-					Spacing="4"
-					VerticalOptions="Center"
-					WidthRequest="100">
+					Spacing="2"
+					VerticalOptions="Start">
+					<CheckBox
+						IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
+						IsEnabled="True"
+						VerticalOptions="Center"
+						Color="{StaticResource SidebarActiveBg}" />
 					<Label
-						Margin="0,0,-18,0"
+						FontAttributes="Bold"
 						FontSize="12"
-						HorizontalOptions="Start"
 						Text="Кирилица"
-						TextColor="{StaticResource SparkTextSecondary}" />
-					<Border
-						Margin="-28,22,0,0"
-						Padding="0"
-						BackgroundColor="{StaticResource Transparent}"
-						Stroke="Transparent"
-						StrokeThickness="1">
-						<CheckBox
-							HorizontalOptions="Start"
-							IsChecked="{Binding UseCyrillicInput, Source={x:Reference Root}, Mode=TwoWay}"
-							IsEnabled="True"
-							VerticalOptions="Center"
-							Color="{StaticResource SidebarActiveBg}" />
-					</Border>
-				</HorizontalStackLayout>
-				<HorizontalStackLayout
-					x:Name="PickerLayout"
-					Grid.Column="2"
-					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
-					Spacing="8"
-					VerticalOptions="Center">
-					<BindableLayout.ItemTemplate>
-						<DataTemplate x:DataType="sc:SparkPickerItem">
-							<sc:FFPicker
-								x:Name="HeaderPicker"
-								ItemsSource="{Binding Items}"
-								Label="{Binding Placeholder}"
-								MinimumWidthRequest="110"
-								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
-						</DataTemplate>
-					</BindableLayout.ItemTemplate>
+						TextColor="{StaticResource SparkAccentTealDark}"
+						VerticalOptions="Center" />
 				</HorizontalStackLayout>
 
+				<!--  Копчиња – на иста линија со пребарувањето  -->
 				<VerticalStackLayout
 					x:Name="ActionLayout"
-					Grid.Column="3"
+					Grid.Row="0"
+					Grid.Column="2"
+					Margin="0,20,0,0"
 					Spacing="4"
-					VerticalOptions="End">
-					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}" Spacing="8">
+					VerticalOptions="Start">
+					<HorizontalStackLayout BindableLayout.ItemsSource="{Binding Buttons, Source={x:Reference Root}}" Spacing="10">
 
 						<BindableLayout.ItemTemplate>
 							<DataTemplate x:DataType="sc:SparkButtonItem">
@@ -142,9 +136,9 @@
 									ButtonKind="Secondary"
 									Command="{Binding Command}"
 									CommandParameter="{Binding CommandParameter}"
-									ContentPadding="16,0"
-									CornerRadius="6"
-									HeightRequestEx="40"
+									ContentPadding="18,0"
+									CornerRadius="8"
+									HeightRequestEx="38"
 									IsEnabled="{Binding IsEnabled}"
 									Text="{Binding Label}"
 									WidthRequestEx="0">
@@ -162,6 +156,32 @@
 
 					</HorizontalStackLayout>
 				</VerticalStackLayout>
+
+				<!--  Pickers (Статус / Град / Реуматолог / Дијагноза / Пол…) – wrap grid како на огласник  -->
+				<FlexLayout
+					x:Name="PickerLayout"
+					Grid.Row="1"
+					Grid.Column="0"
+					Grid.ColumnSpan="3"
+					AlignItems="Start"
+					BindableLayout.ItemsSource="{Binding Pickers, Source={x:Reference Root}}"
+					Direction="Row"
+					JustifyContent="Start"
+					Wrap="Wrap">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate x:DataType="sc:SparkPickerItem">
+							<sc:FFPicker
+								x:Name="HeaderPicker"
+								Margin="0,0,12,8"
+								FlexLayout.Basis="23%"
+								FlexLayout.Grow="0"
+								ItemsSource="{Binding Items}"
+								Label="{Binding Placeholder}"
+								MinimumWidthRequest="120"
+								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
+				</FlexLayout>
 			</Grid>
 			<BoxView
 				BackgroundColor="{StaticResource Transparent}"
