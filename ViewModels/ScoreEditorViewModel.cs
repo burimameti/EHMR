@@ -12,6 +12,7 @@ public partial class ScoreRow : ObservableObject
 {
     public Guid Id { get; set; } = Guid.Empty;
     public DateTime RecordedAt { get; set; } = DateTime.UtcNow;
+    public bool IsNew => Id == Guid.Empty;
 
     [ObservableProperty] private string description = string.Empty;
     [ObservableProperty] private string number = string.Empty;
