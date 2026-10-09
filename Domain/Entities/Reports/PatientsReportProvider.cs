@@ -713,7 +713,6 @@ namespace EHMR.Domain.Entities.Reports
                 var score = encounter.PatientScore
                     ?? patient.Scores.FirstOrDefault(x => x.EncounterId == encounter.Id);
                 var doctor = encounter.Doctor?.FullName
-                    ?? encounter.Doctor?.User?.FullName
                     ?? patient.Doctor?.FullName
                     ?? "-";
 
