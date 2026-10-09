@@ -1377,7 +1377,7 @@
 											StrokeThickness="1">
 											<VerticalStackLayout Spacing="12">
 												<Grid
-													ColumnDefinitions="Аuto,Auto"
+													ColumnDefinitions="*,*"
 													ColumnSpacing="10"
 													IsVisible="{Binding IsEditMode}">
 

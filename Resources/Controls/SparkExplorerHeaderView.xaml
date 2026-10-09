@@ -17,7 +17,7 @@
 
 	<VerticalStackLayout
 		Margin="0"
-		Padding="0"
+		Padding="10"
 		BackgroundColor="Transparent"
 		Spacing="0">
 
@@ -25,12 +25,12 @@
 		<Grid BackgroundColor="Transparent" IsVisible="{Binding SearchVisible, Source={x:Reference Root}}">
 			<Grid
 				x:Name="SecondaryToolbarGrid"
-				Padding="0"
+				Padding="10"
 				ColumnDefinitions="*,*,Auto,Auto"
 				ColumnSpacing="14"
 				MinimumHeightRequest="0"
 				MinimumWidthRequest="0"
-				RowDefinitions="Auto,Auto"
+				RowDefinitions="Auto,*"
 				RowSpacing="3">
 
 				<!--  Search – ги зазема сите преостанати колони  -->
