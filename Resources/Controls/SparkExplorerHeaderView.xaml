@@ -170,15 +170,39 @@
 					Wrap="Wrap">
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="sc:SparkPickerItem">
-							<sc:FFPicker
-								x:Name="HeaderPicker"
-								Margin="0,0,12,8"
+							<Grid
+								Margin="0,0,10,8"
 								FlexLayout.Basis="23%"
 								FlexLayout.Grow="0"
-								ItemsSource="{Binding Items}"
-								Label="{Binding Placeholder}"
-								MinimumWidthRequest="120"
-								SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+								MinimumWidthRequest="112">
+								<sc:FFPicker
+									IsVisible="{Binding IsPicker}"
+									ItemsSource="{Binding Items}"
+									Label="{Binding Placeholder}"
+									HorizontalOptions="Fill"
+									MinimumWidthRequest="0"
+									SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+								<sc:FFDatePicker
+									IsVisible="{Binding IsDatePicker}"
+									Label="{Binding Placeholder}"
+									SelectedDate="{Binding SelectedDate, Mode=TwoWay}" />
+								<HorizontalStackLayout
+									IsVisible="{Binding IsCheckBox}"
+									Spacing="6"
+									VerticalOptions="Center"
+									MinimumHeightRequest="42">
+									<CheckBox
+										IsChecked="{Binding IsChecked, Mode=TwoWay}"
+										IsEnabled="{Binding IsEnabled}"
+										VerticalOptions="Center"
+										Color="{StaticResource SparkAccentTeal}" />
+									<Label
+										Text="{Binding Placeholder}"
+										FontSize="12"
+										TextColor="{StaticResource SparkTextPrimary}"
+										VerticalOptions="Center" />
+								</HorizontalStackLayout>
+							</Grid>
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
 				</FlexLayout>
