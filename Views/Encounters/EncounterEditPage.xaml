@@ -490,7 +490,7 @@
 															HorizontalOptions="Center"
 															Spacing="2"
 															VerticalOptions="Center">
-															<CheckBox IsChecked="{Binding IsActive, Mode=TwoWay}" />
+															<CheckBox IsChecked="{Binding IsActive}" IsEnabled="False" />
 															<controls:FFButton
 																ButtonKind="Danger"
 																Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}"
