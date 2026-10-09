@@ -54,10 +54,10 @@ namespace EHMR.Resources.Controls
                 : 0.76d;
 
             var s = _responsiveScale;
-            SecondaryToolbarGrid.Padding=new Thickness(10*s);
+            SecondaryToolbarGrid.Padding=new Thickness(0);
             SecondaryToolbarGrid.ColumnSpacing=8*s;
-            SecondaryToolbarGrid.RowSpacing=8*s;
-            SecondaryToolbarGrid.MinimumHeightRequest=64*s;
+            SecondaryToolbarGrid.RowSpacing=3*s;
+            SecondaryToolbarGrid.MinimumHeightRequest=0;
 
             HeaderSearchBox.HorizontalOptions=LayoutOptions.Start;
             HeaderSearchBox.MinimumWidthRequest=0;
@@ -82,7 +82,7 @@ namespace EHMR.Resources.Controls
                     continue;
 
                 filterCell.MinimumWidthRequest=Math.Max(112, 118*s);
-                filterCell.Margin=new Thickness(0, 0, 10*s, 8*s);
+                filterCell.Margin=new Thickness(0, 0, 8*s, 4*s);
                 FlexLayout.SetBasis(filterCell, basis);
 
                 foreach(var picker in filterCell.Children.OfType<FFPicker>())
