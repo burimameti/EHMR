@@ -562,7 +562,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         IsScoreSearchEnabled=true;
         patientsProvider.SetScoreSearchEnabled(true);
         patientsProvider.SelectScorePatient(value.PatientId);
-        InitializeSparkControls();
+        // Keep the existing picker instances and their loaded options; only
+        // report rows need refreshing for a selected patient.
         _=GenerateReportAsync();
     }
 
