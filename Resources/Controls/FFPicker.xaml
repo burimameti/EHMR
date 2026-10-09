@@ -5,7 +5,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	x:Name="Root">
 
-	<Grid RowDefinitions="Auto,Auto" RowSpacing="5">
+	<Grid RowDefinitions="Auto,Auto" RowSpacing="3">
 
 		<!--  Field label  -->
 		<Label
@@ -27,8 +27,8 @@
 			Padding="0"
 			BackgroundColor="{StaticResource White}"
 			HeightRequest="36"
-			Stroke="#CBD5E1"
-			StrokeShape="RoundRectangle 6"
+			Stroke="{StaticResource InputBorder}"
+			StrokeShape="RoundRectangle 8"
 			StrokeThickness="1">
 			<Border.GestureRecognizers>
 				<PointerGestureRecognizer PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" />
