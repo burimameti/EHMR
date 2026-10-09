@@ -108,6 +108,10 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     partial void OnSelectedPeriodTypeLabelChanged(string value)
     {
         OnPropertyChanged(nameof(IsCustomPeriod));
+        var periodPicker = Pickers.FirstOrDefault(x => x.Placeholder == "Тип на период");
+        if(periodPicker is not null && periodPicker.SelectedItem != value)
+            periodPicker.SelectedItem = value;
+
         RecalculatePeriodRange();
     }
 
@@ -162,6 +166,10 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     partial void OnStartDateChanged(DateTime value)
     {
+        var control = Pickers.FirstOrDefault(x => x.ControlType == SparkFilterControlType.DatePicker && x.Placeholder == "Од");
+        if(control is not null && control.SelectedDate != value)
+            control.SelectedDate = value;
+
         if(_recalculatingPeriod || _activeProvider is null)
             return;
 
@@ -173,6 +181,10 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     partial void OnEndDateChanged(DateTime value)
     {
+        var control = Pickers.FirstOrDefault(x => x.ControlType == SparkFilterControlType.DatePicker && x.Placeholder == "До");
+        if(control is not null && control.SelectedDate != value)
+            control.SelectedDate = value;
+
         if(_recalculatingPeriod || _activeProvider is null)
             return;
 
@@ -857,11 +869,6 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                patientsProvider.MedicinePicker is { } medicinePicker)
             {
                 medicinePicker.IsVisible = IsMedicineSearchEnabled;
-                medicinePicker.PropertyChanged += (_, e) =>
-                {
-                    if(e.PropertyName == nameof(SparkPickerItem.SelectedItem))
-                        _ = GenerateReportDebouncedAsync();
-                };
                 Pickers.Add(medicinePicker);
             }
         }
