@@ -453,7 +453,7 @@
 															BackgroundColor="Transparent"
 															FontSize="11.5"
 															Keyboard="Numeric"
-															Text="{Binding Dosage, Mode=TwoWay}"
+															Text="{Binding Dosage}" IsReadOnly="True"
 															TextColor="{StaticResource SparkTextPrimary}"
 															VerticalOptions="Center" />
 													</Border>
@@ -468,7 +468,7 @@
 															ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
 															Label=""
 															MinimumWidthRequest="110"
-															SelectedItem="{Binding ApplicationRegimeDisplay, Mode=TwoWay}" />
+															SelectedItem="{Binding ApplicationRegimeDisplay}" IsEnabled="False" />
 													</Border>
 													<Border
 														Grid.Column="3"
