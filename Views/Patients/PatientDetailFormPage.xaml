@@ -728,20 +728,12 @@
 													<Label Style="{StaticResource ReadValueBoldStyle}" Text="{Binding SelectedDoctorDisplay}" />
 												</VerticalStackLayout>
 											</VerticalStackLayout>
-											<VerticalStackLayout
-												Grid.Row="0"
-												Grid.Column="1"
-												Spacing="8">
-												<controls:CrudSectionHeader
-													Title="СКОРОВИ"
-													LineColor="{StaticResource White}"
-													Style="{StaticResource SectionHeaderStyle}" />
-												<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
-											</VerticalStackLayout>
+											
 										</Grid>
 
 										<Grid
-											ColumnDefinitions="*"
+											ColumnDefinitions="1.15*,*"
+											ColumnSpacing="14"
 											HorizontalOptions="Fill"
 											RowDefinitions="Auto,Auto,Auto"
 											RowSpacing="16">
@@ -823,6 +815,11 @@
 														</ScrollView>
 													</Border>
 												</VerticalStackLayout>
+							<VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="8">
+								<controls:CrudSectionHeader Title="СКОРОВИ" LineColor="{StaticResource White}" Style="{StaticResource SectionHeaderStyle}" />
+								<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
+							</VerticalStackLayout>
+
 												<Grid
 													ColumnDefinitions="*,*"
 													ColumnSpacing="10"
@@ -855,6 +852,7 @@
 
 													<Border
 														Grid.Row="1"
+											Grid.ColumnSpan="2"
 														Grid.ColumnSpan="2"
 														Padding="4"
 														BackgroundColor="{StaticResource White}"
