@@ -181,6 +181,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(AppRoutes.Encounters.Create, typeof(EncounterCreatePage));
         Routing.RegisterRoute(AppRoutes.Encounters.List, typeof(EncounterListPage));
         Routing.RegisterRoute(AppRoutes.Encounters.Detail, typeof(EncounterDetailPage));
+        Routing.RegisterRoute(AppRoutes.Encounters.Preview, typeof(EncounterQuickPreviewPage));
 
         //Бекап
         Routing.RegisterRoute(AppRoutes.Backup.Dashboard, typeof(BackupDashboardPage));
