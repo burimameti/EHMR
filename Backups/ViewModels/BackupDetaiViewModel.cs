@@ -71,6 +71,14 @@ public partial class BackupDetailsViewModel : ObservableObject
     private async Task GoBackAsync()
         => await Shell.Current.GoToAsync("..");
 
+    private static Color ResolveBrandAccent()
+    {
+        if (Application.Current?.Resources.TryGetValue("BrandAccent", out var value) == true && value is Color color)
+            return color;
+
+        return Color.FromArgb("#2AEBE7");
+    }
+
     [RelayCommand]
     public async Task LoadAsync()
     {
@@ -104,7 +112,7 @@ public partial class BackupDetailsViewModel : ObservableObject
 
             StatusBreakdown=new ObservableCollection<DonutSegment>
             {
-                new() { Label = "Успешни", Value = SuccessfulBackups, Color = Color.FromArgb("#21B6C4") },
+                new() { Label = "Успешни", Value = SuccessfulBackups, Color = ResolveBrandAccent() },
                 new() { Label = "Неуспешни", Value = FailedBackups, Color = Color.FromArgb("#E0554F") }
             };
 
