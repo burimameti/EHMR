@@ -144,7 +144,7 @@
 									CommandParameter="{Binding CommandParameter}"
 									ContentPadding="16,0"
 									CornerRadius="6"
-									HeightRequestEx="44"
+									HeightRequestEx="40"
 									IsEnabled="{Binding IsEnabled}"
 									Text="{Binding Label}"
 									WidthRequestEx="0">
