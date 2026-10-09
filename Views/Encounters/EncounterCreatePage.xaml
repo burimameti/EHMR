@@ -10,6 +10,15 @@
 	x:DataType="vm:EncounterCreateViewModel"
 	BackgroundColor="{StaticResource PageBackground}">
 
+
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<Style x:Key="SectionHeaderStyle" TargetType="controls:CrudSectionHeader">
+				<Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
+				<Setter Property="TextColor" Value="{StaticResource Gray800}" />
+			</Style>
+		</ResourceDictionary>
+	</ContentPage.Resources>
 	<Grid ColumnDefinitions="260,*">
 
 		<!--  ЛЕВО МЕНИ  -->
@@ -51,11 +60,7 @@
 							<VerticalStackLayout Spacing="12">
 
 								<controls:CrudSectionHeader
-									Title="ПАЦИЕНТ И РЕУМАТОЛОГ"
-									Padding="8,5"
-									BackgroundColor="{StaticResource SparkAccentTealBg}"
-									LineColor="{StaticResource SparkAccentTeal}"
-									TextColor="{StaticResource SparkTextPrimary}" />
+									Title="ПАЦИЕНТ И РЕУМАТОЛОГ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
 								<!--  Пребарување (скриено кога пациентот е веќе зададен)  -->
 								<VerticalStackLayout IsVisible="{Binding IsPatientLockedFromContext, Converter={StaticResource InverseBoolConverter}}" Spacing="8">
@@ -243,11 +248,7 @@
 							<!--  ── 2. БИОЛОШКА ТЕРАПИЈА ──  -->
 							<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="10">
 								<controls:CrudSectionHeader
-									Title="БИОЛОШКА ТЕРАПИЈА"
-									Padding="8,5"
-									BackgroundColor="{StaticResource SparkAccentTealBg}"
-									LineColor="{StaticResource SparkAccentTeal}"
-									TextColor="{StaticResource SparkTextPrimary}" />
+									Title="БИОЛОШКА ТЕРАПИЈА"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
 								<Grid ColumnDefinitions="1.2*,1.2*,0.8*" ColumnSpacing="20">
 									<VerticalStackLayout Grid.Column="0" Spacing="2">
@@ -307,11 +308,7 @@
 
 									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
 										<controls:CrudSectionHeader
-											Title="ТЕКОВНА ТЕРАПИЈА"
-											Padding="8,5"
-											BackgroundColor="{StaticResource Gray200}"
-											LineColor="{StaticResource SparkAccentTeal}"
-											TextColor="{StaticResource SparkTextPrimary}" />
+											Title="ТЕКОВНА ТЕРАПИЈА"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 										<controls:FFButton
 											Grid.Column="1"
 											ButtonKind="Secondary"
@@ -518,11 +515,7 @@
 									Spacing="10">
 									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
 										<controls:CrudSectionHeader
-											Title="СКОРОВИ"
-											Padding="8,5"
-											BackgroundColor="{StaticResource Gray200}"
-											LineColor="{StaticResource SparkAccentTeal}"
-											TextColor="{StaticResource SparkTextPrimary}" />
+											Title="СКОРОВИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 										<controls:FFButton
 											Grid.Column="1"
 											ButtonKind="Secondary"
@@ -598,11 +591,7 @@
 									Grid.Column="0"
 									Spacing="20">
 									<controls:CrudSectionHeader
-										Title="СЛЕДЕН ТЕРМИН"
-										Padding="8,5"
-										BackgroundColor="{StaticResource Gray200}"
-										LineColor="{StaticResource SparkAccentTeal}"
-										TextColor="{StaticResource SparkTextPrimary}" />
+										Title="СЛЕДЕН ТЕРМИН"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
 									<HorizontalStackLayout
 										HorizontalOptions="Start"
@@ -655,11 +644,7 @@
 									Grid.Column="1"
 									Spacing="10">
 									<controls:CrudSectionHeader
-										Title="НАОДИ"
-										Padding="8,5"
-										BackgroundColor="{StaticResource Gray200}"
-										LineColor="{StaticResource SparkAccentTeal}"
-										TextColor="{StaticResource SparkTextPrimary}" />
+										Title="НАОДИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 									<Border
 										BackgroundColor="White"
 										Stroke="{StaticResource SparkBorderSubtle}"
@@ -716,11 +701,7 @@
 
 							<!--  Последни прегледи  -->
 							<controls:CrudSectionHeader
-								Title="ПРЕТХОДНИ ПРЕГЛЕДИ"
-								Padding="8,5"
-								BackgroundColor="{StaticResource SparkAccentTealBg}"
-								LineColor="{StaticResource Gray600}"
-								TextColor="{StaticResource SparkTextPrimary}" />
+								Title="ПРЕТХОДНИ ПРЕГЛЕДИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
 							<!--<Label
 								FontSize="16"
@@ -795,11 +776,7 @@
 							<!--  История на терапии  -->
 							<!--<controls:CrudSectionHeader
 								Title="ИСТОРИЈА НА ТЕРАПИИ"
-								Padding="8,5"
-								BackgroundColor="{StaticResource SparkAccentTealBg}"
-								IsVisible="{Binding HasPatientContext}"
-								LineColor="{StaticResource SparkAccentTeal}"
-								TextColor="{StaticResource SparkTextPrimary}" />-->
+								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />-->
 							<VerticalStackLayout
 								BindableLayout.ItemsSource="{Binding PreviousMedicines}"
 								IsVisible="{Binding HasPatientContext}"
@@ -845,11 +822,7 @@
 							<!--  История на дијагнози  -->
 							<controls:CrudSectionHeader
 								Title="ИСТОРИЈА НА ДИЈАГНОЗИ"
-								Padding="8,5"
-								BackgroundColor="{StaticResource SparkAccentTealBg}"
-								IsVisible="{Binding HasPatientContext}"
-								LineColor="{StaticResource SparkAccentTeal}"
-								TextColor="{StaticResource SparkTextPrimary}" />
+								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 							<VerticalStackLayout
 								BindableLayout.ItemsSource="{Binding PatientDiagnoses}"
 								IsVisible="{Binding HasPatientContext}"
@@ -889,11 +862,7 @@
 							<!--  Документи  -->
 							<controls:CrudSectionHeader
 								Title="ДОКУМЕНТИ НА ПАЦИЕНТ"
-								Padding="8,5"
-								BackgroundColor="{StaticResource SparkAccentTealBg}"
-								IsVisible="{Binding HasPatientContext}"
-								LineColor="{StaticResource SparkAccentTeal}"
-								TextColor="{StaticResource SparkTextPrimary}" />
+								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
 							<Label
 								FontSize="16"
