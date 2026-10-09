@@ -17,6 +17,11 @@
 			<converters:EncounterStatusToColorConverter x:Key="StatusColorConverter" />
 			<converters:EncounterStatusToBgConverter x:Key="StatusBgConverter" />
 
+			<Style x:Key="SectionHeaderStyle" TargetType="controls:CrudSectionHeader">
+				<Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
+				<Setter Property="TextColor" Value="{StaticResource Gray800}" />
+			</Style>
+
 			<DataTemplate x:Key="MedicineRowTemplate" x:DataType="entities:PatientMedicine">
 				<Border
 					Padding="0"
@@ -153,11 +158,7 @@
 							<!--  ПАЦИЕНТ И РЕУМАТОЛОГ  -->
 							<VerticalStackLayout Spacing="12">
 								<controls:CrudSectionHeader
-									Title="ПАЦИЕНТ И РЕУМАТОЛОГ"
-									Padding="8,5"
-									BackgroundColor="{StaticResource Gray300}"
-									LineColor="{StaticResource White}"
-									TextColor="{StaticResource SparkTextPrimary}" />
+									Title="ПАЦИЕНТ И РЕУМАТОЛОГ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
 								<Grid ColumnDefinitions="*,*" ColumnSpacing="12">
 									<Border
@@ -363,11 +364,7 @@
 							<!--  БИОЛОШКА ТЕРАПИЈА  -->
 							<VerticalStackLayout Spacing="10">
 								<controls:CrudSectionHeader
-									Title="БИОЛОШКА ТЕРАПИЈА"
-									Padding="8,5"
-									BackgroundColor="{StaticResource Gray300}"
-									LineColor="{StaticResource White}"
-									TextColor="{StaticResource SparkTextPrimary}" />
+									Title="БИОЛОШКА ТЕРАПИЈА"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
 								<Grid ColumnDefinitions="*,*" ColumnSpacing="20">
 									<VerticalStackLayout Grid.Column="0" Spacing="2">
@@ -422,11 +419,7 @@
 							<!--  ЛЕКОВИ  -->
 							<VerticalStackLayout Spacing="10">
 								<controls:CrudSectionHeader
-									Title="ЛЕКОВИ"
-									Padding="8,5"
-									BackgroundColor="{StaticResource Gray300}"
-									LineColor="{StaticResource White}"
-									TextColor="{StaticResource SparkTextPrimary}" />
+									Title="ЛЕКОВИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
 								<Grid ColumnDefinitions="1.4*,1*,1.35*,0.8*" ColumnSpacing="1">
 									<Border
@@ -522,11 +515,7 @@
 							<!--  ДОКУМЕНТИ  -->
 							<VerticalStackLayout Spacing="10">
 								<controls:CrudSectionHeader
-									Title="ДОКУМЕНТИ"
-									Padding="8,5"
-									BackgroundColor="{StaticResource Gray300}"
-									LineColor="{StaticResource White}"
-									TextColor="{StaticResource SparkTextPrimary}" />
+									Title="ДОКУМЕНТИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 								<FlexLayout
 									BindableLayout.ItemsSource="{Binding PatientDocuments}"
 									Direction="Row"
