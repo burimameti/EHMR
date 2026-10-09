@@ -51,6 +51,7 @@ public class DatabaseMigrationService
             // compiled into the application. Make the PatientMedicine schema safe
             // before any EF query can touch PharmaceuticalReference.
             await EnsurePatientMedicineSchemaAsync(db);
+            await EnsureClinicalScoreDefinitionsSchemaAsync(db);
         }
 
         await NormalizeLegacyStatusesAsync(db);
@@ -103,6 +104,47 @@ public class DatabaseMigrationService
 
         await command.ExecuteNonQueryAsync();
         _logger?.LogInformation("Verified PatientMedicines.PharmaceuticalReference schema.");
+    }
+
+    private async Task EnsureClinicalScoreDefinitionsSchemaAsync(DesktopTherapyDbContext db)
+    {
+        if(!db.Database.IsSqlServer())
+            return;
+
+        var connection=db.Database.GetDbConnection();
+        await using var command=connection.CreateCommand();
+        command.CommandText="""
+            IF OBJECT_ID(N'dbo.ClinicalScoreDefinitions', N'U') IS NULL
+            BEGIN
+                CREATE TABLE dbo.ClinicalScoreDefinitions
+                (
+                    Id uniqueidentifier NOT NULL CONSTRAINT PK_ClinicalScoreDefinitions PRIMARY KEY,
+                    Name nvarchar(200) NOT NULL,
+                    Description nvarchar(500) NOT NULL CONSTRAINT DF_ClinicalScoreDefinitions_Description DEFAULT '',
+                    IsActive bit NOT NULL CONSTRAINT DF_ClinicalScoreDefinitions_IsActive DEFAULT 1,
+                    CreatedAt datetime2 NOT NULL CONSTRAINT DF_ClinicalScoreDefinitions_CreatedAt DEFAULT SYSUTCDATETIME(),
+                    UpdatedAt datetime2 NULL,
+                    CreatedBy nvarchar(max) NOT NULL CONSTRAINT DF_ClinicalScoreDefinitions_CreatedBy DEFAULT ''
+                );
+            END;
+
+            IF NOT EXISTS
+            (
+                SELECT 1 FROM sys.indexes
+                WHERE name = N'IX_ClinicalScoreDefinitions_Name'
+                  AND object_id = OBJECT_ID(N'dbo.ClinicalScoreDefinitions')
+            )
+            BEGIN
+                CREATE UNIQUE INDEX IX_ClinicalScoreDefinitions_Name
+                    ON dbo.ClinicalScoreDefinitions(Name);
+            END;
+            """;
+
+        if(connection.State != System.Data.ConnectionState.Open)
+            await connection.OpenAsync();
+
+        await command.ExecuteNonQueryAsync();
+        _logger?.LogInformation("Verified ClinicalScoreDefinitions database schema.");
     }
 
     private static async Task NormalizeLegacyStatusesAsync(DesktopTherapyDbContext db)
