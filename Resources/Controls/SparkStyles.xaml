@@ -213,8 +213,8 @@
 	</Style>
 
 	<Style x:Key="PrimaryButtonStyle" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="#4CC9D4" />
-		<Setter Property="TextColor" Value="#FFFFFF" />
+		<Setter Property="BackgroundColor" Value="{StaticResource BrandAccent}" />
+		<Setter Property="TextColor" Value="#0F172A" />
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="HeightRequest" Value="40" />
@@ -234,7 +234,7 @@
 	</Style>
 
 	<Style x:Key="ActiveTabButtonStyle" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="#4CC9D4" />
+		<Setter Property="BackgroundColor" Value="{StaticResource BrandAccent}" />
 		<Setter Property="TextColor" Value="#FFFFFF" />
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="12" />
