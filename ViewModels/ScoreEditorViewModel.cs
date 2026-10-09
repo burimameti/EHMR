@@ -46,6 +46,10 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
     [ObservableProperty] private bool hasSuggestions;
     [ObservableProperty] private bool isSearching;
     [ObservableProperty] private string searchStatusText = string.Empty;
+    [ObservableProperty] private bool hasSearchStatus;
+
+    partial void OnSearchStatusTextChanged(string value)
+        => HasSearchStatus = !string.IsNullOrWhiteSpace(value);
 
     public void Load(IEnumerable<PatientScore> scores)
     {
