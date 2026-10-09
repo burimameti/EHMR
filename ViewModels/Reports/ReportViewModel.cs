@@ -787,6 +787,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         if(_activeProvider==null)
             return;
 
+        var providerPickers = _activeProvider.BuildPickers().ToList();
+
         // Report-specific controls are described here in the ViewModel.
         // SparkExplorerHeaderView only renders these definitions; the page has
         // no hand-authored period/date/medicine controls.
@@ -864,7 +866,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             }
         }
 
-        foreach(var picker in _activeProvider.BuildPickers())
+        foreach(var picker in providerPickers)
             Pickers.Add(picker);
     }
 
