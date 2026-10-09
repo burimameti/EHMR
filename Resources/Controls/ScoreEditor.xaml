@@ -77,7 +77,17 @@
 			Stroke="{StaticResource SparkBorderSubtle}"
 			StrokeShape="RoundRectangle 8"
 			StrokeThickness="1">
-			<VerticalStackLayout BindableLayout.ItemsSource="{Binding Suggestions}" Spacing="0">
+			<VerticalStackLayout Spacing="0">
+				<Label
+					Padding="8,7"
+					FontSize="11"
+					IsVisible="{Binding SearchStatusText, Converter={StaticResource StringNotEmptyConverter}}"
+					Text="{Binding SearchStatusText}"
+					TextColor="{StaticResource SparkTextSecondary}" />
+				<VerticalStackLayout
+					BindableLayout.ItemsSource="{Binding Suggestions}"
+					IsVisible="{Binding HasSuggestions}"
+					Spacing="0">
 				<BindableLayout.ItemTemplate>
 					<DataTemplate x:DataType="vm:ScoreSuggestion">
 						<Border
@@ -102,6 +112,7 @@
 						</Border>
 					</DataTemplate>
 				</BindableLayout.ItemTemplate>
+				</VerticalStackLayout>
 			</VerticalStackLayout>
 		</Border>
 
