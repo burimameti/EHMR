@@ -59,9 +59,12 @@ namespace EHMR.Resources.Controls
             SecondaryToolbarGrid.RowSpacing=8*s;
             SecondaryToolbarGrid.MinimumHeightRequest=64*s;
 
-            HeaderSearchBox.HorizontalOptions=LayoutOptions.Fill;
+            HeaderSearchBox.HorizontalOptions=LayoutOptions.Start;
             HeaderSearchBox.MinimumWidthRequest=0;
             HeaderSearchBox.Margin=new Thickness(0);
+            HeaderSearchBox.WidthRequest = SearchWidthRatio > 0
+                ? Math.Max(220, width * SearchWidthRatio)
+                : -1;
 
             CyrillicToggleLayout.WidthRequest=100*s;
             CyrillicToggleLayout.Spacing=4*s;
@@ -219,6 +222,21 @@ namespace EHMR.Resources.Controls
         {
             get => (bool)GetValue(UseCyrillicInputProperty);
             set => SetValue(UseCyrillicInputProperty, value);
+        }
+
+        public static readonly BindableProperty SearchWidthRatioProperty =
+            BindableProperty.Create(
+                nameof(SearchWidthRatio),
+                typeof(double),
+                typeof(SparkExplorerHeaderView),
+                1d,
+                propertyChanged: (bindable, _, _) =>
+                    ((SparkExplorerHeaderView)bindable).ApplyResponsiveLayout());
+
+        public double SearchWidthRatio
+        {
+            get => (double)GetValue(SearchWidthRatioProperty);
+            set => SetValue(SearchWidthRatioProperty, value);
         }
 
         public static readonly BindableProperty SearchPlaceholderProperty =
