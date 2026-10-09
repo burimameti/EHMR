@@ -1490,6 +1490,7 @@ public partial class PreviousMedicineRow : ObservableObject
     }
     public string MedicineName => PatientMedicine.MedicineName;
     public string MedicineNameBilingual => EHMR.Helpers.MacedonianTransliterator.ToBilingual(MedicineName);
+    public string Dosage => PatientMedicine.Dosage;
     public bool HasResolution => PatientMedicine.ResolutionDocumentId.HasValue;
     public void RefreshResolution() => OnPropertyChanged(nameof(HasResolution));
 
