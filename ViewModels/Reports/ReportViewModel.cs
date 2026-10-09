@@ -495,7 +495,13 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         // Load the report once first so all picker values are populated from the
         // provider, then rebuild the controls so the initialized selections are visible.
         await GenerateReportAsync();
-        InitializeSparkControls();
+
+        // GenerateAsync populates the already-bound provider picker instances.
+        // Rebuilding Pickers here would replace them with empty definitions and
+        // discard their loaded options, so refresh only tabs/actions/columns.
+        BuildSparkTabs();
+        BuildSparkButtons();
+        BuildSparkGridColumns();
     }
 
     partial void OnIsMedicineSearchEnabledChanged(bool value)
@@ -767,7 +773,15 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     // =====================================================
     public void RefreshReportControls()
     {
-        InitializeSparkControls();
+        if(_activeProvider is null)
+            return;
+
+        // Do not recreate provider picker models on page appearance: their
+        // option collections are populated during GenerateAsync and must persist.
+        BuildSparkTabs();
+        BuildSparkButtons();
+        BuildSparkGridColumns();
+        OnPropertyChanged(nameof(MedicinePicker));
     }
 
     private void InitializeSparkControls()
