@@ -420,6 +420,7 @@ public partial class DashboardViewModel : ObservableObject
         ResyncToToday();
         await LoadGlobalAsync();
         await LoadSelectedDateAppointmentsAsync();
+        await LoadTodayEncountersAsync();
         IsLoaded=true;
     }
 
@@ -429,6 +430,7 @@ public partial class DashboardViewModel : ObservableObject
         ResyncToToday();
         await LoadGlobalAsync();
         await LoadSelectedDateAppointmentsAsync();
+        await LoadTodayEncountersAsync();
     }
 
     private void ResyncToToday()
@@ -502,6 +504,51 @@ public partial class DashboardViewModel : ObservableObject
         finally
         {
             IsBusy=false;
+        }
+    }
+
+    // =========================================================
+    // TODAY'S ENCOUNTERS (displayed beside date-based appointments)
+    // =========================================================
+    private async Task LoadTodayEncountersAsync()
+    {
+        var start = DateTime.Today;
+        var end = start.AddDays(1);
+
+        try
+        {
+            await using var db = await _dbFactory.CreateDbContextAsync();
+            var query = db.Encounters
+                .AsNoTracking()
+                .Include(e => e.Patient)
+                .Where(e => e.EncounterDate >= start && e.EncounterDate < end)
+                .AsQueryable();
+
+            if (_policyService.IsScopedToOwnData && _policyService.CurrentDoctorId is Guid doctorId)
+                query = query.Where(e => e.DoctorId == doctorId);
+
+            var encounters = await query
+                .OrderByDescending(e => e.ScheduledStart ?? e.EncounterDate)
+                .Take(10)
+                .ToListAsync();
+
+            var items = encounters.Select(e => new DashboardEncounterItem
+            {
+                Source = e,
+                PatientName = e.Patient != null ? e.Patient.FullName : "—",
+                Time = (e.ScheduledStart ?? e.EncounterDate).ToString("HH:mm"),
+                StatusText = EncounterStatusDisplay.TryGetValue(e.Status, out var label)
+                    ? label
+                    : e.Status.ToString(),
+                StatusColor = EncounterStatusToColor(e.Status)
+            }).ToList();
+
+            await MainThread.InvokeOnMainThreadAsync(() =>
+                State.DailyEncounters = new ObservableCollection<DashboardEncounterItem>(items));
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[TodayEncounters] {ex}");
         }
     }
 
