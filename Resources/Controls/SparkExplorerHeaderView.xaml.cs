@@ -103,7 +103,9 @@ namespace EHMR.Resources.Controls
 
             // Row 0: search (star) | cyrillic (auto / 0) | buttons (auto)
             SecondaryToolbarGrid.ColumnDefinitions.Clear();
-            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Star });
+            // Keep search and conditional pickers adjacent from the left.
+            // A star-sized search column left a large visual gap before the inline picker.
+            SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Auto });
             SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Auto });
             SecondaryToolbarGrid.ColumnDefinitions.Add(new ColumnDefinition
             {
