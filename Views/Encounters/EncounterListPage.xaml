@@ -197,6 +197,7 @@
 								Columns="{Binding GridColumns}"
 								CurrentPage="{Binding CurrentPage}"
 								EditRowCommand="{Binding EditCommand}"
+								QuickPreviewCommand="{Binding PreviewCommand}"
 								NextPageCommand="{Binding NextPageCommand}"
 								PageChangedCommand="{Binding PageChangedCommand}"
 								PageInfoText="{Binding PageInfoText}"
