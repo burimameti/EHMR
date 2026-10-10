@@ -9,23 +9,27 @@
     </Style>
 
     <Style x:Key="EhmrPageTitleStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="24" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="TextColor" Value="#0F172A" />
     </Style>
 
     <Style x:Key="EhmrSectionTitleStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="16" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="TextColor" Value="#334155" />
     </Style>
 
     <Style x:Key="EhmrBodyTextStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="TextColor" Value="#334155" />
     </Style>
 
     <Style x:Key="EhmrCaptionStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="11" />
         <Setter Property="TextColor" Value="#64748B" />
     </Style>
@@ -41,6 +45,7 @@
     <Style x:Key="EhmrPrimaryButtonStyle" TargetType="Button">
         <Setter Property="BackgroundColor" Value="#2AEBE7" />
         <Setter Property="TextColor" Value="#0F172A" />
+        <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="HeightRequest" Value="40" />
@@ -52,6 +57,7 @@
     <Style x:Key="EhmrSecondaryButtonStyle" TargetType="Button">
         <Setter Property="BackgroundColor" Value="#FFFFFF" />
         <Setter Property="TextColor" Value="#334155" />
+        <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="HeightRequest" Value="40" />
         <Setter Property="Padding" Value="16,0" />
@@ -63,6 +69,7 @@
     <Style x:Key="EhmrDangerButtonStyle" TargetType="Button">
         <Setter Property="BackgroundColor" Value="#B42318" />
         <Setter Property="TextColor" Value="#FFFFFF" />
+        <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="HeightRequest" Value="40" />
@@ -74,6 +81,7 @@
     <Style x:Key="EhmrGhostButtonStyle" TargetType="Button">
         <Setter Property="BackgroundColor" Value="#F1F5F9" />
         <Setter Property="TextColor" Value="#475569" />
+        <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="HeightRequest" Value="40" />
         <Setter Property="Padding" Value="16,0" />
@@ -83,12 +91,14 @@
     </Style>
 
     <Style x:Key="EhmrGridHeaderStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="TextColor" Value="#FFFFFF" />
     </Style>
 
     <Style x:Key="EhmrGridCellStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="TextColor" Value="#334155" />
     </Style>
