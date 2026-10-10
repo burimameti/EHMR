@@ -284,7 +284,7 @@
 								WidthRequestEx="175" />
 						</Grid>
 
-										<!--  Лековите се преземаат автоматски од активната терапија на пациентот. Во прегледот се внесува само количината дадена при оваа посета.  -->
+										<!-- Лековите се додаваат рачно од активната терапија на пациентот; тука се внесува само количината за овој преглед. -->
 
 
 										<!--  Заглавие на табелата (последната колона е 130, иста како во редовите)  -->
@@ -697,6 +697,25 @@
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
+
+							<!-- Активната терапија на пациентот е само за преглед; не се менува од формата за преглед. -->
+							<controls:CrudSectionHeader
+								Title="АКТИВНИ ЛЕКОВИ НА ПАЦИЕНТОТ"
+								IsVisible="{Binding HasPatientContext}"
+								LineColor="{StaticResource Gray600}"
+								Style="{StaticResource SectionHeaderStyle}" />
+							<Border
+								Padding="10,8"
+								BackgroundColor="{StaticResource SparkContentBackground}"
+								IsVisible="{Binding HasPatientContext}"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 10"
+								StrokeThickness="1">
+								<Label
+									FontSize="12"
+									Text="{Binding ActiveMedicinesSummary}"
+									TextColor="{StaticResource SparkTextPrimary}" />
+							</Border>
 
 							<!--  Историја на лекови  -->
 							<controls:CrudSectionHeader
