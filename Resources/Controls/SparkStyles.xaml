@@ -289,42 +289,42 @@
 	<!--  ============================================================  -->
 	<Style x:Key="SparkSearchBarStyle" TargetType="SearchBar">
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-		<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
-		<Setter Property="CancelButtonColor" Value="{StaticResource SparkTextSecondary}" />
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="PlaceholderColor" Value="#6B7881" />
+		<Setter Property="CancelButtonColor" Value="#6B7881" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
 		<Setter Property="HeightRequest" Value="32" />
 	</Style>
 
 	<Style x:Key="SparkSearchBarFrameStyle" TargetType="Border">
-		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
 				<RoundRectangle CornerRadius="6" />
 			</Setter.Value>
 		</Setter>
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
 		<Setter Property="Padding" Value="0" />
 	</Style>
 
 	<Style x:Key="SparkPickerStyle" TargetType="Picker">
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-		<Setter Property="TitleColor" Value="{StaticResource SparkTextSecondary}" />
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="TitleColor" Value="#6B7881" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
 		<Setter Property="HeightRequest" Value="32" />
 	</Style>
 
 	<Style x:Key="SparkPickerFrameStyle" TargetType="Border">
-		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
 				<Rectangle />
 			</Setter.Value>
 		</Setter>
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
 		<Setter Property="Padding" Value="8,0" />
 		<Setter Property="MinimumWidthRequest" Value="96" />
 	</Style>
@@ -335,27 +335,27 @@
 		<Setter Property="CornerRadius" Value="6" />
 		<Setter Property="HeightRequest" Value="32" />
 		<Setter Property="Padding" Value="12,0" />
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-		<Setter Property="BorderColor" Value="{StaticResource SparkButtonSecondaryBorder}" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
+		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="BorderColor" Value="#CBD5E1" />
 		<Setter Property="BorderWidth" Value="1" />
 		<Style.Triggers>
 			<DataTrigger
 				Binding="{Binding IsPrimary}"
 				TargetType="Button"
 				Value="True">
-				<Setter Property="BackgroundColor" Value="{StaticResource SparkButtonSecondaryBg}" />
-				<Setter Property="TextColor" Value="{StaticResource SparkButtonSecondaryText}" />
+				<Setter Property="BackgroundColor" Value="#FFFFFF" />
+				<Setter Property="TextColor" Value="#334155" />
 				<Setter Property="BorderWidth" Value="0" />
 			</DataTrigger>
 		</Style.Triggers>
 	</Style>
 
 	<Style x:Key="SparkIconButtonFrameStyle" TargetType="Border">
-		<Setter Property="Stroke" Value="{StaticResource SparkButtonSecondaryBorder}" />
+		<Setter Property="Stroke" Value="#CBD5E1" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
 		<Setter Property="WidthRequest" Value="38" />
 		<Setter Property="HeightRequest" Value="38" />
 		<Setter Property="Padding" Value="0" />
@@ -365,9 +365,9 @@
 		<Setter Property="FontFamily" Value="{x:Null}" />
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
-		<Setter Property="BorderColor" Value="{StaticResource SparkBorder}" />
+		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
+		<Setter Property="BorderColor" Value="#D9E0E5" />
 		<Setter Property="BorderWidth" Value="1" />
 		<Setter Property="CornerRadius" Value="6" />
 		<Setter Property="HeightRequest" Value="32" />
@@ -382,27 +382,27 @@
 
 	<Style x:Key="SparkPagerLabelStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+		<Setter Property="TextColor" Value="#6B7881" />
 		<Setter Property="VerticalOptions" Value="Center" />
 	</Style>
 
 	<Style x:Key="SparkTabTitleLabelStyle" TargetType="Label">
-		<Setter Property="FontSize" Value="{StaticResource SparkFontSizeNormal}" />
+		<Setter Property="FontSize" Value="13" />
 		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTabInactiveText}" />
+		<Setter Property="TextColor" Value="#7C8798" />
 		<Setter Property="VerticalOptions" Value="Center" />
 		<Style.Triggers>
 			<DataTrigger
 				Binding="{Binding IsSelected}"
 				TargetType="Label"
 				Value="True">
-				<Setter Property="TextColor" Value="{StaticResource SparkTabActiveText}" />
+				<Setter Property="TextColor" Value="#0F172A" />
 			</DataTrigger>
 		</Style.Triggers>
 	</Style>
 
 	<Style x:Key="SparkTabBadgeFrameStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeNeutralBg}" />
+		<Setter Property="BackgroundColor" Value="#EBEFF3" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 8" />
 		<Setter Property="Padding" Value="7,2" />
 		<Setter Property="Stroke" Value="Transparent" />
@@ -411,7 +411,7 @@
 				Binding="{Binding IsSelected}"
 				TargetType="Border"
 				Value="True">
-				<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeNeutralBgSelected}" />
+				<Setter Property="BackgroundColor" Value="#2AEBE7" />
 			</DataTrigger>
 		</Style.Triggers>
 	</Style>
@@ -426,7 +426,7 @@
 
 
 	<Style x:Key="SparkBadgeWarningFrameStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBadgeWarningBg}" />
+		<Setter Property="BackgroundColor" Value="#FDF3E3" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
 				<RoundRectangle CornerRadius="4" />
@@ -441,16 +441,16 @@
 	<Style x:Key="SparkEntryStyle" TargetType="Entry">
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="HeightRequest" Value="32" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-		<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
+		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="PlaceholderColor" Value="#6B7881" />
 		<Setter Property="BackgroundColor" Value="Transparent" />
 		<Setter Property="ClearButtonVisibility" Value="WhileEditing" />
 	</Style>
 
 	<Style x:Key="SparkEditorStyle" TargetType="Editor">
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-		<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
+		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="PlaceholderColor" Value="#6B7881" />
 		<Setter Property="BackgroundColor" Value="Transparent" />
 		<Setter Property="AutoSize" Value="TextChanges" />
 	</Style>
@@ -458,19 +458,19 @@
 	<Style x:Key="SparkDatePickerStyle" TargetType="DatePicker">
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="HeightRequest" Value="32" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="TextColor" Value="#33414A" />
 		<Setter Property="BackgroundColor" Value="Transparent" />
 	</Style>
 
 	<Style x:Key="SparkTimePickerStyle" TargetType="TimePicker">
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="HeightRequest" Value="32" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="TextColor" Value="#33414A" />
 		<Setter Property="BackgroundColor" Value="Transparent" />
 	</Style>
 	<Style x:Key="SparkCardStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackground}" />
-		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
+		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 8" />
 		<Setter Property="Padding" Value="20" />
 	</Style>
@@ -478,26 +478,26 @@
 	<Style x:Key="SectionHeaderStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="15" />
 		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="TextColor" Value="#33414A" />
 		<Setter Property="Margin" Value="0,0,0,12" />
 	</Style>
 
 	<Style x:Key="DisplayBlockStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource SparkBackgroundAlt}" />
-		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+		<Setter Property="BackgroundColor" Value="#F8FAFB" />
+		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
 		<Setter Property="Padding" Value="12,10" />
 	</Style>
 
 	<Style x:Key="DisplayLabelCaptionStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="11" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+		<Setter Property="TextColor" Value="#6B7881" />
 		<Setter Property="Margin" Value="0,0,0,2" />
 	</Style>
 
 	<Style x:Key="DisplayLabelValueStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="14" />
-		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="TextColor" Value="#33414A" />
 		<Setter Property="FontAttributes" Value="Bold" />
 	</Style>
 </ResourceDictionary>
