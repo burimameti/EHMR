@@ -9,7 +9,7 @@ public enum SearchEntityType
     Patient,
     Doctor,
     Appointment,
-    Diagnosis,
+    PatientMkb10Assignment,
     Medication
 }
 
@@ -34,7 +34,7 @@ public sealed class SearchSuggestion
         SearchEntityType.Patient => "Patients",
         SearchEntityType.Doctor => "Doctors",
         SearchEntityType.Appointment => "Appointments",
-        SearchEntityType.Diagnosis => "Diagnoses",
+        SearchEntityType.PatientMkb10Assignment => "Diagnoses",
         SearchEntityType.Medication => "Medications",
         _ => "Other"
     };
@@ -114,7 +114,7 @@ public class AutocompleteSearchService : IAutocompleteSearchService
         SearchEntityType.Patient => 40,
         SearchEntityType.Doctor => 30,
         SearchEntityType.Appointment => 20,
-        SearchEntityType.Diagnosis => 10,
+        SearchEntityType.PatientMkb10Assignment => 10,
         SearchEntityType.Medication => 5,
         _ => 0
     };
@@ -223,7 +223,7 @@ public class AutocompleteSearchService : IAutocompleteSearchService
                 Score=40+TypeBoost(SearchEntityType.Appointment)
             }));
         }
-        if(types.Contains(SearchEntityType.Diagnosis))
+        if(types.Contains(SearchEntityType.PatientMkb10Assignment))
         {
             var diagnoses = await db.Mkb10Codes
                 .AsNoTracking()
@@ -237,13 +237,13 @@ public class AutocompleteSearchService : IAutocompleteSearchService
                 diagnoses.Select(x => new SearchSuggestion
                 {
                     Id=x.Id.ToString(),
-                    Type=SearchEntityType.Diagnosis,
+                    Type=SearchEntityType.PatientMkb10Assignment,
                     DisplayText=
                         $"{x.Code} • {x.Description}",
                     Score=
                         ScoreMatch(x.Code, query)
                         +ScoreMatch(x.Description, query)
-                        +TypeBoost(SearchEntityType.Diagnosis)
+                        +TypeBoost(SearchEntityType.PatientMkb10Assignment)
                 }));
         }
         // =========================
