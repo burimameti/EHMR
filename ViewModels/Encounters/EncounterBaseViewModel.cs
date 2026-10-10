@@ -529,6 +529,10 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             PatientMedicines.Clear();
             PatientDocuments.Clear();
             PatientScoreHistory.Clear();
+            ScoreOptions.Clear();
+            ScoreSuggestions.Clear();
+            ScoreSearchText=string.Empty;
+            ShowScoreSuggestions=false;
             return;
         }
 
