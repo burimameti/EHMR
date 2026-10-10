@@ -97,14 +97,7 @@
             public const string List = "appointmentslist";
             public const string Detail = "appointmentsdetail";
         }
-
-        public static class Therapy
-        {
-            public const string List = "therapylist";
-            public const string Detail = "therapydetail";
-        }
-
-        public static class Mkb10Codes
+public static class Mkb10Codes
         {
             public const string List = "mkbcodes";
 
