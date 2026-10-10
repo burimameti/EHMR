@@ -11,7 +11,6 @@
 //    {
 //        public List<CalendarDayDto> BuildMonth(
 //            DateTime month,
-//            List<TherapyCycle> cycles,
 //            List<Appointment> appointments)
 //        {
 //            var startOfMonth = new DateTime(month.Year, month.Month, 1);
@@ -53,7 +52,6 @@
 //        }
 
 //        public List<CalendarEventDto> BuildEvents(
-//            List<TherapyCycle> cycles,
 //            List<Appointment> appointments)
 //        {
 //            var events = new List<CalendarEventDto>();
@@ -61,7 +59,6 @@
 //            events.AddRange(cycles.Select(c => new CalendarEventDto
 //            {
 //                Id=c.Id,
-//                EventType=CalendarEventType.TherapyCycle,
 //                Title=$"{c.TherapySchedule.Name} C#{c.CycleNumber}",
 //                ScheduledTime=c.PlannedStartDate,
 //                Status=c.Status.ToString()
@@ -70,7 +67,6 @@
 //            events.AddRange(appointments.Select(a => new CalendarEventDto
 //            {
 //                Id=a.Id,
-//                EventType=CalendarEventType.TherapyCycle,
 //                Title=$"{a.Patient.LastName} {a.ScheduledStart:HH:mm}",
 //                ScheduledTime=a.ScheduledStart,
 //                Status=a.Status.ToString()
