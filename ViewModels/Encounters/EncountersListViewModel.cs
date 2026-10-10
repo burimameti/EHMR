@@ -113,14 +113,13 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
     {
         GridColumns=new ObservableCollection<SparkGridColumn>
         {
-            new() { Header = "БРОЈ", Key = "EncounterNumber", Width = new GridLength(1.1, GridUnitType.Star) },
-            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "PatientName", Width = new GridLength(2, GridUnitType.Star) },
-            new() { Header = "СЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(1.2, GridUnitType.Star) },
-            new() { Header = "РЕУМАТОЛОГ", Key = "DoctorName", Width = new GridLength(1.8, GridUnitType.Star) },
+            new() { Header = "БРОЈ", Key = "EncounterNumber", Width = new GridLength(0.8, GridUnitType.Star) },
+            new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "PatientName", Width = new GridLength(1.5, GridUnitType.Star) },
+            new() { Header = "СЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(0.9, GridUnitType.Star) },
+            new() { Header = "РЕУМАТОЛОГ", Key = "DoctorName", Width = new GridLength(1.3, GridUnitType.Star) },
 
 
-            new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1.3, GridUnitType.Star) },
-            new() { Header = "Preview", Key = "QuickPreview", CellType = SparkGridCellType.QuickPreview, Width = new GridLength(0.75, GridUnitType.Star), Sortable = false },
+            new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1, GridUnitType.Star) },
             new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
     }
@@ -137,7 +136,6 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
             row["DoctorName"]=e.Doctor?.User!=null ? $"{e.Doctor.User.FirstName} {e.Doctor.User.LastName}" : "";
 
             row["Date"]=(e.ScheduledStart??e.EncounterDate).ToString("dd.MM.yyyy");
-            row["QuickPreview"]="Preview";
             // Select goes to Detail (view), Edit goes to a different route (Edit) —
             // can't use AddDefaultActions here since both actions use base commands
             // that point at the same DetailRoute; these navigate to different routes.
