@@ -6,7 +6,7 @@ public enum SparkCardVariant
     Patient,
     Encounter,
     Therapy,
-    Diagnosis,
+    PatientMkb10Assignment,
     Document,
     Medicine,
     Prescription,
