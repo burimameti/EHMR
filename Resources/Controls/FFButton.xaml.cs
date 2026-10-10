@@ -277,7 +277,7 @@ public partial class FFButton : ContentView
         if(IsBlue)
         {
             BackgroundColorEx=Color.FromArgb("#2AEBE7");
-            TextColorEx=Colors.White;
+            TextColorEx=Color.FromArgb("#0F172A");
             BorderColor=Color.FromArgb("#2AEBE7");
             BorderThickness=0;
             return;
@@ -288,24 +288,24 @@ public partial class FFButton : ContentView
             // Main action: Save, Create, Confirm
             case FFButtonKind.Primary:
                 BackgroundColorEx=Color.FromArgb("#2AEBE7");
-                TextColorEx=Colors.White;
+                TextColorEx=Color.FromArgb("#0F172A");
                 BorderColor=Color.FromArgb("#2AEBE7");
                 BorderThickness=0;
                 break;
 
             // Supporting action: Edit, Preview, Back
             case FFButtonKind.Secondary:
-                BackgroundColorEx=ResolveColorResource("BrandAccent", "#4596A3");
-                TextColorEx=Colors.White;
-                BorderColor=Color.FromArgb("#2BC9B4");
-                BorderThickness=0;
+                BackgroundColorEx=Color.FromArgb("#FFFFFF");
+                TextColorEx=Color.FromArgb("#334155");
+                BorderColor=Color.FromArgb("#CBD5E1");
+                BorderThickness=1;
                 break;
 
             // Positive clinical action: Complete, Approve
             case FFButtonKind.Green:
-                BackgroundColorEx=ResolveColorResource("BrandAccent", "#B5E61D");
+                BackgroundColorEx=Color.FromArgb("#15803D");
                 TextColorEx=Colors.White;
-                BorderColor=ResolveColorResource("BrandAccent", "#E3E689");
+                BorderColor=Color.FromArgb("#15803D");
                 BorderThickness=0;
                 break;
 
@@ -330,13 +330,6 @@ public partial class FFButton : ContentView
     // ═══════════════════════════════════════════════════════════ //
     // TAP HANDLER                                                 //
     // ═══════════════════════════════════════════════════════════ //
-
-    private static Color ResolveColorResource(string key, string fallback)
-    {
-        if(Application.Current?.Resources.TryGetValue(key, out var value)==true&&value is Color color)
-            return color;
-        return Color.FromArgb(fallback);
-    }
 
     private async void OnTapped(object sender, TappedEventArgs e)
     {
