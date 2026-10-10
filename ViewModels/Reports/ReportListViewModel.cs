@@ -507,7 +507,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         var encounters=await db.Encounters
             .AsNoTracking()
             .Include(e => e.Doctor).ThenInclude(d => d.User)
-            .Include(e => e.Diagnoses).ThenInclude(d => d.Mkb10Code)
+            .Include(e => e.Mkb10Assignments).ThenInclude(d => d.Mkb10Code)
             .Where(e => e.PatientId==patientId)
             .OrderByDescending(e => e.ScheduledStart ?? e.EncounterDate)
             .Take(6)
@@ -546,7 +546,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 .OrderByDescending(s => s.RecordedAt)
                 .FirstOrDefault();
 
-            var diagnoses=encounter.Diagnoses
+            var diagnoses=encounter.Mkb10Assignments
                 .Where(d => d.Mkb10Code is not null)
                 .OrderByDescending(d => d.IsPrimary)
                 .ThenBy(d => d.Mkb10Code!.Code)
@@ -598,7 +598,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     {
         var data = await db.Patients
             .Include(p => p.Doctor).ThenInclude(d => d.User)
-            .Include(p => p.Diagnoses).ThenInclude(d => d.Mkb10Code)
+            .Include(p => p.Mkb10Assignments).ThenInclude(d => d.Mkb10Code)
             .Include(p => p.PatientMedicines).ThenInclude(pm => pm.Medicine)
             .Include(p => p.Scores)
             .AsNoTracking()
@@ -614,7 +614,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 .Select(s => s.ScoreText)
                 .FirstOrDefault() ?? "";
 
-            var diagnoses=string.Join(", ", p.Diagnoses
+            var diagnoses=string.Join(", ", p.Mkb10Assignments
                 .Where(d => d.Mkb10Code!=null)
                 .Select(d => d.Mkb10Code!.Code)
                 .Distinct());
@@ -669,7 +669,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         var data=await db.PatientMedicines
             .Include(pm => pm.Patient)
             .Include(pm => pm.Medicine)
-            .Include(pm => pm.Patient).ThenInclude(p => p.Diagnoses).ThenInclude(d => d.Mkb10Code)
+            .Include(pm => pm.Patient).ThenInclude(p => p.Mkb10Assignments).ThenInclude(d => d.Mkb10Code)
             .AsNoTracking()
             .Where(pm => (!patientId.HasValue || pm.PatientId==patientId.Value)
                          &&(!medicineId.HasValue || pm.MedicineId==medicineId.Value)).ToListAsync();
@@ -695,7 +695,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 if(pm.Patient is not null)
                     patientNames.Add(pm.Patient.FullName);
 
-                foreach(var diagnosis in pm.Patient?.Diagnoses??[])
+                foreach(var diagnosis in pm.Patient?.Mkb10Assignments??[])
                 {
                     var code=diagnosis.Mkb10Code?.Code?.Trim();
                     var description=diagnosis.Mkb10Code?.Description?.Trim();
