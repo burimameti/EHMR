@@ -211,20 +211,30 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             return;
         }
 
-        var value=string.IsNullOrWhiteSpace(ScoreSearchText)
-            ? await UserDialogService.ShowPromptAsync(
-                "Нов скор",
-                "Внесете вредност на скор.",
-                "Додај",
-                "Откажи",
-                "Пример: 7.5")
-            : ScoreSearchText;
+        var scoreName=ScoreSearchText?.Trim();
+        if(string.IsNullOrWhiteSpace(scoreName) || !ScoreOptions.Any(x => string.Equals(x, scoreName, StringComparison.OrdinalIgnoreCase)))
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Изберете скор",
+                "Изберете скор што веќе е доделен во картонот на пациентот.",
+                "Во ред");
+            return;
+        }
 
-        if(string.IsNullOrWhiteSpace(value))
+        var number=await UserDialogService.ShowPromptAsync(
+            "Вредност за прегледот",
+            $"Внесете ја вредноста за „{scoreName}“. Вредноста важи само за овој преглед.",
+            "Додај",
+            "Откажи",
+            "Пример: 7.5");
+
+        if(string.IsNullOrWhiteSpace(number))
             return;
 
-        value=value.Trim();
-        EncounterScores.Add(value);
+        var entry=$"{scoreName}: {number.Trim()}";
+        if(!EncounterScores.Contains(entry, StringComparer.OrdinalIgnoreCase))
+            EncounterScores.Add(entry);
+
         ScoreText=string.Join(" | ", EncounterScores);
         ScoreSearchText=string.Empty;
         ShowScoreSuggestions=false;
@@ -538,6 +548,17 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             CurrentPatientScoreDate=ctx.LatestScore?.RecordedAt;
             PatientDocuments=new ObservableCollection<PatientDocument>(ctx.Documents);
             PatientScoreHistory=new ObservableCollection<PatientScore>(ctx.Scores);
+            // The encounter can only use score definitions already assigned on the
+            // patient chart; global score definitions are not added from this form.
+            ScoreOptions.Clear();
+            foreach(var scoreName in ctx.Scores
+                .Where(s => s.EncounterId==Guid.Empty && !string.IsNullOrWhiteSpace(s.ScoreText))
+                .Select(s => s.ScoreText.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase))
+                ScoreOptions.Add(scoreName);
+            ScoreSearchText=string.Empty;
+            ScoreSuggestions.Clear();
+            ShowScoreSuggestions=false;
 
             OnPropertyChanged(nameof(FilteredAppointments));
             OnPropertyChanged(nameof(FilteredEncounters));
