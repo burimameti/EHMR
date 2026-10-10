@@ -124,7 +124,7 @@ public partial class FFButton : ContentView
         BindableProperty.Create(nameof(FontSizeEx), typeof(double), typeof(FFButton), 13d);
 
     public static readonly BindableProperty FontFamilyProperty =
-        BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(FFButton), null);
+        BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(FFButton), "Segoe UI");
 
     public static readonly BindableProperty FontAttributesExProperty =
         BindableProperty.Create(nameof(FontAttributesEx), typeof(FontAttributes), typeof(FFButton), FontAttributes.Bold);
@@ -314,7 +314,7 @@ public partial class FFButton : ContentView
                 BackgroundColorEx=Color.FromArgb("#B42318");
                 TextColorEx=Colors.White;
                 BorderColor=Color.FromArgb("#B42318");
-                BorderThickness=2;
+                BorderThickness=0;
                 break;
 
             // Quiet action: Close, Clear filters
