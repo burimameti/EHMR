@@ -4,23 +4,23 @@
 	<!--  ============================================================  -->
 	<!--  SIDEBAR (Deep Slate / Slate-Blue Theme)  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkSidebarBg">#3B4A56</Color>
+	<Color x:Key="SparkSidebarBg">#202D3D</Color>
 	<!--  was #32404D — slightly deeper, reads as "premium dark" not "washed navy"  -->
-	<Color x:Key="SparkSidebarBgHover">#465762</Color>
+	<Color x:Key="SparkSidebarBgHover">#2E4257</Color>
 	<Color x:Key="SparkSidebarActiveBg">#2AEBE7</Color>
 	<!--  aligned to the refined accent teal below, was a mismatched #4CC3D9  -->
-	<Color x:Key="SparkSidebarText">#96A5B5</Color>
+	<Color x:Key="SparkSidebarText">#CBD5E1</Color>
 	<Color x:Key="SparkSidebarTextActive">#FFFFFF</Color>
-	<Color x:Key="SparkSidebarBorder">#1F2933</Color>
+	<Color x:Key="SparkSidebarBorder">#1E293B</Color>
 
 	<!--  ============================================================  -->
 	<!--  MAIN SURFACES & CANVAS  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkCanvasBackground">#F1F3F5</Color>
+	<Color x:Key="SparkCanvasBackground">#F1F5F9</Color>
 	<!--  Canvas behind the cards  -->
 	<Color x:Key="SparkBackground">#FFFFFF</Color>
 	<!--  White card surface  -->
-	<Color x:Key="SparkBackgroundAlt">#F8FAFB</Color>
+	<Color x:Key="SparkBackgroundAlt">#F8FAFC</Color>
 	<!--  Alternating rows/nested sections  -->
 	<Color x:Key="SparkBorder">#D9E0E5</Color>
 	<!--  Hairline borders/dividers  -->
@@ -28,9 +28,9 @@
 	<!--  ============================================================  -->
 	<!--  TYPOGRAPHY  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkTextPrimary">#33414A</Color>
+	<Color x:Key="SparkTextPrimary">#334155</Color>
 	<!--  was #2D3748 — darker for crisper headings/labels  -->
-	<Color x:Key="SparkTextSecondary">#6B7881</Color>
+	<Color x:Key="SparkTextSecondary">#64748B</Color>
 	<!--  Tailwind slate-500, replaces the slightly muddy #718096  -->
 	<Color x:Key="SparkTextMuted">#9AA6AD</Color>
 	<!--  slate-400  -->
@@ -58,11 +58,11 @@
 	<!--  ============================================================  -->
 	<!--  TABS CONFIGURATION  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkTabActiveBg">#F0F7F5</Color>
+	<Color x:Key="SparkTabActiveBg">#D9FBFA</Color>
 	<Color x:Key="SparkTabActiveBorder">#2AEBE7</Color>
 	<Color x:Key="SparkTabActiveText">#0F172A</Color>
 	<Color x:Key="SparkTabInactiveText">#7C8798</Color>
-	<Color x:Key="SparkTabHoverBg">#F1F5F8</Color>
+	<Color x:Key="SparkTabHoverBg">#F1F5F9</Color>
 
 	<!--  ============================================================  -->
 	<!--  SEMANTIC STATUS & BADGES (muted, enterprise-grade — not candy pastel)  -->
@@ -86,8 +86,8 @@
 	<Color x:Key="SparkBadgeDangerText">#C24545</Color>
 
 	<!--  Neutral  -->
-	<Color x:Key="SparkButtonBg">#E8EBF0</Color>
-	<Color x:Key="SparkStatusNeutralBg">#E8EBF0</Color>
+	<Color x:Key="SparkButtonBg">#F1F5F9</Color>
+	<Color x:Key="SparkStatusNeutralBg">#F1F5F9</Color>
 	<Color x:Key="SparkStatusNeutralText">#52586B</Color>
 	<Color x:Key="SparkBadgeNeutralBg">#EBEFF3</Color>
 	<Color x:Key="SparkBadgeNeutralBgSelected">#2AEBE7</Color>
@@ -109,8 +109,8 @@
 		дефинирани (SparkExpandableCardView, TherapyCyclesPage, BackupHistoryPage,
 		страницата за дестинации). Врзани се за постоечките еквиваленти.
 	-->
-	<Color x:Key="SparkSurface">#F8FAFB</Color>
-	<Color x:Key="SparkSurfaceAlt">#F8FAFB</Color>
+	<Color x:Key="SparkSurface">#F8FAFC</Color>
+	<Color x:Key="SparkSurfaceAlt">#F8FAFC</Color>
 	<Color x:Key="SparkBorderSubtle">#D9E0E5</Color>
 	<Color x:Key="SparkOverlay">#80191E29</Color>
 
@@ -124,7 +124,7 @@
 	<!--  ============================================================  -->
 
 	<!--  FFInput, FFDatePickerPage  -->
-	<Color x:Key="InputText">#33414A</Color>
+	<Color x:Key="InputText">#334155</Color>
 	<Color x:Key="InputPlaceholder">#9AA6AD</Color>
 
 	<!--  Components\PageHeader.xaml, SearchFilterBarView.xaml  -->
@@ -138,7 +138,7 @@
 	<Style x:Key="MedicalSectionTitle" TargetType="Label">
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="18" />
-		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="TextColor" Value="#334155" />
 	</Style>
 
 	<Style x:Key="MutedText" TargetType="Label">
@@ -148,7 +148,7 @@
 
 	<Style x:Key="InputLabel" TargetType="Label">
 		<Setter Property="FontSize" Value="11" />
-		<Setter Property="TextColor" Value="#6B7881" />
+		<Setter Property="TextColor" Value="#64748B" />
 		<Setter Property="Margin" Value="0,0,0,4" />
 	</Style>
 
@@ -166,7 +166,7 @@
 	<!--  AppointmentDetailPage, PatientDetailFormPage — „x" во чипче  -->
 	<Style x:Key="TokenChipRemoveButtonStyle" TargetType="Button">
 		<Setter Property="BackgroundColor" Value="Transparent" />
-		<Setter Property="TextColor" Value="#6B7881" />
+		<Setter Property="TextColor" Value="#64748B" />
 		<Setter Property="FontSize" Value="12" />
 		<Setter Property="WidthRequest" Value="24" />
 		<Setter Property="HeightRequest" Value="24" />
@@ -185,7 +185,7 @@
 	<Style x:Key="GridHeaderLabel" TargetType="Label">
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="22" />
-		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="TextColor" Value="#334155" />
 	</Style>
 
 	<Style x:Key="ToolbarContainer" TargetType="Border">
@@ -206,7 +206,7 @@
 
 	<Style x:Key="InputEntry" TargetType="Entry">
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
-		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="TextColor" Value="#334155" />
 		<Setter Property="PlaceholderColor" Value="#9AA6AD" />
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="HeightRequest" Value="40" />
@@ -245,7 +245,7 @@
 
 	<Style x:Key="GridHeaderStyle" TargetType="Border">
 		<Setter Property="Padding" Value="12,10" />
-		<Setter Property="BackgroundColor" Value="#F8FAFB" />
+		<Setter Property="BackgroundColor" Value="#F8FAFC" />
 		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeThickness" Value="1" />
 	</Style>
@@ -289,9 +289,9 @@
 	<!--  ============================================================  -->
 	<Style x:Key="SparkSearchBarStyle" TargetType="SearchBar">
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="TextColor" Value="#33414A" />
-		<Setter Property="PlaceholderColor" Value="#6B7881" />
-		<Setter Property="CancelButtonColor" Value="#6B7881" />
+		<Setter Property="TextColor" Value="#334155" />
+		<Setter Property="PlaceholderColor" Value="#64748B" />
+		<Setter Property="CancelButtonColor" Value="#64748B" />
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
 		<Setter Property="HeightRequest" Value="32" />
 	</Style>
@@ -310,8 +310,8 @@
 
 	<Style x:Key="SparkPickerStyle" TargetType="Picker">
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="TextColor" Value="#33414A" />
-		<Setter Property="TitleColor" Value="#6B7881" />
+		<Setter Property="TextColor" Value="#334155" />
+		<Setter Property="TitleColor" Value="#64748B" />
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
 		<Setter Property="HeightRequest" Value="32" />
 	</Style>
@@ -336,7 +336,7 @@
 		<Setter Property="HeightRequest" Value="32" />
 		<Setter Property="Padding" Value="12,0" />
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
-		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="TextColor" Value="#334155" />
 		<Setter Property="BorderColor" Value="#CBD5E1" />
 		<Setter Property="BorderWidth" Value="1" />
 		<Style.Triggers>
@@ -365,7 +365,7 @@
 		<Setter Property="FontFamily" Value="{x:Null}" />
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="TextColor" Value="#334155" />
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
 		<Setter Property="BorderColor" Value="#D9E0E5" />
 		<Setter Property="BorderWidth" Value="1" />
@@ -382,7 +382,7 @@
 
 	<Style x:Key="SparkPagerLabelStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="TextColor" Value="#6B7881" />
+		<Setter Property="TextColor" Value="#64748B" />
 		<Setter Property="VerticalOptions" Value="Center" />
 	</Style>
 
@@ -441,16 +441,16 @@
 	<Style x:Key="SparkEntryStyle" TargetType="Entry">
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="HeightRequest" Value="32" />
-		<Setter Property="TextColor" Value="#33414A" />
-		<Setter Property="PlaceholderColor" Value="#6B7881" />
+		<Setter Property="TextColor" Value="#334155" />
+		<Setter Property="PlaceholderColor" Value="#64748B" />
 		<Setter Property="BackgroundColor" Value="Transparent" />
 		<Setter Property="ClearButtonVisibility" Value="WhileEditing" />
 	</Style>
 
 	<Style x:Key="SparkEditorStyle" TargetType="Editor">
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="TextColor" Value="#33414A" />
-		<Setter Property="PlaceholderColor" Value="#6B7881" />
+		<Setter Property="TextColor" Value="#334155" />
+		<Setter Property="PlaceholderColor" Value="#64748B" />
 		<Setter Property="BackgroundColor" Value="Transparent" />
 		<Setter Property="AutoSize" Value="TextChanges" />
 	</Style>
@@ -458,14 +458,14 @@
 	<Style x:Key="SparkDatePickerStyle" TargetType="DatePicker">
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="HeightRequest" Value="32" />
-		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="TextColor" Value="#334155" />
 		<Setter Property="BackgroundColor" Value="Transparent" />
 	</Style>
 
 	<Style x:Key="SparkTimePickerStyle" TargetType="TimePicker">
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="HeightRequest" Value="32" />
-		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="TextColor" Value="#334155" />
 		<Setter Property="BackgroundColor" Value="Transparent" />
 	</Style>
 	<Style x:Key="SparkCardStyle" TargetType="Border">
@@ -478,12 +478,12 @@
 	<Style x:Key="SectionHeaderStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="15" />
 		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="TextColor" Value="#334155" />
 		<Setter Property="Margin" Value="0,0,0,12" />
 	</Style>
 
 	<Style x:Key="DisplayBlockStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="#F8FAFB" />
+		<Setter Property="BackgroundColor" Value="#F8FAFC" />
 		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 6" />
 		<Setter Property="Padding" Value="12,10" />
@@ -491,13 +491,13 @@
 
 	<Style x:Key="DisplayLabelCaptionStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="11" />
-		<Setter Property="TextColor" Value="#6B7881" />
+		<Setter Property="TextColor" Value="#64748B" />
 		<Setter Property="Margin" Value="0,0,0,2" />
 	</Style>
 
 	<Style x:Key="DisplayLabelValueStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="14" />
-		<Setter Property="TextColor" Value="#33414A" />
+		<Setter Property="TextColor" Value="#334155" />
 		<Setter Property="FontAttributes" Value="Bold" />
 	</Style>
 </ResourceDictionary>
