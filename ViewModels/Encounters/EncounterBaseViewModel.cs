@@ -1597,7 +1597,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected async Task AddMedicine(Medicine medicine)
     {
-        if(!CanUpdate || medicine is null) return;
+        if(!(CanCreate || CanUpdate) || medicine is null) return;
 
         if(EncounterMedicines.Any(x => x.MedicineId==medicine.Id&&x.IsActive))
             return;
