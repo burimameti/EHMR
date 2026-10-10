@@ -134,7 +134,6 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                 IsPatientLockedFromContext=true;
                 IsEditMode=true;
                 IsReadOnly=false;
-                LoadCurrentMedicinesForEncounter();
                 RefreshSidePanel();
                 _isLoaded=true;
                 return;
@@ -153,7 +152,6 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                     await LoadTherapyCyclesForPatientAsync(matchedPatient.Id);
                     await LoadAppointmentsForPatientAsync(matchedPatient.Id);
                     await LoadPatientContextAsync(matchedPatient.Id);
-                    LoadCurrentMedicinesForEncounter();
                 }
                 finally { _isApplyingContext=false; }
                 _patientContext.SelectedItem=null;
@@ -221,7 +219,6 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             await LoadTherapyCyclesForPatientAsync(patient.Id);
             await LoadAppointmentsForPatientAsync(patient.Id);
             await LoadPatientContextAsync(patient.Id);
-            LoadCurrentMedicinesForEncounter();
         }
         finally { _isApplyingContext=false; }
         RefreshSidePanel();
@@ -236,69 +233,45 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             return;
         }
 
-        var available = PatientMedicines
-            .Where(x => x.IsActive && x.EncounterId==null && x.Medicine is not null)
-            .Where(x => !EncounterMedicines.Any(current => current.MedicineId==x.MedicineId))
-            .GroupBy(x => x.MedicineId)
-            .Select(g => g.First())
-            .ToList();
-
-        if(available.Count==0)
+        // Add only medicines selected for this encounter. Patient-level active
+        // therapy remains visible as history and is never changed by this flow.
+        while(true)
         {
-            await UserDialogService.ShowAlertAsync(
-                "Тековна терапија",
-                "Сите активни лекови на пациентот веќе се прикажани во тековната терапија. Нов лек прво се додава во картонот на пациентот.",
-                "Во ред");
-            return;
-        }
+            var available = PatientMedicines
+                .Where(x => x.IsActive && x.EncounterId==null && x.Medicine is not null)
+                .Where(x => !EncounterMedicines.Any(current => current.MedicineId==x.MedicineId))
+                .GroupBy(x => x.MedicineId)
+                .Select(g => g.First())
+                .ToList();
 
-        var options = available
-            .Select((item, index) => $"{index + 1}. {item.Medicine!.Name}")
-            .ToArray();
-
-        var selected = await UserDialogService.ShowActionSheetAsync(
-            "Додади активен лек",
-            "Откажи",
-            options);
-
-        if(string.IsNullOrWhiteSpace(selected))
-            return;
-
-        var indexSelected = Array.IndexOf(options, selected);
-        if(indexSelected<0 || indexSelected>=available.Count)
-            return;
-
-        await AddMedicine(available[indexSelected].Medicine);
-    }
-
-    private void LoadCurrentMedicinesForEncounter()
-    {
-        if(EncounterMedicines.Count>0) return;
-
-        // Only patient-level active therapy is carried into a new encounter.
-        // Encounter-scoped rows are historical snapshots and must never appear
-        // as preselected current therapy.
-        foreach(var medicine in PatientMedicines
-            .Where(x => x.IsActive && x.EncounterId==null)
-           )
-        {
-            EncounterMedicines.Add(new PatientMedicine
+            if(available.Count==0)
             {
-                Id=Guid.NewGuid(),
-                PatientId=SelectedPatient?.Id ?? Encounter.PatientId,
-                EncounterId=Encounter.Id==Guid.Empty ? null : Encounter.Id,
-                MedicineId=medicine.MedicineId,
-                Medicine=medicine.Medicine,
-                ApplicationRegimeId=medicine.ApplicationRegimeId,
-                ApplicationRegime=medicine.ApplicationRegime,
-                Quantity=0,
-                Dosage=medicine.Dosage,
-                DosesFrequency=medicine.DosesFrequency,
-         
-                Notes=medicine.Notes,
-                PharmaceuticalReference=medicine.PharmaceuticalReference,
-                IsActive=true
-            });
+                await UserDialogService.ShowAlertAsync(
+                    "Тековна терапија",
+                    EncounterMedicines.Count==0
+                        ? "Пациентот нема активни лекови што може да се додадат во овој преглед."
+                        : "Сите активни лекови што може да се додадат веќе се избрани за овој преглед.",
+                    "Во ред");
+                return;
+            }
+
+            var options = available
+                .Select((item, index) => $"{index + 1}. {item.Medicine!.BilingualName}")
+                .ToArray();
+
+            var selected = await UserDialogService.ShowActionSheetAsync(
+                "Додади лек за преглед",
+                "Заврши избор",
+                options);
+
+            if(string.IsNullOrWhiteSpace(selected) || selected=="Заврши избор")
+                return;
+
+            var indexSelected = Array.IndexOf(options, selected);
+            if(indexSelected<0 || indexSelected>=available.Count)
+                return;
+
+            await AddMedicine(available[indexSelected].Medicine!);
         }
     }
 
