@@ -437,6 +437,11 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     // Patient-level therapies that were discontinued are clinical history.
     // Encounter snapshots are excluded because they belong to individual visits,
     // not to the patient's active-therapy timeline.
+    public IEnumerable<PatientMedicine> PreviousMedicines =>
+        PatientMedicines
+            .Where(x => !x.IsActive && x.EncounterId==null)
+            .OrderByDescending(x => x.IsActive);
+
     // Medication history, separate from active medicines used on the new encounter.
     public IEnumerable<PatientMedicine> MedicationHistory =>
         PatientMedicines
