@@ -171,7 +171,6 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(AppRoutes.Users.Detail, typeof(UserEditPage));
         // Therapy
         Routing.RegisterRoute(AppRoutes.Therapy.Detail, typeof(TherapyDetailsPage));
-        Routing.RegisterRoute(AppRoutes.Therapy.List, typeof(TherapyCyclesPage));
 
         // Protocols
         Routing.RegisterRoute(AppRoutes.Protocols.List, typeof(ProtocolRegistryPage));
