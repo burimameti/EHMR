@@ -108,7 +108,7 @@
 																FontAttributes="Bold"
 																FontSize="16"
 																Text="{Binding FullName}"
-																TextColor="{StaticResource SparkTextPrimary}"
+																TextColor="White"
 																VerticalOptions="Center" />
 															<VerticalStackLayout Grid.Column="1" Spacing="1">
 																<Label
@@ -342,28 +342,28 @@
 											<Border
 												Grid.Column="1"
 												Padding="8,7"
-												BackgroundColor="{StaticResource SparkSurfaceAlt}"
+												BackgroundColor="#1F2937"
 												StrokeThickness="0">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ДОЗА" TextColor="White" />
 											</Border>
 											<Border
 												Grid.Column="2"
 												Padding="8,7"
-												BackgroundColor="{StaticResource SparkSurfaceAlt}"
+												BackgroundColor="#1F2937"
 												StrokeThickness="0">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕЖИМ НА АПЛИКАЦИЈА" TextColor="White" />
 											</Border>
 											<Border
 												Grid.Column="3"
 												Padding="8,7"
-												BackgroundColor="{StaticResource SparkSurfaceAlt}"
+												BackgroundColor="#1F2937"
 												StrokeThickness="0">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="КОЛИЧИНА" TextColor="White" />
 											</Border>
 											<Border
 												Grid.Column="4"
 												Padding="8,7"
-												BackgroundColor="{StaticResource SparkSurfaceAlt}"
+												BackgroundColor="#1F2937"
 												StrokeThickness="0">
 												<Label
 													HorizontalOptions="Center"
@@ -408,7 +408,7 @@
 																IsReadOnly="True"
 																Keyboard="Numeric"
 																Text="{Binding Dosage}"
-																TextColor="{StaticResource SparkTextPrimary}"
+																TextColor="White"
 																VerticalOptions="Center" />
 														</Border>
 														<Border
@@ -437,7 +437,7 @@
 																FontSize="11.5"
 																Keyboard="Numeric"
 																Text="{Binding Quantity, Mode=TwoWay}"
-																TextColor="{StaticResource SparkTextPrimary}"
+																TextColor="White"
 																VerticalOptions="Center" />
 														</Border>
 														<Border
@@ -475,16 +475,7 @@
 											Title="СКОРОВИ"
 											LineColor="{StaticResource Gray600}"
 											Style="{StaticResource SectionHeaderStyle}" />
-										<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-											<controls:FFSearchBox Placeholder="Пребарај скор..." Text="{Binding ScoreSearchText, Mode=TwoWay}" />
-											<controls:FFButton
-												Grid.Column="1"
-												ButtonKind="Primary"
-												Command="{Binding AddScoreCommand}"
-												HeightRequestEx="40"
-												Text="Додади скор"
-												WidthRequestEx="125" />
-										</Grid>
+										<controls:FFSearchBox Placeholder="Пребарај скор..." Text="{Binding ScoreSearchText, Mode=TwoWay}" />
 										<Border
 											Padding="4"
 											BackgroundColor="White"
@@ -522,13 +513,14 @@
 													<DataTemplate x:DataType="x:String">
 														<Grid
 															Padding="10,7"
+															BackgroundColor="#1F2937"
 															ColumnDefinitions="*,Auto"
 															ColumnSpacing="5">
 															<Label
 																FontSize="16"
 																LineBreakMode="WordWrap"
 																Text="{Binding .}"
-																TextColor="{StaticResource SparkTextPrimary}"
+																TextColor="White"
 																VerticalOptions="Center" />
 															<controls:FFButton
 																Grid.Column="1"
@@ -536,8 +528,8 @@
 																Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveScoreCommand}"
 																CommandParameter="{Binding .}"
 																HeightRequestEx="30"
-																Text=" X "
-																WidthRequestEx="44" />
+																Text="×"
+																WidthRequestEx="32" />
 														</Grid>
 													</DataTemplate>
 												</BindableLayout.ItemTemplate>
@@ -638,8 +630,8 @@
 															Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveFindingCommand}"
 															CommandParameter="{Binding .}"
 															HeightRequestEx="30"
-															Text=" X "
-															WidthRequestEx="44" />
+															Text="×"
+															WidthRequestEx="32" />
 													</Grid>
 												</DataTemplate>
 											</BindableLayout.ItemTemplate>
