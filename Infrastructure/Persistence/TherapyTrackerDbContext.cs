@@ -67,6 +67,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<ReportHistory> ReportHistories => Set<ReportHistory>();
     public DbSet<Mkb10Code> Mkb10Codes => Set<Mkb10Code>();
+    public DbSet<PatientMkb10Assignment> PatientMkb10Assignments => Set<PatientMkb10Assignment>();
     public DbSet<PatientScore> PatientScores => Set<PatientScore>();
     public DbSet<ClinicalScoreDefinition> ClinicalScoreDefinitions => Set<ClinicalScoreDefinition>();
 
