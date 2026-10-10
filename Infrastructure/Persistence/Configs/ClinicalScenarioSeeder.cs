@@ -301,4 +301,3 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         await context.SaveChangesAsync(ct);
     }
 }
-}
