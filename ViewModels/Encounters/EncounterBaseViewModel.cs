@@ -367,7 +367,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     //LoadPatientContext 
     // ===================== RAW PATIENT CONTEXT (непроменето од service) =====================
-    [ObservableProperty] private ObservableCollection<Diagnosis> patientMkb10Assignments = new();
+    [ObservableProperty] private ObservableCollection<PatientMkb10Assignment> patientMkb10Assignments = new();
     [ObservableProperty] private ObservableCollection<Encounter> patientEncounters = new();
     [ObservableProperty] private ObservableCollection<Appointment> patientAppointments = new();
     [ObservableProperty] private ObservableCollection<Prescription> patientPrescriptions = new();
@@ -504,7 +504,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         {
             var ctx = await EncounterService.GetPatientContext(patientId);
 
-            PatientMkb10Assignments=new ObservableCollection<Diagnosis>(ctx.Mkb10Assignments);
+            PatientMkb10Assignments=new ObservableCollection<PatientMkb10Assignment>(ctx.Mkb10Assignments);
             PatientEncounters=new ObservableCollection<Encounter>(ctx.EncounterHistory);
             PatientAppointments=new ObservableCollection<Appointment>(ctx.Appointments);
             PatientPrescriptions=new ObservableCollection<Prescription>(ctx.Prescriptions);
@@ -1052,7 +1052,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
                         PriorityDisplay=display;
                 }
 
-                Mkb10Assignments=new ObservableCollection<Diagnosis>(dto.Mkb10Assignments);
+                Mkb10Assignments=new ObservableCollection<PatientMkb10Assignment>(dto.Mkb10Assignments);
                 Prescriptions=new ObservableCollection<Prescription>(dto.Prescriptions);
                 EncounterDiagnosisNotes=Encounter.ClinicalNotes??string.Empty;
                 Score=dto.Score;
@@ -1175,7 +1175,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [ObservableProperty]
     protected ObservableCollection<Mkb10Code> mkbResults = new();
     [ObservableProperty]
-    protected ObservableCollection<Diagnosis> mkb10Assignments = new();
+    protected ObservableCollection<PatientMkb10Assignment> mkb10Assignments = new();
     [ObservableProperty]
     protected string mkbCodeSearchText = string.Empty;
 
@@ -1259,7 +1259,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         if(Mkb10Assignments.Any(x =>
             x.Mkb10CodeId==code.Id))
             return;
-        var diagnosis = new Diagnosis
+        var diagnosis = new PatientMkb10Assignment
         {
             Id=Guid.NewGuid(),
 
@@ -1276,7 +1276,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             IsPrimary=
                 Mkb10Assignments.Count==0,
             Status=
-                DiagnosisStatus.Active
+                PatientMkb10AssignmentStatus.Active
         };
         Mkb10Assignments.Add(diagnosis);
         MkbResults.Remove(code);
@@ -1288,7 +1288,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     // =====================================================
 
     [RelayCommand]
-    protected void RemoveMkb(Diagnosis diagnosis)
+    protected void RemoveMkb(PatientMkb10Assignment diagnosis)
     {
         if(!CanUpdate) return;
         if(diagnosis==null)
