@@ -207,24 +207,24 @@ namespace EHMR.Resources.Controls
         #endregion
 
         #region Build
-        private static Color HeaderBg => ResolveColorResource("SparkTextPrimary", "#1E293B");
-        private static Color HeaderTextColor => ResolveColorResource("SparkBackground", "#FFFFFF");
-        private static Color RowMutedTextColor => ResolveColorResource("SparkTextSecondary", "#64748B");
-        private static Color RowTextColor => ResolveColorResource("SparkTextPrimary", "#1E293B");
-        private static Color BorderColor => ResolveColorResource("SparkBorder", "#CBD5E1");
-        private static Color RowAltBg => ResolveColorResource("SparkSurfaceAlt", "#F8FAFC");
-        private static Color RowBg => ResolveColorResource("SparkBackground", "#FFFFFF");
+        private static Color HeaderBg => Color.FromArgb("#33414A");
+        private static Color HeaderTextColor => Color.FromArgb("#FFFFFF");
+        private static Color RowMutedTextColor => Color.FromArgb("#64748B");
+        private static Color RowTextColor => Color.FromArgb("#33414A");
+        private static Color BorderColor => Color.FromArgb("#D9E0E5");
+        private static Color RowAltBg => Color.FromArgb("#F8FAFC");
+        private static Color RowBg => Color.FromArgb("#FFFFFF");
 
-        private static Color BadgeNeutralBg => ResolveColorResource("SparkBadgeNeutralBg", "#F1F5F9");
-        private static Color BadgeNeutralText => ResolveColorResource("SparkBadgeNeutralText", "#475569");
-        private static Color BadgeSuccessBg => ResolveColorResource("SparkBadgeSuccessBg", "#ECFDF5");
-        private static Color BadgeSuccessText => ResolveColorResource("SparkBadgeSuccessText", "#059669");
-        private static Color BadgeDangerBg => ResolveColorResource("SparkBadgeDangerBg", "#FEF2F2");
-        private static Color BadgeDangerText => ResolveColorResource("SparkBadgeDangerText", "#DC2626");
+        private static Color BadgeNeutralBg => Color.FromArgb("#EBEFF3");
+        private static Color BadgeNeutralText => Color.FromArgb("#475569");
+        private static Color BadgeSuccessBg => Color.FromArgb("#DCFCE7");
+        private static Color BadgeSuccessText => Color.FromArgb("#15803D");
+        private static Color BadgeDangerBg => Color.FromArgb("#FCE3E7");
+        private static Color BadgeDangerText => Color.FromArgb("#B42318");
 
         private static Color HyperlinkColor => Color.FromArgb("#2AEBE7");
         private static Color AccentColor => Color.FromArgb("#2AEBE7");
-        private static Color AccentColorMuted => ResolveColorResource("SparkTextSecondary", "#64748B");
+        private static Color AccentColorMuted => Color.FromArgb("#64748B");
         private readonly Dictionary<string, bool> _sortAscending = new(StringComparer.OrdinalIgnoreCase);
 
         private void BuildGrid()
@@ -716,15 +716,18 @@ namespace EHMR.Resources.Controls
             // "Повеќе" is kept here as a compatibility alias for older list VMs.
             if(label.Equals("Детали", StringComparison.OrdinalIgnoreCase)||
                label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase))
-                return Color.FromArgb("#73FBFD");
+                return Color.FromArgb("#2AEBE7");
 
             if(label.Equals("Промени", StringComparison.OrdinalIgnoreCase))
-                return ResolveColorResource("SurfaceAlt", "#1A2436");
+                return Color.FromArgb("#FFFFFF");
 
-            if(label.Equals("Исчисти", StringComparison.OrdinalIgnoreCase)||action.IsPrimary)
-                return ResolveColorResource("SparkButtonSecondaryBg", "#475569");
+            if(label.Equals("Исчисти", StringComparison.OrdinalIgnoreCase))
+                return Color.FromArgb("#F1F5F9");
 
-            return ResolveColorResource("TextMuted", "#64748B");
+            if(action.IsPrimary)
+                return Color.FromArgb("#2AEBE7");
+
+            return Color.FromArgb("#F1F5F9");
         }
 
         private static Color ResolveActionTextColor(SparkButtonItem action)
@@ -732,15 +735,8 @@ namespace EHMR.Resources.Controls
             var label = action.Label?.Trim()??string.Empty;
             if(label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase)||
                label.Equals("Детали", StringComparison.OrdinalIgnoreCase))
-                return ResolveColorResource("SparkTextPrimary", "#1E2733");
-            return Colors.White;
-        }
-
-        private static Color ResolveColorResource(string key, string fallback)
-        {
-            if(Application.Current?.Resources.TryGetValue(key, out var value)==true&&value is Color color)
-                return color;
-            return Color.FromArgb(fallback);
+                return Color.FromArgb("#0F172A");
+            return Color.FromArgb("#334155");
         }
 
         private View BuildActionIcon(string text, ICommand command, object commandParameter, Color color, Color textColor)
@@ -930,14 +926,14 @@ namespace EHMR.Resources.Controls
         #endregion
 
         private static Color PagerActiveBg => Color.FromArgb("#2AEBE7");
-        private static Color PagerActiveText => ResolveColorResource("SparkBackground", "#FFFFFF");
-        private static Color PagerInactiveText => ResolveColorResource("SparkTextSecondary", "#64748B");
-        public static Color PagerBackground => ResolveColorResource("SparkSurfaceAlt", "#F8FAFC");
-        public static Color PagerBorder => ResolveColorResource("SparkBorder", "#CBD5E1");
-        public static Color PagerBorderColor => ResolveColorResource("SparkBorder", "#CBD5E1");
+        private static Color PagerActiveText => Color.FromArgb("#0F172A");
+        private static Color PagerInactiveText => Color.FromArgb("#64748B");
+        public static Color PagerBackground => Color.FromArgb("#F8FAFC");
+        public static Color PagerBorder => Color.FromArgb("#D9E0E5");
+        public static Color PagerBorderColor => Color.FromArgb("#D9E0E5");
         public static Color PagerActiveBackground => Color.FromArgb("#2AEBE7");
-        public static Color PagerActiveForeground => Colors.White;
-        public static Color PagerForeground => ResolveColorResource("SparkTextSecondary", "#64748B");
+        public static Color PagerActiveForeground => Color.FromArgb("#0F172A");
+        public static Color PagerForeground => Color.FromArgb("#64748B");
         public static Color PagerDisabledForeground => Color.FromArgb("#CBD5E1");
 
         private void BuildPager()
