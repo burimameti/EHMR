@@ -41,18 +41,7 @@ public interface IEncounterDetailService
     Task<PatientContextDto> GetPatientContext(Guid patientId);
     Task<Appointment?> GetAppointment(Guid id);
     Task<IEnumerable<Appointment?>> GetAppointments(Guid appointmentId);
-    Task<List<TherapyCycle>> GetTherapyCycles(Guid patientId);
     Task<Appointment> CreateAppointment(Appointment appointment);
-
-    Task<TherapyCycle> CreateTherapyCycle(TherapyCycle cycle);
-    Task AttachTherapyCycleDocumentAsync(
-        Guid patientId,
-        Guid therapyCycleId,
-        string fileName,
-        string storedPath,
-        string contentType,
-        long fileSize,
-        PatientDocumentType documentType = PatientDocumentType.Resenie);
     Task<List<Mkb10Code>> SearchDiagnoses(
         string query,
         CancellationToken token,
