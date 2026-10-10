@@ -163,8 +163,8 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
     [ObservableProperty] private string diagnosisSearchText = string.Empty;
     [ObservableProperty] private string diagnosisDescriptionSearchText = string.Empty;
-    [ObservableProperty] private bool showDiagnosisDropdown;
-    [ObservableProperty] private ObservableCollection<Mkb10Code> availableDiagnoses = new();
+    [ObservableProperty] private bool showMkb10Dropdown;
+    [ObservableProperty] private ObservableCollection<Mkb10Code> availableMkb10Codes = new();
     [ObservableProperty] private ObservableCollection<MkbAlphabetSection> mkbAlphabetSections = new();
     [ObservableProperty] private string selectedMkbSection = string.Empty;
 
@@ -180,12 +180,12 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     // COLLECTIONS
     // =========================
 
-    [ObservableProperty] private ObservableCollection<Diagnosis> selectedDiagnoses = new();
+    [ObservableProperty] private ObservableCollection<Diagnosis> selectedMkb10Assignments = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> selectedMedicines = new();
     [ObservableProperty] private ObservableCollection<Patient> patientsList = new();
     [ObservableProperty] private ObservableCollection<Doctor> doctorsList = new();
     [ObservableProperty] private ObservableCollection<Appointment> appointmentHistory = new();
-    [ObservableProperty] private ObservableCollection<Diagnosis> patientDiagnosisHistory = new();
+    [ObservableProperty] private ObservableCollection<Diagnosis> patientMkb10History = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> patientMedicinesHistory = new();
 
     public IEnumerable<PatientMedicine> PreviousMedicinesHistory =>
@@ -325,11 +325,11 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     partial void OnUseCyrillicPatientSearchChanged(bool value) =>
         OnPatientSearchTextChanged(PatientSearchText);
 
-    partial void OnDiagnosisSearchTextChanged(string value) =>
-        _=SearchMkb10CodesAsync(value, DiagnosisDescriptionSearchText);
+    partial void OnMkb10CodeSearchTextChanged(string value) =>
+        _=SearchMkb10CodesAsync(value, Mkb10DescriptionSearchText);
 
-    partial void OnDiagnosisDescriptionSearchTextChanged(string value) =>
-        _=SearchMkb10CodesAsync(DiagnosisSearchText, value);
+    partial void OnMkb10DescriptionSearchTextChanged(string value) =>
+        _=SearchMkb10CodesAsync(Mkb10CodeSearchText, value);
 
 
     partial void OnPreferredAppointmentDateChanged(DateTime value)
@@ -425,7 +425,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         if(!wasSelected)
             section.IsSelected=true;
 
-        await SearchMkb10CodesAsync(DiagnosisSearchText, DiagnosisDescriptionSearchText);
+        await SearchMkb10CodesAsync(Mkb10CodeSearchText, Mkb10DescriptionSearchText);
     }
 
     // =========================
@@ -498,11 +498,11 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         _originalAppointment=dto.Appointment.Clone();
         Appointment=dto.Appointment;
 
-        SelectedDiagnoses=new ObservableCollection<Diagnosis>(dto.Diagnoses);
+        SelectedMkb10Assignments=new ObservableCollection<Diagnosis>(dto.Mkb10Assignments);
         PatientsList=new ObservableCollection<Patient>(dto.Patients);
         DoctorsList=new ObservableCollection<Doctor>(dto.Doctors);
         AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
-        PatientDiagnosisHistory=new ObservableCollection<Diagnosis>(ctx.Diagnoses);
+        PatientMkb10History=new ObservableCollection<Diagnosis>(ctx.Mkb10Assignments);
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
         OnPropertyChanged(nameof(PreviousMedicinesHistory));
         SelectedMedicines=IsNewAppointment
@@ -554,7 +554,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         ShowPatientSuggestions=false;
 
         Appointment.PatientId=SelectedPatientForAppointment?.Id??Guid.Empty;
-        SelectedDiagnoses=new ObservableCollection<Diagnosis>();
+        SelectedMkb10Assignments=new ObservableCollection<Diagnosis>();
 
         if(SelectedPatientForAppointment!=null)
         {
@@ -563,7 +563,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         else
         {
             AppointmentHistory=new ObservableCollection<Appointment>();
-            PatientDiagnosisHistory=new ObservableCollection<Diagnosis>();
+            PatientMkb10History=new ObservableCollection<Diagnosis>();
             PatientMedicinesHistory=new ObservableCollection<PatientMedicine>();
             OnPropertyChanged(nameof(PreviousMedicinesHistory));
             SelectedMedicines=new ObservableCollection<PatientMedicine>();
@@ -602,7 +602,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         var ctx = await _service.GetPatientContext(patient.Id);
 
         AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
-        PatientDiagnosisHistory=new ObservableCollection<Diagnosis>(ctx.Diagnoses);
+        PatientMkb10History=new ObservableCollection<Diagnosis>(ctx.Mkb10Assignments);
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
         OnPropertyChanged(nameof(PreviousMedicinesHistory));
         SelectedMedicines=IsNewAppointment
@@ -654,8 +654,8 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
         if(!hasCode&&!hasDesc&&!hasSection)
         {
-            AvailableDiagnoses.Clear();
-            ShowDiagnosisDropdown=false;
+            AvailableMkb10Codes.Clear();
+            ShowMkb10Dropdown=false;
             return;
         }
 
@@ -706,30 +706,30 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
             if(token.IsCancellationRequested) return;
 
-            AvailableDiagnoses=new ObservableCollection<Mkb10Code>(result.Take(30));
-            ShowDiagnosisDropdown=AvailableDiagnoses.Count>0;
+            AvailableMkb10Codes=new ObservableCollection<Mkb10Code>(result.Take(30));
+            ShowMkb10Dropdown=AvailableMkb10Codes.Count>0;
         }
         catch(TaskCanceledException) { }
     }
 
     [RelayCommand]
-    private void AddDiagnosis(Mkb10Code code)
+    private void AddMkb10Code(Mkb10Code code)
     {
         if(code==null) return;
-        if(SelectedDiagnoses.Any(x => x.Mkb10CodeId==code.Id)) return;
+        if(SelectedMkb10Assignments.Any(x => x.Mkb10CodeId==code.Id)) return;
 
-        SelectedDiagnoses.Add(new Diagnosis
+        SelectedMkb10Assignments.Add(new Diagnosis
         {
             Mkb10CodeId=code.Id,
             Id=code.Id,
             Mkb10Code=code,
-            IsPrimary=SelectedDiagnoses.Count==0
+            IsPrimary=SelectedMkb10Assignments.Count==0
         });
 
-        DiagnosisSearchText=string.Empty;
-        DiagnosisDescriptionSearchText=string.Empty;
-        AvailableDiagnoses.Clear();
-        ShowDiagnosisDropdown=false;
+        Mkb10CodeSearchText=string.Empty;
+        Mkb10DescriptionSearchText=string.Empty;
+        AvailableMkb10Codes.Clear();
+        ShowMkb10Dropdown=false;
 
         foreach(var s in MkbAlphabetSections)
             s.IsSelected=false;
@@ -737,9 +737,9 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     }
 
     [RelayCommand]
-    private void RemoveDiagnosis(Diagnosis d)
+    private void RemoveMkb10Assignment(Diagnosis d)
     {
-        if(d!=null) SelectedDiagnoses.Remove(d);
+        if(d!=null) SelectedMkb10Assignments.Remove(d);
     }
 
     // =========================
@@ -903,7 +903,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
             await _service.SaveAppointment(
                 Appointment,
-                SelectedDiagnoses.ToList(),
+                SelectedMkb10Assignments.ToList(),
                 SelectedMedicines.ToList());
 
             await UserDialogService.ShowAlertAsync("Успешно", "Терминот е успешно зачуван.", "OK");
