@@ -14,16 +14,16 @@ public class PatientScore
         get; set;
     }
 
-    /// <summary>Null кога скорот е внесен од пациентската форма (не е врзан за преглед).</summary>
-    public Guid EncounterId
+    /// <summary>Null when the score is entered at patient level and is not linked to an encounter.</summary>
+    public Guid? EncounterId
     {
         get; set;
-    }= Guid.Empty;
+    }
 
-    /// <summary>Опис на скорот (пр. DAS28).</summary>
+    /// <summary>ГЋГЇГЁГ± Г­Г  Г±ГЄГ®Г°Г®ГІ (ГЇГ°. DAS28).</summary>
     public string ScoreText { get; set; } = string.Empty;
 
-    /// <summary>Бројка (пр. 3.2).</summary>
+    /// <summary>ГЃГ°Г®ВјГЄГ  (ГЇГ°. 3.2).</summary>
     public string Number { get; set; } = string.Empty;
 
     public DateTime RecordedAt { get; set; } = DateTime.UtcNow;
