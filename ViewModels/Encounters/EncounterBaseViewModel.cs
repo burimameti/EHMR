@@ -438,6 +438,13 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             .Where(x => !x.IsActive && x.EncounterId==null)
             .OrderByDescending(x => x.IsActive);
 
+    // Encounter-linked PatientMedicine rows are immutable clinical history
+    // for individual visits; patient-level assignments have EncounterId == null.
+    public IEnumerable<PatientMedicine> PatientEncounterMedicineHistory =>
+        PatientMedicines
+            .Where(x => x.EncounterId.HasValue)
+            .OrderByDescending(x => x.CreatedAt);
+
     public IEnumerable<Appointment> FilteredAppointments => AppointmentTab switch
     {
         AppointmentTabFilter.Upcoming => PatientAppointments
@@ -526,6 +533,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             OnPropertyChanged(nameof(ActiveMedicinesSummary));
             OnPropertyChanged(nameof(ActiveTherapySummary));
             OnPropertyChanged(nameof(PreviousMedicines));
+            OnPropertyChanged(nameof(PatientEncounterMedicineHistory));
             OnPropertyChanged(nameof(HasPatientContext));
             OnPropertyChanged(nameof(HasEncounterContext));
         }
