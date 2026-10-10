@@ -24,6 +24,11 @@ public class AuthorizationService : IAuthorizationService
         if(!IsAuthenticated || _auth.CurrentUser is null || action == ModuleAction.None)
             return false;
 
+        // Прегледите се достапни само за администраторски улоги, без оглед
+        // на индивидуални module permissions или матрицата за други улоги.
+        if(string.Equals(module, Modules.Encounters, StringComparison.OrdinalIgnoreCase))
+            return HasRole(UserRole.Admin) || HasRole(UserRole.SuperAdmin);
+
         // Medicines are a shared clinic catalog. Creating medicines is intentionally
         // available to every authenticated user; it is not an RBAC privilege.
         if(string.Equals(module, Modules.Medicines, StringComparison.OrdinalIgnoreCase)
@@ -68,6 +73,10 @@ public class AuthorizationService : IAuthorizationService
     {
         if(!IsAuthenticated || _auth.CurrentUser is null)
             return false;
+
+        // Скриј го и модулот „Прегледи“ за сите не-администраторски улоги.
+        if(string.Equals(module, Modules.Encounters, StringComparison.OrdinalIgnoreCase))
+            return HasRole(UserRole.Admin) || HasRole(UserRole.SuperAdmin);
 
         if(HasRole(UserRole.SuperAdmin))
             return true;
