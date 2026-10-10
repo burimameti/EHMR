@@ -20,25 +20,25 @@
 
 	<!--  Sidebar  -->
 
-	<Color x:Key="SidebarSurface">#102A4C</Color>
+	<Color x:Key="SidebarSurface">#202D3D</Color>
 
-	<Color x:Key="SidebarDivider">#274A75</Color>
-	<Color x:Key="SidebarText">#D7E6F8</Color>
+	<Color x:Key="SidebarDivider">#1E293B</Color>
+	<Color x:Key="SidebarText">#CBD5E1</Color>
 	<Color x:Key="SidebarTextActive">#FFFFFF</Color>
 
 	<!--  Text  -->
-	<Color x:Key="SecondaryDarkText">#EAF2FC</Color>
+	<Color x:Key="SecondaryDarkText">#CBD5E1</Color>
 	<Color x:Key="Secondary">#3B82F6</Color>
 
 	<!--  Surfaces  -->
 
-	<Color x:Key="SurfaceElevated">#F4F8FC</Color>
-	<Color x:Key="SurfaceBorder">#D7E3F3</Color>
+	<Color x:Key="SurfaceElevated">#F8FAFC</Color>
+	<Color x:Key="SurfaceBorder">#D9E0E5</Color>
 	<Color x:Key="CardBg">#FFFFFF</Color>
 
 	<!--  Primary  -->
 	<Color x:Key="EpicPrimary">#2AEBE7</Color>
-	<Color x:Key="EpicPrimaryDark">#177A57</Color>
+	<Color x:Key="EpicPrimaryDark">#0F9693</Color>
 	<Color x:Key="EpicPrimaryLight">#D9FBFA</Color>
 
 	<!--  Canonical CRUD accent tokens; Colors.xaml is merged first.  -->
@@ -56,17 +56,17 @@
 
 	<!--  Primary Text  -->
 	<Color x:Key="EpicPrimaryText">#0F9693</Color>
-	<Color x:Key="EpicPrimaryDarkText">#35AEB9</Color>
-	<Color x:Key="EpicPrimaryLightText">#8ADFE6</Color>
+	<Color x:Key="EpicPrimaryDarkText">#0F9693</Color>
+	<Color x:Key="EpicPrimaryLightText">#D9FBFA</Color>
 
 	<!--  Secondary Text  -->
 	<Color x:Key="EpicSecondaryText">#1E40AF</Color>
 	<Color x:Key="EpicSecondaryDarkText">#1E3A8A</Color>
 	<Color x:Key="EpicSecondaryLightText">#93C5FD</Color>
 
-	<Color x:Key="TextSecondary">#52696E</Color>
-	<Color x:Key="TextMuted">#8AA0A4</Color>
-	<Color x:Key="TextPlaceholder">#AFC2C5</Color>
+	<Color x:Key="TextSecondary">#64748B</Color>
+	<Color x:Key="TextMuted">#64748B</Color>
+	<Color x:Key="TextPlaceholder">#94A3B8</Color>
 
 	<!--  Semantic / Status colors (clinical-friendly, not neon)  -->
 	<Color x:Key="StatusActive">#15803D</Color>
@@ -79,14 +79,14 @@
 	<Color x:Key="StatusCompletedBg">#E5EEF8</Color>
 	<Color x:Key="StatusMissed">#D64545</Color>
 	<Color x:Key="StatusMissedBg">#FBE7E7</Color>
-	<Color x:Key="StatusScheduled">#0E8C8C</Color>
-	<Color x:Key="StatusScheduledBg">#DEF1F1</Color>
+	<Color x:Key="StatusScheduled">#0F9693</Color>
+	<Color x:Key="StatusScheduledBg">#D9FBFA</Color>
 	<Color x:Key="StatusCancelled">#7C8C90</Color>
 	<Color x:Key="StatusCancelledBg">#E7ECED</Color>
 
 	<!--  Input  -->
 	<Color x:Key="InputBg">#FFFFFF</Color>
-	<Color x:Key="InputBorder">#CBDBDD</Color>
+	<Color x:Key="InputBorder">#CBD5E1</Color>
 
 
 	<!--  Danger / Success / Warning / Info  -->
@@ -100,8 +100,8 @@
 	<Color x:Key="StatBlueBg">#E5EEF8</Color>
 	<Color x:Key="StatGreen">#15803D</Color>
 	<Color x:Key="StatGreenBg">#DCFCE7</Color>
-	<Color x:Key="StatTeal">#0E8C8C</Color>
-	<Color x:Key="StatTealBg">#DEF1F1</Color>
+	<Color x:Key="StatTeal">#0F9693</Color>
+	<Color x:Key="StatTealBg">#D9FBFA</Color>
 	<Color x:Key="StatOrange">#D98E2B</Color>
 	<Color x:Key="StatOrangeBg">#FBF0DD</Color>
 	<Color x:Key="StatPurple">#7E57A6</Color>
