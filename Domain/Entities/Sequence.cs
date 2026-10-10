@@ -6,7 +6,7 @@ namespace EHMR.Domain.Entities
     {
         public const string Patient = "PATIENT";
         public const string Appointment = "APPOINTMENT";
-        public const string PatientMkb10Assignment = "DIAGNOSIS";
+        public const string PatientMkb10Assignment = "PATIENT_MKB10_ASSIGNMENT";
         public const string Doctor = "DOCTOR";
         public const string Encounter = "ENCOUNTER";
         public const string Prescription = "PRESCRIPTION";
