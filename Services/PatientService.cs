@@ -31,6 +31,7 @@ public class PatientService : IPatientService
         var entities = await db.Patients
             .AsNoTracking()
             .Include(p => p.Doctor)
+            .Include(p => p.Mkb10Assignments).ThenInclude(x => x.Mkb10Code)
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync(ct);
 
@@ -44,6 +45,7 @@ public class PatientService : IPatientService
         return await db.Patients
             .AsNoTracking()
             .Include(p => p.Doctor)
+            .Include(p => p.Mkb10Assignments).ThenInclude(x => x.Mkb10Code)
             .Include(p => p.PatientMedicines).ThenInclude(pm => pm.Medicine)
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync(ct);
@@ -60,6 +62,7 @@ public class PatientService : IPatientService
         var query = db.Patients
             .AsNoTracking()
             .Include(p => p.Doctor)
+            .Include(p => p.Mkb10Assignments).ThenInclude(x => x.Mkb10Code)
             .AsQueryable();
 
         if(!string.IsNullOrWhiteSpace(searchTerm))
@@ -84,7 +87,9 @@ public class PatientService : IPatientService
         await using var db = await _factory.CreateDbContextAsync(ct);
 
         var entities = await ApplySearch(
-                db.Patients.AsNoTracking().Include(p => p.Doctor),
+                db.Patients.AsNoTracking()
+                    .Include(p => p.Doctor)
+                    .Include(p => p.Mkb10Assignments).ThenInclude(x => x.Mkb10Code),
                 term.Trim())
             .OrderBy(p => p.LastName)
             .ThenBy(p => p.FirstName)
