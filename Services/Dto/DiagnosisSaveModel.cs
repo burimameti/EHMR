@@ -67,27 +67,11 @@ namespace EHMR.Services.Dto
     }
     public sealed class PatientMedicineSaveModel
     {
-        public Guid Id
-        {
-            get; init;
-        }
-
-        public Guid MedicineId
-        {
-            get; init;
-        }
-
-        public string? Dosage
-        {
-            get; init;
-        }
-
-public Guid? ApplicationRegimeId { get; init; }
-public decimal Quantity { get; init; } = 1m;
-
-        public bool IsActive
-        {
-            get; init;
-        }
+        public Guid Id { get; init; }
+        public Guid MedicineId { get; init; }
+        public string? Dosage { get; init; }
+        public Guid? ApplicationRegimeId { get; init; }
+        public decimal Quantity { get; init; } = 0m;
+        public bool IsActive { get; init; }
     }
 }

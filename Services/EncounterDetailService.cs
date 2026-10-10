@@ -695,7 +695,7 @@ public class EncounterDetailService : IEncounterDetailService
 
             foreach(var vm in medicines.Where(x => !deletedMedicineIds.Contains(x.Id)))
             {
-                var entity = await db.PatientMedicines.FirstOrDefaultAsync(x => x.Id==vm.Id);
+                var entity = await db.PatientMedicines.FirstOrDefaultAsync(x => x.Id==vm.Id && x.EncounterId==encounter.Id);
                 if(entity is null)
                 {
                     db.PatientMedicines.Add(new PatientMedicine

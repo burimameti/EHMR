@@ -592,7 +592,7 @@ public class PatientService : IPatientService
         // ---- medicines: close, never delete (clinical history) ----
         foreach(var id in model.DeletedMedicineIds)
         {
-            var entity = existing.PatientMedicines.FirstOrDefault(x => x.Id==id);
+            var entity = existing.PatientMedicines.FirstOrDefault(x => x.Id==id && x.EncounterId==null);
             if(entity!=null)
             {
                 entity.IsActive=false;
@@ -603,7 +603,7 @@ public class PatientService : IPatientService
         // MedicineId is always an existing Medicine.Id; the catalog itself is never modified here.
         foreach(var vm in model.Medicines.Where(x => !model.DeletedMedicineIds.Contains(x.Id)))
         {
-            var entity = existing.PatientMedicines.FirstOrDefault(x => x.Id==vm.Id);
+            var entity = existing.PatientMedicines.FirstOrDefault(x => x.Id==vm.Id && x.EncounterId==null);
 
             if(entity==null)
             {
@@ -616,7 +616,7 @@ public class PatientService : IPatientService
 
             entity.ApplicationRegimeId=vm.ApplicationRegimeId;
 
-            entity.Quantity=vm.Quantity;
+            entity.Quantity=0m;
             entity.IsActive=vm.IsActive;
         }
 
@@ -660,7 +660,8 @@ public class PatientService : IPatientService
 
         ApplicationRegimeId=vm.ApplicationRegimeId,
 
-        Quantity=vm.Quantity,
+        EncounterId=null,
+        Quantity=0m,
         IsActive=vm.IsActive
     };
 
@@ -719,7 +720,7 @@ public class PatientService : IPatientService
                 .FirstOrDefault(),
             NextAppointmentDate=null, // wire up once Appointment navigation/include is available
             Diagnoses=p.Diagnoses?.Select(MapDiagnosis).ToList()?? [],
-            Medicines=p.PatientMedicines?.Select(MapMedicine).ToList()?? [],
+            Medicines=p.PatientMedicines?.Where(x => x.EncounterId==null).Select(MapMedicine).ToList()?? [],
             Documents=p.Documents?.Select(MapDocument).ToList()?? []
         };
     }

@@ -1062,47 +1062,13 @@
 																				Text="{Binding Dosage}" />
 																			<Entry
 																				Grid.Column="3"
-																				IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
+																				IsEnabled="False"
 																				Keyboard="Numeric"
 																				Style="{StaticResource TableCellEntryStyle}"
 																				Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" />
 
-																			<!--  Решение  -->
-																			
-
 																			<!--  Акции  -->
-																			<HorizontalStackLayout
-																				Grid.Column="4"
-																				HorizontalOptions="Center"
-																				IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
-																				Spacing="12"
-																				VerticalOptions="Center">
-																				<Label
-																					Style="{StaticResource TableIconStyle}"
-																					Text="&#xf04c;"
-																					TextColor="{StaticResource SparkTextSecondary}">
-																					<Label.GestureRecognizers>
-																						<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.MoveMedicineToInactiveCommand}" CommandParameter="{Binding .}" />
-																					</Label.GestureRecognizers>
-																				</Label>
-																				<Label
-																					IsEnabled="{Binding CanDelete}"
-																					Style="{StaticResource TableIconStyle}"
-																					Text="&#xf1f8;"
-																					TextColor="#DC2626">
-																					<Label.Triggers>
-																						<DataTrigger
-																							Binding="{Binding CanDelete}"
-																							TargetType="Label"
-																							Value="False">
-																							<Setter Property="Opacity" Value="0.3" />
-																						</DataTrigger>
-																					</Label.Triggers>
-																					<Label.GestureRecognizers>
-																						<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" />
-																					</Label.GestureRecognizers>
-																				</Label>
-																			</HorizontalStackLayout>
+																			
 																		</Grid>
 																		<BoxView
 																			Grid.Row="1"
@@ -1189,7 +1155,7 @@
 																				Text="{Binding Dosage}" />
 																			<Entry
 																				Grid.Column="3"
-																				IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
+																				IsEnabled="False"
 																				Keyboard="Numeric"
 																				Style="{StaticResource TableCellEntryStyle}"
 																				Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" />
@@ -1517,7 +1483,6 @@
 					<Label
 						FontAttributes="Bold"
 						FontSize="10"
-						IsVisible="{Binding }"
 						Text="За секој активен или неактивен лек мора да биде внесено решение пред зачувување."
 						TextColor="#DC2626"
 						VerticalOptions="Center" />

@@ -676,7 +676,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
         MedicineId=m.MedicineId,
         Dosage=m.Dosage,
         ApplicationRegimeId=_applicationRegimes.FirstOrDefault(r => string.Equals(r.Regime, m.ApplicationRegime, StringComparison.OrdinalIgnoreCase))?.Id,
-        Quantity=m.Quantity,
+        Quantity=0m,
         IsActive=active
     };
 
@@ -1102,7 +1102,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
             Dosage=medicine.DefaultDosage,
             ApplicationRegimeId=null,
             ApplicationRegime=string.Empty,
-            Quantity=1,
+            Quantity=0,
             IsActive=true
         };
 
