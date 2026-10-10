@@ -28,6 +28,7 @@
 	<Style x:Key="FFShellMenuButtonActiveStyle" TargetType="Button">
 		<Setter Property="BackgroundColor" Value="#2AEBE7" />
 		<Setter Property="TextColor" Value="#0F172A" />
+		<Setter Property="FontFamily" Value="Segoe UI" />
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="CornerRadius" Value="6" />
