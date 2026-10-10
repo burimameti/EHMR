@@ -367,7 +367,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     //LoadPatientContext 
     // ===================== RAW PATIENT CONTEXT (непроменето од service) =====================
-    [ObservableProperty] private ObservableCollection<Diagnosis> patientDiagnoses = new();
+    [ObservableProperty] private ObservableCollection<Diagnosis> patientMkb10Assignments = new();
     [ObservableProperty] private ObservableCollection<Encounter> patientEncounters = new();
     [ObservableProperty] private ObservableCollection<Appointment> patientAppointments = new();
     [ObservableProperty] private ObservableCollection<Prescription> patientPrescriptions = new();
@@ -401,7 +401,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     //[ObservableProperty]
     //private ObservableCollection<ApplicationRegime> applicationRegimeOptions = new();
 
-    public string CurrentDiagnosesSummary => string.Join(", ", PatientDiagnoses
+    public string CurrentMkb10Summary => string.Join(", ", PatientMkb10Assignments
         .Where(x => x.Mkb10Code!=null)
         .Select(x => $"{x.Mkb10Code!.Code} - {x.Mkb10Code.Description}")
         .Take(3));
@@ -485,7 +485,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     {
         if(patientId==Guid.Empty)
         {
-            PatientDiagnoses.Clear();
+            PatientMkb10Assignments.Clear();
             PatientEncounters.Clear();
             PatientAppointments.Clear();
             PatientPrescriptions.Clear();
@@ -504,7 +504,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         {
             var ctx = await EncounterService.GetPatientContext(patientId);
 
-            PatientDiagnoses=new ObservableCollection<Diagnosis>(ctx.Diagnoses);
+            PatientMkb10Assignments=new ObservableCollection<Diagnosis>(ctx.Mkb10Assignments);
             PatientEncounters=new ObservableCollection<Encounter>(ctx.EncounterHistory);
             PatientAppointments=new ObservableCollection<Appointment>(ctx.Appointments);
             PatientPrescriptions=new ObservableCollection<Prescription>(ctx.Prescriptions);
@@ -529,7 +529,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             OnPropertyChanged(nameof(FilteredAppointments));
             OnPropertyChanged(nameof(FilteredEncounters));
             OnPropertyChanged(nameof(FilteredPrescriptions));
-            OnPropertyChanged(nameof(CurrentDiagnosesSummary));
+            OnPropertyChanged(nameof(CurrentMkb10Summary));
             OnPropertyChanged(nameof(ActiveMedicinesSummary));
             OnPropertyChanged(nameof(ActiveTherapySummary));
             OnPropertyChanged(nameof(PreviousMedicines));
@@ -587,7 +587,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         OnPropertyChanged(nameof(HasEncounterContext));
         if(_isInitializing||_isApplyingContext)
             return;
-        Diagnoses.Clear();
+        Mkb10Assignments.Clear();
 
         LinkedAppointment=null;
 
@@ -1019,7 +1019,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
                         EncounterDate=DateTime.Now,
                         CreatedAt=DateTime.UtcNow,
                     };
-                    Diagnoses.Clear();
+                    Mkb10Assignments.Clear();
                     Prescriptions.Clear();
                     EncounterMedicines.Clear();
                     IsEditMode=true;
@@ -1052,7 +1052,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
                         PriorityDisplay=display;
                 }
 
-                Diagnoses=new ObservableCollection<Diagnosis>(dto.Diagnoses);
+                Mkb10Assignments=new ObservableCollection<Diagnosis>(dto.Mkb10Assignments);
                 Prescriptions=new ObservableCollection<Prescription>(dto.Prescriptions);
                 EncounterDiagnosisNotes=Encounter.ClinicalNotes??string.Empty;
                 Score=dto.Score;
@@ -1175,7 +1175,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [ObservableProperty]
     protected ObservableCollection<Mkb10Code> mkbResults = new();
     [ObservableProperty]
-    protected ObservableCollection<Diagnosis> diagnoses = new();
+    protected ObservableCollection<Diagnosis> mkb10Assignments = new();
     [ObservableProperty]
     protected string mkbCodeSearchText = string.Empty;
 
@@ -1256,7 +1256,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         if(!CanUpdate) return;
         if(code==null)
             return;
-        if(Diagnoses.Any(x =>
+        if(Mkb10Assignments.Any(x =>
             x.Mkb10CodeId==code.Id))
             return;
         var diagnosis = new Diagnosis
@@ -1274,11 +1274,11 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             Mkb10Code=code,
             DiagnosedAt=DateTime.Now,
             IsPrimary=
-                Diagnoses.Count==0,
+                Mkb10Assignments.Count==0,
             Status=
                 DiagnosisStatus.Active
         };
-        Diagnoses.Add(diagnosis);
+        Mkb10Assignments.Add(diagnosis);
         MkbResults.Remove(code);
         ShowMkbDropdown=MkbResults.Count>0;
     }
@@ -1293,9 +1293,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         if(!CanUpdate) return;
         if(diagnosis==null)
             return;
-        if(Diagnoses.Contains(diagnosis))
+        if(Mkb10Assignments.Contains(diagnosis))
         {
-            Diagnoses.Remove(diagnosis);
+            Mkb10Assignments.Remove(diagnosis);
         }
     }
     // =====================================================
