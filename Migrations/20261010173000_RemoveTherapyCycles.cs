@@ -63,11 +63,20 @@ public sealed class RemoveTherapyCycles : Migration
                 ALTER TABLE dbo.PatientDocuments DROP COLUMN TherapyCycleId;
             IF OBJECT_ID(N'dbo.TherapyCycles', N'U') IS NOT NULL
                 DROP TABLE dbo.TherapyCycles;
+            IF COL_LENGTH(N'dbo.AuditLogs', N'CycleId') IS NOT NULL
+                ALTER TABLE dbo.AuditLogs DROP COLUMN CycleId;
             """);
     }
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
+        migrationBuilder.AddColumn<Guid>(
+            name: "CycleId",
+            table: "AuditLogs",
+            type: "uniqueidentifier",
+            nullable: false,
+            defaultValue: Guid.Empty);
+
         migrationBuilder.CreateTable(
             name: "TherapyCycles",
             columns: table => new
