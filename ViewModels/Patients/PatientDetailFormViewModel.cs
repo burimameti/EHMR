@@ -34,7 +34,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     private bool _isNewPatientMode;
     private bool _isModalReturnMode;
 
-    private readonly List<Guid> _deletedDiagnosisIds = [];
+    private readonly List<Guid> _deletedPatientMkb10CodeIds = [];
     private readonly List<Guid> _deletedMedicineIds = [];
     private readonly List<Guid> _deletedDocumentIds = [];
 
@@ -244,7 +244,7 @@ public bool CanSavePatientForm => CanSavePatient;
 
             SyncDisplayFromPatient();
 
-            Diagnoses=new ObservableCollection<PatientMkb10CodeDto>(full.Diagnoses);
+            PatientMkb10Codes=new ObservableCollection<PatientMkb10CodeDto>(full.PatientMkb10Codes);
 
             // Тековни терапии = IsActive. Претходни = !IsActive (рачно внесени или затворени).
             AttachedMedicines=new ObservableCollection<AttachedMedicineRow>(
@@ -285,7 +285,7 @@ public bool CanSavePatientForm => CanSavePatient;
     // Прикажувањето е само за читање, па се вчитуваат директно како ентитети —
     // PatientDto носи само дијагнози, лекови и документи.
 
-    [ObservableProperty] private ObservableCollection<PatientMkb10CodeDto> diagnosisHistory = new();
+    [ObservableProperty] private ObservableCollection<PatientMkb10CodeDto> mkb10History = new();
     [ObservableProperty] private ObservableCollection<Encounter> encounterHistory = new();
     [ObservableProperty] private ObservableCollection<PatientScore> scoreHistory = new();
 
@@ -302,7 +302,7 @@ public bool CanSavePatientForm => CanSavePatient;
         {
             await using var db = await _dbFactory.CreateDbContextAsync();
 
-            DiagnosisHistory=new ObservableCollection<PatientMkb10CodeDto>(
+            Mkb10History=new ObservableCollection<PatientMkb10CodeDto>(
                 await db.Set<Diagnosis>()
                     .AsNoTracking()
                     .Where(x => x.PatientId==patientId)
@@ -536,12 +536,12 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
             Patient=Patient,
             IsNewPatient=_isNewPatientMode,
 
-            Diagnoses=
+            PatientMkb10Codes=
             [
-                .. Diagnoses.Select(x => new PatientMkb10CodeSaveModel
+                .. PatientMkb10Codes.Select(x => new PatientMkb10CodeSaveModel
                 {
                     Id = x.Id,
-                    // Diagnoses entered from the Patient form belong to the patient,
+                    // PatientMkb10Codes entered from the Patient form belong to the patient,
                     // not to a specific Encounter.
                     EncounterId = null,
                     Mkb10CodeId = x.Mkb10CodeId,
@@ -586,7 +586,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
                 })
             ],
 
-            DeletedDiagnosisIds=_deletedDiagnosisIds,
+            DeletedPatientMkb10CodeIds=_deletedPatientMkb10CodeIds,
             DeletedMedicineIds=_deletedMedicineIds,
             DeletedDocumentIds=_deletedDocumentIds
         };
@@ -601,7 +601,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
             OnPropertyChanged(nameof(HeaderTitle));
             OnPropertyChanged(nameof(HeaderSubtitle));
 
-            _deletedDiagnosisIds.Clear();
+            _deletedPatientMkb10CodeIds.Clear();
             _deletedMedicineIds.Clear();
             _deletedDocumentIds.Clear();
 
@@ -824,7 +824,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
     private CancellationTokenSource _mkbSearchCts = new();
     private int _mkbSearchVersion;
 
-    [ObservableProperty] private ObservableCollection<PatientMkb10CodeDto> diagnoses = new();
+    [ObservableProperty] private ObservableCollection<PatientMkb10CodeDto> patientMkb10Codes = new();
     [ObservableProperty] private ObservableCollection<Mkb10CodeDto> mkbResults = new();
     [ObservableProperty] private string mkbCodeSearchText = string.Empty;
     [ObservableProperty] private string mkbDescriptionSearchText = string.Empty;
@@ -931,7 +931,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
     private void AddMkb(Mkb10CodeDto code)
     {
         if(code==null||!CanEditPatient) return;
-        if(Diagnoses.Any(x => x.Mkb10CodeId==code.Id)) return;
+        if(PatientMkb10Codes.Any(x => x.Mkb10CodeId==code.Id)) return;
 
         var diagnosis = new PatientMkb10CodeDto
         {
@@ -943,11 +943,11 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
             Mkb10Description=code.Description,
             Severity="Не е дефиниран",
             DiagnosedAt=DateTime.UtcNow,
-            IsPrimary=Diagnoses.Count==0,
+            IsPrimary=PatientMkb10Codes.Count==0,
             Status=DiagnosisStatus.Active
         };
 
-        Diagnoses.Add(diagnosis);
+        PatientMkb10Codes.Add(diagnosis);
 
         MkbCodeSearchText=string.Empty;
         MkbDescriptionSearchText=string.Empty;
@@ -959,8 +959,8 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
     private void RemoveMkb(PatientMkb10CodeDto diagnosis)
     {
         if(diagnosis==null||!CanEditPatient) return;
-        if(diagnosis.Id!=Guid.Empty) _deletedDiagnosisIds.Add(diagnosis.Id);
-        Diagnoses.Remove(diagnosis);
+        if(diagnosis.Id!=Guid.Empty) _deletedPatientMkb10CodeIds.Add(diagnosis.Id);
+        PatientMkb10Codes.Remove(diagnosis);
     }
 
     // =====================================================

@@ -111,7 +111,7 @@ public class PatientService : IPatientService
         var entity = await db.Patients
             .AsNoTracking()
             .Include(p => p.Doctor).ThenInclude(d => d.User)
-            .Include(p => p.Diagnoses).ThenInclude(d => d.Mkb10Code)
+            .Include(p => p.PatientMkb10Codes).ThenInclude(d => d.Mkb10Code)
             .Include(p => p.Encounters)
             .Include(p => p.PatientMedicines).ThenInclude(pm => pm.Medicine)
             .Include(p => p.PatientMedicines).ThenInclude(pm => pm.ApplicationRegime)
@@ -164,7 +164,7 @@ public class PatientService : IPatientService
 
     /// <summary>
     /// Updates only scalar fields on the tracked entity, so navigation properties
-    /// (Doctor, Diagnoses, etc.) are never touched or re-inserted by mistake.
+    /// (Doctor, PatientMkb10Codes, etc.) are never touched or re-inserted by mistake.
     /// </summary>
     public async Task UpdatePatientAsync(PatientEditDto dto, CancellationToken ct = default)
     {
@@ -520,8 +520,8 @@ public class PatientService : IPatientService
         patient.CreatedAt=DateTime.UtcNow;
         patient.RegistrationDate=DateTime.UtcNow;
 
-        foreach(var vm in model.Diagnoses)
-            patient.Diagnoses.Add(NewDiagnosis(patient.Id, vm));
+        foreach(var vm in model.PatientMkb10Codes)
+            patient.PatientMkb10Codes.Add(NewDiagnosis(patient.Id, vm));
 
         foreach(var vm in model.Medicines)
             patient.PatientMedicines.Add(NewPatientMedicine(patient.Id, vm));
@@ -538,7 +538,7 @@ public class PatientService : IPatientService
         var patientDto = model.Patient;
 
         var existing = await db.Patients
-            .Include(x => x.Diagnoses)
+            .Include(x => x.PatientMkb10Codes)
             .Include(x => x.PatientMedicines)
             .Include(x => x.Documents)
             .FirstOrDefaultAsync(x => x.Id==patientDto.Id, ct)
@@ -560,17 +560,17 @@ public class PatientService : IPatientService
         // parent makes EF mark them Modified instead of Added -> "DB row is NULL" concurrency error.
 
         // ---- diagnoses: delete ----
-        foreach(var id in model.DeletedDiagnosisIds)
+        foreach(var id in model.DeletedPatientMkb10CodeIds)
         {
-            var entity = existing.Diagnoses.FirstOrDefault(x => x.Id==id && x.EncounterId==null);
+            var entity = existing.PatientMkb10Codes.FirstOrDefault(x => x.Id==id && x.EncounterId==null);
             if(entity!=null)
                 db.Remove(entity);
         }
 
         // ---- diagnoses: upsert (skip ids just deleted) ----
-        foreach(var vm in model.Diagnoses.Where(x => !model.DeletedDiagnosisIds.Contains(x.Id)))
+        foreach(var vm in model.PatientMkb10Codes.Where(x => !model.DeletedPatientMkb10CodeIds.Contains(x.Id)))
         {
-            var entity = existing.Diagnoses.FirstOrDefault(x => x.Id==vm.Id && x.EncounterId==null);
+            var entity = existing.PatientMkb10Codes.FirstOrDefault(x => x.Id==vm.Id && x.EncounterId==null);
 
             if(entity==null)
             {
@@ -720,7 +720,7 @@ public class PatientService : IPatientService
             NextAppointmentDate=null, // wire up once Appointment navigation/include is available
             // Patient form DTO exposes only patient-level diagnoses.
             // Encounter diagnoses remain scoped to their encounter and are loaded by encounter services.
-            Diagnoses=p.Diagnoses?.Where(x => x.EncounterId==null).Select(MapPatientMkb10Code).ToList()?? [],
+            PatientMkb10Codes=p.PatientMkb10Codes?.Where(x => x.EncounterId==null).Select(MapPatientMkb10Code).ToList()?? [],
             Medicines=p.PatientMedicines?.Where(x => x.EncounterId==null).Select(MapMedicine).ToList()?? [],
             Documents=p.Documents?.Select(MapDocument).ToList()?? []
         };
@@ -840,12 +840,12 @@ public class PatientService : IPatientService
             get; init;
         }
 
-        public List<PatientMkb10CodeSaveModel> Diagnoses { get; init; } = [];
+        public List<PatientMkb10CodeSaveModel> PatientMkb10Codes { get; init; } = [];
         public List<PatientMedicineSaveModel> Medicines { get; init; } = [];
         public List<PatientDocumentSaveModel> Documents { get; init; } = [];
         public List<PatientScoreSaveModel> Scores { get; init; } = [];
 
-        public List<Guid> DeletedDiagnosisIds { get; init; } = [];
+        public List<Guid> DeletedPatientMkb10CodeIds { get; init; } = [];
         public List<Guid> DeletedMedicineIds { get; init; } = [];
         public List<Guid> DeletedDocumentIds { get; init; } = [];
         public List<Guid> DeletedScoreIds { get; init; } = [];

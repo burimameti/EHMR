@@ -69,7 +69,7 @@ namespace EHMR.Services.Dto
             get; set;
         }
 
-        public List<PatientMkb10CodeDto> Diagnoses { get; set; } = [];
+        public List<PatientMkb10CodeDto> PatientMkb10Codes { get; set; } = [];
         public List<PatientMedicineDto> Medicines { get; set; } = [];
         public List<PatientDocumentDto> Documents { get; set; } = [];
 

@@ -100,7 +100,7 @@
 			</Style>
 			<!--  ═══ ШАБЛОНИ ЗА ИСТОРИЈА НА ПАЦИЕНТОТ ═══  -->
 
-			<DataTemplate x:Key="PatientDiagnosisRowTemplate" x:DataType="dto:PatientMkb10CodeDto">
+			<DataTemplate x:Key="PatientPatientMkb10CodeRowTemplate" x:DataType="dto:PatientMkb10CodeDto">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
 						<Label
@@ -832,7 +832,7 @@
 													<VerticalStackLayout
 														Grid.Row="2"
 														Grid.ColumnSpan="2"
-														BindableLayout.ItemsSource="{Binding Diagnoses}"
+														BindableLayout.ItemsSource="{Binding PatientMkb10Codes}"
 														Spacing="4">
 														<BindableLayout.ItemTemplate>
 															<DataTemplate x:DataType="dto:PatientMkb10CodeDto">
@@ -1457,8 +1457,8 @@
 										EmptyViewText="Нема евидентирани дијагнози."
 										FlexLayout.Basis="280"
 										FlexLayout.Grow="1"
-										ItemTemplate="{StaticResource PatientDiagnosisRowTemplate}"
-										ItemsSource="{Binding DiagnosisHistory}"
+										ItemTemplate="{StaticResource PatientPatientMkb10CodeRowTemplate}"
+										ItemsSource="{Binding Mkb10History}"
 										Style="{StaticResource CrudFormHistoryCardStyle}"
 										Variant="Diagnosis" />
 								</FlexLayout>
