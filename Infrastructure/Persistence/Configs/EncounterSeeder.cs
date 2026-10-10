@@ -75,6 +75,40 @@ public class EncounterSeeder : IEntitySeeder
         {
             context.Encounters.Add(encounter);
             await context.SaveChangesAsync(ct);
+
+            // Demo encounter medicine rows are snapshots of the patient's active
+            // assignments. Their quantities belong to this visit only; the
+            // patient-level assignment quantities are not modified.
+            var activeAssignments = await context.PatientMedicines
+                .Where(x => x.PatientId == encounter.PatientId
+                    && x.EncounterId == null
+                    && x.IsActive)
+                .ToListAsync(ct);
+
+            var encounterMedicineSnapshots = activeAssignments
+                .Select(assignment => new PatientMedicine
+                {
+                    Id = Guid.NewGuid(),
+                    PatientId = assignment.PatientId,
+                    EncounterId = encounter.Id,
+                    MedicineId = assignment.MedicineId,
+                    ApplicationRegimeId = assignment.ApplicationRegimeId,
+                    DosesFrequency = assignment.DosesFrequency,
+                    Dosage = assignment.Dosage,
+                    Notes = assignment.Notes,
+                    PharmaceuticalReference = assignment.PharmaceuticalReference,
+                    IsActive = true,
+                    // Demo data explicitly demonstrates both a positive
+                    // administered quantity and a valid zero quantity.
+                    Quantity = assignment.MedicineId == SeedIds.Med5 ? 2m : 0m
+                })
+                .ToList();
+
+            if(encounterMedicineSnapshots.Count > 0)
+            {
+                await context.PatientMedicines.AddRangeAsync(encounterMedicineSnapshots, ct);
+                await context.SaveChangesAsync(ct);
+            }
         }
         catch(Exception ex)
         {
