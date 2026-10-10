@@ -57,9 +57,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Deactivate);
     public bool CanManageAdministration => _authorizationService.CanPerform(Modules.Administration, ModuleAction.Manage);
     public bool CanSavePatient => _isNewPatientMode ? CanCreatePatient : CanEditPatient;
-    public bool HasMissingMedicineResolutions =>
-        AttachedMedicines.Any(x => !x.HasResolution) || PreviousMedicines.Any(x => !x.HasResolution);
-    public bool CanSavePatientForm => CanSavePatient && !HasMissingMedicineResolutions;
+public bool CanSavePatientForm => CanSavePatient;
     public string MaskedNationalId => MaskNationalId(Patient.NationalId);
 
     public bool CanReactivatePatient => CanActivatePatient&&!_isNewPatientMode&&Patient.Status==PatientStatus.Inactive;
@@ -224,7 +222,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(HeaderTitle));
         OnPropertyChanged(nameof(HeaderSubtitle));
         OnPropertyChanged(nameof(MaskedNationalId));
-        OnPropertyChanged(nameof(HasMissingMedicineResolutions));
+
         OnPropertyChanged(nameof(CanSavePatientForm));
     }
 
@@ -258,7 +256,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                 full.Medicines
                     .Where(m => !m.IsActive)
                     .Select(m => new PreviousMedicineRow(m)));
-            OnPropertyChanged(nameof(HasMissingMedicineResolutions));
+
             OnPropertyChanged(nameof(CanSavePatientForm));
             OnPropertyChanged(nameof(MaskedNationalId));
 
@@ -295,17 +293,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     public DateTime? CurrentPatientScoreDate => ScoreHistory.FirstOrDefault()?.RecordedAt;
 
     [ObservableProperty] private ObservableCollection<Appointment> appointmentHistory = new();
-    [ObservableProperty] private ObservableCollection<TherapyCycle> therapyCycleHistory = new();
-
-    public IEnumerable<TherapyCycle> ActiveTherapies => TherapyCycleHistory
-        .Where(x => x.Status==TherapyStatus.Active||x.Status==TherapyStatus.Planned)
-        .OrderByDescending(x => x.StartDate);
-
-    public IEnumerable<TherapyCycle> PreviousTherapies => TherapyCycleHistory
-        .Where(x => x.Status!=TherapyStatus.Active&&x.Status!=TherapyStatus.Planned)
-        .OrderByDescending(x => x.EndDate??x.StartDate);
-
-    [ObservableProperty] private ObservableCollection<Prescription> prescriptionHistory = new();
+[ObservableProperty] private ObservableCollection<Prescription> prescriptionHistory = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> medicineHistory = new();
 
     private async Task LoadHistoryAsync(Guid patientId)
@@ -359,17 +347,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
                     .OrderByDescending(x => x.ScheduledStart)
                     .ToListAsync());
 
-            TherapyCycleHistory=new ObservableCollection<TherapyCycle>(
-                await db.TherapyCycles
-                    .AsNoTracking()
-                    .Include(x => x.Documents)
-                    .Where(x => x.PatientId==patientId)
-                    .OrderByDescending(x => x.StartDate)
-                    .ToListAsync());
-            OnPropertyChanged(nameof(ActiveTherapies));
-            OnPropertyChanged(nameof(PreviousTherapies));
-
-            PrescriptionHistory=new ObservableCollection<Prescription>(
+PrescriptionHistory=new ObservableCollection<Prescription>(
                 await db.Prescriptions
                     .AsNoTracking()
                     .Where(x => x.PatientId==patientId)
@@ -518,19 +496,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         if(Patient.DoctorId==Guid.Empty)
         {
             await _userDialogService.ShowAlertAsync("Валидација", "Реуматолог не е доделен.", "OK");
-            return;
-        }
-
-        var medicineWithoutResolution = AttachedMedicines.FirstOrDefault(x => !x.HasResolution)?.PatientMedicine;
-        medicineWithoutResolution ??= PreviousMedicines.FirstOrDefault(x => !x.HasResolution)?.PatientMedicine;
-        if(medicineWithoutResolution is not null)
-        {
-            var medicineName=medicineWithoutResolution.MedicineName;
-            var state=medicineWithoutResolution.IsActive ? "активниот" : "неактивниот";
-            await _userDialogService.ShowAlertAsync(
-                "Валидација",
-                $"За {state} лек „{medicineName}“ мора да се прикачи решение пред зачувување.",
-                "ОК");
             return;
         }
 
@@ -710,11 +675,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         Id=m.Id,
         MedicineId=m.MedicineId,
         Dosage=m.Dosage,
-        DosesFrequency=m.DosesFrequency,
-        Notes=m.Notes,
-        PharmaceuticalReference=m.PharmaceuticalReference,
         ApplicationRegimeId=_applicationRegimes.FirstOrDefault(r => string.Equals(r.Regime, m.ApplicationRegime, StringComparison.OrdinalIgnoreCase))?.Id,
-        ResolutionDocumentId=m.ResolutionDocumentId,
         Quantity=m.Quantity,
         IsActive=active
     };
@@ -1139,8 +1100,6 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
             MedicineId=medicine.Id,
             MedicineName=medicine.Name,
             Dosage=medicine.DefaultDosage,
-            DosesFrequency=DosesFrequency.Other,
-            PharmaceuticalReference=string.Empty,
             ApplicationRegimeId=null,
             ApplicationRegime=string.Empty,
             Quantity=1,
@@ -1150,7 +1109,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         var row = new AttachedMedicineRow(patientMedicine);
         row.MarkNew();
         AttachedMedicines.Add(row);
-        OnPropertyChanged(nameof(HasMissingMedicineResolutions));
+
         OnPropertyChanged(nameof(CanSavePatientForm));
 
         if(ApplicationRegimeOptions.Count==0)
@@ -1172,82 +1131,26 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task MoveMedicineToInactiveAsync(AttachedMedicineRow row)
     {
-        if(row is null || !CanEditPatient || !IsEditMode || IsUploadingDocument)
+        if(row is null || !CanEditPatient || !IsEditMode)
             return;
-
-        if(!row.HasResolution)
-        {
-            await _userDialogService.ShowAlertAsync(
-                "Недостасува решение",
-                $"За активниот лек „{row.MedicineName}“ прво внесете решение. Лекот не може да се премести во неактивни без постоечко решение за активната терапија.",
-                "ОК");
-            return;
-        }
-
         var confirmed = await _userDialogService.ShowConfirmationAsync(
             "Преместување на неактивен лек",
-            $"Лекот „{row.MedicineName}“ ќе биде преместен во неактивни лекови. Потребно е да прикачите решение за неактивност. Дали сакате да продолжите?",
+            $"Лекот „{row.MedicineName}“ ќе биде означен како неактивен. Дали сакате да продолжите?",
             "Продолжи",
             "Откажи");
         if(!confirmed)
             return;
-
-        try
-        {
-            IsUploadingDocument=true;
-            var file=await FilePicker.Default.PickAsync(new PickOptions { PickerTitle="Прикачи решение за неактивност" });
-            if(file is null)
-                return;
-
-            var patientFolder=Path.Combine(FileSystem.AppDataDirectory,"patient-documents",Patient.Id.ToString());
-            Directory.CreateDirectory(patientFolder);
-            var storedPath=Path.Combine(patientFolder,$"{Guid.NewGuid()}_{file.FileName}");
-            await using(var source=await file.OpenReadAsync())
-            await using(var dest=File.Create(storedPath))
-                await source.CopyToAsync(dest);
-
-            var medicine=row.PatientMedicine;
-            medicine.IsActive=false;
-            var newDoc=new PatientDocumentDto
-            {
-                Id=Guid.NewGuid(),
-                PatientId=Patient.Id,
-                DocumentType=PatientDocumentType.Resenie,
-                Title="Решение за неактивност на лек",
-                Description=$"Решение за неактивност на лек „{medicine.MedicineName}“",
-                FileName=file.FileName,
-                StoredPath=storedPath,
-                ContentType=file.ContentType,
-                UploadedAt=DateTime.UtcNow
-            };
-
-            Documents.Add(newDoc);
-            medicine.ResolutionDocumentId=newDoc.Id;
-            medicine.ResolutionDocument=newDoc;
-            AttachedMedicines.Remove(row);
-
-            var previous=new PreviousMedicineRow(medicine);
-            if(row.CanDelete)
-                previous.MarkNew();
-            else
-                previous.MarkPersisted();
-            PreviousMedicines.Insert(0,previous);
-            SelectedDocumentPreview=newDoc;
-            OnPropertyChanged(nameof(HasMissingMedicineResolutions));
-            OnPropertyChanged(nameof(CanSavePatientForm));
-        }
-        catch(Exception ex)
-        {
-            await _userDialogService.ShowAlertAsync("Грешка",$"Преместувањето на лекот не успеа: {ex.Message}","ОК");
-        }
-        finally
-        {
-            IsUploadingDocument=false;
-        }
+        var medicine = row.PatientMedicine;
+        medicine.IsActive = false;
+        AttachedMedicines.Remove(row);
+        var previous = new PreviousMedicineRow(medicine);
+        if(row.CanDelete) previous.MarkNew(); else previous.MarkPersisted();
+        PreviousMedicines.Insert(0, previous);
+        OnPropertyChanged(nameof(CanSavePatientForm));
     }
 
     // =====================================================
-    // ПРЕТХОДНИ ТЕРАПИИ (рачно, status = неактивен)
+    // ПРЕТХОДНИ ЛЕКОВИ (рачно, status = неактивен)
     // =====================================================
 
     [RelayCommand]
@@ -1255,7 +1158,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     {
         if(row==null||!CanEditPatient||!row.CanDelete) return;
         PreviousMedicines.Remove(row);
-        OnPropertyChanged(nameof(HasMissingMedicineResolutions));
+
         OnPropertyChanged(nameof(CanSavePatientForm));
     }
 
@@ -1273,50 +1176,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     partial void OnSelectedDocumentPreviewChanged(PatientDocumentDto? value)
         => OnPropertyChanged(nameof(HasDocumentPreview));
 
-    [RelayCommand]
-    private async Task UploadMedicineResolutionAsync(object? target)
-    {
-        if(!CanEditPatient||IsUploadingDocument) return;
-        PatientMedicineDto? medicine=target switch
-        {
-            AttachedMedicineRow active => active.PatientMedicine,
-            PreviousMedicineRow previous => previous.PatientMedicine,
-            _ => null
-        };
-        if(medicine is null) return;
-        try
-        {
-            IsUploadingDocument=true;
-            var file=await FilePicker.Default.PickAsync(new PickOptions { PickerTitle="Изберете скенирано решение" });
-            if(file is null) return;
-            var patientFolder=Path.Combine(FileSystem.AppDataDirectory,"patient-documents",Patient.Id.ToString());
-            Directory.CreateDirectory(patientFolder);
-            var storedPath=Path.Combine(patientFolder,$"{Guid.NewGuid()}_{file.FileName}");
-            await using(var source=await file.OpenReadAsync())
-            await using(var dest=File.Create(storedPath)) await source.CopyToAsync(dest);
-            var newDoc=new PatientDocumentDto
-            {
-                Id=Guid.NewGuid(), PatientId=Patient.Id, DocumentType=PatientDocumentType.Resenie,
-                Title=medicine.IsActive ? "Решение за активен лек" : "Решение за неактивен лек",
-                Description=medicine.IsActive ? "Решение за активна терапија" : "Решение за неактивност на лек",
-                FileName=file.FileName, StoredPath=storedPath, ContentType=file.ContentType, UploadedAt=DateTime.UtcNow
-            };
-            Documents.Add(newDoc);
-            medicine.ResolutionDocumentId=newDoc.Id;
-            medicine.ResolutionDocument=newDoc;
-            if(target is AttachedMedicineRow activeRow)
-                activeRow.RefreshResolution();
-            else if(target is PreviousMedicineRow previousRow)
-                previousRow.RefreshResolution();
-            SelectedDocumentPreview=newDoc;
-            OnPropertyChanged(nameof(HasMissingMedicineResolutions));
-            OnPropertyChanged(nameof(CanSavePatientForm));
-        }
-        catch(Exception ex){ await _userDialogService.ShowAlertAsync("Грешка",$"Прикачувањето на решението не успеа: {ex.Message}","OK"); }
-        finally{ IsUploadingDocument=false; }
-    }
-
-    [RelayCommand]
+[RelayCommand]
     private async Task UploadDocumentAsync()
     {
         if(!CanEditPatient||IsUploadingDocument) return;
@@ -1373,15 +1233,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         if(document.Id!=Guid.Empty)
         {
             _deletedDocumentIds.Add(document.Id);
-            foreach(var medicine in AttachedMedicines.Select(x => x.PatientMedicine).Concat(PreviousMedicines.Select(x => x.PatientMedicine)))
-            {
-                if(medicine.ResolutionDocumentId==document.Id)
-                {
-                    medicine.ResolutionDocumentId=null;
-                    medicine.ResolutionDocument=null;
-                }
-            }
-        }
+}
         if(SelectedDocumentPreview==document) SelectedDocumentPreview=null;
         Documents.Remove(document);
     }
@@ -1491,9 +1343,6 @@ public partial class PreviousMedicineRow : ObservableObject
     public string MedicineName => PatientMedicine.MedicineName;
     public string MedicineNameBilingual => EHMR.Helpers.MacedonianTransliterator.ToBilingual(MedicineName);
     public string Dosage => PatientMedicine.Dosage;
-    public bool HasResolution => PatientMedicine.ResolutionDocumentId.HasValue;
-    public void RefreshResolution() => OnPropertyChanged(nameof(HasResolution));
-
 }
 
 public partial class MkbAlphabetSection : ObservableObject

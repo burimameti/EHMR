@@ -115,8 +115,8 @@ public class PatientService : IPatientService
             .Include(p => p.Encounters)
             .Include(p => p.PatientMedicines).ThenInclude(pm => pm.Medicine)
             .Include(p => p.PatientMedicines).ThenInclude(pm => pm.ApplicationRegime)
-            .Include(p => p.PatientMedicines).ThenInclude(pm => pm.ResolutionDocument)
-            .Include(p => p.Documents)
+            .Include(p => p.PatientMedicines)
+.Include(p => p.Documents)
             .FirstOrDefaultAsync(p => p.Id==id, ct);
 
         return entity==null ? null : MapToDto(entity);
@@ -541,8 +541,7 @@ public class PatientService : IPatientService
         var existing = await db.Patients
             .Include(x => x.Diagnoses)
              .Include(x => x.PatientMedicines)
-            .ThenInclude(x => x.ResolutionDocument)
-            .Include(x => x.Documents)
+.Include(x => x.Documents)
             .FirstOrDefaultAsync(x => x.Id==patientDto.Id, ct)
             ??throw new KeyNotFoundException($"Patient {patientDto.Id} not found.");
 
@@ -614,11 +613,9 @@ public class PatientService : IPatientService
 
             entity.MedicineId=vm.MedicineId;
             entity.Dosage=vm.Dosage;
-            entity.DosesFrequency=vm.DosesFrequency;
-            entity.Notes=vm.Notes;
-            entity.PharmaceuticalReference=vm.PharmaceuticalReference;
+
             entity.ApplicationRegimeId=vm.ApplicationRegimeId;
-            entity.ResolutionDocumentId=vm.ResolutionDocumentId;
+
             entity.Quantity=vm.Quantity;
             entity.IsActive=vm.IsActive;
         }
@@ -660,11 +657,9 @@ public class PatientService : IPatientService
         PatientId=patientId,
         MedicineId=vm.MedicineId,
         Dosage=vm.Dosage,
-        DosesFrequency=vm.DosesFrequency,
-        Notes=vm.Notes,
-        PharmaceuticalReference=vm.PharmaceuticalReference,
+
         ApplicationRegimeId=vm.ApplicationRegimeId,
-        ResolutionDocumentId=vm.ResolutionDocumentId,
+
         Quantity=vm.Quantity,
         IsActive=vm.IsActive
     };
@@ -752,8 +747,7 @@ public class PatientService : IPatientService
         MedicineId=pm.MedicineId,
         MedicineName=pm.Medicine?.Name??"",
         ApplicationRegimeId=pm.ApplicationRegimeId,
-        ResolutionDocumentId=pm.ResolutionDocumentId,
-        ResolutionDocument=pm.ResolutionDocument is null ? null : MapDocument(pm.ResolutionDocument),
+
         ApplicationRegime=pm.ApplicationRegime?.Regime??"",
         GenericName=pm.Medicine?.GenericName??"",
         Code=pm.Medicine?.Code??"",
@@ -762,10 +756,10 @@ public class PatientService : IPatientService
         Unit=pm.Medicine?.Unit??"",
         DefaultDosage=pm.Medicine?.DefaultDosage??"",
         Manufacturer=pm.Medicine?.Manufacturer??"",
-        DosesFrequency=pm.DosesFrequency,
+
         Dosage=pm.Dosage,
         Quantity=pm.Quantity,
-        Notes=pm.Notes,
+
         IsActive=pm.IsActive
     };
 
@@ -774,7 +768,7 @@ public class PatientService : IPatientService
         Id=doc.Id,
         PatientId=doc.PatientId,
         EncounterId=doc.EncounterId,
-        TherapyCycleId=doc.TherapyCycleId,
+
         DocumentType=doc.DocumentType,
         Title=doc.Title,
         Description=doc.Description,

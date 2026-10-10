@@ -178,73 +178,7 @@
 					</Grid>
 				</Border>
 			</DataTemplate>
-
-			<DataTemplate x:Key="PatientTherapyCycleRowTemplate" x:DataType="entities:TherapyCycle">
-				<Grid Padding="8,6" ColumnDefinitions="Auto,*">
-					<Label
-						FontAttributes="Bold"
-						FontSize="12"
-						Text="{Binding Status}"
-						TextColor="{StaticResource SparkAccentTealDark}"
-						VerticalOptions="Center" />
-					<Label
-						Grid.Column="1"
-						Margin="10,0,0,0"
-						FontSize="12"
-						LineBreakMode="TailTruncation"
-						Text="{Binding Notes}"
-						TextColor="{StaticResource SparkTextPrimary}"
-						VerticalOptions="Center" />
-				</Grid>
-			</DataTemplate>
-
-			<DataTemplate x:Key="PatientTherapyCycleHistoryRowTemplate" x:DataType="entities:TherapyCycle">
-				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
-					<Grid
-						Padding="8,6"
-						ColumnDefinitions="Auto,*,Auto"
-						ColumnSpacing="10"
-						RowDefinitions="Auto,Auto"
-						RowSpacing="3">
-						<Label
-							Grid.RowSpan="2"
-							FontAttributes="Bold"
-							FontSize="12"
-							Text="{Binding Status}"
-							TextColor="{StaticResource SparkAccentTealDark}"
-							VerticalOptions="Center" />
-						<Label
-							Grid.Column="1"
-							FontSize="12"
-							LineBreakMode="TailTruncation"
-							Text="{Binding DecisionText, TargetNullValue='Без внесено решение'}"
-							TextColor="{StaticResource SparkTextPrimary}"
-							VerticalOptions="Center" />
-						<Label
-							Grid.Column="2"
-							FontSize="11"
-							Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}"
-							TextColor="{StaticResource SparkTextSecondary}"
-							VerticalOptions="Center" />
-						<HorizontalStackLayout
-							Grid.Row="1"
-							Grid.Column="1"
-							Spacing="8">
-							<Label
-								FontSize="11"
-								LineBreakMode="TailTruncation"
-								Text="{Binding Notes, TargetNullValue='Без забелешка'}"
-								TextColor="{StaticResource SparkTextSecondary}" />
-							<Label
-								FontSize="11"
-								Text="{Binding Documents.Count, StringFormat='Документи: {0}'}"
-								TextColor="{StaticResource SparkAccentTealDark}" />
-						</HorizontalStackLayout>
-					</Grid>
-				</Border>
-			</DataTemplate>
-
-			<DataTemplate x:Key="PatientPrescriptionRowTemplate" x:DataType="entities:Prescription">
+<DataTemplate x:Key="PatientPrescriptionRowTemplate" x:DataType="entities:Prescription">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
 						<Label
@@ -1066,7 +1000,7 @@
 														<Grid
 															Padding="10,8"
 															BackgroundColor="{StaticResource SparkSurfaceAlt}"
-															ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,64,64"
+															ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,64"
 															ColumnSpacing="8">
 															<Label
 																Grid.Column="0"
@@ -1110,7 +1044,7 @@
 																	<Grid RowDefinitions="Auto,1">
 																		<Grid
 																			Padding="10,6"
-																			ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,64,64"
+																			ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,64"
 																			ColumnSpacing="8">
 																			<Label
 																				Grid.Column="0"
@@ -1134,42 +1068,11 @@
 																				Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" />
 
 																			<!--  Решение  -->
-																			<HorizontalStackLayout
-																				Grid.Column="4"
-																				HorizontalOptions="Center"
-																				Spacing="12"
-																				VerticalOptions="Center">
-																				<Label
-																					IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
-																					Style="{StaticResource TableIconStyle}"
-																					Text="&#xf093;"
-																					TextColor="#DC2626">
-																					<Label.Triggers>
-																						<DataTrigger
-																							Binding="{Binding HasResolution}"
-																							TargetType="Label"
-																							Value="True">
-																							<Setter Property="TextColor" Value="{StaticResource SparkAccentTealDark}" />
-																						</DataTrigger>
-																					</Label.Triggers>
-																					<Label.GestureRecognizers>
-																						<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.UploadMedicineResolutionCommand}" CommandParameter="{Binding .}" />
-																					</Label.GestureRecognizers>
-																				</Label>
-																				<Label
-																					IsVisible="{Binding HasResolution}"
-																					Style="{StaticResource TableIconStyle}"
-																					Text="&#xf06e;"
-																					TextColor="{StaticResource SparkAccentTealDark}">
-																					<Label.GestureRecognizers>
-																						<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding PatientMedicine.ResolutionDocument}" />
-																					</Label.GestureRecognizers>
-																				</Label>
-																			</HorizontalStackLayout>
+																			
 
 																			<!--  Акции  -->
 																			<HorizontalStackLayout
-																				Grid.Column="5"
+																				Grid.Column="4"
 																				HorizontalOptions="Center"
 																				IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
 																				Spacing="12"
@@ -1223,7 +1126,7 @@
 														<Grid
 															Padding="10,8"
 															BackgroundColor="{StaticResource SparkSurfaceAlt}"
-															ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,64,64"
+															ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,64"
 															ColumnSpacing="8">
 															<Label
 																Grid.Column="0"
@@ -1268,7 +1171,7 @@
 																	<Grid RowDefinitions="Auto,1">
 																		<Grid
 																			Padding="10,6"
-																			ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,64,64"
+																			ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,64"
 																			ColumnSpacing="8">
 																			<Label
 																				Grid.Column="0"
@@ -1291,41 +1194,10 @@
 																				Style="{StaticResource TableCellEntryStyle}"
 																				Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" />
 
-																			<HorizontalStackLayout
-																				Grid.Column="4"
-																				HorizontalOptions="Center"
-																				Spacing="12"
-																				VerticalOptions="Center">
-																				<Label
-																					IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
-																					Style="{StaticResource TableIconStyle}"
-																					Text="&#xf093;"
-																					TextColor="#DC2626">
-																					<Label.Triggers>
-																						<DataTrigger
-																							Binding="{Binding HasResolution}"
-																							TargetType="Label"
-																							Value="True">
-																							<Setter Property="TextColor" Value="{StaticResource SparkAccentTealDark}" />
-																						</DataTrigger>
-																					</Label.Triggers>
-																					<Label.GestureRecognizers>
-																						<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.UploadMedicineResolutionCommand}" CommandParameter="{Binding .}" />
-																					</Label.GestureRecognizers>
-																				</Label>
-																				<Label
-																					IsVisible="{Binding HasResolution}"
-																					Style="{StaticResource TableIconStyle}"
-																					Text="&#xf06e;"
-																					TextColor="{StaticResource SparkAccentTealDark}">
-																					<Label.GestureRecognizers>
-																						<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding PatientMedicine.ResolutionDocument}" />
-																					</Label.GestureRecognizers>
-																				</Label>
-																			</HorizontalStackLayout>
+																			
 
 																			<Label
-																				Grid.Column="5"
+																				Grid.Column="4"
 																				IsEnabled="{Binding CanDelete}"
 																				IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
 																				Style="{StaticResource TableIconStyle}"
@@ -1645,7 +1517,7 @@
 					<Label
 						FontAttributes="Bold"
 						FontSize="10"
-						IsVisible="{Binding HasMissingMedicineResolutions}"
+						IsVisible="{Binding }"
 						Text="За секој активен или неактивен лек мора да биде внесено решение пред зачувување."
 						TextColor="#DC2626"
 						VerticalOptions="Center" />

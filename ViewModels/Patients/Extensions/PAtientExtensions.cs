@@ -162,10 +162,7 @@ namespace EHMR.ViewModels.Patients.Extensions
         public static string ToDisplay(this PatientStatus status) =>
             PatientEnumLookups.Status.ToDisplay(status.ToString());
 
-        public static string ToDisplay(this DosesFrequency frequency) =>
-            PatientEnumLookups.DosesFrequency.ToDisplay(frequency.ToString());
-
-        public static string ToDisplay(this TherapyStatus status) => status switch
+public static string ToDisplay(this TherapyStatus status) => status switch
         {
             TherapyStatus.Planned => "Планирана",
             TherapyStatus.Active => "Активна",
@@ -205,12 +202,7 @@ namespace EHMR.ViewModels.Patients.Extensions
         ("Неактивни", "Inactive")
     });
 
-        // Matches DosesFrequency exactly - used both on the old single-patient
-        // frequency picker and now per-row on AttachedMedicineRow.
-        public static FilterLookup DosesFrequency
-        {
-            get;
-        } = new(new[]
+= new(new[]
         {
         ("Дневно", "Daily"),
         ("Двапати", "TwiceDaily"),

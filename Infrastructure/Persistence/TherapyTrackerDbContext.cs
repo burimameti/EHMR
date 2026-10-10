@@ -411,10 +411,8 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
         {
             entity.HasKey(x => x.Id);
 
-            entity.Property(x => x.DosesFrequency).HasConversion<string>().HasMaxLength(30);
             entity.Property(x => x.Dosage).HasMaxLength(100);
-            entity.Property(x => x.Notes).HasMaxLength(500);
-            entity.Property(x => x.PharmaceuticalReference).HasMaxLength(200);
+
             entity.Property(x => x.IsActive).HasDefaultValue(true);
 
             entity.HasOne(x => x.Patient)
@@ -432,12 +430,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
                 .HasForeignKey(x => x.ApplicationRegimeId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            entity.HasOne(x => x.ResolutionDocument)
-                .WithMany()
-                .HasForeignKey(x => x.ResolutionDocumentId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            entity.HasOne(x => x.Medicine)
+entity.HasOne(x => x.Medicine)
                 .WithMany()
                 .HasForeignKey(x => x.MedicineId)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -445,7 +438,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             entity.HasIndex(x => x.PatientId);
             entity.HasIndex(x => x.MedicineId);
             entity.HasIndex(x => x.ApplicationRegimeId);
-            entity.HasIndex(x => x.ResolutionDocumentId);
+
             entity.HasIndex(x => x.EncounterId);
             entity.HasIndex(x => new { x.PatientId, x.MedicineId, x.IsActive });
         });

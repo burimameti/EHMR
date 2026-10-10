@@ -3,30 +3,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace EHMR.Domain.Entities;
 
 /// <summary>
-/// Join entity between Patient and Medicine. Carries the per-patient
-/// prescribing details (frequency and dosage) that don't
-/// belong on the Medicine catalog entity itself, since the same medicine
-/// can be prescribed differently to different patients.
+/// Patient-level medicine assignment or encounter-specific administration snapshot.
+/// EncounterId is null for the patient-card assignment and populated for a visit record.
+/// Quantity belongs to this row; encounter quantities never update the patient assignment.
 /// </summary>
 public class PatientMedicine : BaseEntity
 {
-    public Guid PatientId
-    {
-        get; set;
-    }
-    public Patient? Patient
-    {
-        get; set;
-    }
-
+    public Guid PatientId { get; set; }
+    public Patient? Patient { get; set; }
     public Guid? EncounterId { get; set; }
     public Encounter? Encounter { get; set; }
-
     public Guid? ApplicationRegimeId { get; set; }
     public ApplicationRegime? ApplicationRegime { get; set; }
-
-    public Guid? ResolutionDocumentId { get; set; }
-    public PatientDocument? ResolutionDocument { get; set; }
 
     [NotMapped]
     public string ApplicationRegimeDisplay
@@ -41,33 +29,11 @@ public class PatientMedicine : BaseEntity
         }
     }
 
-    public Guid MedicineId
-    {
-        get; set;
-    }
-    public Medicine? Medicine
-    {
-        get; set;
-    }
-
-
-    /// <summary>How often THIS patient takes THIS medicine — independent of any other medicine they're on.</summary>
-    public DosesFrequency DosesFrequency { get; set; } = DosesFrequency.Daily;
-
-    /// <summary>Free-text actual dosage for this patient, e.g. "1 tablet" or "5ml" — defaults from Medicine.DefaultDosage but can be overridden.</summary>
+    public Guid MedicineId { get; set; }
+    public Medicine? Medicine { get; set; }
     public string Dosage { get; set; } = string.Empty;
-
-    public string Notes { get; set; } = string.Empty;
-
-    public string PharmaceuticalReference { get; set; } = string.Empty;
-
-
-    /// <summary>Patient-specific quantity, matching the numeric quantity used in encounter medicine entry.</summary>
-    public decimal Quantity { get; set; } = 1m;
-
-    /// <summary>False once discontinued/completed — kept instead of deleting so prescription history survives.</summary>
+    public decimal Quantity { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public override string ToString() =>
-        $"{Medicine?.Name} — {Dosage} ({DosesFrequency})";
+    public override string ToString() => $"{Medicine?.Name} — {Dosage}";
 }

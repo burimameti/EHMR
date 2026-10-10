@@ -1402,7 +1402,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             // Start at zero and let the clinician enter what was actually given.
             // Zero is meaningful and must be persisted as an encounter record.
             Quantity=0,
-            DosesFrequency=previous.DosesFrequency,
+
             IsActive=true
         };
 

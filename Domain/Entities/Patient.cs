@@ -164,14 +164,3 @@ public enum Gender
     Female
 }
 
-public enum DosesFrequency
-{
-    Daily,
-    TwiceDaily,
-    ThreeTimesDaily,
-    EveryOtherDay,
-    EveryThreeDays,
-    Weekly,
-    Monthly,
-    Other
-}

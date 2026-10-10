@@ -19,14 +19,12 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
             return;
 
         var oral = applicationRegimes.FirstOrDefault(x => x.Regime == "Орално")?.Id;
-        var subcutaneous = applicationRegimes.FirstOrDefault(x => x.Regime == "Поткожно")?.Id;
-
         var existingMedicines = await context.PatientMedicines
             .Where(x => x.ApplicationRegimeId == null)
             .ToListAsync(ct);
 
         foreach(var item in existingMedicines)
-            item.ApplicationRegimeId = item.DosesFrequency == DosesFrequency.Weekly ? subcutaneous : oral;
+            item.ApplicationRegimeId ??= oral;
 
         if(existingMedicines.Count > 0)
             await context.SaveChangesAsync(ct);
@@ -57,9 +55,9 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 PatientId = SeedIds.Patient1,
                 MedicineId = SeedIds.Med5, // Метформин
                 ApplicationRegimeId = oral,
-                DosesFrequency = DosesFrequency.TwiceDaily,
+
                 Dosage = "1 таблета од 850mg",
-                Notes = "Да се зема строго за време на оброк.",
+
                 IsActive = true,
                 Quantity = 0m
             },
@@ -69,9 +67,9 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 PatientId = SeedIds.Patient1,
                 MedicineId = SeedIds.Med6, // Амлодипин
                 ApplicationRegimeId = oral,
-                DosesFrequency = DosesFrequency.Daily,
+
                 Dosage = "1 таблета од 5mg",
-                Notes = "Редовна наутро за крвен притисок.",
+
                 IsActive = true,
                 Quantity = 0m
             },
@@ -83,9 +81,9 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 PatientId = SeedIds.Patient2,
                 MedicineId = SeedIds.Med7, // Омепразол
                 ApplicationRegimeId = oral,
-                DosesFrequency = DosesFrequency.Daily,
+
                 Dosage = "1 капсула од 20mg",
-                Notes = "Наутро на гладно, 30 минути пред појадок.",
+
                 IsActive = true,
                 Quantity = 0m
             },
@@ -97,9 +95,9 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 PatientId = SeedIds.Patient3,
                 MedicineId = SeedIds.Med9, // Метотрексат
                 ApplicationRegimeId = subcutaneous,
-                DosesFrequency = DosesFrequency.Weekly,
+
                 Dosage = "3 таблети одеднаш (7.5mg вкупно)",
-                Notes = "Да се зема исклучиво во Вторник. Потребна редовна крвна слика.",
+
                 IsActive = true
             }
         };

@@ -707,8 +707,7 @@ public class EncounterDetailService : IEncounterDetailService
                         ApplicationRegimeId=vm.ApplicationRegimeId,
                         Quantity=vm.Quantity,
                         Dosage=vm.Dosage,
-                        DosesFrequency=vm.DosesFrequency,
-                        Notes=vm.Notes,
+
                         IsActive=vm.IsActive
                     });
                 }
@@ -719,8 +718,7 @@ public class EncounterDetailService : IEncounterDetailService
                     entity.ApplicationRegimeId=vm.ApplicationRegimeId;
                     entity.Quantity=vm.Quantity;
                     entity.Dosage=vm.Dosage;
-                    entity.DosesFrequency=vm.DosesFrequency;
-                    entity.Notes=vm.Notes;
+
                     entity.IsActive=vm.IsActive;
                 }
             }

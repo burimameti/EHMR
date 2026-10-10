@@ -82,24 +82,8 @@ namespace EHMR.Services.Dto
             get; init;
         }
 
-        public DosesFrequency DosesFrequency
-        {
-            get; init;
-        }
-
-        public string? Notes
-        {
-            get; init;
-        }
-
-        public string? PharmaceuticalReference
-        {
-            get; init;
-        }
-
-        public Guid? ApplicationRegimeId { get; init; }
-        public Guid? ResolutionDocumentId { get; init; }
-        public decimal Quantity { get; init; } = 1m;
+public Guid? ApplicationRegimeId { get; init; }
+public decimal Quantity { get; init; } = 1m;
 
         public bool IsActive
         {

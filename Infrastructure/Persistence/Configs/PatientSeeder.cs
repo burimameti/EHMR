@@ -518,15 +518,6 @@ public class PatientSeeder : IEntitySeeder
         if(missingPatients.Count > 0)
             await context.Patients.AddRangeAsync(missingPatients, ct);
 
-        var frequenciesInOriginalOrder = new[]
-        {
-            DosesFrequency.Daily, DosesFrequency.TwiceDaily, DosesFrequency.EveryOtherDay, DosesFrequency.Weekly,
-            DosesFrequency.Daily, DosesFrequency.ThreeTimesDaily, DosesFrequency.Monthly, DosesFrequency.Daily,
-            DosesFrequency.TwiceDaily, DosesFrequency.EveryThreeDays, DosesFrequency.Daily, DosesFrequency.Weekly,
-            DosesFrequency.EveryOtherDay, DosesFrequency.Daily, DosesFrequency.TwiceDaily, DosesFrequency.Daily,
-            DosesFrequency.Monthly, DosesFrequency.Daily, DosesFrequency.Weekly, DosesFrequency.Daily
-        };
-
-        await context.SaveChangesAsync(ct);
+await context.SaveChangesAsync(ct);
     }
 }
