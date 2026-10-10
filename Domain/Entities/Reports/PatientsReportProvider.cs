@@ -865,14 +865,13 @@ namespace EHMR.Domain.Entities.Reports
 
         private static string BuildPatientMkb10Info(Patient patient)
         {
-            if(patient.Mkb10Assignments==null || patient.Mkb10Assignments.Count==0)
-                return "Нема MKB-10 кодови";
+            var codes = (patient.Mkb10Assignments ?? [])
+                .Where(x => x.EncounterId==null && x.Mkb10Code!=null)
+                .Select(x => x.Mkb10Code!.Code)
+                .Distinct()
+                .ToList();
 
-            return string.Join(", ",
-                patient.Mkb10Assignments
-                    .Where(x => x.EncounterId==null && x.Mkb10Code!=null)
-                    .Select(x => x.Mkb10Code!.Code)
-                    .Distinct());
+            return codes.Count==0 ? "Нема MKB-10 кодови" : string.Join(", ", codes);
         }
 
         private static string BuildMedicalInfo(Patient patient)
