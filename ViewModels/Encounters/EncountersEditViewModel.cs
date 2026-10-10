@@ -251,7 +251,7 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
             ScoreText=string.Join(" | ", EncounterScores);
             await EncounterService.SaveEncounter(
                 Encounter,
-                Diagnoses.ToList(),
+                Mkb10Assignments.ToList(),
                 Prescriptions.ToList(),
                 EncounterMedicines.ToList(),
                 DeletedMedicineIds.ToList(),
