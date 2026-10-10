@@ -9,7 +9,6 @@ public enum SearchEntityType
     Patient,
     Doctor,
     Appointment,
-    TherapyCycle,
     Diagnosis,
     Medication
 }
@@ -35,7 +34,6 @@ public sealed class SearchSuggestion
         SearchEntityType.Patient => "Patients",
         SearchEntityType.Doctor => "Doctors",
         SearchEntityType.Appointment => "Appointments",
-        SearchEntityType.TherapyCycle => "Therapy Cycles",
         SearchEntityType.Diagnosis => "Diagnoses",
         SearchEntityType.Medication => "Medications",
         _ => "Other"
@@ -116,7 +114,6 @@ public class AutocompleteSearchService : IAutocompleteSearchService
         SearchEntityType.Patient => 40,
         SearchEntityType.Doctor => 30,
         SearchEntityType.Appointment => 20,
-        SearchEntityType.TherapyCycle => 15,
         SearchEntityType.Diagnosis => 10,
         SearchEntityType.Medication => 5,
         _ => 0
@@ -247,30 +244,6 @@ public class AutocompleteSearchService : IAutocompleteSearchService
                         ScoreMatch(x.Code, query)
                         +ScoreMatch(x.Description, query)
                         +TypeBoost(SearchEntityType.Diagnosis)
-                }));
-        }
-        if(types.Contains(SearchEntityType.TherapyCycle))
-        {
-            var cycles = await db.TherapyCycles
-                .Include(x => x.Patient)
-                .AsNoTracking()
-                .Where(x =>
-                    x.Patient.FirstName.Contains(query)||
-                    x.Patient.LastName.Contains(query))
-                .Take(8)
-                .ToListAsync(ct);
-
-            results.AddRange(
-                cycles.Select(x => new SearchSuggestion
-                {
-                    Id=x.Id.ToString(),
-                    Type=SearchEntityType.TherapyCycle,
-                    DisplayText=
-                        $"Cycle #{x.TherapyCyleNumber} • {x.Patient.FirstName} {x.Patient.LastName}",
-                    Score=
-                        ScoreMatch(x.Patient.FirstName, query)
-                        +ScoreMatch(x.Patient.LastName, query)
-                        +TypeBoost(SearchEntityType.TherapyCycle)
                 }));
         }
         // =========================
