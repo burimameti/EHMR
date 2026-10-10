@@ -309,9 +309,6 @@ namespace EHMR.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("CycleId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Data")
                         .HasColumnType("nvarchar(max)");
 
