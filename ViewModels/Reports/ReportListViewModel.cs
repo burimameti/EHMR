@@ -520,7 +520,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
         var scores=await db.PatientScores
             .AsNoTracking()
-            .Where(s => s.PatientId==patientId && encounterIds.Contains(s.EncounterId))
+            .Where(s => s.PatientId==patientId && s.EncounterId.HasValue && encounterIds.Contains(s.EncounterId.Value))
             .OrderByDescending(s => s.RecordedAt)
             .ToListAsync();
 
