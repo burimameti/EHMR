@@ -142,7 +142,6 @@ public class EncounterDetailService : IEncounterDetailService
             .Include(x => x.Patient)
             .Include(x => x.Doctor).ThenInclude(x => x.User)
             .Include(x => x.Appointment)
-            .Include(x => x.TherapyCycle)
             .FirstAsync(x => x.Id==id);
 
         var diagnoses = await db.Diagnoses
@@ -200,7 +199,6 @@ public class EncounterDetailService : IEncounterDetailService
             .AsNoTracking()
             .Include(x => x.Patient)
             .Include(x => x.Doctor).ThenInclude(x => x.User)
-            .Include(x => x.TherapyCycle)
             .FirstOrDefaultAsync(x => x.Id==appointmentId);
     }
 
@@ -210,7 +208,6 @@ public class EncounterDetailService : IEncounterDetailService
         return await db.Appointments
             .AsNoTracking()
             .Include(x => x.Doctor).ThenInclude(x => x.User)
-            .Include(x => x.TherapyCycle)
             .Where(x => x.PatientId==patientId)
             .OrderByDescending(x => x.ScheduledStart)
             .ToListAsync();
@@ -915,7 +912,6 @@ public class EncounterDetailService : IEncounterDetailService
                     Id=Guid.NewGuid(),
                     PatientId=encounter.PatientId,
                     DoctorId=encounter.DoctorId,
-                    TherapyCycleId=encounter.TherapyCycleId,
                     ScheduledStart=followUp,
                     ScheduledEnd=followUp.AddMinutes(30),
                     ReasonForVisit="Следен контрол",
