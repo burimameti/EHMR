@@ -26,7 +26,7 @@ namespace EHMR.Domain.Entities.Reports
         private string _selectedAllergyFilter = "Сите";
         private string _selectedCityFilter = "Сите";
         private string _selectedRheumatologistFilter = "Сите";
-        private string _selectedDiagnosisFilter = "Сите";
+        private string _selectedMkb10CodeFilter = "Сите";
         private string _selectedMedicineFilter = "Сите";
         private string _selectedGenderFilter = "Сите";
         private string _selectedScoreFilter = "Сите";
@@ -106,7 +106,7 @@ namespace EHMR.Domain.Entities.Reports
             _selectedAllergyFilter="Сите";
             _selectedCityFilter="Сите";
             _selectedRheumatologistFilter="Сите";
-            _selectedDiagnosisFilter="Сите";
+            _selectedMkb10CodeFilter="Сите";
             _selectedMedicineFilter="Сите";
             _selectedGenderFilter="Сите";
             _selectedScoreFilter="Сите";
@@ -121,7 +121,7 @@ namespace EHMR.Domain.Entities.Reports
                 foreach(var picker in new[]
                 {
                     _statusPicker, _cityPicker, _rheumatologistPicker,
-                    _diagnosisPicker, _medicinePicker, _genderPicker, _scorePicker
+                    _mkb10CodePicker, _medicinePicker, _genderPicker, _scorePicker
                 })
                 {
                     if(picker is null)
@@ -150,7 +150,7 @@ namespace EHMR.Domain.Entities.Reports
         private SparkPickerItem? _statusPicker;
         private SparkPickerItem? _cityPicker;
         private SparkPickerItem? _rheumatologistPicker;
-        private SparkPickerItem? _diagnosisPicker;
+        private SparkPickerItem? _mkb10CodePicker;
         private SparkPickerItem? _medicinePicker;
         private SparkPickerItem? _genderPicker;
         private SparkPickerItem? _scorePicker;
@@ -312,12 +312,12 @@ namespace EHMR.Domain.Entities.Reports
                     IsScoreSearchEnabled=false;
                 });
 
-            _diagnosisPicker=CreatePicker(
+            _mkb10CodePicker=CreatePicker(
                 "Дијагноза",
-                _selectedDiagnosisFilter,
+                _selectedMkb10CodeFilter,
                 value =>
                 {
-                    _selectedDiagnosisFilter=value;
+                    _selectedMkb10CodeFilter=value;
                     _selectedScorePatientId=null;
                     IsScoreSearchEnabled=false;
                 });
@@ -366,7 +366,7 @@ namespace EHMR.Domain.Entities.Reports
                 _statusPicker,
                 _cityPicker,
                 _rheumatologistPicker,
-                _diagnosisPicker,
+                _mkb10CodePicker,
                 _genderPicker
             };
 
@@ -576,7 +576,7 @@ namespace EHMR.Domain.Entities.Reports
                     .Select(x => x.Doctor!.FullName));
 
             Debug.WriteLine($"[Patients]   - MKB-10 code picker...");
-            RefreshPicker(_diagnosisPicker,
+            RefreshPicker(_mkb10CodePicker,
                 patients
                     .SelectMany(x => x.Mkb10Assignments)
                     .Where(x => x.Mkb10Code!=null)
@@ -663,10 +663,10 @@ namespace EHMR.Domain.Entities.Reports
                 Debug.WriteLine($"[Patients]   - Rheumatologist filter: {_selectedRheumatologistFilter}");
             }
 
-            if(_selectedDiagnosisFilter!="Сите")
+            if(_selectedMkb10CodeFilter!="Сите")
             {
-                query=query.Where(x => x.Mkb10Assignments.Any(d => d.Mkb10Code?.Code==_selectedDiagnosisFilter));
-                Debug.WriteLine($"[Patients]   - MKB-10 code filter: {_selectedDiagnosisFilter}");
+                query=query.Where(x => x.Mkb10Assignments.Any(d => d.Mkb10Code?.Code==_selectedMkb10CodeFilter));
+                Debug.WriteLine($"[Patients]   - MKB-10 code filter: {_selectedMkb10CodeFilter}");
             }
 
             if(_selectedMedicineFilter!="Сите")
@@ -737,7 +737,7 @@ namespace EHMR.Domain.Entities.Reports
                             ? "Нема скор"
                             : string.IsNullOrWhiteSpace(score.Number) ? score.ScoreText : $"{score.ScoreText}: {score.Number}",
                         BuildEncounterMedicinesInfo(patient, encounter.Id),
-                        BuildEncounterDiagnosisInfo(encounter),
+                        BuildEncounterMkb10Info(encounter),
                         encounter.Notes ?? encounter.ClinicalNotes ?? "-"
                     ],
                     IsAlertSeverity = false
@@ -771,7 +771,7 @@ namespace EHMR.Domain.Entities.Reports
                     patient.Address ?? "-",
                     patient.City ?? "-",
                     BuildMedicinesInfo(patient, from, to, selectedMedicineId),
-                    BuildDiagnosisInfo(patient)
+                    BuildPatientMkb10Info(patient)
                 ],
                 IsAlertSeverity=false
             };
@@ -815,15 +815,15 @@ namespace EHMR.Domain.Entities.Reports
             return medicines.Count == 0 ? "Нема лекови за прегледот" : string.Join(", ", medicines);
         }
 
-        private static string BuildEncounterDiagnosisInfo(Encounter encounter)
+        private static string BuildEncounterMkb10Info(Encounter encounter)
         {
-            var diagnoses = (encounter.Mkb10Assignments ?? [])
+            var mkb10Assignments = (encounter.Mkb10Assignments ?? [])
                 .Where(item => item.Mkb10Code != null)
                 .Select(item => item.Mkb10Code!.Code)
                 .Distinct()
                 .ToList();
 
-            return diagnoses.Count == 0 ? "Нема дијагноза за прегледот" : string.Join(", ", diagnoses);
+            return mkb10Assignments.Count == 0 ? "Нема MKB-10 код за прегледот" : string.Join(", ", mkb10Assignments);
         }
 
         private static string BuildMedicinesInfo(
@@ -862,7 +862,7 @@ namespace EHMR.Domain.Entities.Reports
             return value>=from && value<to;
         }
 
-        private static string BuildDiagnosisInfo(Patient patient)
+        private static string BuildPatientMkb10Info(Patient patient)
         {
             if(patient.Mkb10Assignments==null || patient.Mkb10Assignments.Count==0)
                 return "Нема дијагноза";
@@ -876,7 +876,7 @@ namespace EHMR.Domain.Entities.Reports
 
         private static string BuildMedicalInfo(Patient patient)
         {
-            var diagnosis = patient.Mkb10Assignments==null
+            var mkb10Assignment = patient.Mkb10Assignments==null
                 ? ""
                 : string.Join(", ", patient.Mkb10Assignments.Where(x => x.Mkb10Code!=null).Select(x => x.Mkb10Code!.Code));
 
@@ -885,7 +885,7 @@ namespace EHMR.Domain.Entities.Reports
            
             
 
-            return $"Дијагнози: {diagnosis}";
+            return $"MKB-10 кодови: {mkb10Assignment}";
         }
 
         public ReportMetrics CalculateMetrics(IEnumerable<DynamicReportRow> rows)
