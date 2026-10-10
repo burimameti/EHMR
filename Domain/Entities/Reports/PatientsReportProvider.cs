@@ -865,7 +865,7 @@ namespace EHMR.Domain.Entities.Reports
         private static string BuildPatientMkb10Info(Patient patient)
         {
             if(patient.Mkb10Assignments==null || patient.Mkb10Assignments.Count==0)
-                return "Нема дијагноза";
+                return "Нема MKB-10 кодови";
 
             return string.Join(", ",
                 patient.Mkb10Assignments
