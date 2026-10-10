@@ -6,8 +6,10 @@
 
 	<Style x:Key="BaseButtonStyle" TargetType="Button">
 
+		<Setter Property="FontFamily" Value="Segoe UI" />
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="CornerRadius" Value="0" />
+		<Setter Property="HeightRequest" Value="40" />
+		<Setter Property="CornerRadius" Value="6" />
 		<Setter Property="BorderWidth" Value="0" />
 
 	</Style>
