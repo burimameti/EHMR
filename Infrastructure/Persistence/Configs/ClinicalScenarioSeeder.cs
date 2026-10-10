@@ -238,7 +238,7 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
                 Dosage = medicine.Dosage,
                 Notes = medicine.Notes,
                 IsActive = true,
-                Quantity = 1m
+                Quantity = 0m
             });
         }
         await context.SaveChangesAsync(ct);
