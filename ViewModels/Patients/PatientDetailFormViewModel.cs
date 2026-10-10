@@ -1127,11 +1127,82 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
         AttachedMedicines.Remove(row);
     }
 
+    private static string MedicineResolutionKey(PatientMedicineDto medicine)
+        => $"Решение за лек|{medicine.MedicineId}|{medicine.MedicineName}";
+
+    private PatientDocumentDto? FindMedicineResolution(PatientMedicineDto medicine)
+        => Documents.FirstOrDefault(d =>
+            d.DocumentType == PatientDocumentType.Resenie &&
+            string.Equals(d.Description, MedicineResolutionKey(medicine), StringComparison.Ordinal));
+
+    [RelayCommand]
+    private async Task PreviewMedicineResolutionAsync(AttachedMedicineRow row)
+    {
+        if(row is null) return;
+        var document = FindMedicineResolution(row.PatientMedicine);
+        if(document is null)
+        {
+            await _userDialogService.ShowAlertAsync("Решение за лек", "За овој лек сè уште нема прикачено решение.", "Во ред");
+            return;
+        }
+        await PreviewDocument(document);
+    }
+
+    [RelayCommand]
+    private async Task UploadMedicineResolutionAsync(AttachedMedicineRow row)
+    {
+        if(row is null || !CanEditPatient || !IsEditMode) return;
+        try
+        {
+            var file = await FilePicker.Default.PickAsync(new PickOptions { PickerTitle = $"Изберете решение за {row.MedicineName}" });
+            if(file is null) return;
+
+            var patientFolder = Path.Combine(FileSystem.AppDataDirectory, "patient-documents", Patient.Id.ToString());
+            Directory.CreateDirectory(patientFolder);
+            var storedPath = Path.Combine(patientFolder, $"{Guid.NewGuid()}_{file.FileName}");
+            await using(var source = await file.OpenReadAsync())
+            await using(var destination = File.Create(storedPath))
+                await source.CopyToAsync(destination);
+
+            var key = MedicineResolutionKey(row.PatientMedicine);
+            var existing = FindMedicineResolution(row.PatientMedicine);
+            if(existing is not null) Documents.Remove(existing);
+
+            Documents.Add(new PatientDocumentDto
+            {
+                Id = Guid.Empty,
+                PatientId = Patient.Id,
+                DocumentType = PatientDocumentType.Resenie,
+                Title = $"Решение за лек: {row.MedicineName}",
+                Description = key,
+                FileName = file.FileName,
+                StoredPath = storedPath,
+                ContentType = file.ContentType,
+                UploadedAt = DateTime.UtcNow
+            });
+            OnPropertyChanged(nameof(CanSavePatientForm));
+        }
+        catch(Exception ex)
+        {
+            await _userDialogService.ShowAlertAsync("Грешка", $"Прикачувањето на решението не успеа: {ex.Message}", "Во ред");
+        }
+    }
+
     [RelayCommand]
     private async Task MoveMedicineToInactiveAsync(AttachedMedicineRow row)
     {
         if(row is null || !CanEditPatient || !IsEditMode)
             return;
+
+        if(FindMedicineResolution(row.PatientMedicine) is null)
+        {
+            await _userDialogService.ShowAlertAsync(
+                "Недостасува решение",
+                $"Прикачете решение за лекот „{row.MedicineName}“ пред да го означите како неактивен.",
+                "Во ред");
+            return;
+        }
+
         var confirmed = await _userDialogService.ShowConfirmationAsync(
             "Преместување на неактивен лек",
             $"Лекот „{row.MedicineName}“ ќе биде означен како неактивен. Дали сакате да продолжите?",
