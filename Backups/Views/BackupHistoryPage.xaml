@@ -97,7 +97,7 @@
 							ButtonKind="Primary"
 							Command="{Binding RunBackupCommand}"
 							ContentPadding="20,0"
-							HeightRequestEx="45"
+							HeightRequestEx="40"
 							Text="Нов бекап" />
 					</HorizontalStackLayout>
 				</Grid>
