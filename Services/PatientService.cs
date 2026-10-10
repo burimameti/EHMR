@@ -563,6 +563,22 @@ public class PatientService : IPatientService
                 "Само администратор може да реактивира неактивен пациент.");
         }
 
+        // Generate sequence values before mutating the tracked patient aggregate.
+        // SequenceHelper saves the DbContext internally, so doing this after deletes or
+        // scalar updates would flush a partially-updated aggregate.
+        var newMkb10Assignments = model.PatientMkb10Codes
+            .Where(x => !model.DeletedPatientMkb10CodeIds.Contains(x.Id))
+            .Where(vm => !existing.Mkb10Assignments.Any(x =>
+                x.Id==vm.Id && x.EncounterId==null))
+            .ToList();
+
+        var assignmentNumbers = new List<string>(newMkb10Assignments.Count);
+        foreach(var _ in newMkb10Assignments)
+        {
+            assignmentNumbers.Add(await SequenceHelper.GenerateNumberAsync(
+                db, SequenceNames.PatientMkb10Assignment, "MKB"));
+        }
+
         CopyScalarFields(patientDto, existing);
 
         // NOTE: new children are added through db.<Set>.Add (not existing.<Nav>.Add).
@@ -577,15 +593,15 @@ public class PatientService : IPatientService
                 db.Remove(entity);
         }
 
-        // ---- diagnoses: upsert (skip ids just deleted) ----
+        // ---- patient-level MKB-10 assignments: upsert (skip ids just deleted) ----
+        var assignmentNumberIndex=0;
         foreach(var vm in model.PatientMkb10Codes.Where(x => !model.DeletedPatientMkb10CodeIds.Contains(x.Id)))
         {
             var entity = existing.Mkb10Assignments.FirstOrDefault(x => x.Id==vm.Id && x.EncounterId==null);
 
             if(entity==null)
             {
-                var assignmentNumber = await SequenceHelper.GenerateNumberAsync(
-                    db, SequenceNames.PatientMkb10Assignment, "MKB");
+                var assignmentNumber=assignmentNumbers[assignmentNumberIndex++];
                 db.PatientMkb10Assignments.Add(
                     NewPatientMkb10Assignment(existing.Id, vm, assignmentNumber));
                 continue;
