@@ -141,8 +141,9 @@ public partial class AppShell : Shell
     // =========================
     private void RegisterRoutes()
     {
-        // Dashboard
-        Routing.RegisterRoute(AppRoutes.Dashboard, typeof(DashboardView));
+        // Dashboard is already declared as a Shell root in AppShell.xaml.
+        // Do not register the same route again as a detail route: that can
+        // resolve navigation to a stale DashboardView instance on the stack.
 
         // Alerts
         Routing.RegisterRoute(AppRoutes.Alerts.List, typeof(AlertsListPage));
