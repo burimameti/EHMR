@@ -33,8 +33,8 @@ public partial class DashboardViewModel
                 .OrderBy(x => x.ScheduledStart)
                 .ToList(),
 
-            CurrentDiagnoses=patient.Diagnoses
-                .Where(x => x.Status==DiagnosisStatus.Active||x.Status==DiagnosisStatus.Chronic)
+            CurrentDiagnoses=patient.Mkb10Assignments
+                .Where(x => x.Status==PatientMkb10AssignmentStatus.Active||x.Status==PatientMkb10AssignmentStatus.Chronic)
                 .OrderByDescending(x => x.IsPrimary)
                 .ThenByDescending(x => x.DiagnosedAt)
                 .Select(x =>
@@ -42,7 +42,7 @@ public partial class DashboardViewModel
                         ? $"{x.Mkb10Code.Code} — {x.Mkb10Code.Description}"
                         : !string.IsNullOrWhiteSpace(x.ClinicalDescription)
                             ? x.ClinicalDescription
-                            : x.DiagnosisNumber)
+                            : x.AssignmentNumber)
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .Take(5)

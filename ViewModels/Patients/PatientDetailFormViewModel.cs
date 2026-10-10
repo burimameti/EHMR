@@ -542,8 +542,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
                 {
                     Id = x.Id,
                     // PatientMkb10Codes entered from the Patient form belong to the patient,
-                    // not to a specific Encounter.
-                    EncounterId = null,
+                    // not to a specific Encounter.                   
                     Mkb10CodeId = x.Mkb10CodeId,
                     DiagnosedAt = x.DiagnosedAt,
                     IsPrimary = x.IsPrimary,
