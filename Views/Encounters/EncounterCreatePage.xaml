@@ -247,6 +247,47 @@
 								</Border>
 							</VerticalStackLayout>
 
+
+							<!-- Биолошка терапија: MKB-10, активни лекови и претходен скор од картонот. -->
+							<!-- MKB-10 од картонот на пациентот; се прикажува read-only во новиот преглед. -->
+							<controls:CrudSectionHeader
+								Title="БИОЛОШКА ТЕРАПИЈА"
+								IsVisible="{Binding HasPatientContext}"
+								LineColor="{StaticResource Gray600}"
+								Style="{StaticResource SectionHeaderStyle}" />
+							<Border
+								Padding="10,8"
+								BackgroundColor="#F1F5F9"
+								IsVisible="{Binding HasPatientContext}"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 10"
+								StrokeThickness="1">
+								<Label
+									FontSize="12"
+									Text="{Binding CurrentMkb10Summary, TargetNullValue='Нема доделен MKB-10.'}"
+									TextColor="{StaticResource SparkTextPrimary}" />
+							</Border>
+
+							<!-- Активната терапија на пациентот е само за преглед; не се менува од формата за преглед. -->
+							<controls:CrudSectionHeader
+								Title="АКТИВНИ ЛЕКОВИ НА ПАЦИЕНТОТ"
+								IsVisible="{Binding HasPatientContext}"
+								LineColor="{StaticResource Gray600}"
+								Style="{StaticResource SectionHeaderStyle}" />
+							<Border
+								Padding="10,8"
+								BackgroundColor="{StaticResource SparkContentBackground}"
+								IsVisible="{Binding HasPatientContext}"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 10"
+								StrokeThickness="1">
+								<Label
+									FontSize="12"
+									Text="{Binding ActiveMedicinesSummary}"
+									TextColor="{StaticResource SparkTextPrimary}" />
+							</Border>
+
+
 							<!--  Сите контролни полиња за прегледот се прикажуваат дури по избор на пациент.  -->
 							<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="12">
 
@@ -272,16 +313,16 @@
 								Grid.Column="1"
 								ButtonKind="Secondary"
 								Command="{Binding AddPatientActiveMedicineCommand}"
-								HeightRequestEx="34"
-								Text="Додади лек за преглед"
-								WidthRequestEx="155" />
+								HeightRequestEx="36"
+								Text="+ Лек за Преглед"
+								WidthRequestEx="145" />
 							<controls:FFButton
 								Grid.Column="2"
 								ButtonKind="Primary"
 								Command="{Binding AddEncounterScoreFromListCommand}"
-								HeightRequestEx="34"
-								Text="Внеси нов скор за преглед"
-								WidthRequestEx="175" />
+								HeightRequestEx="36"
+								Text="+ Скор За Преглед"
+								WidthRequestEx="145" />
 						</Grid>
 
 										<!-- Лековите се додаваат рачно од активната терапија на пациентот; тука се внесува само количината за овој преглед. -->
@@ -294,30 +335,30 @@
 											IsVisible="{Binding HasEncounterMedicines}">
 											<Border
 												Padding="8,7"
-												BackgroundColor="{StaticResource SparkSurfaceAlt}"
+												BackgroundColor="#1F2937"
 												StrokeThickness="0">
-												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" />
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" TextColor="White" />
 											</Border>
 											<Border
 												Grid.Column="1"
 												Padding="8,7"
 												BackgroundColor="{StaticResource SparkSurfaceAlt}"
 												StrokeThickness="0">
-												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ДОЗА" />
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ДОЗА" TextColor="White" />
 											</Border>
 											<Border
 												Grid.Column="2"
 												Padding="8,7"
 												BackgroundColor="{StaticResource SparkSurfaceAlt}"
 												StrokeThickness="0">
-												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕЖИМ НА АПЛИКАЦИЈА" />
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕЖИМ НА АПЛИКАЦИЈА" TextColor="White" />
 											</Border>
 											<Border
 												Grid.Column="3"
 												Padding="8,7"
 												BackgroundColor="{StaticResource SparkSurfaceAlt}"
 												StrokeThickness="0">
-												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="КОЛИЧИНА" />
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="КОЛИЧИНА" TextColor="White" />
 											</Border>
 											<Border
 												Grid.Column="4"
@@ -328,7 +369,7 @@
 													HorizontalOptions="Center"
 													HorizontalTextAlignment="Center"
 													Style="{StaticResource TableHeaderLabelStyle}"
-													Text="Избриши" />
+													Text="Избриши" TextColor="White" />
 											</Border>
 										</Grid>
 
@@ -415,8 +456,8 @@
 																	Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}"
 																	CommandParameter="{Binding .}"
 																	HeightRequestEx="32"
-																	Text=" X "
-																	WidthRequestEx="44" />
+																	Text="×"
+																	WidthRequestEx="32" />
 															</HorizontalStackLayout>
 														</Border>
 													</Grid>
@@ -698,43 +739,6 @@
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
 
-							<!-- MKB-10 од картонот на пациентот; се прикажува read-only во новиот преглед. -->
-							<controls:CrudSectionHeader
-								Title="БИОЛОШКА ТЕРАПИЈА — MKB-10 НА ПАЦИЕНТОТ"
-								IsVisible="{Binding HasPatientContext}"
-								LineColor="{StaticResource Gray600}"
-								Style="{StaticResource SectionHeaderStyle}" />
-							<Border
-								Padding="10,8"
-								BackgroundColor="{StaticResource SparkContentBackground}"
-								IsVisible="{Binding HasPatientContext}"
-								Stroke="{StaticResource SparkBorder}"
-								StrokeShape="RoundRectangle 10"
-								StrokeThickness="1">
-								<Label
-									FontSize="12"
-									Text="{Binding CurrentMkb10Summary, TargetNullValue='Нема доделен MKB-10.'}"
-									TextColor="{StaticResource SparkTextPrimary}" />
-							</Border>
-
-							<!-- Активната терапија на пациентот е само за преглед; не се менува од формата за преглед. -->
-							<controls:CrudSectionHeader
-								Title="АКТИВНИ ЛЕКОВИ НА ПАЦИЕНТОТ"
-								IsVisible="{Binding HasPatientContext}"
-								LineColor="{StaticResource Gray600}"
-								Style="{StaticResource SectionHeaderStyle}" />
-							<Border
-								Padding="10,8"
-								BackgroundColor="{StaticResource SparkContentBackground}"
-								IsVisible="{Binding HasPatientContext}"
-								Stroke="{StaticResource SparkBorder}"
-								StrokeShape="RoundRectangle 10"
-								StrokeThickness="1">
-								<Label
-									FontSize="12"
-									Text="{Binding ActiveMedicinesSummary}"
-									TextColor="{StaticResource SparkTextPrimary}" />
-							</Border>
 
 							<!--  Историја на лекови  -->
 							<controls:CrudSectionHeader
