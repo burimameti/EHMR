@@ -275,9 +275,12 @@ Encounter? encounterForMedicines = null;
 
                 foreach(var d in mkb10Assignments)
                 {
-                    db.Set<PatientMkb10Assignment>().Add(new PatientMkb10Assignment
+                    var assignmentNumber = await SequenceHelper.GenerateNumberAsync(
+                        db, SequenceNames.PatientMkb10Assignment, "MKB");
+                    db.PatientMkb10Assignments.Add(new PatientMkb10Assignment
                     {
                         Id=Guid.NewGuid(),
+                        AssignmentNumber=assignmentNumber,
                         PatientId=appointment.PatientId,
                         EncounterId=savedEncounter.Id,
                         Mkb10CodeId=d.Mkb10CodeId,
@@ -329,16 +332,19 @@ Encounter? encounterForMedicines = null;
 
                     await db.SaveChangesAsync();
 
-                    var existingDiag = await db.Set<PatientMkb10Assignment>()
+                    var existingAssignments = await db.PatientMkb10Assignments
                         .Where(x => x.EncounterId==encounter.Id)
                         .ToListAsync();
-                    db.Set<PatientMkb10Assignment>().RemoveRange(existingDiag);
+                    db.PatientMkb10Assignments.RemoveRange(existingAssignments);
 
                     foreach(var d in mkb10Assignments)
                     {
-                        db.Set<PatientMkb10Assignment>().Add(new PatientMkb10Assignment
+                        var assignmentNumber = await SequenceHelper.GenerateNumberAsync(
+                            db, SequenceNames.PatientMkb10Assignment, "MKB");
+                        db.PatientMkb10Assignments.Add(new PatientMkb10Assignment
                         {
                             Id=Guid.NewGuid(),
+                            AssignmentNumber=assignmentNumber,
                             PatientId=appointment.PatientId,
                             EncounterId=encounter.Id,
                             Mkb10CodeId=d.Mkb10CodeId,
