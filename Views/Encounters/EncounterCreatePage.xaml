@@ -285,10 +285,11 @@
                                         <Label FontAttributes="Bold" FontSize="13" Text="ТЕКОВНА ТЕРАПИЈА — ИСТОРИЈА" TextColor="{StaticResource SparkTextSecondary}" />
                                         <Border BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1" Padding="0">
                                             <VerticalStackLayout Spacing="0">
-                                                <Grid ColumnDefinitions="1.25*,0.8*,1*" Padding="7,6" BackgroundColor="{StaticResource SparkSurfaceAlt}" ColumnSpacing="5">
+                                                <Grid ColumnDefinitions="1.1*,0.65*,1*,0.55*" Padding="7,6" BackgroundColor="{StaticResource SparkSurfaceAlt}" ColumnSpacing="5">
                                                     <Label Text="ЛЕК" FontAttributes="Bold" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" />
                                                     <Label Grid.Column="1" Text="ДОЗА" FontAttributes="Bold" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" />
                                                     <Label Grid.Column="2" Text="РЕЖИМ" FontAttributes="Bold" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" />
+                                                    <Label Grid.Column="3" Text="КОЛ." FontAttributes="Bold" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" />
                                                 </Grid>
                                                 <CollectionView ItemsSource="{Binding PatientMedicines}" SelectionMode="None" MaximumHeightRequest="190">
                                                     <CollectionView.ItemsLayout><LinearItemsLayout Orientation="Vertical" ItemSpacing="0" /></CollectionView.ItemsLayout>
@@ -297,10 +298,11 @@
                                                     </CollectionView.EmptyView>
                                                     <CollectionView.ItemTemplate>
                                                         <DataTemplate x:DataType="entities:PatientMedicine">
-                                                            <Grid ColumnDefinitions="1.25*,0.8*,1*" Padding="7,6" ColumnSpacing="5">
+                                                            <Grid ColumnDefinitions="1.1*,0.65*,1*,0.55*" Padding="7,6" ColumnSpacing="5">
                                                                 <Label Text="{Binding Medicine.BilingualName}" FontSize="11" LineBreakMode="WordWrap" TextColor="{StaticResource SparkTextPrimary}" />
                                                                 <Label Grid.Column="1" Text="{Binding Dosage}" FontSize="11" TextColor="{StaticResource SparkTextPrimary}" />
                                                                 <Label Grid.Column="2" Text="{Binding ApplicationRegime.Regime}" FontSize="11" LineBreakMode="WordWrap" TextColor="{StaticResource SparkTextPrimary}" />
+                                                                <Label Grid.Column="3" Text="{Binding Quantity}" FontSize="11" TextColor="{StaticResource SparkTextPrimary}" />
                                                             </Grid>
                                                         </DataTemplate>
                                                     </CollectionView.ItemTemplate>
