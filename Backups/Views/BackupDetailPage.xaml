@@ -91,7 +91,7 @@
 						ButtonKind="Secondary"
 						Command="{Binding GoBackCommand}"
 						ContentPadding="16,0"
-						HeightRequestEx="45"
+						HeightRequestEx="40"
 						Text="← Назад" />
 
 				</Grid>
