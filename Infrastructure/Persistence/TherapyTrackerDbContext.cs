@@ -57,7 +57,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     public DbSet<ApplicationRegime> ApplicationRegimes => Set<ApplicationRegime>();
     public DbSet<Patient> Patients => Set<Patient>();
     public DbSet<TaskItem> TaskItems => Set<TaskItem>();
-    public DbSet<TherapyCycle> TherapyCycles => Set<TherapyCycle>();
     public DbSet<PatientDocument> PatientDocuments => Set<PatientDocument>();
     public DbSet<Prescription> Prescriptions => Set<Prescription>();
     public DbSet<TherapyProtocol> TherapyProtocols { get; set; } = null!;
@@ -369,16 +368,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
 
 
 
-            entity.HasMany(x => x.TherapyCycles)
-                .WithOne(x => x.Patient)
-                .HasForeignKey(x => x.PatientId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-
-
-
-
-
             // ============================================
             // Computed Properties
             // ============================================
@@ -479,13 +468,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
 
             entity.HasIndex(x => x.PatientId);
             entity.HasIndex(x => x.EncounterId);
-            entity.HasIndex(x => x.TherapyCycleId);
-
-            entity.HasOne(x => x.TherapyCycle)
-                .WithMany(x => x.Documents)
-                .HasForeignKey(x => x.TherapyCycleId)
-                .OnDelete(DeleteBehavior.NoAction);
-
             entity.HasOne(x => x.Patient)
                 .WithMany(x => x.Documents)
                 .HasForeignKey(x => x.PatientId)
@@ -510,12 +492,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             .HasForeignKey(x => x.DoctorId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Appointment -> TherapyCycle
-        modelBuilder.Entity<Appointment>()
-            .HasOne(x => x.TherapyCycle)
-            .WithMany(x => x.Appointments)
-            .HasForeignKey(x => x.TherapyCycleId)
-            .OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<Alert>()
     .HasOne(a => a.Patient)
     .WithMany() // add a `public ICollection<Alert> Alerts` on Patient if you want the reverse nav; not required
@@ -594,7 +570,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
       //  modelBuilder.Entity<Inventory>().HasIndex(x => x.MedicineId);
         modelBuilder.Entity<Medicine>().HasIndex(x => x.Name);
         modelBuilder.Entity<Diagnosis>().HasIndex(x => x.PatientId);
-        modelBuilder.Entity<TherapyCycle>().HasIndex(x => x.PatientId);
     }
 
     // --- 8. STRING-CONVERTED STATE TRACKING LAYER ---
@@ -603,7 +578,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
         modelBuilder.Entity<User>().Property(x => x.Role).HasConversion<string>();
         modelBuilder.Entity<TaskItem>().Property(x => x.Priority).HasConversion<string>();
         modelBuilder.Entity<TaskItem>().Property(x => x.Status).HasConversion<string>();
-        modelBuilder.Entity<TherapyCycle>().Property(x => x.Status).HasConversion<string>();
         modelBuilder.Entity<Appointment>().Property(x => x.Status).HasConversion<string>();
         modelBuilder.Entity<Alert>().Property(x => x.Level).HasConversion<string>();
     }
