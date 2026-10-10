@@ -26,7 +26,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                     Id=SeedIds.Appt1,
                     PatientId = SeedIds.Patient1,
                     DoctorId = SeedIds.Doctor1,
-                    TherapyCycleId = SeedIds.Cycle1,
+
                     ScheduledStart = now.AddDays(1).AddHours(9),
                     ScheduledEnd = now.AddDays(1).AddHours(9).AddMinutes(30),
                     ReasonForVisit = "Прва консултација поради болки во грбот",
