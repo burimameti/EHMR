@@ -13,7 +13,7 @@
 
         /// <summary>
         /// Stable identifier for the condition this alert represents
-        /// (e.g. "StaleVisit:{patientId}", "OverdueCycle:{cycleId}").
+        /// (e.g. "StaleVisit:{patientId}").
         /// Used to skip re-creating an alert that's already open.
         /// </summary>
         public string DedupKey { get; set; } = string.Empty;
