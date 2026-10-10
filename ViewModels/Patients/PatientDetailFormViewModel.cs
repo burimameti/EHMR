@@ -303,7 +303,7 @@ public bool CanSavePatientForm => CanSavePatient;
             await using var db = await _dbFactory.CreateDbContextAsync();
 
             DiagnosisHistory=new ObservableCollection<PatientMkb10CodeDto>(
-                await db.Diagnoses
+                await db.Set<Diagnosis>()
                     .AsNoTracking()
                     .Where(x => x.PatientId==patientId)
                     .OrderByDescending(x => x.DiagnosedAt)

@@ -100,7 +100,7 @@
 			</Style>
 			<!--  ═══ ШАБЛОНИ ЗА ИСТОРИЈА НА ПАЦИЕНТОТ ═══  -->
 
-			<DataTemplate x:Key="PatientDiagnosisRowTemplate" x:DataType="dto:PatientMkb10CodeDto">
+			<DataTemplate x:Key="PatientDiagnosisRowTemplate" x:DataType="dto:DiagnosisDto">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
 						<Label
@@ -835,7 +835,7 @@
 														BindableLayout.ItemsSource="{Binding Diagnoses}"
 														Spacing="4">
 														<BindableLayout.ItemTemplate>
-															<DataTemplate x:DataType="dto:PatientMkb10CodeDto">
+															<DataTemplate x:DataType="dto:DiagnosisDto">
 																<Border
 																	Padding="10,7"
 																	BackgroundColor="{StaticResource SparkTabActiveBg}"
