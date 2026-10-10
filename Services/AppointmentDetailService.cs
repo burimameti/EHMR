@@ -251,7 +251,9 @@ return new PatientContextDto
         public async Task SaveAppointment(Appointment appointment, List<PatientMkb10Assignment> mkb10Assignments, List<PatientMedicine> medicines)
         {
             await using var db = await _factory.CreateDbContextAsync();
-appointment.Patient=null;
+            await using var tx = await db.Database.BeginTransactionAsync();
+
+            appointment.Patient=null;
             appointment.Doctor=null;
 Encounter? encounterForMedicines = null;
             bool medicinesEditable = true;
@@ -415,6 +417,7 @@ Encounter? encounterForMedicines = null;
             }
 
             await db.SaveChangesAsync();
+            await tx.CommitAsync();
         }
 
 
