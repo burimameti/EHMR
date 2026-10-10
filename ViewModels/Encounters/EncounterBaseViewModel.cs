@@ -518,12 +518,20 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             CurrentPatientScoreDate=ctx.LatestScore?.RecordedAt;
             PatientDocuments=new ObservableCollection<PatientDocument>(ctx.Documents);
             PatientScoreHistory=new ObservableCollection<PatientScore>(ctx.Scores);
-            // The encounter can only use score definitions already assigned on the
-            // patient chart; global score definitions are not added from this form.
-            ScoreOptions.Clear();
-            foreach(var scoreName in ctx.Scores
+            // Keep globally ranked, frequently used score suggestions, and ensure
+            // scores already assigned to this patient's chart are available too.
+            // New names typed in the search field are also accepted by AddScoreAsync.
+            var patientScoreNames=ctx.Scores
                 .Where(s => !s.EncounterId.HasValue && !string.IsNullOrWhiteSpace(s.ScoreText))
                 .Select(s => s.ScoreText.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var rankedScoreNames=await EncounterService.GetScoreSuggestionsAsync();
+            ScoreOptions.Clear();
+            foreach(var scoreName in rankedScoreNames
+                .Concat(patientScoreNames)
+                .Where(name => !string.IsNullOrWhiteSpace(name))
                 .Distinct(StringComparer.OrdinalIgnoreCase))
                 ScoreOptions.Add(scoreName);
             ScoreSearchText=string.Empty;
