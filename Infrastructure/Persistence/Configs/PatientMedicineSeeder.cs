@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using EHMR.Domain.Entities;
+using System;
 using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
 
 namespace EHMR.Infrastructure.Persistence.Configs;
@@ -18,7 +19,10 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
         if(applicationRegimes.Count == 0)
             return;
 
-        var oral = applicationRegimes.FirstOrDefault(x => x.Regime == "Неделно")?.Id;
+        // ApplicationRegime is the route/method of administration, not frequency.
+        var oral = applicationRegimes.FirstOrDefault(
+            x => string.Equals(x.Regime, "Орално", StringComparison.OrdinalIgnoreCase))?.Id
+            ?? applicationRegimes.FirstOrDefault()?.Id;
         var existingMedicines = await context.PatientMedicines
             .Where(x => x.ApplicationRegimeId == null)
             .ToListAsync(ct);
@@ -98,7 +102,8 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
 
                 Dosage = "3 таблети одеднаш (7.5mg вкупно)",
 
-                IsActive = true
+                IsActive = true,
+                Quantity = 0m
             }
         };
 

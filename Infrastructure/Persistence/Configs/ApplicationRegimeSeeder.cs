@@ -21,24 +21,35 @@ public sealed class ApplicationRegimeSeeder : IEntitySeeder
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {
-        var existing = await context.ApplicationRegimes
-            .ToListAsync(ct);
+        var existing = await context.ApplicationRegimes.ToListAsync(ct);
+        var changed = false;
 
-        var missing = Regimes
-            .Where(name => !existing.Any(x =>
-                string.Equals(x.Regime, name, StringComparison.OrdinalIgnoreCase)))
-            .Select(name => new ApplicationRegime
+        foreach(var name in Regimes)
+        {
+            var regime = existing.FirstOrDefault(x =>
+                string.Equals(x.Regime, name, StringComparison.OrdinalIgnoreCase));
+
+            if(regime is null)
             {
-                Id = Guid.NewGuid(),
-                Regime = name,
-                IsActive = true
-            })
-            .ToList();
+                context.ApplicationRegimes.Add(new ApplicationRegime
+                {
+                    Id = Guid.NewGuid(),
+                    Regime = name,
+                    IsActive = true
+                });
+                changed = true;
+                continue;
+            }
 
-        if (missing.Count == 0)
-            return;
+            // Keep canonical seed options selectable on every seed run.
+            if(!regime.IsActive)
+            {
+                regime.IsActive = true;
+                changed = true;
+            }
+        }
 
-        await context.ApplicationRegimes.AddRangeAsync(missing, ct);
-        await context.SaveChangesAsync(ct);
+        if(changed)
+            await context.SaveChangesAsync(ct);
     }
 }

@@ -115,8 +115,7 @@ public class PatientService : IPatientService
             .Include(p => p.Encounters)
             .Include(p => p.PatientMedicines).ThenInclude(pm => pm.Medicine)
             .Include(p => p.PatientMedicines).ThenInclude(pm => pm.ApplicationRegime)
-            .Include(p => p.PatientMedicines)
-.Include(p => p.Documents)
+            .Include(p => p.Documents)
             .FirstOrDefaultAsync(p => p.Id==id, ct);
 
         return entity==null ? null : MapToDto(entity);
