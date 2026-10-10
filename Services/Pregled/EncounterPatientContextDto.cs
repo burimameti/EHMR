@@ -25,9 +25,6 @@ public class PatientContextDto
     // Термини (Appointments) — сите статуси
     public List<Appointment> Appointments { get; set; } = new();
 
-    // Терапевтски циклуси
-    public List<TherapyCycle> TherapyCycles { get; set; } = new();
-
     // Рецепти (Prescription entity)
     public List<Prescription> Prescriptions { get; set; } = new();
 
