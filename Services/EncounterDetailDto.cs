@@ -13,7 +13,7 @@ public class EncounterDetailDto
 {
     public Encounter Encounter { get; set; } = new();
 
-    public List<Diagnosis> Diagnoses { get; set; } = [];
+    public List<Diagnosis> Mkb10Assignments { get; set; } = [];
 
     public List<Prescription> Prescriptions { get; set; } = [];
 
@@ -38,7 +38,7 @@ public class EncounterDetailDto
         get; set;
     }
 
-    public int TotalDiagnoses
+    public int TotalMkb10Assignments
     {
         get; set;
     }
