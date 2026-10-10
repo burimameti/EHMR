@@ -34,7 +34,7 @@ public sealed class SearchSuggestion
         SearchEntityType.Patient => "Patients",
         SearchEntityType.Doctor => "Doctors",
         SearchEntityType.Appointment => "Appointments",
-        SearchEntityType.PatientMkb10Assignment => "Diagnoses",
+        SearchEntityType.PatientMkb10Assignment => "MKB-10 codes",
         SearchEntityType.Medication => "Medications",
         _ => "Other"
     };
