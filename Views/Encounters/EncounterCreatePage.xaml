@@ -245,6 +245,9 @@
 								</Border>
 							</VerticalStackLayout>
 
+							<!-- Сите контролни полиња за прегледот се прикажуваат дури по избор на пациент. -->
+							<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="12">
+
 							<!-- Опционални дејства за овој преглед; лекови не се додаваат од оваа форма. -->
 							<HorizontalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="8" HorizontalOptions="End">
 								<controls:FFButton ButtonKind="Secondary" Command="{Binding AddApplicationRegimeCommand}" HeightRequestEx="34" Text="Нов режим" WidthRequestEx="116" />
@@ -639,12 +642,14 @@
 
 							</Grid>
 
+							</VerticalStackLayout>
 						</VerticalStackLayout>
 					</ScrollView>
 				</controls:FFSectionCard>
 
 				<!--  ═══════════════  ДЕСНА КОЛОНА  ═══════════════  -->
 				<controls:FFSectionCard
+					IsVisible="{Binding HasPatientContext}"
 					Grid.Column="1"
 					Margin="-3,0,0,0"
 					Style="{StaticResource CrudFormCardStyle}">
@@ -917,6 +922,7 @@
 
 			<!--  ДОЛНА ЛЕНТА  -->
 			<Border
+				IsVisible="{Binding HasPatientContext}"
 				Grid.Row="2"
 				Margin="16,10,16,16"
 				Padding="16,10"
