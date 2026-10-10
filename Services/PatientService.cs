@@ -521,7 +521,12 @@ public class PatientService : IPatientService
         patient.RegistrationDate=DateTime.UtcNow;
 
         foreach(var vm in model.PatientMkb10Codes)
-            patient.Mkb10Assignments.Add(NewPatientMkb10Assignment(patient.Id, vm));
+        {
+            var assignmentNumber = await SequenceHelper.GenerateNumberAsync(
+                db, SequenceNames.PatientMkb10Assignment, "MKB");
+            patient.Mkb10Assignments.Add(
+                NewPatientMkb10Assignment(patient.Id, vm, assignmentNumber));
+        }
 
         foreach(var vm in model.Medicines)
             patient.PatientMedicines.Add(NewPatientMedicine(patient.Id, vm));
@@ -574,7 +579,10 @@ public class PatientService : IPatientService
 
             if(entity==null)
             {
-                db.Set<PatientMkb10Assignment>().Add(NewPatientMkb10Assignment(existing.Id, vm));
+                var assignmentNumber = await SequenceHelper.GenerateNumberAsync(
+                    db, SequenceNames.PatientMkb10Assignment, "MKB");
+                db.PatientMkb10Assignments.Add(
+                    NewPatientMkb10Assignment(existing.Id, vm, assignmentNumber));
                 continue;
             }
 
@@ -636,9 +644,13 @@ public class PatientService : IPatientService
 
     // ---- save-model -> new entity ----
 
-    private static PatientMkb10Assignment NewPatientMkb10Assignment(Guid patientId, PatientMkb10CodeSaveModel vm) => new()
+    private static PatientMkb10Assignment NewPatientMkb10Assignment(
+        Guid patientId,
+        PatientMkb10CodeSaveModel vm,
+        string assignmentNumber) => new()
     {
         Id=Guid.NewGuid(),
+        AssignmentNumber=assignmentNumber,
         PatientId=patientId,
         // Patient-level diagnosis: never bind it to an Encounter.
         EncounterId=null,
