@@ -554,8 +554,8 @@ public class EncounterDetailService : IEncounterDetailService
             diagnosis.Mkb10Code=null;
             if(diagnosis.DiagnosedAt==default)
                 diagnosis.DiagnosedAt=DateTime.Now;
-            if(string.IsNullOrWhiteSpace(diagnosis.DiagnosisNumber))
-                diagnosis.DiagnosisNumber=await SequenceHelper.GenerateNumberAsync(
+            if(string.IsNullOrWhiteSpace(diagnosis.AssignmentNumber))
+                diagnosis.AssignmentNumber=await SequenceHelper.GenerateNumberAsync(
                     db, SequenceNames.PatientMkb10Assignment, "DX");
             db.Set<PatientMkb10Assignment>().Add(diagnosis);
         }
@@ -656,8 +656,8 @@ public class EncounterDetailService : IEncounterDetailService
                 d.EncounterId=encounter.Id;
                 d.Mkb10Code=null; // detach nav property — FK is enough
                 if(d.DiagnosedAt==default) d.DiagnosedAt=encounter.EncounterDate;
-                if(string.IsNullOrWhiteSpace(d.DiagnosisNumber))
-                    d.DiagnosisNumber=
+                if(string.IsNullOrWhiteSpace(d.AssignmentNumber))
+                    d.AssignmentNumber=
                         await SequenceHelper.GenerateNumberAsync(db, SequenceNames.PatientMkb10Assignment, "DX");
                 db.Set<PatientMkb10Assignment>().Add(d);
             }
