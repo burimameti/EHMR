@@ -33,11 +33,11 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     private bool _isInitializing;
 
-    // NOVO: guard за flow-от кога контекстот (appointment -> patient/doctor/therapy-cycle)
+    // Guard for applying appointment and patient context without reset cascades.
     // се применува програмски. Без ова, поставувањето на SelectedPatient/SelectedAppointment
     // внатре во ApplyAppointmentContextAsync тригерира reset-cascade (OnSelectedPatientChanged
     // -> OnSelectedAppointmentChanged -> ClearEncounterContext) кој веднаш го брише истиот
-    // AppointmentId/TherapyCycleId штотуку поставен неколку линии погоре.
+    // Appointment context fields are set together.
     protected bool _isApplyingContext;
 
     // Guards against overlapping "no results -> offer to create" dialogs.
@@ -332,7 +332,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     public bool HasEncounterContext => HasAppointment;
     public string ContextDisplay => HasAppointment ? "Appointment" : "Walk-in";
 
-    // Mirrors TherapyCycleDisplay - drives the "selected appointment" label
+    // Drives the selected-appointment label
     // under the appointment search box in the UI.
     public string AppointmentDisplay =>
         LinkedAppointment==null
@@ -541,7 +541,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         // Guard-от го блокира reset-cascade-от во OnSelectedPatientChanged /
         // OnSelectedAppointmentChanged додека сите полиња на контекстот се
         // применуваат. Ова е фикс за bug-от кадешто SelectedPatient/SelectedDoctor
-        // assignment-ите веднаш го бришеа LinkedAppointment/AppointmentId/TherapyCycleId
+        // assignments immediately cleared the linked appointment context
         // штотуку поставени неколку линии погоре.
         _isApplyingContext=true;
         try
@@ -687,7 +687,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     }
 
     // =====================================================
-    // APPOINTMENT SEARCH (mirrors THERAPY CYCLE SEARCH)
+    // APPOINTMENT SEARCH
     // =====================================================
 
     protected CancellationTokenSource AppointmentSearchCts = new();
