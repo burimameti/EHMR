@@ -60,7 +60,9 @@
 							<VerticalStackLayout Spacing="12">
 
 								<controls:CrudSectionHeader
-									Title="ПАЦИЕНТ И РЕУМАТОЛОГ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+									Title="ПАЦИЕНТ И РЕУМАТОЛОГ"
+									LineColor="{StaticResource Gray600}"
+									Style="{StaticResource SectionHeaderStyle}" />
 
 								<!--  Пребарување (скриено кога пациентот е веќе зададен)  -->
 								<VerticalStackLayout IsVisible="{Binding IsPatientLockedFromContext, Converter={StaticResource InverseBoolConverter}}" Spacing="8">
@@ -130,7 +132,7 @@
 								<!--  Основни податоци за пациентот  -->
 								<Border
 									Padding="14"
-									BackgroundColor="{StaticResource SparkDiagnosisHeader}"
+									BackgroundColor="{StaticResource SparkAccentTealBg}"
 									IsVisible="{Binding HasPatientContext}"
 									StrokeShape="RoundRectangle 10"
 									StrokeThickness="0">
@@ -245,299 +247,313 @@
 								</Border>
 							</VerticalStackLayout>
 
-							<!-- Сите контролни полиња за прегледот се прикажуваат дури по избор на пациент. -->
+							<!--  Сите контролни полиња за прегледот се прикажуваат дури по избор на пациент.  -->
 							<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="12">
 
-							<!--  ── 3. ТЕКОВНА ТЕРАПИЈА + СКОРОВИ (ист ред) / СЛЕДЕН ТЕРМИН (долу лево) ──  -->
-							<Grid
-								ColumnDefinitions="2.2*,*"
-								ColumnSpacing="14"
-								RowDefinitions="Auto,Auto"
-								RowSpacing="14">
+								<!--  ── 3. ТЕКОВНА ТЕРАПИЈА + СКОРОВИ (ист ред) / СЛЕДЕН ТЕРМИН (долу лево) ──  -->
+								<Grid
+									ColumnDefinitions="2.2*,*"
+									ColumnSpacing="14"
+									RowDefinitions="Auto,Auto"
+									RowSpacing="14">
 
-								<!--  ═══ РЕД 1 · КОЛОНА 0: ТЕКОВНА ТЕРАПИЈА ═══  -->
-								<VerticalStackLayout
-									Grid.Row="0"
-									Grid.Column="0"
-									Spacing="10">
+									<!--  ═══ РЕД 1 · КОЛОНА 0: ТЕКОВНА ТЕРАПИЈА ═══  -->
+									<VerticalStackLayout
+										Grid.Row="0"
+										Grid.Column="0"
+										Spacing="10">
 
-									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-										<controls:CrudSectionHeader Title="ТЕКОВНА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-										<controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding AddPatientActiveMedicineCommand}" HeightRequestEx="34" Text="Додади лек за преглед" WidthRequestEx="155" />
-									</Grid>
+										<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+											<controls:CrudSectionHeader
+												Title="ТЕКОВНА ТЕРАПИЈА"
+												LineColor="{StaticResource Gray600}"
+												Style="{StaticResource SectionHeaderStyle}" />
+											<controls:FFButton
+												Grid.Column="1"
+												ButtonKind="Secondary"
+												Command="{Binding AddPatientActiveMedicineCommand}"
+												HeightRequestEx="34"
+												Text="Додади лек за преглед"
+												WidthRequestEx="155" />
+										</Grid>
 
-									<!-- Лековите се преземаат автоматски од активната терапија на пациентот. Во прегледот се внесува само количината дадена при оваа посета. -->
+										<!--  Лековите се преземаат автоматски од активната терапија на пациентот. Во прегледот се внесува само количината дадена при оваа посета.  -->
 
 
-									<!--  Заглавие на табелата (последната колона е 130, иста како во редовите)  -->
-									<Grid
-										ColumnDefinitions="1.45*,1*,1.35*,0.85*,1*"
-										ColumnSpacing="1"
-										IsVisible="{Binding HasEncounterMedicines}">
-										<Border
-											Padding="8,7"
-											BackgroundColor="{StaticResource SparkSurfaceAlt}"
-											StrokeThickness="0">
-											<Label
-												Style="{StaticResource TableHeaderLabelStyle}"
-												Text="ЛЕК" />
-										</Border>
-										<Border
-											Grid.Column="1"
-											Padding="8,7"
-											BackgroundColor="{StaticResource SparkSurfaceAlt}"
-											StrokeThickness="0">
-											<Label
-												Style="{StaticResource TableHeaderLabelStyle}"
-												Text="ДОЗА" />
-										</Border>
-										<Border
-											Grid.Column="2"
-											Padding="8,7"
-											BackgroundColor="{StaticResource SparkSurfaceAlt}"
-											StrokeThickness="0">
-											<Label
-												Style="{StaticResource TableHeaderLabelStyle}"
-												Text="РЕЖИМ НА АПЛИКАЦИЈА" />
-										</Border>
-										<Border
-											Grid.Column="3"
-											Padding="8,7"
-											BackgroundColor="{StaticResource SparkSurfaceAlt}"
-											StrokeThickness="0">
-											<Label
-												Style="{StaticResource TableHeaderLabelStyle}"
-												Text="КОЛИЧИНА" />
-										</Border>
-										<Border
-											Grid.Column="4"
-											Padding="8,7"
-											BackgroundColor="{StaticResource SparkSurfaceAlt}"
-											StrokeThickness="0">
-											<Label
-												HorizontalOptions="Center"
-												HorizontalTextAlignment="Center"
-												Style="{StaticResource TableHeaderLabelStyle}"
-												Text="Избриши" />
-										</Border>
-									</Grid>
+										<!--  Заглавие на табелата (последната колона е 130, иста како во редовите)  -->
+										<Grid
+											ColumnDefinitions="1.45*,1*,1.35*,0.85*,1*"
+											ColumnSpacing="1"
+											IsVisible="{Binding HasEncounterMedicines}">
+											<Border
+												Padding="8,7"
+												BackgroundColor="{StaticResource SparkSurfaceAlt}"
+												StrokeThickness="0">
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" />
+											</Border>
+											<Border
+												Grid.Column="1"
+												Padding="8,7"
+												BackgroundColor="{StaticResource SparkSurfaceAlt}"
+												StrokeThickness="0">
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ДОЗА" />
+											</Border>
+											<Border
+												Grid.Column="2"
+												Padding="8,7"
+												BackgroundColor="{StaticResource SparkSurfaceAlt}"
+												StrokeThickness="0">
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕЖИМ НА АПЛИКАЦИЈА" />
+											</Border>
+											<Border
+												Grid.Column="3"
+												Padding="8,7"
+												BackgroundColor="{StaticResource SparkSurfaceAlt}"
+												StrokeThickness="0">
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="КОЛИЧИНА" />
+											</Border>
+											<Border
+												Grid.Column="4"
+												Padding="8,7"
+												BackgroundColor="{StaticResource SparkSurfaceAlt}"
+												StrokeThickness="0">
+												<Label
+													HorizontalOptions="Center"
+													HorizontalTextAlignment="Center"
+													Style="{StaticResource TableHeaderLabelStyle}"
+													Text="Избриши" />
+											</Border>
+										</Grid>
 
-									<!--  Редови  -->
-									<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="0">
-										<BindableLayout.ItemTemplate>
-											<DataTemplate x:DataType="entities:PatientMedicine">
-												<Grid ColumnDefinitions="1.45*,1*,1.35*,0.85*,1*" ColumnSpacing="1">
-													<Border
-														Padding="8,0"
-														BackgroundColor="White"
-														HeightRequest="46"
-														Stroke="{StaticResource SparkBorderSubtle}"
-														StrokeThickness="1">
-														<VerticalStackLayout
-															Padding="8,3"
-															Spacing="0"
-															VerticalOptions="Center">
-															<Label
-																FontSize="11"
-																LineBreakMode="TailTruncation"
-																Text="{Binding Medicine.BilingualName}"
-																TextColor="{StaticResource SparkTextPrimary}" />
-														</VerticalStackLayout>
-													</Border>
-													<Border
-														Grid.Column="1"
-														Padding="4,0"
-														BackgroundColor="White"
-														HeightRequest="46"
-														Stroke="{StaticResource SparkBorderSubtle}"
-														StrokeThickness="1">
-														<Entry
-															BackgroundColor="Transparent"
-															FontSize="11.5"
-															Keyboard="Numeric"
-															Text="{Binding Dosage}" IsReadOnly="True"
-															TextColor="{StaticResource SparkTextPrimary}"
-															VerticalOptions="Center" />
-													</Border>
-													<Border
-														Grid.Column="2"
-														Padding="0"
-														BackgroundColor="White"
-														HeightRequest="46"
-														Stroke="{StaticResource SparkBorderSubtle}"
-														StrokeThickness="1">
-														<controls:FFPicker
-															ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
-															Label=""
-															MinimumWidthRequest="110"
-															SelectedItem="{Binding ApplicationRegimeDisplay}" IsEnabled="False" />
-													</Border>
-													<Border
-														Grid.Column="3"
-														Padding="4,0"
-														BackgroundColor="White"
-														HeightRequest="46"
-														Stroke="{StaticResource SparkBorderSubtle}"
-														StrokeThickness="1">
-														<Entry
-															BackgroundColor="Transparent"
-															FontSize="11.5"
-															Keyboard="Numeric"
-															Text="{Binding Quantity, Mode=TwoWay}"
-															TextColor="{StaticResource SparkTextPrimary}"
-															VerticalOptions="Center" />
-													</Border>
-													<Border
-														Grid.Column="4"
-														BackgroundColor="White"
-														HeightRequest="46"
-														Stroke="{StaticResource SparkBorderSubtle}"
-														StrokeThickness="1">
-														<HorizontalStackLayout
-															HorizontalOptions="Center"
-															Spacing="4"
-															VerticalOptions="Center">
-															<!--<CheckBox IsChecked="{Binding IsActive, Mode=TwoWay}" IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.CanUpdate}" />-->
-															<controls:FFButton
-																ButtonKind="Danger"
-																Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}"
-																CommandParameter="{Binding .}"
-																HeightRequestEx="32"
-																Text=" X "
-																WidthRequestEx="44" />
-														</HorizontalStackLayout>
-													</Border>
-												</Grid>
-											</DataTemplate>
-										</BindableLayout.ItemTemplate>
-									</VerticalStackLayout>
-								</VerticalStackLayout>
-
-								<!--  ═══ РЕД 1 · КОЛОНА 1: СКОРОВИ ═══  -->
-								<VerticalStackLayout
-									Grid.Row="0"
-									Grid.Column="1"
-									Spacing="10">
-									<controls:CrudSectionHeader Title="СКОРОВИ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-										<controls:FFSearchBox Placeholder="Пребарај скор..." Text="{Binding ScoreSearchText, Mode=TwoWay}" />
-										<controls:FFButton Grid.Column="1" ButtonKind="Primary" Command="{Binding AddScoreCommand}" HeightRequestEx="40" Text="Додади скор" WidthRequestEx="125" />
-									</Grid>
-									<Border
-										Padding="4"
-										BackgroundColor="White"
-										IsVisible="{Binding ShowScoreSuggestions}"
-										Stroke="{StaticResource SparkBorderSubtle}"
-										StrokeShape="RoundRectangle 8"
-										StrokeThickness="1">
-										<CollectionView HeightRequest="150" ItemsSource="{Binding ScoreSuggestions}">
-											<CollectionView.ItemTemplate>
-												<DataTemplate x:DataType="x:String">
-													<Border
-														Padding="9,6"
-														BackgroundColor="Transparent"
-														StrokeThickness="0">
-														<Border.GestureRecognizers>
-															<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectScoreSuggestionCommand}" CommandParameter="{Binding .}" />
-														</Border.GestureRecognizers>
-														<Label
-															FontSize="12"
-															Text="{Binding .}"
-															TextColor="{StaticResource SparkTextPrimary}" />
-													</Border>
-												</DataTemplate>
-											</CollectionView.ItemTemplate>
-										</CollectionView>
-									</Border>
-									<Border
-										Margin="0,5,5,5"
-										BackgroundColor="White"
-										Stroke="{StaticResource SparkBorderSubtle}"
-										StrokeShape="RoundRectangle 0"
-										StrokeThickness="0">
-										<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterScores}" Spacing="0">
+										<!--  Редови  -->
+										<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="0">
 											<BindableLayout.ItemTemplate>
-												<DataTemplate x:DataType="x:String">
-													<Grid
-														Padding="10,7"
-														ColumnDefinitions="*,Auto"
-														ColumnSpacing="5">
-														<Label
-															FontSize="16"
-															LineBreakMode="WordWrap"
-															Text="{Binding .}"
-															TextColor="{StaticResource SparkTextPrimary}"
-															VerticalOptions="Center" />
-														<controls:FFButton
+												<DataTemplate x:DataType="entities:PatientMedicine">
+													<Grid ColumnDefinitions="1.45*,1*,1.35*,0.85*,1*" ColumnSpacing="1">
+														<Border
+															Padding="8,0"
+															BackgroundColor="White"
+															HeightRequest="46"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															StrokeThickness="1">
+															<VerticalStackLayout
+																Padding="8,3"
+																Spacing="0"
+																VerticalOptions="Center">
+																<Label
+																	FontSize="11"
+																	LineBreakMode="TailTruncation"
+																	Text="{Binding Medicine.BilingualName}"
+																	TextColor="{StaticResource SparkTextPrimary}" />
+															</VerticalStackLayout>
+														</Border>
+														<Border
 															Grid.Column="1"
-															ButtonKind="Danger"
-															Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveScoreCommand}"
-															CommandParameter="{Binding .}"
-															HeightRequestEx="30"
-															Text=" X "
-															WidthRequestEx="44" />
+															Padding="4,0"
+															BackgroundColor="White"
+															HeightRequest="46"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															StrokeThickness="1">
+															<Entry
+																BackgroundColor="Transparent"
+																FontSize="11.5"
+																IsReadOnly="True"
+																Keyboard="Numeric"
+																Text="{Binding Dosage}"
+																TextColor="{StaticResource SparkTextPrimary}"
+																VerticalOptions="Center" />
+														</Border>
+														<Border
+															Grid.Column="2"
+															Padding="0"
+															BackgroundColor="White"
+															HeightRequest="46"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															StrokeThickness="1">
+															<controls:FFPicker
+																IsEnabled="False"
+																ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}"
+																Label=""
+																MinimumWidthRequest="110"
+																SelectedItem="{Binding ApplicationRegimeDisplay}" />
+														</Border>
+														<Border
+															Grid.Column="3"
+															Padding="4,0"
+															BackgroundColor="White"
+															HeightRequest="46"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															StrokeThickness="1">
+															<Entry
+																BackgroundColor="Transparent"
+																FontSize="11.5"
+																Keyboard="Numeric"
+																Text="{Binding Quantity, Mode=TwoWay}"
+																TextColor="{StaticResource SparkTextPrimary}"
+																VerticalOptions="Center" />
+														</Border>
+														<Border
+															Grid.Column="4"
+															BackgroundColor="White"
+															HeightRequest="46"
+															Stroke="{StaticResource SparkBorderSubtle}"
+															StrokeThickness="1">
+															<HorizontalStackLayout
+																HorizontalOptions="Center"
+																Spacing="4"
+																VerticalOptions="Center">
+																<!--<CheckBox IsChecked="{Binding IsActive, Mode=TwoWay}" IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.CanUpdate}" />-->
+																<controls:FFButton
+																	ButtonKind="Danger"
+																	Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}"
+																	CommandParameter="{Binding .}"
+																	HeightRequestEx="32"
+																	Text=" X "
+																	WidthRequestEx="44" />
+															</HorizontalStackLayout>
+														</Border>
 													</Grid>
 												</DataTemplate>
 											</BindableLayout.ItemTemplate>
 										</VerticalStackLayout>
-									</Border>
-								</VerticalStackLayout>
-
-								<!--  ═══ РЕД 2 · КОЛОНА 0: СЛЕДЕН ТЕРМИН ═══  -->
-								<VerticalStackLayout
-									Grid.Row="1"
-									Grid.Column="0"
-									Spacing="20">
-									<controls:CrudSectionHeader
-										Title="СЛЕДЕН ТЕРМИН"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-
-									<HorizontalStackLayout
-										HorizontalOptions="Start"
-										Spacing="-55"
-										VerticalOptions="Center">
-										<CheckBox IsChecked="{Binding ScheduleNextFollowUp, Mode=TwoWay}" VerticalOptions="Center" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="14.5"
-											HorizontalOptions="Start"
-											Text="Закажи следна контрола"
-											TextColor="{StaticResource SparkTextPrimary}"
-											VerticalOptions="Center" />
-									</HorizontalStackLayout>
-
-									<VerticalStackLayout IsVisible="{Binding ScheduleNextFollowUp}" Spacing="8">
-										<Label
-											FontSize="11"
-											Text="Датум"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Border
-											Padding="0"
-											BackgroundColor="White"
-											HeightRequest="42"
-											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeShape="RoundRectangle 7"
-											StrokeThickness="1">
-											<DatePicker
-												Date="{Binding NextFollowUpDate, Mode=TwoWay}"
-												Format="dd.MM.yyyy"
-												HorizontalOptions="Fill"
-												MinimumDate="{Binding FollowUpMinimumDate}"
-												TextColor="{StaticResource SparkTextPrimary}" />
-										</Border>
-										<Label
-											FontSize="11"
-											Text="Периодично избирање"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<controls:FFPicker
-											ItemsSource="{Binding FollowUpIntervalOptions}"
-											Label=""
-											Placeholder="Брзо избирање"
-											SelectedItem="{Binding SelectedFollowUpInterval, Mode=TwoWay}" />
 									</VerticalStackLayout>
-								</VerticalStackLayout>
 
-								<!--  ═══ РЕД 2 · КОЛОНА 1: НАОДИ (исклучено) ═══  -->
-								<!--<VerticalStackLayout
+									<!--  ═══ РЕД 1 · КОЛОНА 1: СКОРОВИ ═══  -->
+									<VerticalStackLayout
+										Grid.Row="0"
+										Grid.Column="1"
+										Spacing="10">
+										<controls:CrudSectionHeader
+											Title="СКОРОВИ"
+											LineColor="{StaticResource Gray600}"
+											Style="{StaticResource SectionHeaderStyle}" />
+										<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+											<controls:FFSearchBox Placeholder="Пребарај скор..." Text="{Binding ScoreSearchText, Mode=TwoWay}" />
+											<controls:FFButton
+												Grid.Column="1"
+												ButtonKind="Primary"
+												Command="{Binding AddScoreCommand}"
+												HeightRequestEx="40"
+												Text="Додади скор"
+												WidthRequestEx="125" />
+										</Grid>
+										<Border
+											Padding="4"
+											BackgroundColor="White"
+											IsVisible="{Binding ShowScoreSuggestions}"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											StrokeShape="RoundRectangle 8"
+											StrokeThickness="1">
+											<CollectionView HeightRequest="150" ItemsSource="{Binding ScoreSuggestions}">
+												<CollectionView.ItemTemplate>
+													<DataTemplate x:DataType="x:String">
+														<Border
+															Padding="9,6"
+															BackgroundColor="Transparent"
+															StrokeThickness="0">
+															<Border.GestureRecognizers>
+																<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectScoreSuggestionCommand}" CommandParameter="{Binding .}" />
+															</Border.GestureRecognizers>
+															<Label
+																FontSize="12"
+																Text="{Binding .}"
+																TextColor="{StaticResource SparkTextPrimary}" />
+														</Border>
+													</DataTemplate>
+												</CollectionView.ItemTemplate>
+											</CollectionView>
+										</Border>
+										<Border
+											Margin="0,5,5,5"
+											BackgroundColor="White"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											StrokeShape="RoundRectangle 0"
+											StrokeThickness="0">
+											<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterScores}" Spacing="0">
+												<BindableLayout.ItemTemplate>
+													<DataTemplate x:DataType="x:String">
+														<Grid
+															Padding="10,7"
+															ColumnDefinitions="*,Auto"
+															ColumnSpacing="5">
+															<Label
+																FontSize="16"
+																LineBreakMode="WordWrap"
+																Text="{Binding .}"
+																TextColor="{StaticResource SparkTextPrimary}"
+																VerticalOptions="Center" />
+															<controls:FFButton
+																Grid.Column="1"
+																ButtonKind="Danger"
+																Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveScoreCommand}"
+																CommandParameter="{Binding .}"
+																HeightRequestEx="30"
+																Text=" X "
+																WidthRequestEx="44" />
+														</Grid>
+													</DataTemplate>
+												</BindableLayout.ItemTemplate>
+											</VerticalStackLayout>
+										</Border>
+									</VerticalStackLayout>
+
+									<!--  ═══ РЕД 2 · КОЛОНА 0: СЛЕДЕН ТЕРМИН ═══  -->
+									<VerticalStackLayout
+										Grid.Row="1"
+										Grid.Column="0"
+										Spacing="20">
+										<controls:CrudSectionHeader
+											Title="СЛЕДЕН ТЕРМИН"
+											LineColor="{StaticResource Gray600}"
+											Style="{StaticResource SectionHeaderStyle}" />
+
+										<HorizontalStackLayout
+											HorizontalOptions="Start"
+											Spacing="-55"
+											VerticalOptions="Center">
+											<CheckBox IsChecked="{Binding ScheduleNextFollowUp, Mode=TwoWay}" VerticalOptions="Center" />
+											<Label
+												FontAttributes="Bold"
+												FontSize="14.5"
+												HorizontalOptions="Start"
+												Text="Закажи следна контрола"
+												TextColor="{StaticResource SparkTextPrimary}"
+												VerticalOptions="Center" />
+										</HorizontalStackLayout>
+
+										<VerticalStackLayout IsVisible="{Binding ScheduleNextFollowUp}" Spacing="8">
+											<Label
+												FontSize="11"
+												Text="Датум"
+												TextColor="{StaticResource SparkTextSecondary}" />
+											<Border
+												Padding="0"
+												BackgroundColor="White"
+												HeightRequest="42"
+												Stroke="{StaticResource SparkBorderSubtle}"
+												StrokeShape="RoundRectangle 7"
+												StrokeThickness="1">
+												<DatePicker
+													Date="{Binding NextFollowUpDate, Mode=TwoWay}"
+													Format="dd.MM.yyyy"
+													HorizontalOptions="Fill"
+													MinimumDate="{Binding FollowUpMinimumDate}"
+													TextColor="{StaticResource SparkTextPrimary}" />
+											</Border>
+											<Label
+												FontSize="11"
+												Text="Периодично избирање"
+												TextColor="{StaticResource SparkTextSecondary}" />
+											<controls:FFPicker
+												ItemsSource="{Binding FollowUpIntervalOptions}"
+												Label=""
+												Placeholder="Брзо избирање"
+												SelectedItem="{Binding SelectedFollowUpInterval, Mode=TwoWay}" />
+										</VerticalStackLayout>
+									</VerticalStackLayout>
+
+									<!--  ═══ РЕД 2 · КОЛОНА 1: НАОДИ (исклучено) ═══  -->
+									<!--<VerticalStackLayout
 									Grid.Row="1"
 									Grid.Column="1"
 									Spacing="10">
@@ -583,7 +599,7 @@
 									</Border>
 								</VerticalStackLayout>-->
 
-							</Grid>
+								</Grid>
 
 							</VerticalStackLayout>
 						</VerticalStackLayout>
@@ -592,16 +608,18 @@
 
 				<!--  ═══════════════  ДЕСНА КОЛОНА  ═══════════════  -->
 				<controls:FFSectionCard
-					IsVisible="{Binding HasPatientContext}"
 					Grid.Column="1"
 					Margin="-3,0,0,0"
+					IsVisible="{Binding HasPatientContext}"
 					Style="{StaticResource CrudFormCardStyle}">
 					<ScrollView VerticalScrollBarVisibility="Never">
 						<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
 
 							<!--  Последни прегледи  -->
 							<controls:CrudSectionHeader
-								Title="ПРЕТХОДНИ ПРЕГЛЕДИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								Title="ПРЕТХОДНИ ПРЕГЛЕДИ"
+								LineColor="{StaticResource Gray600}"
+								Style="{StaticResource SectionHeaderStyle}" />
 
 							<!--<Label
 								FontSize="16"
@@ -673,8 +691,12 @@
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
 
-							<!-- Историја на лекови -->
-							<controls:CrudSectionHeader Title="ИСТОРИЈА НА ЛЕКОВИ" IsVisible="{Binding HasPatientContext}" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+							<!--  Историја на лекови  -->
+							<controls:CrudSectionHeader
+								Title="ИСТОРИЈА НА ЛЕКОВИ"
+								IsVisible="{Binding HasPatientContext}"
+								LineColor="{StaticResource Gray600}"
+								Style="{StaticResource SectionHeaderStyle}" />
 							<VerticalStackLayout
 								BindableLayout.ItemsSource="{Binding MedicationHistory}"
 								IsVisible="{Binding HasPatientContext}"
@@ -717,17 +739,36 @@
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
 
-							<controls:CrudSectionHeader Title="ПРЕТХОДЕН СКОР" IsVisible="{Binding HasPatientContext}" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-<Border IsVisible="{Binding HasPatientContext}" Padding="10,8" BackgroundColor="{StaticResource SparkContentBackground}" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 10" StrokeThickness="1">
-  <VerticalStackLayout Spacing="3">
-    <Label Text="{Binding CurrentPatientScore}" FontSize="12.5" FontAttributes="Bold" TextColor="{StaticResource SparkTextPrimary}" />
-    <Label Text="{Binding CurrentPatientScoreDate, StringFormat='{0:dd.MM.yyyy}'}" FontSize="11" TextColor="{StaticResource SparkTextSecondary}" />
-  </VerticalStackLayout>
-</Border>
-<!--  История на дијагнози  -->
+							<controls:CrudSectionHeader
+								Title="ПРЕТХОДЕН СКОР"
+								IsVisible="{Binding HasPatientContext}"
+								LineColor="{StaticResource Gray600}"
+								Style="{StaticResource SectionHeaderStyle}" />
+							<Border
+								Padding="10,8"
+								BackgroundColor="{StaticResource SparkContentBackground}"
+								IsVisible="{Binding HasPatientContext}"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 10"
+								StrokeThickness="1">
+								<VerticalStackLayout Spacing="3">
+									<Label
+										FontAttributes="Bold"
+										FontSize="12.5"
+										Text="{Binding CurrentPatientScore}"
+										TextColor="{StaticResource SparkTextPrimary}" />
+									<Label
+										FontSize="11"
+										Text="{Binding CurrentPatientScoreDate, StringFormat='{0:dd.MM.yyyy}'}"
+										TextColor="{StaticResource SparkTextSecondary}" />
+								</VerticalStackLayout>
+							</Border>
+							<!--  История на дијагнози  -->
 							<controls:CrudSectionHeader
 								Title="ТЕКОВНА ДИЈАГНОЗА"
-								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								IsVisible="{Binding HasPatientContext}"
+								LineColor="{StaticResource Gray600}"
+								Style="{StaticResource SectionHeaderStyle}" />
 							<VerticalStackLayout
 								BindableLayout.ItemsSource="{Binding CurrentMkb10Assignments}"
 								IsVisible="{Binding HasPatientContext}"
@@ -767,7 +808,9 @@
 							<!--  Документи  -->
 							<controls:CrudSectionHeader
 								Title="ДОКУМЕНТИ НА ПАЦИЕНТ"
-								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								IsVisible="{Binding HasPatientContext}"
+								LineColor="{StaticResource Gray600}"
+								Style="{StaticResource SectionHeaderStyle}" />
 
 							<Label
 								FontSize="16"
@@ -870,11 +913,11 @@
 
 			<!--  ДОЛНА ЛЕНТА  -->
 			<Border
-				IsVisible="{Binding HasPatientContext}"
 				Grid.Row="2"
 				Margin="16,10,16,16"
 				Padding="16,10"
 				BackgroundColor="White"
+				IsVisible="{Binding HasPatientContext}"
 				Stroke="{StaticResource SparkBorderSubtle}"
 				StrokeShape="RoundRectangle 8"
 				StrokeThickness="1">
