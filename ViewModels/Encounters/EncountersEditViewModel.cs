@@ -155,8 +155,6 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         EncounterMedicines.CollectionChanged+=OnEncounterMedicinesChanged;
         RefreshSidePanel();
 
-        // load the cycle picker for this encounter's patient and preselect its current cycle
-   
 
         if(!CanAdminEditEncounter)
         {
