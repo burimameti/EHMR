@@ -125,58 +125,41 @@ public partial class FFCard : Border
     private void ApplyDefault()
     {
         StrokeThickness=1;
-        Background=null;
-        SetDynamicResource(BackgroundProperty, "SparkContentBackground");
-        SetDynamicResource(StrokeProperty, "SparkCardBorder");
-
-        Shadow=CreateShadow(0.06f, 0, 4, 16);
+        BackgroundColor=Color.FromArgb("#FFFFFF");
+        Stroke=Color.FromArgb("#D9E0E5");
+        Shadow=null;
     }
 
     private void ApplyElevated()
     {
-        StrokeThickness=0;
-        SetDynamicResource(BackgroundProperty, "SparkContentBackground");
-        SetDynamicResource(StrokeProperty, "Transparent");
-
-        Shadow=CreateShadow(0.08f, 0, 8, 22);
+        StrokeThickness=1;
+        BackgroundColor=Color.FromArgb("#FFFFFF");
+        Stroke=Color.FromArgb("#D9E0E5");
+        Shadow=null;
     }
 
     private void ApplyFlat()
     {
         StrokeThickness=0;
-        SetDynamicResource(BackgroundProperty, "SparkContentBackground");
-        SetDynamicResource(StrokeProperty, "Transparent");
-
+        BackgroundColor=Color.FromArgb("#FFFFFF");
+        Stroke=Colors.Transparent;
         Shadow=null;
     }
 
     private void ApplyOutlined()
     {
         StrokeThickness=1;
-        SetDynamicResource(BackgroundProperty, "SparkContentBackground");
-        SetDynamicResource(StrokeProperty, "SparkCardBorder");
-
+        BackgroundColor=Color.FromArgb("#FFFFFF");
+        Stroke=Color.FromArgb("#D9E0E5");
         Shadow=null;
     }
 
     private void ApplySoft()
     {
         StrokeThickness=1;
-        SetDynamicResource(BackgroundProperty, "SparkBackgroundAlt");
-        SetDynamicResource(StrokeProperty, "SparkCardBorder");
-
-        Shadow=CreateShadow(0.04f, 0, 2, 10);
+        BackgroundColor=Color.FromArgb("#F8FAFC");
+        Stroke=Color.FromArgb("#D9E0E5");
+        Shadow=null;
     }
 
-    // ================= SHADOW FACTORY =================
-    private static Shadow CreateShadow(float opacity, double x, double y, float radius)
-    {
-        return new Shadow
-        {
-            Brush=Colors.Black,
-            Opacity=opacity,
-            Offset=new Point(x, y),
-            Radius=radius
-        };
-    }
 }
