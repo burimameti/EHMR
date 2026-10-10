@@ -263,19 +263,26 @@
 										Grid.Column="0"
 										Spacing="10">
 
-										<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-											<controls:CrudSectionHeader
-												Title="ТЕКОВНА ТЕРАПИЈА"
-												LineColor="{StaticResource Gray600}"
-												Style="{StaticResource SectionHeaderStyle}" />
-											<controls:FFButton
-												Grid.Column="1"
-												ButtonKind="Secondary"
-												Command="{Binding AddPatientActiveMedicineCommand}"
-												HeightRequestEx="34"
-												Text="Додади лек за преглед"
-												WidthRequestEx="155" />
-										</Grid>
+										<Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
+							<controls:CrudSectionHeader
+								Title="ТЕКОВНА ТЕРАПИЈА"
+								LineColor="{StaticResource Gray600}"
+								Style="{StaticResource SectionHeaderStyle}" />
+							<controls:FFButton
+								Grid.Column="1"
+								ButtonKind="Secondary"
+								Command="{Binding AddPatientActiveMedicineCommand}"
+								HeightRequestEx="34"
+								Text="Додади лек за преглед"
+								WidthRequestEx="155" />
+							<controls:FFButton
+								Grid.Column="2"
+								ButtonKind="Primary"
+								Command="{Binding AddEncounterScoreFromListCommand}"
+								HeightRequestEx="34"
+								Text="Внеси нов скор за преглед"
+								WidthRequestEx="175" />
+						</Grid>
 
 										<!--  Лековите се преземаат автоматски од активната терапија на пациентот. Во прегледот се внесува само количината дадена при оваа посета.  -->
 
