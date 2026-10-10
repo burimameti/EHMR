@@ -372,7 +372,7 @@
 											FontSize="10"
 											Text="МКБ-10 дијагноза"
 											TextColor="{StaticResource SparkTextSecondary}" />
-										<VerticalStackLayout BindableLayout.ItemsSource="{Binding Diagnoses}" Spacing="2">
+										<VerticalStackLayout BindableLayout.ItemsSource="{Binding Mkb10Assignments}" Spacing="2">
 
 											<BindableLayout.ItemTemplate>
 												<DataTemplate x:DataType="entities:Diagnosis">
