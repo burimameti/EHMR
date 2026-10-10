@@ -288,7 +288,7 @@ Encounter? encounterForMedicines = null;
                         IsPrimary=d.IsPrimary,
                         Severity=d.Severity,
                         ClinicalDescription=d.ClinicalDescription,
-                        Status=PatientMkb10AssignmentStatus.Suspected,
+                        Status=d.Status,
                     });
                 }
             }
