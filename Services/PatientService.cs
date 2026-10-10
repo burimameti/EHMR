@@ -574,7 +574,7 @@ public class PatientService : IPatientService
 
             if(entity==null)
             {
-                db.Set<Diagnosis>().Add(NewPatientMkb10Assignment(existing.Id, vm));
+                db.Set<PatientMkb10Assignment>().Add(NewPatientMkb10Assignment(existing.Id, vm));
                 continue;
             }
 
@@ -636,7 +636,7 @@ public class PatientService : IPatientService
 
     // ---- save-model -> new entity ----
 
-    private static Diagnosis NewPatientMkb10Assignment(Guid patientId, PatientMkb10CodeSaveModel vm) => new()
+    private static PatientMkb10Assignment NewPatientMkb10Assignment(Guid patientId, PatientMkb10CodeSaveModel vm) => new()
     {
         Id=Guid.NewGuid(),
         PatientId=patientId,
@@ -726,7 +726,7 @@ public class PatientService : IPatientService
         };
     }
 
-    private static PatientMkb10CodeDto MapPatientMkb10Code(Diagnosis d) => new()
+    private static PatientMkb10CodeDto MapPatientMkb10Code(PatientMkb10Assignment d) => new()
     {
         Id=d.Id,
         PatientId=d.PatientId,
