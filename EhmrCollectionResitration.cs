@@ -149,7 +149,6 @@ namespace EHMR
             services.AddScoped<IEntitySeeder, AuditLogSeeder>();
 
             services.AddScoped<IEntitySeeder, DoctorSeeder>();
-            services.AddScoped<IEntitySeeder, DiagnosisSeeder>();
             services.AddScoped<IEntitySeeder, DocumentSeeder>();
             services.AddScoped<IEntitySeeder, EncounterSeeder>();
             services.AddScoped<IEntitySeeder, ClinicalScenarioSeeder>();
