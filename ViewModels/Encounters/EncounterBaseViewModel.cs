@@ -44,7 +44,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     // Without this, fast typing (or clicking "+ Нов ..." додека веќе имате отворено
     // дијалог за понуда) стака повеќе попапи еден врз друг. Откажувањето на врвниот
     // потоа остава друг во полузатворена состојба -> изгледа како "dispose didn't happen".
-    private bool _isOfferingCycleCreation;
     private bool _isOfferingAppointmentCreation;
 
     // =====================================================
@@ -328,38 +327,10 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     [ObservableProperty]
     private Appointment? linkedAppointment;
-    [ObservableProperty]
-    private ObservableCollection<TherapyCycle> availableTherapyCycles = new();
-    [ObservableProperty]
-    private TherapyCycle? selectedTherapyCycle;
-    public bool HasAppointment =>
-        LinkedAppointment!=null;
-    public bool HasTherapyCycle =>
-        SelectedTherapyCycle!=null;
-    public bool IsWalkIn =>
-        !HasAppointment;
-    public bool HasEncounterContext =>
-        HasAppointment||HasTherapyCycle;
-    public string ContextDisplay
-    {
-        get
-        {
-            if(HasAppointment)
-                return "Appointment";
-
-            if(HasTherapyCycle)
-                return "Therapy Cycle";
-
-            return "Walk-in";
-        }
-    }
-    public string TherapyCycleDisplay =>
-        SelectedTherapyCycle?.Notes
-        ??"Без терапевтски циклус";
-    public string TherapyCycleStatus =>
-        SelectedTherapyCycle is null
-            ? string.Empty
-            : SelectedTherapyCycle.Status?.ToDisplay() ?? string.Empty;
+    public bool HasAppointment => LinkedAppointment!=null;
+    public bool IsWalkIn => !HasAppointment;
+    public bool HasEncounterContext => HasAppointment;
+    public string ContextDisplay => HasAppointment ? "Appointment" : "Walk-in";
 
     // Mirrors TherapyCycleDisplay - drives the "selected appointment" label
     // under the appointment search box in the UI.
@@ -376,16 +347,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         OnPropertyChanged(nameof(ContextDisplay));
         OnPropertyChanged(nameof(HasPatientContext));
         OnPropertyChanged(nameof(AppointmentDisplay));
-    }
-    partial void OnSelectedTherapyCycleChanged(TherapyCycle? value)
-    {
-        Encounter.TherapyCycleId=value?.Id;
-
-        OnPropertyChanged(nameof(HasTherapyCycle));
-        OnPropertyChanged(nameof(HasEncounterContext));
-        OnPropertyChanged(nameof(ContextDisplay));
-        OnPropertyChanged(nameof(TherapyCycleDisplay)); OnPropertyChanged(nameof(HasPatientContext));
-        OnPropertyChanged(nameof(TherapyCycleStatus));
     }
     // =====================================================
     // PATIENT CONTEXT
@@ -409,7 +370,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [ObservableProperty] private ObservableCollection<Diagnosis> patientDiagnoses = new();
     [ObservableProperty] private ObservableCollection<Encounter> patientEncounters = new();
     [ObservableProperty] private ObservableCollection<Appointment> patientAppointments = new();
-    [ObservableProperty] private ObservableCollection<TherapyCycle> patientTherapyCyclesHistory = new();
     [ObservableProperty] private ObservableCollection<Prescription> patientPrescriptions = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> patientMedicines = new();
     [ObservableProperty] private ObservableCollection<PatientDocument> patientDocuments = new();
@@ -468,10 +428,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         }
     }
 
-    public string ActiveTherapySummary => string.Join(", ", PatientTherapyCyclesHistory
-        .Where(x => x.Status==TherapyStatus.Active || x.Status==TherapyStatus.Planned)
-        .Select(x => string.IsNullOrWhiteSpace(x.DecisionText) ? (x.Notes ?? "Терапија") : x.DecisionText)
-        .Take(2));
+    public string ActiveTherapySummary => ActiveMedicinesSummary;
 
     // Patient-level therapies that were discontinued are clinical history.
     // Encounter snapshots are excluded because they belong to individual visits,
@@ -524,7 +481,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             PatientDiagnoses.Clear();
             PatientEncounters.Clear();
             PatientAppointments.Clear();
-            PatientTherapyCyclesHistory.Clear();
             PatientPrescriptions.Clear();
             PatientMedicines.Clear();
             PatientDocuments.Clear();
@@ -544,7 +500,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             PatientDiagnoses=new ObservableCollection<Diagnosis>(ctx.Diagnoses);
             PatientEncounters=new ObservableCollection<Encounter>(ctx.EncounterHistory);
             PatientAppointments=new ObservableCollection<Appointment>(ctx.Appointments);
-            PatientTherapyCyclesHistory=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
             PatientPrescriptions=new ObservableCollection<Prescription>(ctx.Prescriptions);
             PatientMedicines=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
             await LoadApplicationRegimesAsync();
@@ -581,27 +536,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         }
     }
 
-    protected async Task LoadTherapyCyclesForPatientAsync(Guid patientId)
-    {
-        if(patientId==Guid.Empty)
-        {
-            AvailableTherapyCycles.Clear();
-            SelectedTherapyCycle=null;
-            return;
-        }
-        var context = await EncounterService.GetPatientContext(patientId);
-        AvailableTherapyCycles=
-            new ObservableCollection<TherapyCycle>(
-                context.TherapyCycles
-                    .Where(x =>
-                        x.Status==TherapyStatus.Active||
-                        x.Status==TherapyStatus.Planned)
-            );
-        SelectedTherapyCycle=
-            AvailableTherapyCycles
-                .FirstOrDefault(x =>
-                    x.Id==Encounter.TherapyCycleId);
-    }
     protected async Task ApplyAppointmentContextAsync(Appointment appointment)
     {
         // Guard-от го блокира reset-cascade-от во OnSelectedPatientChanged /
@@ -616,7 +550,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             Encounter.AppointmentId=appointment.Id;
             Encounter.PatientId=appointment.PatientId;
             Encounter.DoctorId=appointment.DoctorId;
-            Encounter.TherapyCycleId=appointment.TherapyCycleId;
             Encounter.ReasonForVisit=null;
 
             SelectedPatient=
@@ -631,7 +564,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             // додека guard-от е активен) - вака страничните карти (дијагнози,
             // историја, циклуси, термини) веднаш имаат податоци за пациентот.
             await LoadPatientContextAsync(appointment.PatientId);
-            await LoadTherapyCyclesForPatientAsync(appointment.PatientId);
             await LoadAppointmentsForPatientAsync(appointment.PatientId);
         }
         finally
@@ -649,8 +581,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             return;
         Diagnoses.Clear();
 
-        SelectedTherapyCycle=null;
-
         LinkedAppointment=null;
 
         SelectedAppointment=null;
@@ -658,17 +588,12 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         // Reset any in-flight search UI state when the patient changes,
         // otherwise stale dropdown results from the previous patient
         // can remain visible for a moment.
-        CycleSearchText=string.Empty;
-        CycleSearchResults.Clear();
-        ShowCycleDropdown=false;
-
         AppointmentSearchText=string.Empty;
         AppointmentSearchResults.Clear();
         ShowAppointmentDropdown=false;
 
         var patientId = value?.Id??Guid.Empty;
 
-        _=LoadTherapyCyclesForPatientAsync(patientId);
         _=LoadAppointmentsForPatientAsync(patientId);
         _=LoadPatientContextAsync(
                  patientId);
@@ -886,174 +811,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         AppointmentSearchText=string.Empty;
         AppointmentSearchResults.Clear();
         ShowAppointmentDropdown=false;
-    }
-
-    // =====================================================
-    // THERAPY CYCLE SEARCH + CREATE (optional)
-    // =====================================================
-
-    protected CancellationTokenSource CycleSearchCts = new();
-    [ObservableProperty]
-    protected ObservableCollection<TherapyCycle> cycleSearchResults = new();
-    [ObservableProperty]
-    protected string cycleSearchText = string.Empty;
-    [ObservableProperty]
-    protected bool showCycleDropdown;
-    partial void OnCycleSearchTextChanging(string value)
-    {
-        _=SearchTherapyCyclesAsync(value);
-    }
-    [RelayCommand]
-    protected async Task SearchTherapyCyclesAsync(string query)
-    {
-        if(string.IsNullOrWhiteSpace(query))
-        {
-            CycleSearchResults.Clear();
-            ShowCycleDropdown=false;
-            return;
-        }
-        CycleSearchCts.Cancel();
-        CycleSearchCts.Dispose();
-        CycleSearchCts=new CancellationTokenSource();
-
-        var token = CycleSearchCts.Token;
-        try
-        {
-            await Task.Delay(350, token); // debounce, mirrors MKB search feel
-        }
-        catch(TaskCanceledException)
-        {
-            return;
-        }
-        var matches =
-            AvailableTherapyCycles
-                .Where(x =>
-                    (x.Notes??string.Empty)
-                        .Contains(query, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-        CycleSearchResults=
-            new ObservableCollection<TherapyCycle>(matches);
-
-        ShowCycleDropdown=
-            matches.Count>0;
-
-        if(matches.Count==0&&!token.IsCancellationRequested)
-        {
-            await OfferToCreateTherapyCycleAsync(query);
-        }
-    }
-    protected async Task OfferToCreateTherapyCycleAsync(string searchedTerm)
-    {
-        if(SelectedPatient?.Status==PatientStatus.Inactive)
-            return;
-
-        if(SelectedPatient==null)
-            return;
-
-        // Re-entrancy guard: без ова, брзо типување (секој клучен удар
-        // повторно го активира дебонсираното пребарување) или кликање на "+ Нов циклус"
-        // додека типуваната понуда за дијалог сѐ уште е отворена може да создаде
-        // повеќе од еден popup. Откажувањето на едниот потоаостаава дека другото
-        // popup's RequestClose укажува на дијалог што веќе е "употребено" - изгледа како
-        // popup-от не се затвора/раскинува правилно.
-        if(_isOfferingCycleCreation)
-            return;
-
-        _isOfferingCycleCreation=true;
-        try
-        {
-            var shouldCreate =
-                await UserDialogService.ShowConfirmationAsync(
-                    "Нема резултати",
-                    $"Не е пронајден терапевтски циклус за „{searchedTerm}“. Дали сакате да креирате нов?",
-                    "Креирај",
-                    "Откажи");
-            if(!shouldCreate)
-                return;
-
-            var newCycle =
-                await UserDialogService
-                    .ShowCreateTherapyCyclePopupAsync(
-                        SelectedPatient.Id,
-                        searchedTerm);
-            if(newCycle==null)
-                return;
-
-            AvailableTherapyCycles.Add(newCycle);
-
-            SelectedTherapyCycle=newCycle;
-            CycleSearchText=string.Empty;
-
-            CycleSearchResults.Clear();
-
-            ShowCycleDropdown=false;
-        }
-        finally
-        {
-            _isOfferingCycleCreation=false;
-        }
-    }
-    [RelayCommand]
-    protected async Task AddNewTherapyCycleAsync()
-    {
-        if(!CanUpdate)
-        {
-            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за промена на терапијата.", "ОК");
-            return;
-        }
-        if(SelectedPatient?.Status==PatientStatus.Inactive)
-        {
-            await UserDialogService.ShowAlertAsync("Пациентот е неактивен", "За неактивен пациент не може да се креира или менува терапија.", "ОК");
-            return;
-        }
-
-        if(SelectedPatient==null)
-        {
-            OnError("Изберете пациент пред да додадете циклус");
-            return;
-        }
-
-        // Исто така, заштита тука - спречува рачниот копче "+ Нов циклус"
-        // да отвори второ креирано popup додека дијалогот предложен од пребарувањето
-        // веќе се прикажува.
-        if(_isOfferingCycleCreation)
-            return;
-
-        await ExecuteSafeAsync(async () =>
-        {
-            _isOfferingCycleCreation=true;
-            try
-            {
-                var newCycle =
-                    await UserDialogService
-                        .ShowCreateTherapyCyclePopupAsync(
-                            SelectedPatient.Id,
-                            null);
-                if(newCycle==null)
-                    return;
-                AvailableTherapyCycles.Add(newCycle);
-
-                SelectedTherapyCycle=newCycle;
-            }
-            finally
-            {
-                _isOfferingCycleCreation=false;
-            }
-        },
-        "Грешка при креирање циклус");
-    }
-    [RelayCommand]
-    protected void SelectTherapyCycle(TherapyCycle cycle)
-    {
-        if(cycle==null)
-            return;
-        SelectedTherapyCycle=cycle;
-
-        CycleSearchText=string.Empty;
-
-        CycleSearchResults.Clear();
-
-        ShowCycleDropdown=false;
     }
 
     // =====================================================
@@ -1309,7 +1066,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
                     LinkedAppointment=await EncounterService
                         .GetAppointment(Encounter.AppointmentId.Value);
 
-                await LoadTherapyCyclesForPatientAsync(Encounter.PatientId);
                 await LoadPatientContextAsync(Encounter.PatientId);
                 await LoadAppointmentsForPatientAsync(Encounter.PatientId);
 
@@ -1703,10 +1459,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     {
         LinkedAppointment=null;
 
-        SelectedTherapyCycle=null;
         Encounter.AppointmentId=null;
 
-        Encounter.TherapyCycleId=null;
     }
     // =====================================================
     // DISPOSE
@@ -1715,9 +1469,6 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     {
         SearchCts.Cancel();
         SearchCts.Dispose();
-
-        CycleSearchCts.Cancel();
-        CycleSearchCts.Dispose();
 
         AppointmentSearchCts.Cancel();
         AppointmentSearchCts.Dispose();
