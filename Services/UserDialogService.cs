@@ -61,22 +61,7 @@ namespace EHMR.Services
             return result as Appointment;
         }
 
-        public async Task<TherapyCycle?> ShowCreateTherapyCyclePopupAsync(
-            Guid patientId, string? prefillNotes)
-        {
-            var mainPage = GetMainPage();
-            if(mainPage==null)
-                return null;
 
-            var viewModel = new CreateTherapyCyclePopupViewModel(
-                _encounterService, patientId, prefillNotes);
-
-            var popup = new CreateTherapyCyclePopup(viewModel);
-
-            var result = await mainPage.ShowPopupAsync(popup);
-
-            return result as TherapyCycle;
-        }
 
         public Task<string?> ShowPromptAsync(string title, string message, string accept, string cancel, string placeholder = "", string initialValue = "")
         {
