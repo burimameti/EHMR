@@ -50,7 +50,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
     public DbSet<Alert> Alerts => Set<Alert>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<Doctor> Doctors => Set<Doctor>();
-    public DbSet<Diagnosis> Diagnoses => Set<Diagnosis>();
     public DbSet<Encounter> Encounters => Set<Encounter>();
     public DbSet<Medicine> Medicines => Set<Medicine>();
     public DbSet<PatientMedicine> PatientMedicines => Set<PatientMedicine>();
@@ -333,13 +332,6 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
 
 
 
-            entity.HasMany(x => x.Diagnoses)
-                .WithOne(x => x.Patient)
-                .HasForeignKey(x => x.PatientId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-
-
             entity.HasMany(x => x.PatientMedicines)
                 .WithOne(x => x.Patient)
                 .HasForeignKey(x => x.PatientId)
@@ -511,12 +503,6 @@ entity.HasOne(x => x.Medicine)
             entity.HasIndex(x => x.EncounterId).IsUnique();
         });
 
-        // Diagnosis -> Encounter
-        modelBuilder.Entity<Diagnosis>()
-            .HasOne(x => x.Encounter)
-            .WithMany(x => x.Diagnoses)
-            .HasForeignKey(x => x.EncounterId)
-            .OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<Encounter>()
             .HasOne(x => x.Doctor)
             .WithMany()
@@ -562,7 +548,6 @@ entity.HasOne(x => x.Medicine)
         modelBuilder.Entity<Appointment>().HasIndex(x => x.ScheduledStart);
       //  modelBuilder.Entity<Inventory>().HasIndex(x => x.MedicineId);
         modelBuilder.Entity<Medicine>().HasIndex(x => x.Name);
-        modelBuilder.Entity<Diagnosis>().HasIndex(x => x.PatientId);
     }
 
     // --- 8. STRING-CONVERTED STATE TRACKING LAYER ---
