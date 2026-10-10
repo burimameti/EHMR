@@ -4,9 +4,9 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	Margin="0"
-	Padding="14"
-	BackgroundColor="{StaticResource SparkBackground}"
-	Stroke="{StaticResource SparkBorder}"
+	Padding="16"
+	BackgroundColor="#FFFFFF"
+	Stroke="#D9E0E5"
 	StrokeThickness="1"
 	StrokeShape="RoundRectangle 8">
 
