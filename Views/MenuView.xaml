@@ -11,7 +11,7 @@
 
 	<Border
 		Padding="0"
-		BackgroundColor="{StaticResource SidebarBg}"
+		BackgroundColor="#202D3D"
 		StrokeThickness="0">
 
 		<Grid RowDefinitions="Auto,Auto,*,Auto" WidthRequest="255">
@@ -20,7 +20,7 @@
 			<Grid
 				Grid.Row="0"
 				Padding="22,24,20,18"
-				Background="#37414B"
+				Background="#182330"
 				ColumnDefinitions="26,*"
 				ColumnSpacing="10">
 
@@ -28,7 +28,7 @@
 					FontFamily="FASolid"
 					FontSize="18"
 					Text="&#xf005;"
-					TextColor="{StaticResource SidebarActiveBg}"
+					TextColor="#2AEBE7"
 					VerticalOptions="Center" />
 
 				<Label
@@ -41,7 +41,7 @@
 			</Grid>
 			<BoxView
 				Grid.Row="1"
-				BackgroundColor="{StaticResource SidebarActiveBg}"
+				BackgroundColor="#2AEBE7"
 				HeightRequest="1"
 				HorizontalOptions="Fill" />
 			<!--  ================= NAVIGATION =================  -->
@@ -71,7 +71,7 @@
 										Binding="{Binding IsActive}"
 										TargetType="Border"
 										Value="True">
-										<Setter Property="BackgroundColor" Value="{StaticResource SidebarActiveBg}" />
+										<Setter Property="BackgroundColor" Value="#2AEBE7" />
 									</DataTrigger>
 									<DataTrigger
 										Binding="{Binding IsActive}"
@@ -104,7 +104,7 @@
 												Binding="{Binding IsActive}"
 												TargetType="Border"
 												Value="False">
-												<Setter Property="BackgroundColor" Value="{StaticResource SidebarActiveBg}" />
+												<Setter Property="BackgroundColor" Value="#2AEBE7" />
 											</DataTrigger>
 										</Border.Triggers>
 										<Label
@@ -118,7 +118,7 @@
 													Binding="{Binding IsActive}"
 													TargetType="Label"
 													Value="True">
-													<Setter Property="TextColor" Value="{StaticResource SidebarActiveBg}" />
+													<Setter Property="TextColor" Value="#2AEBE7" />
 												</DataTrigger>
 												<DataTrigger
 													Binding="{Binding IsActive}"
@@ -165,7 +165,7 @@
 												Binding="{Binding IsExpanded}"
 												TargetType="Label"
 												Value="True">
-												<Setter Property="TextColor" Value="{StaticResource SidebarActiveBg}" />
+												<Setter Property="TextColor" Value="#2AEBE7" />
 												<Setter Property="Text" Value="&#xf077;" />
 											</DataTrigger>
 											<DataTrigger
@@ -254,7 +254,7 @@
 											<Border
 												Grid.Column="0"
 												Padding="0"
-												BackgroundColor="{StaticResource SidebarBg}"
+												BackgroundColor="#202D3D"
 												HeightRequest="9"
 												HorizontalOptions="Center"
 												StrokeThickness="1.4"
@@ -268,7 +268,7 @@
 														Binding="{Binding IsActive}"
 														TargetType="Border"
 														Value="True">
-														<Setter Property="Stroke" Value="{StaticResource SidebarActiveBg}" />
+														<Setter Property="Stroke" Value="#2AEBE7" />
 													</DataTrigger>
 													<DataTrigger
 														Binding="{Binding IsActive}"
@@ -329,13 +329,13 @@
 				Grid.Row="3"
 				Margin="12,8,12,16"
 				Padding="12,10"
-				BackgroundColor="{StaticResource SidebarSurface}"
+				BackgroundColor="#182330"
 				StrokeShape="Rectangle"
 				StrokeThickness="0">
 
 				<Grid ColumnDefinitions="34,*,Auto" ColumnSpacing="10">
 					<Border
-						BackgroundColor="{StaticResource SidebarActiveBg}"
+						BackgroundColor="#2AEBE7"
 						HeightRequest="34"
 						StrokeShape="Ellipse"
 						StrokeThickness="0"
@@ -346,7 +346,7 @@
 							FontSize="12"
 							HorizontalOptions="Center"
 							Text="{Binding UserInitial}"
-							TextColor="{StaticResource SidebarActiveText}"
+							TextColor="#0F172A"
 							VerticalOptions="Center" />
 					</Border>
 
@@ -362,7 +362,7 @@
 						<Label
 							FontSize="10.5"
 							Text="{Binding UserRole}"
-							TextColor="{StaticResource SidebarTextMuted}" />
+							TextColor="#9AA6AD" />
 					</VerticalStackLayout>
 
 					<Label
@@ -370,7 +370,7 @@
 						FontFamily="FASolid"
 						FontSize="14"
 						Text="&#xf2f5;"
-						TextColor="{StaticResource SidebarTextMuted}"
+						TextColor="#9AA6AD"
 						VerticalOptions="Center">
 						<Label.GestureRecognizers>
 							<TapGestureRecognizer Command="{Binding LogoutCommand}" />
