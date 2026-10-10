@@ -268,7 +268,7 @@
                                                         <Label Padding="8" Text="Нема внесена дијагноза." FontSize="11" TextColor="{StaticResource SparkTextSecondary}" />
                                                     </CollectionView.EmptyView>
                                                     <CollectionView.ItemTemplate>
-                                                        <DataTemplate x:DataType="entities:Diagnosis">
+                                                        <DataTemplate x:DataType="entities:PatientMkb10Assignment">
                                                             <Grid ColumnDefinitions="Auto,*" Padding="7,6" ColumnSpacing="8">
                                                                 <Label Text="{Binding Mkb10Code.Code}" FontSize="11" TextColor="{StaticResource SparkTextPrimary}" />
                                                                 <Label Grid.Column="1" Text="{Binding Mkb10Code.Description}" FontSize="11" LineBreakMode="WordWrap" TextColor="{StaticResource SparkTextPrimary}" />
@@ -825,7 +825,7 @@
 										TextColor="{StaticResource SparkTextSecondary}" />
 								</BindableLayout.EmptyView>-->
 								<BindableLayout.ItemTemplate>
-									<DataTemplate x:DataType="entities:Diagnosis">
+									<DataTemplate x:DataType="entities:PatientMkb10Assignment">
 										<Border
 											Padding="10,8"
 											BackgroundColor="{StaticResource SparkContentBackground}"
