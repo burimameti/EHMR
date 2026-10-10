@@ -72,7 +72,8 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 DosesFrequency = DosesFrequency.Daily,
                 Dosage = "1 таблета од 5mg",
                 Notes = "Редовна наутро за крвен притисок.",
-                IsActive = true
+                IsActive = true,
+                Quantity = 0m
             },
 
             // Пациент 2 терапија (Билјана - прима Омепразол за желудник)
@@ -85,7 +86,8 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 DosesFrequency = DosesFrequency.Daily,
                 Dosage = "1 капсула од 20mg",
                 Notes = "Наутро на гладно, 30 минути пред појадок.",
-                IsActive = true
+                IsActive = true,
+                Quantity = 0m
             },
 
             // Пациент 3 терапија (Зоран - Онколошки пациент на Метотрексат)
