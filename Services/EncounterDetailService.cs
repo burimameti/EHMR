@@ -144,7 +144,7 @@ public class EncounterDetailService : IEncounterDetailService
             .Include(x => x.Appointment)
             .FirstAsync(x => x.Id==id);
 
-        var mkb10Assignments = await db.Set<PatientMkb10Assignment>()
+        var mkb10Assignments = await db.PatientMkb10Assignments
             .AsNoTracking()
             .Where(x => x.EncounterId==id)        // ← no more appointment-level MKB-10 assignments
             .Include(x => x.Mkb10Code)
@@ -541,10 +541,10 @@ public class EncounterDetailService : IEncounterDetailService
         encounter.UpdatedAt=DateTime.UtcNow;
         encounter.UpdatedBy=_authorizationService.CurrentUser.Id;
 
-        var existing=await db.Set<PatientMkb10Assignment>()
+        var existing=await db.PatientMkb10Assignments
             .Where(x => x.EncounterId==encounterId)
             .ToListAsync();
-        db.Set<PatientMkb10Assignment>().RemoveRange(existing);
+        db.PatientMkb10Assignments.RemoveRange(existing);
 
         foreach(var assignment in mkb10Assignments)
         {
@@ -557,7 +557,7 @@ public class EncounterDetailService : IEncounterDetailService
             if(string.IsNullOrWhiteSpace(assignment.AssignmentNumber))
                 assignment.AssignmentNumber=await SequenceHelper.GenerateNumberAsync(
                     db, SequenceNames.PatientMkb10Assignment, "DX");
-            db.Set<PatientMkb10Assignment>().Add(assignment);
+            db.PatientMkb10Assignments.Add(assignment);
         }
 
         if(mkb10Assignments.Count>0)
@@ -644,10 +644,10 @@ public class EncounterDetailService : IEncounterDetailService
             await db.SaveChangesAsync();
 
             // ── MKB-10 assignments: full replace scoped to this encounter ─────────────
-            var existingAssignments = await db.Set<PatientMkb10Assignment>()
+            var existingAssignments = await db.PatientMkb10Assignments
                 .Where(x => x.EncounterId==encounter.Id)
                 .ToListAsync();
-            db.Set<PatientMkb10Assignment>().RemoveRange(existingAssignments);
+            db.PatientMkb10Assignments.RemoveRange(existingAssignments);
 
             foreach(var d in mkb10Assignments)
             {
@@ -659,7 +659,7 @@ public class EncounterDetailService : IEncounterDetailService
                 if(string.IsNullOrWhiteSpace(d.AssignmentNumber))
                     d.AssignmentNumber=
                         await SequenceHelper.GenerateNumberAsync(db, SequenceNames.PatientMkb10Assignment, "DX");
-                db.Set<PatientMkb10Assignment>().Add(d);
+                db.PatientMkb10Assignments.Add(d);
             }
 
             // ── Prescriptions: full replace scoped to this encounter ─────────
