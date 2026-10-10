@@ -61,6 +61,9 @@ public class PatientMedicine : BaseEntity
 
     public string PharmaceuticalReference { get; set; } = string.Empty;
 
+    /// <summary>Start date of this patient-specific medicine record; defaults to the date it is added.</summary>
+    public DateTime StartDate { get; set; } = DateTime.UtcNow;
+
     /// <summary>Patient-specific quantity, matching the numeric quantity used in encounter medicine entry.</summary>
     public decimal Quantity { get; set; } = 1m;
 
