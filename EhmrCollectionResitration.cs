@@ -276,7 +276,6 @@ namespace EHMR
             // services.AddSingleton<INotificationService, NotificationService>();
             // services.AddSingleton<IPatientService, PatientService>();
             // services.AddSingleton<ITherapyWorkflowService, TherapyWorkflowService>();
-            //  services.AddSingleton<ITherapyCycleService, TherapyCycleService>();
             //  services.AddSingleton<ITherapyScheduleService, TherapyScheduleService>();
             //  services.AddSingleton<IDashboardService, DashboardService>();
             services.AddSingleton<INavigationService, NavigationService>();
@@ -366,7 +365,6 @@ namespace EHMR
         //private static IServiceCollection RegisterTherapyModule(this IServiceCollection services)
         //{
         //    services.AddTransient<PatientTherapyDashboardViewModel>();
-        //    services.AddTransient<TherapyCycleViewModel>();
         //    services.AddTransient<TherapyScheduleViewModel>();
         //    return services;
         //}
