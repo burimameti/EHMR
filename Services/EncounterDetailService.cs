@@ -592,10 +592,6 @@ public class EncounterDetailService : IEncounterDetailService
 
         try
         {
-            if(diagnoses.Count>0)
-                encounter.Schedule(DateTime.Now);
-            if(medicines.Count>0)
-                encounter.Complete(DateTime.Now);
             var exists = encounter.Id!=Guid.Empty
                 &&await db.Encounters.AsNoTracking().AnyAsync(e => e.Id==encounter.Id);
 
@@ -722,18 +718,6 @@ public class EncounterDetailService : IEncounterDetailService
                     entity.IsActive=vm.IsActive;
                 }
             }
-            // ─────────────────────────────────────────────────────────────────────────────
-            // EncounterDetailService.SaveEncounter(...)
-            //
-            // ВМЕТНИ го ОВОЈ блок веднаш ПОСЛЕ циклусот:
-            //     foreach(var vm in medicines.Where(x => !deletedMedicineIds.Contains(x.Id))) { ... }
-            // а ПРЕД блокот:
-            //     if(encounter.AppointmentId is { } linkedApptId && linkedApptId != Guid.Empty) { ... }
-            //
-            // Условот `!exists` значи: само при креирање на нов преглед (не при уредување на стар),
-            // за стар преглед да не ја менува тековната терапија на пациентот.
-            // ─────────────────────────────────────────────────────────────────────────────
-
             // Encounter medicines are visit-specific snapshots. Saving this encounter
             // must never deactivate, replace, or create patient-level active therapy rows.
             // Patient chart therapy is maintained only from the patient medicine form.
