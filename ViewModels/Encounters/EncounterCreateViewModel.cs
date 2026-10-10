@@ -411,7 +411,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             ScoreText=string.Join(" | ", EncounterScores);
             Encounter.PatientId=SelectedPatient.Id;
             Encounter.DoctorId=SelectedDoctor.Id;
-            Encounter.Diagnoses.Clear();
+            Encounter.Mkb10Assignments.Clear();
 
             var encounterScoreRecords=EncounterScores
                 .Select(entry =>
