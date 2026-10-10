@@ -75,7 +75,7 @@
 
 	<Style x:Key="PageCardStyleDashboard" TargetType="Border">
 
-		<Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
+		<Setter Property="BackgroundColor" Value="Transparent" />
 
 		<Setter Property="StrokeThickness" Value="0" />
 		<Setter Property="Padding" Value="0" />
@@ -88,8 +88,8 @@
 		</Setter>
 	</Style>
 	<Style x:Key="PageCardStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceColor}" />
-		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
+		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Padding" Value="20" />
 		<Setter Property="Shadow" Value="{StaticResource CardShadow}" />
@@ -106,7 +106,7 @@
 
 	<Style x:Key="ToolbarPillStyle" TargetType="Border">
 		<Setter Property="BackgroundColor" Value="White" />
-		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Padding" Value="14,8" />
 		<Setter Property="StrokeShape">
@@ -124,7 +124,7 @@
 		<Setter Property="WidthRequest" Value="38" />
 		<Setter Property="HeightRequest" Value="38" />
 		<Setter Property="BackgroundColor" Value="Transparent" />
-		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Padding" Value="0" />
 		<Setter Property="HorizontalOptions" Value="Center" />
@@ -141,8 +141,8 @@
 	<!--  =========================  -->
 
 	<Style x:Key="SegmentedTabsWrapperStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceSecondary}" />
-		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="BackgroundColor" Value="#F8FAFC" />
+		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Padding" Value="4" />
 		<Setter Property="StrokeShape">
@@ -155,13 +155,13 @@
 	<Style x:Key="SegmentedTabInactiveStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="FontAttributes" Value="None" />
-		<Setter Property="TextColor" Value="{StaticResource SubtitleColor}" />
+		<Setter Property="TextColor" Value="#64748B" />
 		<Setter Property="Padding" Value="14,7" />
 		<Setter Property="HorizontalTextAlignment" Value="Center" />
 	</Style>
 
 	<Style x:Key="SegmentedTabActiveStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceColor}" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
 		<Setter Property="Shadow" Value="{StaticResource SoftShadow}" />
 		<Setter Property="Padding" Value="14,7" />
 		<Setter Property="StrokeThickness" Value="0" />
@@ -178,7 +178,7 @@
 
 	<Style x:Key="FilterChipStyle" TargetType="Border">
 		<Setter Property="BackgroundColor" Value="White" />
-		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Padding" Value="12,8" />
 		<Setter Property="StrokeShape">
@@ -202,7 +202,7 @@
 
 	<!--  NEW: trend pill shown inside metric card ("+12% vs last week")  -->
 	<Style x:Key="TrendUpPillStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource TrendUpBg}" />
+		<Setter Property="BackgroundColor" Value="#DCFCE7" />
 		<Setter Property="StrokeThickness" Value="0" />
 		<Setter Property="Padding" Value="6,2" />
 		<Setter Property="StrokeShape">
@@ -216,20 +216,20 @@
 		x:Key="TrendDownPillStyle"
 		BasedOn="{StaticResource TrendUpPillStyle}"
 		TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource TrendDownBg}" />
+		<Setter Property="BackgroundColor" Value="#FEE2E2" />
 	</Style>
 
 	<Style x:Key="TrendUpTextStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="11" />
 		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="{StaticResource TrendUpText}" />
+		<Setter Property="TextColor" Value="#15803D" />
 	</Style>
 
 	<Style
 		x:Key="TrendDownTextStyle"
 		BasedOn="{StaticResource TrendUpTextStyle}"
 		TargetType="Label">
-		<Setter Property="TextColor" Value="{StaticResource TrendDownText}" />
+		<Setter Property="TextColor" Value="#B91C1C" />
 	</Style>
 
 	<!--  =========================  -->
@@ -240,7 +240,7 @@
 		<Setter Property="WidthRequest" Value="40" />
 		<Setter Property="HeightRequest" Value="40" />
 		<Setter Property="StrokeThickness" Value="0" />
-		<Setter Property="BackgroundColor" Value="{StaticResource PrimaryLight}" />
+		<Setter Property="BackgroundColor" Value="#D9FBFA" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
 				<RoundRectangle CornerRadius="12" />
@@ -255,31 +255,31 @@
 	<Style x:Key="TitleStyle" TargetType="Label">
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="30" />
-		<Setter Property="TextColor" Value="{StaticResource TitleColor}" />
+		<Setter Property="TextColor" Value="#0F172A" />
 	</Style>
 
 	<Style x:Key="SectionStyle" TargetType="Label">
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="20" />
-		<Setter Property="TextColor" Value="{StaticResource TitleColor}" />
+		<Setter Property="TextColor" Value="#0F172A" />
 	</Style>
 
 	<Style x:Key="SmallLabelStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="12" />
-		<Setter Property="TextColor" Value="{StaticResource SubtitleColor}" />
+		<Setter Property="TextColor" Value="#64748B" />
 	</Style>
 
 	<Style
 		x:Key="MutedLabelStyle"
 		BasedOn="{StaticResource SmallLabelStyle}"
 		TargetType="Label">
-		<Setter Property="TextColor" Value="{StaticResource MutedColor}" />
+		<Setter Property="TextColor" Value="#64748B" />
 	</Style>
 
 	<Style x:Key="ValueStyle" TargetType="Label">
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="28" />
-		<Setter Property="TextColor" Value="{StaticResource TitleColor}" />
+		<Setter Property="TextColor" Value="#0F172A" />
 	</Style>
 
 	<!--  =========================  -->
@@ -317,7 +317,7 @@
 		x:Key="DateBadgeTodayStyle"
 		BasedOn="{StaticResource DateBadgeStyle}"
 		TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource TodayBadgeBg}" />
+		<Setter Property="BackgroundColor" Value="#0F172A" />
 	</Style>
 
 	<!--  =========================  -->
@@ -326,24 +326,24 @@
 
 	<Style x:Key="HourLabelStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="11" />
-		<Setter Property="TextColor" Value="{StaticResource MutedColor}" />
+		<Setter Property="TextColor" Value="#64748B" />
 		<Setter Property="HorizontalTextAlignment" Value="End" />
 	</Style>
 
 	<Style x:Key="TimeGridLineStyle" TargetType="BoxView">
 		<Setter Property="HeightRequest" Value="1" />
-		<Setter Property="Color" Value="{StaticResource DividerColor}" />
+		<Setter Property="Color" Value="#E2E8F0" />
 	</Style>
 
 	<Style x:Key="TimeGridColumnDividerStyle" TargetType="BoxView">
 		<Setter Property="WidthRequest" Value="1" />
-		<Setter Property="Color" Value="{StaticResource DividerColor}" />
+		<Setter Property="Color" Value="#E2E8F0" />
 	</Style>
 
 	<!--  Current-time indicator line  -->
 	<Style x:Key="NowLineStyle" TargetType="BoxView">
 		<Setter Property="HeightRequest" Value="2" />
-		<Setter Property="Color" Value="{StaticResource DangerColor}" />
+		<Setter Property="Color" Value="#B42318" />
 	</Style>
 
 	<!--  =========================  -->
@@ -383,7 +383,7 @@
 
 	<!--  NEW: "Add" pill button top-right of side panel  -->
 	<Style x:Key="PrimaryPillButtonStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource TitleColor}" />
+		<Setter Property="BackgroundColor" Value="#0F172A" />
 		<Setter Property="Padding" Value="14,9" />
 		<Setter Property="StrokeThickness" Value="0" />
 		<Setter Property="StrokeShape">
@@ -397,17 +397,17 @@
 	<Style x:Key="ListTabActiveStyle" TargetType="Label">
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="TextColor" Value="{StaticResource TitleColor}" />
+		<Setter Property="TextColor" Value="#0F172A" />
 	</Style>
 
 	<Style x:Key="ListTabInactiveStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="13" />
-		<Setter Property="TextColor" Value="{StaticResource MutedColor}" />
+		<Setter Property="TextColor" Value="#64748B" />
 	</Style>
 
 	<Style x:Key="ListTabUnderlineActiveStyle" TargetType="BoxView">
 		<Setter Property="HeightRequest" Value="2" />
-		<Setter Property="Color" Value="{StaticResource TitleColor}" />
+		<Setter Property="Color" Value="#0F172A" />
 	</Style>
 
 	<!--  Avatar circle with initials  -->
@@ -433,8 +433,8 @@
 
 	<!--  DETAIL / list item card (used for waitlist entries and today's list)  -->
 	<Style x:Key="DetailCardStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource SurfaceSecondary}" />
-		<Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+		<Setter Property="BackgroundColor" Value="#F8FAFC" />
+		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Padding" Value="14" />
 		<Setter Property="Margin" Value="0,0,0,12" />
@@ -446,7 +446,7 @@
 	</Style>
 
 	<Style x:Key="BookNowButtonStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource TitleColor}" />
+		<Setter Property="BackgroundColor" Value="#0F172A" />
 		<Setter Property="Padding" Value="0,10" />
 		<Setter Property="StrokeThickness" Value="0" />
 		<Setter Property="HorizontalOptions" Value="Fill" />
@@ -466,8 +466,8 @@
 
 	<Style x:Key="MoreButtonStyle" TargetType="Border">
 		<Setter Property="WidthRequest" Value="38" />
-		<Setter Property="BackgroundColor" Value="{StaticResource SidebarActiveBg}" />
-		<Setter Property="Stroke" Value="{StaticResource SidebarActiveBg}" />
+		<Setter Property="BackgroundColor" Value="#2AEBE7" />
+		<Setter Property="Stroke" Value="#2AEBE7" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
