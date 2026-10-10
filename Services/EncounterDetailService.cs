@@ -146,7 +146,7 @@ public class EncounterDetailService : IEncounterDetailService
 
         var mkb10Assignments = await db.Set<PatientMkb10Assignment>()
             .AsNoTracking()
-            .Where(x => x.EncounterId==id)        // ← no more AppointmentDiagnoses
+            .Where(x => x.EncounterId==id)        // ← no more appointment-level MKB-10 assignments
             .Include(x => x.Mkb10Code)
             .OrderByDescending(x => x.IsPrimary)
             .ThenBy(x => x.Mkb10Code!.Code)
@@ -211,7 +211,7 @@ public class EncounterDetailService : IEncounterDetailService
             .Where(x => x.PatientId==patientId)
             .OrderByDescending(x => x.ScheduledStart)
             .ToListAsync();
-        // NO AppointmentDiagnoses include — that table is gone
+        // NO appointment-level MKB-10 assignments include — that table is gone
     }
 
     public async Task<Appointment> CreateAppointment(Appointment appointment)
@@ -250,7 +250,7 @@ public class EncounterDetailService : IEncounterDetailService
             .AsSplitQuery()
             .Include(p => p.Doctor)
 
-            // Problem list — no AppointmentDiagnoses anymore
+            // Problem list — no appointment-level MKB-10 assignments anymore
             .Include(p => p.Mkb10Assignments).ThenInclude(d => d.Mkb10Code)
             .Include(p => p.Mkb10Assignments).ThenInclude(d => d.Encounter)
 
@@ -644,10 +644,10 @@ public class EncounterDetailService : IEncounterDetailService
             await db.SaveChangesAsync();
 
             // ── MKB-10 assignments: full replace scoped to this encounter ─────────────
-            var existingDiagnoses = await db.Set<PatientMkb10Assignment>()
+            var existingAssignments = await db.Set<PatientMkb10Assignment>()
                 .Where(x => x.EncounterId==encounter.Id)
                 .ToListAsync();
-            db.Set<PatientMkb10Assignment>().RemoveRange(existingDiagnoses);
+            db.Set<PatientMkb10Assignment>().RemoveRange(existingAssignments);
 
             foreach(var d in mkb10Assignments)
             {
