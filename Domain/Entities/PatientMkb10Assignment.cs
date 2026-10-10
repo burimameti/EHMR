@@ -4,7 +4,7 @@ namespace EHMR.Domain.Entities
 {
     public class PatientMkb10Assignment : BaseEntity
     { 
-        public string DiagnosisNumber { get; set; } = string.Empty;
+        public string AssignmentNumber { get; set; } = string.Empty;
         public Guid PatientId
         {
             get; set;
