@@ -22,7 +22,6 @@ public static class RolePermissionMatrix
                 (Modules.Inventory, ModuleAction.View),
                 (Modules.Medicines, ModuleAction.View),
                 (Modules.Reports, ModuleAction.View|ModuleAction.Export|ModuleAction.Print),
-                (Modules.Encounters, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Approve|ModuleAction.Print|ModuleAction.Export),
                 (Modules.Calendar, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel),
                 (Modules.MKBCodes, ModuleAction.View),
                 (Modules.Prescriptions, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit)
@@ -38,7 +37,6 @@ public static class RolePermissionMatrix
                 (Modules.Inventory, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
                 (Modules.Medicines, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
                 (Modules.Reports, ModuleAction.View|ModuleAction.Export|ModuleAction.Print),
-                (Modules.Encounters, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Print),
                 (Modules.Calendar, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel),
                 (Modules.MKBCodes, ModuleAction.View),
                 (Modules.Prescriptions, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit)
@@ -54,7 +52,6 @@ public static class RolePermissionMatrix
                 (Modules.Inventory, ModuleAction.View),
                 (Modules.Medicines, ModuleAction.View),
                 (Modules.Reports, ModuleAction.View),
-                (Modules.Encounters, ModuleAction.View|ModuleAction.Create),
                 (Modules.Calendar, ModuleAction.View|ModuleAction.Create|ModuleAction.Schedule),
                 (Modules.MKBCodes, ModuleAction.View),
                 (Modules.Prescriptions, ModuleAction.View|ModuleAction.Create)
@@ -68,7 +65,6 @@ public static class RolePermissionMatrix
                 (Modules.Protocols, ModuleAction.View),
                 (Modules.Inventory, ModuleAction.View),
                 (Modules.Reports, ModuleAction.View),
-                (Modules.Encounters, ModuleAction.View),
                 (Modules.Calendar, ModuleAction.View),
                 (Modules.MKBCodes, ModuleAction.View),
                 (Modules.Prescriptions, ModuleAction.View)
