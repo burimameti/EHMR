@@ -615,7 +615,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 .FirstOrDefault() ?? "";
 
             var diagnoses=string.Join(", ", p.Mkb10Assignments
-                .Where(d => d.Mkb10Code!=null)
+                .Where(d => d.EncounterId==null && d.Mkb10Code!=null)
                 .Select(d => d.Mkb10Code!.Code)
                 .Distinct());
 
@@ -695,7 +695,8 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 if(pm.Patient is not null)
                     patientNames.Add(pm.Patient.FullName);
 
-                foreach(var diagnosis in pm.Patient?.Mkb10Assignments??[])
+                foreach(var diagnosis in (pm.Patient?.Mkb10Assignments??[])
+                    .Where(x => x.EncounterId==null))
                 {
                     var code=diagnosis.Mkb10Code?.Code?.Trim();
                     var description=diagnosis.Mkb10Code?.Description?.Trim();
