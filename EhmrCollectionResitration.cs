@@ -270,7 +270,6 @@ namespace EHMR
             services.AddSingleton<IReportHistoryService, ReportHistoryService>();
             services.AddSingleton<IUserDialogService, UserDialogService>();
             services.AddSingleton<IAppointmentDetailService, AppointmentDetailService>();
-            services.AddSingleton<ITherapyService, TherapyService>();
             //services.AddSingleton<ICalendarEngine, CalendarEngine>();
             //services.AddSingleton<ITimelineEngine, TimelineEngine>();
             services.AddScoped<IAlertService, AlertService>();
@@ -447,15 +446,11 @@ namespace EHMR
             services.AddTransient<Mkb10CodeListPage>();
             services.AddTransient<Mkb10CodeDetailPage>();
 
-            services.AddTransient<TherapyDetailsViewModel>();
-            services.AddTransient<TherapyDetailsPage>();
 
 
             //services.AddTransient<TherapyPlanningViewModel>();
             //services.AddTransient<TherapyPlanningPage>();
 
-            services.AddTransient<TherapyCyclesPage>();
-            services.AddTransient<TherapyCycleListViewModel>();
 
             services.AddTransient<PrescriptionListViewModel>();
             services.AddTransient<PrescriptionDetailFormViewModel>();
