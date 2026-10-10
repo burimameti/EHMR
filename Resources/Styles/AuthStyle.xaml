@@ -30,7 +30,7 @@
 	<Color x:Key="AppBg">#EDF3F8</Color>
 
 	<Style x:Key="ThemedPage" TargetType="ContentPage">
-		<Setter Property="BackgroundColor" Value="{StaticResource AppBg}" />
+		<Setter Property="BackgroundColor" Value="#EDF3F8" />
 	</Style>
 
 	<!--  =====================================================  -->
@@ -209,17 +209,17 @@
 
 
 	<LinearGradientBrush x:Key="LoginPageGradient" StartPoint="0,0" EndPoint="0,1">
-		<GradientStop Offset="0" Color="{StaticResource SparkedDarkBg}" />
-		<GradientStop Offset="1" Color="{StaticResource SparkedDarkCard}" />
+		<GradientStop Offset="0" Color="#1F2937" />
+		<GradientStop Offset="1" Color="#1A2436" />
 	</LinearGradientBrush>
 
 	<Style x:Key="LoginPageStyle" TargetType="ContentPage">
-		<Setter Property="BackgroundColor" Value="{StaticResource LoginDark}" />
+		<Setter Property="BackgroundColor" Value="#0F172A" />
 	</Style>
 
 	<!--  Right login card (white surface)  -->
 	<Style x:Key="LoginCard" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource White}" />
+		<Setter Property="BackgroundColor" Value="#FFFFFF" />
 		<Setter Property="Stroke" Value="#E2E8F0" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Padding" Value="40" />
@@ -254,7 +254,7 @@
 
 	<!--  Primary button  -->
 	<Style x:Key="LoginPrimaryButton" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource LoginPrimary}" />
+		<Setter Property="BackgroundColor" Value="#2AEBE7" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
 				<RoundRectangle CornerRadius="12" />
