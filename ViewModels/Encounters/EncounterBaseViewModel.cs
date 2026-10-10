@@ -1359,7 +1359,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     }
 
     // =====================================================
-    // ADD MEDICINE — Dosage doubles as "quantity" (e.g. "1" tablet/dose)
+    // ADD MEDICINE — create an encounter-specific administration record.
+    // Quantity is independent from the patient-level assignment and starts at 0.
     // =====================================================
 
     [RelayCommand]
@@ -1397,7 +1398,10 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             Dosage=previous.Dosage,
             ApplicationRegimeId=previous.ApplicationRegimeId,
             ApplicationRegime=previous.ApplicationRegime,
-            Quantity=previous.Quantity,
+            // The patient's assigned quantity is not a per-visit administration.
+            // Start at zero and let the clinician enter what was actually given.
+            // Zero is meaningful and must be persisted as an encounter record.
+            Quantity=0,
             DosesFrequency=previous.DosesFrequency,
             IsActive=true
         };
