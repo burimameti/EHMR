@@ -7,17 +7,7 @@ using System.Threading.Tasks;
 
 namespace EHMR.ViewModels.Calendar
 {
-    public interface ICalendarEngine
-    {
-        List<CalendarDayDto> BuildMonth(
-            DateTime month,
-            List<TherapyCycle> cycles,
-            List<Appointment> appointments);
-
-        List<CalendarEventDto> BuildEvents(
-           List<TherapyCycle> cycles,
-           List<Appointment> appointments);
-    }
+    public interface ICalendarEngine { }
 
     public interface ITimelineEngine
     {
