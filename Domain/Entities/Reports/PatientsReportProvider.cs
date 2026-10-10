@@ -522,13 +522,14 @@ namespace EHMR.Domain.Entities.Reports
                 }
                 else
                 {
-                    rows=filtered_list.Select(patient => CreateRow(patient, from, to)).ToList();
+                    rows=filtered_list.Select(patient => CreateRow(patient, from, to, selectedMedicineId: IsMedicineFilterEnabled ? _selectedMedicineId : null)).ToList();
                 }
 
-                _selectedMedicineTotalQuantity = _selectedMedicineId.HasValue
-                    ? patients
-                        .SelectMany(x => x.PatientMedicines)
+                _selectedMedicineTotalQuantity = IsMedicineFilterEnabled && _selectedMedicineId.HasValue
+                    ? filtered_list
+                        .SelectMany(patient => patient.PatientMedicines)
                         .Where(pm => pm.MedicineId==_selectedMedicineId.Value
+                                   && pm.EncounterId.HasValue
                                    && pm.Encounter != null
                                    && IsWithinReportPeriod(pm.Encounter.EncounterDate, from, to))
                         .Sum(pm => pm.Quantity)
@@ -748,7 +749,8 @@ namespace EHMR.Domain.Entities.Reports
             Patient patient,
             DateTime from,
             DateTime to,
-            bool includeScoreHistory=false)
+            bool includeScoreHistory=false,
+            Guid? selectedMedicineId=null)
         {
             return new DynamicReportRow
             {
@@ -768,7 +770,7 @@ namespace EHMR.Domain.Entities.Reports
                             .FirstOrDefault() ?? "Нема скор",
                     patient.Address ?? "-",
                     patient.City ?? "-",
-                    BuildMedicinesInfo(patient, from, to),
+                    BuildMedicinesInfo(patient, from, to, selectedMedicineId),
                     BuildDiagnosisInfo(patient)
                 ],
                 IsAlertSeverity=false
@@ -827,7 +829,8 @@ namespace EHMR.Domain.Entities.Reports
         private static string BuildMedicinesInfo(
             Patient patient,
             DateTime from,
-            DateTime to)
+            DateTime to,
+            Guid? selectedMedicineId)
         {
             if(patient.PatientMedicines==null||patient.PatientMedicines.Count==0)
                 return "Нема лекови";
@@ -835,8 +838,10 @@ namespace EHMR.Domain.Entities.Reports
             var medicines = patient.PatientMedicines
                 .Where(x =>
                     x.Medicine!=null &&
+                    x.EncounterId.HasValue &&
                     x.Encounter != null &&
-                    IsWithinReportPeriod(x.Encounter.EncounterDate, from, to))
+                    IsWithinReportPeriod(x.Encounter.EncounterDate, from, to) &&
+                    (!selectedMedicineId.HasValue || x.MedicineId==selectedMedicineId.Value))
                 .GroupBy(x => x.Medicine!.Name)
                 .Select(group =>
                 {
