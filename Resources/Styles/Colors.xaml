@@ -147,9 +147,7 @@
 		#FFFFFF
 	</Color>
 
-	<Color x:Key="InputFocus">
-		#17B8B4
-	</Color>
+	<Color x:Key="InputFocus">#2AEBE7</Color>
 
 	<Color x:Key="InputDisabled">
 		#F8FAFC
@@ -161,15 +159,11 @@
 		#E2E8F0
 	</Color>
 
-	<Color x:Key="TabActive">
-		#17B8B4
-	</Color>
+	<Color x:Key="TabActive">#2AEBE7</Color>
 
 
 	<!--  Blue clinical  -->
-	<Color x:Key="MedicalBlue">
-		#17B8B4
-	</Color>
+	<Color x:Key="MedicalBlue">#2AEBE7</Color>
 
 	<Color x:Key="MedicalBlueSoft">
 		#DBEAFE
