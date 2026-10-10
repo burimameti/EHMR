@@ -102,7 +102,7 @@ public class Patient : BaseEntity
     /// <summary>
     /// Patient diagnoses (ICD-10 / MKB-10).
     /// </summary>
-    public ICollection<Diagnosis> Diagnoses { get; set; } = new List<Diagnosis>();
+    public ICollection<Diagnosis> Mkb10Assignments { get; set; } = new List<Diagnosis>();
 
     /// <summary>
     /// Current and historical medications prescribed to the patient.
