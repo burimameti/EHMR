@@ -375,7 +375,7 @@
 										<VerticalStackLayout BindableLayout.ItemsSource="{Binding Mkb10Assignments}" Spacing="2">
 
 											<BindableLayout.ItemTemplate>
-												<DataTemplate x:DataType="entities:Diagnosis">
+												<DataTemplate x:DataType="entities:PatientMkb10Assignment">
 													<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
 														<Label
 															FontAttributes="Bold"
