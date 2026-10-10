@@ -4,14 +4,14 @@
 	<!--  =====================================================  -->
 	<!--  🎨 SHARED APP COLORS  -->
 	<!--  =====================================================  -->
-	<Color x:Key="Surface">#4A5863</Color>
+	<Color x:Key="Surface">#334155</Color>
 	<Color x:Key="SurfaceAlt">#1A2436</Color>
 	<Color x:Key="SparkedDarkCard">#1A2436</Color>
 
 	<Color x:Key="Teal400">#2AEBE7</Color>
 	<Color x:Key="Teal600">#2AEBE7</Color>
-	<Color x:Key="Teal50">#F0FDFA</Color>
-	<Color x:Key="Teal100">#CCFBF1</Color>
+	<Color x:Key="Teal50">#D9FBFA</Color>
+	<Color x:Key="Teal100">#D9FBFA</Color>
 
 	<Color x:Key="SidebarBg">#202D3D</Color>
 	<Color x:Key="SidebarActiveText">#0F172A</Color>
@@ -60,11 +60,11 @@
 	<!--  Tabs  -->
 	<!--  =====================================================  -->
 
-	<Color x:Key="SparkTabActiveBg">#E7F7FA</Color>
+	<Color x:Key="SparkTabActiveBg">#D9FBFA</Color>
 	<Color x:Key="SparkTabActiveBorder">#2AEBE7</Color>
-	<Color x:Key="SparkTabActiveText">#16374A</Color>
+	<Color x:Key="SparkTabActiveText">#0F172A</Color>
 	<Color x:Key="SparkTabInactiveText">#7C8798</Color>
-	<Color x:Key="SparkTabHoverBg">#F1F5F8</Color>
+	<Color x:Key="SparkTabHoverBg">#F1F5F9</Color>
 
 
 
@@ -126,8 +126,8 @@
 	<!--  =====================================================  -->
 
 	<Color x:Key="ExpandCardBackground">#FFFFFF</Color>
-	<Color x:Key="ExpandCardBody">#FAFBFC</Color>
-	<Color x:Key="ExpandCardBorder">#D8E1EA</Color>
+	<Color x:Key="ExpandCardBody">#F8FAFC</Color>
+	<Color x:Key="ExpandCardBorder">#D9E0E5</Color>
 
 	<Color x:Key="ExpandCardHeader">#556372</Color>
 	<Color x:Key="ExpandCardHeaderHover">#647383</Color>
@@ -137,7 +137,7 @@
 
 	<Color x:Key="ExpandCardChevron">#FFFFFF</Color>
 
-	<Color x:Key="ExpandCardBadge">#21B6C4</Color>
+	<Color x:Key="ExpandCardBadge">#2AEBE7</Color>
 	<Color x:Key="ExpandCardBadgeText">#FFFFFF</Color>
 
 
@@ -196,7 +196,7 @@
 
 	<Color x:Key="LoginDark">#0F172A</Color>
 	<Color x:Key="LoginDark2">#1E293B</Color>
-	<Color x:Key="LoginDark3">#05084E</Color>
+	<Color x:Key="LoginDark3">#0F172A</Color>
 
 	<Color x:Key="LoginText">#FFFFFF</Color>
 	<Color x:Key="LoginMuted">#9CA3AF</Color>
