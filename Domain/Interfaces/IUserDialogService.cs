@@ -29,8 +29,5 @@ namespace EHMR.Domain.Interfaces
         Task<Appointment?> ShowCreateAppointmentPopupAsync(
           Guid patientId, Guid? doctorId);
 
-        /// Opens a popup to create a brand-new therapy cycle. Returns null if the user cancels.
-        /// prefillNotes lets you pre-fill the "Notes" field with whatever the user searched for.
-
     }
 }
