@@ -146,6 +146,14 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                 _isApplyingContext=true;
                 try
                 {
+                    // Start with an empty encounter score list; patient score history
+                    // is loaded separately and shown read-only.
+                    EncounterScores.Clear();
+                    ScoreText=string.Empty;
+                    ScoreSearchText=string.Empty;
+                    ScoreSuggestions.Clear();
+                    ShowScoreSuggestions=false;
+
                     SelectedPatient=matchedPatient;
                     if(matchedPatient.DoctorId!=Guid.Empty)
                         SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==matchedPatient.DoctorId);
@@ -212,6 +220,13 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
         _isApplyingContext=true;
         try
         {
+            // Scores belong to one encounter and must never leak across patients.
+            EncounterScores.Clear();
+            ScoreText=string.Empty;
+            ScoreSearchText=string.Empty;
+            ScoreSuggestions.Clear();
+            ShowScoreSuggestions=false;
+
             SelectedPatient=patient;
             if(patient.DoctorId!=Guid.Empty)
                 SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==patient.DoctorId);
