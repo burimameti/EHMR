@@ -105,7 +105,7 @@ namespace EHMR.Services
                 .FirstOrDefaultAsync(x => x.AppointmentId==id);
 
             var mkb10Assignments = encounter is not null
-                ? await db.Set<PatientMkb10Assignment>()
+                ? await db.PatientMkb10Assignments
                     .AsNoTracking()
                     .Where(x => x.EncounterId==encounter.Id)
                     .Include(x => x.Mkb10Code)
@@ -194,7 +194,7 @@ var patients = await db.Patients
                 .ToListAsync();
 
             // All MKB-10 assignments for this patient — both standalone and encounter-linked
-            var mkb10Assignments = await db.Set<PatientMkb10Assignment>()
+            var mkb10Assignments = await db.PatientMkb10Assignments
                 .AsNoTracking()
                 .Where(x => x.PatientId==patientId)
                 .Include(x => x.Mkb10Code)
