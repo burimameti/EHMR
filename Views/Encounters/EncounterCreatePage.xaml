@@ -245,6 +245,12 @@
 								</Border>
 							</VerticalStackLayout>
 
+							<!-- Опционални дејства за овој преглед; лекови не се додаваат од оваа форма. -->
+							<HorizontalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="8" HorizontalOptions="End">
+								<controls:FFButton ButtonKind="Secondary" Command="{Binding AddApplicationRegimeCommand}" HeightRequestEx="34" Text="Нов режим" WidthRequestEx="116" />
+								<controls:FFButton ButtonKind="Secondary" Command="{Binding AddScoreCommand}" HeightRequestEx="34" Text="Нов скор" WidthRequestEx="100" />
+							</HorizontalStackLayout>
+
 							<!--  ── 2. БИОЛОШКА ТЕРАПИЈА ──  -->
 							<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="10">
 								<controls:CrudSectionHeader
@@ -306,54 +312,10 @@
 									Grid.Column="0"
 									Spacing="10">
 
-									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-										<controls:CrudSectionHeader
-											Title="ТЕКОВНА ТЕРАПИЈА"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-										<controls:FFButton
-											Grid.Column="1"
-											ButtonKind="Secondary"
-											Command="{Binding AddApplicationRegimeCommand}"
-											HeightRequestEx="34"
-											Text="+ Нов режим"
-											WidthRequestEx="116" />
-									</Grid>
+									<controls:CrudSectionHeader Title="ТЕКОВНА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
-									<!--  Додавање лек  -->
-									<controls:FFSearchBox Placeholder="Додај лек во тековната терапија..." Text="{Binding MedicineSearchText, Mode=TwoWay}" />
+									<!-- Лековите се преземаат автоматски од активната терапија на пациентот. Во прегледот се внесува само количината дадена при оваа посета. -->
 
-									<Border
-										Padding="4"
-										BackgroundColor="White"
-										IsVisible="{Binding ShowMedicineDropdown}"
-										Stroke="{StaticResource SparkBorderSubtle}"
-										StrokeShape="RoundRectangle 8"
-										StrokeThickness="1">
-										<CollectionView HeightRequest="180" ItemsSource="{Binding MedicineResults}">
-											<CollectionView.ItemTemplate>
-												<DataTemplate x:DataType="entities:Medicine">
-													<Border
-														Padding="10,7"
-														BackgroundColor="Transparent"
-														StrokeThickness="0">
-														<Border.GestureRecognizers>
-															<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMedicineCommand}" CommandParameter="{Binding .}" />
-														</Border.GestureRecognizers>
-														<VerticalStackLayout Spacing="1">
-															<Label
-																FontAttributes="Bold"
-																FontSize="12.5"
-																Text="{Binding Name}"
-																TextColor="{StaticResource SparkAccentTealDark}" />
-															<Label
-																FontSize="10.5"
-																Text="{Binding GenericName}"
-																TextColor="{StaticResource SparkTextSecondary}" />
-														</VerticalStackLayout>
-													</Border>
-												</DataTemplate>
-											</CollectionView.ItemTemplate>
-										</CollectionView>
-									</Border>
 
 									<!--  Заглавие на табелата (последната колона е 130, иста како во редовите)  -->
 									<Grid
@@ -513,17 +475,7 @@
 									Grid.Row="0"
 									Grid.Column="1"
 									Spacing="10">
-									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-										<controls:CrudSectionHeader
-											Title="СКОРОВИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-										<controls:FFButton
-											Grid.Column="1"
-											ButtonKind="Secondary"
-											Command="{Binding AddScoreCommand}"
-											HeightRequestEx="34"
-											Text="Додади Скор"
-											WidthRequestEx="90" />
-									</Grid>
+									<controls:CrudSectionHeader Title="СКОРОВИ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 									<controls:FFSearchBox Placeholder="Пребарај скор..." Text="{Binding ScoreSearchText, Mode=TwoWay}" />
 									<Border
 										Padding="4"
