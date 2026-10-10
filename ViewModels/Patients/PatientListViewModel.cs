@@ -277,14 +277,6 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
     }
 
     [RelayCommand]
-    private async Task NavigateToTherapies(string? statusFilter = null)
-    {
-        var query = new Dictionary<string, object>();
-        if(!string.IsNullOrWhiteSpace(statusFilter)) query["statusFilter"]=statusFilter;
-        await Shell.Current.GoToAsync(AppRoutes.Therapy.List, query);
-    }
-
-    [RelayCommand]
     private async Task NewEncounterForSelected(Patient? patient)
     {
         if(patient is null)
