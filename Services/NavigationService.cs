@@ -6,6 +6,9 @@ namespace EHMR.Services
 {
     public class NavigationService : INavigationService
     {
+        // All navigation initiated through the service is serialized. Shell is not
+        // safe to transition concurrently from menu, Back, and form commands.
+        private static readonly SemaphoreSlim NavigationLock = new(1, 1);
         private readonly INavigationEvents _navEvents;
 
         public NavigationService(INavigationEvents navEvents)
@@ -30,6 +33,9 @@ namespace EHMR.Services
 
         public async Task GoToAsync(string route, IDictionary<string, object>? parameters = null)
         {
+            await NavigationLock.WaitAsync();
+            try
+            {
             if(string.IsNullOrWhiteSpace(route))
                 throw new ArgumentNullException(nameof(route));
             string normalizedRoute = "";
@@ -78,10 +84,18 @@ namespace EHMR.Services
 
             _navEvents.NotifyRouteChanged(normalizedRoute);
             Debug.WriteLine($"Route called - on navService{DateTime.Now}", route);
+            }
+            finally
+            {
+                NavigationLock.Release();
+            }
         }
 
         public async Task GoBackAsync()
         {
+            await NavigationLock.WaitAsync();
+            try
+            {
             var shell = Shell.Current;
             if(shell is null)
                 throw new InvalidOperationException("Shell.Current is null. Ensure your app uses Shell.");
@@ -96,6 +110,11 @@ namespace EHMR.Services
                 return;
 
             await shell.GoToAsync(dashboard, false);
+            }
+            finally
+            {
+                NavigationLock.Release();
+            }
         }
 
         public async Task PushModalAsync(object page)
