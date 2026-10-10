@@ -432,9 +432,7 @@
 	  <MauiXaml Update="Views\Popups\CreateAppointmentPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Popups\CreateTherpayCyclePopup.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
+
 	  <MauiXaml Update="Views\Prescription\PrescriptionListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -459,12 +457,8 @@
 	  <MauiXaml Update="Views\Protocols\ProtocolRegistryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Therapies\TherapyCyclesPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Therapies\TherapyDetailsPagе.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
+
+
 	  <MauiXaml Update="Views\UserEditPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -540,12 +534,8 @@
 	  <Compile Update="Views\Protocols\ProtocolRegistryPage.xaml.cs">
 	    <DependentUpon>ProtocolRegistryPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Therapies\TherapyCyclesPage.xaml.cs">
-	    <DependentUpon>TherapyCyclesPage.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Views\Therapies\TherapyDetailsPagе.xaml.cs">
-	    <DependentUpon>TherapyDetailsPagе.xaml</DependentUpon>
-	  </Compile>
+
+
 	  <Compile Update="Views\UserEditPage.xaml.cs">
 	    <DependentUpon>UserEditPage.xaml</DependentUpon>
 	  </Compile>
