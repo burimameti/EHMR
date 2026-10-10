@@ -25,7 +25,6 @@ namespace EHMR.Infrastructure.Persistence.Configs
             {
             new Module { UserId = SeedIds.AdminUser, ModuleKey = Modules.Administration, IsEnabled = true },
             new Module { UserId = SeedIds.AdminUser, ModuleKey = Modules.Patients, IsEnabled = true },
-            new Module { UserId = SeedIds.AdminUser, ModuleKey = Modules.Therapy, IsEnabled = true },
                         new Module { UserId = SeedIds.AdminUser, ModuleKey = Modules.BackupDashboard, IsEnabled = true },
             new Module { UserId = SeedIds.AdminUser, ModuleKey = Modules.Reports, IsEnabled = true }
         });
@@ -40,7 +39,6 @@ namespace EHMR.Infrastructure.Persistence.Configs
             foreach(var doc in doctors)
             {
                 modules.Add(new Module { UserId=doc, ModuleKey=Modules.Patients, IsEnabled=true });
-                modules.Add(new Module { UserId=doc, ModuleKey=Modules.Therapy, IsEnabled=true });
                 modules.Add(new Module { UserId=doc, ModuleKey=Modules.Appointments, IsEnabled=true });
             }
 
@@ -48,7 +46,6 @@ namespace EHMR.Infrastructure.Persistence.Configs
             modules.Add(new Module
             {
                 UserId=SeedIds.NurseUser,
-                ModuleKey=Modules.Therapy,
                 IsEnabled=true
             });
 
