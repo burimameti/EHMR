@@ -144,7 +144,7 @@ public class EncounterDetailService : IEncounterDetailService
             .Include(x => x.Appointment)
             .FirstAsync(x => x.Id==id);
 
-        var diagnoses = await db.Set<Diagnosis>()
+        var diagnoses = await db.Set<PatientMkb10Assignment>()
             .AsNoTracking()
             .Where(x => x.EncounterId==id)        // ← no more AppointmentDiagnoses
             .Include(x => x.Mkb10Code)
@@ -256,7 +256,7 @@ public class EncounterDetailService : IEncounterDetailService
 
             // Encounter history
             .Include(p => p.Encounters).ThenInclude(e => e.Doctor).ThenInclude(d => d.User)
-            // Encounter diagnoses via the Diagnosis.EncounterId FK
+            // Encounter diagnoses via the PatientMkb10Assignment.EncounterId FK
             .Include(p => p.Encounters).ThenInclude(e => e.Mkb10Assignments).ThenInclude(d => d.Mkb10Code)
 
             // Appointments — scheduling shell only, no diagnosis join
@@ -527,7 +527,7 @@ public class EncounterDetailService : IEncounterDetailService
     }
     public async Task UpdateEncounterClinicalData(
         Guid encounterId,
-        List<Diagnosis> diagnoses,
+        List<PatientMkb10Assignment> diagnoses,
         string? remarks)
     {
         await using var db=await _factory.CreateDbContextAsync();
@@ -541,10 +541,10 @@ public class EncounterDetailService : IEncounterDetailService
         encounter.UpdatedAt=DateTime.UtcNow;
         encounter.UpdatedBy=_authorizationService.CurrentUser.Id;
 
-        var existing=await db.Set<Diagnosis>()
+        var existing=await db.Set<PatientMkb10Assignment>()
             .Where(x => x.EncounterId==encounterId)
             .ToListAsync();
-        db.Set<Diagnosis>().RemoveRange(existing);
+        db.Set<PatientMkb10Assignment>().RemoveRange(existing);
 
         foreach(var diagnosis in diagnoses)
         {
@@ -556,8 +556,8 @@ public class EncounterDetailService : IEncounterDetailService
                 diagnosis.DiagnosedAt=DateTime.Now;
             if(string.IsNullOrWhiteSpace(diagnosis.DiagnosisNumber))
                 diagnosis.DiagnosisNumber=await SequenceHelper.GenerateNumberAsync(
-                    db, SequenceNames.Diagnosis, "DX");
-            db.Set<Diagnosis>().Add(diagnosis);
+                    db, SequenceNames.PatientMkb10Assignment, "DX");
+            db.Set<PatientMkb10Assignment>().Add(diagnosis);
         }
 
         if(diagnoses.Count>0)
@@ -579,7 +579,7 @@ public class EncounterDetailService : IEncounterDetailService
 
     public async Task SaveEncounter(
         Encounter encounter,
-        List<Diagnosis> diagnoses,
+        List<PatientMkb10Assignment> diagnoses,
         List<Prescription> prescriptions,
         List<PatientMedicine> medicines,
         List<Guid> deletedMedicineIds,
@@ -644,10 +644,10 @@ public class EncounterDetailService : IEncounterDetailService
             await db.SaveChangesAsync();
 
             // ── Diagnoses: full replace scoped to this encounter ─────────────
-            var existingDiagnoses = await db.Set<Diagnosis>()
+            var existingDiagnoses = await db.Set<PatientMkb10Assignment>()
                 .Where(x => x.EncounterId==encounter.Id)
                 .ToListAsync();
-            db.Set<Diagnosis>().RemoveRange(existingDiagnoses);
+            db.Set<PatientMkb10Assignment>().RemoveRange(existingDiagnoses);
 
             foreach(var d in diagnoses)
             {
@@ -658,8 +658,8 @@ public class EncounterDetailService : IEncounterDetailService
                 if(d.DiagnosedAt==default) d.DiagnosedAt=encounter.EncounterDate;
                 if(string.IsNullOrWhiteSpace(d.DiagnosisNumber))
                     d.DiagnosisNumber=
-                        await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Diagnosis, "DX");
-                db.Set<Diagnosis>().Add(d);
+                        await SequenceHelper.GenerateNumberAsync(db, SequenceNames.PatientMkb10Assignment, "DX");
+                db.Set<PatientMkb10Assignment>().Add(d);
             }
 
             // ── Prescriptions: full replace scoped to this encounter ─────────
