@@ -14,7 +14,7 @@ namespace EHMR.Services
         Task UpdateAppointmentStatus(Guid appointmentId, AppointmentStatus newStatus);
         Task<List<Mkb10Code>> SearchMkb10Codes(string query, CancellationToken token);
         Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30);
-        Task SaveAppointment(Appointment appointment, List<PatientMkb10Assignment> diagnoses, List<PatientMedicine> medicines);
+        Task SaveAppointment(Appointment appointment, List<PatientMkb10Assignment> MKB-10 assignments, List<PatientMedicine> medicines);
         Task AutoCloseStaleAppointmentsAsync();
     }
 
@@ -99,12 +99,12 @@ namespace EHMR.Services
                 .Include(x => x.Doctor).ThenInclude(x => x.User)
                 .FirstAsync(x => x.Id==id);
 
-            // Diagnoses now come from the linked Encounter, not AppointmentDiagnoses
+            // MKB-10 assignments now come from the linked Encounter, not AppointmentMKB-10 assignments
             var encounter = await db.Encounters
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.AppointmentId==id);
 
-            var diagnoses = encounter is not null
+            var MKB-10 assignments = encounter is not null
                 ? await db.Set<PatientMkb10Assignment>()
                     .AsNoTracking()
                     .Where(x => x.EncounterId==encounter.Id)
@@ -139,13 +139,13 @@ var patients = await db.Patients
             {
                 Appointment=appointment,
                 LinkedEncounter=encounter,
-                Mkb10Assignments=diagnoses,
+                Mkb10Assignments=MKB-10 assignments,
                 Patients=patients,
                 Doctors=doctors,
                 PreviousAppointment=currentIndex>0 ? history[currentIndex-1] : null,
                 NextAppointment=currentIndex<history.Count-1 ? history[currentIndex+1] : null,
                 TotalAppointments=history.Count,
-                TotalMkb10Assignments=diagnoses.Count,
+                TotalMkb10Assignments=MKB-10 assignments.Count,
             };
         }
 
@@ -193,8 +193,8 @@ var patients = await db.Patients
                 .OrderByDescending(x => x.IsActive)
                 .ToListAsync();
 
-            // All diagnoses for this patient — both standalone and encounter-linked
-            var diagnoses = await db.Set<PatientMkb10Assignment>()
+            // All MKB-10 assignments for this patient — both standalone and encounter-linked
+            var MKB-10 assignments = await db.Set<PatientMkb10Assignment>()
                 .AsNoTracking()
                 .Where(x => x.PatientId==patientId)
                 .Include(x => x.Mkb10Code)
@@ -204,7 +204,7 @@ var patients = await db.Patients
 return new PatientContextDto
             {
                 Appointments=appointments,
-                Mkb10Assignments=diagnoses,
+                Mkb10Assignments=MKB-10 assignments,
                 PatientMedicines=patientMedicines
             };
         }
@@ -248,7 +248,7 @@ return new PatientContextDto
             _encounterService.GetNextAvailableSlot(doctorId, from, durationMinutes, patientId);
 
         // ─── Commands ─────────
-        public async Task SaveAppointment(Appointment appointment, List<PatientMkb10Assignment> diagnoses, List<PatientMedicine> medicines)
+        public async Task SaveAppointment(Appointment appointment, List<PatientMkb10Assignment> MKB-10 assignments, List<PatientMedicine> medicines)
         {
             await using var db = await _factory.CreateDbContextAsync();
 appointment.Patient=null;
@@ -273,7 +273,7 @@ Encounter? encounterForMedicines = null;
 
                 encounterForMedicines=savedEncounter;
 
-                foreach(var d in diagnoses)
+                foreach(var d in MKB-10 assignments)
                 {
                     db.Set<PatientMkb10Assignment>().Add(new PatientMkb10Assignment
                     {
@@ -334,7 +334,7 @@ Encounter? encounterForMedicines = null;
                         .ToListAsync();
                     db.Set<PatientMkb10Assignment>().RemoveRange(existingDiag);
 
-                    foreach(var d in diagnoses)
+                    foreach(var d in MKB-10 assignments)
                     {
                         db.Set<PatientMkb10Assignment>().Add(new PatientMkb10Assignment
                         {
@@ -361,7 +361,7 @@ Encounter? encounterForMedicines = null;
                 else
                 {
                     // encounter is not null AND encounter.IsLocked == true — visit already
-                    // closed (Completed/Cancelled). Diagnoses already skipped by the
+                    // closed (Completed/Cancelled). MKB-10 assignments already skipped by the
                     // guard above; freeze medicines for the same reason.
                     medicinesEditable=false;
                 }
