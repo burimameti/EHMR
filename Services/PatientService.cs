@@ -720,13 +720,13 @@ public class PatientService : IPatientService
             NextAppointmentDate=null, // wire up once Appointment navigation/include is available
             // Patient form DTO exposes only patient-level diagnoses.
             // Encounter diagnoses remain scoped to their encounter and are loaded by encounter services.
-            Diagnoses=p.Diagnoses?.Where(x => x.EncounterId==null).Select(MapDiagnosis).ToList()?? [],
+            Diagnoses=p.Diagnoses?.Where(x => x.EncounterId==null).Select(MapPatientMkb10Code).ToList()?? [],
             Medicines=p.PatientMedicines?.Where(x => x.EncounterId==null).Select(MapMedicine).ToList()?? [],
             Documents=p.Documents?.Select(MapDocument).ToList()?? []
         };
     }
 
-    private static DiagnosisDto MapDiagnosis(Diagnosis d) => new()
+    private static PatientMkb10CodeDto MapPatientMkb10Code(Diagnosis d) => new()
     {
         Id=d.Id,
         PatientId=d.PatientId,

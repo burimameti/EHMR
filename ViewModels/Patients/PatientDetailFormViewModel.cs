@@ -244,7 +244,7 @@ public bool CanSavePatientForm => CanSavePatient;
 
             SyncDisplayFromPatient();
 
-            Diagnoses=new ObservableCollection<DiagnosisDto>(full.Diagnoses);
+            Diagnoses=new ObservableCollection<PatientMkb10CodeDto>(full.Diagnoses);
 
             // Тековни терапии = IsActive. Претходни = !IsActive (рачно внесени или затворени).
             AttachedMedicines=new ObservableCollection<AttachedMedicineRow>(
@@ -285,7 +285,7 @@ public bool CanSavePatientForm => CanSavePatient;
     // Прикажувањето е само за читање, па се вчитуваат директно како ентитети —
     // PatientDto носи само дијагнози, лекови и документи.
 
-    [ObservableProperty] private ObservableCollection<DiagnosisDto> diagnosisHistory = new();
+    [ObservableProperty] private ObservableCollection<PatientMkb10CodeDto> diagnosisHistory = new();
     [ObservableProperty] private ObservableCollection<Encounter> encounterHistory = new();
     [ObservableProperty] private ObservableCollection<PatientScore> scoreHistory = new();
 
@@ -302,12 +302,12 @@ public bool CanSavePatientForm => CanSavePatient;
         {
             await using var db = await _dbFactory.CreateDbContextAsync();
 
-            DiagnosisHistory=new ObservableCollection<DiagnosisDto>(
+            DiagnosisHistory=new ObservableCollection<PatientMkb10CodeDto>(
                 await db.Diagnoses
                     .AsNoTracking()
                     .Where(x => x.PatientId==patientId)
                     .OrderByDescending(x => x.DiagnosedAt)
-                    .Select(x => new DiagnosisDto
+                    .Select(x => new PatientMkb10CodeDto
                     {
                         Id=x.Id,
                         PatientId=x.PatientId,
@@ -824,7 +824,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
     private CancellationTokenSource _mkbSearchCts = new();
     private int _mkbSearchVersion;
 
-    [ObservableProperty] private ObservableCollection<DiagnosisDto> diagnoses = new();
+    [ObservableProperty] private ObservableCollection<PatientMkb10CodeDto> diagnoses = new();
     [ObservableProperty] private ObservableCollection<Mkb10CodeDto> mkbResults = new();
     [ObservableProperty] private string mkbCodeSearchText = string.Empty;
     [ObservableProperty] private string mkbDescriptionSearchText = string.Empty;
@@ -933,7 +933,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
         if(code==null||!CanEditPatient) return;
         if(Diagnoses.Any(x => x.Mkb10CodeId==code.Id)) return;
 
-        var diagnosis = new DiagnosisDto
+        var diagnosis = new PatientMkb10CodeDto
         {
             Id=Guid.Empty, // Empty -> SaveAsync treats it as INSERT
             PatientId=Patient.Id,
@@ -956,7 +956,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
     }
 
     [RelayCommand]
-    private void RemoveMkb(DiagnosisDto diagnosis)
+    private void RemoveMkb(PatientMkb10CodeDto diagnosis)
     {
         if(diagnosis==null||!CanEditPatient) return;
         if(diagnosis.Id!=Guid.Empty) _deletedDiagnosisIds.Add(diagnosis.Id);
