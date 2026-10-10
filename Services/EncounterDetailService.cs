@@ -391,6 +391,12 @@ public class EncounterDetailService : IEncounterDetailService
                                 .OrderByDescending(d => d.UploadedAt)
                                 .ToList(),
 
+            Scores=await db.PatientScores
+                .AsNoTracking()
+                .Where(s => s.PatientId==patientId)
+                .OrderByDescending(s => s.RecordedAt)
+                .ToListAsync(),
+
             LatestScore=await db.PatientScores
                 .AsNoTracking()
                 .Where(s => s.PatientId==patientId)
