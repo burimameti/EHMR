@@ -518,7 +518,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             // patient chart; global score definitions are not added from this form.
             ScoreOptions.Clear();
             foreach(var scoreName in ctx.Scores
-                .Where(s => s.EncounterId==Guid.Empty && !string.IsNullOrWhiteSpace(s.ScoreText))
+                .Where(s => !s.EncounterId.HasValue && !string.IsNullOrWhiteSpace(s.ScoreText))
                 .Select(s => s.ScoreText.Trim())
                 .Distinct(StringComparer.OrdinalIgnoreCase))
                 ScoreOptions.Add(scoreName);
