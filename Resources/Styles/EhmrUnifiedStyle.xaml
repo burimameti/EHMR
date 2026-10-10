@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- EHMR Unified UI: all visual values are explicit hex literals. -->
+
+    <Style x:Key="EhmrPageCanvasStyle" TargetType="ContentPage">
+        <Setter Property="BackgroundColor" Value="#F1F5F9" />
+    </Style>
+
+    <Style x:Key="EhmrPageTitleStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="#0F172A" />
+    </Style>
+
+    <Style x:Key="EhmrSectionTitleStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="#334155" />
+    </Style>
+
+    <Style x:Key="EhmrBodyTextStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="TextColor" Value="#334155" />
+    </Style>
+
+    <Style x:Key="EhmrCaptionStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="TextColor" Value="#64748B" />
+    </Style>
+
+    <Style x:Key="EhmrCardStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="#FFFFFF" />
+        <Setter Property="Stroke" Value="#D9E0E5" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+        <Setter Property="Padding" Value="16" />
+    </Style>
+
+    <Style x:Key="EhmrPrimaryButtonStyle" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="#2AEBE7" />
+        <Setter Property="TextColor" Value="#0F172A" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="HeightRequest" Value="40" />
+        <Setter Property="Padding" Value="16,0" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="BorderWidth" Value="0" />
+    </Style>
+
+    <Style x:Key="EhmrSecondaryButtonStyle" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="#FFFFFF" />
+        <Setter Property="TextColor" Value="#334155" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="HeightRequest" Value="40" />
+        <Setter Property="Padding" Value="16,0" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="BorderColor" Value="#CBD5E1" />
+        <Setter Property="BorderWidth" Value="1" />
+    </Style>
+
+    <Style x:Key="EhmrDangerButtonStyle" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="#B42318" />
+        <Setter Property="TextColor" Value="#FFFFFF" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="HeightRequest" Value="40" />
+        <Setter Property="Padding" Value="16,0" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="BorderWidth" Value="0" />
+    </Style>
+
+    <Style x:Key="EhmrGhostButtonStyle" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="#F1F5F9" />
+        <Setter Property="TextColor" Value="#475569" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="HeightRequest" Value="40" />
+        <Setter Property="Padding" Value="16,0" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="BorderColor" Value="#CBD5E1" />
+        <Setter Property="BorderWidth" Value="1" />
+    </Style>
+
+    <Style x:Key="EhmrGridHeaderStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="#FFFFFF" />
+    </Style>
+
+    <Style x:Key="EhmrGridCellStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextColor" Value="#334155" />
+    </Style>
+
+</ResourceDictionary>
