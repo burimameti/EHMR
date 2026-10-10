@@ -1470,7 +1470,6 @@ namespace EHMR.Migrations
 
                     b.Navigation("Patient");
 
-                    b.Navigation("TherapyCycle");
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Diagnosis", b =>
@@ -1532,7 +1531,6 @@ namespace EHMR.Migrations
 
                     b.Navigation("Patient");
 
-                    b.Navigation("TherapyCycle");
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Medicine", b =>
@@ -1569,7 +1567,6 @@ namespace EHMR.Migrations
 
                     b.Navigation("Patient");
 
-                    b.Navigation("TherapyCycle");
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.PatientMedicine", b =>
