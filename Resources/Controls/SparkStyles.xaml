@@ -38,7 +38,7 @@
 	<!--  cleaner, more standard SaaS link blue than #2F8FE0  -->
 
 	<!--  ============================================================  -->
-	<!--  ACCENTS (Vibrant Dashboard Teal)  -->
+	<!--  ACCENTS (Unified EHMR Accent)  -->
 	<!--  ============================================================  -->
 	<!--  SparkAccentTeal tokens live in Colors.xaml so earlier dictionaries can use them.  -->
 
@@ -61,7 +61,7 @@
 	<Color x:Key="SparkTabActiveBg">#D9FBFA</Color>
 	<Color x:Key="SparkTabActiveBorder">#2AEBE7</Color>
 	<Color x:Key="SparkTabActiveText">#0F172A</Color>
-	<Color x:Key="SparkTabInactiveText">#7C8798</Color>
+	<Color x:Key="SparkTabInactiveText">#64748B</Color>
 	<Color x:Key="SparkTabHoverBg">#F1F5F9</Color>
 
 	<!--  ============================================================  -->
@@ -392,7 +392,7 @@
 	<Style x:Key="SparkTabTitleLabelStyle" TargetType="Label">
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="FontAttributes" Value="Bold" />
-		<Setter Property="TextColor" Value="#7C8798" />
+		<Setter Property="TextColor" Value="#64748B" />
 		<Setter Property="VerticalOptions" Value="Center" />
 		<Style.Triggers>
 			<DataTrigger
