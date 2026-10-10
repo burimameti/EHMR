@@ -61,7 +61,7 @@ public partial class FFCard : Border
             nameof(HasShadow),
             typeof(bool),
             typeof(FFCard),
-            true,
+            false,
             propertyChanged: OnAppearanceChanged);
 
     public bool HasShadow
@@ -127,7 +127,7 @@ public partial class FFCard : Border
         StrokeThickness=1;
         BackgroundColor=Color.FromArgb("#FFFFFF");
         Stroke=Color.FromArgb("#D9E0E5");
-        Shadow=null;
+        Shadow=HasShadow ? CreateShadow(0.04f, 0, 2, 10) : null;
     }
 
     private void ApplyElevated()
@@ -135,7 +135,7 @@ public partial class FFCard : Border
         StrokeThickness=1;
         BackgroundColor=Color.FromArgb("#FFFFFF");
         Stroke=Color.FromArgb("#D9E0E5");
-        Shadow=null;
+        Shadow=HasShadow ? CreateShadow(0.06f, 0, 4, 14) : null;
     }
 
     private void ApplyFlat()
@@ -151,7 +151,7 @@ public partial class FFCard : Border
         StrokeThickness=1;
         BackgroundColor=Color.FromArgb("#FFFFFF");
         Stroke=Color.FromArgb("#D9E0E5");
-        Shadow=null;
+        Shadow=HasShadow ? CreateShadow(0.03f, 0, 2, 8) : null;
     }
 
     private void ApplySoft()
@@ -159,7 +159,17 @@ public partial class FFCard : Border
         StrokeThickness=1;
         BackgroundColor=Color.FromArgb("#F8FAFC");
         Stroke=Color.FromArgb("#D9E0E5");
-        Shadow=null;
+        Shadow=HasShadow ? CreateShadow(0.03f, 0, 2, 8) : null;
     }
 
+    private static Shadow CreateShadow(float opacity, double x, double y, float radius)
+    {
+        return new Shadow
+        {
+            Brush=Color.FromArgb("#000000"),
+            Opacity=opacity,
+            Offset=new Point(x, y),
+            Radius=radius
+        };
+    }
 }
