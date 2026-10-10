@@ -144,19 +144,8 @@ public class Encounter
     public Guid? UpdatedBy
     {
         get; set;
-    }
-
-    public Guid? TherapyCycleId
-    {
-        get; set;
-    }
-
-    public virtual TherapyCycle? TherapyCycle
-    {
-        get; set;
-    }
-
-    public virtual Patient? Patient
+    } 
+public virtual Patient? Patient
     {
         get; set;
     }
