@@ -21,7 +21,7 @@ public interface IEncounterDetailService
     Task AutoCloseStaleVisitsAsync(int staleAfterDays = 3);
     Task SaveEncounter(
         Encounter encounter,
-        List<PatientMkb10Assignment> diagnoses,
+        List<PatientMkb10Assignment> mkb10Assignments,
         List<Prescription> prescriptions,
         List<PatientMedicine> medicines,
         List<Guid> deletedMedicineIds,
@@ -31,7 +31,7 @@ public interface IEncounterDetailService
 
     Task UpdateEncounterClinicalData(
         Guid encounterId,
-        List<PatientMkb10Assignment> diagnoses,
+        List<PatientMkb10Assignment> mkb10Assignments,
         string? remarks);
     Task<EncounterDetailDto> GetEncounter(Guid id);
     Task<List<Patient>> GetPatients();
