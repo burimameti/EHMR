@@ -6,7 +6,6 @@ public sealed class DiagnosisSaveModel
 {
     public Guid Id { get; set; }
     public Guid? Mkb10CodeId { get; set; }
-    public Guid? EncounterId { get; set; }
     public DateTime DiagnosedAt { get; set; }
     public bool IsPrimary { get; set; }
     public string Severity { get; set; } = string.Empty;

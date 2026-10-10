@@ -539,8 +539,8 @@ public class PatientService : IPatientService
 
         var existing = await db.Patients
             .Include(x => x.Diagnoses)
-             .Include(x => x.PatientMedicines)
-.Include(x => x.Documents)
+            .Include(x => x.PatientMedicines)
+            .Include(x => x.Documents)
             .FirstOrDefaultAsync(x => x.Id==patientDto.Id, ct)
             ??throw new KeyNotFoundException($"Patient {patientDto.Id} not found.");
 
@@ -562,7 +562,7 @@ public class PatientService : IPatientService
         // ---- diagnoses: delete ----
         foreach(var id in model.DeletedDiagnosisIds)
         {
-            var entity = existing.Diagnoses.FirstOrDefault(x => x.Id==id);
+            var entity = existing.Diagnoses.FirstOrDefault(x => x.Id==id && x.EncounterId==null);
             if(entity!=null)
                 db.Remove(entity);
         }
@@ -570,7 +570,7 @@ public class PatientService : IPatientService
         // ---- diagnoses: upsert (skip ids just deleted) ----
         foreach(var vm in model.Diagnoses.Where(x => !model.DeletedDiagnosisIds.Contains(x.Id)))
         {
-            var entity = existing.Diagnoses.FirstOrDefault(x => x.Id==vm.Id);
+            var entity = existing.Diagnoses.FirstOrDefault(x => x.Id==vm.Id && x.EncounterId==null);
 
             if(entity==null)
             {
@@ -718,7 +718,9 @@ public class PatientService : IPatientService
                 .Select(e => (DateTime?)e.EncounterDate)
                 .FirstOrDefault(),
             NextAppointmentDate=null, // wire up once Appointment navigation/include is available
-            Diagnoses=p.Diagnoses?.Select(MapDiagnosis).ToList()?? [],
+            // Patient form DTO exposes only patient-level diagnoses.
+            // Encounter diagnoses remain scoped to their encounter and are loaded by encounter services.
+            Diagnoses=p.Diagnoses?.Where(x => x.EncounterId==null).Select(MapDiagnosis).ToList()?? [],
             Medicines=p.PatientMedicines?.Where(x => x.EncounterId==null).Select(MapMedicine).ToList()?? [],
             Documents=p.Documents?.Select(MapDocument).ToList()?? []
         };
