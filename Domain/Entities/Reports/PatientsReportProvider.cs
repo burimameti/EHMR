@@ -188,7 +188,7 @@ namespace EHMR.Domain.Entities.Reports
                     new SparkGridColumn { Header = "ПЛАН", Key = "Plan", Width = new GridLength(2, GridUnitType.Star) },
                     new SparkGridColumn { Header = "СКОР", Key = "Score", Width = new GridLength(1.2, GridUnitType.Star) },
                     new SparkGridColumn { Header = "ЛЕКОВИ", Key = "Medicine", Width = new GridLength(1.7, GridUnitType.Star) },
-                    new SparkGridColumn { Header = "MKB-10 КОДОВИ", Key = "Diagnosis", Width = new GridLength(1.7, GridUnitType.Star) },
+                    new SparkGridColumn { Header = "MKB-10 КОДОВИ", Key = "PatientMkb10Assignment", Width = new GridLength(1.7, GridUnitType.Star) },
                     new SparkGridColumn { Header = "ЗАБЕЛЕШКИ", Key = "Notes", Width = new GridLength(2, GridUnitType.Star) }
                 }
                 : new[]
@@ -203,7 +203,7 @@ namespace EHMR.Domain.Entities.Reports
                     new SparkGridColumn { Header = "АДРЕСА", Key = "Address", Width = new GridLength(1.7, GridUnitType.Star) },
                     new SparkGridColumn { Header = "ГРАД", Key = "City", Width = new GridLength(1.1, GridUnitType.Star) },
                     new SparkGridColumn { Header = "ЛЕК", Key = "Medicine", Width = new GridLength(1.7, GridUnitType.Star) },
-                    new SparkGridColumn { Header = "MKB-10 КОД", Key = "Diagnosis", Width = new GridLength(1.7, GridUnitType.Star) }
+                    new SparkGridColumn { Header = "MKB-10 КОД", Key = "PatientMkb10Assignment", Width = new GridLength(1.7, GridUnitType.Star) }
                 };
 
         public IEnumerable<SparkTabItem> BuildTabs()
