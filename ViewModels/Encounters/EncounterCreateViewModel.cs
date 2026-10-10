@@ -34,39 +34,6 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     [ObservableProperty]
     private PatientDocument? latestPatientDocument;
 
-    // Preload active patient-chart medicines as encounter-specific snapshots.
-    // Per-visit quantity starts at zero; patient-level therapy is not modified.
-    // This is only used while creating a new encounter, never for existing visits.
-    private void PopulateEncounterMedicinesFromPatient()
-    {
-        if(IsReadOnly || !IsEditMode || SelectedPatient is null)
-            return;
-
-        EncounterMedicines.Clear();
-
-        foreach(var source in PatientMedicines
-            .Where(x => x.IsActive && x.EncounterId==null && x.Medicine is not null)
-            .GroupBy(x => x.MedicineId)
-            .Select(g => g.First()))
-        {
-            EncounterMedicines.Add(new PatientMedicine
-            {
-                Id=Guid.NewGuid(),
-                PatientId=SelectedPatient.Id,
-                EncounterId=Encounter.Id,
-                MedicineId=source.MedicineId,
-                Medicine=source.Medicine,
-                Dosage=source.Dosage,
-                ApplicationRegimeId=source.ApplicationRegimeId,
-                ApplicationRegime=source.ApplicationRegime,
-                Quantity=0,
-                IsActive=true
-            });
-        }
-
-        ResolveApplicationRegimes(EncounterMedicines);
-    }
-
     // ── Patient search ────────────────────────────────────────────────────────
     [ObservableProperty]
     private string patientSearchText = string.Empty;
@@ -160,7 +127,6 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             if(incomingAppointment!=null&&incomingAppointment.Id!=Guid.Empty)
             {
                 await ApplyAppointmentContextAsync(incomingAppointment);
-                PopulateEncounterMedicinesFromPatient();
                 var duration=Math.Max(1, (int)(incomingAppointment.ScheduledEnd-incomingAppointment.ScheduledStart).TotalMinutes);
                 Encounter.Schedule(incomingAppointment.ScheduledStart, duration);
                 OnPropertyChanged(nameof(AutomaticScheduleDisplay));
@@ -193,8 +159,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                         SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==matchedPatient.DoctorId);
                     await LoadAppointmentsForPatientAsync(matchedPatient.Id);
                     await LoadPatientContextAsync(matchedPatient.Id);
-                    PopulateEncounterMedicinesFromPatient();
-                }
+                    }
                 finally { _isApplyingContext=false; }
                 _patientContext.SelectedItem=null;
                 RefreshSidePanel();
@@ -267,7 +232,6 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                 SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==patient.DoctorId);
             await LoadAppointmentsForPatientAsync(patient.Id);
             await LoadPatientContextAsync(patient.Id);
-            PopulateEncounterMedicinesFromPatient();
         }
         finally { _isApplyingContext=false; }
         RefreshSidePanel();
@@ -322,6 +286,38 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
 
             await AddMedicine(available[indexSelected].Medicine!);
         }
+    }
+
+    [RelayCommand]
+    private async Task AddEncounterScoreFromListAsync()
+    {
+        if(SelectedPatient is null)
+        {
+            await UserDialogService.ShowAlertAsync("Пациент", "Прво изберете пациент.", "Во ред");
+            return;
+        }
+
+        var options=ScoreOptions
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        if(options.Length==0)
+        {
+            await UserDialogService.ShowAlertAsync("Скор", "Нема зачувани предлози за скор. Може да внесете име преку полето „Пребарај скор...“.", "Во ред");
+            return;
+        }
+
+        var selected=await UserDialogService.ShowActionSheetAsync(
+            "Избери скор за овој преглед",
+            "Откажи",
+            options);
+
+        if(string.IsNullOrWhiteSpace(selected) || selected=="Откажи")
+            return;
+
+        ScoreSearchText=selected;
+        await AddScoreAsync();
     }
 
     // ── Schedule display ──────────────────────────────────────────────────────
