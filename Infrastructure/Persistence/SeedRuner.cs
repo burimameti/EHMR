@@ -32,6 +32,8 @@ namespace EHMR.Infrastructure.Persistence
             "AppointmentSeeder",
             "EncounterSeeder",
             "ClinicalScenarioSeeder",
+            "PatientScoreSeeder",
+            "PatientMkb10AssignmentSeeder",
             "DiagnosisSeeder",
             "PrescriptionSeeder",
             "PatientMedicineSeeder",
