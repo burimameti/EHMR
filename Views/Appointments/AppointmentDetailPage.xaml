@@ -17,7 +17,7 @@
 				<Setter Property="TextColor" Value="{StaticResource Gray800}" />
 			</Style>
 
-			<DataTemplate x:Key="AppointmentMkb10HistoryRowTemplate" x:DataType="entities:Diagnosis">
+			<DataTemplate x:Key="AppointmentMkb10HistoryRowTemplate" x:DataType="entities:PatientMkb10Assignment">
 				<Border
 					Margin="0,2"
 					Padding="10,8"
@@ -639,7 +639,7 @@
 													TextColor="{StaticResource SparkTextSecondary}" />
 											</BindableLayout.EmptyView>
 											<BindableLayout.ItemTemplate>
-												<DataTemplate x:DataType="entities:Diagnosis">
+												<DataTemplate x:DataType="entities:PatientMkb10Assignment">
 													<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
 														<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
 														<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
@@ -746,7 +746,7 @@
 											</Border>
 										</BindableLayout.EmptyView>
 										<BindableLayout.ItemTemplate>
-											<DataTemplate x:DataType="entities:Diagnosis">
+											<DataTemplate x:DataType="entities:PatientMkb10Assignment">
 												<Grid ColumnDefinitions="110,*,110" ColumnSpacing="1">
 													<Border
 														Padding="12,10"
@@ -1178,7 +1178,7 @@
 								ItemTemplate="{StaticResource AppointmentMkb10HistoryRowTemplate}"
 								ItemsSource="{Binding PatientMkb10History}"
 								Subtitle=""
-								Variant="Diagnosis" />
+								Variant="PatientMkb10Assignment" />
 
 						</VerticalStackLayout>
 					</controls:FFSectionCard>
