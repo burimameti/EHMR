@@ -1164,7 +1164,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     }
 
     // =====================================================
-    // DIAGNOSIS / MKB10
+    // MKB-10 ASSIGNMENT / MKB10
     // =====================================================
 
     public ObservableCollection<MkbAlphabetSection> MkbAlphabetSections { get; } = new();
@@ -1247,7 +1247,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         }, "Грешка при пребарување дијагнози");
     }
     // =====================================================
-    // ADD DIAGNOSIS
+    // ADD MKB-10 ASSIGNMENT
     // =====================================================
 
     [RelayCommand]
@@ -1259,7 +1259,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         if(Mkb10Assignments.Any(x =>
             x.Mkb10CodeId==code.Id))
             return;
-        var diagnosis = new PatientMkb10Assignment
+        var assignment = new PatientMkb10Assignment
         {
             Id=Guid.NewGuid(),
 
@@ -1278,28 +1278,28 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             Status=
                 PatientMkb10AssignmentStatus.Active
         };
-        Mkb10Assignments.Add(diagnosis);
+        Mkb10Assignments.Add(assignment);
         MkbResults.Remove(code);
         ShowMkbDropdown=MkbResults.Count>0;
     }
 
     // =====================================================
-    // REMOVE DIAGNOSIS
+    // REMOVE MKB-10 ASSIGNMENT
     // =====================================================
 
     [RelayCommand]
-    protected void RemoveMkb(PatientMkb10Assignment diagnosis)
+    protected void RemoveMkb(PatientMkb10Assignment assignment)
     {
         if(!CanUpdate) return;
-        if(diagnosis==null)
+        if(assignment==null)
             return;
-        if(Mkb10Assignments.Contains(diagnosis))
+        if(Mkb10Assignments.Contains(assignment))
         {
-            Mkb10Assignments.Remove(diagnosis);
+            Mkb10Assignments.Remove(assignment);
         }
     }
     // =====================================================
-     // MEDICINE SEARCH + ATTACH (encounter-scoped, mirrors MKB10 diagnosis flow)
+     // MEDICINE SEARCH + ATTACH (encounter-scoped, mirrors MKB10 assignment flow)
      // =====================================================
     protected CancellationTokenSource MedicineSearchCts = new();
 
