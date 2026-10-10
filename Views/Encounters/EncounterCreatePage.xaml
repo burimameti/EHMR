@@ -253,47 +253,88 @@
 								<controls:CrudSectionHeader
 									Title="БИОЛОШКА ТЕРАПИЈА"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
-								<Grid ColumnDefinitions="1.2*,1.2*,0.8*" ColumnSpacing="20">
-									<VerticalStackLayout Grid.Column="0" Spacing="2">
-										<Label
-											FontAttributes="Bold"
-											FontSize="16"
-											Text="МКБ-10 дијагноза"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="11.5"
-											LineBreakMode="WordWrap"
-											Text="{Binding CurrentDiagnosesSummary, TargetNullValue='Нема внесена дијагноза.'}"
-											TextColor="{StaticResource SparkTextPrimary}" />
-									</VerticalStackLayout>
+                                <Grid ColumnDefinitions="1.15*,1.35*,1*" ColumnSpacing="12">
+                                    <!-- Full diagnosis history -->
+                                    <VerticalStackLayout Grid.Column="0" Spacing="6">
+                                        <Label FontAttributes="Bold" FontSize="13" Text="МКБ-10 ИСТОРИЈА" TextColor="{StaticResource SparkTextSecondary}" />
+                                        <Border BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1" Padding="0">
+                                            <VerticalStackLayout Spacing="0">
+                                                <Grid ColumnDefinitions="Auto,*" Padding="7,6" BackgroundColor="{StaticResource SparkSurfaceAlt}">
+                                                    <Label Text="КОД" FontAttributes="Bold" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" />
+                                                    <Label Grid.Column="1" Text="ДИЈАГНОЗА" FontAttributes="Bold" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" />
+                                                </Grid>
+                                                <CollectionView ItemsSource="{Binding PatientDiagnoses}" SelectionMode="None" MaximumHeightRequest="190">
+                                                    <CollectionView.EmptyView>
+                                                        <Label Padding="8" Text="Нема внесена дијагноза." FontSize="11" TextColor="{StaticResource SparkTextSecondary}" />
+                                                    </CollectionView.EmptyView>
+                                                    <CollectionView.ItemTemplate>
+                                                        <DataTemplate x:DataType="entities:Diagnosis">
+                                                            <Grid ColumnDefinitions="Auto,*" Padding="7,6" ColumnSpacing="8">
+                                                                <Label Text="{Binding Mkb10Code.Code}" FontSize="11" TextColor="{StaticResource SparkTextPrimary}" />
+                                                                <Label Grid.Column="1" Text="{Binding Mkb10Code.Description}" FontSize="11" LineBreakMode="WordWrap" TextColor="{StaticResource SparkTextPrimary}" />
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </CollectionView.ItemTemplate>
+                                                </CollectionView>
+                                            </VerticalStackLayout>
+                                        </Border>
+                                    </VerticalStackLayout>
 
-									<VerticalStackLayout Grid.Column="1" Spacing="2">
-										<Label
-											FontAttributes="Bold"
-											FontSize="16"
-											Text="Лек"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="11.5"
-											LineBreakMode="WordWrap"
-											Text="{Binding ActiveMedicinesSummary, TargetNullValue='Нема активна терапија.'}"
-											TextColor="{StaticResource SparkTextPrimary}" />
-									</VerticalStackLayout>
+                                    <!-- Full patient-level active therapy history -->
+                                    <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                        <Label FontAttributes="Bold" FontSize="13" Text="ТЕКОВНА ТЕРАПИЈА — ИСТОРИЈА" TextColor="{StaticResource SparkTextSecondary}" />
+                                        <Border BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1" Padding="0">
+                                            <VerticalStackLayout Spacing="0">
+                                                <Grid ColumnDefinitions="1.25*,0.8*,1*" Padding="7,6" BackgroundColor="{StaticResource SparkSurfaceAlt}" ColumnSpacing="5">
+                                                    <Label Text="ЛЕК" FontAttributes="Bold" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" />
+                                                    <Label Grid.Column="1" Text="ДОЗА" FontAttributes="Bold" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" />
+                                                    <Label Grid.Column="2" Text="РЕЖИМ" FontAttributes="Bold" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" />
+                                                </Grid>
+                                                <CollectionView ItemsSource="{Binding PatientMedicines}" SelectionMode="None" MaximumHeightRequest="190">
+                                                    <CollectionView.ItemsLayout><LinearItemsLayout Orientation="Vertical" ItemSpacing="0" /></CollectionView.ItemsLayout>
+                                                    <CollectionView.EmptyView>
+                                                        <Label Padding="8" Text="Нема терапија во картонот." FontSize="11" TextColor="{StaticResource SparkTextSecondary}" />
+                                                    </CollectionView.EmptyView>
+                                                    <CollectionView.ItemTemplate>
+                                                        <DataTemplate x:DataType="entities:PatientMedicine">
+                                                            <Grid ColumnDefinitions="1.25*,0.8*,1*" Padding="7,6" ColumnSpacing="5">
+                                                                <Label Text="{Binding Medicine.BilingualName}" FontSize="11" LineBreakMode="WordWrap" TextColor="{StaticResource SparkTextPrimary}" />
+                                                                <Label Grid.Column="1" Text="{Binding Dosage}" FontSize="11" TextColor="{StaticResource SparkTextPrimary}" />
+                                                                <Label Grid.Column="2" Text="{Binding ApplicationRegime.Regime}" FontSize="11" LineBreakMode="WordWrap" TextColor="{StaticResource SparkTextPrimary}" />
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </CollectionView.ItemTemplate>
+                                                </CollectionView>
+                                            </VerticalStackLayout>
+                                        </Border>
+                                    </VerticalStackLayout>
 
-									<VerticalStackLayout Grid.Column="2" Spacing="2">
-										<Label
-											FontSize="16"
-											Text="Претходен скор"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="11.5"
-											Text="{Binding CurrentPatientScore, TargetNullValue='—'}"
-											TextColor="{StaticResource SparkTextPrimary}" />
-									</VerticalStackLayout>
-								</Grid>
+                                    <!-- Full score history -->
+                                    <VerticalStackLayout Grid.Column="2" Spacing="6">
+                                        <Label FontAttributes="Bold" FontSize="13" Text="ПРЕТХОДНИ СКОРОВИ" TextColor="{StaticResource SparkTextSecondary}" />
+                                        <Border BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1" Padding="0">
+                                            <VerticalStackLayout Spacing="0">
+                                                <Grid ColumnDefinitions="*,Auto" Padding="7,6" BackgroundColor="{StaticResource SparkSurfaceAlt}">
+                                                    <Label Text="СКОР" FontAttributes="Bold" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" />
+                                                    <Label Grid.Column="1" Text="ДАТУМ" FontAttributes="Bold" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" />
+                                                </Grid>
+                                                <CollectionView ItemsSource="{Binding PatientScoreHistory}" SelectionMode="None" MaximumHeightRequest="190">
+                                                    <CollectionView.EmptyView>
+                                                        <Label Padding="8" Text="Нема претходни скорови." FontSize="11" TextColor="{StaticResource SparkTextSecondary}" />
+                                                    </CollectionView.EmptyView>
+                                                    <CollectionView.ItemTemplate>
+                                                        <DataTemplate x:DataType="entities:PatientScore">
+                                                            <Grid ColumnDefinitions="*,Auto" Padding="7,6" ColumnSpacing="6">
+                                                                <Label Text="{Binding DisplayText}" FontSize="11" LineBreakMode="WordWrap" TextColor="{StaticResource SparkTextPrimary}" />
+                                                                <Label Grid.Column="1" Text="{Binding RecordedAt, StringFormat='{0:dd.MM.yy}'}" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </CollectionView.ItemTemplate>
+                                                </CollectionView>
+                                            </VerticalStackLayout>
+                                        </Border>
+                                    </VerticalStackLayout>
+                                </Grid>
 							</VerticalStackLayout>
 
 							<!--  ── 3. ТЕКОВНА ТЕРАПИЈА + СКОРОВИ (ист ред) / СЛЕДЕН ТЕРМИН (долу лево) ──  -->
