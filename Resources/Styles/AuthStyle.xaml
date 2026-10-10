@@ -8,15 +8,15 @@
 	<Color x:Key="SurfaceAlt">#1A2436</Color>
 	<Color x:Key="SparkedDarkCard">#1A2436</Color>
 
-	<Color x:Key="Teal400">#2DD4BF</Color>
-	<Color x:Key="Teal600">#99D9EA</Color>
+	<Color x:Key="Teal400">#2AEBE7</Color>
+	<Color x:Key="Teal600">#2AEBE7</Color>
 	<Color x:Key="Teal50">#F0FDFA</Color>
 	<Color x:Key="Teal100">#CCFBF1</Color>
 
-	<Color x:Key="SidebarBg">#3B4754</Color>
-	<Color x:Key="SidebarActiveText">#0F2E2A</Color>
+	<Color x:Key="SidebarBg">#202D3D</Color>
+	<Color x:Key="SidebarActiveText">#0F172A</Color>
 	<Color x:Key="SidebarText">#CBD5E1</Color>
-	<Color x:Key="SidebarTextMuted">#8B98A5</Color>
+	<Color x:Key="SidebarTextMuted">#9AA6AD</Color>
 	<Color x:Key="SidebarLine">#5B6672</Color>
 	<Color x:Key="SidebarBorder">#1E293B</Color>
 
@@ -24,13 +24,13 @@
 	<Color x:Key="TextSecondary">#94A3B8</Color>
 	<Color x:Key="TextMuted">#64748B</Color>
 
-	<Color x:Key="EhmrPrimary">#0284C7</Color>
+	<Color x:Key="EhmrPrimary">#2AEBE7</Color>
 	<Color x:Key="PrimarySoft">#1E293B</Color>
 
-	<Color x:Key="AppBg">#EDF3F8</Color>
+	<Color x:Key="AppBg">#F1F5F9</Color>
 
 	<Style x:Key="ThemedPage" TargetType="ContentPage">
-		<Setter Property="BackgroundColor" Value="#EDF3F8" />
+		<Setter Property="BackgroundColor" Value="#F1F5F9" />
 	</Style>
 
 	<!--  =====================================================  -->
@@ -38,19 +38,19 @@
 	<!--  🌈 SPARK CORE THEME  -->
 	<!--  =====================================================  -->
 
-	<Color x:Key="SparkPageBackground">#F4F7FB</Color>
-	<Color x:Key="SparkPageBackground1">#E4ECF5</Color>
-	<Color x:Key="SparkPageBackground2">#D5E2F0</Color>
-	<Color x:Key="SparkPageBackground3">#C5D6EC</Color>
+	<Color x:Key="SparkPageBackground">#F1F5F9</Color>
+	<Color x:Key="SparkPageBackground1">#F8FAFC</Color>
+	<Color x:Key="SparkPageBackground2">#F8FAFC</Color>
+	<Color x:Key="SparkPageBackground3">#F8FAFC</Color>
 	<Color x:Key="SparkedDarkBg">#1F2937</Color>
 	<!--  Cards  -->
-	<Color x:Key="SparkContentBackground">#F3F6FA</Color>
-	<Color x:Key="SparkCardBorder">#DDE6F0</Color>
+	<Color x:Key="SparkContentBackground">#FFFFFF</Color>
+	<Color x:Key="SparkCardBorder">#D9E0E5</Color>
 
 
 	<!--  Text  -->
-	<Color x:Key="SparkTextPrimary">#172B4D</Color>
-	<Color x:Key="SparkTextSecondary">#637381</Color>
+	<Color x:Key="SparkTextPrimary">#334155</Color>
+	<Color x:Key="SparkTextSecondary">#64748B</Color>
 
 
 	<!--  Accent  -->
@@ -72,8 +72,8 @@
 	<!--  Section Headers  -->
 	<!--  =====================================================  -->
 
-	<Color x:Key="SparkSectionHeaderBg">#E8F5F4</Color>
-	<Color x:Key="SparkSectionHeaderText">#00695C</Color>
+	<Color x:Key="SparkSectionHeaderBg">#D9FBFA</Color>
+	<Color x:Key="SparkSectionHeaderText">#0F9693</Color>
 
 
 
