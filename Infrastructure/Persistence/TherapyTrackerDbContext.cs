@@ -106,6 +106,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
         ConfigurePatientMedicine(modelBuilder);
         ConfigureApplicationRegime(modelBuilder);
         ConfigureClinicalScoreDefinition(modelBuilder);
+        ConfigurePatientMkb10Assignment(modelBuilder);
         ConfigurePatientDocument(modelBuilder);
         ConfigureRelationships(modelBuilder);
         ConfigureIndexes(modelBuilder);
@@ -434,6 +435,48 @@ entity.HasOne(x => x.Medicine)
 
             entity.HasIndex(x => x.EncounterId);
             entity.HasIndex(x => new { x.PatientId, x.MedicineId, x.IsActive });
+        });
+    }
+
+    private static void ConfigurePatientMkb10Assignment(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<PatientMkb10Assignment>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.AssignmentNumber)
+                .IsRequired();
+
+            entity.Property(x => x.Severity)
+                .IsRequired();
+
+            entity.Property(x => x.ClinicalDescription)
+                .IsRequired();
+
+            entity.Property(x => x.DiagnosedAt)
+                .IsRequired();
+
+            entity.Property(x => x.Status)
+                .HasConversion<int>();
+
+            entity.HasOne(x => x.Patient)
+                .WithMany(x => x.Mkb10Assignments)
+                .HasForeignKey(x => x.PatientId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.Encounter)
+                .WithMany(x => x.Mkb10Assignments)
+                .HasForeignKey(x => x.EncounterId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(x => x.Mkb10Code)
+                .WithMany()
+                .HasForeignKey(x => x.Mkb10CodeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(x => x.PatientId);
+            entity.HasIndex(x => x.EncounterId);
+            entity.HasIndex(x => x.Mkb10CodeId);
         });
     }
 
