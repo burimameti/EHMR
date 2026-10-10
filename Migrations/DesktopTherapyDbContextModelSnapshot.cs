@@ -989,7 +989,7 @@ namespace EHMR.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("EncounterId")
+                    b.Property<Guid?>("EncounterId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Number")
@@ -1010,7 +1010,8 @@ namespace EHMR.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EncounterId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[EncounterId] IS NOT NULL");
 
                     b.HasIndex("PatientId", "RecordedAt");
 
@@ -1580,8 +1581,7 @@ namespace EHMR.Migrations
                     b.HasOne("EHMR.Domain.Entities.Encounter", "Encounter")
                         .WithOne("PatientScore")
                         .HasForeignKey("EHMR.Domain.Entities.PatientScore", "EncounterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("EHMR.Domain.Entities.Patient", "Patient")
                         .WithMany("Scores")
