@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
 	<Style x:Key="FFShellSidebarStyle" TargetType="Border">
-		<Setter Property="Background" Value="#111827" />
+		<Setter Property="Background" Value="#202D3D" />
 		<Setter Property="Padding" Value="10" />
 		<Setter Property="StrokeThickness" Value="0" />
 	</Style>
@@ -15,9 +15,21 @@
 
 	<Style x:Key="FFShellMenuButtonStyle" TargetType="Button">
 		<Setter Property="BackgroundColor" Value="Transparent" />
-		<Setter Property="TextColor" Value="#E2E8F0" />
+		<Setter Property="TextColor" Value="#CBD5E1" />
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="CornerRadius" Value="0" />
+		<Setter Property="HeightRequest" Value="36" />
+		<Setter Property="Padding" Value="10,0" />
+		<Setter Property="HorizontalOptions" Value="Fill" />
+	</Style>
+
+
+	<Style x:Key="FFShellMenuButtonActiveStyle" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="#2AEBE7" />
+		<Setter Property="TextColor" Value="#0F172A" />
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="CornerRadius" Value="6" />
 		<Setter Property="HeightRequest" Value="36" />
 		<Setter Property="Padding" Value="10,0" />
 		<Setter Property="HorizontalOptions" Value="Fill" />
@@ -26,8 +38,8 @@
 	<Style x:Key="FFShellTopBarStyle" TargetType="Border">
 		<Setter Property="Background" Value="White" />
 		<Setter Property="Padding" Value="10,8" />
-		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
+		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeThickness" Value="1" />
-		<Setter Property="StrokeShape" Value="RoundRectangle 0" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 8" />
 	</Style>
 </ResourceDictionary>
