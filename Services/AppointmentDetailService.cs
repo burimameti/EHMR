@@ -14,7 +14,7 @@ namespace EHMR.Services
         Task UpdateAppointmentStatus(Guid appointmentId, AppointmentStatus newStatus);
         Task<List<Mkb10Code>> SearchMkb10Codes(string query, CancellationToken token);
         Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30);
-        Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, List<PatientMedicine> medicines);
+        Task SaveAppointment(Appointment appointment, List<PatientMkb10Assignment> diagnoses, List<PatientMedicine> medicines);
         Task AutoCloseStaleAppointmentsAsync();
     }
 
@@ -105,7 +105,7 @@ namespace EHMR.Services
                 .FirstOrDefaultAsync(x => x.AppointmentId==id);
 
             var diagnoses = encounter is not null
-                ? await db.Set<Diagnosis>()
+                ? await db.Set<PatientMkb10Assignment>()
                     .AsNoTracking()
                     .Where(x => x.EncounterId==encounter.Id)
                     .Include(x => x.Mkb10Code)
@@ -194,7 +194,7 @@ var patients = await db.Patients
                 .ToListAsync();
 
             // All diagnoses for this patient — both standalone and encounter-linked
-            var diagnoses = await db.Set<Diagnosis>()
+            var diagnoses = await db.Set<PatientMkb10Assignment>()
                 .AsNoTracking()
                 .Where(x => x.PatientId==patientId)
                 .Include(x => x.Mkb10Code)
@@ -248,7 +248,7 @@ return new PatientContextDto
             _encounterService.GetNextAvailableSlot(doctorId, from, durationMinutes, patientId);
 
         // ─── Commands ─────────
-        public async Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, List<PatientMedicine> medicines)
+        public async Task SaveAppointment(Appointment appointment, List<PatientMkb10Assignment> diagnoses, List<PatientMedicine> medicines)
         {
             await using var db = await _factory.CreateDbContextAsync();
 appointment.Patient=null;
@@ -275,7 +275,7 @@ Encounter? encounterForMedicines = null;
 
                 foreach(var d in diagnoses)
                 {
-                    db.Set<Diagnosis>().Add(new Diagnosis
+                    db.Set<PatientMkb10Assignment>().Add(new PatientMkb10Assignment
                     {
                         Id=Guid.NewGuid(),
                         PatientId=appointment.PatientId,
@@ -285,7 +285,7 @@ Encounter? encounterForMedicines = null;
                         IsPrimary=d.IsPrimary,
                         Severity=d.Severity,
                         ClinicalDescription=d.ClinicalDescription,
-                        Status=DiagnosisStatus.Suspected,
+                        Status=PatientMkb10AssignmentStatus.Suspected,
                     });
                 }
             }
@@ -329,14 +329,14 @@ Encounter? encounterForMedicines = null;
 
                     await db.SaveChangesAsync();
 
-                    var existingDiag = await db.Set<Diagnosis>()
+                    var existingDiag = await db.Set<PatientMkb10Assignment>()
                         .Where(x => x.EncounterId==encounter.Id)
                         .ToListAsync();
-                    db.Set<Diagnosis>().RemoveRange(existingDiag);
+                    db.Set<PatientMkb10Assignment>().RemoveRange(existingDiag);
 
                     foreach(var d in diagnoses)
                     {
-                        db.Set<Diagnosis>().Add(new Diagnosis
+                        db.Set<PatientMkb10Assignment>().Add(new PatientMkb10Assignment
                         {
                             Id=Guid.NewGuid(),
                             PatientId=appointment.PatientId,
