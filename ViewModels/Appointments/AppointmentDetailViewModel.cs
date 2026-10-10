@@ -182,7 +182,6 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
     [ObservableProperty] private ObservableCollection<Diagnosis> selectedDiagnoses = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> selectedMedicines = new();
-    [ObservableProperty] private ObservableCollection<TherapyCycle> visibleTherapies = new();
     [ObservableProperty] private ObservableCollection<Patient> patientsList = new();
     [ObservableProperty] private ObservableCollection<Doctor> doctorsList = new();
     [ObservableProperty] private ObservableCollection<Appointment> appointmentHistory = new();
@@ -225,7 +224,6 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
     [ObservableProperty] private Patient? selectedPatientForAppointment;
     [ObservableProperty] private Doctor? selectedDoctorForAppointment;
-    [ObservableProperty] private TherapyCycle? selectedTherapyCycle;
 
     public IReadOnlyList<AppointmentStatusChoice> StatusOptions
     {
@@ -501,7 +499,6 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         Appointment=dto.Appointment;
 
         SelectedDiagnoses=new ObservableCollection<Diagnosis>(dto.Diagnoses);
-        VisibleTherapies=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
         PatientsList=new ObservableCollection<Patient>(dto.Patients);
         DoctorsList=new ObservableCollection<Doctor>(dto.Doctors);
         AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
@@ -514,7 +511,6 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
         SelectedPatientForAppointment=PatientsList.FirstOrDefault(x => x.Id==Appointment.PatientId);
         SelectedDoctorForAppointment=DoctorsList.FirstOrDefault(x => x.Id==Appointment.DoctorId);
-        SelectedTherapyCycle=VisibleTherapies.FirstOrDefault(x => x.Id==Appointment.TherapyCycleId);
 
         PreferredAppointmentDate=Appointment.ScheduledStart.Date;
         SelectedStartTime=Appointment.ScheduledStart.TimeOfDay;
@@ -571,8 +567,6 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             PatientMedicinesHistory=new ObservableCollection<PatientMedicine>();
             OnPropertyChanged(nameof(PreviousMedicinesHistory));
             SelectedMedicines=new ObservableCollection<PatientMedicine>();
-            VisibleTherapies=new ObservableCollection<TherapyCycle>();
-            SelectedTherapyCycle=null;
             SelectedDoctorForAppointment=null;
         }
 
@@ -615,7 +609,6 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             ? new ObservableCollection<PatientMedicine>()
             : new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
         VisibleTherapies=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
-        SelectedTherapyCycle=VisibleTherapies.FirstOrDefault();
 
         OnPropertyChanged(nameof(HeaderTitle));
         OnPropertyChanged(nameof(HeaderSubtitle));
@@ -908,12 +901,10 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         {
             Appointment.PatientId=SelectedPatientForAppointment.Id;
             Appointment.DoctorId=SelectedDoctorForAppointment.Id;
-            Appointment.TherapyCycleId=SelectedTherapyCycle?.Id;
 
             await _service.SaveAppointment(
                 Appointment,
                 SelectedDiagnoses.ToList(),
-                SelectedTherapyCycle,
                 SelectedMedicines.ToList());
 
             await UserDialogService.ShowAlertAsync("Успешно", "Терминот е успешно зачуван.", "OK");
@@ -964,7 +955,6 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
                 Appointment=_originalAppointment.Clone();
                 SelectedPatientForAppointment=PatientsList.FirstOrDefault(x => x.Id==Appointment.PatientId);
                 SelectedDoctorForAppointment=DoctorsList.FirstOrDefault(x => x.Id==Appointment.DoctorId);
-                SelectedTherapyCycle=VisibleTherapies.FirstOrDefault(x => x.Id==Appointment.TherapyCycleId);
                 SelectedStartTime=Appointment.ScheduledStart.TimeOfDay;
                 SelectedEndTime=Appointment.ScheduledEnd.TimeOfDay;
             }
@@ -981,12 +971,6 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         await LoadAsync();
     }
 
-    [RelayCommand]
-    private async Task GenerateNextCycleAsync()
-    {
-        await _service.GenerateNextTherapyCycle(Appointment);
-        await LoadAsync();
-    }
 }
 
 // =============================================================================
@@ -1014,7 +998,6 @@ public static class AppointmentExtensions
             AppointmentNumber=source.AppointmentNumber,
             PatientId=source.PatientId,
             DoctorId=source.DoctorId,
-            TherapyCycleId=source.TherapyCycleId,
             ScheduledStart=source.ScheduledStart,
             ScheduledEnd=source.ScheduledEnd,
             Status=source.Status,
@@ -1022,8 +1005,7 @@ public static class AppointmentExtensions
             ClinicalNotes=source.ClinicalNotes,
             CreatedAt=source.CreatedAt,
             Patient=source.Patient,
-            Doctor=source.Doctor,
-            TherapyCycle=source.TherapyCycle
+            Doctor=source.Doctor
         };
     }
 }
