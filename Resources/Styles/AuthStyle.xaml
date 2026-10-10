@@ -153,10 +153,10 @@
 	<Color x:Key="SparkPatientBorder">#BFDBFE</Color>
 
 
-	<!--  Diagnosis  -->
-	<Color x:Key="SparkDiagnosisHeader">#EEF2FF</Color>
-	<Color x:Key="SparkDiagnosisIcon">#C7D2FE</Color>
-	<Color x:Key="SparkDiagnosisBorder">#A5B4FC</Color>
+	<!--  Mkb10Assignment  -->
+	<Color x:Key="SparkMkb10AssignmentHeader">#EEF2FF</Color>
+	<Color x:Key="SparkMkb10AssignmentIcon">#C7D2FE</Color>
+	<Color x:Key="SparkMkb10AssignmentBorder">#A5B4FC</Color>
 
 
 	<!--  Encounter  -->
