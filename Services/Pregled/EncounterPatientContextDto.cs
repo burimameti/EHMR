@@ -17,7 +17,7 @@ public class PatientContextDto
     }
 
     // Дијагнози — целосна историја
-    public List<Diagnosis> Mkb10Assignments { get; set; } = new();
+    public List<PatientMkb10Assignment> Mkb10Assignments { get; set; } = new();
 
     // Прегледи (Encounters) — сите статуси, филтрирање се прави на VM ниво
     public List<Encounter> EncounterHistory { get; set; } = new();
