@@ -404,6 +404,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [ObservableProperty] private ObservableCollection<PatientMedicine> patientMedicines = new();
     [ObservableProperty] private ObservableCollection<PatientDocument> patientDocuments = new();
 
+    // Full patient score history; encounter-specific edits are kept separately.
+    [ObservableProperty] private ObservableCollection<PatientScore> patientScoreHistory = new();
+
     [ObservableProperty] private bool isPatientLoading;
 
 
@@ -515,6 +518,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             PatientPrescriptions.Clear();
             PatientMedicines.Clear();
             PatientDocuments.Clear();
+            PatientScoreHistory.Clear();
             return;
         }
 
@@ -533,6 +537,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             CurrentPatientScore=ctx.LatestScore?.ScoreText??string.Empty;
             CurrentPatientScoreDate=ctx.LatestScore?.RecordedAt;
             PatientDocuments=new ObservableCollection<PatientDocument>(ctx.Documents);
+            PatientScoreHistory=new ObservableCollection<PatientScore>(ctx.Scores);
 
             OnPropertyChanged(nameof(FilteredAppointments));
             OnPropertyChanged(nameof(FilteredEncounters));
