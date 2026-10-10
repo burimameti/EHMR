@@ -105,7 +105,7 @@ namespace EHMR.Services
                 .FirstOrDefaultAsync(x => x.AppointmentId==id);
 
             var diagnoses = encounter is not null
-                ? await db.Diagnoses
+                ? await db.Set<Diagnosis>()
                     .AsNoTracking()
                     .Where(x => x.EncounterId==encounter.Id)
                     .Include(x => x.Mkb10Code)
@@ -194,7 +194,7 @@ var patients = await db.Patients
                 .ToListAsync();
 
             // All diagnoses for this patient — both standalone and encounter-linked
-            var diagnoses = await db.Diagnoses
+            var diagnoses = await db.Set<Diagnosis>()
                 .AsNoTracking()
                 .Where(x => x.PatientId==patientId)
                 .Include(x => x.Mkb10Code)
@@ -275,7 +275,7 @@ Encounter? encounterForMedicines = null;
 
                 foreach(var d in diagnoses)
                 {
-                    db.Diagnoses.Add(new Diagnosis
+                    db.Set<Diagnosis>().Add(new Diagnosis
                     {
                         Id=Guid.NewGuid(),
                         PatientId=appointment.PatientId,
@@ -329,14 +329,14 @@ Encounter? encounterForMedicines = null;
 
                     await db.SaveChangesAsync();
 
-                    var existingDiag = await db.Diagnoses
+                    var existingDiag = await db.Set<Diagnosis>()
                         .Where(x => x.EncounterId==encounter.Id)
                         .ToListAsync();
-                    db.Diagnoses.RemoveRange(existingDiag);
+                    db.Set<Diagnosis>().RemoveRange(existingDiag);
 
                     foreach(var d in diagnoses)
                     {
-                        db.Diagnoses.Add(new Diagnosis
+                        db.Set<Diagnosis>().Add(new Diagnosis
                         {
                             Id=Guid.NewGuid(),
                             PatientId=appointment.PatientId,

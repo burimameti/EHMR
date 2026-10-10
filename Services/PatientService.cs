@@ -574,7 +574,7 @@ public class PatientService : IPatientService
 
             if(entity==null)
             {
-                db.Diagnoses.Add(NewDiagnosis(existing.Id, vm));
+                db.Set<Diagnosis>().Add(NewDiagnosis(existing.Id, vm));
                 continue;
             }
 

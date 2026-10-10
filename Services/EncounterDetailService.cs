@@ -144,7 +144,7 @@ public class EncounterDetailService : IEncounterDetailService
             .Include(x => x.Appointment)
             .FirstAsync(x => x.Id==id);
 
-        var diagnoses = await db.Diagnoses
+        var diagnoses = await db.Set<Diagnosis>()
             .AsNoTracking()
             .Where(x => x.EncounterId==id)        // ← no more AppointmentDiagnoses
             .Include(x => x.Mkb10Code)
@@ -541,10 +541,10 @@ public class EncounterDetailService : IEncounterDetailService
         encounter.UpdatedAt=DateTime.UtcNow;
         encounter.UpdatedBy=_authorizationService.CurrentUser.Id;
 
-        var existing=await db.Diagnoses
+        var existing=await db.Set<Diagnosis>()
             .Where(x => x.EncounterId==encounterId)
             .ToListAsync();
-        db.Diagnoses.RemoveRange(existing);
+        db.Set<Diagnosis>().RemoveRange(existing);
 
         foreach(var diagnosis in diagnoses)
         {
@@ -557,7 +557,7 @@ public class EncounterDetailService : IEncounterDetailService
             if(string.IsNullOrWhiteSpace(diagnosis.DiagnosisNumber))
                 diagnosis.DiagnosisNumber=await SequenceHelper.GenerateNumberAsync(
                     db, SequenceNames.Diagnosis, "DX");
-            db.Diagnoses.Add(diagnosis);
+            db.Set<Diagnosis>().Add(diagnosis);
         }
 
         if(diagnoses.Count>0)
@@ -644,10 +644,10 @@ public class EncounterDetailService : IEncounterDetailService
             await db.SaveChangesAsync();
 
             // ── Diagnoses: full replace scoped to this encounter ─────────────
-            var existingDiagnoses = await db.Diagnoses
+            var existingDiagnoses = await db.Set<Diagnosis>()
                 .Where(x => x.EncounterId==encounter.Id)
                 .ToListAsync();
-            db.Diagnoses.RemoveRange(existingDiagnoses);
+            db.Set<Diagnosis>().RemoveRange(existingDiagnoses);
 
             foreach(var d in diagnoses)
             {
@@ -659,7 +659,7 @@ public class EncounterDetailService : IEncounterDetailService
                 if(string.IsNullOrWhiteSpace(d.DiagnosisNumber))
                     d.DiagnosisNumber=
                         await SequenceHelper.GenerateNumberAsync(db, SequenceNames.Diagnosis, "DX");
-                db.Diagnoses.Add(d);
+                db.Set<Diagnosis>().Add(d);
             }
 
             // ── Prescriptions: full replace scoped to this encounter ─────────
