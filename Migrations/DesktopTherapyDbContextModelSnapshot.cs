@@ -270,9 +270,6 @@ namespace EHMR.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("TherapyCycleId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -283,8 +280,6 @@ namespace EHMR.Migrations
                     b.HasIndex("PatientId");
 
                     b.HasIndex("ScheduledStart");
-
-                    b.HasIndex("TherapyCycleId");
 
                     b.ToTable("Appointments");
                 });
@@ -571,9 +566,6 @@ namespace EHMR.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("TherapyCycleId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -592,8 +584,6 @@ namespace EHMR.Migrations
                     b.HasIndex("DoctorId");
 
                     b.HasIndex("PatientId");
-
-                    b.HasIndex("TherapyCycleId");
 
                     b.ToTable("Encounters");
                 });
@@ -919,9 +909,6 @@ namespace EHMR.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<Guid?>("TherapyCycleId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -938,8 +925,6 @@ namespace EHMR.Migrations
                     b.HasIndex("EncounterId");
 
                     b.HasIndex("PatientId");
-
-                    b.HasIndex("TherapyCycleId");
 
                     b.ToTable("PatientDocuments");
                 });
@@ -1420,51 +1405,6 @@ namespace EHMR.Migrations
                     b.ToTable("TaskItems");
                 });
 
-            modelBuilder.Entity("EHMR.Domain.Entities.TherapyCycle", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DecisionText")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("PatientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TherapyCyleNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PatientId");
-
-                    b.ToTable("TherapyCycles");
-                });
-
             modelBuilder.Entity("EHMR.Domain.Entities.TherapyProtocol", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1526,11 +1466,6 @@ namespace EHMR.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EHMR.Domain.Entities.TherapyCycle", "TherapyCycle")
-                        .WithMany("Appointments")
-                        .HasForeignKey("TherapyCycleId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.Navigation("Doctor");
 
                     b.Navigation("Patient");
@@ -1591,10 +1526,6 @@ namespace EHMR.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EHMR.Domain.Entities.TherapyCycle", "TherapyCycle")
-                        .WithMany()
-                        .HasForeignKey("TherapyCycleId");
-
                     b.Navigation("Appointment");
 
                     b.Navigation("Doctor");
@@ -1633,11 +1564,6 @@ namespace EHMR.Migrations
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("EHMR.Domain.Entities.TherapyCycle", "TherapyCycle")
-                        .WithMany("Documents")
-                        .HasForeignKey("TherapyCycleId")
-                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Encounter");
 
@@ -1755,16 +1681,6 @@ namespace EHMR.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("EHMR.Domain.Entities.TherapyCycle", b =>
-                {
-                    b.HasOne("EHMR.Domain.Entities.Patient", "Patient")
-                        .WithMany("TherapyCycles")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Patient");
-                });
-
             modelBuilder.Entity("EHMR.Domain.Entities.ApplicationRegime", b =>
                 {
                     b.Navigation("PatientMedicines");
@@ -1804,7 +1720,6 @@ namespace EHMR.Migrations
 
                     b.Navigation("Scores");
 
-                    b.Navigation("TherapyCycles");
                 });
 
             modelBuilder.Entity("EHMR.Domain.Entities.Rbac.User", b =>
@@ -1818,12 +1733,6 @@ namespace EHMR.Migrations
                     b.Navigation("Scopes");
                 });
 
-            modelBuilder.Entity("EHMR.Domain.Entities.TherapyCycle", b =>
-                {
-                    b.Navigation("Appointments");
-
-                    b.Navigation("Documents");
-                });
 #pragma warning restore 612, 618
         }
     }
