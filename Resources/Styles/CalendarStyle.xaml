@@ -92,7 +92,7 @@
 		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Padding" Value="20" />
-		<Setter Property="Shadow" Value="{StaticResource CardShadow}" />
+		<Setter Property="Shadow" Value="{x:Null}" />
 		<Setter Property="StrokeShape">
 			<Setter.Value>
 				<RoundRectangle CornerRadius="18" />
@@ -162,7 +162,7 @@
 
 	<Style x:Key="SegmentedTabActiveStyle" TargetType="Border">
 		<Setter Property="BackgroundColor" Value="#FFFFFF" />
-		<Setter Property="Shadow" Value="{StaticResource SoftShadow}" />
+		<Setter Property="Shadow" Value="{x:Null}" />
 		<Setter Property="Padding" Value="14,7" />
 		<Setter Property="StrokeThickness" Value="0" />
 		<Setter Property="StrokeShape">
