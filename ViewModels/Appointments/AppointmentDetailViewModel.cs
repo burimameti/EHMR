@@ -180,12 +180,12 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     // COLLECTIONS
     // =========================
 
-    [ObservableProperty] private ObservableCollection<Diagnosis> selectedMkb10Assignments = new();
+    [ObservableProperty] private ObservableCollection<PatientMkb10Assignment> selectedMkb10Assignments = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> selectedMedicines = new();
     [ObservableProperty] private ObservableCollection<Patient> patientsList = new();
     [ObservableProperty] private ObservableCollection<Doctor> doctorsList = new();
     [ObservableProperty] private ObservableCollection<Appointment> appointmentHistory = new();
-    [ObservableProperty] private ObservableCollection<Diagnosis> patientMkb10History = new();
+    [ObservableProperty] private ObservableCollection<PatientMkb10Assignment> patientMkb10History = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> patientMedicinesHistory = new();
 
     public IEnumerable<PatientMedicine> PreviousMedicinesHistory =>
@@ -498,11 +498,11 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         _originalAppointment=dto.Appointment.Clone();
         Appointment=dto.Appointment;
 
-        SelectedMkb10Assignments=new ObservableCollection<Diagnosis>(dto.Mkb10Assignments);
+        SelectedMkb10Assignments=new ObservableCollection<PatientMkb10Assignment>(dto.Mkb10Assignments);
         PatientsList=new ObservableCollection<Patient>(dto.Patients);
         DoctorsList=new ObservableCollection<Doctor>(dto.Doctors);
         AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
-        PatientMkb10History=new ObservableCollection<Diagnosis>(ctx.Mkb10Assignments);
+        PatientMkb10History=new ObservableCollection<PatientMkb10Assignment>(ctx.Mkb10Assignments);
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
         OnPropertyChanged(nameof(PreviousMedicinesHistory));
         SelectedMedicines=IsNewAppointment
@@ -554,7 +554,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         ShowPatientSuggestions=false;
 
         Appointment.PatientId=SelectedPatientForAppointment?.Id??Guid.Empty;
-        SelectedMkb10Assignments=new ObservableCollection<Diagnosis>();
+        SelectedMkb10Assignments=new ObservableCollection<PatientMkb10Assignment>();
 
         if(SelectedPatientForAppointment!=null)
         {
@@ -563,7 +563,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         else
         {
             AppointmentHistory=new ObservableCollection<Appointment>();
-            PatientMkb10History=new ObservableCollection<Diagnosis>();
+            PatientMkb10History=new ObservableCollection<PatientMkb10Assignment>();
             PatientMedicinesHistory=new ObservableCollection<PatientMedicine>();
             OnPropertyChanged(nameof(PreviousMedicinesHistory));
             SelectedMedicines=new ObservableCollection<PatientMedicine>();
@@ -602,7 +602,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         var ctx = await _service.GetPatientContext(patient.Id);
 
         AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
-        PatientMkb10History=new ObservableCollection<Diagnosis>(ctx.Mkb10Assignments);
+        PatientMkb10History=new ObservableCollection<PatientMkb10Assignment>(ctx.Mkb10Assignments);
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
         OnPropertyChanged(nameof(PreviousMedicinesHistory));
         SelectedMedicines=IsNewAppointment
@@ -718,7 +718,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         if(code==null) return;
         if(SelectedMkb10Assignments.Any(x => x.Mkb10CodeId==code.Id)) return;
 
-        SelectedMkb10Assignments.Add(new Diagnosis
+        SelectedMkb10Assignments.Add(new PatientMkb10Assignment
         {
             Mkb10CodeId=code.Id,
             Id=code.Id,
@@ -737,7 +737,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     }
 
     [RelayCommand]
-    private void RemoveMkb10Assignment(Diagnosis d)
+    private void RemoveMkb10Assignment(PatientMkb10Assignment d)
     {
         if(d!=null) SelectedMkb10Assignments.Remove(d);
     }
