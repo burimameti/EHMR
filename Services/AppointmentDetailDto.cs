@@ -6,7 +6,7 @@ namespace EHMR.Services
     {
         public Appointment Appointment { get; set; } = new();
         public Encounter LinkedEncounter { get; set; } = new();
-        public List<Diagnosis> Mkb10Assignments { get; set; } = [];
+        public List<PatientMkb10Assignment> Mkb10Assignments { get; set; } = [];
 
         public List<Patient> Patients { get; set; } = [];
 
