@@ -636,7 +636,7 @@ public class PatientService : IPatientService
 
     // ---- save-model -> new entity ----
 
-    private static Diagnosis NewDiagnosis(Guid patientId, DiagnosisSaveModel vm) => new()
+    private static Diagnosis NewDiagnosis(Guid patientId, PatientMkb10CodeSaveModel vm) => new()
     {
         Id=Guid.NewGuid(),
         PatientId=patientId,
@@ -840,7 +840,7 @@ public class PatientService : IPatientService
             get; init;
         }
 
-        public List<DiagnosisSaveModel> Diagnoses { get; init; } = [];
+        public List<PatientMkb10CodeSaveModel> Diagnoses { get; init; } = [];
         public List<PatientMedicineSaveModel> Medicines { get; init; } = [];
         public List<PatientDocumentSaveModel> Documents { get; init; } = [];
         public List<PatientScoreSaveModel> Scores { get; init; } = [];

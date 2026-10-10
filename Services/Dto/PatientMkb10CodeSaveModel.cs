@@ -2,7 +2,7 @@ using EHMR.Domain.Entities;
 
 namespace EHMR.Services.Dto;
 
-public sealed class DiagnosisSaveModel
+public sealed class PatientMkb10CodeSaveModel
 {
     public Guid Id { get; set; }
     public Guid? Mkb10CodeId { get; set; }

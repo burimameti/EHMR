@@ -538,7 +538,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
 
             Diagnoses=
             [
-                .. Diagnoses.Select(x => new DiagnosisSaveModel
+                .. Diagnoses.Select(x => new PatientMkb10CodeSaveModel
                 {
                     Id = x.Id,
                     // Diagnoses entered from the Patient form belong to the patient,
