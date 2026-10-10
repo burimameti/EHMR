@@ -873,7 +873,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                 SelectedRheumatologist=selected;
                 ApplyPipeline();
             });
-        _diagnosisPicker=MakePicker("Дијагноза", new[] { "Сите" }.Concat(rows.Select(x => x.DiagnosisValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedDiagnosis,
+        _diagnosisPicker=MakePicker("MKB-10 код", new[] { "Сите" }.Concat(rows.Select(x => x.DiagnosisValue).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct()), SelectedDiagnosis,
             selected =>
             {
                 SelectedDiagnosis=selected;
