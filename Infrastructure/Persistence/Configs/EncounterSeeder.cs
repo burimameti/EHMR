@@ -86,4 +86,52 @@ public class EncounterSeeder : IEntitySeeder
             throw new Exception("Encounter seeding failed", ex);
         }
     }
+
+    private static async Task SeedEncounterMedicinesAsync(
+        DesktopTherapyDbContext context,
+        Encounter encounter,
+        CancellationToken ct)
+    {
+        var assignments = await context.PatientMedicines
+            .Where(x => x.PatientId == encounter.PatientId
+                && x.EncounterId == null
+                && x.IsActive)
+            .ToListAsync(ct);
+        var existingRows = await context.PatientMedicines
+            .Where(x => x.EncounterId == encounter.Id)
+            .ToListAsync(ct);
+
+        foreach(var assignment in assignments)
+        {
+            var quantity = assignment.MedicineId == SeedIds.Med5 ? 2m : 0m;
+            var existing = existingRows.FirstOrDefault(x => x.MedicineId == assignment.MedicineId);
+            if(existing is not null)
+            {
+                existing.Quantity = quantity;
+                existing.ApplicationRegimeId = assignment.ApplicationRegimeId;
+                existing.DosesFrequency = assignment.DosesFrequency;
+                existing.Dosage = assignment.Dosage;
+                existing.Notes = assignment.Notes;
+                existing.IsActive = true;
+                continue;
+            }
+
+            context.PatientMedicines.Add(new PatientMedicine
+            {
+                Id = Guid.NewGuid(),
+                PatientId = assignment.PatientId,
+                EncounterId = encounter.Id,
+                MedicineId = assignment.MedicineId,
+                ApplicationRegimeId = assignment.ApplicationRegimeId,
+                DosesFrequency = assignment.DosesFrequency,
+                Dosage = assignment.Dosage,
+                Notes = assignment.Notes,
+                PharmaceuticalReference = assignment.PharmaceuticalReference,
+                IsActive = true,
+                Quantity = quantity
+            });
+        }
+
+        await context.SaveChangesAsync(ct);
+    }
 }
