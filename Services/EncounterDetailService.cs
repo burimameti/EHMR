@@ -332,15 +332,12 @@ public class EncounterDetailService : IEncounterDetailService
 
             // Encounter history
             .Include(p => p.Encounters).ThenInclude(e => e.Doctor).ThenInclude(d => d.User)
-            .Include(p => p.Encounters).ThenInclude(e => e.TherapyCycle)
             // Encounter diagnoses via the Diagnosis.EncounterId FK
             .Include(p => p.Encounters).ThenInclude(e => e.Diagnoses).ThenInclude(d => d.Mkb10Code)
 
             // Appointments — scheduling shell only, no diagnosis join
             .Include(p => p.Appointments).ThenInclude(a => a.Doctor).ThenInclude(d => d.User)
-            .Include(p => p.Appointments).ThenInclude(a => a.TherapyCycle)
 
-            .Include(p => p.TherapyCycles).ThenInclude(t => t.Appointments)
 
             .Include(p => p.Prescriptions)
 
@@ -371,9 +368,6 @@ public class EncounterDetailService : IEncounterDetailService
                                 .OrderByDescending(a => a.ScheduledStart)
                                 .ToList(),
 
-            TherapyCycles=patient.TherapyCycles
-                                .OrderByDescending(t => t.StartDate)
-                                .ToList(),
 
             Prescriptions=patient.Prescriptions
                                 .OrderByDescending(p => p.IssuedDate)
