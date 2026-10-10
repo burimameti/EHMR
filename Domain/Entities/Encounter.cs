@@ -168,7 +168,7 @@ public virtual Patient? Patient
     }
         = new List<Prescription>();
 
-    public virtual ICollection<Diagnosis> Diagnoses
+    public virtual ICollection<Diagnosis> Mkb10Assignments
     {
         get; set;
     }
