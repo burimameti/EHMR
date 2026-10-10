@@ -15,9 +15,6 @@ namespace EHMR.Infrastructure.Persistence.Configs
 
         public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
         {
-            if(await context.UserModules.AnyAsync(ct))
-                return;
-
             var modules = new List<Module>();
 
             // ADMIN FULL ACCESS
@@ -46,7 +43,20 @@ namespace EHMR.Infrastructure.Persistence.Configs
             modules.Add(new Module { UserId = SeedIds.NurseUser, ModuleKey = Modules.Patients, IsEnabled = true });
             modules.Add(new Module { UserId = SeedIds.NurseUser, ModuleKey = Modules.Appointments, IsEnabled = true });
 
-            await context.UserModules.AddRangeAsync(modules, ct);
+            var existingAssignments = await context.UserModules
+                .Select(x => new { x.UserId, x.ModuleKey })
+                .ToListAsync(ct);
+
+            var missingAssignments = modules
+                .Where(candidate => !existingAssignments.Any(existing =>
+                    existing.UserId == candidate.UserId
+                    && existing.ModuleKey == candidate.ModuleKey))
+                .ToList();
+
+            if(missingAssignments.Count == 0)
+                return;
+
+            await context.UserModules.AddRangeAsync(missingAssignments, ct);
             await context.SaveChangesAsync(ct);
         }
     }
