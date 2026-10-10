@@ -263,7 +263,7 @@
                                                     <Label Text="КОД" FontAttributes="Bold" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" />
                                                     <Label Grid.Column="1" Text="ДИЈАГНОЗА" FontAttributes="Bold" FontSize="10" TextColor="{StaticResource SparkTextSecondary}" />
                                                 </Grid>
-                                                <CollectionView ItemsSource="{Binding PatientDiagnoses}" SelectionMode="None" MaximumHeightRequest="190">
+                                                <CollectionView ItemsSource="{Binding PatientMkb10Assignments}" SelectionMode="None" MaximumHeightRequest="190">
                                                     <CollectionView.EmptyView>
                                                         <Label Padding="8" Text="Нема внесена дијагноза." FontSize="11" TextColor="{StaticResource SparkTextSecondary}" />
                                                     </CollectionView.EmptyView>
@@ -815,7 +815,7 @@
 								Title="ИСТОРИЈА НА ДИЈАГНОЗИ"
 								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 							<VerticalStackLayout
-								BindableLayout.ItemsSource="{Binding PatientDiagnoses}"
+								BindableLayout.ItemsSource="{Binding PatientMkb10Assignments}"
 								IsVisible="{Binding HasPatientContext}"
 								Spacing="6">
 								<!--<BindableLayout.EmptyView>
