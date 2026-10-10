@@ -38,7 +38,6 @@ using EHMR.Views.Patients;
 using EHMR.Views.Prescription;
 using EHMR.Views.Protocols;
 using EHMR.Views.Reports;
-using EHMR.Views.Therapies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
