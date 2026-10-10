@@ -251,13 +251,13 @@ public class EncounterDetailService : IEncounterDetailService
             .Include(p => p.Doctor)
 
             // Problem list — no AppointmentDiagnoses anymore
-            .Include(p => p.Diagnoses).ThenInclude(d => d.Mkb10Code)
-            .Include(p => p.Diagnoses).ThenInclude(d => d.Encounter)
+            .Include(p => p.Mkb10Assignments).ThenInclude(d => d.Mkb10Code)
+            .Include(p => p.Mkb10Assignments).ThenInclude(d => d.Encounter)
 
             // Encounter history
             .Include(p => p.Encounters).ThenInclude(e => e.Doctor).ThenInclude(d => d.User)
             // Encounter diagnoses via the Diagnosis.EncounterId FK
-            .Include(p => p.Encounters).ThenInclude(e => e.Diagnoses).ThenInclude(d => d.Mkb10Code)
+            .Include(p => p.Encounters).ThenInclude(e => e.Mkb10Assignments).ThenInclude(d => d.Mkb10Code)
 
             // Appointments — scheduling shell only, no diagnosis join
             .Include(p => p.Appointments).ThenInclude(a => a.Doctor).ThenInclude(d => d.User)
@@ -280,7 +280,7 @@ public class EncounterDetailService : IEncounterDetailService
             Patient=patient,
             PrimaryDoctor=patient.Doctor,
 
-            Mkb10Assignments=patient.Diagnoses
+            Mkb10Assignments=patient.Mkb10Assignments
                                 .OrderByDescending(d => d.DiagnosedAt)
                                 .ToList(),
 
@@ -608,7 +608,7 @@ public class EncounterDetailService : IEncounterDetailService
                         "Овој термин веќе има активен преглед.");
             }
 
-            encounter.Diagnoses.Clear(); // detach nav collection — diagnoses saved separately below
+            encounter.Mkb10Assignments.Clear(); // detach nav collection — diagnoses saved separately below
 
             if(!exists)
             {
