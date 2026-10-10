@@ -1,5 +1,6 @@
 using EHMR.Domain.Entities;
 using EHMR.Helpers;
+using EHMR.UI.Lookup;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
