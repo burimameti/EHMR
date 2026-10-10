@@ -176,7 +176,7 @@ public class EncounterDetailService : IEncounterDetailService
         return new EncounterDetailDto
         {
             Encounter=encounter,
-            Diagnoses=diagnoses,
+            Mkb10Assignments=diagnoses,
             Prescriptions=prescriptions,
             Score=score,
             Patients=patients,
@@ -185,7 +185,7 @@ public class EncounterDetailService : IEncounterDetailService
             NextEncounter=currentIndex>=0&&currentIndex<history.Count-1
                                     ? history[currentIndex+1] : null,
             TotalEncounters=history.Count,
-            TotalDiagnoses=diagnoses.Count,
+            TotalMkb10Assignments=diagnoses.Count,
             TotalPrescriptions=prescriptions.Count
         };
     }
@@ -280,7 +280,7 @@ public class EncounterDetailService : IEncounterDetailService
             Patient=patient,
             PrimaryDoctor=patient.Doctor,
 
-            Diagnoses=patient.Diagnoses
+            Mkb10Assignments=patient.Diagnoses
                                 .OrderByDescending(d => d.DiagnosedAt)
                                 .ToList(),
 
