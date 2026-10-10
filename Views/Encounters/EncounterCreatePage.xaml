@@ -698,6 +698,25 @@
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
 
+							<!-- MKB-10 од картонот на пациентот; се прикажува read-only во новиот преглед. -->
+							<controls:CrudSectionHeader
+								Title="БИОЛОШКА ТЕРАПИЈА — MKB-10 НА ПАЦИЕНТОТ"
+								IsVisible="{Binding HasPatientContext}"
+								LineColor="{StaticResource Gray600}"
+								Style="{StaticResource SectionHeaderStyle}" />
+							<Border
+								Padding="10,8"
+								BackgroundColor="{StaticResource SparkContentBackground}"
+								IsVisible="{Binding HasPatientContext}"
+								Stroke="{StaticResource SparkBorder}"
+								StrokeShape="RoundRectangle 10"
+								StrokeThickness="1">
+								<Label
+									FontSize="12"
+									Text="{Binding CurrentMkb10Summary, TargetNullValue='Нема доделен MKB-10.'}"
+									TextColor="{StaticResource SparkTextPrimary}" />
+							</Border>
+
 							<!-- Активната терапија на пациентот е само за преглед; не се менува од формата за преглед. -->
 							<controls:CrudSectionHeader
 								Title="АКТИВНИ ЛЕКОВИ НА ПАЦИЕНТОТ"
@@ -791,12 +810,12 @@
 							</Border>
 							<!--  История на дијагнози  -->
 							<controls:CrudSectionHeader
-								Title="ТЕКОВНА ДИЈАГНОЗА"
+								Title="ИСТОРИЈА НА MKB-10"
 								IsVisible="{Binding HasPatientContext}"
 								LineColor="{StaticResource Gray600}"
 								Style="{StaticResource SectionHeaderStyle}" />
 							<VerticalStackLayout
-								BindableLayout.ItemsSource="{Binding CurrentMkb10Assignments}"
+								BindableLayout.ItemsSource="{Binding PatientMkb10Assignments}"
 								IsVisible="{Binding HasPatientContext}"
 								Spacing="6">
 								<!--<BindableLayout.EmptyView>
