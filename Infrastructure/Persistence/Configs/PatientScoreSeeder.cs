@@ -27,8 +27,8 @@ public sealed class PatientScoreSeeder : IEntitySeeder
         var encounterIds = Scores.Select(x => x.EncounterId).ToArray();
 
         var existing = await context.PatientScores
-            .Where(x => encounterIds.Contains(x.EncounterId))
-            .Select(x => x.EncounterId)
+            .Where(x => x.EncounterId.HasValue && encounterIds.Contains(x.EncounterId.Value))
+            .Select(x => x.EncounterId!.Value)
             .ToListAsync(ct);
 
         var rows = Scores
