@@ -7,7 +7,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="Root"
 	x:DataType="viewModels:UserEditViewModel"
-	BackgroundColor="#F8FAFC">
+	BackgroundColor="#F1F5F9">
 
 	<Grid ColumnDefinitions="285,*">
 
