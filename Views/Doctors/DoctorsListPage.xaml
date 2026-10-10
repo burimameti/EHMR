@@ -45,7 +45,7 @@
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
 						ContentPadding="20,0"
-						HeightRequestEx="45"
+						HeightRequestEx="40"
 						IsEnabled="{Binding CanCreate}"
 						Text="Нов реуматолог"
 						TextColorEx="White" />
