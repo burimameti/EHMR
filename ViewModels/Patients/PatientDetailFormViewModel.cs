@@ -818,7 +818,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
     }
 
     // =====================================================
-    // MKB10 DIAGNOSIS SEARCH + ATTACH (A-Z секции)
+    // MKB10 MKB-10 ASSIGNMENT SEARCH + ATTACH (A-Z секции)
     // =====================================================
 
     private CancellationTokenSource _mkbSearchCts = new();
@@ -933,7 +933,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
         if(code==null||!CanEditPatient) return;
         if(PatientMkb10Codes.Any(x => x.Mkb10CodeId==code.Id)) return;
 
-        var diagnosis = new PatientMkb10CodeDto
+        var assignment = new PatientMkb10CodeDto
         {
             Id=Guid.Empty, // Empty -> SaveAsync treats it as INSERT
             PatientId=Patient.Id,
@@ -947,7 +947,7 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
             Status=PatientMkb10AssignmentStatus.Active
         };
 
-        PatientMkb10Codes.Add(diagnosis);
+        PatientMkb10Codes.Add(assignment);
 
         MkbCodeSearchText=string.Empty;
         MkbDescriptionSearchText=string.Empty;
@@ -956,11 +956,11 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
     }
 
     [RelayCommand]
-    private void RemoveMkb(PatientMkb10CodeDto diagnosis)
+    private void RemoveMkb(PatientMkb10CodeDto assignment)
     {
-        if(diagnosis==null||!CanEditPatient) return;
-        if(diagnosis.Id!=Guid.Empty) _deletedPatientMkb10CodeIds.Add(diagnosis.Id);
-        PatientMkb10Codes.Remove(diagnosis);
+        if(assignment==null||!CanEditPatient) return;
+        if(assignment.Id!=Guid.Empty) _deletedPatientMkb10CodeIds.Add(assignment.Id);
+        PatientMkb10Codes.Remove(assignment);
     }
 
     // =====================================================
