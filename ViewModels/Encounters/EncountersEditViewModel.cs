@@ -144,11 +144,9 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
             return;
         }
 
-        // InitializeAsync() already loads the patient context (Diagnoses, PatientMedicines
-        // full history, etc.) via LoadPatientContextAsync for the existing-encounter path —
-        // EncounterMedicines starts empty here, so only medicines the user adds/removes
-        // during THIS edit session get touched on save; the rest of the patient's
-        // medicine history is left completely alone.
+        // Load all patient medicine records for context/history, then edit only the
+        // snapshot rows linked to this encounter. Patient-level active assignments
+        // and medicine snapshots from other encounters remain unchanged.
         await InitializeAsync(selected.Id);
 
         EncounterMedicines.CollectionChanged-=OnEncounterMedicinesChanged;
