@@ -69,8 +69,8 @@
 	<Color x:Key="TextPlaceholder">#AFC2C5</Color>
 
 	<!--  Semantic / Status colors (clinical-friendly, not neon)  -->
-	<Color x:Key="StatusActive">#6BD1E1</Color>
-	<Color x:Key="StatusActiveBg">#E3F6EC</Color>
+	<Color x:Key="StatusActive">#15803D</Color>
+	<Color x:Key="StatusActiveBg">#DCFCE7</Color>
 	<Color x:Key="StatusInactive">#D64545</Color>
 	<Color x:Key="StatusInactiveBg">#FBE7E7</Color>
 	<Color x:Key="StatusPending">#D98E2B</Color>
@@ -91,15 +91,15 @@
 
 	<!--  Danger / Success / Warning / Info  -->
 	<Color x:Key="Danger">#D64545</Color>
-	<Color x:Key="Success">#6BD1E1</Color>
+	<Color x:Key="Success">#15803D</Color>
 	<Color x:Key="Warning">#D98E2B</Color>
 
 
 	<!--  Stat card accents (soft tinted backgrounds, dark-enough text accent color)  -->
 	<Color x:Key="StatBlue">#2B6CB0</Color>
 	<Color x:Key="StatBlueBg">#E5EEF8</Color>
-	<Color x:Key="StatGreen">#6BD1E1</Color>
-	<Color x:Key="StatGreenBg">#E3F6EC</Color>
+	<Color x:Key="StatGreen">#15803D</Color>
+	<Color x:Key="StatGreenBg">#DCFCE7</Color>
 	<Color x:Key="StatTeal">#0E8C8C</Color>
 	<Color x:Key="StatTealBg">#DEF1F1</Color>
 	<Color x:Key="StatOrange">#D98E2B</Color>
