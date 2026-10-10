@@ -10,7 +10,7 @@ public sealed class PatientMkb10CodeSaveModel
     public bool IsPrimary { get; set; }
     public string Severity { get; set; } = string.Empty;
     public string? ClinicalDescription { get; set; }
-    public DiagnosisStatus Status { get; set; }
+    public PatientMkb10AssignmentStatus Status { get; set; }
 }
 
 public sealed class PatientDocumentSaveModel
