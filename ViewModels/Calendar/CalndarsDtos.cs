@@ -9,7 +9,6 @@ public enum CalendarSection
     Patients,
     Appointments,
     Encounters,
-    Cycles,
     Statistics
 }
 
