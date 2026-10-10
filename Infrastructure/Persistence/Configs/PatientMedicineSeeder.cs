@@ -32,7 +32,21 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
             await context.SaveChangesAsync(ct);
 
         if(await context.PatientMedicines.AnyAsync(ct))
+        {
+            // Seed-managed demo assignments have zero on the patient card;
+            // encounter administrations are stored separately per visit.
+            var demoAssignments = await context.PatientMedicines
+                .Where(x => x.EncounterId == null && (
+                    (x.PatientId == SeedIds.Patient1 && (x.MedicineId == SeedIds.Med5 || x.MedicineId == SeedIds.Med6))
+                    || (x.PatientId == SeedIds.Patient2 && x.MedicineId == SeedIds.Med7)
+                    || (x.PatientId == SeedIds.Patient3 && x.MedicineId == SeedIds.Med9)))
+                .ToListAsync(ct);
+            foreach(var assignment in demoAssignments)
+                assignment.Quantity = 0m;
+            if(demoAssignments.Count > 0)
+                await context.SaveChangesAsync(ct);
             return;
+        }
 
         var patientMedicines = new List<PatientMedicine>
         {
@@ -46,7 +60,8 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 DosesFrequency = DosesFrequency.TwiceDaily,
                 Dosage = "1 таблета од 850mg",
                 Notes = "Да се зема строго за време на оброк.",
-                IsActive = true
+                IsActive = true,
+                Quantity = 0m
             },
             new()
             {
