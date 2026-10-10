@@ -809,6 +809,31 @@
 								</VerticalStackLayout>
 							</Border>
 							<!--  История на дијагнози  -->
+							<!-- Историја на скорови од картонот, одделно од скоровите за тековниот преглед. -->
+							<controls:CrudSectionHeader
+								Title="ИСТОРИЈА НА СКОРОВИ"
+								IsVisible="{Binding HasPatientContext}"
+								LineColor="{StaticResource Gray600}"
+								Style="{StaticResource SectionHeaderStyle}" />
+							<VerticalStackLayout
+								BindableLayout.ItemsSource="{Binding PatientScoreHistory}"
+								IsVisible="{Binding HasPatientContext}"
+								Spacing="6">
+								<BindableLayout.EmptyView>
+									<Label Padding="10,8" FontSize="11" Text="Нема претходно внесени скорови." TextColor="{StaticResource SparkTextSecondary}" />
+								</BindableLayout.EmptyView>
+								<BindableLayout.ItemTemplate>
+									<DataTemplate x:DataType="entities:PatientScore">
+										<Border Padding="10,8" BackgroundColor="{StaticResource SparkContentBackground}" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 10" StrokeThickness="1">
+											<VerticalStackLayout Spacing="2">
+												<Label FontAttributes="Bold" FontSize="12" Text="{Binding ScoreText, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
+												<Label FontSize="11" Text="{Binding RecordedAt, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkTextSecondary}" />
+											</VerticalStackLayout>
+										</Border>
+									</DataTemplate>
+								</BindableLayout.ItemTemplate>
+							</VerticalStackLayout>
+
 							<controls:CrudSectionHeader
 								Title="ИСТОРИЈА НА MKB-10"
 								IsVisible="{Binding HasPatientContext}"
