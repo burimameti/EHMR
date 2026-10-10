@@ -92,7 +92,7 @@
 	<Color x:Key="SparkBadgeNeutralBg">#EBEFF3</Color>
 	<Color x:Key="SparkBadgeNeutralBgSelected">#2AEBE7</Color>
 	<Color x:Key="SparkBadgeNeutralText">#556072</Color>
-	<Color x:Key="SparkBadgeNeutralTextSelected">#FFFFFF</Color>
+	<Color x:Key="SparkBadgeNeutralTextSelected">#0F172A</Color>
 
 	<!--
 		Danger — овие три се користеа на 5 места (RestorePage, MbkImportExportPage,
