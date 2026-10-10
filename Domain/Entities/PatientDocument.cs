@@ -20,17 +20,7 @@ public class PatientDocument : BaseEntity
     {
         get; set;
     }
-
-    public Guid? TherapyCycleId
-    {
-        get; set;
-    }
-    public TherapyCycle? TherapyCycle
-    {
-        get; set;
-    }
-
-    public PatientDocumentType DocumentType
+public PatientDocumentType DocumentType
     {
         get; set;
     }
