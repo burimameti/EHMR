@@ -268,7 +268,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
         if(indexSelected<0 || indexSelected>=available.Count)
             return;
 
-        await AddMedicineAsync(available[indexSelected].Medicine);
+        await AddMedicine(available[indexSelected].Medicine);
     }
 
     private void LoadCurrentMedicinesForEncounter()
