@@ -31,7 +31,6 @@ namespace EHMR.Domain.Interfaces
 
         /// Opens a popup to create a brand-new therapy cycle. Returns null if the user cancels.
         /// prefillNotes lets you pre-fill the "Notes" field with whatever the user searched for.
-        Task<TherapyCycle?> ShowCreateTherapyCyclePopupAsync(
-         Guid patientId, string? prefillNotes);
+
     }
 }
