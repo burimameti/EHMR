@@ -36,7 +36,7 @@
 					FontAttributes="Bold"
 					FontSize="18"
 					Text="EHMR"
-					TextColor="White"
+					TextColor="#FFFFFF"
 					VerticalOptions="Center" />
 			</Grid>
 			<BoxView
@@ -358,7 +358,7 @@
 							FontAttributes="Bold"
 							FontSize="12.5"
 							Text="{Binding UserName}"
-							TextColor="White" />
+							TextColor="#FFFFFF" />
 						<Label
 							FontSize="10.5"
 							Text="{Binding UserRole}"
