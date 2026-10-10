@@ -169,9 +169,6 @@ namespace EHMR
             services.AddScoped<IEntitySeeder, FunctionalCoverageSeeder>();
             services.AddScoped<IEntitySeeder, TherapyProtocolSeeder>();
             //  services.AddScoped<IEntitySeeder, TherapyProtocolMedicineSeeder>();
-
-            services.AddScoped<IEntitySeeder, TherapyCycleSeeder>();
-
             services.AddScoped<IEntitySeeder, PrescriptionSeeder>();
             services.AddSingleton<IReportProvider, MissedTherapiesReportProvider>();
 
