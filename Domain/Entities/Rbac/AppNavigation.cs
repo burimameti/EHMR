@@ -125,26 +125,6 @@ public static class AppNavigation
             ]
         },
 
-        //// ==========================
-        //// THERAPY
-        //// ==========================
-        //new()
-        //{
-        //    //GroupTitle = "Терапии",
-        //    //Module = Modules.Therapy,
-        //    //Icon = new IconDefinition { Glyph = "\uf0c3", Font = IconFontType.FontAwesomeSolid }, // Flask / Vial
-        //    //Items =
-        //    //[
-        //    //    new()
-        //    //    {
-        //            GroupTitle = "Терапии",
-        //            Route = AppRoutes.Therapy.List,
-        //            Module = Modules.Therapy,
-        //            Icon = new IconDefinition { Glyph = "\uf1b1", Font = IconFontType.FontAwesomeSolid } // Cubes
-        //    //    }
-        //    //]
-        //},
-
         // ==========================
         // PROTOCOLS
         // ==========================
@@ -365,7 +345,6 @@ public static class AppNavigation
             [AppRoutes.Prescriptions.Detail]=AppRoutes.Prescriptions.List,
             [AppRoutes.Reports.Detail]=AppRoutes.Reports.List,
             [AppRoutes.Users.Detail]=AppRoutes.Admin.AdminPanel,
-            [AppRoutes.Therapy.Detail]=AppRoutes.Therapy.List,
             [AppRoutes.Protocols.Detail]=AppRoutes.Protocols.List,
             [AppRoutes.Encounters.Create]=AppRoutes.Encounters.List,
             [AppRoutes.Encounters.Edit]=AppRoutes.Encounters.List,
