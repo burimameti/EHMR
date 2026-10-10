@@ -20,9 +20,6 @@ public partial class DashboardState : ObservableObject
     // =====================================================
     [ObservableProperty] private int totalPatients;
     [ObservableProperty] private int activeTherapies;
-    [ObservableProperty] private int overdueCycles;
-    [ObservableProperty] private int missedCycles;
-    [ObservableProperty] private int completedCycles;
     [ObservableProperty] private int pendingTasks;
     [ObservableProperty] private int unreadNotifications;
 
