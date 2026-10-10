@@ -76,7 +76,7 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
             .AsNoTracking()
             .Where(x => x.PatientId==patientId &&
                 (focusEncounter == null
-                    ? x.EncounterId==Guid.Empty
+                    ? !x.EncounterId.HasValue
                     : x.EncounterId==focusEncounter.Id))
             .OrderByDescending(x => x.RecordedAt)
             .Take(5)
