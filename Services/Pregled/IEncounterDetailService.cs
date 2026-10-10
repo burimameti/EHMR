@@ -26,7 +26,8 @@ public interface IEncounterDetailService
         List<PatientMedicine> medicines,
         List<Guid> deletedMedicineIds,
         string? scoreText = null,
-        DateTime? nextFollowUpDate = null); 
+        DateTime? nextFollowUpDate = null,
+        List<PatientScore>? encounterScores = null); 
 
     Task UpdateEncounterClinicalData(
         Guid encounterId,
