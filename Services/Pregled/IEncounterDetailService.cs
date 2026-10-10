@@ -42,7 +42,7 @@ public interface IEncounterDetailService
     Task<Appointment?> GetAppointment(Guid id);
     Task<IEnumerable<Appointment?>> GetAppointments(Guid appointmentId);
     Task<Appointment> CreateAppointment(Appointment appointment);
-    Task<List<Mkb10Code>> SearchDiagnoses(
+    Task<List<Mkb10Code>> SearchMkb10Codes(
         string query,
         CancellationToken token,
         string? codeSection = null,

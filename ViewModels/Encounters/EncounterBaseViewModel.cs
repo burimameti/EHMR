@@ -1231,7 +1231,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         {
             try
             {
-                var result=await EncounterService.SearchDiagnoses(
+                var result=await EncounterService.SearchMkb10Codes(
                     MkbCodeSearchText,
                     SearchCts.Token,
                     SelectedMkbSection,

@@ -322,7 +322,7 @@ public class EncounterDetailService : IEncounterDetailService
 
     // ── Search ───────────────────────────────────────────────────────────────
 
-    public async Task<List<Mkb10Code>> SearchDiagnoses(
+    public async Task<List<Mkb10Code>> SearchMkb10Codes(
         string query,
         CancellationToken token,
         string? codeSection = null,

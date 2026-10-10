@@ -326,10 +326,10 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         OnPatientSearchTextChanged(PatientSearchText);
 
     partial void OnDiagnosisSearchTextChanged(string value) =>
-        _=SearchDiagnosesAsync(value, DiagnosisDescriptionSearchText);
+        _=SearchMkb10CodesAsync(value, DiagnosisDescriptionSearchText);
 
     partial void OnDiagnosisDescriptionSearchTextChanged(string value) =>
-        _=SearchDiagnosesAsync(DiagnosisSearchText, value);
+        _=SearchMkb10CodesAsync(DiagnosisSearchText, value);
 
 
     partial void OnPreferredAppointmentDateChanged(DateTime value)
@@ -425,7 +425,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         if(!wasSelected)
             section.IsSelected=true;
 
-        await SearchDiagnosesAsync(DiagnosisSearchText, DiagnosisDescriptionSearchText);
+        await SearchMkb10CodesAsync(DiagnosisSearchText, DiagnosisDescriptionSearchText);
     }
 
     // =========================
@@ -646,7 +646,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     // internally from the On...Changed partials and SelectMkbSection.
     // =========================
 
-    private async Task SearchDiagnosesAsync(string codeQuery, string descriptionQuery)
+    private async Task SearchMkb10CodesAsync(string codeQuery, string descriptionQuery)
     {
         var hasCode = !string.IsNullOrWhiteSpace(codeQuery);
         var hasDesc = !string.IsNullOrWhiteSpace(descriptionQuery);
@@ -673,26 +673,26 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
             if(hasCode)
             {
-                var byCode = await _service.SearchDiagnoses(codeQuery.Trim(), token);
+                var byCode = await _service.SearchMkb10Codes(codeQuery.Trim(), token);
                 result=result.UnionBy(byCode, x => x.Id).ToList();
             }
 
             if(hasDesc)
             {
                 var term = MacedonianTransliterator.ToCyrillic(descriptionQuery.Trim());
-                var byDesc = await _service.SearchDiagnoses(term, token);
+                var byDesc = await _service.SearchMkb10Codes(term, token);
                 result=result.UnionBy(byDesc, x => x.Id).ToList();
 
                 if(!string.Equals(term, descriptionQuery.Trim(), StringComparison.OrdinalIgnoreCase))
                 {
-                    var byRaw = await _service.SearchDiagnoses(descriptionQuery.Trim(), token);
+                    var byRaw = await _service.SearchMkb10Codes(descriptionQuery.Trim(), token);
                     result=result.UnionBy(byRaw, x => x.Id).ToList();
                 }
             }
 
             if(!hasCode&&!hasDesc&&hasSection)
             {
-                var bySection = await _service.SearchDiagnoses(SelectedMkbSection, token);
+                var bySection = await _service.SearchMkb10Codes(SelectedMkbSection, token);
                 result=result.UnionBy(bySection, x => x.Id).ToList();
             }
 

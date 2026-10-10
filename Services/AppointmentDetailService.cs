@@ -12,7 +12,7 @@ namespace EHMR.Services
         Task<AppointmentDetailDto> GetAppointmentContext();
         Task<PatientContextDto> GetPatientContext(Guid patientId);
         Task UpdateAppointmentStatus(Guid appointmentId, AppointmentStatus newStatus);
-        Task<List<Mkb10Code>> SearchDiagnoses(string query, CancellationToken token);
+        Task<List<Mkb10Code>> SearchMkb10Codes(string query, CancellationToken token);
         Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30);
         Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, List<PatientMedicine> medicines);
         Task AutoCloseStaleAppointmentsAsync();
@@ -225,7 +225,7 @@ return new PatientContextDto
                 .Take(30)
                 .ToListAsync(token);
         }
-        public async Task<List<Mkb10Code>> SearchDiagnoses(string query, CancellationToken token)
+        public async Task<List<Mkb10Code>> SearchMkb10Codes(string query, CancellationToken token)
         {
             await using var db = await _factory.CreateDbContextAsync();
 
