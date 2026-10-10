@@ -114,7 +114,6 @@ public class Patient : BaseEntity
     /// Patient appointments.
     /// </summary>
     public ICollection<Appointment> Appointments { get; set; } = [];
-    public ICollection<TherapyCycle> TherapyCycles { get; set; } = [];
     public ICollection<Prescription> Prescriptions { get; set; } = [];
     public ICollection<Encounter> Encounters { get; set; } = [];
     public ICollection<PatientScore> Scores { get; set; } = [];
