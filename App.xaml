@@ -7,6 +7,14 @@
 	xmlns:local="clr-namespace:EHMR">
 	<Application.Resources>
 		<ResourceDictionary>
+			<!-- Shared table typography used by editable grids and patient tables. -->
+			<Style x:Key="TableHeaderLabelStyle" TargetType="Label">
+				<Setter Property="FontAttributes" Value="Bold" />
+				<Setter Property="FontSize" Value="9" />
+				<Setter Property="LineBreakMode" Value="TailTruncation" />
+				<Setter Property="TextColor" Value="#64748B" />
+				<Setter Property="VerticalOptions" Value="Center" />
+			</Style>
 			<!--<converters:NotificationLevelToColorConverter x:Key="NotificationLevelToColorConverter" />-->
 			<converters:DoctorStatusToBackgroundConverter x:Key="DoctorStatusToBackgroundConverter" />
 			<converters:DashboardStateToTone x:Key="DashboardStateToTone" />
