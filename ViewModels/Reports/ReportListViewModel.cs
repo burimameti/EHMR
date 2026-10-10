@@ -71,7 +71,6 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         get;
     } =
     [
-        new() { Type = ReportType.MissedTherapies,      Label = "Пропуштени терапии" },
         new() { Type = ReportType.Auditing,              Label = "Аудит" },
         new() { Type = ReportType.AppointmentStatuses,   Label = "Статус на термини" },
         new() { Type = ReportType.Patients,               Label = "Пациенти" },
@@ -133,7 +132,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         _dbFactory=dbFactory;
         _autocomplete=autocomplete;
         _reportExportService=reportExportService;
-        _selectedReportType=ReportTypes.First(x => x.Type==ReportType.MissedTherapies);
+        _selectedReportType=ReportTypes.First(x => x.Type==ReportType.AppointmentStatuses);
         _statusFilter=new ReportStatusOption { Label="ИТНО / СИТЕ" };
         _navigationService=navigationService;
 
@@ -329,11 +328,6 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
     {
         switch(type)
         {
-            case ReportType.MissedTherapies:
-                Col1Header="ПАЦИЕНТ(Име/Презиме)"; Col2Header="ПРОТОКОЛ"; Col3Header="ЦИКЛУС"; Col4Header="ИСТЕЧЕН РОК"; Col5Header="ОБРАЗЛОЖЕНИЕ";
-                Metric1Title="Пропуштени Протоколи"; Metric2Title="Неразјаснети"; Metric3Title="Легитимирана Доследност";
-                break;
-
             case ReportType.Auditing:
                 Col1Header="КОРИСНИК"; Col2Header="АКЦИЈА / НАСТАН"; Col3Header="МОДУЛ"; Col4Header="ВРЕМЕ"; Col5Header="ДЕТАЛИ ОД АУДИТ ПАТЕКА";
                 Metric1Title="Вкупно активности"; Metric2Title="Безбедносни Критични"; Metric3Title="Системски Статус";
@@ -382,12 +376,6 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
             {
                 switch(SelectedReportType.Type)
                 {
-                    case ReportType.MissedTherapies:
-                        System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loading missed therapies...");
-                        rows=await LoadMissedTherapiesAsync(db, startRange, endRange, SelectedPatientGuid);
-                        System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loaded {rows.Count} missed therapies");
-                        break;
-
                     case ReportType.Auditing:
                         System.Diagnostics.Debug.WriteLine($"[ReportListViewModel] Loading audit logs...");
                         rows=await LoadAuditingAsync(db, startRange, endRange, SelectedPatientGuid);
@@ -468,29 +456,6 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
         }
     }
 
-
-    private static async Task<List<GenericReportRow>> LoadMissedTherapiesAsync(
-        DesktopTherapyDbContext db, DateTime startRange, DateTime endRange, Guid? patientId)
-    {
-        var data = await db.TherapyCycles
-            .Include(p => p.Patient)
-            .AsNoTracking()
-            .Where(c => c.Status==TherapyStatus.Missed
-                        &&c.StartDate>=startRange&&c.EndDate<=endRange
-                        &&(!patientId.HasValue||c.PatientId==patientId.Value))
-            .OrderByDescending(c => c.EndDate)
-            .ToListAsync();
-
-        return data.Select(c => new GenericReportRow
-        {
-            PrimaryHeader=c.Patient.LastName,
-            SecondaryHeader=c.Patient.FirstName,
-            HighlightValue=$"Ц-#{c.TherapyCyleNumber}",
-            DateValue=c.StartDate?.ToString("dd.MM.yyyy"),
-            InformationalText=string.IsNullOrEmpty(c.Notes) ? "Нема внесено причина од реуматолог!" : c.Notes,
-            IsAlertSeverity=string.IsNullOrEmpty(c.Notes)
-        }).ToList();
-    }
 
     private static async Task<List<GenericReportRow>> LoadAuditingAsync(
         DesktopTherapyDbContext db, DateTime startRange, DateTime endRange, Guid? patientId)
@@ -1149,7 +1114,6 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
 
 public enum ReportType
 {
-    MissedTherapies,
     Auditing,
     AppointmentStatuses,
     Patients,
