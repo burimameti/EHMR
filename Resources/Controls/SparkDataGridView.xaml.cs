@@ -222,8 +222,8 @@ namespace EHMR.Resources.Controls
         private static Color BadgeDangerBg => ResolveColorResource("SparkBadgeDangerBg", "#FEF2F2");
         private static Color BadgeDangerText => ResolveColorResource("SparkBadgeDangerText", "#DC2626");
 
-        private static Color HyperlinkColor => ResolveColorResource("BrandAccent", "#0D9488");
-        private static Color AccentColor => ResolveColorResource("BrandAccent", "#0D9488");
+        private static Color HyperlinkColor => ResolveColorResource("BrandAccent", "#99D9EA");
+        private static Color AccentColor => ResolveColorResource("BrandAccent", "#99D9EA");
         private static Color AccentColorMuted => ResolveColorResource("SparkTextSecondary", "#64748B");
         private readonly Dictionary<string, bool> _sortAscending = new(StringComparer.OrdinalIgnoreCase);
 
@@ -929,13 +929,13 @@ namespace EHMR.Resources.Controls
 
         #endregion
 
-        private static Color PagerActiveBg => ResolveColorResource("BrandAccent", "#0D9488");
+        private static Color PagerActiveBg => ResolveColorResource("BrandAccent", "#99D9EA");
         private static Color PagerActiveText => ResolveColorResource("SparkBackground", "#FFFFFF");
         private static Color PagerInactiveText => ResolveColorResource("SparkTextSecondary", "#64748B");
         public static Color PagerBackground => ResolveColorResource("SparkSurfaceAlt", "#F8FAFC");
         public static Color PagerBorder => ResolveColorResource("SparkBorder", "#CBD5E1");
         public static Color PagerBorderColor => ResolveColorResource("SparkBorder", "#CBD5E1");
-        public static Color PagerActiveBackground => ResolveColorResource("BrandAccent", "#0D9488");
+        public static Color PagerActiveBackground => ResolveColorResource("BrandAccent", "#99D9EA");
         public static Color PagerActiveForeground => Colors.White;
         public static Color PagerForeground => ResolveColorResource("SparkTextSecondary", "#64748B");
         public static Color PagerDisabledForeground => Color.FromArgb("#CBD5E1");

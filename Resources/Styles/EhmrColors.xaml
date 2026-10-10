@@ -5,13 +5,13 @@
 	<!--  BRAND  -->
 	<!--  =========================================================  -->
 
-	<Color x:Key="Primary">#0D9488</Color>
+	<Color x:Key="Primary">#99D9EA</Color>
 	<Color x:Key="PrimaryHover">#21D6D2</Color>
 	<Color x:Key="PrimaryPressed">#17B8B4</Color>
 	<Color x:Key="PrimaryLight">#D9FBFA</Color>
 
 
-	<Color x:Key="Accent">#0D9488</Color>
+	<Color x:Key="Accent">#99D9EA</Color>
 
 	<!--  =========================================================  -->
 	<!--  PAGE BACKGROUNDS  -->
@@ -160,7 +160,7 @@
 
 	<Color x:Key="BorderStrong">#72859A</Color>
 
-	<Color x:Key="BorderFocus">#0D9488</Color>
+	<Color x:Key="BorderFocus">#99D9EA</Color>
 
 	<!--  =========================================================  -->
 	<!--  DIVIDERS  -->

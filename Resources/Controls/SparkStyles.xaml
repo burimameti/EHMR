@@ -7,7 +7,7 @@
 	<Color x:Key="SparkSidebarBg">#3B4A56</Color>
 	<!--  was #32404D — slightly deeper, reads as "premium dark" not "washed navy"  -->
 	<Color x:Key="SparkSidebarBgHover">#465762</Color>
-	<Color x:Key="SparkSidebarActiveBg">#0D9488</Color>
+	<Color x:Key="SparkSidebarActiveBg">#99D9EA</Color>
 	<!--  aligned to the refined accent teal below, was a mismatched #4CC3D9  -->
 	<Color x:Key="SparkSidebarText">#96A5B5</Color>
 	<Color x:Key="SparkSidebarTextActive">#FFFFFF</Color>
@@ -34,7 +34,7 @@
 	<!--  Tailwind slate-500, replaces the slightly muddy #718096  -->
 	<Color x:Key="SparkTextMuted">#9AA6AD</Color>
 	<!--  slate-400  -->
-	<Color x:Key="SparkLink">#0D9488</Color>
+	<Color x:Key="SparkLink">#99D9EA</Color>
 	<!--  cleaner, more standard SaaS link blue than #2F8FE0  -->
 
 	<!--  ============================================================  -->
@@ -45,8 +45,8 @@
 	<!--  ============================================================  -->
 	<!--  BUTTONS & INTERACTIVE ELEMENTS  -->
 	<!--  ============================================================  -->
-	<Color x:Key="SparkButtonPrimaryBg">#0D9488</Color>
-	<Color x:Key="SparkButtonPrimaryBgPressed">#0D9488</Color>
+	<Color x:Key="SparkButtonPrimaryBg">#99D9EA</Color>
+	<Color x:Key="SparkButtonPrimaryBgPressed">#99D9EA</Color>
 	<Color x:Key="SparkButtonPrimaryText">#0F172A</Color>
 
 	<Color x:Key="SparkButtonSecondaryBg">#FFFFFF</Color>
@@ -59,7 +59,7 @@
 	<!--  TABS CONFIGURATION  -->
 	<!--  ============================================================  -->
 	<Color x:Key="SparkTabActiveBg">#F0F7F5</Color>
-	<Color x:Key="SparkTabActiveBorder">#0D9488</Color>
+	<Color x:Key="SparkTabActiveBorder">#99D9EA</Color>
 	<Color x:Key="SparkTabActiveText">#0F172A</Color>
 	<Color x:Key="SparkTabInactiveText">#7C8798</Color>
 	<Color x:Key="SparkTabHoverBg">#F1F5F8</Color>
@@ -90,7 +90,7 @@
 	<Color x:Key="SparkStatusNeutralBg">#E8EBF0</Color>
 	<Color x:Key="SparkStatusNeutralText">#52586B</Color>
 	<Color x:Key="SparkBadgeNeutralBg">#EBEFF3</Color>
-	<Color x:Key="SparkBadgeNeutralBgSelected">{StaticResource BrandAccent}</Color>
+	<Color x:Key="SparkBadgeNeutralBgSelected">#99D9EA</Color>
 	<Color x:Key="SparkBadgeNeutralText">#556072</Color>
 	<Color x:Key="SparkBadgeNeutralTextSelected">#FFFFFF</Color>
 

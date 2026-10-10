@@ -276,9 +276,9 @@ public partial class FFButton : ContentView
 
         if(IsBlue)
         {
-            BackgroundColorEx=ResolveColorResource("BrandAccent", "#0D9488");
+            BackgroundColorEx=ResolveColorResource("BrandAccent", "#99D9EA");
             TextColorEx=Colors.White;
-            BorderColor=ResolveColorResource("BrandAccent", "#0D9488");
+            BorderColor=ResolveColorResource("BrandAccent", "#99D9EA");
             BorderThickness=0;
             return;
         }
@@ -287,25 +287,25 @@ public partial class FFButton : ContentView
         {
             // Main action: Save, Create, Confirm
             case FFButtonKind.Primary:
-                BackgroundColorEx=ResolveColorResource("BrandAccent", "#0D9488");
+                BackgroundColorEx=ResolveColorResource("BrandAccent", "#39A3A3");
                 TextColorEx=Colors.White;
-                BorderColor=ResolveColorResource("BrandAccent", "#0D9488");
+                BorderColor=ResolveColorResource("BrandAccent", "#99D9EA");
                 BorderThickness=0;
                 break;
 
             // Supporting action: Edit, Preview, Back
             case FFButtonKind.Secondary:
-                BackgroundColorEx=Color.FromArgb("#475569");
+                BackgroundColorEx=ResolveColorResource("BrandAccent", "#4596A3");
                 TextColorEx=Colors.White;
-                BorderColor=Color.FromArgb("#475569");
+                BorderColor=Color.FromArgb("#2BC9B4");
                 BorderThickness=0;
                 break;
 
             // Positive clinical action: Complete, Approve
             case FFButtonKind.Green:
-                BackgroundColorEx=ResolveColorResource("BrandAccent", "#0D9488");
+                BackgroundColorEx=ResolveColorResource("BrandAccent", "#B5E61D");
                 TextColorEx=Colors.White;
-                BorderColor=ResolveColorResource("BrandAccent", "#0D9488");
+                BorderColor=ResolveColorResource("BrandAccent", "#E3E689");
                 BorderThickness=0;
                 break;
 

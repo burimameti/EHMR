@@ -76,7 +76,7 @@ public partial class BackupDetailsViewModel : ObservableObject
         if (Application.Current?.Resources.TryGetValue("BrandAccent", out var value) == true && value is Color color)
             return color;
 
-        return Color.FromArgb("#0D9488");
+        return Color.FromArgb("#99D9EA");
     }
 
     [RelayCommand]

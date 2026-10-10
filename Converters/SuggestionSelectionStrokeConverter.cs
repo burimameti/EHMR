@@ -21,7 +21,7 @@ public class EncounterStatusChipBackgroundConverter : IValueConverter
         return status switch
         {
             // Active / in-flight → vivid teal
-            EncounterStatus.Scheduled => Color.FromArgb("#0D9488"),   // teal-600
+            EncounterStatus.Scheduled => Color.FromArgb("#99D9EA"),   // teal-600
            // EncounterStatus.CheckedIn => Color.FromArgb("#0284C7"),   // sky-600
             EncounterStatus.InProgress => Color.FromArgb("#2563EB"),   // blue-600
 

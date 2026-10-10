@@ -9,7 +9,7 @@
 	<Color x:Key="SparkedDarkCard">#1A2436</Color>
 
 	<Color x:Key="Teal400">#2DD4BF</Color>
-	<Color x:Key="Teal600">#0D9488</Color>
+	<Color x:Key="Teal600">#99D9EA</Color>
 	<Color x:Key="Teal50">#F0FDFA</Color>
 	<Color x:Key="Teal100">#CCFBF1</Color>
 
@@ -201,8 +201,8 @@
 	<Color x:Key="LoginText">#FFFFFF</Color>
 	<Color x:Key="LoginMuted">#9CA3AF</Color>
 
-	<Color x:Key="LoginPrimary">{StaticResource BrandAccent}</Color>
-	<Color x:Key="LoginAccent">{StaticResource BrandAccent}</Color>
+	<Color x:Key="LoginPrimary">#99D9EA</Color>
+	<Color x:Key="LoginAccent">#99D9EA</Color>
 
 	<Color x:Key="LoginBorder">#374151</Color>
 	<Color x:Key="LoginCardAlt">#111827</Color>
