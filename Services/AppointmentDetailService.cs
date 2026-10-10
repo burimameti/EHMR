@@ -139,13 +139,13 @@ var patients = await db.Patients
             {
                 Appointment=appointment,
                 LinkedEncounter=encounter,
-                Diagnoses=diagnoses,
+                Mkb10Assignments=diagnoses,
                 Patients=patients,
                 Doctors=doctors,
                 PreviousAppointment=currentIndex>0 ? history[currentIndex-1] : null,
                 NextAppointment=currentIndex<history.Count-1 ? history[currentIndex+1] : null,
                 TotalAppointments=history.Count,
-                TotalDiagnoses=diagnoses.Count,
+                TotalMkb10Assignments=diagnoses.Count,
             };
         }
 
@@ -204,7 +204,7 @@ var patients = await db.Patients
 return new PatientContextDto
             {
                 Appointments=appointments,
-                Diagnoses=diagnoses,
+                Mkb10Assignments=diagnoses,
                 PatientMedicines=patientMedicines
             };
         }
