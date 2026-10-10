@@ -25,7 +25,7 @@
                         TextColorEx="White"
                         Command="{Binding StartBackupCommand}"
                         ContentPadding="18,0"
-                        HeightRequestEx="45"
+                        HeightRequestEx="40"
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
                         Text="Стартувај бекап" />
                 </Grid>
