@@ -62,9 +62,9 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
             .Include(x => x.Medicine)
             .Include(x => x.ApplicationRegime)
             .Where(x => x.PatientId==patientId &&
-                (focusEncounter != null
-                    || x.EncounterId==focusEncounter.Id
-                    || (!x.EncounterId.HasValue && x.IsActive)))
+                (focusEncounter is null
+                    ? !x.EncounterId.HasValue
+                    : x.EncounterId==focusEncounter.Id || (!x.EncounterId.HasValue && x.IsActive)))
             .OrderByDescending(x => x.IsActive)
             .ThenByDescending(x => x.CreatedAt)
             .ToListAsync();
@@ -75,7 +75,9 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
         var scores=await db.PatientScores
             .AsNoTracking()
             .Where(x => x.PatientId==patientId &&
-                (focusEncounter !=null || x.EncounterId==focusEncounter.Id))
+                (focusEncounter is null
+                    ? x.EncounterId==Guid.Empty
+                    : x.EncounterId==focusEncounter.Id))
             .OrderByDescending(x => x.RecordedAt)
             .Take(5)
             .ToListAsync();
