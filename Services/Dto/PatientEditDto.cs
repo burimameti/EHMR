@@ -122,7 +122,7 @@ namespace EHMR.Services.Dto
     }
 
     // =====================================================
-    // DIAGNOSIS
+    // PATIENT MKB-10 ASSIGNMENTS
     // =====================================================
 
     public class PatientMkb10CodeDto
