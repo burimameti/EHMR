@@ -13,7 +13,8 @@ namespace EHMR.Services
         Task<PatientContextDto> GetPatientContext(Guid patientId);
         Task UpdateAppointmentStatus(Guid appointmentId, AppointmentStatus newStatus);
         Task<List<Mkb10Code>> SearchDiagnoses(string query, CancellationToken token);
-        Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30);        Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, List<PatientMedicine> medicines);
+        Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30);
+        Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, List<PatientMedicine> medicines);
         Task AutoCloseStaleAppointmentsAsync();
     }
 
@@ -200,19 +201,12 @@ var patients = await db.Patients
                 .Include(x => x.Encounter)
                 .OrderByDescending(x => x.DiagnosedAt)
                 .ToListAsync();
-
-            var cycles = await db.TherapyCycles
-                .AsNoTracking()
-                .Where(x => x.PatientId==patientId)
-                .Include(x => x.Appointments)
-                .OrderByDescending(x => x.TherapyCyleNumber)
-                .ToListAsync();
-
-            return new PatientContextDto
+return new PatientContextDto
             {
                 Appointments=appointments,
                 Diagnoses=diagnoses,
-                PatientMedicines=patientMedicines,};
+                PatientMedicines=patientMedicines
+            };
         }
         public async Task<List<Medicine>> SearchMedicines(string query, CancellationToken token)
         {
