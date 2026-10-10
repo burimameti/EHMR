@@ -100,7 +100,7 @@
 			</Style>
 			<!--  ═══ ШАБЛОНИ ЗА ИСТОРИЈА НА ПАЦИЕНТОТ ═══  -->
 
-			<DataTemplate x:Key="PatientPatientMkb10CodeRowTemplate" x:DataType="dto:PatientMkb10CodeDto">
+			<DataTemplate x:Key="PatientMkb10CodeRowTemplate" x:DataType="dto:PatientMkb10CodeDto">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
 						<Label
@@ -779,7 +779,7 @@
 															HorizontalOptions="Fill"
 															Label="Пребарување по опис"
 															MinimumWidthRequest="0"
-															Placeholder="Опис на дијагноза"
+															Placeholder="Опис на MKB-10 код"
 															Text="{Binding MkbDescriptionSearchText, Mode=TwoWay}" />
 													</VerticalStackLayout>
 
@@ -1452,12 +1452,12 @@
 										Style="{StaticResource CrudFormHistoryCardStyle}"
 										Variant="Appointment" />
 									<controls:SparkExpandableCard
-										Title="Дијагнози"
+										Title="MKB-10 кодови"
 										Margin="0,0,0,10"
-										EmptyViewText="Нема евидентирани дијагнози."
+										EmptyViewText="Нема доделени MKB-10 кодови."
 										FlexLayout.Basis="280"
 										FlexLayout.Grow="1"
-										ItemTemplate="{StaticResource PatientPatientMkb10CodeRowTemplate}"
+										ItemTemplate="{StaticResource PatientMkb10CodeRowTemplate}"
 										ItemsSource="{Binding Mkb10History}"
 										Style="{StaticResource CrudFormHistoryCardStyle}"
 										Variant="Diagnosis" />

@@ -283,7 +283,7 @@ public bool CanSavePatientForm => CanSavePatient;
 
     // ═══════════════════════════════════════════ ИСТОРИЈА НА ПАЦИЕНТОТ ═══════════════════════════════════════════
     // Прикажувањето е само за читање, па се вчитуваат директно како ентитети —
-    // PatientDto носи само дијагнози, лекови и документи.
+    // PatientDto носи MKB-10 доделувања, лекови и документи.
 
     [ObservableProperty] private ObservableCollection<PatientMkb10CodeDto> mkb10History = new();
     [ObservableProperty] private ObservableCollection<Encounter> encounterHistory = new();
