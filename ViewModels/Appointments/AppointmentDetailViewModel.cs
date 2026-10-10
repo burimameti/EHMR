@@ -161,8 +161,8 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     // DIAGNOSIS / MKB SEARCH — property names match EncounterBaseViewModel 1:1
     // =========================
 
-    [ObservableProperty] private string diagnosisSearchText = string.Empty;
-    [ObservableProperty] private string diagnosisDescriptionSearchText = string.Empty;
+    [ObservableProperty] private string mkb10CodeSearchText = string.Empty;
+    [ObservableProperty] private string mkb10DescriptionSearchText = string.Empty;
     [ObservableProperty] private bool showMkb10Dropdown;
     [ObservableProperty] private ObservableCollection<Mkb10Code> availableMkb10Codes = new();
     [ObservableProperty] private ObservableCollection<MkbAlphabetSection> mkbAlphabetSections = new();
