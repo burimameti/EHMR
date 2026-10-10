@@ -24,19 +24,8 @@ public class Appointment : BaseEntity
     public Doctor? Doctor
     {
         get; set;
-    }
-
-    public Guid? TherapyCycleId
-    {
-        get; set;
-    }
-
-    public TherapyCycle? TherapyCycle
-    {
-        get; set;
-    }
-
-    public AppointmentStatus Status
+    } 
+public AppointmentStatus Status
     {
         get; set;
     }
