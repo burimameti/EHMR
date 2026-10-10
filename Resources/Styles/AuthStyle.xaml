@@ -61,7 +61,7 @@
 	<!--  =====================================================  -->
 
 	<Color x:Key="SparkTabActiveBg">#E7F7FA</Color>
-	<Color x:Key="SparkTabActiveBorder">#21B6C4</Color>
+	<Color x:Key="SparkTabActiveBorder">#2AEBE7</Color>
 	<Color x:Key="SparkTabActiveText">#16374A</Color>
 	<Color x:Key="SparkTabInactiveText">#7C8798</Color>
 	<Color x:Key="SparkTabHoverBg">#F1F5F8</Color>
@@ -117,7 +117,7 @@
 	<Color x:Key="SparkBadgeDangerText">#E0554F</Color>
 
 	<Color x:Key="SparkBadgeNeutralBg">#EDF1F5</Color>
-	<Color x:Key="SparkBadgeNeutralSelected">#21B6C4</Color>
+	<Color x:Key="SparkBadgeNeutralSelected">#2AEBE7</Color>
 
 
 
@@ -201,8 +201,8 @@
 	<Color x:Key="LoginText">#FFFFFF</Color>
 	<Color x:Key="LoginMuted">#9CA3AF</Color>
 
-	<Color x:Key="LoginPrimary">#99D9EA</Color>
-	<Color x:Key="LoginAccent">#99D9EA</Color>
+	<Color x:Key="LoginPrimary">#2AEBE7</Color>
+	<Color x:Key="LoginAccent">#2AEBE7</Color>
 
 	<Color x:Key="LoginBorder">#374151</Color>
 	<Color x:Key="LoginCardAlt">#111827</Color>
