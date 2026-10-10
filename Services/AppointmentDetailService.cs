@@ -415,4 +415,5 @@ Encounter? encounterForMedicines = null;
             await _encounterService.UpdateAppointmentStatus(appointmentId, newStatus);
         }
 
+    }
 }
