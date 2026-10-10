@@ -541,10 +541,11 @@ entity.HasOne(x => x.Medicine)
             entity.HasOne(x => x.Encounter)
                 .WithOne(x => x.PatientScore)
                 .HasForeignKey<PatientScore>(x => x.EncounterId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasIndex(x => new { x.PatientId, x.RecordedAt });
-            entity.HasIndex(x => x.EncounterId).IsUnique();
+            entity.HasIndex(x => x.EncounterId).IsUnique().HasFilter("[EncounterId] IS NOT NULL");
         });
 
         modelBuilder.Entity<Encounter>()
