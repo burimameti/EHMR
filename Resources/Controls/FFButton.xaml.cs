@@ -138,7 +138,7 @@ public partial class FFButton : ContentView
         BindableProperty.Create(nameof(BackgroundColorEx), typeof(Color), typeof(FFButton), Colors.Transparent);
 
     public static readonly BindableProperty TextColorExProperty =
-        BindableProperty.Create(nameof(TextColorEx), typeof(Color), typeof(FFButton), Colors.White);
+        BindableProperty.Create(nameof(TextColorEx), typeof(Color), typeof(FFButton), Color.FromArgb("#FFFFFF));
 
     public static readonly BindableProperty BorderColorProperty =
         BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(FFButton), Colors.Transparent);
@@ -268,7 +268,7 @@ public partial class FFButton : ContentView
            string.Equals(Text, "Cancel", StringComparison.OrdinalIgnoreCase))
         {
             BackgroundColorEx=Color.FromArgb("#B42318");
-            TextColorEx=Colors.White;
+            TextColorEx=Color.FromArgb("#FFFFFF);
             BorderColor=Color.FromArgb("#B42318");
             BorderThickness=0;
             return;
@@ -304,7 +304,7 @@ public partial class FFButton : ContentView
             // Positive clinical action: Complete, Approve
             case FFButtonKind.Green:
                 BackgroundColorEx=Color.FromArgb("#15803D");
-                TextColorEx=Colors.White;
+                TextColorEx=Color.FromArgb("#FFFFFF);
                 BorderColor=Color.FromArgb("#15803D");
                 BorderThickness=0;
                 break;
@@ -312,7 +312,7 @@ public partial class FFButton : ContentView
             // Destructive action: Delete, Cancel therapy
             case FFButtonKind.Danger:
                 BackgroundColorEx=Color.FromArgb("#B42318");
-                TextColorEx=Colors.White;
+                TextColorEx=Color.FromArgb("#FFFFFF);
                 BorderColor=Color.FromArgb("#B42318");
                 BorderThickness=0;
                 break;
