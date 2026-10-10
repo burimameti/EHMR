@@ -22,19 +22,19 @@
 
 				<Ellipse
 					AbsoluteLayout.LayoutBounds="-70,80,220,220"
-					Fill="{StaticResource LoginAccent}"
+					Fill="#2AEBE7"
 					Opacity="0.10" />
 
 				<Ellipse
 					AbsoluteLayout.LayoutBounds="0.08,0.25,420,420"
 					AbsoluteLayout.LayoutFlags="PositionProportional"
-					Fill="{StaticResource LoginAccent}"
+					Fill="#2AEBE7"
 					Opacity="0.35" />
 
 				<Ellipse
 					AbsoluteLayout.LayoutBounds="0.92,0.78,320,320"
 					AbsoluteLayout.LayoutFlags="PositionProportional"
-					Fill="{StaticResource LoginAccent}"
+					Fill="#2AEBE7"
 					Opacity="0.08" />
 
 			</AbsoluteLayout>
@@ -46,10 +46,10 @@
 				<!--  =================================================  -->
 
 				<Border
-					BackgroundColor="{StaticResource LoginCardAlt}"
+					BackgroundColor="#111827"
 					HeightRequest="86"
 					HorizontalOptions="Start"
-					Stroke="{StaticResource LoginAccent}"
+					Stroke="#2AEBE7"
 					StrokeThickness="2"
 					WidthRequest="340">
 
@@ -68,7 +68,7 @@
 							FontSize="48"
 							HorizontalOptions="Center"
 							Text="EHMR"
-							TextColor="{StaticResource LoginPrimary}"
+							TextColor="#2AEBE7"
 							VerticalOptions="Center" />
 
 						<!--<Label
@@ -104,14 +104,14 @@
 						FontAttributes="Bold"
 						FontSize="62"
 						Text="КЛИНИКАТА ЗА РЕУМАТОЛОГИЈА"
-						TextColor="{StaticResource LoginPrimary}" />
+						TextColor="#2AEBE7" />
 
 					<BoxView
 						Margin="0,12"
 						HeightRequest="2"
 						HorizontalOptions="Start"
 						WidthRequest="240"
-						Color="{StaticResource LoginAccent}" />
+						Color="#2AEBE7" />
 
 
 
@@ -134,9 +134,9 @@
 
 			<Border
 				Padding="20"
-				BackgroundColor="{StaticResource LoginDark2}"
+				BackgroundColor="#1E293B"
 				HorizontalOptions="Fill"
-				Stroke="{StaticResource LoginAccent}"
+				Stroke="#2AEBE7"
 				Style="{StaticResource LoginCard}"
 				VerticalOptions="Center">
 
@@ -163,7 +163,7 @@
 							<Label
 								FontSize="14"
 								Text="Најава се врши со внесување на корисничко име  и лозинка издадена од вашиот администратор."
-								TextColor="{StaticResource LoginAccent}" />
+								TextColor="#2AEBE7" />
 						</VerticalStackLayout>
 
 						<!--  USERNAME  -->
@@ -173,7 +173,7 @@
 								FontAttributes="Bold"
 								FontSize="13"
 								Text="Корисничко име или Е-пошта"
-								TextColor="{StaticResource White}" />
+								TextColor="#FFFFFF" />
 
 							<Border
 								Margin="0,8,0,0"
@@ -187,7 +187,7 @@
 										FontFamily="FASolid"
 										FontSize="14"
 										Text="&#xf0e0;"
-										TextColor="{StaticResource LoginAccent}"
+										TextColor="#2AEBE7"
 										VerticalOptions="Center" />
 
 									<Entry
@@ -209,7 +209,7 @@
 								FontAttributes="Bold"
 								FontSize="13"
 								Text="Лозинка"
-								TextColor="{StaticResource White}" />
+								TextColor="#FFFFFF" />
 
 							<Border Style="{StaticResource LoginInputBorder}">
 
@@ -220,7 +220,7 @@
 										FontFamily="FASolid"
 										FontSize="14"
 										Text="&#xf023;"
-										TextColor="{StaticResource LoginAccent}"
+										TextColor="#2AEBE7"
 										VerticalOptions="Center" />
 
 									<Entry
@@ -240,20 +240,20 @@
 						<Grid ColumnDefinitions="*,Auto">
 
 							<HorizontalStackLayout HorizontalOptions="Start" Spacing="6">
-								<CheckBox IsChecked="{Binding RememberMe}" Color="{StaticResource LoginAccent}" />
+								<CheckBox IsChecked="{Binding RememberMe}" Color="#2AEBE7" />
 								<Label
 									Margin="-80,5,22,0"
 									FontSize="13"
 									HorizontalOptions="Start"
 									Text="Запамти"
-									TextColor="{StaticResource White}" />
+									TextColor="#FFFFFF" />
 							</HorizontalStackLayout>
 
 							<Label
 								Grid.Column="1"
 								FontSize="13"
 								Text="Заборавена лозинка?"
-								TextColor="{StaticResource LoginAccent}" />
+								TextColor="#2AEBE7" />
 
 						</Grid>
 
@@ -272,7 +272,7 @@
 									FontSize="15"
 									HorizontalOptions="Center"
 									Text="Влези во систем"
-									TextColor="{StaticResource OffBlack}"
+									TextColor="#0F172A"
 									VerticalOptions="Center" />
 
 							</Grid>
@@ -291,7 +291,7 @@
 							<Label
 								FontSize="12"
 								Text="Заштитен и криптиран пристап (SSL)"
-								TextColor="{StaticResource LoginMuted}" />
+								TextColor="#9CA3AF" />
 
 						</HorizontalStackLayout>
 
