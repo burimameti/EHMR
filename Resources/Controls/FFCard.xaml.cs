@@ -46,7 +46,7 @@ public partial class FFCard : Border
             nameof(CardCornerRadius),
             typeof(float),
             typeof(FFCard),
-            16f,
+            8f,
             propertyChanged: OnAppearanceChanged);
 
     public float CardCornerRadius
