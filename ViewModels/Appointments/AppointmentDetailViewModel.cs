@@ -158,7 +158,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [ObservableProperty] private bool showPatientSuggestions;
 
     // =========================
-    // DIAGNOSIS / MKB SEARCH — property names match EncounterBaseViewModel 1:1
+    // MKB-10 ASSIGNMENT / MKB SEARCH — property names match EncounterBaseViewModel 1:1
     // =========================
 
     [ObservableProperty] private string mkb10CodeSearchText = string.Empty;
@@ -641,7 +641,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     private Task PatientChanged(Patient patient) => OnPatientChangedAsync(patient);
 
     // =========================
-    // DIAGNOSIS SEARCH — mirrors EncounterBaseViewModel.SearchMkbAsync exactly.
+    // MKB-10 ASSIGNMENT SEARCH — mirrors EncounterBaseViewModel.SearchMkbAsync exactly.
     // Two parameters => can't be a [RelayCommand] (MVVMTK0007). Only ever called
     // internally from the On...Changed partials and SelectMkbSection.
     // =========================
