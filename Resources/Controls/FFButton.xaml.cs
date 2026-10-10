@@ -32,7 +32,12 @@ public partial class FFButton : ContentView
                 BackgroundColorEx=Color.FromArgb("#991B1B");
                 return;
             }
-
+            if(string.Equals(Text, "Назад", StringComparison.OrdinalIgnoreCase)||
+              string.Equals(Text, "Освежи", StringComparison.OrdinalIgnoreCase))
+            {
+                BackgroundColorEx=Color.FromArgb("#64748B");
+                return;
+            }
             if(IsBlue)
             {
                 BackgroundColorEx=Color.FromArgb("#2AEBE7");
@@ -106,7 +111,7 @@ public partial class FFButton : ContentView
         BindableProperty.Create(nameof(IsLoading), typeof(bool), typeof(FFButton), false);
 
     public static readonly BindableProperty HeightRequestExProperty =
-        BindableProperty.Create(nameof(HeightRequestEx), typeof(double), typeof(FFButton), 36d,
+        BindableProperty.Create(nameof(HeightRequestEx), typeof(double), typeof(FFButton), 38d,
             propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumHeightRequest=(double)v);
 
     public static readonly BindableProperty WidthRequestExProperty =
@@ -121,7 +126,7 @@ public partial class FFButton : ContentView
         BindableProperty.Create(nameof(CornerRadius), typeof(float), typeof(FFButton), 0f);
 
     public static readonly BindableProperty FontSizeExProperty =
-        BindableProperty.Create(nameof(FontSizeEx), typeof(double), typeof(FFButton), 13d);
+        BindableProperty.Create(nameof(FontSizeEx), typeof(double), typeof(FFButton), 16d);
 
     public static readonly BindableProperty FontFamilyProperty =
         BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(FFButton), "Segoe UI");
@@ -264,22 +269,24 @@ public partial class FFButton : ContentView
 
     private void ApplyKind()
     {
-        if(string.Equals(Text, "Откажи", StringComparison.OrdinalIgnoreCase) ||
-           string.Equals(Text, "Cancel", StringComparison.OrdinalIgnoreCase))
+        void Set(string bg, string text, string border, double thickness)
         {
-            BackgroundColorEx=Color.FromArgb("#B42318");
-            TextColorEx=Color.FromArgb("#FFFFFF");
-            BorderColor=Color.FromArgb("#B42318");
-            BorderThickness=0;
+            BackgroundColorEx=Color.FromArgb(bg);
+            TextColorEx=Color.FromArgb(text);
+            BorderColor=Color.FromArgb(border);
+            BorderThickness=thickness;
+        }
+
+        if(string.Equals(Text, "Откажи", StringComparison.OrdinalIgnoreCase)||
+            string.Equals(Text, "Cancel", StringComparison.OrdinalIgnoreCase))
+        {
+            Set("#FEF2F2", "#B91C1C", "#64748B", 1);
             return;
         }
 
         if(IsBlue)
         {
-            BackgroundColorEx=Color.FromArgb("#2AEBE7");
-            TextColorEx=Color.FromArgb("#0F172A");
-            BorderColor=Color.FromArgb("#2AEBE7");
-            BorderThickness=0;
+            Set("#5EEAD4", "#000000", "#64748B", 0);
             return;
         }
 
@@ -287,42 +294,27 @@ public partial class FFButton : ContentView
         {
             // Main action: Save, Create, Confirm
             case FFButtonKind.Primary:
-                BackgroundColorEx=Color.FromArgb("#2AEBE7");
-                TextColorEx=Color.FromArgb("#0F172A");
-                BorderColor=Color.FromArgb("#2AEBE7");
-                BorderThickness=0;
+                Set("#5EEAD4", "#000000", "#64748B", 0);
                 break;
 
             // Supporting action: Edit, Preview, Back
             case FFButtonKind.Secondary:
-                BackgroundColorEx=Color.FromArgb("#FFFFFF");
-                TextColorEx=Color.FromArgb("#334155");
-                BorderColor=Color.FromArgb("#CBD5E1");
-                BorderThickness=1;
+                Set("#64748B", "#FFFFFF", "#5EEAD4", 1);
                 break;
 
-            // Positive clinical action: Complete, Approve
+            // Positive action: Complete, Approve
             case FFButtonKind.Green:
-                BackgroundColorEx=Color.FromArgb("#15803D");
-                TextColorEx=Color.FromArgb("#FFFFFF");
-                BorderColor=Color.FromArgb("#15803D");
-                BorderThickness=0;
+                Set("#4D7C0F", "#FFFFFF", "#1D7C0F", 0);
                 break;
 
-            // Destructive action: Delete, Cancel therapy
+            // Destructive action: Delete
             case FFButtonKind.Danger:
-                BackgroundColorEx=Color.FromArgb("#B42318");
-                TextColorEx=Color.FromArgb("#FFFFFF");
-                BorderColor=Color.FromArgb("#B42318");
-                BorderThickness=0;
+                Set("#B91C1C", "#FFFFFF", "#B91C1C", 0);
                 break;
 
             // Quiet action: Close, Clear filters
             case FFButtonKind.Ghost:
-                BackgroundColorEx=Color.FromArgb("#F1F5F9");
-                TextColorEx=Color.FromArgb("#475569");
-                BorderColor=Color.FromArgb("#CBD5E1");
-                BorderThickness=1;
+                Set("#F0FDFA", "#115E59", "#CCFBF1", 1);
                 break;
         }
     }

@@ -209,7 +209,7 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
                     .Text("EHMR")
                     .Bold()
                     .FontSize(14)
-                    .FontColor("#0F766E");
+                    .FontColor("#64748B");
 
                 row.RelativeItem()
                     .AlignRight()
