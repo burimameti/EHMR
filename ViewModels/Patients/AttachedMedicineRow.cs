@@ -26,13 +26,13 @@ namespace EHMR.ViewModels
         public string DefaultDosage => PatientMedicine.DefaultDosage;
         public string Manufacturer => PatientMedicine.Manufacturer;
         public string? ApplicationRegime => PatientMedicine?.ApplicationRegime;
-        public bool HasResolution => PatientMedicine.ResolutionDocumentId.HasValue;
+     
 
         public decimal Quantity => PatientMedicine.Quantity;
         public string Dosage => PatientMedicine.Dosage;
         public bool IsActive => PatientMedicine.IsActive;
         public bool CanDelete { get; private set; } = false;
-        public Guid? ResolutionDocumentId => PatientMedicine.ResolutionDocumentId;
+   
 
         public void MarkNew()
         {
@@ -46,7 +46,7 @@ namespace EHMR.ViewModels
             OnPropertyChanged(nameof(CanDelete));
         }
 
-        public void RefreshResolution() => OnPropertyChanged(nameof(HasResolution));
+       
 
         public string RegimeDisplay =>
             string.IsNullOrWhiteSpace(PatientMedicine.ApplicationRegime)

@@ -84,14 +84,12 @@ public sealed class FunctionalCoverageSeeder : IEntitySeeder
 
         var requiredRegimes = new[]
         {
-            "Орално",
-            "Поткожно",
-            "Интравенски",
-            "Интрамускулно",
-            "Интраартикуларно",
-            "Интраназално",
-            "Топикално",
-            "Сублингвално"
+            
+            "Неделно",
+            "ДвеНедели",
+            "ТриНедели",
+            "Месечно"
+         
         };
 
         if (requiredRegimes.Any(x => !regimes.ContainsKey(x)))
@@ -123,32 +121,32 @@ public sealed class FunctionalCoverageSeeder : IEntitySeeder
         var rows = new List<PatientMedicine>
         {
             // SAME THERAPY / SAME MEDICINE / DIFFERENT DOSES.
-            Coverage(0,  SeedIds.Patient1, SeedIds.Med9, regimes["Поткожно"], DosesFrequency.Weekly,          "5 mg",  1, true),
-            Coverage(1,  SeedIds.Patient2, SeedIds.Med9, regimes["Поткожно"], DosesFrequency.Weekly,          "7.5 mg",2, true),
-            Coverage(2,  SeedIds.Patient5, SeedIds.Med9, regimes["Поткожно"], DosesFrequency.EveryOtherDay,  "10 mg", 3, false),
-            Coverage(3,  SeedIds.Patient11,SeedIds.Med9, regimes["Поткожно"], DosesFrequency.Monthly,       "15 mg", 4, true),
-            Coverage(4,  SeedIds.Patient14,SeedIds.Med9, regimes["Поткожно"], DosesFrequency.Other,          "20 mg", 5, true),
+            Coverage(0,  SeedIds.Patient1, SeedIds.Med9, regimes["Неделно"],          "5 mg",  1, true),
+            Coverage(1,  SeedIds.Patient2, SeedIds.Med9, regimes["Неделно"],          "7.5 mg",2, true),
+            Coverage(2,  SeedIds.Patient5, SeedIds.Med9, regimes["Неделно"],  "10 mg", 3, false),
+            Coverage(3,  SeedIds.Patient11,SeedIds.Med9, regimes["Неделно"],     "15 mg", 4, true),
+            Coverage(4,  SeedIds.Patient14,SeedIds.Med9, regimes["Неделно"],          "20 mg", 5, true),
 
             // Every supported application regime is represented.
-            Coverage(5,  SeedIds.Patient6, SeedIds.Med1, regimes["Орално"],            DosesFrequency.Daily,          "1 таблета", 10, true),
-            Coverage(6,  SeedIds.Patient7, SeedIds.Med2, regimes["Интравенски"],       DosesFrequency.Monthly,        "100 mg", 2, true),
-            Coverage(7,  SeedIds.Patient8, SeedIds.Med3, regimes["Интрамускулно"],     DosesFrequency.EveryThreeDays,"50 mg",  3, true),
-            Coverage(8,  SeedIds.Patient9, SeedIds.Med4, regimes["Интраартикуларно"],  DosesFrequency.Other,         "40 mg",  1, true),
-            Coverage(9,  SeedIds.Patient10,SeedIds.Med5, regimes["Интраназално"],      DosesFrequency.Daily,         "2 впрскувања", 2, true),
-            Coverage(10, SeedIds.Patient12,SeedIds.Med6, regimes["Топикално"],          DosesFrequency.Daily,         "1 апликација", 30, true),
-            Coverage(11, SeedIds.Patient13,SeedIds.Med7, regimes["Сублингвално"],       DosesFrequency.TwiceDaily,    "1 таблета", 60, true),
+            Coverage(5,  SeedIds.Patient6, SeedIds.Med1, regimes["Месечно"],          "1 таблета", 10, true),
+            Coverage(6,  SeedIds.Patient7, SeedIds.Med2, regimes["ДвеНедели"],        "100 mg", 2, true),
+            Coverage(7,  SeedIds.Patient8, SeedIds.Med3, regimes["ТриНедели"],        "50 mg",  3, true),
+            Coverage(8,  SeedIds.Patient9, SeedIds.Med4, regimes["Месечно"],         "40 mg",  1, true),
+            Coverage(9,  SeedIds.Patient10,SeedIds.Med5, regimes["Месечно"],       "2 впрскувања", 2, true),
+            Coverage(10, SeedIds.Patient12,SeedIds.Med6, regimes["Месечно"],       "1 апликација", 30, true),
+            Coverage(11, SeedIds.Patient13,SeedIds.Med7, regimes["Месечно"],    "1 таблета", 60, true),
 
             // More combinations for reporting/filter visibility.
-            Coverage(12, SeedIds.Patient15,SeedIds.Med9, regimes["Поткожно"], DosesFrequency.Weekly, "7.5 mg", 2, true),
-            Coverage(13, SeedIds.Patient16,SeedIds.Med9, regimes["Поткожно"], DosesFrequency.Monthly, "15 mg", 1, true),
-            Coverage(14, SeedIds.Patient17,SeedIds.Med8, regimes["Орално"], DosesFrequency.ThreeTimesDaily, "1 таблета", 90, true),
-            Coverage(15, SeedIds.Patient18,SeedIds.Med9, regimes["Поткожно"], DosesFrequency.Weekly, "10 mg", 3, false),
-            Coverage(16, SeedIds.Patient19,SeedIds.Med10,regimes["Интравенски"], DosesFrequency.EveryOtherDay, "250 mg", 6, true),
-            Coverage(17, SeedIds.Patient20,SeedIds.Med9, regimes["Поткожно"], DosesFrequency.Other, "20 mg", 2, true),
+            Coverage(12, SeedIds.Patient15,SeedIds.Med9, regimes["Неделно"], "7.5 mg", 2, true),
+            Coverage(13, SeedIds.Patient16,SeedIds.Med9, regimes["Неделно"], "15 mg", 1, true),
+            Coverage(14, SeedIds.Patient17,SeedIds.Med8, regimes["Месечно"], "1 таблета", 90, true),
+            Coverage(15, SeedIds.Patient18,SeedIds.Med9, regimes["Неделно"], "10 mg", 3, false),
+            Coverage(16, SeedIds.Patient19,SeedIds.Med10,regimes["Месечно"], "250 mg", 6, true),
+            Coverage(17, SeedIds.Patient20,SeedIds.Med9, regimes["Неделно"], "20 mg", 2, true),
 
             // Additional frequency coverage.
-            Coverage(18, SeedIds.Patient3, SeedIds.Med1, regimes["Орално"], DosesFrequency.EveryOtherDay, "1 таблета", 14, true),
-            Coverage(19, SeedIds.Patient4, SeedIds.Med2, regimes["Орално"], DosesFrequency.ThreeTimesDaily, "1 таблета", 90, true)
+            Coverage(18, SeedIds.Patient3, SeedIds.Med1, regimes["Месечно"], "1 таблета", 14, true),
+            Coverage(19, SeedIds.Patient4, SeedIds.Med2, regimes["Месечно"], "1 таблета", 90, true)
         };
 
         var missing = rows.Where(x => !existingIds.Contains(x.Id)).ToList();
@@ -164,7 +162,7 @@ public sealed class FunctionalCoverageSeeder : IEntitySeeder
         Guid patientId,
         Guid medicineId,
         Guid applicationRegimeId,
-        DosesFrequency frequency,
+       
         string dosage,
         decimal quantity,
         bool active)
@@ -174,13 +172,12 @@ public sealed class FunctionalCoverageSeeder : IEntitySeeder
             PatientId = patientId,
             MedicineId = medicineId,
             ApplicationRegimeId = applicationRegimeId,
-            DosesFrequency = frequency,
+         
             Dosage = dosage,
             Quantity = quantity,
     
            
-            Notes = "Демо запис за функционално тестирање.",
-            PharmaceuticalReference = $"COVERAGE-{index + 1:000}",
+         
             IsActive = active
         };
 }

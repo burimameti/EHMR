@@ -796,7 +796,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             Medicine=medicine,
             PatientId=SelectedPatientForAppointment?.Id??Guid.Empty,
             Dosage="1", // matches Encounter convention: Dosage doubles as quantity
-            DosesFrequency=DosesFrequency.Other,
+           
       
             IsActive=true
         });

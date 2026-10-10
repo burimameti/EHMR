@@ -168,7 +168,7 @@ public class UserService : IUserService
         {
             Modules.Dashboard,
             Modules.Patients,
-            Modules.Therapy,
+   
             Modules.Medicines,
             Modules.Administration
         });

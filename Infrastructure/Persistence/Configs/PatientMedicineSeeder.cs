@@ -18,7 +18,7 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
         if(applicationRegimes.Count == 0)
             return;
 
-        var oral = applicationRegimes.FirstOrDefault(x => x.Regime == "Орално")?.Id;
+        var oral = applicationRegimes.FirstOrDefault(x => x.Regime == "Неделно")?.Id;
         var existingMedicines = await context.PatientMedicines
             .Where(x => x.ApplicationRegimeId == null)
             .ToListAsync(ct);
@@ -94,7 +94,7 @@ public sealed class PatientMedicineSeeder : IEntitySeeder
                 Id = Guid.NewGuid(),
                 PatientId = SeedIds.Patient3,
                 MedicineId = SeedIds.Med9, // Метотрексат
-                ApplicationRegimeId = subcutaneous,
+                ApplicationRegimeId = oral,
 
                 Dosage = "3 таблети одеднаш (7.5mg вкупно)",
 

@@ -109,9 +109,9 @@ public class EncounterSeeder : IEntitySeeder
             {
                 existing.Quantity = quantity;
                 existing.ApplicationRegimeId = assignment.ApplicationRegimeId;
-                existing.DosesFrequency = assignment.DosesFrequency;
+           
                 existing.Dosage = assignment.Dosage;
-                existing.Notes = assignment.Notes;
+       
                 existing.IsActive = true;
                 continue;
             }
@@ -123,10 +123,9 @@ public class EncounterSeeder : IEntitySeeder
                 EncounterId = encounter.Id,
                 MedicineId = assignment.MedicineId,
                 ApplicationRegimeId = assignment.ApplicationRegimeId,
-                DosesFrequency = assignment.DosesFrequency,
+        
                 Dosage = assignment.Dosage,
-                Notes = assignment.Notes,
-                PharmaceuticalReference = assignment.PharmaceuticalReference,
+            
                 IsActive = true,
                 Quantity = quantity
             });

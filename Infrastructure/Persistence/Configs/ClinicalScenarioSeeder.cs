@@ -208,9 +208,9 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
 
         var medicines = new[]
         {
-            new { Id = SeedIds.Med2, RegimeId = oral, Frequency = DosesFrequency.TwiceDaily, Dosage = "1 таблета од 400 mg", Notes = "По јадење, краткотрајно за болка." },
-            new { Id = SeedIds.Med6, RegimeId = oral, Frequency = DosesFrequency.Daily, Dosage = "1 таблета од 5 mg", Notes = "Да се зема секое утро." },
-            new { Id = SeedIds.Med9, RegimeId = subcutaneous, Frequency = DosesFrequency.Weekly, Dosage = "7.5 mg еднаш неделно", Notes = "Редовна контрола на крвна слика." }
+            new { Id = SeedIds.Med2, RegimeId = oral,  Dosage = "1 таблета од 400 mg", Notes = "По јадење, краткотрајно за болка." },
+            new { Id = SeedIds.Med6, RegimeId = oral, Dosage = "1 таблета од 5 mg", Notes = "Да се зема секое утро." },
+            new { Id = SeedIds.Med9, RegimeId = subcutaneous, Dosage = "7.5 mg еднаш неделно", Notes = "Редовна контрола на крвна слика." }
         };
 
         // Ensure the new medicine-first patient-level assignments exist.
@@ -225,9 +225,9 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
             {
                 existingAssignment.Quantity = 0m;
                 existingAssignment.ApplicationRegimeId = medicine.RegimeId;
-                existingAssignment.DosesFrequency = medicine.Frequency;
+     
                 existingAssignment.Dosage = medicine.Dosage;
-                existingAssignment.Notes = medicine.Notes;
+         
                 existingAssignment.IsActive = true;
                 continue;
             }
@@ -242,9 +242,9 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
                 PatientId = SeedIds.Patient13,
                 MedicineId = medicine.Id,
                 ApplicationRegimeId = medicine.RegimeId,
-                DosesFrequency = medicine.Frequency,
+         
                 Dosage = medicine.Dosage,
-                Notes = medicine.Notes,
+           
                 IsActive = true,
                 Quantity = 0m
             });
@@ -283,9 +283,9 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
                     // so a database seeded with the old model receives the new values.
                     existing.Quantity = quantity;
                     existing.ApplicationRegimeId = medicine.RegimeId;
-                    existing.DosesFrequency = medicine.Frequency;
+                
                     existing.Dosage = medicine.Dosage;
-                    existing.Notes = medicine.Notes;
+                 
                     existing.IsActive = true;
                     continue;
                 }
@@ -297,9 +297,9 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
                     EncounterId = encounterId,
                     MedicineId = medicine.Id,
                     ApplicationRegimeId = medicine.RegimeId,
-                    DosesFrequency = medicine.Frequency,
+                
                     Dosage = medicine.Dosage,
-                    Notes = medicine.Notes,
+               
                     IsActive = true,
                     Quantity = quantity
                 });

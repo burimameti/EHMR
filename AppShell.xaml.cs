@@ -18,6 +18,7 @@ using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
 using System;
 using System.Threading.Tasks;
+using EHMR.Views.Therapies;
 
 namespace EHMR;
 

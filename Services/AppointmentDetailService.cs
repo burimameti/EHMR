@@ -306,24 +306,24 @@ Encounter? encounterForMedicines = null;
                     encounter.Notes=appointment.ClinicalNotes;
                     encounter.ReasonForVisit=null;
 
-                    var (resolvedEncounter, resolvedAppointment)=
-                        ReconcileStatus(encounter.Status, appointment.Status);
+                    //var (resolvedEncounter, resolvedAppointment)=
+                    //    ReconcileStatus(encounter.Status, appointment.Status);
 
-                    encounter.Status=resolvedEncounter;
-                    appointment.Status=resolvedAppointment;
+                    //encounter.Status=resolvedEncounter;
+                    //appointment.Status=resolvedAppointment;
 
-                    // ── Lock on ANY terminal outcome, not just Completed ──
-                    var isTerminal = resolvedEncounter is EncounterStatus.Completed
-                                                        or EncounterStatus.Cancelled;
+                    //// ── Lock on ANY terminal outcome, not just Completed ──
+                    //var isTerminal = resolvedEncounter is EncounterStatus.Completed
+                    //                                    or EncounterStatus.Cancelled;
 
-                    if(isTerminal&&!encounter.IsLocked)
-                    {
-                        encounter.IsLocked=true;
-                        encounter.EndTime=DateTime.Now;
-                        encounter.DurationMinutes=encounter.StartTime.HasValue
-                            ? (int)(DateTime.Now-encounter.StartTime.Value).TotalMinutes
-                            : null;
-                    }
+                    //if(isTerminal&&!encounter.IsLocked)
+                    //{
+                    //    encounter.IsLocked=true;
+                    //    encounter.EndTime=DateTime.Now;
+                    //    encounter.DurationMinutes=encounter.StartTime.HasValue
+                    //        ? (int)(DateTime.Now-encounter.StartTime.Value).TotalMinutes
+                    //        : null;
+                    //}
 
                     medicinesEditable=true; // this closing-out pass still saves
 
@@ -384,9 +384,9 @@ Encounter? encounterForMedicines = null;
                     if(existingByMedicineId.TryGetValue(medicine.MedicineId, out var existing))
                     {
                         existing.Dosage = medicine.Dosage;
-                        existing.DosesFrequency = medicine.DosesFrequency;
+                  
                         existing.ApplicationRegimeId = medicine.ApplicationRegimeId;
-                        existing.Notes = medicine.Notes;
+                 
                         existing.IsActive = medicine.IsActive;
                         existing.Quantity = medicine.Quantity;
                     }
@@ -400,8 +400,7 @@ Encounter? encounterForMedicines = null;
                             MedicineId = medicine.MedicineId,
                             ApplicationRegimeId = medicine.ApplicationRegimeId,
                             Dosage = medicine.Dosage,
-                            DosesFrequency = medicine.DosesFrequency,
-                            Notes = medicine.Notes,
+                 
                             IsActive = medicine.IsActive,
                             Quantity = medicine.Quantity
                         });

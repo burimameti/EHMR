@@ -17,7 +17,7 @@ public static class RolePermissionMatrix
                 (Modules.Doctors, ModuleAction.View),
                 (Modules.Patients, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Activate|ModuleAction.Deactivate),
                 (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel|ModuleAction.Complete),
-                (Modules.Therapy, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
+            
                 (Modules.Protocols, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Approve|ModuleAction.Print|ModuleAction.Export),
                 (Modules.Inventory, ModuleAction.View),
                 (Modules.Medicines, ModuleAction.View),
@@ -32,7 +32,7 @@ public static class RolePermissionMatrix
                 (Modules.Doctors, ModuleAction.View),
                 (Modules.Patients, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Activate|ModuleAction.Deactivate),
                 (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel|ModuleAction.Complete),
-                (Modules.Therapy, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
+          
                 (Modules.Protocols, ModuleAction.View|ModuleAction.Print),
                 (Modules.Inventory, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
                 (Modules.Medicines, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
@@ -47,7 +47,7 @@ public static class RolePermissionMatrix
                 (Modules.Doctors, ModuleAction.View),
                 (Modules.Patients, ModuleAction.View|ModuleAction.Create),
                 (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Schedule),
-                (Modules.Therapy, ModuleAction.View|ModuleAction.Create),
+              
                 (Modules.Protocols, ModuleAction.View|ModuleAction.Print),
                 (Modules.Inventory, ModuleAction.View),
                 (Modules.Medicines, ModuleAction.View),
@@ -61,7 +61,7 @@ public static class RolePermissionMatrix
                 (Modules.Dashboard, ModuleAction.View),
                 (Modules.Patients, ModuleAction.View),
                 (Modules.Appointments, ModuleAction.View),
-                (Modules.Therapy, ModuleAction.View),
+               
                 (Modules.Protocols, ModuleAction.View),
                 (Modules.Inventory, ModuleAction.View),
                 (Modules.Reports, ModuleAction.View),

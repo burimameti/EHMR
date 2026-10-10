@@ -480,7 +480,7 @@ namespace EHMR.Domain.Entities.Reports
                         .ThenInclude(x => x.Encounter)
                     .Include(x => x.Diagnoses)
                         .ThenInclude(x => x.Mkb10Code)
-                    .Include(x => x.TherapyCycles)
+                
                     .Include(x => x.Encounters)
                         .ThenInclude(x => x.Doctor)
                             .ThenInclude(x => x!.User)
@@ -882,13 +882,10 @@ namespace EHMR.Domain.Entities.Reports
 
             var allergies = string.IsNullOrWhiteSpace(patient.Allergies) ? "Нема алергии" : patient.Allergies;
 
-            var missedTherapies = patient.TherapyCycles
-                .Where(x => x.Status==TherapyStatus.Missed)
-                .Count();
+           
+            
 
-            var therapyInfo = missedTherapies>0 ? $" | ⚠️ Пропуштени терапии: {missedTherapies}" : "";
-
-            return $"Дијагнози: {diagnosis}; Алергии: {allergies}{therapyInfo}";
+            return $"Дијагнози: {diagnosis}";
         }
 
         public ReportMetrics CalculateMetrics(IEnumerable<DynamicReportRow> rows)

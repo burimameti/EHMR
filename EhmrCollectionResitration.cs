@@ -27,7 +27,6 @@ using EHMR.ViewModels.Patients;
 using EHMR.ViewModels.Prescriptions;
 using EHMR.ViewModels.Reports;
 using EHMR.ViewModels.Support;
-using EHMR.ViewModels.Therapies;
 using EHMR.Views;
 using EHMR.Views.Admin;
 using EHMR.Views.Appointments;

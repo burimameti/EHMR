@@ -4,7 +4,7 @@ using EHMR.UI.Lookup;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
+
 
 namespace EHMR.ViewModels.Patients.Extensions;
 
@@ -64,14 +64,14 @@ public static class PatientFilterLookups
         ("Женски", "Female")
     });
 
-    public static FilterLookup BloodType { get; } = new(new[]
-    {
-        ("Сите", "All"),
-        ("A+", "A+"), ("A-", "A-"),
-        ("B+", "B+"), ("B-", "B-"),
-        ("AB+", "AB+"), ("AB-", "AB-"),
-        ("O+", "O+"), ("O-", "O-")
-    });
+    //public static FilterLookup BloodType { get; } = new(new[]
+    //{
+    //    ("Сите", "All"),
+    //    ("A+", "A+"), ("A-", "A-"),
+    //    ("B+", "B+"), ("B-", "B-"),
+    //    ("AB+", "AB+"), ("AB-", "AB-"),
+    //    ("O+", "O+"), ("O-", "O-")
+    //});
 
     public static FilterLookup AgeGroup { get; } = new(new[]
     {
@@ -138,27 +138,27 @@ public static class PatientEnumLookups
         ("Неактивни", "Inactive")
     });
 
-    public static FilterLookup BloodType { get; } = new(new[]
-    {
-        ("A+", "A+"), ("A-", "A-"),
-        ("B+", "B+"), ("B-", "B-"),
-        ("AB+", "AB+"), ("AB-", "AB-"),
-        ("O+", "O+"), ("O-", "O-")
-    });
+    //public static FilterLookup BloodType { get; } = new(new[]
+    //{
+    //    ("A+", "A+"), ("A-", "A-"),
+    //    ("B+", "B+"), ("B-", "B-"),
+    //    ("AB+", "AB+"), ("AB-", "AB-"),
+    //    ("O+", "O+"), ("O-", "O-")
+    //});
 }
 
-public static class AgeGroupExtensions
-{
-    public static bool IsInAgeGroup(this int age, string ageGroup) => ageGroup switch
-    {
-        "0-18" => age is >= 0 and <= 18,
-        "19-35" => age is >= 19 and <= 35,
-        "36-50" => age is >= 36 and <= 50,
-        "51-65" => age is >= 51 and <= 65,
-        "65+" => age > 65,
-        _ => true
-    };
-}
+//public static class AgeGroupExtensions
+//{
+//    public static bool IsInAgeGroup(this int age, string ageGroup) => ageGroup switch
+//    {
+//        "0-18" => age is >= 0 and <= 18,
+//        "19-35" => age is >= 19 and <= 35,
+//        "36-50" => age is >= 36 and <= 50,
+//        "51-65" => age is >= 51 and <= 65,
+//        "65+" => age > 65,
+//        _ => true
+//    };
+//}
 
 public static class PatientExtensions
 {

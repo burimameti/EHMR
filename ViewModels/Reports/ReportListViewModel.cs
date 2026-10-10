@@ -580,7 +580,7 @@ public partial class ReportListViewModel : BaseViewModel<GenericReportRow>
                         : pm.Dosage;
                     var frequency=pm.ApplicationRegime?.Regime;
                     if(string.IsNullOrWhiteSpace(frequency))
-                        frequency=pm.DosesFrequency.ToString();
+                        frequency=pm.ApplicationRegime.Regime.ToString();
 
                     return string.Join(", ", new[] { dosage, frequency }
                         .Where(x => !string.IsNullOrWhiteSpace(x)));
