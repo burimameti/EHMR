@@ -405,10 +405,18 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     //[ObservableProperty]
     //private ObservableCollection<ApplicationRegime> applicationRegimeOptions = new();
 
-    public string CurrentMkb10Summary => string.Join(", ", PatientMkb10Assignments
-        .Where(x => x.Mkb10Code!=null)
-        .Select(x => $"{x.Mkb10Code!.Code} - {x.Mkb10Code.Description}")
-        .Take(3));
+    public string CurrentMkb10Summary
+    {
+        get
+        {
+            var diagnoses=CurrentMkb10Assignments
+                .Where(x => x.Mkb10Code!=null)
+                .Select(x => $"{x.Mkb10Code!.Code} - {x.Mkb10Code.Description}")
+                .ToList();
+
+            return diagnoses.Count==0 ? "Нема тековно доделен MKB-10." : string.Join(", ", diagnoses);
+        }
+    }
 
     public string ActiveMedicinesSummary
     {
