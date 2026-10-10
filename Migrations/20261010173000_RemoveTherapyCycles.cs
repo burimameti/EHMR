@@ -65,6 +65,8 @@ public sealed class RemoveTherapyCycles : Migration
                 DROP TABLE dbo.TherapyCycles;
             IF COL_LENGTH(N'dbo.AuditLogs', N'CycleId') IS NOT NULL
                 ALTER TABLE dbo.AuditLogs DROP COLUMN CycleId;
+            IF OBJECT_ID(N'dbo.UserModules', N'U') IS NOT NULL
+                DELETE FROM dbo.UserModules WHERE ModuleKey = N'Therapy';
             """);
     }
 
