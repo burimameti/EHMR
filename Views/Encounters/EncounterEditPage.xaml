@@ -290,7 +290,7 @@
 											FontAttributes="Bold"
 											FontSize="11.5"
 											LineBreakMode="WordWrap"
-											Text="{Binding CurrentDiagnosesSummary, TargetNullValue='Нема внесена дијагноза.'}"
+											Text="{Binding CurrentMkb10Summary, TargetNullValue='Нема внесена дијагноза.'}"
 											TextColor="{StaticResource SparkTextPrimary}" />
 									</VerticalStackLayout>
 
@@ -825,7 +825,7 @@
 								Title="ИСТОРИЈА НА ДИЈАГНОЗИ"
 								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 							<VerticalStackLayout
-								BindableLayout.ItemsSource="{Binding PatientDiagnoses}"
+								BindableLayout.ItemsSource="{Binding PatientMkb10Assignments}"
 								IsVisible="{Binding HasPatientContext}"
 								Spacing="6">
 								<BindableLayout.EmptyView>
