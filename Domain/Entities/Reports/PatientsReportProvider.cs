@@ -579,7 +579,7 @@ namespace EHMR.Domain.Entities.Reports
             RefreshPicker(_mkb10CodePicker,
                 patients
                     .SelectMany(x => x.Mkb10Assignments)
-                    .Where(x => x.Mkb10Code!=null)
+                    .Where(x => x.EncounterId==null && x.Mkb10Code!=null)
                     .Select(x => x.Mkb10Code!.Code));
 
             Debug.WriteLine($"[Patients]   - Medicine picker...");
@@ -665,7 +665,8 @@ namespace EHMR.Domain.Entities.Reports
 
             if(_selectedMkb10CodeFilter!="Сите")
             {
-                query=query.Where(x => x.Mkb10Assignments.Any(d => d.Mkb10Code?.Code==_selectedMkb10CodeFilter));
+                query=query.Where(x => x.Mkb10Assignments.Any(d =>
+                    d.EncounterId==null && d.Mkb10Code?.Code==_selectedMkb10CodeFilter));
                 Debug.WriteLine($"[Patients]   - MKB-10 code filter: {_selectedMkb10CodeFilter}");
             }
 
@@ -869,7 +870,7 @@ namespace EHMR.Domain.Entities.Reports
 
             return string.Join(", ",
                 patient.Mkb10Assignments
-                    .Where(x => x.Mkb10Code!=null)
+                    .Where(x => x.EncounterId==null && x.Mkb10Code!=null)
                     .Select(x => x.Mkb10Code!.Code)
                     .Distinct());
         }
@@ -878,7 +879,9 @@ namespace EHMR.Domain.Entities.Reports
         {
             var mkb10Assignment = patient.Mkb10Assignments==null
                 ? ""
-                : string.Join(", ", patient.Mkb10Assignments.Where(x => x.Mkb10Code!=null).Select(x => x.Mkb10Code!.Code));
+                : string.Join(", ", patient.Mkb10Assignments
+                    .Where(x => x.EncounterId==null && x.Mkb10Code!=null)
+                    .Select(x => x.Mkb10Code!.Code));
 
             var allergies = string.IsNullOrWhiteSpace(patient.Allergies) ? "Нема алергии" : patient.Allergies;
 
