@@ -14,7 +14,6 @@ using EHMR.Views.Prescription;
 using EHMR.Views.Protocols;
 using EHMR.Views.Reports;
 using EHMR.Views.Mkb10;
-using EHMR.Views.Therapies;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
 using System;
