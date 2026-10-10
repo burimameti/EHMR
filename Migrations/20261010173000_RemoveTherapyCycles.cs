@@ -120,5 +120,26 @@ public sealed class RemoveTherapyCycles : Migration
         migrationBuilder.CreateIndex(name: "IX_Appointments_TherapyCycleId", table: "Appointments", column: "TherapyCycleId");
         migrationBuilder.CreateIndex(name: "IX_Encounters_TherapyCycleId", table: "Encounters", column: "TherapyCycleId");
         migrationBuilder.CreateIndex(name: "IX_PatientDocuments_TherapyCycleId", table: "PatientDocuments", column: "TherapyCycleId");
+
+        migrationBuilder.AddForeignKey(
+            name: "FK_Appointments_TherapyCycles_TherapyCycleId",
+            table: "Appointments",
+            column: "TherapyCycleId",
+            principalTable: "TherapyCycles",
+            principalColumn: "Id",
+            onDelete: ReferentialAction.NoAction);
+        migrationBuilder.AddForeignKey(
+            name: "FK_Encounters_TherapyCycles_TherapyCycleId",
+            table: "Encounters",
+            column: "TherapyCycleId",
+            principalTable: "TherapyCycles",
+            principalColumn: "Id");
+        migrationBuilder.AddForeignKey(
+            name: "FK_PatientDocuments_TherapyCycles_TherapyCycleId",
+            table: "PatientDocuments",
+            column: "TherapyCycleId",
+            principalTable: "TherapyCycles",
+            principalColumn: "Id",
+            onDelete: ReferentialAction.NoAction);
     }
 }
