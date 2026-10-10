@@ -41,10 +41,18 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
         if(encounterId.HasValue && focusEncounter is null)
             throw new InvalidOperationException("Прегледот не е пронајден.");
 
-        var diagnoses=await db.Diagnoses
+        // Patient report: patient-level MKB-10 assignments only.
+        // Encounter report: assignments belonging to that exact encounter.
+        var diagnosesQuery=db.PatientMkb10Assignments
             .AsNoTracking()
             .Include(x => x.Mkb10Code)
-            .Where(x => x.PatientId==patientId)
+            .Where(x => x.PatientId==patientId);
+
+        diagnosesQuery=focusEncounter is not null
+            ? diagnosesQuery.Where(x => x.EncounterId==focusEncounter.Id)
+            : diagnosesQuery.Where(x => x.EncounterId==null);
+
+        var diagnoses=await diagnosesQuery
             .OrderByDescending(x => x.DiagnosedAt)
             .Take(5)
             .ToListAsync();
@@ -53,7 +61,10 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
             .AsNoTracking()
             .Include(x => x.Medicine)
             .Include(x => x.ApplicationRegime)
-            .Where(x => x.PatientId==patientId)
+            .Where(x => x.PatientId==patientId &&
+                (focusEncounter is null
+                    || x.EncounterId==focusEncounter.Id
+                    || (!x.EncounterId.HasValue && x.IsActive)))
             .OrderByDescending(x => x.IsActive)
             .ThenByDescending(x => x.CreatedAt)
             .ToListAsync();
@@ -63,7 +74,8 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
 
         var scores=await db.PatientScores
             .AsNoTracking()
-            .Where(x => x.PatientId==patientId)
+            .Where(x => x.PatientId==patientId &&
+                (!focusEncounter.HasValue || x.EncounterId==focusEncounter.Id))
             .OrderByDescending(x => x.RecordedAt)
             .Take(5)
             .ToListAsync();
