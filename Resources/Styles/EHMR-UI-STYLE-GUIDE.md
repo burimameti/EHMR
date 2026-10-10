@@ -76,7 +76,7 @@ Keep success, warning and danger colors semantic; do not recolor them as brand a
 
 ## 7. Typography
 
-- Body/UI font: use the platform default sans-serif for app text for reliable cross-platform rendering; do not use the icon font for text.
+- Body/UI font: use Segoe UI for all application text; use the platform sans-serif fallback only on platforms where Segoe UI is unavailable. Do not use the icon font for text.
 - Icons only: `FASolid`.
 - Page title: 24 px bold; section title: 16 px bold; normal text: 13 px; grid text: 12 px; field label/caption: 11–12 px.
 - Use 14 px for dense but important secondary headings and 10–11 px only for compact metadata.
