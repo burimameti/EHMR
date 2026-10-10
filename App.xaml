@@ -87,6 +87,7 @@
 				<ResourceDictionary Source="Resources/Styles/Controls.xaml" />
 				<ResourceDictionary Source="Resources/Styles/Layouts.xaml" />
 				<ResourceDictionary Source="Resources/Styles/CrudDesignSystem.xaml" />
+				<ResourceDictionary Source="Resources/Styles/EhmrUnifiedStyle.xaml" />
 
 				<!--<ResourceDictionary Source="Resources/Styles/Colors2.xaml" />-->
 				<!--<ResourceDictionary Source="Resources/Styles/Styles2.xaml" />-->
