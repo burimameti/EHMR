@@ -142,7 +142,7 @@ public partial class FFCard : Border
     {
         StrokeThickness=0;
         BackgroundColor=Color.FromArgb("#FFFFFF");
-        Stroke=Colors.Transparent;
+        Stroke=Color.FromArgb("#00000000");
         Shadow=null;
     }
 
