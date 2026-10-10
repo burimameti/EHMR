@@ -37,7 +37,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 {
                     Id=SeedIds.Appt2,
                     PatientId = SeedIds.Patient2,
-                    DoctorId = SeedIds.Doctor2,         TherapyCycleId = SeedIds.Cycle2,
+                    DoctorId = SeedIds.Doctor2,
                     ScheduledStart = now.AddDays(1).AddHours(10),
                     ScheduledEnd = now.AddDays(1).AddHours(10).AddMinutes(45),
                     ReasonForVisit = "Контролен преглед по терапија",
@@ -47,7 +47,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 new Appointment
                 {
                     PatientId = SeedIds.Patient3,
-                    DoctorId = SeedIds.Doctor1,         TherapyCycleId = SeedIds.Cycle3,
+                    DoctorId = SeedIds.Doctor1,
                     ScheduledStart = now.AddDays(2).AddHours(11),
                     ScheduledEnd = now.AddDays(2).AddHours(11).AddMinutes(30),
                     ReasonForVisit = "Рехабилитација на колено",
@@ -59,7 +59,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 new Appointment
                 {
                     PatientId = SeedIds.Patient4,
-                    DoctorId = SeedIds.Doctor2,         TherapyCycleId = SeedIds.Cycle4,
+                    DoctorId = SeedIds.Doctor2,
                     ScheduledStart = now.AddHours(-1),
                     ScheduledEnd = now.AddHours(-0.5),
                     ReasonForVisit = "Физикална терапија - рамото",
@@ -69,7 +69,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 new Appointment
                 {
                     PatientId = SeedIds.Patient5,
-                    DoctorId = SeedIds.Doctor1,         TherapyCycleId = SeedIds.Cycle5,
+                    DoctorId = SeedIds.Doctor1,
                     ScheduledStart = now.AddHours(-2),
                     ScheduledEnd = now.AddHours(-1.5),
                     ReasonForVisit = "Контрола на повреда",
@@ -81,7 +81,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 new Appointment
                 {
                     PatientId = SeedIds.Patient6,
-                    DoctorId = SeedIds.Doctor1,         TherapyCycleId = SeedIds.Cycle6,
+                    DoctorId = SeedIds.Doctor1,
                     ScheduledStart = now.AddDays(-1).AddHours(9),
                     ScheduledEnd = now.AddDays(-1).AddHours(9).AddMinutes(30),
                     ReasonForVisit = "Терапија за врат",
@@ -91,7 +91,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 new Appointment
                 {
                     PatientId = SeedIds.Patient7,
-                    DoctorId = SeedIds.Doctor2,         TherapyCycleId = SeedIds.Cycle7,
+                    DoctorId = SeedIds.Doctor2,
                     ScheduledStart = now.AddDays(-2).AddHours(10),
                     ScheduledEnd = now.AddDays(-2).AddHours(10).AddMinutes(40),
                     ReasonForVisit = "Рехабилитација после повреда",
@@ -103,7 +103,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 new Appointment
                 {
                     PatientId = SeedIds.Patient8,
-                    DoctorId = SeedIds.Doctor1,         TherapyCycleId = SeedIds.Cycle8,
+                    DoctorId = SeedIds.Doctor1,
                     ScheduledStart = now.AddDays(1).AddHours(12),
                     ScheduledEnd = now.AddDays(1).AddHours(12).AddMinutes(30),
                     ReasonForVisit = "Масажа терапија",
@@ -113,7 +113,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 new Appointment
                 {
                     PatientId = SeedIds.Patient9,
-                    DoctorId = SeedIds.Doctor2,         TherapyCycleId = SeedIds.Cycle9,
+                    DoctorId = SeedIds.Doctor2,
                     ScheduledStart = now.AddDays(2).AddHours(14),
                     ScheduledEnd = now.AddDays(2).AddHours(14).AddMinutes(30),
                     ReasonForVisit = "Контролен преглед",
@@ -125,7 +125,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 new Appointment
                 {
                     PatientId = SeedIds.Patient10,
-                    DoctorId = SeedIds.Doctor1,         TherapyCycleId = SeedIds.Cycle10,
+                    DoctorId = SeedIds.Doctor1,
                     ScheduledStart = now.AddDays(-1).AddHours(11),
                     ScheduledEnd = now.AddDays(-1).AddHours(11).AddMinutes(30),
                     ReasonForVisit = "Терапија за грб",
@@ -135,7 +135,7 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 new Appointment
                 {
                     PatientId = SeedIds.Patient11,
-                    DoctorId = SeedIds.Doctor2,         TherapyCycleId = SeedIds.Cycle11,
+                    DoctorId = SeedIds.Doctor2,
                     ScheduledStart = now.AddDays(-3).AddHours(10),
                     ScheduledEnd = now.AddDays(-3).AddHours(10).AddMinutes(30),
                     ReasonForVisit = "Контрола",
