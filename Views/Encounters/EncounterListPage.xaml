@@ -49,7 +49,7 @@
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
 						ContentPadding="16,0"
-						HeightRequestEx="45"
+						HeightRequestEx="40"
 						IsVisible="{Binding CanCreate}"
 						Text="Нов преглед"
 						TextColorEx="{StaticResource White}" />-->
