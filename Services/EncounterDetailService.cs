@@ -144,7 +144,7 @@ public class EncounterDetailService : IEncounterDetailService
             .Include(x => x.Appointment)
             .FirstAsync(x => x.Id==id);
 
-        var diagnoses = await db.Set<PatientMkb10Assignment>()
+        var mkb10Assignments = await db.Set<PatientMkb10Assignment>()
             .AsNoTracking()
             .Where(x => x.EncounterId==id)        // ← no more AppointmentDiagnoses
             .Include(x => x.Mkb10Code)
@@ -176,7 +176,7 @@ public class EncounterDetailService : IEncounterDetailService
         return new EncounterDetailDto
         {
             Encounter=encounter,
-            Mkb10Assignments=diagnoses,
+            Mkb10Assignments=mkb10Assignments,
             Prescriptions=prescriptions,
             Score=score,
             Patients=patients,
@@ -185,7 +185,7 @@ public class EncounterDetailService : IEncounterDetailService
             NextEncounter=currentIndex>=0&&currentIndex<history.Count-1
                                     ? history[currentIndex+1] : null,
             TotalEncounters=history.Count,
-            TotalMkb10Assignments=diagnoses.Count,
+            TotalMkb10Assignments=mkb10Assignments.Count,
             TotalPrescriptions=prescriptions.Count
         };
     }
@@ -256,10 +256,10 @@ public class EncounterDetailService : IEncounterDetailService
 
             // Encounter history
             .Include(p => p.Encounters).ThenInclude(e => e.Doctor).ThenInclude(d => d.User)
-            // Encounter diagnoses via the PatientMkb10Assignment.EncounterId FK
+            // Encounter mkb10Assignments via the PatientMkb10Assignment.EncounterId FK
             .Include(p => p.Encounters).ThenInclude(e => e.Mkb10Assignments).ThenInclude(d => d.Mkb10Code)
 
-            // Appointments — scheduling shell only, no diagnosis join
+            // Appointments — scheduling shell only, no assignment join
             .Include(p => p.Appointments).ThenInclude(a => a.Doctor).ThenInclude(d => d.User)
 
 
@@ -527,7 +527,7 @@ public class EncounterDetailService : IEncounterDetailService
     }
     public async Task UpdateEncounterClinicalData(
         Guid encounterId,
-        List<PatientMkb10Assignment> diagnoses,
+        List<PatientMkb10Assignment> mkb10Assignments,
         string? remarks)
     {
         await using var db=await _factory.CreateDbContextAsync();
@@ -546,21 +546,21 @@ public class EncounterDetailService : IEncounterDetailService
             .ToListAsync();
         db.Set<PatientMkb10Assignment>().RemoveRange(existing);
 
-        foreach(var diagnosis in diagnoses)
+        foreach(var assignment in mkb10Assignments)
         {
-            diagnosis.Id=Guid.NewGuid();
-            diagnosis.PatientId=encounter.PatientId;
-            diagnosis.EncounterId=encounter.Id;
-            diagnosis.Mkb10Code=null;
-            if(diagnosis.DiagnosedAt==default)
-                diagnosis.DiagnosedAt=DateTime.Now;
-            if(string.IsNullOrWhiteSpace(diagnosis.AssignmentNumber))
-                diagnosis.AssignmentNumber=await SequenceHelper.GenerateNumberAsync(
+            assignment.Id=Guid.NewGuid();
+            assignment.PatientId=encounter.PatientId;
+            assignment.EncounterId=encounter.Id;
+            assignment.Mkb10Code=null;
+            if(assignment.DiagnosedAt==default)
+                assignment.DiagnosedAt=DateTime.Now;
+            if(string.IsNullOrWhiteSpace(assignment.AssignmentNumber))
+                assignment.AssignmentNumber=await SequenceHelper.GenerateNumberAsync(
                     db, SequenceNames.PatientMkb10Assignment, "DX");
-            db.Set<PatientMkb10Assignment>().Add(diagnosis);
+            db.Set<PatientMkb10Assignment>().Add(assignment);
         }
 
-        if(diagnoses.Count>0)
+        if(mkb10Assignments.Count>0)
         {
             encounter.Complete(DateTime.Now);
 
@@ -579,7 +579,7 @@ public class EncounterDetailService : IEncounterDetailService
 
     public async Task SaveEncounter(
         Encounter encounter,
-        List<PatientMkb10Assignment> diagnoses,
+        List<PatientMkb10Assignment> mkb10Assignments,
         List<Prescription> prescriptions,
         List<PatientMedicine> medicines,
         List<Guid> deletedMedicineIds,
@@ -608,7 +608,7 @@ public class EncounterDetailService : IEncounterDetailService
                         "Овој термин веќе има активен преглед.");
             }
 
-            encounter.Mkb10Assignments.Clear(); // detach nav collection — diagnoses saved separately below
+            encounter.Mkb10Assignments.Clear(); // detach nav collection — mkb10Assignments saved separately below
 
             if(!exists)
             {
@@ -643,13 +643,13 @@ public class EncounterDetailService : IEncounterDetailService
 
             await db.SaveChangesAsync();
 
-            // ── Diagnoses: full replace scoped to this encounter ─────────────
+            // ── MKB-10 assignments: full replace scoped to this encounter ─────────────
             var existingDiagnoses = await db.Set<PatientMkb10Assignment>()
                 .Where(x => x.EncounterId==encounter.Id)
                 .ToListAsync();
             db.Set<PatientMkb10Assignment>().RemoveRange(existingDiagnoses);
 
-            foreach(var d in diagnoses)
+            foreach(var d in mkb10Assignments)
             {
                 d.Id=Guid.NewGuid();
                 d.PatientId=encounter.PatientId;
