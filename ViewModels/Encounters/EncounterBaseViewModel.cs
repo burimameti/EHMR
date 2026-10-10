@@ -570,7 +570,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             // Експлицитно ги вчитуваме овие тука (наместо да се потпираме на
             // fire-and-forget-от од OnSelectedPatientChanged, кој е блокиран
             // додека guard-от е активен) - вака страничните карти (дијагнози,
-            // историја, циклуси, термини) веднаш имаат податоци за пациентот.
+            // историја на лекови, термини) веднаш имаат податоци за пациентот.
             await LoadPatientContextAsync(appointment.PatientId);
             await LoadAppointmentsForPatientAsync(appointment.PatientId);
         }
