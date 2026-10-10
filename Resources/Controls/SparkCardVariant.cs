@@ -13,5 +13,4 @@ public enum SparkCardVariant
     Appointment,
     Warning,
     Success,
-    TherapyCycle
 }
