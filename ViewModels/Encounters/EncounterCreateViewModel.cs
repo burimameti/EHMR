@@ -423,6 +423,21 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             Encounter.TherapyCycleId=SelectedTherapyCycle?.Id;
             Encounter.Diagnoses.Clear();
 
+            var encounterScoreRecords=EncounterScores
+                .Select(entry =>
+                {
+                    var separator=entry.IndexOf(':');
+                    return separator>0
+                        ? new PatientScore
+                        {
+                            ScoreText=entry[..separator].Trim(),
+                            Number=entry[(separator+1)..].Trim()
+                        }
+                        : new PatientScore { ScoreText=entry.Trim() };
+                })
+                .Where(score => !string.IsNullOrWhiteSpace(score.ScoreText))
+                .ToList();
+
             await EncounterService.SaveEncounter(
                 Encounter,
                 Diagnoses.ToList(),
@@ -430,7 +445,8 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                 EncounterMedicines.ToList(),
                 DeletedMedicineIds.ToList(),
                 ScoreText,
-                ScheduleNextFollowUp ? NextFollowUpDate.Date.AddHours(9) : null);
+                ScheduleNextFollowUp ? NextFollowUpDate.Date.AddHours(9) : null,
+                encounterScoreRecords);
 
             await NavigationService.GoToAsync(AppRoutes.Encounters.List);
 
