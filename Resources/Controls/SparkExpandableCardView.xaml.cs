@@ -579,7 +579,7 @@ public partial class SparkExpandableCard : ContentView
 
             SparkCardVariant.Encounter => "📋",
 
-            SparkCardVariant.Diagnosis => "🩺",
+            SparkCardVariant.PatientMkb10Assignment => "🩺",
 
             SparkCardVariant.Appointment => "📅",
 
