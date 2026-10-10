@@ -5,7 +5,7 @@
         public const string Login = "login";
         public const string Dashboard = "dashboard";
         public const string Calendar = "calendar";
-        public const string CalendarPage = "MainPage";
+        public const string CalendarPage = "calendar-dashboard";
         public static class Patients
         {
             public const string List = "patients";
