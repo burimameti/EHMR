@@ -450,7 +450,10 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     public IEnumerable<PatientMkb10Assignment> CurrentMkb10Assignments =>
         PatientMkb10Assignments
-            .Where(x => x.Status==PatientMkb10AssignmentStatus.Active)
+            // Chronic, in-remission and suspected diagnoses can still be current.
+            .Where(x => x.Status!=PatientMkb10AssignmentStatus.Resolved
+                     && x.Status!=PatientMkb10AssignmentStatus.RuledOut
+                     && x.Status!=PatientMkb10AssignmentStatus.Inactive)
             .OrderByDescending(x => x.IsPrimary)
             .ThenByDescending(x => x.DiagnosedAt);
 
@@ -508,6 +511,10 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             PatientMedicines.Clear();
             PatientDocuments.Clear();
             PatientScoreHistory.Clear();
+            CurrentPatientScore=string.Empty;
+            CurrentPatientScoreDate=null;
+            OnPropertyChanged(nameof(CurrentMkb10Assignments));
+            OnPropertyChanged(nameof(MedicationHistory));
             ScoreOptions.Clear();
             ScoreSuggestions.Clear();
             ScoreSearchText=string.Empty;
@@ -526,8 +533,15 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             PatientPrescriptions=new ObservableCollection<Prescription>(ctx.Prescriptions);
             PatientMedicines=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
             await LoadApplicationRegimesAsync();
-            CurrentPatientScore=ctx.LatestScore?.ScoreText??string.Empty;
-            CurrentPatientScoreDate=ctx.LatestScore?.RecordedAt;
+            // Fall back to the latest patient-level score if the context provider
+            // did not populate LatestScore.
+            var latestPatientScore = ctx.LatestScore
+                ?? ctx.Scores
+                    .Where(s => !s.EncounterId.HasValue)
+                    .OrderByDescending(s => s.RecordedAt)
+                    .FirstOrDefault();
+            CurrentPatientScore=latestPatientScore?.ScoreText??string.Empty;
+            CurrentPatientScoreDate=latestPatientScore?.RecordedAt;
             PatientDocuments=new ObservableCollection<PatientDocument>(ctx.Documents);
             PatientScoreHistory=new ObservableCollection<PatientScore>(ctx.Scores);
             // Keep globally ranked, frequently used score suggestions, and ensure
