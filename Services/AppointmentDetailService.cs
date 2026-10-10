@@ -13,9 +13,7 @@ namespace EHMR.Services
         Task<PatientContextDto> GetPatientContext(Guid patientId);
         Task UpdateAppointmentStatus(Guid appointmentId, AppointmentStatus newStatus);
         Task<List<Mkb10Code>> SearchDiagnoses(string query, CancellationToken token);
-        Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30);
-        Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, TherapyCycle? cycle, List<PatientMedicine> medicines);
-        Task GenerateNextTherapyCycle(Appointment appointment);
+        Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30);        Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, List<PatientMedicine> medicines);
         Task AutoCloseStaleAppointmentsAsync();
     }
 
@@ -98,7 +96,6 @@ namespace EHMR.Services
                 .AsNoTracking()
                 .Include(x => x.Patient)
                 .Include(x => x.Doctor).ThenInclude(x => x.User)
-                .Include(x => x.TherapyCycle)
                 .FirstAsync(x => x.Id==id);
 
             // Diagnoses now come from the linked Encounter, not AppointmentDiagnoses
@@ -115,15 +112,7 @@ namespace EHMR.Services
                     .ThenBy(x => x.Mkb10Code!.Code)
                     .ToListAsync()
                 : [];
-
-            var cycles = await db.TherapyCycles
-                .AsNoTracking()
-                .Where(x => x.PatientId==appointment.PatientId)
-                .Include(x => x.Appointments)
-                .OrderBy(x => x.TherapyCyleNumber)
-                .ToListAsync();
-
-            var patients = await db.Patients
+var patients = await db.Patients
                 .AsNoTracking()
                 .Include(x => x.Doctor)
                 .OrderBy(x => x.LastName)
@@ -150,14 +139,12 @@ namespace EHMR.Services
                 Appointment=appointment,
                 LinkedEncounter=encounter,
                 Diagnoses=diagnoses,
-                TherapyCycles=cycles,
                 Patients=patients,
                 Doctors=doctors,
                 PreviousAppointment=currentIndex>0 ? history[currentIndex-1] : null,
                 NextAppointment=currentIndex<history.Count-1 ? history[currentIndex+1] : null,
                 TotalAppointments=history.Count,
                 TotalDiagnoses=diagnoses.Count,
-                TotalCycles=cycles.Count
             };
         }
 
@@ -225,9 +212,7 @@ namespace EHMR.Services
             {
                 Appointments=appointments,
                 Diagnoses=diagnoses,
-                PatientMedicines=patientMedicines,
-                TherapyCycles=cycles
-            };
+                PatientMedicines=patientMedicines,};
         }
         public async Task<List<Medicine>> SearchMedicines(string query, CancellationToken token)
         {
@@ -269,16 +254,12 @@ namespace EHMR.Services
             _encounterService.GetNextAvailableSlot(doctorId, from, durationMinutes, patientId);
 
         // ─── Commands ─────────
-        public async Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, TherapyCycle? cycle, List<PatientMedicine> medicines)
+        public async Task SaveAppointment(Appointment appointment, List<Diagnosis> diagnoses, List<PatientMedicine> medicines)
         {
             await using var db = await _factory.CreateDbContextAsync();
-            appointment.TherapyCycleId=cycle?.Id;
-
-            appointment.Patient=null;
+appointment.Patient=null;
             appointment.Doctor=null;
-            appointment.TherapyCycle=null;
-
-            Encounter? encounterForMedicines = null;
+Encounter? encounterForMedicines = null;
             bool medicinesEditable = true;
 
             if(appointment.Id==Guid.Empty)
@@ -440,111 +421,4 @@ namespace EHMR.Services
             await _encounterService.UpdateAppointmentStatus(appointmentId, newStatus);
         }
 
-        public async Task GenerateNextTherapyCycle(Appointment appointment)
-        {
-            await using var db = await _factory.CreateDbContextAsync();
-
-            var lastCycle = await db.TherapyCycles
-                .Where(x => x.PatientId==appointment.PatientId)
-                .OrderByDescending(x => x.TherapyCyleNumber)
-                .FirstOrDefaultAsync();
-
-            var cycleNumber = lastCycle is null||string.IsNullOrWhiteSpace(lastCycle.TherapyCyleNumber)
-                ? await SequenceHelper.GenerateNumberAsync(db, SequenceNames.TherapyCycle, "TER")
-                : lastCycle.TherapyCyleNumber;
-
-            var cycle = new TherapyCycle
-            {
-                Id=Guid.NewGuid(),
-                PatientId=appointment.PatientId,
-                TherapyCyleNumber=cycleNumber,
-                Status=TherapyStatus.Scheduled,
-            };
-
-            db.TherapyCycles.Add(cycle);
-
-            var nextAppointment = new Appointment
-            {
-                Id=Guid.NewGuid(),
-                PatientId=appointment.PatientId,
-                DoctorId=appointment.DoctorId,
-                TherapyCycleId=cycle.Id,
-                ScheduledStart=appointment.ScheduledStart.AddDays(7),
-                ScheduledEnd=appointment.ScheduledEnd.AddDays(7),
-                Status=AppointmentStatus.Scheduled,
-            };
-
-            db.Appointments.Add(nextAppointment);
-
-    
-            await _encounterService.BuildEncounterAsync(db, nextAppointment, "");
-
-            await db.SaveChangesAsync();
-        }
-
-
-        private static EncounterStatus MapToEncounterStatus(AppointmentStatus status) => status switch
-        {
-            AppointmentStatus.Scheduled => EncounterStatus.Scheduled,
-            AppointmentStatus.InProgress => EncounterStatus.InProgress,
-            AppointmentStatus.Completed => EncounterStatus.Completed,
-            AppointmentStatus.Cancelled => EncounterStatus.Cancelled,
-            _ => EncounterStatus.Scheduled
-        };
-
-        private static (EncounterStatus encounter, AppointmentStatus appointment)
-         ReconcileStatus(EncounterStatus encounterStatus, AppointmentStatus appointmentStatus)
-        {
-            var resolved = ResolveLeadingStatus(encounterStatus, appointmentStatus);
-            return (
-                resolved,                           // already EncounterStatus — no mapping needed
-                MapToAppointmentStatus(resolved)    // map once to get the appointment side
-            );
-        }
-
-        // Lifecycle order — higher = further along
-        private static int LifecycleOrder(EncounterStatus s) => s switch
-        {
-            EncounterStatus.Scheduled => 0,
-            EncounterStatus.InProgress => 1,
-            EncounterStatus.Completed => 4,
-            EncounterStatus.Cancelled => 5,
-                _ => 0
-        };
-
-        private static int LifecycleOrder(AppointmentStatus s) => s switch
-        {
-            AppointmentStatus.Scheduled => 0,
-            AppointmentStatus.Completed => 4,
-            AppointmentStatus.Cancelled => 5,
-            _ => 0
-        };
-
-        private static EncounterStatus ResolveLeadingStatus(
-          EncounterStatus e, AppointmentStatus a)
-        {
-            // Terminal states on encounter side always win
-            if(e is EncounterStatus.Completed or EncounterStatus.Cancelled)
-                return e;
-
-            // Terminal states on appointment side — map and win
-            if(a is AppointmentStatus.Completed or AppointmentStatus.Cancelled)
-                return MapToEncounterStatus(a);
-
-            // Non-terminal — whichever is further ahead wins
-            return LifecycleOrder(e)>=LifecycleOrder(a)
-                ? e
-                : MapToEncounterStatus(a);
-        }
-
-
-        private static AppointmentStatus MapToAppointmentStatus(EncounterStatus s) => s switch
-        {
-            EncounterStatus.Scheduled => AppointmentStatus.Scheduled,
-            EncounterStatus.InProgress => AppointmentStatus.InProgress,
-            EncounterStatus.Completed => AppointmentStatus.Completed,
-            EncounterStatus.Cancelled => AppointmentStatus.Cancelled,
-            _ => AppointmentStatus.Scheduled
-        };
-    }
 }
