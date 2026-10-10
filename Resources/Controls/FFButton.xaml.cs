@@ -81,10 +81,6 @@ public partial class FFButton : ContentView
         Container.MinimumHeightRequest = Math.Max(40, HeightRequestEx);
         Container.StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(6) };
 
-        if (width < 145)
-        {
-            FontSizeEx = Math.Max(12.5, 13 * scale);
-        }
     }
 
     // ═══════════════════════════════════════════════════════════ //
