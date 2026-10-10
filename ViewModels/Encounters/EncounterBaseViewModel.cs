@@ -437,10 +437,17 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     // Patient-level therapies that were discontinued are clinical history.
     // Encounter snapshots are excluded because they belong to individual visits,
     // not to the patient's active-therapy timeline.
-    public IEnumerable<PatientMedicine> PreviousMedicines =>
+    // Medication history, separate from active medicines used on the new encounter.
+    public IEnumerable<PatientMedicine> MedicationHistory =>
         PatientMedicines
-            .Where(x => !x.IsActive && x.EncounterId==null)
-            .OrderByDescending(x => x.IsActive);
+            .Where(x => (x.EncounterId==null && !x.IsActive) || x.EncounterId.HasValue)
+            .OrderByDescending(x => x.CreatedAt);
+
+    public IEnumerable<PatientMkb10Assignment> CurrentMkb10Assignments =>
+        PatientMkb10Assignments
+            .Where(x => x.Status==PatientMkb10AssignmentStatus.Active)
+            .OrderByDescending(x => x.IsPrimary)
+            .ThenByDescending(x => x.DiagnosedAt);
 
     // Encounter-linked PatientMedicine rows are immutable clinical history
     // for individual visits; patient-level assignments have EncounterId == null.
@@ -545,6 +552,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             OnPropertyChanged(nameof(ActiveMedicinesSummary));
             OnPropertyChanged(nameof(ActiveTherapySummary));
             OnPropertyChanged(nameof(PreviousMedicines));
+            OnPropertyChanged(nameof(MedicationHistory));
+            OnPropertyChanged(nameof(CurrentMkb10Assignments));
             OnPropertyChanged(nameof(PatientEncounterMedicineHistory));
             OnPropertyChanged(nameof(HasPatientContext));
             OnPropertyChanged(nameof(HasEncounterContext));
