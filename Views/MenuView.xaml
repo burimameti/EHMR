@@ -148,7 +148,7 @@
 												Binding="{Binding IsActive}"
 												TargetType="Label"
 												Value="False">
-												<Setter Property="TextColor" Value="{StaticResource SidebarText}" />
+												<Setter Property="TextColor" Value="#CBD5E1" />
 												<Setter Property="FontAttributes" Value="None" />
 											</DataTrigger>
 										</Label.Triggers>
@@ -184,7 +184,7 @@
 												Binding="{Binding IsActive}"
 												TargetType="Label"
 												Value="False">
-												<Setter Property="TextColor" Value="{StaticResource SidebarTextMuted}" />
+												<Setter Property="TextColor" Value="#9AA6AD" />
 											</DataTrigger>
 											<DataTrigger
 												Binding="{Binding Items.Count}"
@@ -248,7 +248,7 @@
 												HorizontalOptions="Center"
 												VerticalOptions="Fill"
 												WidthRequest="1"
-												Color="{StaticResource SidebarActiveBg}" />
+												Color="#2AEBE7" />
 
 											<!--  bullet, painted with sidebar bg to mask the line behind it  -->
 											<Border
@@ -274,7 +274,7 @@
 														Binding="{Binding IsActive}"
 														TargetType="Border"
 														Value="False">
-														<Setter Property="Stroke" Value="{StaticResource SidebarBg}" />
+														<Setter Property="Stroke" Value="#202D3D" />
 													</DataTrigger>
 												</Border.Triggers>
 											</Border>
@@ -297,7 +297,7 @@
 														Binding="{Binding IsActive}"
 														TargetType="Label"
 														Value="False">
-														<Setter Property="TextColor" Value="{StaticResource SidebarTextMuted}" />
+														<Setter Property="TextColor" Value="#9AA6AD" />
 														<Setter Property="FontAttributes" Value="None" />
 													</DataTrigger>
 												</Label.Triggers>
