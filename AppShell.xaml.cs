@@ -27,11 +27,12 @@ public partial class AppShell : Shell
     private readonly IAuthStateService _auth;
     private readonly INavigationCoordinator _coordinator;
     private readonly IAuthorizationService _authorization;
+    private readonly INavigationService _navigationService;
     private bool _isNavigating;
 
     public AppShell(
         IAuthStateService auth, IAuthorizationService authorization,
-        INavigationCoordinator coordinator)
+        INavigationCoordinator coordinator, INavigationService navigationService)
     {
         InitializeComponent();
 
@@ -39,6 +40,7 @@ public partial class AppShell : Shell
         _coordinator=coordinator;
 
         _authorization=authorization;
+        _navigationService=navigationService;
         RegisterRoutes();
         SetupCoordinator();
 
@@ -95,7 +97,10 @@ public partial class AppShell : Shell
 
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    await GoToAsync(route);
+                    // Use the same serialized navigation pipeline as forms and Back.
+                    // Direct Shell.GoToAsync here could race with a form command and
+                    // unexpectedly leave the user on another page (often Calendar).
+                    await _navigationService.GoToAsync(route);
 
                     FlyoutIsPresented=false;
                 });
@@ -123,7 +128,7 @@ public partial class AppShell : Shell
                 ? "//dashboard"
                 : "//login";
 
-            await GoToAsync(target);
+            await _navigationService.GoToAsync(target);
         }
         finally
         {
