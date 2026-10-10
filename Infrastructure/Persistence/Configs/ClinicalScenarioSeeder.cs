@@ -80,7 +80,7 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
             await context.SaveChangesAsync(ct);
         }
 
-        await SeedEncounterMedicinesAsync(context, today, ct);
+        await SeedEncounterMedicinesAsync(context, ct);
     }
 
     private static List<Appointment> BuildAppointments(DateTime today) =>
@@ -198,68 +198,107 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
 
     private static async Task SeedEncounterMedicinesAsync(
         DesktopTherapyDbContext context,
-        DateTime today,
         CancellationToken ct)
     {
-        var medicineIds=new[] { SeedIds.Med2, SeedIds.Med6, SeedIds.Med9 };
-        var availableMedicines=await context.Medicines
-            .Where(x => medicineIds.Contains(x.Id))
-            .Select(x => x.Id)
-            .ToListAsync(ct);
-
-        var regimes=await context.ApplicationRegimes
+        var regimes = await context.ApplicationRegimes
             .Where(x => x.IsActive)
             .ToListAsync(ct);
+        var oral = regimes.FirstOrDefault(x => x.Regime == "Орално")?.Id;
+        var subcutaneous = regimes.FirstOrDefault(x => x.Regime == "Поткожно")?.Id;
 
-        var oral=regimes.FirstOrDefault(x => x.Regime=="Орално")?.Id;
-        var subcutaneous=regimes.FirstOrDefault(x => x.Regime=="Поткожно")?.Id;
+        var medicines = new[]
+        {
+            new { Id = SeedIds.Med2, RegimeId = oral, Frequency = DosesFrequency.TwiceDaily, Dosage = "1 таблета од 400 mg", Notes = "По јадење, краткотрајно за болка." },
+            new { Id = SeedIds.Med6, RegimeId = oral, Frequency = DosesFrequency.Daily, Dosage = "1 таблета од 5 mg", Notes = "Да се зема секое утро." },
+            new { Id = SeedIds.Med9, RegimeId = subcutaneous, Frequency = DosesFrequency.Weekly, Dosage = "7.5 mg еднаш неделно", Notes = "Редовна контрола на крвна слика." }
+        };
 
-        if(availableMedicines.Count==0)
-            return;
+        // Ensure the new medicine-first patient-level assignments exist.
+        foreach(var medicine in medicines)
+        {
+            var assignmentExists = await context.PatientMedicines.AnyAsync(
+                x => x.PatientId == SeedIds.Patient13
+                    && x.EncounterId == null
+                    && x.MedicineId == medicine.Id,
+                ct);
+            if(assignmentExists)
+                continue;
 
-        var rows=new List<PatientMedicine>();
-        if(availableMedicines.Contains(SeedIds.Med2))
-            rows.Add(PatientMedicine(Guid.Parse("00000000-0000-0000-0000-000000009001"), EncounterIds[0], SeedIds.Med2, oral, DosesFrequency.TwiceDaily, "1 таблета од 400 mg", today.AddMonths(-8), today.AddMonths(-7), false, "По јадење, краткотрајно за болка."));
-        if(availableMedicines.Contains(SeedIds.Med9))
-            rows.Add(PatientMedicine(Guid.Parse("00000000-0000-0000-0000-000000009002"), EncounterIds[1], SeedIds.Med9, subcutaneous, DosesFrequency.Weekly, "7.5 mg еднаш неделно", today.AddMonths(-5), null, true, "Редовна контрола на крвна слика."));
-        if(availableMedicines.Contains(SeedIds.Med6))
-            rows.Add(PatientMedicine(Guid.Parse("00000000-0000-0000-0000-000000009003"), EncounterIds[3], SeedIds.Med6, oral, DosesFrequency.Daily, "1 таблета од 5 mg", today.AddDays(-14), null, true, "Да се зема секое утро."));
+            context.PatientMedicines.Add(new PatientMedicine
+            {
+                Id = Guid.Parse(medicine.Id == SeedIds.Med2
+                    ? "00000000-0000-0000-0000-000000009101"
+                    : medicine.Id == SeedIds.Med6
+                        ? "00000000-0000-0000-0000-000000009102"
+                        : "00000000-0000-0000-0000-000000009103"),
+                PatientId = SeedIds.Patient13,
+                MedicineId = medicine.Id,
+                ApplicationRegimeId = medicine.RegimeId,
+                DosesFrequency = medicine.Frequency,
+                Dosage = medicine.Dosage,
+                Notes = medicine.Notes,
+                IsActive = true,
+                Quantity = 1m
+            });
+        }
+        await context.SaveChangesAsync(ct);
 
-        var ids=rows.Select(x => x.Id).ToArray();
-        var existingIds=await context.PatientMedicines
-            .Where(x => ids.Contains(x.Id))
-            .Select(x => x.Id)
+        // Each demo encounter gets its own quantity snapshot for every medicine
+        // assigned to the patient. Quantities deliberately vary by visit, including
+        // zero, and never overwrite the patient-level assignment quantity.
+        decimal[,] quantities =
+        {
+            { 1m, 0m, 0m },
+            { 5m, 1m, 0m },
+            { 0m, 0m, 2m },
+            { 0m, 1m, 5m }
+        };
+
+        var seededEncounterIds = EncounterIds.Take(4).ToArray();
+        var existingRows = await context.PatientMedicines
+            .Where(x => x.EncounterId.HasValue && seededEncounterIds.Contains(x.EncounterId.Value))
             .ToListAsync(ct);
-        var missing=rows.Where(x => !existingIds.Contains(x.Id)).ToList();
-        if(missing.Count==0)
-            return;
 
-        await context.PatientMedicines.AddRangeAsync(missing, ct);
+        for(var encounterIndex = 0; encounterIndex < seededEncounterIds.Length; encounterIndex++)
+        {
+            for(var medicineIndex = 0; medicineIndex < medicines.Length; medicineIndex++)
+            {
+                var medicine = medicines[medicineIndex];
+                var encounterId = seededEncounterIds[encounterIndex];
+                var quantity = quantities[encounterIndex, medicineIndex];
+                var existing = existingRows.FirstOrDefault(
+                    x => x.EncounterId == encounterId && x.MedicineId == medicine.Id);
+
+                if(existing is not null)
+                {
+                    // These fixed demo encounter rows are intentionally refreshed
+                    // so a database seeded with the old model receives the new values.
+                    existing.Quantity = quantity;
+                    existing.ApplicationRegimeId = medicine.RegimeId;
+                    existing.DosesFrequency = medicine.Frequency;
+                    existing.Dosage = medicine.Dosage;
+                    existing.Notes = medicine.Notes;
+                    existing.IsActive = true;
+                    continue;
+                }
+
+                context.PatientMedicines.Add(new PatientMedicine
+                {
+                    Id = Guid.Parse($"00000000-0000-0000-0000-{(910000 + encounterIndex * 10 + medicineIndex):D12}"),
+                    PatientId = SeedIds.Patient13,
+                    EncounterId = encounterId,
+                    MedicineId = medicine.Id,
+                    ApplicationRegimeId = medicine.RegimeId,
+                    DosesFrequency = medicine.Frequency,
+                    Dosage = medicine.Dosage,
+                    Notes = medicine.Notes,
+                    IsActive = true,
+                    Quantity = quantity
+                });
+            }
+        }
+
         await context.SaveChangesAsync(ct);
     }
-
-    private static PatientMedicine PatientMedicine(
-        Guid id,
-        Guid encounterId,
-        Guid medicineId,
-        Guid? applicationRegimeId,
-        DosesFrequency frequency,
-        string dosage,
-        DateTime start,
-        DateTime? end,
-        bool active,
-        string notes) => new()
-    {
-        Id=id,
-        PatientId=SeedIds.Patient13,
-        EncounterId=encounterId,
-        MedicineId=medicineId,
-        ApplicationRegimeId=applicationRegimeId,
-        DosesFrequency=frequency,
-        Dosage=dosage,
-      
-        IsActive=active,
-        Notes=notes,
-        CreatedAt=start
-    };
+}
 }
