@@ -618,7 +618,7 @@ namespace EHMR.Resources.Controls
             {
                 Text = "🔍",
                 FontSize = R(16),
-                TextColor = Color.FromArgb("#35AEB9"),
+                TextColor = Color.FromArgb("#0F9693"),
                 BackgroundColor = Colors.Transparent,
                 BorderWidth = 0,
                 Padding = new Thickness(6, 0),
@@ -961,7 +961,7 @@ namespace EHMR.Resources.Controls
                 HeightRequest=R(34),
                 Padding=0,
                 StrokeShape=new Rectangle(),
-                Background=new SolidColorBrush(Colors.White),
+                Background=new SolidColorBrush(Color.FromArgb("#FFFFFF")),
                 Stroke=new SolidColorBrush(PagerBorderColor),
                 StrokeThickness=1,
                 Opacity=enabled ? 1 : .45,
@@ -1005,7 +1005,7 @@ namespace EHMR.Resources.Controls
                 StrokeShape=new Rectangle(),
                 Stroke=active ? PagerActiveBg : PagerBorder,
                 StrokeThickness=1,
-                Background=new SolidColorBrush(active ? PagerActiveBg : Colors.White),
+                Background=new SolidColorBrush(active ? PagerActiveBg : Color.FromArgb("#FFFFFF")),
                 Content=new Label
                 {
                     Text=page.ToString(),
