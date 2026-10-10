@@ -34,7 +34,6 @@ namespace EHMR.Infrastructure.Persistence
             "ClinicalScenarioSeeder",
             "PatientScoreSeeder",
             "PatientMkb10AssignmentSeeder",
-            "DiagnosisSeeder",
             "PrescriptionSeeder",
             "PatientMedicineSeeder",
             "FunctionalCoverageSeeder",
@@ -79,9 +78,8 @@ namespace EHMR.Infrastructure.Persistence
                     Console.WriteLine(ex);
 
                     // Демо податоците се само примероци — нивниот пад не смее да го
-                    // спречи подигањето на апликацијата. Порано DiagnosisSeeder
-                    // фрлаше кога каталогот на МКБ-10 е празен и целата апликација
-                    // не се подигаше.
+                    // спречи подигањето на апликацијата кога недостасуваат опционални
+                    // каталошки податоци или demo records.
                     if(DemoOnlySeeders.Contains(name))
                     {
                         // Неуспешниот seeder може да остави недовршени измени
