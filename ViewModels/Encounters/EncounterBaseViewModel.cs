@@ -211,14 +211,18 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         }
 
         var scoreName=ScoreSearchText?.Trim();
-        if(string.IsNullOrWhiteSpace(scoreName) || !ScoreOptions.Any(x => string.Equals(x, scoreName, StringComparison.OrdinalIgnoreCase)))
+        if(string.IsNullOrWhiteSpace(scoreName))
         {
             await UserDialogService.ShowAlertAsync(
-                "Изберете скор",
-                "Изберете скор што веќе е доделен во картонот на пациентот.",
+                "Внесете скор",
+                "Изберете постоечки скор од предлозите или внесете име за нов скор.",
                 "Во ред");
             return;
         }
+
+        // Allow a clinician to enter a new score name as well as selecting a
+        // patient-level score. The encounter row becomes a reusable suggestion
+        // for future encounters through GetScoreSuggestionsAsync().
 
         var number=await UserDialogService.ShowPromptAsync(
             "Вредност за прегледот",
