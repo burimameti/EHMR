@@ -42,12 +42,9 @@ namespace EHMR.Infrastructure.Persistence.Configs
                 modules.Add(new Module { UserId=doc, ModuleKey=Modules.Appointments, IsEnabled=true });
             }
 
-            // NURSE
-            modules.Add(new Module
-            {
-                UserId=SeedIds.NurseUser,
-                IsEnabled=true
-            });
+            // NURSE — patient and appointment workflows replace the retired therapy-cycle module.
+            modules.Add(new Module { UserId = SeedIds.NurseUser, ModuleKey = Modules.Patients, IsEnabled = true });
+            modules.Add(new Module { UserId = SeedIds.NurseUser, ModuleKey = Modules.Appointments, IsEnabled = true });
 
             await context.UserModules.AddRangeAsync(modules, ct);
             await context.SaveChangesAsync(ct);
