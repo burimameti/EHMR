@@ -669,7 +669,8 @@ public class EncounterDetailService : IEncounterDetailService
         List<PatientMedicine> medicines,
         List<Guid> deletedMedicineIds,
         string? scoreText = null,
-        DateTime? nextFollowUpDate = null)
+        DateTime? nextFollowUpDate = null,
+        List<PatientScore>? encounterScores = null)
     {
         await using var db = await _factory.CreateDbContextAsync();
         await using var tx = await db.Database.BeginTransactionAsync();
@@ -851,32 +852,57 @@ public class EncounterDetailService : IEncounterDetailService
                     await db.SaveChangesAsync();
                 }
             }
-            // One score belongs to one encounter and the patient. Blank score removes
-            // the previous score for this encounter.
-            var normalizedScore=scoreText?.Trim();
-            var existingScore=await db.PatientScores
-                .FirstOrDefaultAsync(x => x.EncounterId==encounter.Id && x.PatientId==encounter.PatientId);
+            // Scores entered from the encounter form are visit-specific records.
+            // Replace only this encounter's rows; never update patient-level scores.
+            if(encounterScores is not null)
+            {
+                var existingEncounterScores=await db.PatientScores
+                    .Where(x => x.EncounterId==encounter.Id && x.PatientId==encounter.PatientId)
+                    .ToListAsync();
+                db.PatientScores.RemoveRange(existingEncounterScores);
 
-            if(string.IsNullOrWhiteSpace(normalizedScore))
-            {
-                if(existingScore is not null)
-                    db.PatientScores.Remove(existingScore);
-            }
-            else if(existingScore is null)
-            {
-                db.PatientScores.Add(new PatientScore
+                foreach(var item in encounterScores.Where(x =>
+                    !string.IsNullOrWhiteSpace(x.ScoreText) || !string.IsNullOrWhiteSpace(x.Number)))
                 {
-                    Id=Guid.NewGuid(),
-                    PatientId=encounter.PatientId,
-                    EncounterId=encounter.Id,
-                    ScoreText=normalizedScore,
-                    RecordedAt=DateTime.UtcNow
-                });
+                    db.PatientScores.Add(new PatientScore
+                    {
+                        Id=Guid.NewGuid(),
+                        PatientId=encounter.PatientId,
+                        EncounterId=encounter.Id,
+                        ScoreText=item.ScoreText.Trim(),
+                        Number=item.Number.Trim(),
+                        RecordedAt=DateTime.UtcNow
+                    });
+                }
             }
             else
             {
-                existingScore.ScoreText=normalizedScore;
-                existingScore.RecordedAt=DateTime.UtcNow;
+                // Legacy caller compatibility (encounter edit screen).
+                var normalizedScore=scoreText?.Trim();
+                var existingScore=await db.PatientScores
+                    .FirstOrDefaultAsync(x => x.EncounterId==encounter.Id && x.PatientId==encounter.PatientId);
+
+                if(string.IsNullOrWhiteSpace(normalizedScore))
+                {
+                    if(existingScore is not null)
+                        db.PatientScores.Remove(existingScore);
+                }
+                else if(existingScore is null)
+                {
+                    db.PatientScores.Add(new PatientScore
+                    {
+                        Id=Guid.NewGuid(),
+                        PatientId=encounter.PatientId,
+                        EncounterId=encounter.Id,
+                        ScoreText=normalizedScore,
+                        RecordedAt=DateTime.UtcNow
+                    });
+                }
+                else
+                {
+                    existingScore.ScoreText=normalizedScore;
+                    existingScore.RecordedAt=DateTime.UtcNow;
+                }
             }
 
             // Optional follow-up appointment. The appointment and its future encounter
