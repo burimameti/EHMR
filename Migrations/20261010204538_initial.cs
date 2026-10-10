@@ -640,7 +640,7 @@ namespace EHMR.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EncounterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EncounterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ScoreText = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Number = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RecordedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -885,7 +885,8 @@ namespace EHMR.Migrations
                 name: "IX_PatientScores_EncounterId",
                 table: "PatientScores",
                 column: "EncounterId",
-                unique: true);
+                unique: true,
+                filter: "[EncounterId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PatientScores_PatientId_RecordedAt",
