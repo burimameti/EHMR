@@ -34,7 +34,7 @@
                         ButtonKind="Secondary"
                         Command="{Binding RefreshCommand}"
                         ContentPadding="18,0"
-                        HeightRequestEx="45"
+                        HeightRequestEx="40"
                         Text="Освежи" />
                 </Grid>
             </Border>
