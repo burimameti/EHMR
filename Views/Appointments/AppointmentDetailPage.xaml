@@ -17,7 +17,7 @@
 				<Setter Property="TextColor" Value="{StaticResource Gray800}" />
 			</Style>
 
-			<DataTemplate x:Key="AppointmentDiagnosisHistoryRowTemplate" x:DataType="entities:Diagnosis">
+			<DataTemplate x:Key="AppointmentMkb10HistoryRowTemplate" x:DataType="entities:Diagnosis">
 				<Border
 					Margin="0,2"
 					Padding="10,8"
@@ -577,7 +577,7 @@
 													FontSize="11.5"
 													Text="Пребарување по МКБ код (латиница)"
 													TextColor="{StaticResource SparkTextSecondary}" />
-												<controls:FFSearchBox Placeholder="Пример: M06.9" Text="{Binding DiagnosisSearchText, Mode=TwoWay}" />
+												<controls:FFSearchBox Placeholder="Пример: M06.9" Text="{Binding Mkb10CodeSearchText, Mode=TwoWay}" />
 											</VerticalStackLayout>
 											<VerticalStackLayout Grid.Column="1" Spacing="5">
 												<Label
@@ -585,14 +585,14 @@
 													FontSize="11.5"
 													Text="Пребарување по опис (кирилица)"
 													TextColor="{StaticResource SparkTextSecondary}" />
-												<controls:FFSearchBox Placeholder="Пример: ревматоиден артритис" Text="{Binding DiagnosisDescriptionSearchText, Mode=TwoWay}" />
+												<controls:FFSearchBox Placeholder="Пример: ревматоиден артритис" Text="{Binding Mkb10DescriptionSearchText, Mode=TwoWay}" />
 											</VerticalStackLayout>
 										</Grid>
 
 										<CollectionView
 											HeightRequest="180"
-											IsVisible="{Binding ShowDiagnosisDropdown}"
-											ItemsSource="{Binding AvailableDiagnoses}"
+											IsVisible="{Binding ShowMkb10Dropdown}"
+											ItemsSource="{Binding AvailableMkb10Codes}"
 											SelectionMode="None">
 											<CollectionView.ItemTemplate>
 												<DataTemplate x:DataType="entities:Mkb10Code">
@@ -603,7 +603,7 @@
 														StrokeShape="RoundRectangle 10"
 														StrokeThickness="0">
 														<Border.GestureRecognizers>
-															<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddDiagnosisCommand}" CommandParameter="{Binding .}" />
+															<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMkb10CodeCommand}" CommandParameter="{Binding .}" />
 														</Border.GestureRecognizers>
 														<VerticalStackLayout Spacing="2">
 															<Label
@@ -631,7 +631,7 @@
 											FontSize="11"
 											Text="ДОДЕЛЕНИ ДИЈАГНОЗИ"
 											TextColor="{StaticResource SparkTextSecondary}" />
-										<VerticalStackLayout BindableLayout.ItemsSource="{Binding SelectedDiagnoses}" Spacing="8">
+										<VerticalStackLayout BindableLayout.ItemsSource="{Binding SelectedMkb10Assignments}" Spacing="8">
 											<BindableLayout.EmptyView>
 												<Label
 													FontSize="12"
@@ -654,7 +654,7 @@
 																	Grid.Column="2"
 																	Padding="0"
 																	BackgroundColor="Transparent"
-																	Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveDiagnosisCommand}"
+																	Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMkb10AssignmentCommand}"
 																	CommandParameter="{Binding .}"
 																	FontSize="11"
 																	HeightRequest="26"
@@ -732,7 +732,7 @@
 									</Grid>
 
 									<!--  Table rows  -->
-									<VerticalStackLayout BindableLayout.ItemsSource="{Binding SelectedDiagnoses}" Spacing="0">
+									<VerticalStackLayout BindableLayout.ItemsSource="{Binding SelectedMkb10Assignments}" Spacing="0">
 										<BindableLayout.EmptyView>
 											<Border
 												Padding="12,14"
@@ -1171,12 +1171,12 @@
 								Variant="Appointment" />
 
 							<controls:SparkExpandableCard
-								Title="Дијагнози"
+								Title="MKB-10 кодови"
 								CardBackgroundColor="White"
 								EmptyViewText="Нема историја на дијагнози."
 								HeaderTextColor="{StaticResource SparkTextPrimary}"
-								ItemTemplate="{StaticResource AppointmentDiagnosisHistoryRowTemplate}"
-								ItemsSource="{Binding PatientDiagnosisHistory}"
+								ItemTemplate="{StaticResource AppointmentMkb10HistoryRowTemplate}"
+								ItemsSource="{Binding PatientMkb10History}"
 								Subtitle=""
 								Variant="Diagnosis" />
 
