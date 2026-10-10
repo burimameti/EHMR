@@ -34,7 +34,6 @@ namespace EHMR.Infrastructure.Persistence
             "ClinicalScenarioSeeder",
             "DiagnosisSeeder",
             "PrescriptionSeeder",
-            "TherapyCycleSeeder",
             "PatientMedicineSeeder",
             "FunctionalCoverageSeeder",
             "DocumentSeeder",
