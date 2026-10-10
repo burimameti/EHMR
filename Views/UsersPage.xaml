@@ -45,7 +45,7 @@
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
 						ContentPadding="20,0"
-						HeightRequestEx="45"
+						HeightRequestEx="40"
 						IsVisible="{Binding CanCreate}"
 						Text="Нов"
 						TextColorEx="#0F172A" />
