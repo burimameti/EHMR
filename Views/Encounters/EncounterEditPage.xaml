@@ -835,7 +835,7 @@
 										TextColor="{StaticResource SparkTextSecondary}" />
 								</BindableLayout.EmptyView>
 								<BindableLayout.ItemTemplate>
-									<DataTemplate x:DataType="entities:Diagnosis">
+									<DataTemplate x:DataType="entities:PatientMkb10Assignment">
 										<Border
 											Padding="10,8"
 											BackgroundColor="{StaticResource SparkContentBackground}"
