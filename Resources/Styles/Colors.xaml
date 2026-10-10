@@ -110,7 +110,7 @@
 	<!--  Cross / medical accent (e.g. emergency, alerts ribbon)  -->
 	<Color x:Key="MedicalRed">#D6334B</Color>
 
-	<Color x:Key="Transparent">Transparent</Color>
+	<Color x:Key="Transparent">#00000000</Color>
 	<Color x:Key="Gray50">#F8FAFC</Color>
 	<Color x:Key="Gray100">#F8FAFC</Color>
 	<Color x:Key="Gray200">#F1F5F9</Color>
