@@ -37,6 +37,9 @@ public class PatientContextDto
     // Документи (наод/упат/лаб итн.)
     public List<PatientDocument> Documents { get; set; } = new();
 
-    // Latest score recorded for this patient (shown as the current score in a new encounter).
+    // Complete score history for the patient, including patient-level and prior-encounter scores.
+    public List<PatientScore> Scores { get; set; } = new();
+
+    // Latest score recorded for compatibility with existing summary bindings.
     public PatientScore? LatestScore { get; set; }
 }
