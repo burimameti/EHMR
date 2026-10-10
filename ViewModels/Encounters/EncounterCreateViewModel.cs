@@ -227,6 +227,50 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
         RefreshSidePanel();
     }
 
+    [RelayCommand]
+    private async Task AddPatientActiveMedicineAsync()
+    {
+        if(SelectedPatient is null)
+        {
+            await UserDialogService.ShowAlertAsync("Пациент", "Прво изберете пациент.", "Во ред");
+            return;
+        }
+
+        var available = PatientMedicines
+            .Where(x => x.IsActive && x.EncounterId==null && x.Medicine is not null)
+            .Where(x => !EncounterMedicines.Any(current => current.MedicineId==x.MedicineId))
+            .GroupBy(x => x.MedicineId)
+            .Select(g => g.First())
+            .ToList();
+
+        if(available.Count==0)
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Тековна терапија",
+                "Сите активни лекови на пациентот веќе се прикажани во тековната терапија. Нов лек прво се додава во картонот на пациентот.",
+                "Во ред");
+            return;
+        }
+
+        var options = available
+            .Select((item, index) => $"{index + 1}. {item.Medicine!.Name}")
+            .ToArray();
+
+        var selected = await UserDialogService.ShowActionSheetAsync(
+            "Додади активен лек",
+            "Откажи",
+            options);
+
+        if(string.IsNullOrWhiteSpace(selected))
+            return;
+
+        var indexSelected = Array.IndexOf(options, selected);
+        if(indexSelected<0 || indexSelected>=available.Count)
+            return;
+
+        await AddMedicineAsync(available[indexSelected].Medicine);
+    }
+
     private void LoadCurrentMedicinesForEncounter()
     {
         if(EncounterMedicines.Count>0) return;
@@ -241,7 +285,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             EncounterMedicines.Add(new PatientMedicine
             {
                 Id=Guid.NewGuid(),
-                PatientId=Encounter.PatientId,
+                PatientId=SelectedPatient?.Id ?? Encounter.PatientId,
                 EncounterId=Encounter.Id==Guid.Empty ? null : Encounter.Id,
                 MedicineId=medicine.MedicineId,
                 Medicine=medicine.Medicine,
