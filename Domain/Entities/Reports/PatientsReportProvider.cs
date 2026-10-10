@@ -478,7 +478,7 @@ namespace EHMR.Domain.Entities.Reports
                         .ThenInclude(x => x.Medicine)
                     .Include(x => x.PatientMedicines)
                         .ThenInclude(x => x.Encounter)
-                    .Include(x => x.Diagnoses)
+                    .Include(x => x.Mkb10Assignments)
                         .ThenInclude(x => x.Mkb10Code)
                 
                     .Include(x => x.Encounters)
@@ -487,7 +487,7 @@ namespace EHMR.Domain.Entities.Reports
                     .Include(x => x.Encounters)
                         .ThenInclude(x => x.PatientScore)
                     .Include(x => x.Encounters)
-                        .ThenInclude(x => x.Diagnoses)
+                        .ThenInclude(x => x.Mkb10Assignments)
                             .ThenInclude(x => x.Mkb10Code)
                     .Include(x => x.Scores)
                         .ThenInclude(x => x.Encounter)
@@ -578,7 +578,7 @@ namespace EHMR.Domain.Entities.Reports
             Debug.WriteLine($"[Patients]   - MKB-10 code picker...");
             RefreshPicker(_diagnosisPicker,
                 patients
-                    .SelectMany(x => x.Diagnoses)
+                    .SelectMany(x => x.Mkb10Assignments)
                     .Where(x => x.Mkb10Code!=null)
                     .Select(x => x.Mkb10Code!.Code));
 
@@ -665,7 +665,7 @@ namespace EHMR.Domain.Entities.Reports
 
             if(_selectedDiagnosisFilter!="Сите")
             {
-                query=query.Where(x => x.Diagnoses.Any(d => d.Mkb10Code?.Code==_selectedDiagnosisFilter));
+                query=query.Where(x => x.Mkb10Assignments.Any(d => d.Mkb10Code?.Code==_selectedDiagnosisFilter));
                 Debug.WriteLine($"[Patients]   - MKB-10 code filter: {_selectedDiagnosisFilter}");
             }
 
@@ -817,7 +817,7 @@ namespace EHMR.Domain.Entities.Reports
 
         private static string BuildEncounterDiagnosisInfo(Encounter encounter)
         {
-            var diagnoses = (encounter.Diagnoses ?? [])
+            var diagnoses = (encounter.Mkb10Assignments ?? [])
                 .Where(item => item.Mkb10Code != null)
                 .Select(item => item.Mkb10Code!.Code)
                 .Distinct()
@@ -864,11 +864,11 @@ namespace EHMR.Domain.Entities.Reports
 
         private static string BuildDiagnosisInfo(Patient patient)
         {
-            if(patient.Diagnoses==null || patient.Diagnoses.Count==0)
+            if(patient.Mkb10Assignments==null || patient.Mkb10Assignments.Count==0)
                 return "Нема дијагноза";
 
             return string.Join(", ",
-                patient.Diagnoses
+                patient.Mkb10Assignments
                     .Where(x => x.Mkb10Code!=null)
                     .Select(x => x.Mkb10Code!.Code)
                     .Distinct());
@@ -876,9 +876,9 @@ namespace EHMR.Domain.Entities.Reports
 
         private static string BuildMedicalInfo(Patient patient)
         {
-            var diagnosis = patient.Diagnoses==null
+            var diagnosis = patient.Mkb10Assignments==null
                 ? ""
-                : string.Join(", ", patient.Diagnoses.Where(x => x.Mkb10Code!=null).Select(x => x.Mkb10Code!.Code));
+                : string.Join(", ", patient.Mkb10Assignments.Where(x => x.Mkb10Code!=null).Select(x => x.Mkb10Code!.Code));
 
             var allergies = string.IsNullOrWhiteSpace(patient.Allergies) ? "Нема алергии" : patient.Allergies;
 
