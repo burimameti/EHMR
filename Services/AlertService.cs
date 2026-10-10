@@ -61,29 +61,6 @@ namespace EHMR.Services
                     });
                 }
 
-                // ---- Rule: therapy cycle past its end date, still open ----
-                // TODO: adjust TherapyCycleStatus/EndDate to your actual property names —
-                // I don't have TherapyCycle.cs, this is a placeholder shape.
-                // var overdueCycles = await db.TherapyCycles
-                //     .Where(t => t.Status != TherapyCycleStatus.Completed)
-                //     .Where(t => t.EndDate < DateTime.UtcNow)
-                //     .Select(t => new { t.Id, t.PatientId })
-                //     .ToListAsync();
-                //
-                // foreach (var cycle in overdueCycles)
-                // {
-                //     var key = $"OverdueCycle:{cycle.Id}";
-                //     if (existing.Contains(key)) continue;
-                //
-                //     newAlerts.Add(new Alert
-                //     {
-                //         PatientId = cycle.PatientId,
-                //         Level = AlertLevel.Critical,
-                //         Message = "Терапевтскиот циклус го поминал очекуваниот крај.",
-                //         DedupKey = key
-                //     });
-                // }
-
                 if(newAlerts.Count>0)
                 {
                     db.Alerts.AddRange(newAlerts);
