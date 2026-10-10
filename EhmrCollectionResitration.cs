@@ -170,7 +170,6 @@ namespace EHMR
             services.AddScoped<IEntitySeeder, TherapyProtocolSeeder>();
             //  services.AddScoped<IEntitySeeder, TherapyProtocolMedicineSeeder>();
             services.AddScoped<IEntitySeeder, PrescriptionSeeder>();
-            services.AddSingleton<IReportProvider, MissedTherapiesReportProvider>();
 
            services.AddSingleton<IReportProvider, PatientsReportProvider>();
            services.AddSingleton<IReportProvider, MedicineUsageReportProvider>();
