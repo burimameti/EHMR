@@ -7,7 +7,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="PageRoot"
 	x:DataType="viewModels:UsersViewModel"
-	BackgroundColor="{StaticResource PageBackground}">
+	BackgroundColor="#F1F5F9">
 <Grid ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
@@ -48,14 +48,14 @@
 						HeightRequestEx="45"
 						IsVisible="{Binding CanCreate}"
 						Text="Нов"
-						TextColorEx="White" />
+						TextColorEx="#0F172A" />
 				</Grid>
 			</Border>
 
 			<!--  MAIN CONTENT / GRID  -->
 			<Border
 				Grid.Row="1"
-				BackgroundColor="{StaticResource PageBackground}"
+				BackgroundColor="#F1F5F9"
 				StrokeThickness="0">
 				<ScrollView VerticalScrollBarVisibility="Never">
 					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
@@ -92,17 +92,17 @@
 		<!--  LOADING OVERLAY  -->
 		<Grid
 			Grid.Column="1"
-			BackgroundColor="{StaticResource SparkOverlay}"
+			BackgroundColor="#800F172A"
 			IsVisible="{Binding IsBusy}">
 			<VerticalStackLayout
 				HorizontalOptions="Center"
 				Spacing="12"
 				VerticalOptions="Center">
-				<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
+				<ActivityIndicator IsRunning="{Binding IsBusy}" Color="#2AEBE7" />
 				<Label
 					FontSize="13"
 					Text="Вчитување..."
-					TextColor="{StaticResource SparkTextPrimary}" />
+					TextColor="#0F172A" />
 			</VerticalStackLayout>
 		</Grid>
 
