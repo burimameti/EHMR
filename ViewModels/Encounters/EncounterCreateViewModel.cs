@@ -430,7 +430,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
 
             await EncounterService.SaveEncounter(
                 Encounter,
-                Diagnoses.ToList(),
+                Mkb10Assignments.ToList(),
                 Prescriptions.ToList(),
                 EncounterMedicines.ToList(),
                 DeletedMedicineIds.ToList(),
