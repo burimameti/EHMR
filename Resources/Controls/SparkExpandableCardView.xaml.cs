@@ -585,7 +585,6 @@ public partial class SparkExpandableCard : ContentView
 
             SparkCardVariant.Therapy => "💉",
 
-            SparkCardVariant.TherapyCycle => "🔄",
 
             SparkCardVariant.Prescription => "💊",
 
