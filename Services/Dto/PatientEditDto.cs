@@ -157,7 +157,7 @@ namespace EHMR.Services.Dto
         }
         public string Severity { get; set; } = "";
         public string ClinicalDescription { get; set; } = "";
-        public DiagnosisStatus Status
+        public PatientMkb10AssignmentStatus Status
         {
             get; set;
         }
