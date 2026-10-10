@@ -96,6 +96,26 @@ public class DatabaseMigrationService
             BEGIN
                 ALTER TABLE dbo.PatientMedicines
                 ADD ResolutionDocumentId uniqueidentifier NULL;
+            END;
+
+            -- StartDate is a legacy, database-only column. The application model no longer
+            -- maps patient-level medicine start/end dates. A default is required so INSERTs
+            -- from the current EF model can omit this legacy NOT NULL column.
+            IF COL_LENGTH('dbo.PatientMedicines', 'StartDate') IS NOT NULL
+               AND NOT EXISTS
+               (
+                   SELECT 1
+                   FROM sys.default_constraints dc
+                   INNER JOIN sys.columns c
+                       ON c.object_id = dc.parent_object_id
+                      AND c.column_id = dc.parent_column_id
+                   WHERE dc.parent_object_id = OBJECT_ID(N'dbo.PatientMedicines')
+                     AND c.name = N'StartDate'
+               )
+            BEGIN
+                ALTER TABLE dbo.PatientMedicines
+                ADD CONSTRAINT DF_PatientMedicines_StartDate
+                    DEFAULT (SYSUTCDATETIME()) FOR StartDate;
             END
             """;
 
