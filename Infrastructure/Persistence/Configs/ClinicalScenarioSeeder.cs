@@ -216,13 +216,21 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         // Ensure the new medicine-first patient-level assignments exist.
         foreach(var medicine in medicines)
         {
-            var assignmentExists = await context.PatientMedicines.AnyAsync(
+            var existingAssignment = await context.PatientMedicines.FirstOrDefaultAsync(
                 x => x.PatientId == SeedIds.Patient13
                     && x.EncounterId == null
                     && x.MedicineId == medicine.Id,
                 ct);
-            if(assignmentExists)
+            if(existingAssignment is not null)
+            {
+                existingAssignment.Quantity = 0m;
+                existingAssignment.ApplicationRegimeId = medicine.RegimeId;
+                existingAssignment.DosesFrequency = medicine.Frequency;
+                existingAssignment.Dosage = medicine.Dosage;
+                existingAssignment.Notes = medicine.Notes;
+                existingAssignment.IsActive = true;
                 continue;
+            }
 
             context.PatientMedicines.Add(new PatientMedicine
             {
