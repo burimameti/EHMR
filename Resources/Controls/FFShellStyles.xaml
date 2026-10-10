@@ -7,7 +7,7 @@
 	</Style>
 
 	<Style x:Key="FFShellBrandStyle" TargetType="Label">
-		<Setter Property="TextColor" Value="White" />
+		<Setter Property="TextColor" Value="#FFFFFF" />
 		<Setter Property="FontSize" Value="16" />
 		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="Margin" Value="2,8,2,16" />
@@ -38,7 +38,7 @@
 	</Style>
 
 	<Style x:Key="FFShellTopBarStyle" TargetType="Border">
-		<Setter Property="Background" Value="White" />
+		<Setter Property="Background" Value="#FFFFFF" />
 		<Setter Property="Padding" Value="10,8" />
 		<Setter Property="Stroke" Value="#D9E0E5" />
 		<Setter Property="StrokeThickness" Value="1" />
