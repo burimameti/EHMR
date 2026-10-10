@@ -35,13 +35,13 @@ public partial class FFButton : ContentView
 
             if(IsBlue)
             {
-                BackgroundColorEx=Color.FromArgb("#17CFCB");
+                BackgroundColorEx=Color.FromArgb("#2AEBE7");
                 return;
             }
 
             BackgroundColorEx = ButtonKind switch
             {
-                FFButtonKind.Primary => Color.FromArgb("#17CFCB"),
+                FFButtonKind.Primary => Color.FromArgb("#2AEBE7"),
                 FFButtonKind.Secondary => Color.FromArgb("#F1F5F9"),
                 FFButtonKind.Green => Color.FromArgb("#166534"),
                 FFButtonKind.Danger => Color.FromArgb("#991B1B"),
