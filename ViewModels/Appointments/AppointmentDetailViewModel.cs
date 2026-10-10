@@ -608,7 +608,6 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         SelectedMedicines=IsNewAppointment
             ? new ObservableCollection<PatientMedicine>()
             : new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
-        VisibleTherapies=new ObservableCollection<TherapyCycle>(ctx.TherapyCycles);
 
         OnPropertyChanged(nameof(HeaderTitle));
         OnPropertyChanged(nameof(HeaderSubtitle));
