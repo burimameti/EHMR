@@ -367,40 +367,43 @@ Encounter? encounterForMedicines = null;
                 }
             }
 
-            // ── Sync patient medicines (only while the encounter isn't locked) ──
-            if(medicinesEditable&&medicines is { Count:>0 })
+            // Store medicine values on this encounter only. Never move or update
+            // the patient's active assignment while saving an appointment.
+            if(medicinesEditable && encounterForMedicines is not null && medicines is { Count: > 0 })
             {
                 var existingEntities = await db.PatientMedicines
-                    .Where(x => x.PatientId==appointment.PatientId)
+                    .Where(x => x.EncounterId == encounterForMedicines.Id)
                     .ToListAsync();
 
                 var existingByMedicineId = existingEntities
-                    .ToDictionary(x => x.MedicineId);
+                    .GroupBy(x => x.MedicineId)
+                    .ToDictionary(group => group.Key, group => group.First());
 
-                foreach(var m in medicines)
+                foreach(var medicine in medicines)
                 {
-                    if(existingByMedicineId.TryGetValue(m.MedicineId, out var entity))
+                    if(existingByMedicineId.TryGetValue(medicine.MedicineId, out var existing))
                     {
-                        entity.EncounterId=encounterForMedicines?.Id??entity.EncounterId;
-                        entity.Dosage=m.Dosage;
-                        entity.DosesFrequency=m.DosesFrequency;
-                        
-                        entity.Notes=m.Notes;
-                        entity.IsActive=m.IsActive;
+                        existing.Dosage = medicine.Dosage;
+                        existing.DosesFrequency = medicine.DosesFrequency;
+                        existing.ApplicationRegimeId = medicine.ApplicationRegimeId;
+                        existing.Notes = medicine.Notes;
+                        existing.IsActive = medicine.IsActive;
+                        existing.Quantity = medicine.Quantity;
                     }
                     else
                     {
                         db.PatientMedicines.Add(new PatientMedicine
                         {
-                            Id=Guid.NewGuid(),
-                            PatientId=appointment.PatientId,
-                            EncounterId=encounterForMedicines?.Id,
-                            MedicineId=m.MedicineId,
-                            Dosage=m.Dosage,
-                            DosesFrequency=m.DosesFrequency,
-                          
-                            Notes=m.Notes,
-                            IsActive=m.IsActive,
+                            Id = Guid.NewGuid(),
+                            PatientId = appointment.PatientId,
+                            EncounterId = encounterForMedicines.Id,
+                            MedicineId = medicine.MedicineId,
+                            ApplicationRegimeId = medicine.ApplicationRegimeId,
+                            Dosage = medicine.Dosage,
+                            DosesFrequency = medicine.DosesFrequency,
+                            Notes = medicine.Notes,
+                            IsActive = medicine.IsActive,
+                            Quantity = medicine.Quantity
                         });
                     }
                 }
