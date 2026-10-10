@@ -1460,7 +1460,7 @@
 										ItemTemplate="{StaticResource PatientMkb10CodeRowTemplate}"
 										ItemsSource="{Binding Mkb10History}"
 										Style="{StaticResource CrudFormHistoryCardStyle}"
-										Variant="Diagnosis" />
+										Variant="PatientMkb10Assignment" />
 								</FlexLayout>
 
 							</VerticalStackLayout>
