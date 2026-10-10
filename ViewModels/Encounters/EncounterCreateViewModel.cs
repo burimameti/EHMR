@@ -149,7 +149,6 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                     SelectedPatient=matchedPatient;
                     if(matchedPatient.DoctorId!=Guid.Empty)
                         SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==matchedPatient.DoctorId);
-                    await LoadTherapyCyclesForPatientAsync(matchedPatient.Id);
                     await LoadAppointmentsForPatientAsync(matchedPatient.Id);
                     await LoadPatientContextAsync(matchedPatient.Id);
                 }
@@ -216,7 +215,6 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             SelectedPatient=patient;
             if(patient.DoctorId!=Guid.Empty)
                 SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==patient.DoctorId);
-            await LoadTherapyCyclesForPatientAsync(patient.Id);
             await LoadAppointmentsForPatientAsync(patient.Id);
             await LoadPatientContextAsync(patient.Id);
         }
@@ -342,13 +340,6 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     }
 
     [RelayCommand]
-    private void ClearTherapyCycle()
-    {
-        SelectedTherapyCycle=null;
-        Encounter.TherapyCycleId=null;
-    }
-
-    [RelayCommand]
     private async Task PreviewDocument(PatientDocument doc)
     {
         if(doc is null||string.IsNullOrWhiteSpace(doc.StoredPath)) return;
@@ -420,7 +411,6 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             ScoreText=string.Join(" | ", EncounterScores);
             Encounter.PatientId=SelectedPatient.Id;
             Encounter.DoctorId=SelectedDoctor.Id;
-            Encounter.TherapyCycleId=SelectedTherapyCycle?.Id;
             Encounter.Diagnoses.Clear();
 
             var encounterScoreRecords=EncounterScores
