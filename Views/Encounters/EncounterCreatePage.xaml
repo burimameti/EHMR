@@ -276,7 +276,7 @@
 								Style="{StaticResource SectionHeaderStyle}" />
 							<Border
 								Padding="10,8"
-								BackgroundColor="{StaticResource SparkContentBackground}"
+								BackgroundColor="#F1F5F9"
 								IsVisible="{Binding HasPatientContext}"
 								Stroke="{StaticResource SparkBorder}"
 								StrokeShape="RoundRectangle 10"
