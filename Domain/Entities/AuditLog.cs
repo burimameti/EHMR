@@ -23,15 +23,8 @@
 
         public string AfterValue { get; set; } = string.Empty;
 
-        public DateTime Timestamp { get; set; } = DateTime.Now;
-
-        public Guid CycleId
-        {
-            get;
-            set;
-        }
-
-        public Guid EntityId
+        public DateTime Timestamp { get; set; } = DateTime.Now; 
+public Guid EntityId
         {
             get;
             set;
