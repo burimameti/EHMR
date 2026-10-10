@@ -11,7 +11,6 @@ namespace EHMR.Domain.Entities
         public const string Encounter = "ENCOUNTER";
         public const string Prescription = "PRESCRIPTION";
         public const string Therapy = "THERAPY";
-        public const string TherapyCycle = "THERAPYCYCLE";
         public const string Report = "REPORT";
         public const string Document = "DOCUMENT";
     }
