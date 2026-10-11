@@ -151,6 +151,14 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
                 }
             };
 
+            actions.Add(new SparkButtonItem
+            {
+                IconGlyph="⌕",
+                Label="Preview",
+                Command=PreviewCommand,
+                CommandParameter=e
+            });
+
             if(CanUpdate)
                 actions.Add(new SparkButtonItem { IconGlyph="✎", Label="Промени", Command=EditCommand, CommandParameter=e });
 
