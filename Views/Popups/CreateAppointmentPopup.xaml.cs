@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Maui.Views;
 using EHMR.ViewModels.Popups;
-using System.Runtime.Versioning;
-using ZXing;
 
 namespace EHMR.Views.Popups;
 
@@ -28,7 +26,6 @@ public partial class CreateAppointmentPopup : Popup
 
    
 
-    [SupportedOSPlatform("windows10.0.17763.0")]
     private void ClosePopup(object? result)
     {
 #if WINDOWS
