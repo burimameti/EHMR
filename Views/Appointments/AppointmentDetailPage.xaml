@@ -66,7 +66,7 @@
 						<HorizontalStackLayout Spacing="10">
 							<controls:FFStatusChip
 								BackgroundColor="{Binding Appointment.Status, Converter={StaticResource AppointmentStatusToColorConverter}}"
-								IsVisible="{Binding IsReadOnly}"
+								IsVisible="{Binding IsNewAppointment, Converter={StaticResource InverseBoolConverter}}"
 								Text="{Binding Appointment.Status, Converter={StaticResource AppointmentStatusDisplayConverter}}"
 								TextColor="White" />
 							<controls:FFButton
@@ -366,60 +366,6 @@
 							</Border>
 
 <!--  ══════════════════════════════════════════  -->
-							<!--  2. ТЕРМИН  -->
-							<!--  ══════════════════════════════════════════  -->
-							<VerticalStackLayout Spacing="12">
-								<controls:CrudSectionHeader Title="ТЕРМИН" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
-
-								<Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="14">
-
-									<!--  Scheduling horizon + auto slot (new only)  -->
-									<!-- Автоматскиот слободен термин намерно не се прикажува. -->
-									<!-- Date + Time -->
-									<Grid
-										Grid.Row="1"
-										ColumnDefinitions="1.4*,1*"
-										ColumnSpacing="16">
-										<Grid Grid.Column="0" ColumnDefinitions="Auto,*" ColumnSpacing="12" VerticalOptions="Center">
-											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Датум" VerticalOptions="Center" />
-											<DatePicker Grid.Column="1" BackgroundColor="White" Date="{Binding PreferredAppointmentDate, Mode=TwoWay}" IsVisible="{Binding IsEditMode}" TextColor="{StaticResource SparkTextPrimary}" />
-											<Label Grid.Column="1" Padding="12,8" IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}" Text="{Binding Appointment.ScheduledStart, StringFormat='{:d.M.yyyy}'}" TextColor="{StaticResource SparkTextPrimary}" />
-										</Grid>
-
-										<!--<VerticalStackLayout Grid.Column="1" Spacing="6">
-											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Време" />
-											<TimePicker
-												BackgroundColor="White"
-												IsVisible="{Binding IsEditMode}"
-												TextColor="{StaticResource SparkTextPrimary}"
-												Time="{Binding SelectedStartTime, Mode=TwoWay}" />
-											<Label
-												Padding="12,10"
-												IsVisible="{Binding IsReadOnly}"
-												Style="{StaticResource CrudFormValueSurfaceStyle}"
-												Text="{Binding Appointment.ScheduledStart}" />
-										</VerticalStackLayout>-->
-									</Grid>
-
-									<!--  Status (edit mode, existing only)  -->
-									<Grid
-										Grid.Row="2"
-										ColumnDefinitions="130,*"
-										ColumnSpacing="{StaticResource FormRowSpacing}"
-										IsVisible="{Binding ShowStatusEditor}">
-										<Label
-											Grid.Column="0"
-											Style="{StaticResource EditFieldLabelStyle}"
-											Text="Статус" />
-										<controls:FFPicker
-											Grid.Column="1"
-											ItemsSource="{Binding StatusOptions}"
-											Placeholder="Изберете статус"
-											SelectedItem="{Binding SelectedStatusOption}" />
-									</Grid>
-								</Grid>
-							</VerticalStackLayout>
-							<!--  ══════════════════════════════════════════  -->
 							<!--  3. МКБ-10 ДИЈАГНОЗИ  -->
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="14">
@@ -940,6 +886,24 @@
 
 							</VerticalStackLayout>
 
+							<!--  ══════════════════════════════════════════  -->
+							<!--  2. ТЕРМИН  -->
+							<!--  ══════════════════════════════════════════  -->
+							<VerticalStackLayout Spacing="12">
+								<controls:CrudSectionHeader Title="ТЕРМИН" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
+
+								<Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="14">
+
+									<!--  Scheduling horizon + auto slot (new only)  -->
+									<!-- Автоматскиот слободен термин намерно не се прикажува. -->
+									<!-- Date + Time -->
+									<Grid
+										Grid.Row="1"
+										ColumnDefinitions="1.4*,1*"
+										ColumnSpacing="16">
+										
+								</Grid>
+							</VerticalStackLayout>
 							<!--  ══════════════════════════════════════════  -->
 							<!--  5. ЗАБЕЛЕШКА  -->
 							<!--  ══════════════════════════════════════════  -->
