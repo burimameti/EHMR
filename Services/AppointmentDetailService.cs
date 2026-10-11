@@ -11,6 +11,7 @@ namespace EHMR.Services
         Task<AppointmentDetailDto> GetAppointment(Guid id);
         Task<AppointmentDetailDto> GetAppointmentContext();
         Task<PatientContextDto> GetPatientContext(Guid patientId);
+        Task<PatientScore> SavePatientScore(PatientScore score);
         Task UpdateAppointmentStatus(Guid appointmentId, AppointmentStatus newStatus);
         Task<List<Mkb10Code>> SearchMkb10Codes(string query, CancellationToken token);
         Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30);
@@ -175,6 +176,25 @@ var patients = await db.Patients
                 Patients=patients,
                 Doctors=doctors,
             };
+        }
+
+        public async Task<PatientScore> SavePatientScore(PatientScore score)
+        {
+            if(score is null) throw new ArgumentNullException(nameof(score));
+            if(score.PatientId == Guid.Empty) throw new InvalidOperationException("Изберете пациент пред внесување скор.");
+            if(string.IsNullOrWhiteSpace(score.ScoreText)) throw new InvalidOperationException("Внесете име на скор.");
+            if(string.IsNullOrWhiteSpace(score.Number)) throw new InvalidOperationException("Внесете вредност на скор.");
+
+            await using var db = await _factory.CreateDbContextAsync();
+            var patientExists = await db.Patients.AnyAsync(x => x.Id == score.PatientId);
+            if(!patientExists) throw new InvalidOperationException("Пациентот не е пронајден.");
+
+            score.Id = Guid.NewGuid();
+            score.EncounterId = null;
+            score.RecordedAt = DateTime.UtcNow;
+            db.PatientScores.Add(score);
+            await db.SaveChangesAsync();
+            return score;
         }
 
         public async Task<PatientContextDto> GetPatientContext(Guid patientId)
