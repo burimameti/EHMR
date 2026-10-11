@@ -349,35 +349,35 @@
 											IsVisible="{Binding HasEncounterMedicines}">
 											<Border
 												Padding="8,7"
-												BackgroundColor="#1F2937"
+												BackgroundColor="{StaticResource Gray300}"
 												StrokeThickness="0">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" TextColor="White" />
 											</Border>
 											<Border
 												Grid.Column="1"
 												Padding="8,7"
-												BackgroundColor="#1F2937"
+												BackgroundColor="{StaticResource Gray300}"
 												StrokeThickness="0">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ДОЗА" TextColor="White" />
 											</Border>
 											<Border
 												Grid.Column="2"
 												Padding="8,7"
-												BackgroundColor="#1F2937"
+												BackgroundColor="{StaticResource Gray300}"
 												StrokeThickness="0">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕЖИМ НА АПЛИКАЦИЈА" TextColor="White" />
 											</Border>
 											<Border
 												Grid.Column="3"
 												Padding="8,7"
-												BackgroundColor="#1F2937"
+												BackgroundColor="{StaticResource Gray300}"
 												StrokeThickness="0">
 												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="КОЛИЧИНА" TextColor="White" />
 											</Border>
 											<Border
 												Grid.Column="4"
 												Padding="8,7"
-												BackgroundColor="#1F2937"
+												BackgroundColor="{StaticResource Gray300}"
 												StrokeThickness="0">
 												<Label
 													HorizontalOptions="Center"
@@ -511,38 +511,38 @@
 											</CollectionView>
 										</Border>
 										<Border
-											Margin="0,5,5,5"
-											BackgroundColor="White"
-											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeShape="RoundRectangle 0"
-											StrokeThickness="0">
-											<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterScores}" Spacing="0">
-												<BindableLayout.ItemTemplate>
-													<DataTemplate x:DataType="x:String">
-														<Grid
-															Padding="10,7"
-															BackgroundColor="#1F2937"
-															ColumnDefinitions="*,Auto"
-															ColumnSpacing="5">
-															<Label
-																FontSize="12"
-																LineBreakMode="WordWrap"
-																Text="{Binding .}"
-																TextColor="White"
-																VerticalOptions="Center" />
-															<controls:FFButton
-																Grid.Column="1"
-																ButtonKind="Danger"
-																Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveScoreCommand}"
-																CommandParameter="{Binding .}"
-																HeightRequestEx="30"
-																Text="×"
-																WidthRequestEx="32" />
-														</Grid>
-													</DataTemplate>
-												</BindableLayout.ItemTemplate>
-											</VerticalStackLayout>
-										</Border>
+						Padding="0"
+						BackgroundColor="White"
+						Stroke="{StaticResource SparkBorderSubtle}"
+						StrokeShape="RoundRectangle 8"
+						StrokeThickness="1">
+							<VerticalStackLayout Spacing="0">
+								<Grid Padding="10,8" BackgroundColor="{StaticResource SparkSurfaceAlt}" ColumnDefinitions="*,44" ColumnSpacing="8">
+									<Label Style="{StaticResource TableHeaderLabelStyle}" Text="СКОР" />
+									<Label Grid.Column="1" HorizontalTextAlignment="Center" Style="{StaticResource TableHeaderLabelStyle}" Text="АКЦИИ" />
+								</Grid>
+								<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterScores}" Spacing="0">
+									<BindableLayout.EmptyView>
+										<Label Padding="12" FontSize="11" HorizontalOptions="Center" Text="Нема внесени скорови." TextColor="{StaticResource SparkTextMuted}" />
+									</BindableLayout.EmptyView>
+									<BindableLayout.ItemTemplate>
+										<DataTemplate x:DataType="x:String">
+											<Grid RowDefinitions="Auto,1">
+												<Grid Padding="10,6" ColumnDefinitions="*,44" ColumnSpacing="8">
+													<Label FontSize="11" LineBreakMode="WordWrap" Text="{Binding .}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+													<Label Grid.Column="1" FontFamily="FASolid" FontSize="13" HorizontalOptions="Center" Text="&#xf1f8;" TextColor="#DC2626" VerticalOptions="Center">
+														<Label.GestureRecognizers>
+															<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveScoreCommand}" CommandParameter="{Binding .}" />
+														</Label.GestureRecognizers>
+													</Label>
+												</Grid>
+												<BoxView Grid.Row="1" HeightRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+											</Grid>
+										</DataTemplate>
+									</BindableLayout.ItemTemplate>
+								</VerticalStackLayout>
+							</VerticalStackLayout>
+						</Border>
 									</VerticalStackLayout>
 
 									<!--  ═══ РЕД 2 · КОЛОНА 0: СЛЕДЕН ТЕРМИН ═══  -->
