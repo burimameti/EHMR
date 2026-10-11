@@ -828,12 +828,15 @@
 								</BindableLayout.EmptyView>
 								<BindableLayout.ItemTemplate>
 									<DataTemplate x:DataType="entities:PatientScore">
-										<Border Padding="10,8" BackgroundColor="{StaticResource SparkContentBackground}" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 10" StrokeThickness="1">
-											<VerticalStackLayout Spacing="2">
-												<Label FontAttributes="Bold" FontSize="12" Text="{Binding ScoreText, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
-												<Label FontSize="11" Text="{Binding RecordedAt, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkTextSecondary}" />
-											</VerticalStackLayout>
-										</Border>
+										<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+											<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+											<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
+												<VerticalStackLayout Spacing="2">
+													<Label Style="{StaticResource CrudCollectionCodeStyle}" Text="{Binding ScoreText, TargetNullValue='—'}" />
+													<Label Style="{StaticResource CrudCollectionMetaStyle}" Text="{Binding RecordedAt, StringFormat='{0:dd.MM.yyyy}'}" />
+												</VerticalStackLayout>
+											</Border>
+										</Grid>
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
@@ -855,26 +858,15 @@
 								</BindableLayout.EmptyView>-->
 								<BindableLayout.ItemTemplate>
 									<DataTemplate x:DataType="entities:PatientMkb10Assignment">
-										<Border
-											Padding="10,8"
-											BackgroundColor="{StaticResource SparkContentBackground}"
-											Stroke="{StaticResource SparkBorder}"
-											StrokeShape="RoundRectangle 10"
-											StrokeThickness="1">
-											<Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-												<Label
-													FontAttributes="Bold"
-													FontSize="12.5"
-													Text="{Binding Mkb10Code.Code}"
-													TextColor="{StaticResource SparkAccentTealDark}" />
-												<Label
-													Grid.Column="1"
-													FontSize="11.5"
-													LineBreakMode="TailTruncation"
-													Text="{Binding Mkb10Code.Description}"
-													TextColor="{StaticResource SparkTextPrimary}" />
-											</Grid>
-										</Border>
+										<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+											<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+											<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
+												<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+													<Label Style="{StaticResource CrudCollectionCodeStyle}" Text="{Binding Mkb10Code.Code}" />
+													<Label Grid.Column="1" LineBreakMode="TailTruncation" Style="{StaticResource CrudCollectionMetaStyle}" Text="{Binding Mkb10Code.Description}" />
+												</Grid>
+											</Border>
+										</Grid>
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
