@@ -66,16 +66,15 @@
 										UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}">
 										<controls:SparkExplorerHeaderView.SuggestionTemplate>
 											<DataTemplate x:DataType="domain:Patient">
-												<Grid Padding="10,8" ColumnDefinitions="*,Auto" ColumnSpacing="12" BackgroundColor="White">
-													<VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
-														<Label Text="{Binding FullName}" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource SparkTextPrimary}" />
-														<Label Text="{Binding PatientNumber, StringFormat='Пациент бр. {0}'}" FontSize="11" TextColor="{StaticResource SparkTextSecondary}" />
-													</VerticalStackLayout>
-												<Label Grid.Column="1" Text="{Binding SzboNumber}" FontSize="11" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" HorizontalTextAlignment="End" />
-												</Grid>
-												<Border.StrokeShape>
-													<RoundRectangle CornerRadius="0" />
-												</Border.StrokeShape>
+												<Border Padding="0" BackgroundColor="White" Stroke="#E2E8F0" StrokeThickness="0,0,0,1" StrokeShape="RoundRectangle 0">
+													<Grid Padding="10,8" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+														<VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+															<Label Text="{Binding FullName}" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource SparkTextPrimary}" />
+															<Label Text="{Binding PatientNumber, StringFormat='Пациент бр. {0}'}" FontSize="11" TextColor="{StaticResource SparkTextSecondary}" />
+														</VerticalStackLayout>
+														<Label Grid.Column="1" Text="{Binding SzboNumber}" FontSize="11" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" HorizontalTextAlignment="End" />
+													</Grid>
+												</Border>
 											</DataTemplate>
 										</controls:SparkExplorerHeaderView.SuggestionTemplate>
 									</controls:SparkExplorerHeaderView>
