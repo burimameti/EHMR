@@ -290,7 +290,7 @@
 							<!-- БИОЛОШКА ТЕРАПИЈА: усогласен приказ на МКБ, активни лекови и претходен скор -->
 							<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="8">
 								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-								<Grid ColumnDefinitions="2*,2*,1*" ColumnSpacing="12" VerticalOptions="Start">
+								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1*" ColumnSpacing="12" VerticalOptions="Start">
 									<Border Grid.Column="0" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start" HorizontalOptions="Fill">
 										<VerticalStackLayout Spacing="0">
 											<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}">
