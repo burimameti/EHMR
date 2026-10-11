@@ -57,6 +57,8 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     public bool CanCreatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Create);
     public bool CanCreateAppointment =>
         !_isNewPatientMode &&
+        IsReadOnly &&
+        Patient.Id != Guid.Empty &&
         _authorizationService.CanPerform(Modules.Appointments, ModuleAction.Create) &&
         _authorizationService.CanPerform(Modules.Appointments, ModuleAction.Schedule);
     public bool CanEditPatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Edit);
@@ -81,6 +83,7 @@ public bool CanSavePatientForm => CanSavePatient;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEditMode))]
+    [NotifyPropertyChangedFor(nameof(CanCreateAppointment))]
     [NotifyPropertyChangedFor(nameof(InputBgColor))]
     [NotifyPropertyChangedFor(nameof(InputBorderColor))]
     private bool isReadOnly = true;
