@@ -18,78 +18,31 @@
 			</Style>
 
 			<DataTemplate x:Key="AppointmentMkb10HistoryRowTemplate" x:DataType="entities:PatientMkb10Assignment">
-				<Border
-					Margin="0,2"
-					Padding="10,8"
-					BackgroundColor="White"
-					Stroke="#E2E8F0"
-					StrokeShape="RoundRectangle 8"
-					StrokeThickness="1">
-					<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-						<Label
-							FontAttributes="Bold"
-							FontSize="12"
-							Text="{Binding Mkb10Code.Code, TargetNullValue='—'}"
-							TextColor="{StaticResource SparkAccentTealDark}"
-							VerticalOptions="Center" />
-						<Label
-							Grid.Column="1"
-							FontSize="11.5"
-							LineBreakMode="TailTruncation"
-							Text="{Binding Mkb10Code.Description, TargetNullValue='Без опис'}"
-							TextColor="{StaticResource SparkTextPrimary}"
-							VerticalOptions="Center" />
-						<Label
-							Grid.Column="2"
-							FontSize="10.5"
-							Text="{Binding DiagnosedAt, StringFormat='{0:dd.MM.yyyy}'}"
-							TextColor="{StaticResource SparkTextSecondary}"
-							VerticalOptions="Center" />
-					</Grid>
-				</Border>
+				<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+					<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+					<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
+						<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+							<Label Style="{StaticResource CrudCollectionCodeStyle}" Text="{Binding Mkb10Code.Code, TargetNullValue='—'}" VerticalOptions="Center" />
+							<Label Grid.Column="1" Style="{StaticResource CrudCollectionMetaStyle}" LineBreakMode="TailTruncation" Text="{Binding Mkb10Code.Description, TargetNullValue='Без опис'}" VerticalOptions="Center" />
+							<Label Grid.Column="2" Style="{StaticResource CrudCollectionMetaStyle}" FontSize="10.5" Text="{Binding DiagnosedAt, StringFormat='{0:dd.MM.yyyy}'}" VerticalOptions="Center" />
+						</Grid>
+					</Border>
+				</Grid>
 			</DataTemplate>
 
 			<DataTemplate x:Key="AppointmentHistoryRowTemplate" x:DataType="entities:Appointment">
-				<Border
-					Margin="0,2"
-					Padding="10,8"
-					BackgroundColor="White"
-					Stroke="#E2E8F0"
-					StrokeShape="RoundRectangle 8"
-					StrokeThickness="1">
-					<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-						<BoxView
-							CornerRadius="2"
-							HeightRequest="30"
-							WidthRequest="4"
-							Color="{Binding Status, Converter={StaticResource AppointmentStatusToColorConverter}}" />
-						<VerticalStackLayout Grid.Column="1" Spacing="2">
-							<Label
-								FontAttributes="Bold"
-								FontSize="12"
-								Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
-								TextColor="{StaticResource SparkTextPrimary}" />
-							<Label
-								FontSize="11"
-								LineBreakMode="TailTruncation"
-								Text="{Binding ClinicalNotes, TargetNullValue='Без забелешка'}"
-								TextColor="{StaticResource SparkTextSecondary}" />
-						</VerticalStackLayout>
-						<Border
-							Grid.Column="2"
-							Padding="7,3"
-							BackgroundColor="{StaticResource SparkAccentTealBg}"
-							StrokeShape="RoundRectangle 7"
-							StrokeThickness="0"
-							VerticalOptions="Center">
-							<Label
-								FontAttributes="Bold"
-								FontSize="9.5"
-								Text="{Binding Status, Converter={StaticResource AppointmentStatusToLabelConverter}}"
-								TextColor="{Binding Status, Converter={StaticResource AppointmentStatusToColorConverter}}" />
-						</Border>
-					</Grid>
-				</Border>
+				<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+					<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+					<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
+						<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+							<VerticalStackLayout Spacing="2">
+								<Label Style="{StaticResource CrudCollectionCodeStyle}" Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
+								<Label Style="{StaticResource CrudCollectionMetaStyle}" LineBreakMode="TailTruncation" Text="{Binding ClinicalNotes, TargetNullValue='Без забелешка'}" />
+							</VerticalStackLayout>
+							<Label Grid.Column="1" FontAttributes="Bold" FontSize="9.5" Text="{Binding Status, Converter={StaticResource AppointmentStatusToLabelConverter}}" TextColor="{Binding Status, Converter={StaticResource AppointmentStatusToColorConverter}}" VerticalOptions="Center" />
+						</Grid>
+					</Border>
+				</Grid>
 			</DataTemplate>
 
 		</ResourceDictionary>
@@ -1161,7 +1114,7 @@
 
 
 							<controls:SparkExpandableCard
-								Title="Термини"
+								Title="Историја на прегледи"
 								CardBackgroundColor="White"
 								EmptyViewText="Нема претходни термини."
 								HeaderTextColor="{StaticResource SparkTextPrimary}"
@@ -1171,7 +1124,7 @@
 								Variant="Appointment" />
 
 							<controls:SparkExpandableCard
-								Title="MKB-10 кодови"
+								Title="Историја на дијагнози"
 								CardBackgroundColor="White"
 								EmptyViewText="Нема историја на дијагнози."
 								HeaderTextColor="{StaticResource SparkTextPrimary}"
