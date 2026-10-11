@@ -182,11 +182,12 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     }
 
     [RelayCommand]
-    protected void SelectScoreSuggestion(string? score)
+    protected async Task SelectScoreSuggestion(string? score)
     {
         if(string.IsNullOrWhiteSpace(score)) return;
         ScoreSearchText=score;
         ShowScoreSuggestions=false;
+        await AddScoreAsync();
     }
 
     [RelayCommand]
@@ -1377,43 +1378,43 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     partial void OnMedicineSearchTextChanging(string value)
     {
-        if(string.IsNullOrWhiteSpace(value)||value.Length<2)
-        {
-            MedicineResults.Clear();
-            ShowMedicineDropdown=false;
-            return;
-        }
-        _=SearchMedicinesAsync(value);
+        SearchApprovedPatientMedicines(value);
     }
 
     [RelayCommand]
-    protected async Task SearchMedicinesAsync(string query)
+    protected Task SearchMedicinesAsync(string query)
     {
-        if(string.IsNullOrWhiteSpace(query)||query.Length<2)
+        SearchApprovedPatientMedicines(query);
+        return Task.CompletedTask;
+    }
+
+    private void SearchApprovedPatientMedicines(string? query)
+    {
+        var term=query?.Trim();
+        if(string.IsNullOrWhiteSpace(term)||term.Length<2)
         {
             MedicineResults.Clear();
             ShowMedicineDropdown=false;
             return;
         }
 
-        MedicineSearchCts.Cancel();
-        MedicineSearchCts.Dispose();
-        MedicineSearchCts=new CancellationTokenSource();
+        // Only show medicines already active and approved in this patient's chart.
+        // Never offer the global medicine catalogue from an encounter form.
+        var approvedMedicines=PatientMedicines
+            .Where(x => x.IsActive && x.EncounterId==null && x.Medicine is not null)
+            .Where(x => !EncounterMedicines.Any(current => current.MedicineId==x.MedicineId && current.IsActive))
+            .Select(x => x.Medicine!)
+            .GroupBy(x => x.Id)
+            .Select(group => group.First())
+            .Where(m =>
+                (m.Name?.Contains(term,StringComparison.OrdinalIgnoreCase)==true) ||
+                (m.GenericName?.Contains(term,StringComparison.OrdinalIgnoreCase)==true) ||
+                (m.BilingualName?.Contains(term,StringComparison.OrdinalIgnoreCase)==true))
+            .Take(12)
+            .ToList();
 
-        await ExecuteSafeAsync(async () =>
-        {
-            try
-            {
-                var result = await EncounterService.SearchMedicines(query, MedicineSearchCts.Token);
-                MedicineResults=new ObservableCollection<Medicine>(result);
-                ShowMedicineDropdown=MedicineResults.Count>0;
-            }
-            catch(OperationCanceledException)
-            {
-                // user continued typing
-            }
-        },
-        "Грешка при пребарување лекови");
+        MedicineResults=new ObservableCollection<Medicine>(approvedMedicines);
+        ShowMedicineDropdown=MedicineResults.Count>0;
     }
 
     // =====================================================
