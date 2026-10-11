@@ -674,7 +674,7 @@
 					Grid.Column="1"
 					Margin="0"
 					Style="{StaticResource CrudFormCardStyle}">
-					<ScrollView VerticalScrollBarVisibility="Never">
+					<controls:CustomScrollView ScrollBarColor="{StaticResource SparkAccentTeal}">
 						<VerticalStackLayout Style="{StaticResource CrudFormSidebarStackStyle}">
 
 							<!--  Section: Последни прегледи  -->
@@ -1010,7 +1010,7 @@
 							</FlexLayout>
 
 						</VerticalStackLayout>
-					</ScrollView>
+					</controls:CustomScrollView>
 				</controls:FFSectionCard>
 
 			</Grid>
