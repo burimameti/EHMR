@@ -16,19 +16,16 @@ public sealed class PatientScoreSeeder : IEntitySeeder
     private static readonly (Guid Id, Guid PatientId, Guid? EncounterId, string ScoreName, string Number, int DaysOffset)[] Scores =
     [
         // Patient-card history: these rows are not linked to an encounter.
-        (Guid.Parse("00000000-0000-0000-0000-000000009111"), SeedIds.Patient13,
+        (Guid.Parse("00000000-0000-0000-0000-000000009111"), SeedIds.Patient3,
             null, "DAS28", "5.8", -300),
-        (Guid.Parse("00000000-0000-0000-0000-000000009112"), SeedIds.Patient13,
-            null, "DAS28", "4.9", -180),
-
         // Each encounter owns its own score value.
-        (Guid.Parse("00000000-0000-0000-0000-000000009101"), SeedIds.Patient13,
+        (Guid.Parse("00000000-0000-0000-0000-000000009101"), SeedIds.Patient3,
             Guid.Parse("00000000-0000-0000-0000-000000008001"), "DAS28", "7", -240),
-        (Guid.Parse("00000000-0000-0000-0000-000000009102"), SeedIds.Patient13,
+        (Guid.Parse("00000000-0000-0000-0000-000000009102"), SeedIds.Patient3,
             Guid.Parse("00000000-0000-0000-0000-000000008002"), "DAS28", "6", -150),
-        (Guid.Parse("00000000-0000-0000-0000-000000009103"), SeedIds.Patient13,
+        (Guid.Parse("00000000-0000-0000-0000-000000009103"), SeedIds.Patient3,
             Guid.Parse("00000000-0000-0000-0000-000000008003"), "DAS28", "5", -60),
-        (Guid.Parse("00000000-0000-0000-0000-000000009104"), SeedIds.Patient13,
+        (Guid.Parse("00000000-0000-0000-0000-000000009104"), SeedIds.Patient3,
             Guid.Parse("00000000-0000-0000-0000-000000008004"), "DAS28", "3", -14),
         (Guid.Parse("00000000-0000-0000-0000-000000009105"), SeedIds.Patient1,
             SeedIds.Encounter1, "DAS28", "8", -90)
