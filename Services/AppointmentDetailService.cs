@@ -11,11 +11,12 @@ namespace EHMR.Services
         Task<AppointmentDetailDto> GetAppointment(Guid id);
         Task<AppointmentDetailDto> GetAppointmentContext();
         Task<PatientContextDto> GetPatientContext(Guid patientId);
+        Task<List<ApplicationRegime>> GetApplicationRegimesAsync();
         Task<PatientScore> SavePatientScore(PatientScore score);
         Task UpdateAppointmentStatus(Guid appointmentId, AppointmentStatus newStatus);
         Task<List<Mkb10Code>> SearchMkb10Codes(string query, CancellationToken token);
         Task<DateTime> GetNextAvailableSlot(Guid doctorId, Guid patientId, DateTime from, int durationMinutes = 30);
-        Task SaveAppointment(Appointment appointment, List<PatientMkb10Assignment> mkb10Assignments, List<PatientMedicine> medicines);
+        Task SaveAppointment(Appointment appointment, List<PatientMkb10Assignment> mkb10Assignments, List<PatientMedicine> medicines, List<PatientScore>? scores = null);
         Task AutoCloseStaleAppointmentsAsync();
     }
 
@@ -197,6 +198,9 @@ var patients = await db.Patients
             return score;
         }
 
+        public Task<List<ApplicationRegime>> GetApplicationRegimesAsync() =>
+            _encounterService.GetApplicationRegimesAsync();
+
         public async Task<PatientContextDto> GetPatientContext(Guid patientId)
         {
             await using var db = await _factory.CreateDbContextAsync();
@@ -277,7 +281,7 @@ var patients = await db.Patients
             _encounterService.GetNextAvailableSlot(doctorId, from, durationMinutes, patientId);
 
         // ─── Commands ─────────
-        public async Task SaveAppointment(Appointment appointment, List<PatientMkb10Assignment> mkb10Assignments, List<PatientMedicine> medicines)
+        public async Task SaveAppointment(Appointment appointment, List<PatientMkb10Assignment> mkb10Assignments, List<PatientMedicine> medicines, List<PatientScore>? scores = null)
         {
             await using var db = await _factory.CreateDbContextAsync();
             await using var tx = await db.Database.BeginTransactionAsync();
@@ -407,6 +411,22 @@ Encounter? encounterForMedicines = null;
                     // closed (Completed/Cancelled). MKB-10 assignments are already skipped by the
                     // guard above; freeze medicines for the same reason.
                     medicinesEditable=false;
+                }
+            }
+
+            if(encounterForMedicines is not null && scores is { Count: > 0 })
+            {
+                foreach(var score in scores.Where(x => !string.IsNullOrWhiteSpace(x.ScoreText) && !string.IsNullOrWhiteSpace(x.Number)))
+                {
+                    db.PatientScores.Add(new PatientScore
+                    {
+                        Id = Guid.NewGuid(),
+                        PatientId = appointment.PatientId,
+                        EncounterId = encounterForMedicines.Id,
+                        ScoreText = score.ScoreText.Trim(),
+                        Number = score.Number.Trim(),
+                        RecordedAt = DateTime.UtcNow
+                    });
                 }
             }
 
