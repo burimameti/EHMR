@@ -27,7 +27,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     public bool CanApprove => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Approve);
     public bool CanPrint => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Print);
     public bool CanExport => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Export);
-    private bool CanModifyScores => !IsReadOnly && (Encounter.Id==Guid.Empty ? CanCreate : CanUpdate);
+    private bool CanModifyScores => !IsReadOnly && (CanCreate || CanUpdate);
 
     protected CancellationTokenSource SearchCts = new();
 
@@ -1456,7 +1456,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected async Task AddMedicine(Medicine medicine)
     {
-        if(IsReadOnly || !(Encounter.Id==Guid.Empty ? CanCreate : CanUpdate) || medicine is null) return;
+        if(IsReadOnly || !(CanCreate || CanUpdate) || medicine is null) return;
 
         if(EncounterMedicines.Any(x => x.MedicineId==medicine.Id&&x.IsActive))
             return;
@@ -1515,7 +1515,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected void RemoveMedicine(PatientMedicine medicine)
     {
-        if(IsReadOnly || !(Encounter.Id==Guid.Empty ? CanCreate : CanUpdate)) return;
+        if(IsReadOnly || !(CanCreate || CanUpdate)) return;
         if(medicine==null) return;
 
         // Only mark for DB deletion if it's a real, already-persisted row.
