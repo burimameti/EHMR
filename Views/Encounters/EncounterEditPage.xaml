@@ -291,43 +291,18 @@
 								<controls:CrudSectionHeader
 									Title="БИОЛОШКА ТЕРАПИЈА"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
-								<Grid ColumnDefinitions="1.2*,1.2*,0.8*" ColumnSpacing="20">
-									<VerticalStackLayout Grid.Column="0" Spacing="2">
-										<Label
-											FontSize="10"
-											Text="МКБ-10 дијагноза"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="11.5"
-											LineBreakMode="WordWrap"
-											Text="{Binding CurrentMkb10Summary, TargetNullValue='Нема внесена дијагноза.'}"
-											TextColor="{StaticResource SparkTextPrimary}" />
+								<Grid ColumnDefinitions="*,*" ColumnSpacing="20" RowDefinitions="Auto,Auto" RowSpacing="8">
+									<VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
+										<Label FontSize="10" Text="МКБ-10 дијагноза" TextColor="{StaticResource SparkTextSecondary}" />
+										<Label FontAttributes="Bold" FontSize="11.5" LineBreakMode="WordWrap" Text="{Binding CurrentMkb10Summary, TargetNullValue='Нема внесена дијагноза.'}" TextColor="{StaticResource SparkTextPrimary}" />
 									</VerticalStackLayout>
-
-									<VerticalStackLayout Grid.Column="1" Spacing="2">
-										<Label
-											FontSize="10"
-											Text="Активна терапија"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="11.5"
-											LineBreakMode="WordWrap"
-											Text="{Binding ActiveMedicinesSummary, TargetNullValue='Нема активна терапија.'}"
-											TextColor="{StaticResource SparkTextPrimary}" />
+									<VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="2">
+										<Label FontSize="10" Text="Претходен скор" TextColor="{StaticResource SparkTextSecondary}" />
+										<Label FontAttributes="Bold" FontSize="11.5" Text="{Binding CurrentPatientScore, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
 									</VerticalStackLayout>
-
-									<VerticalStackLayout Grid.Column="2" Spacing="2">
-										<Label
-											FontSize="10"
-											Text="Претходен скор"
-											TextColor="{StaticResource SparkTextSecondary}" />
-										<Label
-											FontAttributes="Bold"
-											FontSize="11.5"
-											Text="{Binding CurrentPatientScore, TargetNullValue='—'}"
-											TextColor="{StaticResource SparkTextPrimary}" />
+									<VerticalStackLayout Grid.Row="1" Grid.ColumnSpan="2" Spacing="2">
+										<Label FontSize="10" Text="Активна терапија" TextColor="{StaticResource SparkTextSecondary}" />
+										<Label FontAttributes="Bold" FontSize="11.5" LineBreakMode="WordWrap" Text="{Binding ActiveMedicinesSummary, TargetNullValue='Нема активна терапија.'}" TextColor="{StaticResource SparkTextPrimary}" />
 									</VerticalStackLayout>
 								</Grid>
 							</VerticalStackLayout>
@@ -447,63 +422,27 @@
 										</BindableLayout.EmptyView>
 										<BindableLayout.ItemTemplate>
 											<DataTemplate x:DataType="entities:PatientMedicine">
-												<Grid ColumnDefinitions="1.45*,1*,0.80*,170" ColumnSpacing="1">
-													<Border
-														Padding="8,0"
-														BackgroundColor="White"
-														HeightRequest="46"
-														Stroke="{StaticResource SparkBorderSubtle}"
-														StrokeThickness="1">
-														<VerticalStackLayout Padding="8,2" Spacing="0" VerticalOptions="Center">
-															<Label FontSize="10.8" Text="{Binding Medicine.BilingualName}" TextColor="{StaticResource SparkTextPrimary}" LineBreakMode="TailTruncation" />
-														</VerticalStackLayout>
-													</Border>
-													<Border
-														Grid.Column="1"
-														Padding="4,0"
-														BackgroundColor="White"
-														HeightRequest="46"
-														Stroke="{StaticResource SparkBorderSubtle}"
-														StrokeThickness="1">
-														<Entry
-														Style="{StaticResource TableCellEntryStyle}"
-														Keyboard="Numeric"
-														Text="{Binding Medicine.DefaultDosage , Mode=TwoWay}" />
-													</Border>
-													<Border
-														Grid.Column="2"
-														Padding="4,0"
-														BackgroundColor="White"
-														HeightRequest="46"
-														Stroke="{StaticResource SparkBorderSubtle}"
-														StrokeThickness="1">
-														<Entry
-														Style="{StaticResource TableCellEntryStyle}"
-														Keyboard="Numeric"
-														Text="{Binding Quantity, Mode=TwoWay}" />
-													</Border>
-													<Border
-														Grid.Column="3"
-														BackgroundColor="White"
-														HeightRequest="46"
-														Stroke="{StaticResource SparkBorderSubtle}"
-														StrokeThickness="1">
-														<HorizontalStackLayout
-															HorizontalOptions="Center"
-															Spacing="2"
-															VerticalOptions="Center">
-															<CheckBox IsChecked="{Binding IsActive}" IsEnabled="False" />
-															<controls:FFButton
-																ButtonKind="Danger"
-																Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}"
-																CommandParameter="{Binding .}"
-																HeightRequestEx="30"
-																Text="Избриши"
-																WidthRequestEx="78" />
-														</HorizontalStackLayout>
-													</Border>
+										<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+											<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+											<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
+												<Grid ColumnDefinitions="2*,1.2*,1*" ColumnSpacing="10">
+													<VerticalStackLayout Spacing="1">
+														<Label FontAttributes="Bold" FontSize="12" Text="{Binding Medicine.BilingualName, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
+														<Label FontSize="10" Text="{Binding ApplicationRegime.Regime, TargetNullValue='—'}" TextColor="{StaticResource SparkTextSecondary}" />
+													</VerticalStackLayout>
+													<VerticalStackLayout Grid.Column="1" Spacing="1">
+														<Label FontSize="10" Text="Период" TextColor="{StaticResource SparkTextSecondary}" />
+														<Label Style="{StaticResource CrudCollectionMetaStyle}" Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}" />
+														<Label Style="{StaticResource CrudCollectionMetaStyle}" Text="{Binding EndDate, StringFormat='{0:dd.MM.yyyy}'}" />
+													</VerticalStackLayout>
+													<VerticalStackLayout Grid.Column="2" Spacing="1">
+														<Label FontSize="10" Text="Статус" TextColor="{StaticResource SparkTextSecondary}" />
+														<Label FontAttributes="Bold" FontSize="11" Text="Завршена" TextColor="{StaticResource SparkTextSecondary}" />
+													</VerticalStackLayout>
 												</Grid>
-											</DataTemplate>
+											</Border>
+										</Grid>
+									</DataTemplate>
 										</BindableLayout.ItemTemplate>
 									</VerticalStackLayout>
 								</VerticalStackLayout>
@@ -831,26 +770,15 @@
 								</BindableLayout.EmptyView>
 								<BindableLayout.ItemTemplate>
 									<DataTemplate x:DataType="entities:PatientMkb10Assignment">
-										<Border
-											Padding="10,8"
-											BackgroundColor="{StaticResource SparkContentBackground}"
-											Stroke="{StaticResource SparkBorder}"
-											StrokeShape="RoundRectangle 10"
-											StrokeThickness="1">
-											<Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-												<Label
-													FontAttributes="Bold"
-													FontSize="12.5"
-													Text="{Binding Mkb10Code.Code}"
-													TextColor="{StaticResource SparkAccentTealDark}" />
-												<Label
-													Grid.Column="1"
-													FontSize="11.5"
-													LineBreakMode="TailTruncation"
-													Text="{Binding Mkb10Code.Description}"
-													TextColor="{StaticResource SparkTextPrimary}" />
-											</Grid>
-										</Border>
+										<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+											<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+											<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
+												<Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+													<Label Style="{StaticResource CrudCollectionCodeStyle}" Text="{Binding Mkb10Code.Code}" />
+													<Label Grid.Column="1" LineBreakMode="TailTruncation" Style="{StaticResource CrudCollectionMetaStyle}" Text="{Binding Mkb10Code.Description}" />
+												</Grid>
+											</Border>
+										</Grid>
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
