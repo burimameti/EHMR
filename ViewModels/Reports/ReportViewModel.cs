@@ -21,6 +21,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     private IReportProvider? _activeProvider;
     private ReportDefinition? _activeReport;
     private int _generationId;
+    private readonly HashSet<string> _expandedPatientGroups = new(StringComparer.OrdinalIgnoreCase);
     private CancellationTokenSource? _generateCts;
     [ObservableProperty]
     private string activeReportTitle = string.Empty;
@@ -474,6 +475,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             return;
 
         ClearReportState();
+        _expandedPatientGroups.Clear();
+        PageSize=report.Type==ReportType.Patients ? 10000 : 10;
 
         _activeReport=report;
         SelectedReportDefinition=report;
@@ -938,39 +941,113 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     private void BuildSparkGridColumns()
     {
-        int width = 130;
         GridColumns.Clear();
 
         if(_activeProvider==null)
             return;
 
+        if(_activeReport?.Type==ReportType.Patients)
+        {
+            GridColumns.Add(new SparkGridColumn
+            {
+                Header="",
+                Key="GroupExpand",
+                CellType=SparkGridCellType.Button,
+                Width=new GridLength(58),
+                Sortable=false
+            });
+        }
+
         foreach(var column in _activeProvider.Columns)
             GridColumns.Add(column);
+    }
 
+    [RelayCommand]
+    private void TogglePatientGroup(string? patientName)
+    {
+        if(string.IsNullOrWhiteSpace(patientName))
+            return;
 
+        if(!_expandedPatientGroups.Add(patientName))
+            _expandedPatientGroups.Remove(patientName);
+
+        RefreshSparkGridRows();
     }
 
     private void RefreshSparkGridRows()
     {
         var rows = new ObservableCollection<SparkGridRow>();
-        foreach(var reportRow in ProcessedRows)
+
+        if(_activeReport?.Type==ReportType.Patients && GridColumns.Count>0)
         {
-            var row = new SparkGridRow { Tag=reportRow };
-            for(int i = 0; i<reportRow.Cells.Count&&i<GridColumns.Count; i++)
+            var groups=ProcessedRows
+                .Where(x=>x.Cells.Count>0)
+                .GroupBy(x=>x.Cells[0]??string.Empty, StringComparer.OrdinalIgnoreCase)
+                .OrderBy(g=>g.Key, StringComparer.CurrentCultureIgnoreCase);
+
+            foreach(var group in groups)
             {
-                var key = GridColumns[i].Key;
-                var value = reportRow.Cells[i];
-
-                row[key]=key switch
+                var patientName=group.Key;
+                var visits=group.ToList();
+                var expanded=_expandedPatientGroups.Contains(patientName);
+                var parent=new SparkGridRow { Tag=patientName };
+                parent["GroupExpand"]=new SparkButtonItem
                 {
-                    "NationalId" => PrivacyMaskHelper.MaskNationalId(value?.ToString()),
-                   // "Phone" => PrivacyMaskHelper.MaskPhone(value?.ToString()),
-                    _ => value
+                    Label=expanded ? "−" : "+",
+                    IsPrimary=false,
+                    IsEnabled=visits.Count>0,
+                    Command=TogglePatientGroupCommand,
+                    CommandParameter=patientName
                 };
-            }
 
-            rows.Add(row);
+                foreach(var column in _activeProvider!.Columns)
+                    parent[column.Key]=column.Key=="Patient"
+                        ? $"{patientName}  ({visits.Count} прегледи)"
+                        : string.Empty;
+                rows.Add(parent);
+
+                if(!expanded)
+                    continue;
+
+                foreach(var reportRow in visits)
+                {
+                    var child=new SparkGridRow { Tag=reportRow };
+                    child["GroupExpand"]=null!;
+                    for(int i=0;i<reportRow.Cells.Count&&i<_activeProvider.Columns.Count();i++)
+                    {
+                        var column=_activeProvider.Columns.ElementAt(i);
+                        var value=reportRow.Cells[i];
+                        if(i==0)
+                            value=$"   ↳ {value}";
+                        child[column.Key]=column.Key switch
+                        {
+                            "NationalId" => PrivacyMaskHelper.MaskNationalId(value?.ToString()),
+                            _ => value
+                        }!;
+                    }
+                    rows.Add(child);
+                }
+            }
         }
+        else
+        {
+            foreach(var reportRow in ProcessedRows)
+            {
+                var row = new SparkGridRow { Tag=reportRow };
+                for(int i = 0; i<reportRow.Cells.Count&&i<GridColumns.Count; i++)
+                {
+                    var key = GridColumns[i].Key;
+                    var value = reportRow.Cells[i];
+                    row[key]=key switch
+                    {
+                        "NationalId" => PrivacyMaskHelper.MaskNationalId(value?.ToString()),
+                        _ => value
+                    }!;
+                }
+                rows.Add(row);
+            }
+        }
+
         GridRows=rows;
     }
 
