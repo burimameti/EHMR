@@ -1030,7 +1030,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                         {
                             "NationalId" => PrivacyMaskHelper.MaskNationalId(value?.ToString()),
                             _ => value
-                        }!;
+                        };
                     }
                     rows.Add(child);
                 }
@@ -1049,7 +1049,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                     {
                         "NationalId" => PrivacyMaskHelper.MaskNationalId(value?.ToString()),
                         _ => value
-                    }!;
+                    };
                 }
                 rows.Add(row);
             }

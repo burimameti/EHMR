@@ -115,8 +115,9 @@ h2{{font-size:10pt;color:#0f4c81;text-transform:uppercase;letter-spacing:.8px;ma
     private async void OnPrintClicked(object sender, EventArgs e)
     {
 #if WINDOWS
-        if (sender is Button button)
-            button.IsEnabled = false;
+        Button? printButton = sender as Button;
+        if (printButton is not null)
+            printButton.IsEnabled = false;
 
         try
         {
@@ -140,9 +141,6 @@ h2{{font-size:10pt;color:#0f4c81;text-transform:uppercase;letter-spacing:.8px;ma
                 return;
             }
 
-            // Navigate through the native WebView2 instance and wait for its
-            // navigation event. This avoids relying on MAUI's WebView.Navigated
-            // event, which can race with page appearance/handler initialization.
             var loaded = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             void OnNavigationCompleted(object? _, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs args)
             {
@@ -174,8 +172,8 @@ h2{{font-size:10pt;color:#0f4c81;text-transform:uppercase;letter-spacing:.8px;ma
         }
         finally
         {
-            if (sender is Button button)
-                button.IsEnabled = true;
+            if (printButton is not null)
+                printButton.IsEnabled = true;
         }
 #else
         await DisplayAlert("Печатење", "Печатењето е достапно во Windows десктоп верзијата.", "ОК");

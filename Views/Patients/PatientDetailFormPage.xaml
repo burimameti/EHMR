@@ -63,11 +63,30 @@
 			<!--  ═══ ШАБЛОНИ ЗА ИСТОРИЈА НА ПАЦИЕНТОТ ═══  -->
 
 			<DataTemplate x:Key="PatientMkb10CodeRowTemplate" x:DataType="dto:PatientMkb10CodeDto">
-				<Grid ColumnDefinitions="18,*" ColumnSpacing="5" Padding="0,3">
+				<Grid
+					Padding="0,3"
+					ColumnDefinitions="18,*"
+					ColumnSpacing="5">
 					<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
-					<Grid Grid.Column="1" Padding="0,6" ColumnDefinitions="Auto,*" ColumnSpacing="10">
-						<Label FontAttributes="Bold" FontFamily="Consolas" FontSize="12" Text="{Binding Mkb10Code}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
-						<Label Grid.Column="1" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding Mkb10Description}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+					<Grid
+						Grid.Column="1"
+						Padding="0,6"
+						ColumnDefinitions="Auto,*"
+						ColumnSpacing="10">
+						<Label
+							FontAttributes="Bold"
+							FontFamily="Consolas"
+							FontSize="12"
+							Text="{Binding Mkb10Code}"
+							TextColor="{StaticResource SparkAccentTealDark}"
+							VerticalOptions="Center" />
+						<Label
+							Grid.Column="1"
+							FontSize="12"
+							LineBreakMode="TailTruncation"
+							Text="{Binding Mkb10Description}"
+							TextColor="{StaticResource SparkTextPrimary}"
+							VerticalOptions="Center" />
 					</Grid>
 				</Grid>
 			</DataTemplate>
@@ -1059,18 +1078,18 @@
 																				Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.UploadMedicineResolutionCommand}"
 																				CommandParameter="{Binding .}"
 																				FontSizeEx="10"
-																				HeightRequestEx="13"
+																				HeightRequestEx="19"
 																				Text="Прикачи"
-																				WidthRequestEx="80" />
+																				WidthRequestEx="70" />
 																			<controls:FFButton
 																				Grid.Column="5"
 																				ButtonKind="Danger"
 																				Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.MoveMedicineToInactiveCommand}"
 																				CommandParameter="{Binding .}"
 																				FontSizeEx="10"
-																				HeightRequestEx="13"
+																				HeightRequestEx="19"
 																				Text="Неактивен"
-																				WidthRequestEx="80" />
+																				WidthRequestEx="70" />
 																		</Grid>
 																		<BoxView
 																			Grid.Row="1"
