@@ -1116,7 +1116,6 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
 
             var results = resultMap.Values
                 .Where(m => SearchTextMatches(m.Name, query) ||
-                            SearchTextMatches(m.GenericName, query) ||
                             SearchTextMatches(m.GenericName, query))
                 .Take(20)
                 .ToList();
