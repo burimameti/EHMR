@@ -463,6 +463,7 @@ public partial class DashboardViewModel : ObservableObject
                 .AsNoTracking()
                 .Include(p => p.Appointments)
                 .Include(p => p.Encounters)
+                .Include(p => p.Scores)
                 .Include(p => p.Mkb10Assignments)
                     .ThenInclude(d => d.Mkb10Code)
                 .Include(p => p.PatientMedicines)
