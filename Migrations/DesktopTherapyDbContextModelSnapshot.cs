@@ -885,12 +885,6 @@ namespace EHMR.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DosingFrequency")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasDefaultValue("Месечно");
-
                     b.Property<string>("Dosage")
                         .IsRequired()
                         .HasMaxLength(100)
