@@ -164,7 +164,7 @@ namespace EHMR.Domain.Entities.Reports
         }
 
         public string Key => "patients";
-        public string Title => "Пациенти";
+        public string Title => "Пациенти по прегледи";
         public string Description => "Пациенти по секој преглед во избраниот временски период; секоја посета е посебен ред.";
         public string Icon => "🧑‍⚕️";
         public ReportType Type => ReportType.Patients;
@@ -647,8 +647,10 @@ namespace EHMR.Domain.Entities.Reports
 
             if(_selectedMkb10CodeFilter!="Сите")
             {
-                query=query.Where(x => x.Mkb10Assignments.Any(d =>
-                    d.EncounterId==null && d.Mkb10Code?.Code==_selectedMkb10CodeFilter));
+                query=query.Where(x =>
+                    x.Mkb10Assignments.Any(d => d.Mkb10Code?.Code==_selectedMkb10CodeFilter) ||
+                    x.Encounters.Any(encounter => encounter.Mkb10Assignments.Any(d =>
+                        d.Mkb10Code?.Code==_selectedMkb10CodeFilter)));
                 Debug.WriteLine($"[Patients]   - MKB-10 code filter: {_selectedMkb10CodeFilter}");
             }
 
@@ -880,11 +882,11 @@ namespace EHMR.Domain.Entities.Reports
 
             return new ReportMetrics
             {
-                Title1="Пациенти",
+                Title1="Прегледи",
                 Value1=list.Count,
-                Title2="Со алергии / пропуштени терапии",
+                Title2="Прегледи со предупредување",
                 Value2=withAlertSeverity,
-                Title3="Здравствен запис",
+                Title3="Прегледи со запис",
                 Value3=list.Count==0 ? 100 : (int)((double)(list.Count-withAlertSeverity)/list.Count*100)
             };
         }
