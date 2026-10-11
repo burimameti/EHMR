@@ -141,7 +141,9 @@ h2{{font-size:10pt;color:#0f4c81;text-transform:uppercase;letter-spacing:.8px;ma
                 return;
             }
 
-            nativeWebView.CoreWebView2.ShowPrintUI(Microsoft.Web.WebView2.Core.CoreWebView2PrintDialogKind.Browser);
+            // Use the native Windows print dialog rather than the embedded browser print preview.
+            // This opens the standard printer selection/print dialog for the generated report.
+            nativeWebView.CoreWebView2.ShowPrintUI(Microsoft.Web.WebView2.Core.CoreWebView2PrintDialogKind.System);
         }
         catch (Exception ex)
         {
