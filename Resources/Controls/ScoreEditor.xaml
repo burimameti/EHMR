@@ -40,13 +40,21 @@
 	<VerticalStackLayout Spacing="8">
 
 		<!--  Наслов (иста висина како „АКТИВНИ ЛЕКОВИ")  -->
-		<Grid HeightRequest="34">
+		<Grid ColumnDefinitions="*,Auto" HeightRequest="34">
 			<Label
 				FontAttributes="Bold"
 				FontSize="11"
 				Text="СКОРОВИ"
 				TextColor="{StaticResource SparkAccentTealDark}"
 				VerticalOptions="Center" />
+			<controls:FFButton
+				Grid.Column="1"
+				ButtonKind="Primary"
+				Command="{Binding AddNewScoreDefinitionCommand}"
+				HeightRequestEx="34"
+				IsVisible="{Binding IsEditable}"
+				Text="+ Нов скор"
+				WidthRequestEx="104" />
 		</Grid>
 
 		<!--  Пребарување + предлози  -->
