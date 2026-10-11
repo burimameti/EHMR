@@ -49,12 +49,7 @@
 			<DataTemplate x:Key="DocumentTemplate" x:DataType="entities:PatientDocument">
 				<Border
 					Margin="0,0,8,8"
-					Padding="10"
-					BackgroundColor="{StaticResource SparkTabActiveBg}"
-					Stroke="{StaticResource SparkBorderSubtle}"
-					StrokeShape="RoundRectangle 10"
-					StrokeThickness="1"
-					WidthRequest="180">
+					WidthRequest="180" Style="{StaticResource CrudFormDocumentCardStyle}">
 					<Border.GestureRecognizers>
 						<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding .}" />
 					</Border.GestureRecognizers>
@@ -492,12 +487,7 @@
 										<DataTemplate x:DataType="entities:PatientDocument">
 											<Border
 												Margin="0,0,8,8"
-												Padding="10"
-												BackgroundColor="{StaticResource SparkTabActiveBg}"
-												Stroke="{StaticResource SparkBorderSubtle}"
-												StrokeShape="RoundRectangle 10"
-												StrokeThickness="1"
-												WidthRequest="180">
+												WidthRequest="180" Style="{StaticResource CrudFormDocumentCardStyle}">
 												<Border.GestureRecognizers>
 													<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding .}" />
 												</Border.GestureRecognizers>
