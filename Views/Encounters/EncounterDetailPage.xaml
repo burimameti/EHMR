@@ -348,7 +348,7 @@
 								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1*" ColumnSpacing="8" VerticalOptions="Start">
 									<Border Grid.Column="0" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
 										<VerticalStackLayout Spacing="0">
-											<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}">
+											<Grid Style="{StaticResource CrudFormTableHeaderGridStyle}">
 												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="МКБ-10 ДИЈАГНОЗИ" />
 											</Grid>
 											<VerticalStackLayout BindableLayout.ItemsSource="{Binding Mkb10Assignments}" Spacing="0" VerticalOptions="Start">
@@ -365,9 +365,9 @@
 											</VerticalStackLayout>
 										</VerticalStackLayout>
 									</Border>
-									<Border Grid.Column="1" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start" HorizontalOptions="Fill">
+									<Border Grid.Column="1" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
 										<VerticalStackLayout Spacing="0">
-											<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}">
+											<Grid Style="{StaticResource CrudFormTableHeaderGridStyle}">
 												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="АКТИВНИ ЛЕКОВИ" />
 											</Grid>
 											<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="0" VerticalOptions="Start">
@@ -440,12 +440,7 @@
 									Spacing="5">
 									<BindableLayout.ItemTemplate>
 										<DataTemplate x:DataType="entities:PatientMedicine">
-											<Border
-												Padding="0"
-												BackgroundColor="White"
-												Stroke="{StaticResource Gray200}"
-												StrokeShape="RoundRectangle 8"
-												StrokeThickness="1">
+											<Border Style="{StaticResource CrudFormTableFrameStyle}">
 												<Grid ColumnDefinitions="1.4*,1*,1.35*,0.8*" ColumnSpacing="1">
 													<Label
 														Padding="10,9"
