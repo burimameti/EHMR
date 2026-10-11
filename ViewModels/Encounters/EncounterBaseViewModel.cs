@@ -833,6 +833,16 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         if(SelectedPatient?.Status==PatientStatus.Inactive)
             return;
 
+        if(!AuthorizationService.CanPerform(Modules.Appointments, ModuleAction.Create) ||
+           !AuthorizationService.CanPerform(Modules.Appointments, ModuleAction.Schedule))
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Пристапот е одбиен",
+                "Немате овластување за креирање и закажување термин.",
+                "ОК");
+            return;
+        }
+
         if(SelectedPatient==null)
             return;
 
