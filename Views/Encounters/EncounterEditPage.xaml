@@ -13,6 +13,18 @@
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
+			<Style x:Key="FieldEntryStyle" TargetType="Entry">
+				<Setter Property="BackgroundColor" Value="Transparent" />
+				<Setter Property="FontSize" Value="13" />
+				<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+			</Style>
+			<Style x:Key="TableCellEntryStyle" TargetType="Entry">
+				<Setter Property="BackgroundColor" Value="Transparent" />
+				<Setter Property="FontSize" Value="11" />
+				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+				<Setter Property="VerticalOptions" Value="Center" />
+			</Style>
 			<Style x:Key="SectionHeaderStyle" TargetType="controls:CrudSectionHeader">
 				<Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
 				<Setter Property="TextColor" Value="{StaticResource Gray800}" />
@@ -454,12 +466,9 @@
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
 														<Entry
-															BackgroundColor="Transparent"
-															FontSize="11.5"
-															Keyboard="Numeric"
-															Text="{Binding Medicine.DefaultDosage , Mode=TwoWay}"
-															TextColor="{StaticResource SparkTextPrimary}"
-															VerticalOptions="Center" />
+														Style="{StaticResource TableCellEntryStyle}"
+														Keyboard="Numeric"
+														Text="{Binding Medicine.DefaultDosage , Mode=TwoWay}" />
 													</Border>
 													<Border
 														Grid.Column="2"
