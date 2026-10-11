@@ -1074,22 +1074,18 @@
 
 							<controls:SparkExpandableCard
 								Title="Историја на прегледи"
-								CardBackgroundColor="White"
+								Style="{StaticResource CrudFormHistoryCardStyle}"
 								EmptyViewText="Нема претходни термини."
-								HeaderTextColor="{StaticResource SparkTextPrimary}"
 								ItemTemplate="{StaticResource AppointmentHistoryRowTemplate}"
 								ItemsSource="{Binding AppointmentHistory}"
-								Subtitle=""
 								Variant="Appointment" />
 
 							<controls:SparkExpandableCard
 								Title="Историја на дијагнози"
-								CardBackgroundColor="White"
+								Style="{StaticResource CrudFormHistoryCardStyle}"
 								EmptyViewText="Нема историја на дијагнози."
-								HeaderTextColor="{StaticResource SparkTextPrimary}"
 								ItemTemplate="{StaticResource AppointmentMkb10HistoryRowTemplate}"
 								ItemsSource="{Binding PatientMkb10History}"
-								Subtitle=""
 								Variant="PatientMkb10Assignment" />
 
 						</VerticalStackLayout>
