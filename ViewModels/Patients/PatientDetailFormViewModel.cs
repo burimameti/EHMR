@@ -1046,6 +1046,12 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
     [RelayCommand]
     private async Task AddApplicationRegimeAsync()
     {
+        if(!_authorizationService.CanPerform(Modules.Medicines, ModuleAction.Create))
+        {
+            await _userDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за креирање нов начин на апликација.", "ОК");
+            return;
+        }
+
         var value = await _userDialogService.ShowPromptAsync(
             "Нов режим на апликација",
             "Внесете нов режим на апликација за лекот.",
@@ -1137,6 +1143,11 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
     {
         if (!IsEditMode || !CanSavePatient)
             return;
+        if(!_authorizationService.CanPerform(Modules.Medicines, ModuleAction.Create))
+        {
+            await _userDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за креирање нов лек.", "ОК");
+            return;
+        }
 
         var popup = new NewMedicinePopup(_dbFactory);
         await Shell.Current.ShowPopupAsync(popup);
