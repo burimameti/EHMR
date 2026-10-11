@@ -328,7 +328,8 @@
 
 
 							<!-- БИОЛОШКА ТЕРАПИЈА: МКБ-10 дијагнози, активни лекови и скор -->
-							<VerticalStackLayout IsVisible="True" Spacing="8">
+							<Border Style="{StaticResource CrudFormSectionCardStyle}">
+								<VerticalStackLayout IsVisible="True" Spacing="8">
 								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1.5*" ColumnSpacing="8" VerticalOptions="Start">
 									<Border Grid.Column="0" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
@@ -383,7 +384,8 @@
 										</VerticalStackLayout>
 									</Border>
 								</Grid>
-							</VerticalStackLayout>
+							</VerticalStackLayout></VerticalStackLayout>
+							</Border>
 
 			<!--  ЛЕКОВИ  -->
 							<VerticalStackLayout Spacing="10">
