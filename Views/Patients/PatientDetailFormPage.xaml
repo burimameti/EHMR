@@ -835,43 +835,21 @@
 														BindableLayout.ItemsSource="{Binding PatientMkb10Codes}"
 														Spacing="4">
 														<BindableLayout.ItemTemplate>
-															<DataTemplate x:DataType="dto:PatientMkb10CodeDto">
-																<Border
-																	Padding="10,7"
-																	BackgroundColor="{StaticResource SparkTabActiveBg}"
-																	Stroke="{StaticResource SparkBorderSubtle}"
-																	StrokeShape="RoundRectangle 8"
-																	StrokeThickness="1">
-																	<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
-																		<Label
-																			FontAttributes="Bold"
-																			FontSize="11.5"
-																			Text="{Binding Mkb10Code, TargetNullValue='—'}"
-																			TextColor="{StaticResource SparkAccentTealDark}"
-																			VerticalOptions="Center" />
-																		<Label
-																			Grid.Column="1"
-																			FontSize="11.5"
-																			LineBreakMode="WordWrap"
-																			Text="{Binding Mkb10Description, TargetNullValue='—'}"
-																			TextColor="{StaticResource SparkTextPrimary}"
-																			VerticalOptions="Center" />
-																		<Label
-																			Grid.Column="2"
-																			FontFamily="FASolid"
-																			FontSize="10"
-																			IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
-																			Text="&#xf1f8;"
-																			TextColor="#DC2626"
-																			VerticalOptions="Center">
-																			<Label.GestureRecognizers>
-																				<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMkbCommand}" CommandParameter="{Binding .}" />
-																			</Label.GestureRecognizers>
-																		</Label>
-																	</Grid>
-																</Border>
-															</DataTemplate>
-														</BindableLayout.ItemTemplate>
+														<DataTemplate x:DataType="dto:PatientMkb10CodeDto">
+															<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+																<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+																<Grid Grid.Column="1" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" Padding="0,4">
+																	<Label FontAttributes="Bold" FontSize="11.5" Text="{Binding Mkb10Code, TargetNullValue='—'}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
+																	<Label Grid.Column="1" FontSize="11.5" LineBreakMode="WordWrap" Text="{Binding Mkb10Description, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+																	<Label Grid.Column="2" FontFamily="FASolid" FontSize="10" IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" Text="&#xf1f8;" TextColor="#DC2626" VerticalOptions="Center">
+																		<Label.GestureRecognizers>
+																			<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMkbCommand}" CommandParameter="{Binding .}" />
+																		</Label.GestureRecognizers>
+																	</Label>
+																</Grid>
+															</Grid>
+														</DataTemplate>
+													</BindableLayout.ItemTemplate>
 													</VerticalStackLayout>
 												</Grid>
 											</VerticalStackLayout>
