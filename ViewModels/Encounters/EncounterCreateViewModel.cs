@@ -24,6 +24,65 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     private bool _isLoading;
     private bool _isLoaded;
 
+
+    // A new encounter must have an explicitly selected status before it can be saved.
+    [ObservableProperty]
+    private bool scheduledStatusSelected;
+
+    [ObservableProperty]
+    private bool inProgressStatusSelected;
+
+    [ObservableProperty]
+    private bool completedStatusSelected;
+
+    [ObservableProperty]
+    private bool cancelledStatusSelected;
+
+    [ObservableProperty]
+    private EncounterStatus? selectedStatusForSave;
+
+    public string StatusDisplay => SelectedStatusForSave switch
+    {
+        EncounterStatus.Scheduled => "Закажан",
+        EncounterStatus.InProgress => "Во тек",
+        EncounterStatus.Completed => "Завршен",
+        EncounterStatus.Cancelled => "Откажан",
+        _ => "Не е избран"
+    };
+
+    partial void OnScheduledStatusSelectedChanged(bool value) => HandleStatusSelection(EncounterStatus.Scheduled, value);
+    partial void OnInProgressStatusSelectedChanged(bool value) => HandleStatusSelection(EncounterStatus.InProgress, value);
+    partial void OnCompletedStatusSelectedChanged(bool value) => HandleStatusSelection(EncounterStatus.Completed, value);
+    partial void OnCancelledStatusSelectedChanged(bool value) => HandleStatusSelection(EncounterStatus.Cancelled, value);
+
+    private void HandleStatusSelection(EncounterStatus status, bool isSelected)
+    {
+        if (isSelected)
+        {
+            if (status != EncounterStatus.Scheduled) ScheduledStatusSelected = false;
+            if (status != EncounterStatus.InProgress) InProgressStatusSelected = false;
+            if (status != EncounterStatus.Completed) CompletedStatusSelected = false;
+            if (status != EncounterStatus.Cancelled) CancelledStatusSelected = false;
+            SelectedStatusForSave = status;
+        }
+        else if (SelectedStatusForSave == status)
+        {
+            SelectedStatusForSave = null;
+        }
+
+        OnPropertyChanged(nameof(StatusDisplay));
+    }
+
+    private void ResetStatusSelection()
+    {
+        SelectedStatusForSave = null;
+        ScheduledStatusSelected = false;
+        InProgressStatusSelected = false;
+        CompletedStatusSelected = false;
+        CancelledStatusSelected = false;
+        OnPropertyChanged(nameof(StatusDisplay));
+    }
+
     // ── Side-panel ────────────────────────────────────────────────────────────
     [ObservableProperty]
     private ObservableCollection<Encounter> recentEncounters = [];
@@ -450,10 +509,40 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             return;
         }
 
+        if(SelectedStatusForSave is null)
+        {
+            await UserDialogService.ShowAlertAsync("Статусот не е избран", "Изберете статус во долниот дел од формата пред да го зачувате прегледот.", "ОК");
+            return;
+        }
+
+        if(!EncounterMedicines.Any(x => x.IsActive && x.MedicineId != Guid.Empty && !DeletedMedicineIds.Contains(x.Id)))
+        {
+            await UserDialogService.ShowAlertAsync("Недостасува терапија", "Прегледот не може да се зачува без најмалку еден доделен активен лек.", "ОК");
+            return;
+        }
+
+        if(!EncounterScores.Any(x => !string.IsNullOrWhiteSpace(x)))
+        {
+            await UserDialogService.ShowAlertAsync("Недостасува скор", "Прегледот не може да се зачува без внесен скор.", "ОК");
+            return;
+        }
+
         ResolveApplicationRegimes(EncounterMedicines);
 
         await ExecuteSafeAsync(async () =>
         {
+            var requestedStatus = SelectedStatusForSave!.Value;
+            if(requestedStatus == EncounterStatus.Completed)
+            {
+                Encounter.Complete(DateTime.Now);
+            }
+            else
+            {
+                Encounter.Status = requestedStatus;
+                Encounter.IsLocked = false;
+                Encounter.EndTime = null;
+            }
+
             Encounter.SetNotes(string.Join(" | ", EncounterFindings));
             ScoreText=string.Join(" | ", EncounterScores);
             Encounter.PatientId=SelectedPatient.Id;
