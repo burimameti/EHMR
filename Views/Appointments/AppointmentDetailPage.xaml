@@ -766,7 +766,7 @@
 													Text="КОЛИЧИНА" Style="{StaticResource CrudFormTableHeaderLabelStyle}" />
 											</Border>
 											<Border
-												Grid.Column="2" / Style="{StaticResource CrudFormTableHeaderCellStyle}">
+												Grid.Column="2" Style="{StaticResource CrudFormTableHeaderCellStyle}" />
 										</Grid>
 
 										<!--  Table rows  -->
