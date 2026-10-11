@@ -4,12 +4,13 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-	x:Name="Root">
+	x:Name="Root"
+	Background="{StaticResource AppBg}">
 
 	<Border
 		Padding="20"
 		BackgroundColor="{StaticResource SparkBackground}"
-		Stroke="{StaticResource SparkBorder}"
+		Stroke="{StaticResource Gray400}"
 		StrokeShape="RoundRectangle 12"
 		StrokeThickness="1"
 		WidthRequest="460">

@@ -59,7 +59,7 @@
 				<Setter Property="Padding" Value="0" />
 				<Setter Property="BackgroundColor" Value="White" />
 				<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
-				<Setter Property="StrokeShape" Value="RoundRectangle 8" />
+				<Setter Property="StrokeShape" Value="RoundRectangle 0" />
 				<Setter Property="StrokeThickness" Value="1" />
 			</Style>
 
@@ -67,7 +67,7 @@
 				<Setter Property="FontAttributes" Value="Bold" />
 				<Setter Property="FontSize" Value="9" />
 				<Setter Property="LineBreakMode" Value="TailTruncation" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextSecondary}" />
+				<Setter Property="TextColor" Value="{StaticResource Black}" />
 				<Setter Property="VerticalOptions" Value="Center" />
 			</Style>
 
@@ -178,7 +178,7 @@
 					</Grid>
 				</Border>
 			</DataTemplate>
-<DataTemplate x:Key="PatientPrescriptionRowTemplate" x:DataType="entities:Prescription">
+			<DataTemplate x:Key="PatientPrescriptionRowTemplate" x:DataType="entities:Prescription">
 				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
 					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
 						<Label
@@ -1007,16 +1007,41 @@
 
 														<Grid
 															Padding="10,8"
-															BackgroundColor="{StaticResource SparkSurfaceAlt}"
-															ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,72,72,88"
+															BackgroundColor="{StaticResource Gray300}"
+															ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,72,88"
 															ColumnSpacing="6">
-															<Label Grid.Column="0" Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" />
-															<Label Grid.Column="1" Style="{StaticResource TableHeaderLabelStyle}" Text="РЕЖИМ" />
-															<Label Grid.Column="2" Style="{StaticResource TableHeaderLabelStyle}" Text="ДОЗА" />
-															<Label Grid.Column="3" Style="{StaticResource TableHeaderLabelStyle}" Text="КОЛ." />
-															<Label Grid.Column="4" HorizontalTextAlignment="Center" Style="{StaticResource TableHeaderLabelStyle}" Text="ПРЕГЛЕД" />
-															<Label Grid.Column="5" HorizontalTextAlignment="Center" Style="{StaticResource TableHeaderLabelStyle}" Text="ПРИКАЧИ" />
-															<Label Grid.Column="6" HorizontalTextAlignment="Center" Style="{StaticResource TableHeaderLabelStyle}" Text="НЕАКТИВЕН" />
+															<Label
+																Grid.Column="0"
+																Style="{StaticResource TableHeaderLabelStyle}"
+																Text="ЛЕК" />
+															<Label
+																Grid.Column="1"
+																Style="{StaticResource TableHeaderLabelStyle}"
+																Text="РЕЖИМ" />
+															<Label
+																Grid.Column="2"
+																Style="{StaticResource TableHeaderLabelStyle}"
+																Text="ДОЗА" />
+															<Label
+																Grid.Column="3"
+																HorizontalTextAlignment="Start"
+																Style="{StaticResource TableHeaderLabelStyle}"
+																Text="КОЛ." />
+															<!--<Label
+																Grid.Column="4"
+																HorizontalTextAlignment="Center"
+																Style="{StaticResource TableHeaderLabelStyle}"
+																Text="ПРЕГЛЕД" />-->
+															<Label
+																Grid.Column="4"
+																HorizontalTextAlignment="Start"
+																Style="{StaticResource TableHeaderLabelStyle}"
+																Text="РЕШЕНИЕ" />
+															<Label
+																Grid.Column="5"
+																HorizontalTextAlignment="Center"
+																Style="{StaticResource TableHeaderLabelStyle}"
+																Text="НЕАКТИВЕН" />
 														</Grid>
 
 														<VerticalStackLayout BindableLayout.ItemsSource="{Binding AttachedMedicines}" Spacing="0">
@@ -1033,7 +1058,7 @@
 																	<Grid RowDefinitions="Auto,1">
 																		<Grid
 																			Padding="10,6"
-																			ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,72,72,88"
+																			ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,88,100"
 																			ColumnSpacing="6">
 																			<Label
 																				Grid.Column="0"
@@ -1051,35 +1076,38 @@
 																				Text="{Binding Dosage}" />
 																			<Entry
 																				Grid.Column="3"
+																				HorizontalTextAlignment="Center"
 																				IsEnabled="False"
 																				Keyboard="Numeric"
 																				Style="{StaticResource TableCellEntryStyle}"
 																				Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" />
 
-																			<controls:FFButton
+																			<!--<controls:FFButton
 																				Grid.Column="4"
 																				ButtonKind="Secondary"
 																				Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewMedicineResolutionCommand}"
 																				CommandParameter="{Binding .}"
 																				HeightRequestEx="32"
 																				Text="Преглед"
-																				WidthRequestEx="70" />
+																				WidthRequestEx="70" />-->
 																			<controls:FFButton
-																				Grid.Column="5"
+																				Grid.Column="4"
 																				ButtonKind="Secondary"
 																				Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.UploadMedicineResolutionCommand}"
 																				CommandParameter="{Binding .}"
+																				FontSizeEx="10"
 																				HeightRequestEx="32"
 																				Text="Прикачи"
-																				WidthRequestEx="70" />
+																				WidthRequestEx="88" />
 																			<controls:FFButton
-																				Grid.Column="6"
+																				Grid.Column="5"
 																				ButtonKind="Danger"
 																				Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.MoveMedicineToInactiveCommand}"
 																				CommandParameter="{Binding .}"
+																				FontSizeEx="10"
 																				HeightRequestEx="32"
 																				Text="Неактивен"
-																				WidthRequestEx="86" />
+																				WidthRequestEx="100" />
 																		</Grid>
 																		<BoxView
 																			Grid.Row="1"
@@ -1171,7 +1199,7 @@
 																				Style="{StaticResource TableCellEntryStyle}"
 																				Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" />
 
-																			
+
 
 																			<Label
 																				Grid.Column="4"

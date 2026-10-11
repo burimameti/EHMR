@@ -3,12 +3,13 @@
 	x:Class="EHMR.Views.Popups.NewScorePopup"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+	xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+	Background="{StaticResource AppBg}">
 
 	<Border
 		Padding="20"
 		BackgroundColor="{StaticResource SparkBackground}"
-		Stroke="{StaticResource SparkBorder}"
+		Stroke="{StaticResource Gray400}"
 		StrokeShape="RoundRectangle 12"
 		StrokeThickness="1"
 		WidthRequest="400">
@@ -23,7 +24,7 @@
 					TextColor="{StaticResource SparkTextPrimary}" />
 				<Label
 					FontSize="11"
-					Text="Скорот ќе се зачува во постојниот регистар и ќе се додаде во табелата на пациентот."
+					Text="Скорот ќе се зачува во табелата на скорови. Понатака може да се пребарува и да се додели на пациент."
 					TextColor="{StaticResource SparkTextSecondary}" />
 			</VerticalStackLayout>
 
@@ -62,7 +63,7 @@
 					CharacterSpacing="0.6"
 					FontAttributes="Bold"
 					FontSize="10"
-					Text="ОПИС (ОПЦИОНАЛНО)"
+					Text="Опис (ОПЦИОНАЛЕН)"
 					TextColor="{StaticResource SparkTextSecondary}" />
 				<Border
 					Padding="10,6"
