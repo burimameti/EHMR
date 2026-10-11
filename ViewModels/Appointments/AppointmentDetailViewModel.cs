@@ -1016,7 +1016,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             await UserDialogService.ShowAlertAsync("Валидација", "Доделете најмалку еден активен лек.", "OK");
             return;
         }
-        if(PatientScoreHistory.Count==0)
+        if(PatientScoreHistory.Count==0 && AppointmentScores.Count==0)
         {
             await UserDialogService.ShowAlertAsync("Валидација", "Пациентот мора да има внесен скор пред зачувување.", "OK");
             return;
