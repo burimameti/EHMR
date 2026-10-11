@@ -923,8 +923,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
     {
         Buttons.Clear();
 
-        // Keep the standard BaseViewModel "Исчисти" command available on
-        // report pages as well. Provider-specific buttons are added after it.
+        // Keep the standard clear-filter action, then place Back immediately
+        // to the left of the PDF export action in the report toolbar.
         AddClearFiltersButton();
 
         if(_activeProvider==null)
@@ -932,7 +932,14 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         Buttons.Add(new SparkButtonItem
         {
-            Label="Генерирај извештај",
+            Label="← Назад",
+            IsPrimary=false,
+            Command=GoBackCommand
+        });
+
+        Buttons.Add(new SparkButtonItem
+        {
+            Label="Генерирај PDF",
             IsPrimary=true,
             IsEnabled=CanCreate,
             Command=ExecuteReportGenerationCommand
