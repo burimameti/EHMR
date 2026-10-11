@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Maui.Views;
+using EHMR.Views.Popups;
 using EHMR.Domain.Entities;
 using EHMR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -165,63 +167,41 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task AddNewScoreDefinitionAsync()
     {
-        if(IsReadOnly) return;
+        if (IsReadOnly)
+            return;
 
-        var name = await Shell.Current.DisplayPromptAsync(
-            "Додади нов скор",
-            "Внесете го називот на новиот скор:",
-            "Зачувај",
-            "Откажи",
-            "Пример: DAS28");
-        if(string.IsNullOrWhiteSpace(name)) return;
-        name=name.Trim();
+        var popup = new NewScorePopup(_dbFactory);
+        await Shell.Current.ShowPopupAsync(popup);
+        if (string.IsNullOrWhiteSpace(popup.ScoreNameResult))
+            return;
 
-        var description = await Shell.Current.DisplayPromptAsync(
-            "Опис на скор",
-            "Внесете опис (опционално):",
-            "Зачувај",
-            "Откажи",
-            "Опис на клиничкиот скор");
-        if(description is null) return;
-
-        try
+        var name = popup.ScoreNameResult.Trim();
+        if (Items.Any(x => string.Equals(x.Description, name, StringComparison.OrdinalIgnoreCase)))
         {
-            await using var db = await _dbFactory.CreateDbContextAsync();
-            var duplicate = await db.Set<ClinicalScoreDefinition>()
-                .AnyAsync(x => x.IsActive && x.Name.ToLower() == name.ToLower());
-            if(duplicate)
-            {
-                await Shell.Current.DisplayAlert("Постои скор",
-                    $"Скорот „{name}“ веќе постои во регистарот. Пребарајте го и изберете го.",
-                    "ОК");
-                _suppressSearch=true;
-                DescriptionText=name;
-                _suppressSearch=false;
-                await DebounceSearchAsync(name);
-                return;
-            }
-
-            db.Set<ClinicalScoreDefinition>().Add(new ClinicalScoreDefinition
-            {
-                Id=Guid.NewGuid(),
-                Name=name,
-                Description=description.Trim(),
-                IsActive=true
-            });
-            await db.SaveChangesAsync();
-
-            _suppressSearch=true;
-            DescriptionText=name;
-            _suppressSearch=false;
-            NumberText=string.Empty;
-            await DebounceSearchAsync(name);
+            SearchStatusText = "Овој скор веќе е додаден во табелата.";
+            return;
         }
-        catch(Exception ex)
+
+        // A newly-created definition is attached to the patient immediately;
+        // the clinical value is entered directly in the table row.
+        var row = new ScoreRow
         {
-            Debug.WriteLine(ex);
-            await Shell.Current.DisplayAlert("Грешка",
-                $"Новиот скор не може да се зачува: {ex.Message}", "ОК");
-        }
+            Description = name,
+            Number = string.Empty,
+            RecordedAt = DateTime.UtcNow
+        };
+        Items.Insert(0, row);
+        SelectedScore = row;
+        OnPropertyChanged(nameof(SelectedScore));
+
+        _suppressSearch = true;
+        DescriptionText = string.Empty;
+        _suppressSearch = false;
+        NumberText = string.Empty;
+        Suggestions.Clear();
+        HasSuggestions = false;
+        ShowSuggestions = false;
+        SearchStatusText = string.Empty;
     }
 
     [RelayCommand]
