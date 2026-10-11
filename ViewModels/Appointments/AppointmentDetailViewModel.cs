@@ -32,8 +32,19 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     public bool CanSaveAppointment =>
         IsNewAppointment
             ? CanCreate && CanSchedule
-            : (CanUpdate && CanScheduleForCurrentChange) ||
-              (IsStatusChangeAuthorized && !HasScheduleChange);
+            : HasScheduleChange
+                ? CanUpdate && CanSchedule
+                : SelectedStatusForSave is { } status
+                    && (status == _originalAppointment?.Status
+                        ? CanUpdate
+                        : status switch
+                        {
+                            AppointmentStatus.Cancelled => CanCancel,
+                            AppointmentStatus.Completed => CanComplete,
+                            AppointmentStatus.Scheduled => CanSchedule,
+                            AppointmentStatus.InProgress => CanUpdate,
+                            _ => false
+                        });
 
     public bool CanEditAppointment =>
         IsReadOnly&&!_isNewAppointmentMode&&CanUpdate&&
@@ -217,6 +228,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         if(status!=AppointmentStatus.Completed) CompletedStatusSelected=false;
         if(status!=AppointmentStatus.Cancelled) CancelledStatusSelected=false;
         OnPropertyChanged(nameof(StatusDisplay));
+        OnPropertyChanged(nameof(CanSaveAppointment));
     }
 
     private void ResetStatusSelection()
@@ -227,6 +239,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         CancelledStatusSelected=false;
         SelectedStatusForSave=null;
         OnPropertyChanged(nameof(StatusDisplay));
+        OnPropertyChanged(nameof(CanSaveAppointment));
     }
 
     public IEnumerable<PatientMkb10Assignment> CurrentMkb10Assignments =>
