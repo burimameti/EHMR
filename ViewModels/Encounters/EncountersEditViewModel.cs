@@ -23,6 +23,48 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     [ObservableProperty]
     private bool scheduleNextFollowUp;
 
+    // Status selection is transient: every edit session starts with no pending status change.
+    [ObservableProperty] private bool scheduledStatusSelected;
+    [ObservableProperty] private bool inProgressStatusSelected;
+    [ObservableProperty] private bool completedStatusSelected;
+    [ObservableProperty] private bool cancelledStatusSelected;
+    [ObservableProperty] private EncounterStatus? selectedStatusForSave;
+    private bool _updatingStatusSelection;
+
+    partial void OnScheduledStatusSelectedChanged(bool value) => HandleStatusSelection(value, EncounterStatus.Scheduled);
+    partial void OnInProgressStatusSelectedChanged(bool value) => HandleStatusSelection(value, EncounterStatus.InProgress);
+    partial void OnCompletedStatusSelectedChanged(bool value) => HandleStatusSelection(value, EncounterStatus.Completed);
+    partial void OnCancelledStatusSelectedChanged(bool value) => HandleStatusSelection(value, EncounterStatus.Cancelled);
+
+    private void HandleStatusSelection(bool value, EncounterStatus status)
+    {
+        if(_updatingStatusSelection) return;
+        if(!value)
+        {
+            if(SelectedStatusForSave==status) SelectedStatusForSave=null;
+            return;
+        }
+
+        _updatingStatusSelection=true;
+        ScheduledStatusSelected=status==EncounterStatus.Scheduled;
+        InProgressStatusSelected=status==EncounterStatus.InProgress;
+        CompletedStatusSelected=status==EncounterStatus.Completed;
+        CancelledStatusSelected=status==EncounterStatus.Cancelled;
+        _updatingStatusSelection=false;
+        SelectedStatusForSave=status;
+    }
+
+    private void ResetStatusSelection()
+    {
+        _updatingStatusSelection=true;
+        ScheduledStatusSelected=false;
+        InProgressStatusSelected=false;
+        CompletedStatusSelected=false;
+        CancelledStatusSelected=false;
+        SelectedStatusForSave=null;
+        _updatingStatusSelection=false;
+    }
+
     [ObservableProperty]
     private DateTime nextFollowUpDate=DateTime.Today.AddDays(7);
 
@@ -144,6 +186,10 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
             return;
         }
 
+        // The persisted status remains on the encounter; a new edit session must explicitly select
+        // which status should be saved, so no checkbox state is inherited from another session.
+        ResetStatusSelection();
+
         // Load all patient medicine records for context/history, then edit only the
         // snapshot rows linked to this encounter. Patient-level active assignments
         // and medicine snapshots from other encounters remain unchanged.
@@ -234,6 +280,24 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
             return;
         }
 
+        if(SelectedStatusForSave is null)
+        {
+            await UserDialogService.ShowAlertAsync("Статусот не е избран", "Изберете статус во долниот дел од формата пред да го зачувате прегледот.", "ОК");
+            return;
+        }
+
+        if(!EncounterMedicines.Any(x => x.IsActive && x.MedicineId!=Guid.Empty && !DeletedMedicineIds.Contains(x.Id)))
+        {
+            await UserDialogService.ShowAlertAsync("Недостасува терапија", "Прегледот не може да се зачува без најмалку еден доделен активен лек.", "ОК");
+            return;
+        }
+
+        if(!EncounterScores.Any(x => !string.IsNullOrWhiteSpace(x)))
+        {
+            await UserDialogService.ShowAlertAsync("Недостасува скор", "Прегледот не може да се зачува без внесен скор.", "ОК");
+            return;
+        }
+
         if(EncounterMedicines.Any(x => string.IsNullOrWhiteSpace(x.ApplicationRegime?.Regime)))
         {
             await UserDialogService.ShowAlertAsync(
@@ -247,6 +311,18 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
 
         await ExecuteSafeAsync(async () =>
         {
+            var requestedStatus=SelectedStatusForSave!.Value;
+            if(requestedStatus==EncounterStatus.Completed)
+            {
+                Encounter.Complete(DateTime.Now);
+            }
+            else
+            {
+                Encounter.Status=requestedStatus;
+                Encounter.IsLocked=false;
+                Encounter.EndTime=null;
+            }
+
             Encounter.SetNotes(string.Join(" | ", EncounterFindings));
             ScoreText=string.Join(" | ", EncounterScores);
             await EncounterService.SaveEncounter(
