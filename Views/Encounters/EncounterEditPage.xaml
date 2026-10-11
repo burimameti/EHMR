@@ -37,7 +37,7 @@
 					<controls:FFPageHeader.HeaderContent>
 						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
 							<controls:FFButton
-								ButtonKind="Secondary"
+								ButtonKind="Ghost"
 								Command="{Binding CancelCommand}"
 								HeightRequestEx="40"
 								Text="Назад"
@@ -54,10 +54,8 @@
 				</controls:FFPageHeader>
 			</Border>
 
-			<Grid
-				Grid.Row="1"
-				ColumnDefinitions="2*,0.6*"
-				Style="{StaticResource CrudFormBodyGridStyle}">
+			<Border Grid.Row="1" Style="{StaticResource CrudFormBodyGridStyle}">
+				<Grid ColumnDefinitions="2*,0.6*" ColumnSpacing="14">
 
 				<!--  ═══════════════════════════════════════════════════════  -->
 				<!--  ЛЕВА КОЛОНА — ФОРМИ  -->
@@ -65,8 +63,9 @@
 				<controls:FFSectionCard
 					Grid.Column="0"
 					Margin="0"
-					IsEnabled="{Binding CanAdminEditEncounter}">
-					<ScrollView VerticalScrollBarVisibility="Never">
+					IsEnabled="{Binding CanAdminEditEncounter}"
+					Style="{StaticResource CrudFormCardStyle}">
+					<controls:CustomScrollView ScrollBarColor="{StaticResource SparkAccentTeal}">
 						<VerticalStackLayout Style="{StaticResource CrudFormContentStackStyle}">
 
 							<!--  ── 1. ПАЦИЕНТ И РЕУМАТОЛОГ ─────────────────────  -->
@@ -665,7 +664,7 @@
 							</VerticalStackLayout>
 
 						</VerticalStackLayout>
-					</ScrollView>
+					</controls:CustomScrollView>
 				</controls:FFSectionCard>
 
 				<!--  ═══════════════════════════════════════════════════════  -->
@@ -1015,6 +1014,7 @@
 				</controls:FFSectionCard>
 
 			</Grid>
+			</Border>
 
 			<!--  Footer  -->
 			<Border
