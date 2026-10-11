@@ -232,6 +232,46 @@
 						</Grid>
 					</Border>
 
+                    <!-- Encounter rows grouped by patient; the first grid column is the +/− expander. -->
+                    <Border Grid.Row="2" Grid.Column="0"
+                            BackgroundColor="{StaticResource Surface}"
+                            Stroke="{StaticResource Border}"
+                            StrokeShape="RoundRectangle 12"
+                            StrokeThickness="1"
+                            Padding="0">
+                        <controls:SparkDataGridView
+                            Columns="{Binding GridColumns}"
+                            Rows="{Binding GridRows}"
+                            AllowHorizontalScroll="True"
+                            ShowPagination="False" />
+                    </Border>
+
+                    <VerticalStackLayout Grid.Row="2" Grid.Column="1" Spacing="12">
+                        <Border Padding="16" BackgroundColor="{StaticResource Surface}"
+                                Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 12">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding Metric1Title}" Style="{StaticResource InputLabel}" />
+                                <Label Text="{Binding Metric1Value}" FontSize="28" FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Padding="16" BackgroundColor="{StaticResource Surface}"
+                                Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 12">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding Metric2Title}" Style="{StaticResource InputLabel}" />
+                                <Label Text="{Binding Metric2Value}" FontSize="28" FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Padding="16" BackgroundColor="{StaticResource Surface}"
+                                Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 12">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding Metric3Title}" Style="{StaticResource InputLabel}" />
+                                <Label Text="{Binding Metric3Value}" FontSize="28" FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
 
 				</Grid>
 			</Grid>
