@@ -14,11 +14,14 @@ namespace EHMR.Services
     public class UserDialogService : IUserDialogService
     {
         private readonly IEncounterDetailService _encounterService;
+        private readonly IAuthorizationService _authorizationService;
 
-
-        public UserDialogService(IEncounterDetailService encounterService)
+        public UserDialogService(
+            IEncounterDetailService encounterService,
+            IAuthorizationService authorizationService)
         {
             _encounterService=encounterService;
+            _authorizationService=authorizationService;
         }
 
 
@@ -52,7 +55,7 @@ namespace EHMR.Services
                 return null;
 
             var viewModel = new CreateAppointmentPopupViewModel(
-                _encounterService, patientId, doctorId);
+                _encounterService, _authorizationService, patientId, doctorId);
 
             var popup = new CreateAppointmentPopup(viewModel);
 
