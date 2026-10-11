@@ -4,6 +4,7 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+	xmlns:domain="clr-namespace:EHMR.Domain.Entities"
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Patients"
 	x:Name="PageRoot"
 	x:DataType="viewModels:PatientListViewModel"
@@ -58,8 +59,26 @@
 										SearchCommand="{Binding SearchCommand}"
 										SearchPlaceholder="Пребарување на пациенти..."
 										SearchText="{Binding SearchText}"
+										SelectedSuggestion="{Binding SelectedSuggestion, Mode=TwoWay}"
+										ShowSuggestions="{Binding ShowSuggestions}"
+										Suggestions="{Binding Suggestions}"
 										Tabs="{Binding Tabs}"
-										UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}" />
+										UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}">
+										<controls:SparkExplorerHeaderView.SuggestionTemplate>
+											<DataTemplate x:DataType="domain:Patient">
+												<Grid Padding="10,8" ColumnDefinitions="*,Auto" ColumnSpacing="12" BackgroundColor="White">
+													<VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+														<Label Text="{Binding FullName}" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource SparkTextPrimary}" />
+														<Label Text="{Binding PatientNumber, StringFormat='Пациент бр. {0}'}" FontSize="11" TextColor="{StaticResource SparkTextSecondary}" />
+													</VerticalStackLayout>
+												<Label Grid.Column="1" Text="{Binding SzboNumber}" FontSize="11" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" HorizontalTextAlignment="End" />
+												</Grid>
+												<Border.StrokeShape>
+													<RoundRectangle CornerRadius="0" />
+												</Border.StrokeShape>
+											</DataTemplate>
+										</controls:SparkExplorerHeaderView.SuggestionTemplate>
+									</controls:SparkExplorerHeaderView>
 
 								</VerticalStackLayout>
 							</Grid>
