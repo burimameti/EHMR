@@ -946,7 +946,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             return;
         }
 
-        if(!IsNewAppointment&&!CanSaveAppointment)
+        if(!IsNewAppointment && !CanSaveAppointment && (SelectedStatusForSave is not null || HasScheduleChange))
         {
             await UserDialogService.ShowAlertAsync(
                 "Пристапот е одбиен",
