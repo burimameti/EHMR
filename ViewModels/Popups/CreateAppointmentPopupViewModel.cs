@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
+using EHMR.Domain.Entities.Rbac;
+using EHMR.Domain.Interfaces;
 using EHMR.Services;
 using System.Collections.ObjectModel;
 
@@ -9,6 +11,7 @@ namespace EHMR.ViewModels.Popups;
 public partial class CreateAppointmentPopupViewModel : ObservableObject
 {
     private readonly IEncounterDetailService _encounterService;
+    private readonly IAuthorizationService _authorizationService;
     private readonly Guid _patientId;
     private readonly Guid? _prefillDoctorId;
     public Action<object?>? RequestClose
@@ -19,10 +22,12 @@ public partial class CreateAppointmentPopupViewModel : ObservableObject
 
     public CreateAppointmentPopupViewModel(
         IEncounterDetailService encounterService,
+        IAuthorizationService authorizationService,
         Guid patientId,
         Guid? docId)
     {
         _encounterService=encounterService;
+        _authorizationService=authorizationService;
         _patientId=patientId;
         _prefillDoctorId=docId;
 
@@ -76,6 +81,21 @@ public partial class CreateAppointmentPopupViewModel : ObservableObject
             return;
         }
 
+        if(!_authorizationService.CanPerform(Modules.Appointments, ModuleAction.Create) ||
+           !_authorizationService.CanPerform(Modules.Appointments, ModuleAction.Schedule))
+        {
+            HasError=true;
+            ErrorMessage="Немате овластување за креирање и закажување термин.";
+            return;
+        }
+
+        var requestedStart=AppointmentDate.Date+AppointmentTime;
+        if(requestedStart<=DateTime.Now)
+        {
+            HasError=true;
+            ErrorMessage="Изберете датум и време во иднина.";
+            return;
+        }
 
         if(IsBusy)
             return;
@@ -91,11 +111,20 @@ public partial class CreateAppointmentPopupViewModel : ObservableObject
                 Id=Guid.NewGuid(),
                 PatientId=_patientId,
                 DoctorId=SelectedDoctor.Id,
-                ScheduledStart=AppointmentDate.Date+AppointmentTime,
-                ReasonForVisit=ReasonForVisit,
+                ScheduledStart=requestedStart,
+                ScheduledEnd=requestedStart.AddMinutes(30),
+                ReasonForVisit=ReasonForVisit.Trim(),
                 Status=AppointmentStatus.Scheduled
             };
 
+            var availableStart=await _encounterService.GetNextAvailableSlot(
+                SelectedDoctor.Id, requestedStart, 30, _patientId);
+            if(availableStart!=requestedStart)
+            {
+                HasError=true;
+                ErrorMessage=$"Избраниот термин не е слободен. Најблизок слободен термин е {availableStart:dd.MM.yyyy HH:mm}.";
+                return;
+            }
 
             var saved =
                 await _encounterService.CreateAppointment(appointment);
