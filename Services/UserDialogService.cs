@@ -59,9 +59,9 @@ namespace EHMR.Services
 
             var popup = new CreateAppointmentPopup(viewModel);
 
-            var result = await mainPage.ShowPopupAsync(popup);
+            var result = await mainPage.ShowPopupAsync<Appointment>(popup);
 
-            return result as Appointment;
+            return result.WasDismissedByTappingOutsideOfPopup ? null : result.Result;
         }
 
 
