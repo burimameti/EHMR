@@ -57,7 +57,7 @@ public sealed class PatientMkb10AssignmentSeeder : IEntitySeeder
         new(
             Guid.Parse("00000000-0000-0000-0000-000000009211"),
             "MKB-DEMO-E8001",
-            SeedIds.Patient3,
+            SeedIds.Patient2,
             Guid.Parse("00000000-0000-0000-0000-000000008001"),
             "M06.9",
             -240,
@@ -69,7 +69,7 @@ public sealed class PatientMkb10AssignmentSeeder : IEntitySeeder
         new(
             Guid.Parse("00000000-0000-0000-0000-000000009212"),
             "MKB-DEMO-E8002",
-            SeedIds.Patient3,
+            SeedIds.Patient2,
             Guid.Parse("00000000-0000-0000-0000-000000008002"),
             "M06.9",
             -150,
@@ -102,7 +102,11 @@ public sealed class PatientMkb10AssignmentSeeder : IEntitySeeder
             "Контролен преглед со подобрен клинички одговор.",
             PatientMkb10AssignmentStatus.Chronic),
 
-
+        new(Guid.Parse("00000000-0000-0000-0000-000000009216"), "MKB-DEMO-E8005", SeedIds.Patient3, Guid.Parse("00000000-0000-0000-0000-000000008005"), "M06.9", -29, true, "Умерена", "Контролен преглед.", PatientMkb10AssignmentStatus.Active),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009217"), "MKB-DEMO-E8006", SeedIds.Patient3, Guid.Parse("00000000-0000-0000-0000-000000008006"), "M06.9", -12, true, "Ниска", "Последна завршена контрола.", PatientMkb10AssignmentStatus.Chronic),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009218"), "MKB-DEMO-E8007", SeedIds.Patient1, Guid.Parse("00000000-0000-0000-0000-000000008007"), "M06.9", -15, true, "Умерена", "Контролен преглед.", PatientMkb10AssignmentStatus.Active),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009219"), "MKB-DEMO-E8008", SeedIds.Patient4, Guid.Parse("00000000-0000-0000-0000-000000008008"), "M06.9", -18, true, "Умерена", "Контролен преглед.", PatientMkb10AssignmentStatus.Active),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009220"), "MKB-DEMO-E8009", SeedIds.Patient5, Guid.Parse("00000000-0000-0000-0000-000000008009"), "M06.9", -25, true, "Висока", "Почетен преглед.", PatientMkb10AssignmentStatus.Active)
     ];
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
@@ -149,6 +153,48 @@ public sealed class PatientMkb10AssignmentSeeder : IEntitySeeder
             row.Status = seed.Status;
             row.CreatedAt = DateTime.UtcNow;
             row.CreatedBy = "Seed";
+        }
+
+        // Every seeded encounter needs its own medicine assignment for the encounter report.
+        var encounterIds = Enumerable.Range(1, 9)
+            .Select(i => Guid.Parse("00000000-0000-0000-0000-" + (8000 + i).ToString("D12")))
+            .ToArray();
+        var encounters = await context.Encounters
+            .Where(x => encounterIds.Contains(x.Id))
+            .ToListAsync(ct);
+        var medicines = await context.Medicines
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.Name)
+            .ToListAsync(ct);
+        var regimes = await context.ApplicationRegimes
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.Regime)
+            .ToListAsync(ct);
+
+        if (medicines.Count > 0 && regimes.Count > 0)
+        {
+            foreach (var encounter in encounters)
+            {
+                var existingMedicine = await context.PatientMedicines
+                    .FirstOrDefaultAsync(x => x.EncounterId == encounter.Id, ct);
+                if (existingMedicine is not null)
+                    continue;
+
+                var medicine = medicines[encounter.EncounterDate.Day % medicines.Count];
+                var regime = regimes[encounter.EncounterDate.Day % regimes.Count];
+                var suffix = int.TryParse(encounter.EncounterNumber.Split('-').Last(), out var number) ? number : 1;
+                context.PatientMedicines.Add(new PatientMedicine
+                {
+                    Id = Guid.Parse("00000000-0000-0000-0000-" + (930000 + suffix).ToString("D12")),
+                    PatientId = encounter.PatientId,
+                    EncounterId = encounter.Id,
+                    MedicineId = medicine.Id,
+                    ApplicationRegimeId = regime.Id,
+                    Dosage = "Според терапевтски план",
+                    Quantity = 1m,
+                    IsActive = true
+                });
+            }
         }
 
         await context.SaveChangesAsync(ct);
