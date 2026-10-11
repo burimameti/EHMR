@@ -59,9 +59,10 @@
 						<VerticalStackLayout Style="{StaticResource CrudFormContentStackStyle}">
 
 							<!--  ── 1. ПАЦИЕНТ И РЕУМАТОЛОГ ──  -->
-							<VerticalStackLayout Spacing="12">
+							<Border Style="{StaticResource CrudFormSectionCardStyle}">
+								<VerticalStackLayout Spacing="12">
 
-								<controls:CrudSectionHeader
+									<controls:CrudSectionHeader
 									Title="ПАЦИЕНТ И РЕУМАТОЛОГ"
 									LineColor="{StaticResource Gray600}"
 									Style="{StaticResource CrudFormSectionHeaderStyle}" />
@@ -238,7 +239,8 @@
 										</VerticalStackLayout>
 									</Grid>
 								</Border>
-							</VerticalStackLayout>
+								</VerticalStackLayout>
+							</Border>
 
 
 
