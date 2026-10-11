@@ -50,9 +50,19 @@ public partial class AppShell : Shell
     // =========================
     // INITIAL NAVIGATION
     // =========================
-    public async Task HandleInitialNavigationAsync()
+    public Task HandleInitialNavigationAsync()
     {
-        await HandleAuthChangedAsync();
+        // The Shell is still hosted behind LoadingPage during startup, so
+        // GoToAsync cannot reliably establish the initial route yet. Select
+        // the existing root item before AppShell is attached to the Window.
+        var targetRoute = _auth.IsAuthenticated ? "dashboard" : "login";
+        var targetItem = Items.FirstOrDefault(item =>
+            string.Equals(item.Route, targetRoute, StringComparison.OrdinalIgnoreCase));
+
+        if(targetItem is not null)
+            CurrentItem = targetItem;
+
+        return Task.CompletedTask;
     }
 
     // =========================
