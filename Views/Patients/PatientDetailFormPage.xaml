@@ -754,7 +754,137 @@
 												</Grid>
 											
 
+
+</VerticalStackLayout>
+
+											<!--  ─── СКОРОВИ (десно од МКБ) ───  -->
+											<VerticalStackLayout
+												Grid.Row="0"
+												Grid.Column="1"
+												Spacing="8"
+												VerticalOptions="Start">
+												<controls:CrudSectionHeader
+													Title="СКОРОВИ"
+													LineColor="{StaticResource Gray600}"
+													Style="{StaticResource CrudFormSectionHeaderStyle}" />
+												<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
+											
+
+
+</VerticalStackLayout>
+
+											<!--<VerticalStackLayout
+												Grid.Row="0"
+												Grid.Column="1"
+												Spacing="8"
+												VerticalOptions="Start">
+												<controls:CrudSectionHeader
+													Title=""
+													LineColor="{StaticResource White}"
+													Style="{StaticResource CrudFormSectionHeaderStyle}" />
+												<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
+											</VerticalStackLayout>-->
+
+											<!--  ─── АКТИВНИ | НЕАКТИВНИ ЛЕКОВИ (една линија) ───  -->
+											<Grid
+												Grid.Row="1"
+												Grid.Column="0"
+												Grid.ColumnSpan="2"
+												ColumnDefinitions="*,*"
+												ColumnSpacing="14"
+												RowDefinitions="Auto,Auto,Auto"
+												RowSpacing="8">
+
+												<!--  Row 0: наслови  -->
+												<Grid
+													Grid.Row="0"
+													Grid.Column="0"
+													ColumnDefinitions="*,Auto,Auto"
+													HeightRequest="34">
+													<Label
+														FontAttributes="Bold"
+														FontSize="11"
+														Text="АКТИВНИ ЛЕКОВИ"
+														TextColor="{StaticResource SparkAccentTealDark}"
+														VerticalOptions="Center" />
+													<controls:FFButton
+														Grid.Column="1"
+														ButtonKind="Primary"
+														Command="{Binding AddApplicationRegimeCommand}"
+														HeightRequestEx="34"
+														IsVisible="{Binding IsEditMode}"
+														Text="+ Нов режим"
+														WidthRequestEx="116" />
+													<controls:FFButton
+														Grid.Column="2"
+														ButtonKind="Primary"
+														Command="{Binding CreateMedicineCommand}"
+														HeightRequestEx="34"
+														IsVisible="{Binding IsEditMode}"
+														Text="+ Нов лек"
+														WidthRequestEx="92" />
+												</Grid>
+												<Grid
+													Grid.Row="0"
+													Grid.Column="1"
+													HeightRequest="34">
+													<Label
+														FontAttributes="Bold"
+														FontSize="11"
+														Text="НЕАКТИВНИ ЛЕКОВИ"
+														TextColor="{StaticResource SparkTextSecondary}"
+														VerticalOptions="Center" />
+												</Grid>
+
+												<!--  Row 1: пребарување лек (само активни)  -->
+												<VerticalStackLayout
+													Grid.Row="1"
+													Grid.Column="0"
+													IsVisible="{Binding IsEditMode}"
+													Spacing="4">
+													<controls:FFSearchBox Placeholder="Додај лек во активна терапија..." Text="{Binding MedicineSearchText, Mode=TwoWay}" />
+													<Border
+														Padding="4"
+														BackgroundColor="White"
+														IsVisible="{Binding ShowMedicineDropdown}"
+														Stroke="{StaticResource SparkBorderSubtle}"
+														StrokeShape="RoundRectangle 8"
+														StrokeThickness="1">
+														<CollectionView
+															HeightRequest="140"
+															ItemsSource="{Binding MedicineResults}"
+															SelectionMode="None">
+															<CollectionView.ItemTemplate>
+																<DataTemplate x:DataType="dto:MedicineDto">
+																	<Border
+																		Padding="9,6"
+																		BackgroundColor="Transparent"
+																		StrokeThickness="0">
+																		<Border.GestureRecognizers>
+																			<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMedicineCommand}" CommandParameter="{Binding .}" />
+																		</Border.GestureRecognizers>
+																		<VerticalStackLayout Spacing="1">
+																			<Label
+																				FontAttributes="Bold"
+																				FontSize="11.5"
+																				Text="{Binding Name}"
+																				TextColor="{StaticResource SparkAccentTealDark}" />
+																			<Label
+																				FontSize="10"
+																				Text="{Binding GenericName}"
+																				TextColor="{StaticResource SparkTextSecondary}" />
+																		</VerticalStackLayout>
+																	</Border>
+																</DataTemplate>
+															</CollectionView.ItemTemplate>
+														</CollectionView>
+													</Border>
+												</VerticalStackLayout>
+
+
 <Border
+												Grid.Row="2"
+												Grid.Column="0"
 													Style="{StaticResource CrudFormTableFrameStyle}"
 													VerticalOptions="Start">
 													<VerticalStackLayout Spacing="0">
@@ -870,22 +1000,10 @@
 														</VerticalStackLayout>
 													</VerticalStackLayout>
 												</Border>
-</VerticalStackLayout>
-
-											<!--  ─── СКОРОВИ (десно од МКБ) ───  -->
-											<VerticalStackLayout
-												Grid.Row="0"
-												Grid.Column="1"
-												Spacing="8"
-												VerticalOptions="Start">
-												<controls:CrudSectionHeader
-													Title="СКОРОВИ"
-													LineColor="{StaticResource Gray600}"
-													Style="{StaticResource CrudFormSectionHeaderStyle}" />
-												<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
-											
 
 <Border
+												Grid.Row="2"
+												Grid.Column="1"
 													Style="{StaticResource CrudFormTableFrameStyle}"
 													VerticalOptions="Start">
 													<VerticalStackLayout Spacing="0">
@@ -989,115 +1107,6 @@
 														</VerticalStackLayout>
 													</VerticalStackLayout>
 												</Border>
-</VerticalStackLayout>
-
-											<!--<VerticalStackLayout
-												Grid.Row="0"
-												Grid.Column="1"
-												Spacing="8"
-												VerticalOptions="Start">
-												<controls:CrudSectionHeader
-													Title=""
-													LineColor="{StaticResource White}"
-													Style="{StaticResource CrudFormSectionHeaderStyle}" />
-												<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
-											</VerticalStackLayout>-->
-
-											<!--  ─── АКТИВНИ | НЕАКТИВНИ ЛЕКОВИ (една линија) ───  -->
-											<Grid
-												Grid.Row="1"
-												Grid.Column="0"
-												Grid.ColumnSpan="2"
-												ColumnDefinitions="*,*"
-												ColumnSpacing="14"
-												RowDefinitions="Auto,Auto,Auto"
-												RowSpacing="8">
-
-												<!--  Row 0: наслови  -->
-												<Grid
-													Grid.Row="0"
-													Grid.Column="0"
-													ColumnDefinitions="*,Auto,Auto"
-													HeightRequest="34">
-													<Label
-														FontAttributes="Bold"
-														FontSize="11"
-														Text="АКТИВНИ ЛЕКОВИ"
-														TextColor="{StaticResource SparkAccentTealDark}"
-														VerticalOptions="Center" />
-													<controls:FFButton
-														Grid.Column="1"
-														ButtonKind="Primary"
-														Command="{Binding AddApplicationRegimeCommand}"
-														HeightRequestEx="34"
-														IsVisible="{Binding IsEditMode}"
-														Text="+ Нов режим"
-														WidthRequestEx="116" />
-													<controls:FFButton
-														Grid.Column="2"
-														ButtonKind="Primary"
-														Command="{Binding CreateMedicineCommand}"
-														HeightRequestEx="34"
-														IsVisible="{Binding IsEditMode}"
-														Text="+ Нов лек"
-														WidthRequestEx="92" />
-												</Grid>
-												<Grid
-													Grid.Row="0"
-													Grid.Column="1"
-													HeightRequest="34">
-													<Label
-														FontAttributes="Bold"
-														FontSize="11"
-														Text="НЕАКТИВНИ ЛЕКОВИ"
-														TextColor="{StaticResource SparkTextSecondary}"
-														VerticalOptions="Center" />
-												</Grid>
-
-												<!--  Row 1: пребарување лек (само активни)  -->
-												<VerticalStackLayout
-													Grid.Row="1"
-													Grid.Column="0"
-													IsVisible="{Binding IsEditMode}"
-													Spacing="4">
-													<controls:FFSearchBox Placeholder="Додај лек во активна терапија..." Text="{Binding MedicineSearchText, Mode=TwoWay}" />
-													<Border
-														Padding="4"
-														BackgroundColor="White"
-														IsVisible="{Binding ShowMedicineDropdown}"
-														Stroke="{StaticResource SparkBorderSubtle}"
-														StrokeShape="RoundRectangle 8"
-														StrokeThickness="1">
-														<CollectionView
-															HeightRequest="140"
-															ItemsSource="{Binding MedicineResults}"
-															SelectionMode="None">
-															<CollectionView.ItemTemplate>
-																<DataTemplate x:DataType="dto:MedicineDto">
-																	<Border
-																		Padding="9,6"
-																		BackgroundColor="Transparent"
-																		StrokeThickness="0">
-																		<Border.GestureRecognizers>
-																			<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMedicineCommand}" CommandParameter="{Binding .}" />
-																		</Border.GestureRecognizers>
-																		<VerticalStackLayout Spacing="1">
-																			<Label
-																				FontAttributes="Bold"
-																				FontSize="11.5"
-																				Text="{Binding Name}"
-																				TextColor="{StaticResource SparkAccentTealDark}" />
-																			<Label
-																				FontSize="10"
-																				Text="{Binding GenericName}"
-																				TextColor="{StaticResource SparkTextSecondary}" />
-																		</VerticalStackLayout>
-																	</Border>
-																</DataTemplate>
-															</CollectionView.ItemTemplate>
-														</CollectionView>
-													</Border>
-												</VerticalStackLayout>
 </Grid>
 
 										</Grid>
