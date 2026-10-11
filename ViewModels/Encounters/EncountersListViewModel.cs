@@ -116,9 +116,10 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
             new() { Header = "БРОЈ", Key = "EncounterNumber", Width = new GridLength(0.8, GridUnitType.Star) },
             new() { Header = "ИМЕ И ПРЕЗИМЕ", Key = "PatientName", Width = new GridLength(1.5, GridUnitType.Star) },
             new() { Header = "СЗБО БРОЈ", Key = "SzboNumber", Width = new GridLength(0.9, GridUnitType.Star) },
-            new() { Header = "РЕУМАТОЛОГ", Key = "DoctorName", Width = new GridLength(1.3, GridUnitType.Star) },
-
-
+            new() { Header = "РЕУМАТОЛОГ", Key = "DoctorName", Width = new GridLength(1.2, GridUnitType.Star) },
+            new() { Header = "ТЕЛЕФОН", Key = "PatientPhone", Width = new GridLength(1.1, GridUnitType.Star) },
+            new() { Header = "СТАТУС НА ПАЦИЕНТ", Key = "PatientStatus", Width = new GridLength(1.1, GridUnitType.Star) },
+            new() { Header = "СТАТУС НА ПРЕГЛЕД", Key = "EncounterStatus", Width = new GridLength(1.2, GridUnitType.Star) },
             new() { Header = "ДАТУМ", Key = "Date", Width = new GridLength(1, GridUnitType.Star) },
             new() { Header = "ОПЦИИ", Key = "Actions", CellType = SparkGridCellType.Actions, Width = GridLength.Auto }
         };
@@ -133,7 +134,15 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
             row["EncounterNumber"]=e.EncounterNumber;
             row["PatientName"]=e.Patient!=null ? $"{e.Patient.FirstName} {e.Patient.LastName}" : "";
             row["SzboNumber"]=e.Patient?.SzboNumber??"—";
-            row["DoctorName"]=e.Doctor?.User!=null ? $"{e.Doctor.User.FirstName} {e.Doctor.User.LastName}" : "";
+            row["DoctorName"]=e.Doctor?.User!=null ? $"{e.Doctor.User.FirstName} {e.Doctor.User.LastName}" : "—";
+            row["PatientPhone"]=string.IsNullOrWhiteSpace(e.Patient?.Phone) ? "—" : e.Patient.Phone;
+            row["PatientStatus"]=e.Patient?.Status switch
+            {
+                PatientStatus.Active => "Активен",
+                PatientStatus.Inactive => "Неактивен",
+                _ => "—"
+            };
+            row["EncounterStatus"]=EncounterStatusSchema.ToDisplay(e.Status.ToString());
 
             row["Date"]=(e.ScheduledStart??e.EncounterDate).ToString("dd.MM.yyyy");
             // Select goes to Detail (view), Edit goes to a different route (Edit) —
