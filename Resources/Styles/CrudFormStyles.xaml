@@ -175,6 +175,14 @@
 		<Setter Property="HorizontalOptions" Value="Center" />
 		<Setter Property="VerticalOptions" Value="Center" />
 	</Style>
+	<Style x:Key="CrudFormDocumentCardStyle" TargetType="Border">
+		<Setter Property="Padding" Value="10,8" />
+		<Setter Property="BackgroundColor" Value="{StaticResource SparkTabActiveBg}" />
+		<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 10" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Shadow" Value="{x:Null}" />
+	</Style>
 	<Style x:Key="CrudFormSectionHeaderStyle" TargetType="controls:CrudSectionHeader">
 		<Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
 		<Setter Property="TextColor" Value="{StaticResource Gray800}" />
