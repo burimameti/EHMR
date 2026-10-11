@@ -94,6 +94,11 @@ public partial class DashboardViewModel
 
         public string[] CurrentMedicines { get; init; } = [];
 
+        public string LatestScore => Patient.Scores?
+            .OrderByDescending(x => x.RecordedAt)
+            .Select(x => x.DisplayText)
+            .FirstOrDefault() ?? "—";
+
         public Encounter? ActiveEncounter =>
             Encounters.FirstOrDefault(x =>
                 x.Status==EncounterStatus.Scheduled||
