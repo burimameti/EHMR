@@ -60,7 +60,7 @@
 								ContentPadding="16,0"
 								HeightRequestEx="40"
 								IsEnabled="{Binding CanPrint}"
-								Text="Печати / PDF" />
+								Text="Преглед за печатење / PDF" />
 						</HorizontalStackLayout>
 					</controls:FFPageHeader.HeaderContent>
 				</controls:FFPageHeader>
