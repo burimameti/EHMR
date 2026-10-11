@@ -1515,7 +1515,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected void RemoveMedicine(PatientMedicine medicine)
     {
-        if(!CanUpdate) return;
+        if(IsReadOnly || !(Encounter.Id==Guid.Empty ? CanCreate : CanUpdate)) return;
         if(medicine==null) return;
 
         // Only mark for DB deletion if it's a real, already-persisted row.
