@@ -447,6 +447,15 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
         IsReadOnly=false;
     }
 
+    /// <summary>Refreshes the patient-owned history lists when the patient page becomes visible.</summary>
+    public async Task RefreshHistoryAsync()
+    {
+        if (_isNewPatientMode || Patient.Id == Guid.Empty)
+            return;
+
+        await LoadHistoryAsync(Patient.Id);
+    }
+
     private bool _isSaving;
 
     public bool IsSaving
