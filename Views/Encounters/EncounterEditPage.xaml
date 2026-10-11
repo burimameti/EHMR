@@ -478,12 +478,9 @@
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
 														<Entry
-															BackgroundColor="Transparent"
-															FontSize="11.5"
-															Keyboard="Numeric"
-															Text="{Binding Quantity, Mode=TwoWay}"
-															TextColor="{StaticResource SparkTextPrimary}"
-															VerticalOptions="Center" />
+														Style="{StaticResource TableCellEntryStyle}"
+														Keyboard="Numeric"
+														Text="{Binding Quantity, Mode=TwoWay}" />
 													</Border>
 													<Border
 														Grid.Column="3"
