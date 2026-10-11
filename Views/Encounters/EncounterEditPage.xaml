@@ -318,7 +318,7 @@
 										</VerticalStackLayout>
 									</Border>
 								</Grid>
-							</VerticalStackLayout></VerticalStackLayout>
+							</VerticalStackLayout>
 							</Border>
 
 			<!--  ЛЕКОВИ + СКОРОВИ  -->
@@ -460,7 +460,7 @@
 									</DataTemplate>
 										</BindableLayout.ItemTemplate>
 									</VerticalStackLayout>
-								</VerticalStackLayout></VerticalStackLayout>
+								</VerticalStackLayout>
 								</Border>
 
 								<!--  Десна колона: скорови и наоди  -->
@@ -608,7 +608,7 @@
 										Placeholder="Брзо избирање"
 										SelectedItem="{Binding SelectedFollowUpInterval, Mode=TwoWay}" />
 								</Grid>
-							</VerticalStackLayout></VerticalStackLayout>
+							</VerticalStackLayout>
 							</Border>
 
 						</VerticalStackLayout>
