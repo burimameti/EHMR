@@ -36,7 +36,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
               (IsStatusChangeAuthorized && !HasScheduleChange);
 
     public bool CanEditAppointment =>
-        !_isNewAppointmentMode&&CanUpdate&&
+        IsReadOnly&&!_isNewAppointmentMode&&CanUpdate&&
         Appointment.Status is AppointmentStatus.Scheduled or AppointmentStatus.InProgress;
 
     public bool CanCancelAppointment =>
@@ -524,6 +524,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         OnPropertyChanged(nameof(HasSelectedMedicines));
         OnPropertyChanged(nameof(HeaderTitle));
         OnPropertyChanged(nameof(HeaderSubtitle));
+        OnPropertyChanged(nameof(CanEditAppointment));
     }
 
     // Rewritten so every property here is assigned exactly once, on exactly one path:
@@ -820,6 +821,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     private void ToggleEditMode()
     {
         ToggleEdit();
+        OnPropertyChanged(nameof(CanEditAppointment));
         OnPropertyChanged(nameof(ShowStatusEditor));
     }
 
@@ -922,6 +924,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             {
                 _originalAppointment=Appointment.Clone();
                 IsReadOnly=true;
+                OnPropertyChanged(nameof(CanEditAppointment));
             }
         }, "Грешка при зачувување на податоци");
     }
@@ -967,6 +970,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
                 SelectedEndTime=Appointment.ScheduledEnd.TimeOfDay;
             }
             IsReadOnly=true;
+            OnPropertyChanged(nameof(CanEditAppointment));
             await Task.CompletedTask;
         }, "Грешка при откажување");
     }
