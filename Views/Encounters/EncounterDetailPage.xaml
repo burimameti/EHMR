@@ -365,11 +365,11 @@
 							<!-- БИОЛОШКА ТЕРАПИЈА: усогласен приказ на МКБ, активни лекови и претходен скор -->
 							<VerticalStackLayout IsVisible="True" Spacing="8">
 								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
-								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1*" ColumnSpacing="12" VerticalOptions="Start">
+								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1*" ColumnSpacing="8" VerticalOptions="Start">
 									<Border Grid.Column="0" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start" HorizontalOptions="Fill">
 										<VerticalStackLayout Spacing="0">
 											<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}">
-												<Label FontAttributes="Bold" FontSize="10" Text="МКБ-10 ДИЈАГНОЗИ" TextColor="{StaticResource SparkTextSecondary}" />
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="МКБ-10 ДИЈАГНОЗИ" />
 											</Grid>
 											<VerticalStackLayout BindableLayout.ItemsSource="{Binding Mkb10Assignments}" Spacing="0" VerticalOptions="Start">
 												<BindableLayout.EmptyView><Label FontSize="11" Text="Нема доделени МКБ-10 дијагнози." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
@@ -388,7 +388,7 @@
 									<Border Grid.Column="1" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start" HorizontalOptions="Fill">
 										<VerticalStackLayout Spacing="0">
 											<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}">
-												<Label FontAttributes="Bold" FontSize="10" Text="АКТИВНИ ЛЕКОВИ" TextColor="{StaticResource SparkTextSecondary}" />
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="АКТИВНИ ЛЕКОВИ" />
 											</Grid>
 											<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="0" VerticalOptions="Start">
 												<BindableLayout.EmptyView><Label FontSize="11" Text="Нема лекови во овој преглед." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
@@ -407,7 +407,7 @@
 									</Border>
 									<Border Grid.Column="2" Padding="10,8" BackgroundColor="{StaticResource SparkTabActiveBg}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start">
 										<VerticalStackLayout Spacing="5">
-											<Label FontAttributes="Bold" FontSize="10" Text="ПРЕТХОДЕН СКОР" TextColor="{StaticResource SparkTextSecondary}" />
+											<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ПРЕТХОДЕН СКОР" />
 											<Label FontAttributes="Bold" FontSize="12" LineBreakMode="WordWrap" Text="{Binding CurrentPatientScore, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
 										</VerticalStackLayout>
 									</Border>
