@@ -96,10 +96,8 @@
 			<VerticalStackLayout Spacing="0">
 
 				<Grid
-					Padding="10,8"
-					BackgroundColor="{StaticResource Gray300}"
 					ColumnDefinitions="*,90,44"
-					ColumnSpacing="8">
+					ColumnSpacing="8" Style="{StaticResource CrudFormTableHeaderGridStyle}">
 					<Label
 						Grid.Column="0"
 						Style="{StaticResource ScoreHeaderLabelStyle}"
