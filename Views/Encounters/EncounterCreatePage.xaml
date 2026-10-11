@@ -295,7 +295,7 @@
 										</VerticalStackLayout>
 									</Border>
 								</Grid>
-							</VerticalStackLayout></VerticalStackLayout>
+							</VerticalStackLayout>
 							</Border>
 
 							<!--  Сите контролни полиња за прегледот се прикажуваат дури по избор на пациент.  -->
@@ -478,7 +478,7 @@
 												</DataTemplate>
 											</BindableLayout.ItemTemplate>
 										</VerticalStackLayout>
-									</VerticalStackLayout></VerticalStackLayout>
+									</VerticalStackLayout>
 									</Border>
 
 									<!--  ═══ РЕД 1 · КОЛОНА 1: СКОРОВИ ═══  -->
@@ -601,7 +601,7 @@
 												Placeholder="Брзо избирање"
 												SelectedItem="{Binding SelectedFollowUpInterval, Mode=TwoWay}" />
 										</VerticalStackLayout>
-									</VerticalStackLayout></VerticalStackLayout>
+									</VerticalStackLayout>
 									</Border>
 
 									<!--  ═══ РЕД 2 · КОЛОНА 1: НАОДИ (исклучено) ═══  -->
