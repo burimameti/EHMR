@@ -115,40 +115,67 @@ h2{{font-size:10pt;color:#0f4c81;text-transform:uppercase;letter-spacing:.8px;ma
     private async void OnPrintClicked(object sender, EventArgs e)
     {
 #if WINDOWS
+        if (sender is Button button)
+            button.IsEnabled = false;
+
         try
         {
-            if (_printDocumentLoaded is not null && !_isPrintDocumentReady)
+            if (_selectedItemService.SelectedItem is not Encounter encounter)
             {
-                // Wait for the HTML report to finish loading before opening the native print dialog.
-                var completed = await Task.WhenAny(_printDocumentLoaded.Task, Task.Delay(TimeSpan.FromSeconds(10)));
-                if (completed != _printDocumentLoaded.Task || !await _printDocumentLoaded.Task)
-                {
-                    await DisplayAlert("Печатење", "Извештајот сè уште не е подготвен за печатење. Обидете се повторно.", "ОК");
-                    return;
-                }
+                await DisplayAlert("Печатење", "Не е избран преглед за печатење. Затворете го прегледот и отворете го повторно.", "ОК");
+                return;
             }
 
             if (PrintWebView.Handler?.PlatformView is not Microsoft.UI.Xaml.Controls.WebView2 nativeWebView)
             {
-                await DisplayAlert("Печатење", "Компонентата за печатење не е иницијализирана. Затворете го прегледот и отворете го повторно.", "ОК");
+                await DisplayAlert("Печатење", "Прегледот за печатење сè уште се иницијализира. Почекајте момент и обидете се повторно.", "ОК");
                 return;
             }
 
             await nativeWebView.EnsureCoreWebView2Async();
-            if (nativeWebView.CoreWebView2 is null)
+            var coreWebView = nativeWebView.CoreWebView2;
+            if (coreWebView is null)
             {
-                await DisplayAlert("Печатење", "Не можеше да се иницијализира печатењето.", "ОК");
+                await DisplayAlert("Печатење", "Windows WebView не успеа да се иницијализира.", "ОК");
                 return;
             }
 
-            // Use the native Windows print dialog rather than the embedded browser print preview.
-            // This opens the standard printer selection/print dialog for the generated report.
-            nativeWebView.CoreWebView2.ShowPrintUI(Microsoft.Web.WebView2.Core.CoreWebView2PrintDialogKind.System);
+            // Navigate through the native WebView2 instance and wait for its
+            // navigation event. This avoids relying on MAUI's WebView.Navigated
+            // event, which can race with page appearance/handler initialization.
+            var loaded = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            void OnNavigationCompleted(object? _, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs args)
+            {
+                loaded.TrySetResult(args.IsSuccess);
+            }
+
+            coreWebView.NavigationCompleted += OnNavigationCompleted;
+            try
+            {
+                coreWebView.NavigateToString(BuildPrintHtml(encounter));
+                var completed = await Task.WhenAny(loaded.Task, Task.Delay(TimeSpan.FromSeconds(15)));
+                if (completed != loaded.Task || !await loaded.Task)
+                {
+                    await DisplayAlert("Печатење", "Извештајот не се вчита успешно. Обидете се повторно.", "ОК");
+                    return;
+                }
+            }
+            finally
+            {
+                coreWebView.NavigationCompleted -= OnNavigationCompleted;
+            }
+
+            coreWebView.ShowPrintUI(Microsoft.Web.WebView2.Core.CoreWebView2PrintDialogKind.System);
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Encounter report printing failed: {ex}");
             await DisplayAlert("Печатење", $"Не успеа да се отвори дијалогот за печатење: {ex.Message}", "ОК");
+        }
+        finally
+        {
+            if (sender is Button button)
+                button.IsEnabled = true;
         }
 #else
         await DisplayAlert("Печатење", "Печатењето е достапно во Windows десктоп верзијата.", "ОК");
