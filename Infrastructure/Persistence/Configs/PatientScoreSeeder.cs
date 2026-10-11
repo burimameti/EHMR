@@ -4,71 +4,59 @@ using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
 
 namespace EHMR.Infrastructure.Persistence.Configs;
 
-/// <summary>
-/// Seeds both patient-card scores (EncounterId = null) and visit-specific scores.
-/// Encounter scores are unique per encounter; patient-level scores are independently
-/// identified by their fixed seed IDs and may coexist for the same patient.
-/// </summary>
+/// <summary>One patient-card score and one score for every completed demo encounter.</summary>
 public sealed class PatientScoreSeeder : IEntitySeeder
 {
     public int Order => 57;
 
-    private static readonly (Guid Id, Guid PatientId, Guid? EncounterId, string ScoreName, string Number, int DaysOffset)[] Scores =
+    private sealed record Seed(Guid Id, Guid PatientId, Guid? EncounterId, string Name, string Value, int DaysAgo);
+
+    private static readonly Seed[] Seeds =
     [
-        // Patient-card history: these rows are not linked to an encounter.
-        (Guid.Parse("00000000-0000-0000-0000-000000009111"), SeedIds.Patient3,
-            null, "DAS28", "5.8", -300),
-        // Each encounter owns its own score value.
-        (Guid.Parse("00000000-0000-0000-0000-000000009101"), SeedIds.Patient3,
-            Guid.Parse("00000000-0000-0000-0000-000000008001"), "DAS28", "7", -240),
-        (Guid.Parse("00000000-0000-0000-0000-000000009102"), SeedIds.Patient3,
-            Guid.Parse("00000000-0000-0000-0000-000000008002"), "DAS28", "6", -150),
-        (Guid.Parse("00000000-0000-0000-0000-000000009103"), SeedIds.Patient3,
-            Guid.Parse("00000000-0000-0000-0000-000000008003"), "DAS28", "5", -60),
-        (Guid.Parse("00000000-0000-0000-0000-000000009104"), SeedIds.Patient3,
-            Guid.Parse("00000000-0000-0000-0000-000000008004"), "DAS28", "3", -14),
-        (Guid.Parse("00000000-0000-0000-0000-000000009105"), SeedIds.Patient1,
-            SeedIds.Encounter1, "DAS28", "8", -90)
+        new(Guid.Parse("00000000-0000-0000-0000-000000009111"), SeedIds.Patient3, null, "DAS28", "5.8", 58),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009101"), SeedIds.Patient2, Guid.Parse("00000000-0000-0000-0000-000000008001"), "DAS28", "6.2", 52),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009102"), SeedIds.Patient2, Guid.Parse("00000000-0000-0000-0000-000000008002"), "DAS28", "5.7", 21),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009103"), SeedIds.Patient3, Guid.Parse("00000000-0000-0000-0000-000000008003"), "DAS28", "7.0", 58),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009104"), SeedIds.Patient3, Guid.Parse("00000000-0000-0000-0000-000000008004"), "DAS28", "6.1", 44),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009105"), SeedIds.Patient3, Guid.Parse("00000000-0000-0000-0000-000000008005"), "DAS28", "5.4", 29),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009106"), SeedIds.Patient3, Guid.Parse("00000000-0000-0000-0000-000000008006"), "DAS28", "4.8", 12)
     ];
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {
-        var encounterIds = Scores
-            .Where(x => x.EncounterId.HasValue)
-            .Select(x => x.EncounterId!.Value)
-            .Distinct()
-            .ToArray();
+        // Remove the legacy second patient-card demo score and old seeded score rows.
+        var legacyIds = new[]
+        {
+            Guid.Parse("00000000-0000-0000-0000-000000009112"),
+            Guid.Parse("00000000-0000-0000-0000-000000009105")
+        };
+        var legacy = await context.PatientScores.Where(x => legacyIds.Contains(x.Id)
+            && x.EncounterId == null).ToListAsync(ct);
+        if (legacy.Count > 0)
+        {
+            context.PatientScores.RemoveRange(legacy);
+            await context.SaveChangesAsync(ct);
+        }
 
-        var existingEncounterIds = await context.PatientScores
-            .Where(x => x.EncounterId.HasValue && encounterIds.Contains(x.EncounterId.Value))
-            .Select(x => x.EncounterId!.Value)
-            .ToListAsync(ct);
+        foreach (var seed in Seeds)
+        {
+            var row = await context.PatientScores.FirstOrDefaultAsync(x => x.Id == seed.Id, ct);
+            if (row == null && seed.EncounterId.HasValue)
+                row = await context.PatientScores.FirstOrDefaultAsync(x => x.EncounterId == seed.EncounterId, ct);
 
-        var existingSeedIds = await context.PatientScores
-            .Where(x => Scores.Select(s => s.Id).Contains(x.Id))
-            .Select(x => x.Id)
-            .ToListAsync(ct);
-
-        var rows = Scores
-            .Where(x => x.EncounterId.HasValue
-                ? !existingEncounterIds.Contains(x.EncounterId.Value)
-                : !existingSeedIds.Contains(x.Id))
-            .Where(x => !existingSeedIds.Contains(x.Id))
-            .Select(x => new PatientScore
+            if (row == null)
             {
-                Id = x.Id,
-                PatientId = x.PatientId,
-                EncounterId = x.EncounterId,
-                ScoreText = x.ScoreName,
-                Number = x.Number,
-                RecordedAt = DateTime.UtcNow.AddDays(x.DaysOffset)
-            })
-            .ToList();
+                row = new PatientScore { Id = seed.Id };
+                context.PatientScores.Add(row);
+            }
 
-        if (rows.Count == 0)
-            return;
+            row.PatientId = seed.PatientId;
+            row.EncounterId = seed.EncounterId;
+            row.ScoreText = seed.Name;
+            row.Number = seed.Value;
+            row.RecordedAt = DateTime.UtcNow.Date.AddDays(-seed.DaysAgo);
+        }
 
-        await context.PatientScores.AddRangeAsync(rows, ct);
         await context.SaveChangesAsync(ct);
     }
 }
