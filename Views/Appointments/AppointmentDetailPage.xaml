@@ -824,6 +824,7 @@
 							
 
 						</VerticalStackLayout>
+						</VerticalStackLayout>
 					</controls:CustomScrollView>
 				</controls:FFSectionCard>
 
