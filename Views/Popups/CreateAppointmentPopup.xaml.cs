@@ -13,21 +13,15 @@ public partial class CreateAppointmentPopup : Popup
     {
         InitializeComponent();
         _viewModel = viewModel;
-#if WINDOWS
         BindingContext = _viewModel;
-        viewModel.RequestClose = result =>
+
+        _viewModel.RequestClose = result =>
         {
             AppointmentResult = result;
-            ClosePopup();
+            ClosePopup(result);
         };
-        _=_viewModel.InitializeAsync();
-#else
-        viewModel.RequestClose = result =>
-        {
-            AppointmentResult = result;
-            CloseAsync();
-        };
-#endif
+
+        _ = _viewModel.InitializeAsync();
     }
 
     public object? AppointmentResult { get; private set; }
@@ -35,12 +29,12 @@ public partial class CreateAppointmentPopup : Popup
    
 
     [SupportedOSPlatform("windows10.0.17763.0")]
-    private void ClosePopup()
+    private void ClosePopup(object? result)
     {
 #if WINDOWS
-        _ = CloseAsync(CancellationToken.None);
+        _ = CloseAsync(result, CancellationToken.None);
 #else
-        _ = CloseAsync();
+        _ = CloseAsync(result);
 #endif
     }
 }
