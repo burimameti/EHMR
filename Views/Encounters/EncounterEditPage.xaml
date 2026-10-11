@@ -387,7 +387,7 @@
 
 									<!--  Заглавие на табелата: 4 колони (0..3)  -->
 									<Grid
-										ColumnDefinitions="1.45*,1*,1.35*,0.85*,1*"
+										ColumnDefinitions="1.45*,1*,0.85*,170"
 										ColumnSpacing="1"
 										IsVisible="{Binding HasEncounterMedicines}">
 										<Border
@@ -429,9 +429,9 @@
 											StrokeThickness="0">
 											<Label
 												FontAttributes="Bold"
-												FontSize="8"
+												FontSize="9"
 												HorizontalOptions="Center"
-												Text="РЕЖИМ НА АПЛИКАЦИЈА"
+												Text="ТЕКОВНА"
 												TextColor="White"
 												VerticalOptions="Center" />
 										</Border>
@@ -447,11 +447,11 @@
 										</BindableLayout.EmptyView>
 										<BindableLayout.ItemTemplate>
 											<DataTemplate x:DataType="entities:PatientMedicine">
-												<Grid ColumnDefinitions="1.45*,1*,1.35*,0.85*,1*" ColumnSpacing="1">
+												<Grid ColumnDefinitions="1.45*,1*,0.80*,170" ColumnSpacing="1">
 													<Border
 														Padding="8,0"
 														BackgroundColor="White"
-														HeightRequest="42"
+														HeightRequest="46"
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
 														<VerticalStackLayout Padding="8,2" Spacing="0" VerticalOptions="Center">
@@ -462,7 +462,7 @@
 														Grid.Column="1"
 														Padding="4,0"
 														BackgroundColor="White"
-														HeightRequest="42"
+														HeightRequest="46"
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
 														<Entry
@@ -474,7 +474,7 @@
 														Grid.Column="2"
 														Padding="4,0"
 														BackgroundColor="White"
-														HeightRequest="42"
+														HeightRequest="46"
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
 														<Entry
@@ -485,7 +485,7 @@
 													<Border
 														Grid.Column="3"
 														BackgroundColor="White"
-														HeightRequest="42"
+														HeightRequest="46"
 														Stroke="{StaticResource SparkBorderSubtle}"
 														StrokeThickness="1">
 														<HorizontalStackLayout
