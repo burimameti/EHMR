@@ -790,7 +790,7 @@
 								LineColor="{StaticResource Gray600}"
 								Style="{StaticResource CrudFormSectionHeaderStyle}" />
 							<VerticalStackLayout
-								BindableLayout.ItemsSource="{Binding PatientMkb10Assignments}"
+								BindableLayout.ItemsSource="{Binding DistinctPatientMkb10Assignments}"
 								IsVisible="{Binding HasPatientContext}"
 								Spacing="6">
 								<!--<BindableLayout.EmptyView>
