@@ -1098,8 +1098,9 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
         if (popup.MedicineResult is not { } medicine)
             return;
 
-        // Reuse the existing attachment path so duplicate protection and row behavior stay identical.
-        AddMedicine(medicine);
+        // The popup only creates a medicine-catalog entry. Adding it to this patient's
+        // therapy grid remains an explicit action through the existing search results.
+        MedicineSearchText = medicine.Name;
     }
 
     [RelayCommand]
