@@ -141,7 +141,7 @@
 				</controls:FFPageHeader>
 			</Border>
 
-			<Grid Grid.Row="1" Style="{StaticResource CrudFormBodyGridStyle}">
+			<Border Grid.Row="1" Style="{StaticResource CrudFormBodyGridStyle}">
 
 				<controls:FFSectionCard Margin="0" Style="{StaticResource CrudFormCardStyle}">
 					<ScrollView VerticalScrollBarVisibility="Never">
@@ -541,7 +541,7 @@
 						</VerticalStackLayout>
 					</ScrollView>
 				</controls:FFSectionCard>
-			</Grid>
+			</Border>
 
 			<Border
 				Grid.Row="2"
