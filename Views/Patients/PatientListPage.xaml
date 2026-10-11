@@ -66,8 +66,9 @@
 										UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}">
 										<controls:SparkExplorerHeaderView.SuggestionTemplate>
 											<DataTemplate x:DataType="domain:Patient">
-												<Border Padding="0" BackgroundColor="White" Stroke="#E2E8F0" StrokeThickness="0,0,0,1" StrokeShape="RoundRectangle 0">
-													<Grid Padding="10,8" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+												<Border Padding="0" BackgroundColor="White" StrokeThickness="0" StrokeShape="RoundRectangle 0">
+													<Grid RowDefinitions="Auto,1" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+														<Grid Grid.Row="0" Grid.ColumnSpan="2" Padding="10,8" ColumnDefinitions="*,Auto" ColumnSpacing="12">
 														<VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
 															<Label Text="{Binding FullName}" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource SparkTextPrimary}" />
 															<Label Text="{Binding PatientNumber, StringFormat='Пациент бр. {0}'}" FontSize="11" TextColor="{StaticResource SparkTextSecondary}" />
