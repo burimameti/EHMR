@@ -733,11 +733,37 @@
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
 
+							<!-- Patient score history, separate from scores entered for this encounter. -->
+							<controls:CrudSectionHeader
+								Title="ИСТОРИЈА НА СКОРОВИ"
+								IsVisible="{Binding HasPatientContext}"
+								LineColor="{StaticResource Gray600}"
+								Style="{StaticResource CrudFormSectionHeaderStyle}" />
+							<VerticalStackLayout
+								BindableLayout.ItemsSource="{Binding PatientScoreHistory}"
+								IsVisible="{Binding HasPatientContext}"
+								Spacing="0">
+								<BindableLayout.EmptyView>
+									<Label Padding="10,8" FontSize="11" Text="Нема претходно внесени скорови." TextColor="{StaticResource SparkTextSecondary}" />
+								</BindableLayout.EmptyView>
+								<BindableLayout.ItemTemplate>
+									<DataTemplate x:DataType="entities:PatientScore">
+										<Grid ColumnDefinitions="18,*" ColumnSpacing="5" Padding="0,2">
+											<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+											<VerticalStackLayout Grid.Column="1" Padding="0,3,0,7" Spacing="2">
+												<Label FontAttributes="Bold" FontSize="12" Text="{Binding ScoreText, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
+												<Label FontSize="10.5" Text="{Binding RecordedAt, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkTextSecondary}" />
+										</VerticalStackLayout>
+										</Grid>
+									</DataTemplate>
+								</BindableLayout.ItemTemplate>
+							</VerticalStackLayout>
+
 							<controls:CrudSectionHeader
 								Title="ИСТОРИЈА НА ДИЈАГНОЗИ"
-								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
+								IsVisible="{Binding HasPatientContext}" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 							<VerticalStackLayout
-								BindableLayout.ItemsSource="{Binding PatientMkb10Assignments}"
+								BindableLayout.ItemsSource="{Binding DistinctPatientMkb10Assignments}"
 								IsVisible="{Binding HasPatientContext}"
 								Spacing="6">
 								<BindableLayout.EmptyView>
