@@ -1092,8 +1092,28 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
 
         try
         {
-            var results = await _patientService.SearchMedicinesAsync(query);
-            if(token.IsCancellationRequested) return;
+            var variants = new[]
+            {
+                query.Trim(),
+                EHMR.Helpers.MacedonianTransliterator.ToCyrillic(query.Trim()),
+                EHMR.Helpers.MacedonianTransliterator.ToLatin(query.Trim())
+            }.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase);
+
+            var resultMap = new Dictionary<Guid, MedicineDto>();
+            foreach(var variant in variants)
+            {
+                var matches = await _patientService.SearchMedicinesAsync(variant);
+                if(token.IsCancellationRequested) return;
+                foreach(var medicine in matches)
+                    resultMap.TryAdd(medicine.Id, medicine);
+            }
+
+            var results = resultMap.Values
+                .Where(m => SearchTextMatches(m.Name, query) ||
+                            SearchTextMatches(m.GenericName, query) ||
+                            SearchTextMatches(m.BilingualName, query))
+                .Take(20)
+                .ToList();
 
             MedicineResults=new ObservableCollection<MedicineDto>(results);
             ShowMedicineDropdown=results.Count>0;
@@ -1103,6 +1123,13 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
         {
             await _userDialogService.ShowAlertAsync("Грешка", $"Пребарувањето на лекови не успеа: {ex.Message}", "OK");
         }
+    }
+
+    private static bool SearchTextMatches(string? source, string query)
+    {
+        if(string.IsNullOrWhiteSpace(source)||string.IsNullOrWhiteSpace(query)) return false;
+        var variants = new[] { query, EHMR.Helpers.MacedonianTransliterator.ToCyrillic(query), EHMR.Helpers.MacedonianTransliterator.ToLatin(query) };
+        return variants.Any(v => source.Contains(v, StringComparison.OrdinalIgnoreCase));
     }
 
     [RelayCommand]
