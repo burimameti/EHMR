@@ -30,8 +30,7 @@ public sealed class PatientScoreSeeder : IEntitySeeder
             Guid.Parse("00000000-0000-0000-0000-000000009112"),
             Guid.Parse("00000000-0000-0000-0000-000000009105")
         };
-        var legacy = await context.PatientScores.Where(x => legacyIds.Contains(x.Id)
-            && x.EncounterId == null).ToListAsync(ct);
+        var legacy = await context.PatientScores.Where(x => legacyIds.Contains(x.Id)).ToListAsync(ct);
         if (legacy.Count > 0)
         {
             context.PatientScores.RemoveRange(legacy);
