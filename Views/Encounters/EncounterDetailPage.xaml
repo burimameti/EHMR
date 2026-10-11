@@ -20,12 +20,7 @@
 			
 
 			<DataTemplate x:Key="MedicineRowTemplate" x:DataType="entities:PatientMedicine">
-				<Border
-					Padding="0"
-					BackgroundColor="White"
-					Stroke="{StaticResource SparkBorderSubtle}"
-					StrokeShape="RoundRectangle 8"
-					StrokeThickness="1">
+				<Border Style="{StaticResource CrudFormTableFrameStyle}">
 					<Grid ColumnDefinitions="1.4*,1*,1.35*,0.8*" ColumnSpacing="1">
 						<Label Padding="10,6" FontSize="11.5" Text="{Binding Medicine.BilingualName, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" LineBreakMode="TailTruncation" />
 						<Label
@@ -351,7 +346,7 @@
 							<VerticalStackLayout IsVisible="True" Spacing="8">
 								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1*" ColumnSpacing="8" VerticalOptions="Start">
-									<Border Grid.Column="0" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start" HorizontalOptions="Fill">
+									<Border Grid.Column="0" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
 										<VerticalStackLayout Spacing="0">
 											<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}">
 												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="МКБ-10 ДИЈАГНОЗИ" />
