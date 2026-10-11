@@ -321,26 +321,16 @@
 												Text="{Binding Encounter.Status, Converter={StaticResource StatusTextConverter}}"
 												TextColor="{StaticResource SparkAccentTealDark}" />
 										</VerticalStackLayout>
-										<VerticalStackLayout Grid.Row="2" Spacing="1">
-											<Label
-												FontSize="10"
-												Text="Претходен скор"
-												TextColor="{StaticResource SparkTextSecondary}" />
-											<Label
-												FontAttributes="Bold"
-												FontSize="12"
-												Text="{Binding Score.ScoreText, TargetNullValue='—'}"
-												TextColor="{StaticResource SparkTextPrimary}" />
-										</VerticalStackLayout>
+										
 									</Grid>
 								</Border>
 							</VerticalStackLayout>
 
 
-							<!-- БИОЛОШКА ТЕРАПИЈА: усогласен приказ на МКБ, активни лекови и претходен скор -->
+							<!-- БИОЛОШКА ТЕРАПИЈА: МКБ-10 дијагнози, активни лекови и скор -->
 							<VerticalStackLayout IsVisible="True" Spacing="8">
 								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
-								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1*" ColumnSpacing="8" VerticalOptions="Start">
+								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1.5*" ColumnSpacing="8" VerticalOptions="Start">
 									<Border Grid.Column="0" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
 										<VerticalStackLayout Spacing="0">
 											<Grid Style="{StaticResource CrudFormTableHeaderGridStyle}">
@@ -380,10 +370,16 @@
 											</VerticalStackLayout>
 										</VerticalStackLayout>
 									</Border>
-									<Border Grid.Column="2" VerticalOptions="Start" Style="{StaticResource CrudFormSectionCardStyle}">
-										<VerticalStackLayout Spacing="5">
-											<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="ПРЕТХОДЕН СКОР" />
-											<Label FontAttributes="Bold" FontSize="12" LineBreakMode="WordWrap" Text="{Binding CurrentPatientScore, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
+									<Border Grid.Column="2" VerticalOptions="Start" Style="{StaticResource CrudFormTableFrameStyle}">
+										<VerticalStackLayout Spacing="0">
+											<Grid ColumnDefinitions="*,Auto" Style="{StaticResource CrudFormTableHeaderGridStyle}">
+												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="СКОР / ОПИС" />
+												<Label Grid.Column="1" HorizontalTextAlignment="End" Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="БРОЈКА" />
+											</Grid>
+											<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Padding="10,9">
+												<Label FontSize="11" LineBreakMode="WordWrap" Text="{Binding Score.ScoreText, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+												<Label Grid.Column="1" FontAttributes="Bold" FontSize="12" HorizontalTextAlignment="End" Text="{Binding Score.Number, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+											</Grid>
 										</VerticalStackLayout>
 									</Border>
 								</Grid>
