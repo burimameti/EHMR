@@ -15,7 +15,7 @@
 		Stroke="{Binding BorderColor, Source={x:Reference Root}}"
 		StrokeShape="RoundRectangle 6"
 		StrokeThickness="{Binding BorderThickness, Source={x:Reference Root}}"
-		VerticalOptions="End">
+		VerticalOptions="Fill">
 		<Border.GestureRecognizers>
 			<TapGestureRecognizer Tapped="OnTapped" />
 		</Border.GestureRecognizers>
