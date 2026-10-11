@@ -69,6 +69,13 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
             });
     }
 
+    private static bool SearchMatches(string? source, string query)
+    {
+        if(string.IsNullOrWhiteSpace(source)||string.IsNullOrWhiteSpace(query)) return false;
+        var variants=new[] { query, EHMR.Helpers.MacedonianTransliterator.ToCyrillic(query), EHMR.Helpers.MacedonianTransliterator.ToLatin(query) };
+        return variants.Any(v=>source.Contains(v,StringComparison.OrdinalIgnoreCase));
+    }
+
     partial void OnDescriptionTextChanged(string value)
     {
         if(_suppressSearch) return;
@@ -111,12 +118,14 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
             var q=query.Trim();
             var definitions=await db.Set<ClinicalScoreDefinition>()
                 .AsNoTracking()
-                .Where(x=>x.IsActive &&
-                    ((x.Name!=null && x.Name.Contains(q)) ||
-                     (x.Description!=null && x.Description.Contains(q))))
+                .Where(x=>x.IsActive)
+                .ToListAsync(token);
+
+            definitions=definitions
+                .Where(x=>SearchMatches(x.Name, q) || SearchMatches(x.Description, q))
                 .OrderBy(x=>x.Name)
                 .Take(30)
-                .ToListAsync(token);
+                .ToList();
 
             var names=definitions.Select(x=>x.Name).ToList();
             var usage=names.Count==0
