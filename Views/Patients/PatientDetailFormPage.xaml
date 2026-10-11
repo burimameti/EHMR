@@ -22,12 +22,7 @@
 
 			<!--  ═══ СТИЛОВИ ЗА ОВАА СТРАНА ═══  -->
 
-			<Style x:Key="SectionHeaderStyle" TargetType="controls:CrudSectionHeader">
-
-
-				<Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
-				<Setter Property="TextColor" Value="{StaticResource Gray800}" />
-			</Style>
+			
 
 			<Style x:Key="FieldEntryStyle" TargetType="Entry">
 				<Setter Property="BackgroundColor" Value="Transparent" />
@@ -55,49 +50,16 @@
 
 			<!--  ═══ ТАБЕЛИ НА ЛЕКОВИ ═══  -->
 
-			<Style x:Key="TableFrameStyle" TargetType="Border">
-				<Setter Property="Padding" Value="0" />
-				<Setter Property="BackgroundColor" Value="White" />
-				<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
-				<Setter Property="StrokeShape" Value="RoundRectangle 0" />
-				<Setter Property="StrokeThickness" Value="1" />
-			</Style>
+			
 
-			<Style x:Key="TableHeaderLabelStyle" TargetType="Label">
-				<Setter Property="FontAttributes" Value="Bold" />
-				<Setter Property="FontSize" Value="9" />
-				<Setter Property="LineBreakMode" Value="TailTruncation" />
-				<Setter Property="TextColor" Value="{StaticResource Black}" />
-				<Setter Property="VerticalOptions" Value="Center" />
-			</Style>
+			
 
-			<Style x:Key="TableCellLabelStyle" TargetType="Label">
-				<Setter Property="FontSize" Value="11" />
-				<Setter Property="LineBreakMode" Value="TailTruncation" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-				<Setter Property="VerticalOptions" Value="Center" />
-			</Style>
+			
 
-			<Style x:Key="TableCellEntryStyle" TargetType="Entry">
-				<Setter Property="BackgroundColor" Value="Transparent" />
-				<Setter Property="FontSize" Value="11" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-				<Setter Property="VerticalOptions" Value="Center" />
-			</Style>
+			
 
-			<Style x:Key="TableIconStyle" TargetType="Label">
-				<Setter Property="FontFamily" Value="FASolid" />
-				<Setter Property="FontSize" Value="13" />
-				<Setter Property="HorizontalOptions" Value="Center" />
-				<Setter Property="VerticalOptions" Value="Center" />
-			</Style>
-			<Style x:Key="SectionCardStyle" TargetType="Border">
-				<Setter Property="Padding" Value="14" />
-				<Setter Property="BackgroundColor" Value="#F8FAFC" />
-				<Setter Property="Stroke" Value="#DCE3EA" />
-				<Setter Property="StrokeShape" Value="RoundRectangle 12" />
-				<Setter Property="StrokeThickness" Value="1" />
-			</Style>
+			
+			
 			<!--  ═══ ШАБЛОНИ ЗА ИСТОРИЈА НА ПАЦИЕНТОТ ═══  -->
 
 			<DataTemplate x:Key="PatientMkb10CodeRowTemplate" x:DataType="dto:PatientMkb10CodeDto">
@@ -191,14 +153,14 @@
 									Stroke="#DCE3EA"
 									StrokeShape="RoundRectangle 12"
 									StrokeThickness="1"
-									Style="{StaticResource SectionCardStyle}">
+									Style="{StaticResource CrudFormSectionCardStyle}">
 									<VerticalStackLayout Spacing="10">
 
 										<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
 											<controls:CrudSectionHeader
 												Title="ЛИЧНИ ПОДАТОЦИ"
 												LineColor="{StaticResource Gray600}"
-												Style="{StaticResource SectionHeaderStyle}"
+												Style="{StaticResource CrudFormSectionHeaderStyle}"
 												VerticalOptions="Center" />
 											<controls:FFStatusChip
 												Grid.Column="1"
@@ -355,13 +317,13 @@
 									Stroke="#DCE3EA"
 									StrokeShape="RoundRectangle 12"
 									StrokeThickness="1"
-									Style="{StaticResource SectionCardStyle}">
+									Style="{StaticResource CrudFormSectionCardStyle}">
 									<VerticalStackLayout Spacing="10">
 
 										<controls:CrudSectionHeader
 											Title="КОНТАКТ ИНФОРМАЦИИ"
 											LineColor="{StaticResource Gray600}"
-											Style="{StaticResource SectionHeaderStyle}"
+											Style="{StaticResource CrudFormSectionHeaderStyle}"
 											VerticalOptions="Center" />
 
 										<Grid
@@ -517,12 +479,12 @@
 									Stroke="#DCE3EA"
 									StrokeShape="RoundRectangle 12"
 									StrokeThickness="1"
-									Style="{StaticResource SectionCardStyle}">
+									Style="{StaticResource CrudFormSectionCardStyle}">
 									<VerticalStackLayout Spacing="14">
 										<controls:CrudSectionHeader
 											Title="БИОЛОШКА ТЕРАПИЈА"
 											LineColor="{StaticResource Gray600}"
-											Style="{StaticResource SectionHeaderStyle}"
+											Style="{StaticResource CrudFormSectionHeaderStyle}"
 											VerticalOptions="Center" />
 
 										<!--  Doctor + Scores  -->
@@ -805,7 +767,7 @@
 											
 
 <Border
-													Style="{StaticResource TableFrameStyle}"
+													Style="{StaticResource CrudFormTableFrameStyle}"
 													VerticalOptions="Start">
 													<VerticalStackLayout Spacing="0">
 
@@ -815,35 +777,35 @@
 															ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,88,100"
 															ColumnSpacing="6">
 															<Label
-																Style="{StaticResource TableHeaderLabelStyle}"
+																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="ЛЕК" />
 															<Label
 																Grid.Column="1"
-																Style="{StaticResource TableHeaderLabelStyle}"
+																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="РЕЖИМ" />
 															<Label
 																Grid.Column="2"
-																Style="{StaticResource TableHeaderLabelStyle}"
+																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="ДОЗА" />
 															<Label
 																Grid.Column="3"
 																HorizontalTextAlignment="Start"
-																Style="{StaticResource TableHeaderLabelStyle}"
+																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="КОЛ." />
 															<!--<Label
 																Grid.Column="4"
 																HorizontalTextAlignment="Center"
-																Style="{StaticResource TableHeaderLabelStyle}"
+																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="ПРЕГЛЕД" />-->
 															<Label
 																Grid.Column="4"
 																HorizontalTextAlignment="Start"
-																Style="{StaticResource TableHeaderLabelStyle}"
+																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="РЕШЕНИЕ" />
 															<Label
 																Grid.Column="5"
 																HorizontalTextAlignment="Center"
-																Style="{StaticResource TableHeaderLabelStyle}"
+																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="НЕАКТИВЕН" />
 														</Grid>
 
@@ -865,7 +827,7 @@
 																			ColumnSpacing="6">
 																			<Label
 																				Grid.Column="0"
-																				Style="{StaticResource TableCellLabelStyle}"
+																				Style="{StaticResource CrudFormTableCellLabelStyle}"
 																				Text="{Binding MedicineNameBilingual}" />
 																			<controls:FFPicker
 																				Grid.Column="1"
@@ -875,14 +837,14 @@
 																				VerticalOptions="Center" />
 																			<Label
 																				Grid.Column="2"
-																				Style="{StaticResource TableCellLabelStyle}"
+																				Style="{StaticResource CrudFormTableCellLabelStyle}"
 																				Text="{Binding Dosage}" />
 																			<Entry
 																				Grid.Column="3"
 																				HorizontalTextAlignment="Center"
 																				IsEnabled="False"
 																				Keyboard="Numeric"
-																				Style="{StaticResource TableCellEntryStyle}"
+																				Style="{StaticResource CrudFormTableCellEntryStyle}"
 																				Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" />
 
 																			<!--<controls:FFButton
@@ -933,12 +895,12 @@
 												<controls:CrudSectionHeader
 													Title="СКОРОВИ"
 													LineColor="{StaticResource Gray600}"
-													Style="{StaticResource SectionHeaderStyle}" />
+													Style="{StaticResource CrudFormSectionHeaderStyle}" />
 												<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
 											
 
 <Border
-													Style="{StaticResource TableFrameStyle}"
+													Style="{StaticResource CrudFormTableFrameStyle}"
 													VerticalOptions="Start">
 													<VerticalStackLayout Spacing="0">
 
@@ -949,28 +911,28 @@
 															ColumnSpacing="6">
 															<Label
 																Grid.Column="0"
-																Style="{StaticResource TableHeaderLabelStyle}"
+																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="ЛЕК" />
 															<Label
-																Style="{StaticResource TableHeaderLabelStyle}"
+																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="РЕЖИМ" />
 															<Label
 																Grid.Column="2"
-																Style="{StaticResource TableHeaderLabelStyle}"
+																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="ДОЗА" />
 															<Label
 																Grid.Column="3"
-																Style="{StaticResource TableHeaderLabelStyle}"
+																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="КОЛ." />
 															<Label
 																Grid.Column="4"
 																HorizontalTextAlignment="Center"
-																Style="{StaticResource TableHeaderLabelStyle}"
+																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="РЕШЕНИЕ" />
 															<Label
 																Grid.Column="5"
 																HorizontalTextAlignment="Center"
-																Style="{StaticResource TableHeaderLabelStyle}"
+																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="АКЦИИ" />
 														</Grid>
 
@@ -992,7 +954,7 @@
 																			ColumnSpacing="6">
 																			<Label
 																				Grid.Column="0"
-																				Style="{StaticResource TableCellLabelStyle}"
+																				Style="{StaticResource CrudFormTableCellLabelStyle}"
 																				Text="{Binding MedicineNameBilingual}" />
 																			<controls:FFPicker
 																				Grid.Column="1"
@@ -1002,13 +964,13 @@
 																				VerticalOptions="Center" />
 																			<Label
 																				Grid.Column="2"
-																				Style="{StaticResource TableCellLabelStyle}"
+																				Style="{StaticResource CrudFormTableCellLabelStyle}"
 																				Text="{Binding Dosage}" />
 																			<Entry
 																				Grid.Column="3"
 																				IsEnabled="False"
 																				Keyboard="Numeric"
-																				Style="{StaticResource TableCellEntryStyle}"
+																				Style="{StaticResource CrudFormTableCellEntryStyle}"
 																				Text="{Binding PatientMedicine.Quantity, Mode=TwoWay}" />
 
 
@@ -1017,7 +979,7 @@
 																				Grid.Column="5"
 																				IsEnabled="{Binding CanDelete}"
 																				IsVisible="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}"
-																				Style="{StaticResource TableIconStyle}"
+																				Style="{StaticResource CrudFormTableIconStyle}"
 																				Text="&#xf1f8;"
 																				TextColor="#DC2626">
 																				<Label.Triggers>
@@ -1053,7 +1015,7 @@
 												<controls:CrudSectionHeader
 													Title=""
 													LineColor="{StaticResource White}"
-													Style="{StaticResource SectionHeaderStyle}" />
+													Style="{StaticResource CrudFormSectionHeaderStyle}" />
 												<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
 											</VerticalStackLayout>-->
 
@@ -1166,7 +1128,7 @@
 										<controls:CrudSectionHeader
 											Title="ПРИКАЧИ ДРУГА ДОКУМЕНТАЦИЈА ЗА ПАЦИЕНТОТ"
 											LineColor="{StaticResource White}"
-											Style="{StaticResource SectionHeaderStyle}" />
+											Style="{StaticResource CrudFormSectionHeaderStyle}" />
 										<Border
 											Padding="14"
 											BackgroundColor="White"
@@ -1296,7 +1258,7 @@
 										<controls:CrudSectionHeader
 											Title="СТАТУС НА ПАЦИЕНТ"
 											LineColor="{StaticResource White}"
-											Style="{StaticResource SectionHeaderStyle}" />
+											Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 										<HorizontalStackLayout HorizontalOptions="Start" Spacing="28">
 											<VerticalStackLayout IsVisible="{Binding CanShowActiveStatusOption}" Spacing="2">
@@ -1368,7 +1330,7 @@
 										<controls:CrudSectionHeader
 											Title="ЗАБЕЛЕШКА"
 											LineColor="{StaticResource White}"
-											Style="{StaticResource SectionHeaderStyle}" />
+											Style="{StaticResource CrudFormSectionHeaderStyle}" />
 										<Border IsEnabled="{Binding IsEditMode}" Style="{StaticResource TextAreaFieldBoxStyle}">
 											<Editor
 												AutoSize="TextChanges"
@@ -1393,7 +1355,7 @@
 								<controls:CrudSectionHeader
 									Title="ИСТОРИЈА НА ПАЦИЕНТОТ"
 									LineColor="{StaticResource White}"
-									Style="{StaticResource SectionHeaderStyle}" />
+									Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 								<FlexLayout
 									AlignItems="Start"
