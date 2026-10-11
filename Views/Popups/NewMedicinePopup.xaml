@@ -1,70 +1,278 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <toolkit:Popup
-    x:Class="EHMR.Views.Popups.NewMedicinePopup"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    x:Name="Root">
-    <Border Padding="14" BackgroundColor="{StaticResource SparkBackground}"
-            Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 8"
-            StrokeThickness="1" WidthRequest="440">
-        <ScrollView>
-            <VerticalStackLayout Spacing="8">
-                <Label FontAttributes="Bold" FontSize="15" Text="Нов лек"
-                       TextColor="{StaticResource SparkTextPrimary}" />
-                <Label FontSize="10" Text="Лекот ќе се зачува во постојниот регистар и ќе се додаде во активната терапија."
-                       TextColor="{StaticResource SparkTextSecondary}" />
-                <Label FontAttributes="Bold" FontSize="10" Text="НАЗИВ НА ЛЕК *" TextColor="{StaticResource SparkTextSecondary}" />
-                <Border BackgroundColor="{StaticResource SparkBackground}" HeightRequest="36" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 6">
-                    <Entry x:Name="NameEntry" BackgroundColor="Transparent" FontSize="13" Placeholder="Назив на лек" TextColor="{StaticResource SparkTextPrimary}" />
-                </Border>
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                    <VerticalStackLayout Spacing="3">
-                        <Label FontAttributes="Bold" FontSize="10" Text="ГЕНЕРИЧКО ИМЕ" TextColor="{StaticResource SparkTextSecondary}" />
-                        <Border BackgroundColor="{StaticResource SparkBackground}" HeightRequest="36" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 6">
-                            <Entry x:Name="GenericNameEntry" BackgroundColor="Transparent" FontSize="12" Placeholder="Генеричко име" TextColor="{StaticResource SparkTextPrimary}" />
-                        </Border>
-                    </VerticalStackLayout>
-                    <VerticalStackLayout Grid.Column="1" Spacing="3">
-                        <Label FontAttributes="Bold" FontSize="10" Text="КОД / ATC" TextColor="{StaticResource SparkTextSecondary}" />
-                        <Border BackgroundColor="{StaticResource SparkBackground}" HeightRequest="36" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 6">
-                            <Entry x:Name="CodeEntry" BackgroundColor="Transparent" FontSize="12" Placeholder="Код" TextColor="{StaticResource SparkTextPrimary}" />
-                        </Border>
-                    </VerticalStackLayout>
-                </Grid>
-                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
-                    <VerticalStackLayout Spacing="3">
-                        <Label FontAttributes="Bold" FontSize="10" Text="ФОРМА" TextColor="{StaticResource SparkTextSecondary}" />
-                        <Border BackgroundColor="{StaticResource SparkBackground}" HeightRequest="36" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 6">
-                            <Entry x:Name="DosageFormEntry" BackgroundColor="Transparent" FontSize="12" Placeholder="Табл., инјекција" TextColor="{StaticResource SparkTextPrimary}" />
-                        </Border>
-                    </VerticalStackLayout>
-                    <VerticalStackLayout Grid.Column="1" Spacing="3">
-                        <Label FontAttributes="Bold" FontSize="10" Text="ЈАЧИНА" TextColor="{StaticResource SparkTextSecondary}" />
-                        <Border BackgroundColor="{StaticResource SparkBackground}" HeightRequest="36" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 6">
-                            <Entry x:Name="StrengthEntry" BackgroundColor="Transparent" FontSize="12" Keyboard="Numeric" Placeholder="0" TextColor="{StaticResource SparkTextPrimary}" />
-                        </Border>
-                    </VerticalStackLayout>
-                    <VerticalStackLayout Grid.Column="2" Spacing="3">
-                        <Label FontAttributes="Bold" FontSize="10" Text="ЕДИНИЦА" TextColor="{StaticResource SparkTextSecondary}" />
-                        <Border BackgroundColor="{StaticResource SparkBackground}" HeightRequest="36" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 6">
-                            <Entry x:Name="UnitEntry" BackgroundColor="Transparent" FontSize="12" Placeholder="mg, ml..." TextColor="{StaticResource SparkTextPrimary}" />
-                        </Border>
-                    </VerticalStackLayout>
-                </Grid>
-                <Label FontAttributes="Bold" FontSize="10" Text="СТАНДАРДНА ДОЗА" TextColor="{StaticResource SparkTextSecondary}" />
-                <Border BackgroundColor="{StaticResource SparkBackground}" HeightRequest="36" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 6">
-                    <Entry x:Name="DefaultDosageEntry" BackgroundColor="Transparent" FontSize="12" Placeholder="Пр. 1 табл. дневно" TextColor="{StaticResource SparkTextPrimary}" />
-                </Border>
-                <Label FontAttributes="Bold" FontSize="10" Text="ПРОИЗВОДИТЕЛ" TextColor="{StaticResource SparkTextSecondary}" />
-                <Border BackgroundColor="{StaticResource SparkBackground}" HeightRequest="36" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 6">
-                    <Entry x:Name="ManufacturerEntry" BackgroundColor="Transparent" FontSize="12" Placeholder="Производител" TextColor="{StaticResource SparkTextPrimary}" />
-                </Border>
-                <HorizontalStackLayout HorizontalOptions="End" Spacing="8">
-                    <Button BackgroundColor="{StaticResource SparkSurfaceAlt}" BorderColor="{StaticResource SparkBorder}" BorderWidth="1" Clicked="OnCancelClicked" CornerRadius="6" HeightRequest="34" Text="Откажи" TextColor="{StaticResource SparkTextPrimary}" WidthRequest="86" />
-                    <Button BackgroundColor="{StaticResource SparkAccentTealDark}" Clicked="OnSaveClicked" CornerRadius="6" HeightRequest="34" Text="Зачувај и додај" TextColor="White" WidthRequest="132" />
-                </HorizontalStackLayout>
-            </VerticalStackLayout>
-        </ScrollView>
-    </Border>
+	x:Class="EHMR.Views.Popups.NewMedicinePopup"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+	x:Name="Root">
+
+	<Border
+		Padding="20"
+		BackgroundColor="{StaticResource SparkBackground}"
+		Stroke="{StaticResource SparkBorder}"
+		StrokeShape="RoundRectangle 12"
+		StrokeThickness="1"
+		WidthRequest="460">
+		<ScrollView MaximumHeightRequest="620">
+			<VerticalStackLayout Spacing="16">
+
+				<!--  Header  -->
+				<VerticalStackLayout Spacing="4">
+					<Label
+						FontAttributes="Bold"
+						FontSize="16"
+						Text="Нов лек"
+						TextColor="{StaticResource SparkTextPrimary}" />
+					<Label
+						FontSize="11"
+						Text="Лекот ќе се зачува во постојниот регистар и ќе се додаде во активната терапија."
+						TextColor="{StaticResource SparkTextSecondary}" />
+				</VerticalStackLayout>
+
+				<BoxView HeightRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+
+				<!--  Назив  -->
+				<VerticalStackLayout Spacing="6">
+					<Label
+						CharacterSpacing="0.6"
+						FontAttributes="Bold"
+						FontSize="10"
+						Text="НАЗИВ НА ЛЕК *"
+						TextColor="{StaticResource SparkTextSecondary}" />
+					<Border
+						Padding="10,0"
+						BackgroundColor="{StaticResource SparkBackground}"
+						HeightRequest="40"
+						Stroke="{StaticResource SparkBorder}"
+						StrokeShape="RoundRectangle 8"
+						StrokeThickness="1">
+						<Entry
+							x:Name="NameEntry"
+							BackgroundColor="Transparent"
+							FontSize="13"
+							HeightRequest="38"
+							Placeholder="Назив на лек"
+							PlaceholderColor="{StaticResource SparkTextSecondary}"
+							TextColor="{StaticResource SparkTextPrimary}"
+							VerticalOptions="Center" />
+					</Border>
+				</VerticalStackLayout>
+
+				<!--  Генеричко име / Код  -->
+				<Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+					<VerticalStackLayout Spacing="6">
+						<Label
+							CharacterSpacing="0.6"
+							FontAttributes="Bold"
+							FontSize="10"
+							Text="ГЕНЕРИЧКО ИМЕ"
+							TextColor="{StaticResource SparkTextSecondary}" />
+						<Border
+							Padding="10,0"
+							BackgroundColor="{StaticResource SparkBackground}"
+							HeightRequest="40"
+							Stroke="{StaticResource SparkBorder}"
+							StrokeShape="RoundRectangle 8"
+							StrokeThickness="1">
+							<Entry
+								x:Name="GenericNameEntry"
+								BackgroundColor="Transparent"
+								FontSize="13"
+								HeightRequest="38"
+								Placeholder="Генеричко име"
+								PlaceholderColor="{StaticResource SparkTextSecondary}"
+								TextColor="{StaticResource SparkTextPrimary}"
+								VerticalOptions="Center" />
+						</Border>
+					</VerticalStackLayout>
+					<VerticalStackLayout Grid.Column="1" Spacing="6">
+						<Label
+							CharacterSpacing="0.6"
+							FontAttributes="Bold"
+							FontSize="10"
+							Text="КОД / ATC"
+							TextColor="{StaticResource SparkTextSecondary}" />
+						<Border
+							Padding="10,0"
+							BackgroundColor="{StaticResource SparkBackground}"
+							HeightRequest="40"
+							Stroke="{StaticResource SparkBorder}"
+							StrokeShape="RoundRectangle 8"
+							StrokeThickness="1">
+							<Entry
+								x:Name="CodeEntry"
+								BackgroundColor="Transparent"
+								FontSize="13"
+								HeightRequest="38"
+								Placeholder="Код"
+								PlaceholderColor="{StaticResource SparkTextSecondary}"
+								TextColor="{StaticResource SparkTextPrimary}"
+								VerticalOptions="Center" />
+						</Border>
+					</VerticalStackLayout>
+				</Grid>
+
+				<!--  Форма / Јачина / Единица  -->
+				<Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+					<VerticalStackLayout Spacing="6">
+						<Label
+							CharacterSpacing="0.6"
+							FontAttributes="Bold"
+							FontSize="10"
+							Text="ФОРМА"
+							TextColor="{StaticResource SparkTextSecondary}" />
+						<Border
+							Padding="10,0"
+							BackgroundColor="{StaticResource SparkBackground}"
+							HeightRequest="40"
+							Stroke="{StaticResource SparkBorder}"
+							StrokeShape="RoundRectangle 8"
+							StrokeThickness="1">
+							<Entry
+								x:Name="DosageFormEntry"
+								BackgroundColor="Transparent"
+								FontSize="13"
+								HeightRequest="38"
+								Placeholder="Табл., инјекција"
+								PlaceholderColor="{StaticResource SparkTextSecondary}"
+								TextColor="{StaticResource SparkTextPrimary}"
+								VerticalOptions="Center" />
+						</Border>
+					</VerticalStackLayout>
+					<VerticalStackLayout Grid.Column="1" Spacing="6">
+						<Label
+							CharacterSpacing="0.6"
+							FontAttributes="Bold"
+							FontSize="10"
+							Text="ЈАЧИНА"
+							TextColor="{StaticResource SparkTextSecondary}" />
+						<Border
+							Padding="10,0"
+							BackgroundColor="{StaticResource SparkBackground}"
+							HeightRequest="40"
+							Stroke="{StaticResource SparkBorder}"
+							StrokeShape="RoundRectangle 8"
+							StrokeThickness="1">
+							<Entry
+								x:Name="StrengthEntry"
+								BackgroundColor="Transparent"
+								FontSize="13"
+								HeightRequest="38"
+								Keyboard="Numeric"
+								Placeholder="0"
+								PlaceholderColor="{StaticResource SparkTextSecondary}"
+								TextColor="{StaticResource SparkTextPrimary}"
+								VerticalOptions="Center" />
+						</Border>
+					</VerticalStackLayout>
+					<VerticalStackLayout Grid.Column="2" Spacing="6">
+						<Label
+							CharacterSpacing="0.6"
+							FontAttributes="Bold"
+							FontSize="10"
+							Text="ЕДИНИЦА"
+							TextColor="{StaticResource SparkTextSecondary}" />
+						<Border
+							Padding="10,0"
+							BackgroundColor="{StaticResource SparkBackground}"
+							HeightRequest="40"
+							Stroke="{StaticResource SparkBorder}"
+							StrokeShape="RoundRectangle 8"
+							StrokeThickness="1">
+							<Entry
+								x:Name="UnitEntry"
+								BackgroundColor="Transparent"
+								FontSize="13"
+								HeightRequest="38"
+								Placeholder="mg, ml..."
+								PlaceholderColor="{StaticResource SparkTextSecondary}"
+								TextColor="{StaticResource SparkTextPrimary}"
+								VerticalOptions="Center" />
+						</Border>
+					</VerticalStackLayout>
+				</Grid>
+
+				<!--  Стандардна доза  -->
+				<VerticalStackLayout Spacing="6">
+					<Label
+						CharacterSpacing="0.6"
+						FontAttributes="Bold"
+						FontSize="10"
+						Text="СТАНДАРДНА ДОЗА"
+						TextColor="{StaticResource SparkTextSecondary}" />
+					<Border
+						Padding="10,0"
+						BackgroundColor="{StaticResource SparkBackground}"
+						HeightRequest="40"
+						Stroke="{StaticResource SparkBorder}"
+						StrokeShape="RoundRectangle 8"
+						StrokeThickness="1">
+						<Entry
+							x:Name="DefaultDosageEntry"
+							BackgroundColor="Transparent"
+							FontSize="13"
+							HeightRequest="38"
+							Placeholder="Пр. 1 табл. дневно"
+							PlaceholderColor="{StaticResource SparkTextSecondary}"
+							TextColor="{StaticResource SparkTextPrimary}"
+							VerticalOptions="Center" />
+					</Border>
+				</VerticalStackLayout>
+
+				<!--  Производител  -->
+				<VerticalStackLayout Spacing="6">
+					<Label
+						CharacterSpacing="0.6"
+						FontAttributes="Bold"
+						FontSize="10"
+						Text="ПРОИЗВОДИТЕЛ"
+						TextColor="{StaticResource SparkTextSecondary}" />
+					<Border
+						Padding="10,0"
+						BackgroundColor="{StaticResource SparkBackground}"
+						HeightRequest="40"
+						Stroke="{StaticResource SparkBorder}"
+						StrokeShape="RoundRectangle 8"
+						StrokeThickness="1">
+						<Entry
+							x:Name="ManufacturerEntry"
+							BackgroundColor="Transparent"
+							FontSize="13"
+							HeightRequest="38"
+							Placeholder="Производител"
+							PlaceholderColor="{StaticResource SparkTextSecondary}"
+							TextColor="{StaticResource SparkTextPrimary}"
+							VerticalOptions="Center" />
+					</Border>
+				</VerticalStackLayout>
+
+				<BoxView HeightRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+
+				<!--  Actions  -->
+				<HorizontalStackLayout HorizontalOptions="End" Spacing="10">
+					<Button
+						BackgroundColor="{StaticResource SparkSurfaceAlt}"
+						BorderColor="{StaticResource SparkBorder}"
+						BorderWidth="1"
+						Clicked="OnCancelClicked"
+						CornerRadius="8"
+						FontSize="12"
+						HeightRequest="38"
+						Text="Откажи"
+						TextColor="{StaticResource SparkTextPrimary}"
+						WidthRequest="100" />
+					<Button
+						BackgroundColor="{StaticResource SparkAccentTealDark}"
+						Clicked="OnSaveClicked"
+						CornerRadius="8"
+						FontAttributes="Bold"
+						FontSize="12"
+						HeightRequest="38"
+						Text="Зачувај и додај"
+						TextColor="White"
+						WidthRequest="140" />
+				</HorizontalStackLayout>
+			</VerticalStackLayout>
+		</ScrollView>
+	</Border>
 </toolkit:Popup>
