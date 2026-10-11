@@ -59,6 +59,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
         !_isNewPatientMode &&
         IsReadOnly &&
         Patient.Id != Guid.Empty &&
+        Patient.Status == PatientStatus.Active &&
         _authorizationService.CanPerform(Modules.Appointments, ModuleAction.Create) &&
         _authorizationService.CanPerform(Modules.Appointments, ModuleAction.Schedule);
     public bool CanEditPatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Edit);
@@ -465,6 +466,15 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
             await _userDialogService.ShowAlertAsync(
                 "Термин",
                 "Прво зачувајте го пациентот, па потоа креирајте термин.",
+                "ОК");
+            return;
+        }
+
+        if(Patient.Status == PatientStatus.Inactive)
+        {
+            await _userDialogService.ShowAlertAsync(
+                "Пациентот е неактивен",
+                "За неактивен пациент не може да се креира термин.",
                 "ОК");
             return;
         }
