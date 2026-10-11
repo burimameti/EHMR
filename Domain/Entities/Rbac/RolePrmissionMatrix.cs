@@ -30,16 +30,19 @@ public static class RolePermissionMatrix
             [UserRole.MainNurse] = Template(
                 (Modules.Dashboard, ModuleAction.View),
                 (Modules.Doctors, ModuleAction.View),
-                (Modules.Patients, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Activate|ModuleAction.Deactivate),
-                (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel|ModuleAction.Complete),
-          
-                (Modules.Protocols, ModuleAction.View|ModuleAction.Print),
-                (Modules.Inventory, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
-                (Modules.Medicines, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit),
+                // Main nurse may register and view patients, but cannot edit, deactivate, or delete them.
+                (Modules.Patients, ModuleAction.View|ModuleAction.Create),
+                // May create encounters and appointments, but existing clinical records are read-only.
+                (Modules.Encounters, ModuleAction.View|ModuleAction.Create|ModuleAction.Print),
+                (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Schedule),
+                (Modules.Protocols, ModuleAction.View),
+                (Modules.Inventory, ModuleAction.None),
+                // Catalog creation is allowed; editing/deleting existing entries is not.
+                (Modules.Medicines, ModuleAction.View|ModuleAction.Create),
                 (Modules.Reports, ModuleAction.View|ModuleAction.Export|ModuleAction.Print),
-                (Modules.Calendar, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel),
+                (Modules.Calendar, ModuleAction.View|ModuleAction.Create|ModuleAction.Schedule),
                 (Modules.MKBCodes, ModuleAction.View),
-                (Modules.Prescriptions, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit)
+                (Modules.Prescriptions, ModuleAction.View|ModuleAction.Create)
             ),
 
             [UserRole.Nurse] = Template(
