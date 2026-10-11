@@ -32,8 +32,6 @@ public class PatientMedicine : BaseEntity
     public Guid MedicineId { get; set; }
     public Medicine? Medicine { get; set; }
     public string Dosage { get; set; } = string.Empty;
-    /// <summary>Patient-specific dosing interval; independent from route of administration.</summary>
-    public string DosingFrequency { get; set; } = "Месечно";
     public decimal Quantity { get; set; }
     public bool IsActive { get; set; } = true;
 
