@@ -728,9 +728,10 @@ public class EncounterDetailService : IEncounterDetailService
 
                 if(appt is not null)
                 {
-                    var (resolvedEncounter, resolvedAppointment)=
-                        ReconcileStatus(encounter.Status, appt.Status);
-
+                    // The edit form requires an explicit status choice on each save.
+                    // The selected encounter status is authoritative and is mirrored to its appointment.
+                    var resolvedEncounter=encounter.Status;
+                    var resolvedAppointment=MapToAppointmentStatus(resolvedEncounter);
                     encounter.Status=resolvedEncounter;
                     appt.Status=resolvedAppointment;
 
