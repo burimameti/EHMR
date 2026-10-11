@@ -25,10 +25,7 @@
 				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 				<Setter Property="VerticalOptions" Value="Center" />
 			</Style>
-			<Style x:Key="SectionHeaderStyle" TargetType="controls:CrudSectionHeader">
-				<Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
-				<Setter Property="TextColor" Value="{StaticResource Gray800}" />
-			</Style>
+			
 		</ResourceDictionary>
 	</ContentPage.Resources>
 	<Grid ColumnDefinitions="260,*">
@@ -84,18 +81,14 @@
 							<VerticalStackLayout Spacing="12">
 
 								<controls:CrudSectionHeader
-									Title="ПАЦИЕНТ И РЕУМАТОЛОГ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+									Title="ПАЦИЕНТ И РЕУМАТОЛОГ"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 								<!--  Locked context display  -->
 								<Grid
 									ColumnDefinitions="*,*"
 									ColumnSpacing="12"
 									IsVisible="{Binding IsPatientLockedFromContext}">
-									<Border
-										Padding="14,12"
-										BackgroundColor="{StaticResource SparkTabActiveBg}"
-										StrokeShape="RoundRectangle 10"
-										StrokeThickness="0">
+									<Border Style="{StaticResource CrudFormSectionCardStyle}">
 										<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
 											<Border
 												BackgroundColor="{StaticResource SparkAccentTealBg}"
@@ -130,11 +123,7 @@
 									</Border>
 
 									<Border
-										Grid.Column="1"
-										Padding="14,12"
-										BackgroundColor="{StaticResource SparkTabActiveBg}"
-										StrokeShape="RoundRectangle 10"
-										StrokeThickness="0">
+										Grid.Column="1" Style="{StaticResource CrudFormSectionCardStyle}">
 										<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
 											<Border
 												BackgroundColor="{StaticResource SparkAccentTealBg}"
@@ -171,11 +160,7 @@
 
 								<!--  Основни податоци за пациентот  -->
 								<Border
-									Padding="14"
-									BackgroundColor="{StaticResource SparkTabActiveBg}"
-									IsVisible="{Binding HasPatientContext}"
-									StrokeShape="RoundRectangle 10"
-									StrokeThickness="0">
+									IsVisible="{Binding HasPatientContext}" Style="{StaticResource CrudFormSectionCardStyle}">
 									<Grid
 										ColumnDefinitions="1.4*,1*,1*,1.4*"
 										ColumnSpacing="14"
@@ -289,7 +274,7 @@
 
 							<!-- БИОЛОШКА ТЕРАПИЈА: усогласен приказ на МКБ, активни лекови и претходен скор -->
 							<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="8">
-								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1*" ColumnSpacing="8" VerticalOptions="Start">
 									<Border Grid.Column="0" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start" HorizontalOptions="Fill">
 										<VerticalStackLayout Spacing="0">
@@ -330,7 +315,7 @@
 											</VerticalStackLayout>
 										</VerticalStackLayout>
 									</Border>
-									<Border Grid.Column="2" Padding="10,8" BackgroundColor="{StaticResource SparkTabActiveBg}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start">
+									<Border Grid.Column="2" VerticalOptions="Start" Style="{StaticResource CrudFormSectionCardStyle}">
 										<VerticalStackLayout Spacing="5">
 											<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ПРЕТХОДЕН СКОР" />
 											<Label FontAttributes="Bold" FontSize="12" LineBreakMode="WordWrap" Text="{Binding CurrentPatientScore, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
@@ -346,7 +331,7 @@
 								<VerticalStackLayout Grid.Column="0" Spacing="10">
 									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
 										<controls:CrudSectionHeader
-											Title="ТЕКОВНА ТЕРАПИЈА"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+											Title="ТЕКОВНА ТЕРАПИЈА"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 										<controls:FFButton
 											Grid.Column="1"
 											ButtonKind="Secondary"
@@ -582,7 +567,7 @@
 							<!--  ЗАКАЖУВАЊЕ НА СЛЕДЕН ТЕРМИН  -->
 							<VerticalStackLayout Spacing="10">
 								<controls:CrudSectionHeader
-									Title="ЗАКАЖУВАЊЕ НА СЛЕДЕН ТЕРМИН"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+									Title="ЗАКАЖУВАЊЕ НА СЛЕДЕН ТЕРМИН"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 								<HorizontalStackLayout Spacing="6" VerticalOptions="Center">
 									<Label
 										FontAttributes="Bold"
@@ -646,7 +631,7 @@
 
 							<!--  Section: Последни прегледи  -->
 							<controls:CrudSectionHeader
-								Title="ПОСЛЕДНИ ПРЕГЛЕДИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								Title="ПОСЛЕДНИ ПРЕГЛЕДИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 							<Label
 								FontSize="12"
@@ -687,7 +672,7 @@
 
 							<controls:CrudSectionHeader
 								Title="ИСТОРИЈА НА ТЕРАПИИ"
-								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 							<VerticalStackLayout
 								BindableLayout.ItemsSource="{Binding PreviousMedicines}"
 								IsVisible="{Binding HasPatientContext}"
@@ -751,7 +736,7 @@
 
 							<controls:CrudSectionHeader
 								Title="ИСТОРИЈА НА ДИЈАГНОЗИ"
-								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 							<VerticalStackLayout
 								BindableLayout.ItemsSource="{Binding PatientMkb10Assignments}"
 								IsVisible="{Binding HasPatientContext}"
@@ -780,7 +765,7 @@
 							<!--  Section: Документи  -->
 							<controls:CrudSectionHeader
 								Title="ДОКУМЕНТИ НА ПАЦИЕНТ"
-								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								IsVisible="{Binding HasPatientContext}"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 							<Label
 								FontSize="12"
