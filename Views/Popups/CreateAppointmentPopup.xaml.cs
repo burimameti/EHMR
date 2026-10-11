@@ -29,7 +29,7 @@ public partial class CreateAppointmentPopup : Popup
     private void ClosePopup(object? result)
     {
 #if WINDOWS
-        _ = CloseAsync(result, CancellationToken.None);
+        _ = CloseAsync(CancellationToken.None);
 #else
         _ = CloseAsync(result);
 #endif
