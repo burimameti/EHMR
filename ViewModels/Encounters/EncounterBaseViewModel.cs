@@ -27,7 +27,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     public bool CanApprove => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Approve);
     public bool CanPrint => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Print);
     public bool CanExport => AuthorizationService.CanPerform(Modules.Encounters, ModuleAction.Export);
-    private bool CanModifyScores => CanCreate || CanUpdate;
+    private bool CanModifyScores => !IsReadOnly && (Encounter.Id==Guid.Empty ? CanCreate : CanUpdate);
 
     protected CancellationTokenSource SearchCts = new();
 
@@ -1456,7 +1456,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     protected async Task AddMedicine(Medicine medicine)
     {
-        if(!(CanCreate || CanUpdate) || medicine is null) return;
+        if(IsReadOnly || !(Encounter.Id==Guid.Empty ? CanCreate : CanUpdate) || medicine is null) return;
 
         if(EncounterMedicines.Any(x => x.MedicineId==medicine.Id&&x.IsActive))
             return;
