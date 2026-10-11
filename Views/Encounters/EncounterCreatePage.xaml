@@ -73,7 +73,7 @@
 											VerticalOptions="Center">
 											<CheckBox IsChecked="{Binding UseCyrillicPatientSearch, Mode=TwoWay}" />
 											<Label
-												FontSize="16"
+												FontSize="12"
 												Text="Кирилица"
 												TextColor="{StaticResource SparkTextPrimary}"
 												VerticalOptions="Center" />
@@ -137,7 +137,7 @@
 										<Label
 											Grid.ColumnSpan="4"
 											FontAttributes="Bold"
-											FontSize="15"
+											FontSize="14"
 											LineBreakMode="TailTruncation"
 											Text="{Binding SelectedPatient.FullName, TargetNullValue='—'}"
 											TextColor="{StaticResource SparkTextPrimary}" />
@@ -147,12 +147,12 @@
 											Grid.Column="0"
 											Spacing="1">
 											<Label
-												FontSize="16"
+												FontSize="11"
 												Text="Датум на раѓање"
 												TextColor="{StaticResource SparkTextSecondary}" />
 											<Label
 												FontAttributes="Bold"
-												FontSize="16"
+												FontSize="13"
 												Text="{Binding SelectedPatient.BirthDate, StringFormat='{0:dd.MM.yyyy}'}"
 												TextColor="{StaticResource SparkTextPrimary}" />
 										</VerticalStackLayout>
@@ -162,12 +162,12 @@
 											Grid.Column="1"
 											Spacing="1">
 											<Label
-												FontSize="16"
+												FontSize="11"
 												Text="Пол"
 												TextColor="{StaticResource SparkTextSecondary}" />
 											<Label
 												FontAttributes="Bold"
-												FontSize="16"
+												FontSize="13"
 												Text="{Binding SelectedPatient.Gender}"
 												TextColor="{StaticResource SparkTextPrimary}" />
 										</VerticalStackLayout>
@@ -178,12 +178,12 @@
 											Grid.ColumnSpan="2"
 											Spacing="1">
 											<Label
-												FontSize="16"
+												FontSize="11"
 												Text="Адреса"
 												TextColor="{StaticResource Black}" />
 											<Label
 												FontAttributes="Bold"
-												FontSize="16"
+												FontSize="13"
 												LineBreakMode="TailTruncation"
 												Text="{Binding SelectedPatient.Address, TargetNullValue='—'}"
 												TextColor="{StaticResource SparkTextPrimary}" />
@@ -194,12 +194,12 @@
 											Grid.Column="0"
 											Spacing="1">
 											<Label
-												FontSize="16"
+												FontSize="11"
 												Text="Телефон"
 												TextColor="{StaticResource SparkTextSecondary}" />
 											<Label
 												FontAttributes="Bold"
-												FontSize="16"
+												FontSize="13"
 												Text="{Binding SelectedPatient.Phone, TargetNullValue='—'}"
 												TextColor="{StaticResource SparkTextPrimary}" />
 										</VerticalStackLayout>
@@ -210,12 +210,12 @@
 											Spacing="1">
 											<Label
 												FontAttributes="Bold"
-												FontSize="16"
+												FontSize="11"
 												Text="ЕЗБО"
 												TextColor="{StaticResource SparkTextSecondary}" />
 											<Label
 												FontAttributes="Bold"
-												FontSize="16"
+												FontSize="13"
 												Text="{Binding SelectedPatient.SzboNumber, TargetNullValue='—'}"
 												TextColor="{StaticResource SparkTextPrimary}" />
 										</VerticalStackLayout>
@@ -226,12 +226,12 @@
 											Grid.ColumnSpan="2"
 											Spacing="1">
 											<Label
-												FontSize="16"
+												FontSize="11"
 												Text="Матичен реуматолог"
 												TextColor="{StaticResource SparkTextSecondary}" />
 											<Label
 												FontAttributes="Bold"
-												FontSize="16"
+												FontSize="14"
 												LineBreakMode="TailTruncation"
 												Text="{Binding SelectedDoctor.FullName, TargetNullValue='—'}"
 												TextColor="{StaticResource SparkAccentTealDark}" />
@@ -510,7 +510,7 @@
 															ColumnDefinitions="*,Auto"
 															ColumnSpacing="5">
 															<Label
-																FontSize="16"
+																FontSize="12"
 																LineBreakMode="WordWrap"
 																Text="{Binding .}"
 																TextColor="White"
@@ -612,7 +612,7 @@
 														ColumnDefinitions="*,Auto"
 														ColumnSpacing="5">
 														<Label
-															FontSize="16"
+															FontSize="12"
 															LineBreakMode="WordWrap"
 															Text="{Binding .}"
 															TextColor="{StaticResource SparkTextPrimary}"
@@ -696,12 +696,12 @@
 													VerticalOptions="Center">
 													<Label
 														FontAttributes="Bold"
-														FontSize="16"
+														FontSize="13"
 														LineBreakMode="TailTruncation"
 														Text="{Binding ClinicalNotes, TargetNullValue='Преглед без наведена причина'}"
 														TextColor="{StaticResource SparkTextPrimary}" />
 													<Label
-														FontSize="16"
+														FontSize="11"
 														Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}"
 														TextColor="{StaticResource SparkTextSecondary}" />
 												</VerticalStackLayout>
@@ -753,7 +753,7 @@
 														Text="{Binding Medicine.BilingualName, TargetNullValue='—'}"
 														TextColor="{StaticResource SparkTextPrimary}" />
 													<Label
-														FontSize="16"
+														FontSize="12"
 														Text="{Binding ApplicationRegime.Regime, TargetNullValue='—'}"
 														TextColor="{StaticResource SparkTextSecondary}" />
 												</VerticalStackLayout>
@@ -834,7 +834,7 @@
 								Spacing="6">
 								<!--<BindableLayout.EmptyView>
 									<Label
-										FontSize="16"
+										FontSize="12"
 										Text="Нема претходни дијагнози."
 										TextColor="{StaticResource SparkTextSecondary}" />
 								</BindableLayout.EmptyView>-->
