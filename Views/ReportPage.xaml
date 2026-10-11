@@ -234,8 +234,8 @@
 
                     <!-- Encounter rows grouped by patient; the first grid column is the +/− expander. -->
                     <Border Grid.Row="2" Grid.Column="0"
-                            BackgroundColor="{StaticResource Surface}"
-                            Stroke="{StaticResource Border}"
+                            BackgroundColor="{StaticResource SurfaceAlt}"
+                            Stroke="#E2E8F0"
                             StrokeShape="RoundRectangle 12"
                             StrokeThickness="1"
                             Padding="0">
