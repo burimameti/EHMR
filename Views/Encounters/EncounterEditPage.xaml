@@ -764,12 +764,7 @@
 								TextColor="{StaticResource SparkTextSecondary}" />
 
 							<Border
-								Padding="10"
-								BackgroundColor="{StaticResource SparkContentBackground}"
-								IsVisible="{Binding LatestPatientDocument, Converter={StaticResource SparkNotNullConverter}}"
-								Stroke="{StaticResource SparkBorder}"
-								StrokeShape="RoundRectangle 12"
-								StrokeThickness="1">
+								IsVisible="{Binding LatestPatientDocument, Converter={StaticResource SparkNotNullConverter}}" Style="{StaticResource CrudFormSectionCardStyle}">
 								<Grid ColumnDefinitions="110,*,Auto" ColumnSpacing="12">
 									<Border
 										HeightRequest="90"
