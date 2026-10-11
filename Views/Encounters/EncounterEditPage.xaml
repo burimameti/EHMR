@@ -517,13 +517,7 @@
 											Text="СКОРОВИ"
 											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
-										<controls:FFButton
-											Grid.Column="1"
-											ButtonKind="Ghost"
-											Command="{Binding AddScoreCommand}"
-											HeightRequestEx="34"
-											Text="Додади Скор"
-											WidthRequestEx="112" />
+
 									</Grid>
 
 									<controls:FFSearchBox Placeholder="Пребарај скор..." Text="{Binding ScoreSearchText, Mode=TwoWay}" />
