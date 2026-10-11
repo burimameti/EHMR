@@ -253,7 +253,7 @@
 								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1*" ColumnSpacing="8" VerticalOptions="Start">
 									<Border Grid.Column="0" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
 										<VerticalStackLayout Spacing="0">
-											<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}">
+											<Grid Style="{StaticResource CrudFormTableHeaderGridStyle}">
 												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="МКБ-10 ДИЈАГНОЗИ" />
 											</Grid>
 											<VerticalStackLayout BindableLayout.ItemsSource="{Binding CurrentMkb10Assignments}" Spacing="0" VerticalOptions="Start">
@@ -270,9 +270,9 @@
 											</VerticalStackLayout>
 										</VerticalStackLayout>
 									</Border>
-									<Border Grid.Column="1" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start" HorizontalOptions="Fill">
+									<Border Grid.Column="1" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
 										<VerticalStackLayout Spacing="0">
-											<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}">
+											<Grid Style="{StaticResource CrudFormTableHeaderGridStyle}">
 												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="АКТИВНИ ЛЕКОВИ" />
 											</Grid>
 											<VerticalStackLayout BindableLayout.ItemsSource="{Binding CurrentPatientMedicines}" Spacing="0" VerticalOptions="Start">
@@ -518,7 +518,7 @@
 										</Border>
 										<Border Style="{StaticResource CrudFormTableFrameStyle}">
 							<VerticalStackLayout Spacing="0">
-								<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}" ColumnDefinitions="*,44" ColumnSpacing="8">
+								<Grid ColumnDefinitions="*,44" ColumnSpacing="8" Style="{StaticResource CrudFormTableHeaderGridStyle}">
 									<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="СКОР" />
 									<Label Grid.Column="1" HorizontalTextAlignment="Center" Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="АКЦИИ" />
 								</Grid>
