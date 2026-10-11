@@ -38,7 +38,7 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {
         var requiredPatients=await context.Patients
-            .Where(x => x.Id==SeedIds.Patient13||x.Id==SeedIds.Patient2||x.Id==SeedIds.Patient3)
+            .Where(x => x.Id==SeedIds.Patient3||x.Id==SeedIds.Patient2||x.Id==SeedIds.Patient3)
             .Select(x => x.Id)
             .ToListAsync(ct);
         var requiredDoctors=await context.Doctors
@@ -46,7 +46,7 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
             .Select(x => x.Id)
             .ToListAsync(ct);
 
-        if(requiredPatients.Count<3||requiredDoctors.Count<3)
+        if(requiredPatients.Count<2||requiredDoctors.Count<1)
             return;
 
         var today=DateTime.Today;
@@ -85,11 +85,11 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
 
     private static List<Appointment> BuildAppointments(DateTime today) =>
     [
-        Appointment(0, SeedIds.Patient13, SeedIds.Doctor5, today.AddMonths(-8).AddHours(9), AppointmentStatus.Completed, "Прв реуматолошки преглед", "Почетна проценка и лабораториски насоки."),
-        Appointment(1, SeedIds.Patient13, SeedIds.Doctor5, today.AddMonths(-5).AddHours(10), AppointmentStatus.Completed, "Контрола по воведена терапија", "Намалена утринска вкочанетост."),
-        Appointment(2, SeedIds.Patient13, SeedIds.Doctor5, today.AddMonths(-2).AddHours(11), AppointmentStatus.Completed, "Редовна контрола", "Стабилна состојба, терапијата се продолжува."),
-        Appointment(3, SeedIds.Patient13, SeedIds.Doctor5, today.AddDays(-14).AddHours(9).AddMinutes(30), AppointmentStatus.Completed, "Контрола на болка во зглобови", "Добар одговор на терапијата."),
-        Appointment(4, SeedIds.Patient13, SeedIds.Doctor5, today.AddDays(3).AddHours(10), AppointmentStatus.Scheduled, "Следна контролна посета", "Закажана контрола со нови лабораториски резултати."),
+        Appointment(0, SeedIds.Patient3, SeedIds.Doctor5, today.AddMonths(-8).AddHours(9), AppointmentStatus.Completed, "Прв реуматолошки преглед", "Почетна проценка и лабораториски насоки."),
+        Appointment(1, SeedIds.Patient3, SeedIds.Doctor5, today.AddMonths(-5).AddHours(10), AppointmentStatus.Completed, "Контрола по воведена терапија", "Намалена утринска вкочанетост."),
+        Appointment(2, SeedIds.Patient3, SeedIds.Doctor5, today.AddMonths(-2).AddHours(11), AppointmentStatus.Completed, "Редовна контрола", "Стабилна состојба, терапијата се продолжува."),
+        Appointment(3, SeedIds.Patient3, SeedIds.Doctor5, today.AddDays(-14).AddHours(9).AddMinutes(30), AppointmentStatus.Completed, "Контрола на болка во зглобови", "Добар одговор на терапијата."),
+        Appointment(4, SeedIds.Patient3, SeedIds.Doctor5, today.AddDays(3).AddHours(10), AppointmentStatus.Scheduled, "Следна контролна посета", "Закажана контрола со нови лабораториски резултати."),
        // Appointment(5, SeedIds.Patient2, SeedIds.Doctor2, today.AddHours(12), AppointmentStatus.CheckedIn, "Акутна болка и оток на колено", "Пациентот е пријавен и чека преглед."),
       //  Appointment(6, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-1).AddHours(13), AppointmentStatus.Missed, "Контрола на хронична терапија", "Пациентот не се појави.")
     ];
@@ -117,11 +117,11 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
 
     private static List<Encounter> BuildEncounters(DateTime today) =>
     [
-        CompletedEncounter(0, SeedIds.Patient13, SeedIds.Doctor5, today.AddMonths(-8).AddHours(9), "Болка во мали зглобови и утринска вкочанетост", "Почетна реуматолошка проценка", "Потребни лабораториски анализи и контролен преглед."),
-        CompletedEncounter(1, SeedIds.Patient13, SeedIds.Doctor5, today.AddMonths(-5).AddHours(10), "Утринската вкочанетост е намалена", "Делумен клинички одговор", "Продолжување на терапијата со следење на крвна слика."),
-        CompletedEncounter(2, SeedIds.Patient13, SeedIds.Doctor5, today.AddMonths(-2).AddHours(11), "Повремена болка при оптоварување", "Стабилна хронична состојба", "Продолжи со редовна терапија и умерена активност."),
-        CompletedEncounter(3, SeedIds.Patient13, SeedIds.Doctor5, today.AddDays(-14).AddHours(9).AddMinutes(30), "Болка во зглобови со интензитет 3/10", "Добар одговор на терапија", "Контрола за три месеци со лабораториски резултати."),
-        ScheduledEncounter(4, SeedIds.Patient13, SeedIds.Doctor5, today.AddDays(3).AddHours(10), EncounterStatus.Scheduled, "Следна контролна посета"),
+        CompletedEncounter(0, SeedIds.Patient3, SeedIds.Doctor5, today.AddMonths(-8).AddHours(9), "Болка во мали зглобови и утринска вкочанетост", "Почетна реуматолошка проценка", "Потребни лабораториски анализи и контролен преглед."),
+        CompletedEncounter(1, SeedIds.Patient3, SeedIds.Doctor5, today.AddMonths(-5).AddHours(10), "Утринската вкочанетост е намалена", "Делумен клинички одговор", "Продолжување на терапијата со следење на крвна слика."),
+        CompletedEncounter(2, SeedIds.Patient3, SeedIds.Doctor5, today.AddMonths(-2).AddHours(11), "Повремена болка при оптоварување", "Стабилна хронична состојба", "Продолжи со редовна терапија и умерена активност."),
+        CompletedEncounter(3, SeedIds.Patient3, SeedIds.Doctor5, today.AddDays(-14).AddHours(9).AddMinutes(30), "Болка во зглобови со интензитет 3/10", "Добар одговор на терапија", "Контрола за три месеци со лабораториски резултати."),
+        ScheduledEncounter(4, SeedIds.Patient3, SeedIds.Doctor5, today.AddDays(3).AddHours(10), EncounterStatus.Scheduled, "Следна контролна посета"),
        // ScheduledEncounter(5, SeedIds.Patient2, SeedIds.Doctor2, today.AddHours(12), EncounterStatus.CheckedIn, "Акутна болка и оток на колено"),
        // ScheduledEncounter(6, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-1).AddHours(13), EncounterStatus.NoShow, "Контрола на хронична терапија")
     ];
@@ -217,7 +217,7 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         foreach(var medicine in medicines)
         {
             var existingAssignment = await context.PatientMedicines.FirstOrDefaultAsync(
-                x => x.PatientId == SeedIds.Patient13
+                x => x.PatientId == SeedIds.Patient3
                     && x.EncounterId == null
                     && x.MedicineId == medicine.Id,
                 ct);
@@ -239,7 +239,7 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
                     : medicine.Id == SeedIds.Med6
                         ? "00000000-0000-0000-0000-000000009102"
                         : "00000000-0000-0000-0000-000000009103"),
-                PatientId = SeedIds.Patient13,
+                PatientId = SeedIds.Patient3,
                 MedicineId = medicine.Id,
                 ApplicationRegimeId = medicine.RegimeId,
          
@@ -293,7 +293,7 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
                 context.PatientMedicines.Add(new PatientMedicine
                 {
                     Id = Guid.Parse($"00000000-0000-0000-0000-{(910000 + encounterIndex * 10 + medicineIndex):D12}"),
-                    PatientId = SeedIds.Patient13,
+                    PatientId = SeedIds.Patient3,
                     EncounterId = encounterId,
                     MedicineId = medicine.Id,
                     ApplicationRegimeId = medicine.RegimeId,
