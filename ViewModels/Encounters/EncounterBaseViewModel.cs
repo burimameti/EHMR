@@ -101,6 +101,12 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     [RelayCommand]
     public async Task AddApplicationRegimeAsync()
     {
+        if(!AuthorizationService.CanPerform(Modules.Medicines, ModuleAction.Create))
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за додавање нов начин на апликација.", "ОК");
+            return;
+        }
+
         var value=await UserDialogService.ShowPromptAsync(
             "Нов режим на апликација",
             "Внесете нов режим на апликација за лекот.",
