@@ -887,24 +887,20 @@
 							</VerticalStackLayout>
 
 							<!--  ══════════════════════════════════════════  -->
+							<!--  ══════════════════════════════════════════  -->
 							<!--  2. ТЕРМИН  -->
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="12">
 								<controls:CrudSectionHeader Title="ТЕРМИН" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
-
-								<Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="14">
-
-									<!--  Scheduling horizon + auto slot (new only)  -->
-									<!-- Автоматскиот слободен термин намерно не се прикажува. -->
-									<!-- Date + Time -->
-									<Grid
-										Grid.Row="1"
-										ColumnDefinitions="1.4*,1*"
-										ColumnSpacing="16">
-										
+								<Grid ColumnDefinitions="1.4*,1*" ColumnSpacing="16">
+									<Grid Grid.Column="0" ColumnDefinitions="Auto,*" ColumnSpacing="12" VerticalOptions="Center">
+										<Label Style="{StaticResource EditFieldLabelStyle}" Text="Датум" VerticalOptions="Center" />
+										<DatePicker Grid.Column="1" BackgroundColor="White" Date="{Binding PreferredAppointmentDate, Mode=TwoWay}" IsVisible="{Binding IsEditMode}" TextColor="{StaticResource SparkTextPrimary}" />
+										<Label Grid.Column="1" Padding="12,8" IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}" Text="{Binding Appointment.ScheduledStart, StringFormat='{:d.M.yyyy}'}" TextColor="{StaticResource SparkTextPrimary}" />
+									</Grid>
 								</Grid>
 							</VerticalStackLayout>
-							<!--  ══════════════════════════════════════════  -->
+
 							<!--  5. ЗАБЕЛЕШКА  -->
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="12">
