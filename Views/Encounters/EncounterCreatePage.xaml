@@ -19,12 +19,7 @@
 				<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
 				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
 			</Style>
-			<Style x:Key="TableCellEntryStyle" TargetType="Entry">
-				<Setter Property="BackgroundColor" Value="Transparent" />
-				<Setter Property="FontSize" Value="11" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-				<Setter Property="VerticalOptions" Value="Center" />
-			</Style>
+			
 			
 		</ResourceDictionary>
 	</ContentPage.Resources>
@@ -423,7 +418,7 @@
 															Stroke="{StaticResource SparkBorderSubtle}"
 															StrokeThickness="1">
 															<Entry
-															Style="{StaticResource TableCellEntryStyle}"
+															Style="{StaticResource CrudFormTableCellEntryStyle}"
 															IsReadOnly="True"
 															Keyboard="Numeric"
 															Text="{Binding Dosage}" />
@@ -450,7 +445,7 @@
 															Stroke="{StaticResource SparkBorderSubtle}"
 															StrokeThickness="1">
 															<Entry
-															Style="{StaticResource TableCellEntryStyle}"
+															Style="{StaticResource CrudFormTableCellEntryStyle}"
 															Keyboard="Numeric"
 															Text="{Binding Quantity, Mode=TwoWay}" />
 														</Border>
