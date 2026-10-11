@@ -105,16 +105,7 @@
 				Style="{StaticResource PageCardStyleDashboard}">
 				<sc:FFPageHeader
 					Title="Извештаи за пациенти"
-					Subtitle="Преглед, филтрирање и генерирање извештаи за пациенти">
-					<sc:FFPageHeader.HeaderContent>
-						<sc:FFButton
-							ButtonKind="Secondary"
-							Command="{Binding GoBackCommand}"
-							ContentPadding="16,0"
-							HeightRequestEx="40"
-							Text="← Назад" />
-					</sc:FFPageHeader.HeaderContent>
-				</sc:FFPageHeader>
+					Subtitle="Преглед, филтрирање и генерирање извештаи за пациенти" />
 			</Border>
 
 			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
