@@ -102,17 +102,7 @@ public sealed class PatientMkb10AssignmentSeeder : IEntitySeeder
             "Контролен преглед со подобрен клинички одговор.",
             PatientMkb10AssignmentStatus.Chronic),
 
-        new(
-            Guid.Parse("00000000-0000-0000-0000-000000009215"),
-            "MKB-DEMO-E1",
-            SeedIds.Patient1,
-            SeedIds.Encounter1,
-            "I10",
-            -90,
-            true,
-            "Умерена",
-            "Контрола на крвен притисок.",
-            PatientMkb10AssignmentStatus.Active)
+
     ];
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
