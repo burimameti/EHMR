@@ -502,6 +502,15 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
             return;
         }
 
+        if(ScoreEditor.Items.Count == 0)
+        {
+            await _userDialogService.ShowAlertAsync(
+                "Валидација",
+                "Мора да внесете најмалку еден скор пред да го зачувате пациентот.",
+                "ОК");
+            return;
+        }
+
         var emptyScore = ScoreEditor.Items.FirstOrDefault(x => string.IsNullOrWhiteSpace(x.Description));
         if(emptyScore!=null)
         {
