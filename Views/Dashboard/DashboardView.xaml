@@ -369,7 +369,7 @@
 															<Label
 																FontAttributes="Bold"
 																FontSize="12"
-																Text="{Binding Patient.Phone}"
+																Text="{Binding Contact}"
 																TextColor="{StaticResource SparkTextPrimary}" />
 														</VerticalStackLayout>
 														<VerticalStackLayout Grid.Column="4" Spacing="1">
