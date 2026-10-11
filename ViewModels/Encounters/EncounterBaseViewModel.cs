@@ -1409,7 +1409,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     private void SearchApprovedPatientMedicines(string? query)
     {
         var term=query?.Trim();
-        if(string.IsNullOrWhiteSpace(term)||term.Length<2)
+        if(string.IsNullOrWhiteSpace(term))
         {
             MedicineResults.Clear();
             ShowMedicineDropdown=false;
