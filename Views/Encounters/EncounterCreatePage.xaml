@@ -253,47 +253,37 @@
 							</VerticalStackLayout>
 
 
-							<!-- Биолошка терапија: MKB-10, активни лекови и претходен скор од картонот. -->
-							<!-- MKB-10 од картонот на пациентот; се прикажува read-only во новиот преглед. -->
-							<controls:CrudSectionHeader
-								Title="БИОЛОШКА ТЕРАПИЈА"
-								IsVisible="{Binding HasPatientContext}"
-								LineColor="{StaticResource Gray600}"
-								Style="{StaticResource SectionHeaderStyle}" />
-							<Border
-								Padding="10,8"
-								BackgroundColor="#F1F5F9"
-								IsVisible="{Binding HasPatientContext}"
-								Stroke="{StaticResource SparkBorder}"
-								StrokeShape="RoundRectangle 10"
-								StrokeThickness="1">
-								<Label
-									FontSize="12"
-									Text="{Binding CurrentMkb10Summary, TargetNullValue='Нема доделен MKB-10.'}"
-									TextColor="{StaticResource SparkTextPrimary}" />
-							</Border>
+							<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" IsVisible="{Binding HasPatientContext}" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="6">
+  <Label FontSize="10" Text="МКБ-10 дијагнози" TextColor="{StaticResource SparkTextSecondary}" />
+  <VerticalStackLayout BindableLayout.ItemsSource="{Binding CurrentMkb10Assignments}" Spacing="3">
+    <BindableLayout.EmptyView><Label FontSize="12" Text="Нема доделени МКБ-10 дијагнози." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
+    <BindableLayout.ItemTemplate><DataTemplate x:DataType="entities:PatientMkb10Assignment">
+      <Grid ColumnDefinitions="18,*" ColumnSpacing="5"><controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="0,4">
+          <Label FontAttributes="Bold" FontSize="11.5" Text="{Binding Mkb10Code.Code, TargetNullValue='—'}" TextColor="{StaticResource SparkAccentTealDark}" />
+          <Label Grid.Column="1" FontSize="11.5" LineBreakMode="WordWrap" Text="{Binding Mkb10Code.Description, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
+        </Grid>
+      </Grid>
+    </DataTemplate></BindableLayout.ItemTemplate>
+  </VerticalStackLayout>
+</VerticalStackLayout>
+<controls:CrudSectionHeader Title="АКТИВНИ ЛЕКОВИ НА ПАЦИЕНТОТ" IsVisible="{Binding HasPatientContext}" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="3">
+  <BindableLayout.ItemsSource><Binding Path="CurrentPatientMedicines" /></BindableLayout.ItemsSource>
+  <BindableLayout.EmptyView><Label FontSize="12" Text="Нема активна терапија." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
+  <BindableLayout.ItemTemplate><DataTemplate x:DataType="entities:PatientMedicine">
+    <Grid ColumnDefinitions="18,*" ColumnSpacing="5"><controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+      <VerticalStackLayout Grid.Column="1" Padding="0,4" Spacing="2">
+        <Label FontAttributes="Bold" FontSize="12" Text="{Binding Medicine.BilingualName, TargetNullValue='Лек'}" TextColor="{StaticResource SparkTextPrimary}" />
+        <Label FontSize="10.5" Text="{Binding Dosage, StringFormat='Доза: {0}', TargetNullValue=''}" TextColor="{StaticResource SparkTextSecondary}" />
+        <Label FontSize="10.5" Text="{Binding ApplicationRegime.Regime, StringFormat='Режим: {0}', TargetNullValue=''}" TextColor="{StaticResource SparkTextSecondary}" />
+      </VerticalStackLayout>
+    </Grid>
+  </DataTemplate></BindableLayout.ItemTemplate>
+</VerticalStackLayout>
 
-							<!-- Активната терапија на пациентот е само за преглед; не се менува од формата за преглед. -->
-							<controls:CrudSectionHeader
-								Title="АКТИВНИ ЛЕКОВИ НА ПАЦИЕНТОТ"
-								IsVisible="{Binding HasPatientContext}"
-								LineColor="{StaticResource Gray600}"
-								Style="{StaticResource SectionHeaderStyle}" />
-							<Border
-								Padding="10,8"
-								BackgroundColor="#F1F5F9"
-								IsVisible="{Binding HasPatientContext}"
-								Stroke="{StaticResource SparkBorder}"
-								StrokeShape="RoundRectangle 10"
-								StrokeThickness="1">
-								<Label
-									FontSize="12"
-									Text="{Binding ActiveMedicinesSummary}"
-									TextColor="{StaticResource SparkTextPrimary}" />
-							</Border>
-
-
-							<!--  Сите контролни полиња за прегледот се прикажуваат дури по избор на пациент.  -->
+			<!--  Сите контролни полиња за прегледот се прикажуваат дури по избор на пациент.  -->
 							<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="12">
 
 								<!--  ── 3. ТЕКОВНА ТЕРАПИЈА + СКОРОВИ (ист ред) / СЛЕДЕН ТЕРМИН (долу лево) ──  -->
