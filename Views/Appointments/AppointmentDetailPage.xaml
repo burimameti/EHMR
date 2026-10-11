@@ -12,10 +12,7 @@
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
-			<Style x:Key="SectionHeaderStyle" TargetType="controls:CrudSectionHeader">
-				<Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
-				<Setter Property="TextColor" Value="{StaticResource Gray800}" />
-			</Style>
+			
 
 			<DataTemplate x:Key="AppointmentMkb10HistoryRowTemplate" x:DataType="entities:PatientMkb10Assignment">
 				<Grid ColumnDefinitions="18,*" ColumnSpacing="5" Padding="0,3">
@@ -111,7 +108,7 @@
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="12">
 
-								<controls:CrudSectionHeader Title="ПАЦИЕНТ И РЕУМАТОЛОГ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								<controls:CrudSectionHeader Title="ПАЦИЕНТ И РЕУМАТОЛОГ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 
 								<!--  Locked panels — existing appointment (view + edit mode)  -->
@@ -119,11 +116,7 @@
 									ColumnDefinitions="*,*"
 									ColumnSpacing="12"
 									IsVisible="{Binding IsNewAppointment, Converter={StaticResource InverseBoolConverter}}">
-									<Border
-										Padding="14,12"
-										BackgroundColor="{StaticResource SparkTabActiveBg}"
-										StrokeShape="RoundRectangle 10"
-										StrokeThickness="0">
+									<Border Style="{StaticResource CrudFormSectionCardStyle}">
 										<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
 											<Border
 												BackgroundColor="{StaticResource SparkAccentTealBg}"
@@ -157,11 +150,7 @@
 										</Grid>
 									</Border>
 									<Border
-										Grid.Column="1"
-										Padding="14,12"
-										BackgroundColor="{StaticResource SparkTabActiveBg}"
-										StrokeShape="RoundRectangle 10"
-										StrokeThickness="0">
+										Grid.Column="1" Style="{StaticResource CrudFormSectionCardStyle}">
 										<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
 											<Border
 												BackgroundColor="{StaticResource SparkAccentTealBg}"
@@ -265,11 +254,7 @@
 										ColumnDefinitions="*,*"
 										ColumnSpacing="12"
 										IsVisible="{Binding SelectedPatientForAppointment, Converter={StaticResource SparkNotNullConverter}}">
-										<Border
-											Padding="14,12"
-											BackgroundColor="{StaticResource SparkTabActiveBg}"
-											StrokeShape="RoundRectangle 10"
-											StrokeThickness="0">
+										<Border Style="{StaticResource CrudFormSectionCardStyle}">
 											<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
 												<Border
 													BackgroundColor="{StaticResource SparkAccentTealBg}"
@@ -303,11 +288,7 @@
 											</Grid>
 										</Border>
 										<Border
-											Grid.Column="1"
-											Padding="14,12"
-											BackgroundColor="{StaticResource SparkTabActiveBg}"
-											StrokeShape="RoundRectangle 10"
-											StrokeThickness="0">
+											Grid.Column="1" Style="{StaticResource CrudFormSectionCardStyle}">
 											<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
 												<Border
 													BackgroundColor="{StaticResource SparkAccentTealBg}"
@@ -350,7 +331,7 @@
 							<!--  2. ТЕРМИН  -->
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="12">
-								<controls:CrudSectionHeader Title="ТЕРМИН" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								<controls:CrudSectionHeader Title="ТЕРМИН" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 								<Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="14">
 
@@ -414,7 +395,7 @@
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="14">
 
-								<controls:CrudSectionHeader Title="МКБ-10 ДИЈАГНОЗИ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								<controls:CrudSectionHeader Title="МКБ-10 ДИЈАГНОЗИ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 
 								<!--  ═══ EDIT MODE: alphabet + dual search + compact assigned list ═══  -->
@@ -730,7 +711,7 @@
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="12">
 
-								<controls:CrudSectionHeader Title="ЛЕКОВИ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								<controls:CrudSectionHeader Title="ЛЕКОВИ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 
 								<!--  ═══ EDIT MODE: search + compact assigned list side-by-side ═══  -->
@@ -1018,7 +999,7 @@
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="12">
 
-								<controls:CrudSectionHeader Title="ЗАБЕЛЕШКА" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								<controls:CrudSectionHeader Title="ЗАБЕЛЕШКА" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 
 								<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="8">
@@ -1069,7 +1050,7 @@
 					<controls:FFSectionCard Grid.Row="0" Style="{StaticResource CrudFormCardStyle}">
 						<VerticalStackLayout Padding="0" Spacing="12">
 
-							<controls:CrudSectionHeader Title="ИСТОРИЈА НА ПАЦИЕНТОТ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+							<controls:CrudSectionHeader Title="ИСТОРИЈА НА ПАЦИЕНТОТ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 
 							<controls:SparkExpandableCard
