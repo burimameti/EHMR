@@ -31,8 +31,8 @@ public sealed class PatientMkb10AssignmentSeeder : IEntitySeeder
         // Patient card: chronic diagnosis, independent of any individual visit.
         new(
             Guid.Parse("00000000-0000-0000-0000-000000009201"),
-            "MKB-DEMO-P13-001",
-            SeedIds.Patient13,
+            "MKB-DEMO-P3-001",
+            SeedIds.Patient3,
             null,
             "M06.9",
             -300,
@@ -57,7 +57,7 @@ public sealed class PatientMkb10AssignmentSeeder : IEntitySeeder
         new(
             Guid.Parse("00000000-0000-0000-0000-000000009211"),
             "MKB-DEMO-E8001",
-            SeedIds.Patient13,
+            SeedIds.Patient3,
             Guid.Parse("00000000-0000-0000-0000-000000008001"),
             "M06.9",
             -240,
@@ -69,7 +69,7 @@ public sealed class PatientMkb10AssignmentSeeder : IEntitySeeder
         new(
             Guid.Parse("00000000-0000-0000-0000-000000009212"),
             "MKB-DEMO-E8002",
-            SeedIds.Patient13,
+            SeedIds.Patient3,
             Guid.Parse("00000000-0000-0000-0000-000000008002"),
             "M06.9",
             -150,
@@ -81,7 +81,7 @@ public sealed class PatientMkb10AssignmentSeeder : IEntitySeeder
         new(
             Guid.Parse("00000000-0000-0000-0000-000000009213"),
             "MKB-DEMO-E8003",
-            SeedIds.Patient13,
+            SeedIds.Patient3,
             Guid.Parse("00000000-0000-0000-0000-000000008003"),
             "M06.9",
             -60,
@@ -93,7 +93,7 @@ public sealed class PatientMkb10AssignmentSeeder : IEntitySeeder
         new(
             Guid.Parse("00000000-0000-0000-0000-000000009214"),
             "MKB-DEMO-E8004",
-            SeedIds.Patient13,
+            SeedIds.Patient3,
             Guid.Parse("00000000-0000-0000-0000-000000008004"),
             "M06.9",
             -14,
