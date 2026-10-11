@@ -1113,12 +1113,7 @@
 											Title="ПРИКАЧИ ДРУГА ДОКУМЕНТАЦИЈА ЗА ПАЦИЕНТОТ"
 											LineColor="{StaticResource White}"
 											Style="{StaticResource CrudFormSectionHeaderStyle}" />
-										<Border
-											Padding="14"
-											BackgroundColor="White"
-											Stroke="{StaticResource SparkBorderSubtle}"
-											StrokeShape="RoundRectangle 10"
-											StrokeThickness="1">
+										<Border Style="{StaticResource CrudFormSectionCardStyle}">
 											<VerticalStackLayout Spacing="12">
 												<Grid
 													ColumnDefinitions="*,*"
@@ -1149,12 +1144,7 @@
 													<CollectionView.ItemTemplate>
 														<DataTemplate x:DataType="dto:PatientDocumentDto">
 															<Border
-																Margin="0,0,0,8"
-																Padding="10,8"
-																BackgroundColor="{StaticResource SparkTabActiveBg}"
-																Stroke="{StaticResource SparkBorderSubtle}"
-																StrokeShape="RoundRectangle 10"
-																StrokeThickness="1">
+																Margin="0,0,0,8" Style="{StaticResource CrudFormDocumentCardStyle}">
 																<Border.GestureRecognizers>
 																	<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.PreviewDocumentCommand}" CommandParameter="{Binding .}" />
 																</Border.GestureRecognizers>
