@@ -829,11 +829,25 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     private async Task NewAppointmentForPatient(Patient patient)
     {
         if(patient is null) return;
-        if(!CanCreate)
+
+        if(patient.Status != PatientStatus.Active)
         {
-            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате авторизација за додавање термини.", "OK");
+            await UserDialogService.ShowAlertAsync(
+                "Неактивен пациент",
+                "Не може да се креира термин за неактивен пациент.",
+                "ОК");
             return;
         }
+
+        if(!CanCreate || !CanSchedule)
+        {
+            await UserDialogService.ShowAlertAsync(
+                "Пристапот е одбиен",
+                "Немате овластување за креирање и закажување термин.",
+                "ОК");
+            return;
+        }
+
         _selectedItemService.SelectedItem=new Appointment { Id=Guid.Empty, PatientId=patient.Id };
         await NavigationService.GoToAsync(AppRoutes.Appointments.Detail);
     }
