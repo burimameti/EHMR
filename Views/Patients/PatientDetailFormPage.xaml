@@ -101,102 +101,45 @@
 			<!--  ═══ ШАБЛОНИ ЗА ИСТОРИЈА НА ПАЦИЕНТОТ ═══  -->
 
 			<DataTemplate x:Key="PatientMkb10CodeRowTemplate" x:DataType="dto:PatientMkb10CodeDto">
-				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
-					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
-						<Label
-							FontAttributes="Bold"
-							FontFamily="Consolas"
-							FontSize="12"
-							Text="{Binding Mkb10Code}"
-							TextColor="{StaticResource SparkAccentTealDark}"
-							VerticalOptions="Center" />
-						<Label
-							Grid.Column="1"
-							Margin="10,0,0,0"
-							FontSize="12"
-							LineBreakMode="TailTruncation"
-							Text="{Binding Mkb10Description}"
-							TextColor="{StaticResource SparkTextPrimary}"
-							VerticalOptions="Center" />
+				<Grid ColumnDefinitions="18,*" ColumnSpacing="5" Padding="0,3">
+					<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+					<Grid Grid.Column="1" Padding="0,6" ColumnDefinitions="Auto,*" ColumnSpacing="10">
+						<Label FontAttributes="Bold" FontFamily="Consolas" FontSize="12" Text="{Binding Mkb10Code}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
+						<Label Grid.Column="1" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding Mkb10Description}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
 					</Grid>
-				</Border>
+				</Grid>
 			</DataTemplate>
 
 			<DataTemplate x:Key="PatientEncounterRowTemplate" x:DataType="entities:Encounter">
-				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
-					<Grid
-						Padding="8,6"
-						ColumnDefinitions="Auto,*,Auto"
-						ColumnSpacing="10">
-						<Label
-							FontAttributes="Bold"
-							FontSize="12"
-							Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}"
-							TextColor="{StaticResource SparkAccentTealDark}"
-							VerticalOptions="Center" />
-						<Label
-							Grid.Column="1"
-							FontSize="12"
-							LineBreakMode="TailTruncation"
-							Text="{Binding ClinicalNotes, TargetNullValue='Без забелешка'}"
-							TextColor="{StaticResource SparkTextPrimary}"
-							VerticalOptions="Center" />
-						<Border
-							Grid.Column="2"
-							Padding="6,2"
-							BackgroundColor="{Binding Status, Converter={StaticResource StatusBgConverter}}"
-							StrokeShape="RoundRectangle 4"
-							StrokeThickness="0"
-							VerticalOptions="Center">
-							<Label
-								FontAttributes="Bold"
-								FontSize="10"
-								Text="{Binding Status, Converter={StaticResource StatusTextConverter}}"
-								TextColor="{Binding Status, Converter={StaticResource StatusColorConverter}}" />
+				<Grid ColumnDefinitions="18,*" ColumnSpacing="5" Padding="0,3">
+					<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+					<Grid Grid.Column="1" Padding="0,6" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+						<Label FontAttributes="Bold" FontSize="12" Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
+						<Label Grid.Column="1" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding ClinicalNotes, TargetNullValue='Без забелешка'}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+						<Border Grid.Column="2" Padding="6,2" BackgroundColor="{Binding Status, Converter={StaticResource StatusBgConverter}}" StrokeShape="RoundRectangle 4" StrokeThickness="0" VerticalOptions="Center">
+							<Label FontAttributes="Bold" FontSize="10" Text="{Binding Status, Converter={StaticResource StatusTextConverter}}" TextColor="{Binding Status, Converter={StaticResource StatusColorConverter}}" />
 						</Border>
 					</Grid>
-				</Border>
+				</Grid>
 			</DataTemplate>
 
 			<DataTemplate x:Key="PatientAppointmentRowTemplate" x:DataType="entities:Appointment">
-				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
-					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
-						<Label
-							FontAttributes="Bold"
-							FontSize="12"
-							Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy}'}"
-							TextColor="{StaticResource SparkAccentTealDark}"
-							VerticalOptions="Center" />
-						<Label
-							Grid.Column="1"
-							Margin="10,0,0,0"
-							FontSize="12"
-							LineBreakMode="TailTruncation"
-							Text="{Binding ClinicalNotes, TargetNullValue='Без забелешка'}"
-							TextColor="{StaticResource SparkTextPrimary}"
-							VerticalOptions="Center" />
+				<Grid ColumnDefinitions="18,*" ColumnSpacing="5" Padding="0,3">
+					<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+					<Grid Grid.Column="1" Padding="0,6" ColumnDefinitions="Auto,*" ColumnSpacing="10">
+						<Label FontAttributes="Bold" FontSize="12" Text="{Binding ScheduledStart, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
+						<Label Grid.Column="1" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding ClinicalNotes, TargetNullValue='Без забелешка'}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
 					</Grid>
-				</Border>
+				</Grid>
 			</DataTemplate>
 			<DataTemplate x:Key="PatientPrescriptionRowTemplate" x:DataType="entities:Prescription">
-				<Border Style="{StaticResource CrudFormHistoryRowStyle}">
-					<Grid Padding="8,6" ColumnDefinitions="Auto,*">
-						<Label
-							FontAttributes="Bold"
-							FontSize="12"
-							Text="{Binding Status}"
-							TextColor="{StaticResource SparkAccentTealDark}"
-							VerticalOptions="Center" />
-						<Label
-							Grid.Column="1"
-							Margin="10,0,0,0"
-							FontSize="12"
-							LineBreakMode="TailTruncation"
-							Text="{Binding Notes}"
-							TextColor="{StaticResource SparkTextPrimary}"
-							VerticalOptions="Center" />
+				<Grid ColumnDefinitions="18,*" ColumnSpacing="5" Padding="0,3">
+					<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+					<Grid Grid.Column="1" Padding="0,6" ColumnDefinitions="Auto,*" ColumnSpacing="10">
+						<Label FontAttributes="Bold" FontSize="12" Text="{Binding Status}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
+						<Label Grid.Column="1" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding Notes}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
 					</Grid>
-				</Border>
+				</Grid>
 			</DataTemplate>
 
 		</ResourceDictionary>
