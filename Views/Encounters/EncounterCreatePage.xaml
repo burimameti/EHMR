@@ -56,7 +56,7 @@
 				<!--  ═══════════════  ЛЕВА КОЛОНА — ФОРМИ  ═══════════════  -->
 				<controls:FFSectionCard Grid.Column="0" Margin="0" Style="{StaticResource CrudFormCardStyle}">
 					<controls:CustomScrollView ScrollBarColor="{StaticResource SparkAccentTeal}">
-						<VerticalStackLayout Style="{StaticResource CrudFormContentStackStyle}">
+						<VerticalStackLayout Spacing="18" Style="{StaticResource CrudFormContentStackStyle}">
 
 							<!--  ── 1. ПАЦИЕНТ И РЕУМАТОЛОГ ──  -->
 							<Border Style="{StaticResource CrudFormSectionCardStyle}">
@@ -93,7 +93,8 @@
 										StrokeShape="RoundRectangle 8"
 										StrokeThickness="1">
 										<CollectionView
-											HeightRequest="164"
+											MaximumHeightRequest="164"
+											VerticalOptions="Start"
 											ItemsSource="{Binding PatientSuggestions}"
 											SelectedItem="{Binding PatientSuggestionSelection, Mode=TwoWay}"
 											SelectionMode="Single">
