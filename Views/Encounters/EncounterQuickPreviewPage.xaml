@@ -13,8 +13,12 @@
                 <Label Text="PREVIEW" FontSize="11" FontAttributes="Bold" TextColor="#64748B" />
                 <Label Text="Преглед на медицински извештај" FontSize="20" FontAttributes="Bold" TextColor="#1E293B" />
             </VerticalStackLayout>
-            <Button Grid.Column="1" Text="Назад" Clicked="OnBackClicked" Padding="18,0" HeightRequest="40"
-                    BackgroundColor="#F1F5F9" TextColor="#334155" />
+            <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                <Button Text="Печати" Clicked="OnPrintClicked" Padding="18,0" HeightRequest="36"
+                        BackgroundColor="#2AEBE7" TextColor="#0F172A" FontAttributes="Bold" />
+                <Button Text="Назад" Clicked="OnBackClicked" Padding="18,0" HeightRequest="36"
+                        BackgroundColor="#F1F5F9" TextColor="#334155" />
+            </HorizontalStackLayout>
         </Grid>
 
         <ScrollView Grid.Row="1" Padding="24" VerticalScrollBarVisibility="Always">
