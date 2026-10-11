@@ -456,8 +456,18 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             .Where(x => (x.EncounterId==null && !x.IsActive) || x.EncounterId.HasValue)
             .OrderByDescending(x => x.CreatedAt);
 
+    partial void OnPatientMkb10AssignmentsChanged(ObservableCollection<PatientMkb10Assignment> value)
+    {
+        OnPropertyChanged(nameof(CurrentMkb10Assignments));
+        OnPropertyChanged(nameof(CurrentMkb10Summary));
+    }
+
     public IEnumerable<PatientMkb10Assignment> CurrentMkb10Assignments =>
         PatientMkb10Assignments
+            // Only patient-level assignments represent diagnoses currently on the chart.
+            // Encounter-linked assignments belong to historical visits and remain in the
+            // separate "Историја на MKB-10" section.
+            .Where(x => !x.EncounterId.HasValue)
             // Chronic, in-remission and suspected diagnoses can still be current.
             .Where(x => x.Status!=PatientMkb10AssignmentStatus.Resolved
                      && x.Status!=PatientMkb10AssignmentStatus.RuledOut
