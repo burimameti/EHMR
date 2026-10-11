@@ -122,4 +122,58 @@
 		<Setter Property="Spacing" Value="8" />
 		<Setter Property="VerticalOptions" Value="Center" />
 	</Style>
+
+	<!-- Master card surface: copied from the patient form's established card design. -->
+	<Style x:Key="CrudFormSectionCardStyle" TargetType="Border">
+		<Setter Property="Padding" Value="14" />
+		<Setter Property="BackgroundColor" Value="#F8FAFC" />
+		<Setter Property="Stroke" Value="#DCE3EA" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
+		<Setter Property="StrokeThickness" Value="1" />
+		<Setter Property="Shadow" Value="{x:Null}" />
+	</Style>
+
+	<!-- Master editable-grid styles: the medication grid on PatientDetailFormPage is the reference. -->
+	<Style x:Key="CrudFormTableFrameStyle" TargetType="Border">
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="BackgroundColor" Value="White" />
+		<Setter Property="Stroke" Value="{StaticResource SparkBorderSubtle}" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 0" />
+		<Setter Property="StrokeThickness" Value="1" />
+	</Style>
+	<Style x:Key="CrudFormTableHeaderCellStyle" TargetType="Border">
+		<Setter Property="Padding" Value="10,8" />
+		<Setter Property="BackgroundColor" Value="{StaticResource Gray300}" />
+		<Setter Property="StrokeThickness" Value="0" />
+	</Style>
+	<Style x:Key="CrudFormTableHeaderLabelStyle" TargetType="Label">
+		<Setter Property="FontAttributes" Value="Bold" />
+		<Setter Property="FontSize" Value="9" />
+		<Setter Property="LineBreakMode" Value="TailTruncation" />
+		<Setter Property="TextColor" Value="{StaticResource Black}" />
+		<Setter Property="VerticalOptions" Value="Center" />
+	</Style>
+	<Style x:Key="CrudFormTableCellLabelStyle" TargetType="Label">
+		<Setter Property="FontSize" Value="11" />
+		<Setter Property="LineBreakMode" Value="TailTruncation" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="VerticalOptions" Value="Center" />
+	</Style>
+	<Style x:Key="CrudFormTableCellEntryStyle" TargetType="Entry">
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="FontSize" Value="11" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+		<Setter Property="VerticalOptions" Value="Center" />
+	</Style>
+	<Style x:Key="CrudFormTableIconStyle" TargetType="Label">
+		<Setter Property="FontFamily" Value="FASolid" />
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="HorizontalOptions" Value="Center" />
+		<Setter Property="VerticalOptions" Value="Center" />
+	</Style>
+	<Style x:Key="CrudFormSectionHeaderStyle" TargetType="controls:CrudSectionHeader">
+		<Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
+		<Setter Property="TextColor" Value="{StaticResource Gray800}" />
+	</Style>
+
 </ResourceDictionary>
