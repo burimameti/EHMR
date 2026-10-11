@@ -351,28 +351,28 @@
 												Padding="8,7"
 												BackgroundColor="{StaticResource Gray300}"
 												StrokeThickness="0">
-												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" TextColor="White" />
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ЛЕК" />
 											</Border>
 											<Border
 												Grid.Column="1"
 												Padding="8,7"
 												BackgroundColor="{StaticResource Gray300}"
 												StrokeThickness="0">
-												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ДОЗА" TextColor="White" />
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ДОЗА" />
 											</Border>
 											<Border
 												Grid.Column="2"
 												Padding="8,7"
 												BackgroundColor="{StaticResource Gray300}"
 												StrokeThickness="0">
-												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕЖИМ НА АПЛИКАЦИЈА" TextColor="White" />
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="РЕЖИМ НА АПЛИКАЦИЈА" />
 											</Border>
 											<Border
 												Grid.Column="3"
 												Padding="8,7"
 												BackgroundColor="{StaticResource Gray300}"
 												StrokeThickness="0">
-												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="КОЛИЧИНА" TextColor="White" />
+												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="КОЛИЧИНА" />
 											</Border>
 											<Border
 												Grid.Column="4"
@@ -383,7 +383,7 @@
 													HorizontalOptions="Center"
 													HorizontalTextAlignment="Center"
 													Style="{StaticResource TableHeaderLabelStyle}"
-													Text="Избриши" TextColor="White" />
+													Text="Избриши" />
 											</Border>
 										</Grid>
 
