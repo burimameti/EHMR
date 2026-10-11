@@ -109,7 +109,7 @@
 													TextColor="{StaticResource SparkTextSecondary}" />
 												<Label
 													FontAttributes="Bold"
-													FontSize="15"
+													FontSize="14"
 													LineBreakMode="TailTruncation"
 													Text="{Binding SelectedPatient.FullName, FallbackValue='—'}"
 													TextColor="{StaticResource SparkTextPrimary}" />
@@ -148,7 +148,7 @@
 													TextColor="{StaticResource SparkTextSecondary}" />
 												<Label
 													FontAttributes="Bold"
-													FontSize="15"
+													FontSize="14"
 													LineBreakMode="TailTruncation"
 													Text="{Binding SelectedDoctor.FullName, FallbackValue='—'}"
 													TextColor="{StaticResource SparkTextPrimary}" />
@@ -172,7 +172,7 @@
 										<Label
 											Grid.ColumnSpan="4"
 											FontAttributes="Bold"
-											FontSize="15"
+											FontSize="14"
 											LineBreakMode="TailTruncation"
 											Text="{Binding SelectedPatient.FullName, TargetNullValue='—'}"
 											TextColor="{StaticResource SparkTextPrimary}" />
