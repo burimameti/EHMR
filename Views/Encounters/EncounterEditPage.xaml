@@ -634,59 +634,21 @@
 								</BindableLayout.EmptyView>
 								<BindableLayout.ItemTemplate>
 									<DataTemplate x:DataType="entities:Encounter">
-										<Border
-											Padding="12,10"
-											BackgroundColor="{StaticResource SparkTabActiveBg}"
-											StrokeShape="RoundRectangle 10"
-											StrokeThickness="0">
-											<Border.GestureRecognizers>
-												<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.OpenEncounterCommand}" CommandParameter="{Binding .}" />
-											</Border.GestureRecognizers>
-											<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-												<Border
-													BackgroundColor="{StaticResource SparkAccentTealBg}"
-													HeightRequest="32"
-													StrokeShape="RoundRectangle 16"
-													StrokeThickness="0"
-													WidthRequest="32">
-													<Label
-														FontFamily="FASolid"
-														FontSize="11"
-														HorizontalOptions="Center"
-														Text="&#xf0f1;"
-														TextColor="{StaticResource SparkAccentTealDark}"
-														VerticalOptions="Center" />
-												</Border>
-												<VerticalStackLayout
-													Grid.Column="1"
-													Spacing="2"
-													VerticalOptions="Center">
-													<Label
-														FontAttributes="Bold"
-														FontSize="12"
-														LineBreakMode="TailTruncation"
-														Text="{Binding ClinicalNotes, TargetNullValue='Преглед без наведена причина'}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-													<Label
-														FontSize="10"
-														Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}"
-														TextColor="{StaticResource SparkTextSecondary}" />
-												</VerticalStackLayout>
-												<Border
-													Grid.Column="2"
-													Padding="8,3"
-													BackgroundColor="{StaticResource SparkAccentTealBg}"
-													StrokeShape="RoundRectangle 8"
-													StrokeThickness="0"
-													VerticalOptions="Center">
-													<Label
-														FontAttributes="Bold"
-														FontSize="9"
-														Text="{Binding Status}"
-														TextColor="{StaticResource SparkAccentTealDark}" />
-												</Border>
-											</Grid>
-										</Border>
+										<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+											<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+											<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
+												<Border.GestureRecognizers>
+													<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.OpenEncounterCommand}" CommandParameter="{Binding .}" />
+												</Border.GestureRecognizers>
+												<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+													<VerticalStackLayout Spacing="2">
+														<Label FontAttributes="Bold" FontSize="12" LineBreakMode="TailTruncation" Text="{Binding ClinicalNotes, TargetNullValue='Преглед без наведена причина'}" TextColor="{StaticResource SparkTextPrimary}" />
+														<Label Style="{StaticResource CrudCollectionMetaStyle}" Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}" />
+													</VerticalStackLayout>
+													<Label Grid.Column="1" FontAttributes="Bold" FontSize="9.5" Text="{Binding Status}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
+												</Grid>
+											</Border>
+										</Grid>
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
