@@ -176,7 +176,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
         ScoreSuggestions=new ObservableCollection<string>(
             ScoreOptions
-                .Where(x => x.Contains(query,StringComparison.OrdinalIgnoreCase))
+                .Where(x => SearchMatches(x, query))
                 .Take(8));
         ShowScoreSuggestions=ScoreSuggestions.Count>0;
     }
@@ -1425,14 +1425,21 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             .GroupBy(x => x.Id)
             .Select(group => group.First())
             .Where(m =>
-                (m.Name?.Contains(term,StringComparison.OrdinalIgnoreCase)==true) ||
-                (m.GenericName?.Contains(term,StringComparison.OrdinalIgnoreCase)==true) ||
-                (m.BilingualName?.Contains(term,StringComparison.OrdinalIgnoreCase)==true))
+                SearchMatches(m.Name, term) ||
+                SearchMatches(m.GenericName, term) ||
+                SearchMatches(m.BilingualName, term))
             .Take(12)
             .ToList();
 
         MedicineResults=new ObservableCollection<Medicine>(approvedMedicines);
         ShowMedicineDropdown=MedicineResults.Count>0;
+    }
+
+    private static bool SearchMatches(string? source, string query)
+    {
+        if(string.IsNullOrWhiteSpace(source)||string.IsNullOrWhiteSpace(query)) return false;
+        var variants = new[] { query, EHMR.Helpers.MacedonianTransliterator.ToCyrillic(query), EHMR.Helpers.MacedonianTransliterator.ToLatin(query) };
+        return variants.Any(v => source.Contains(v, StringComparison.OrdinalIgnoreCase));
     }
 
     // =====================================================
