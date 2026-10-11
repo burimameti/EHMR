@@ -24,6 +24,7 @@ public partial class CreateAppointmentPopupViewModel : ObservableObject
     {
         _encounterService=encounterService;
         _patientId=patientId;
+        _prefillDoctorId=docId;
 
 
 
