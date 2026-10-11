@@ -256,6 +256,49 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         .Select(x => x.DisplayText)
         .FirstOrDefault() ?? "—";
 
+    [RelayCommand]
+    private async Task AddPatientScoreAsync()
+    {
+        if(SelectedPatientForAppointment is null)
+        {
+            await UserDialogService.ShowAlertAsync("Скор", "Прво изберете пациент.", "Во ред");
+            return;
+        }
+
+        if(!(CanCreate || CanUpdate))
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за внесување скор.", "Во ред");
+            return;
+        }
+
+        var scoreName = await UserDialogService.ShowPromptAsync(
+            "Нов скор", "Внесете го името на скорот (на пример DAS28).", "Продолжи", "Откажи", "DAS28");
+        if(string.IsNullOrWhiteSpace(scoreName)) return;
+
+        var number = await UserDialogService.ShowPromptAsync(
+            "Вредност на скор", $"Внесете ја вредноста за „{scoreName.Trim()}“.", "Зачувај", "Откажи", "Пример: 3.2");
+        if(string.IsNullOrWhiteSpace(number)) return;
+
+        try
+        {
+            var saved = await _service.SavePatientScore(new PatientScore
+            {
+                PatientId = SelectedPatientForAppointment.Id,
+                ScoreText = scoreName.Trim(),
+                Number = number.Trim()
+            });
+
+            PatientScoreHistory.Insert(0, saved);
+            OnPropertyChanged(nameof(CurrentPatientScore));
+            await UserDialogService.ShowAlertAsync("Успешно", $"Скорот „{saved.DisplayText}“ е зачуван во историјата на пациентот.", "Во ред");
+        }
+        catch(Exception ex)
+        {
+            await UserDialogService.ShowAlertAsync("Грешка", $"Скорот не може да се зачува: {ex.Message}", "Во ред");
+        }
+    }
+
+
     // =========================
     // UI STATE
     // =========================
