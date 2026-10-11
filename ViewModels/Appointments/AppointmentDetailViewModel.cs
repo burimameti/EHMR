@@ -199,6 +199,9 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [ObservableProperty] private ObservableCollection<PatientMkb10Assignment> patientMkb10History = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> patientMedicinesHistory = new();
     [ObservableProperty] private ObservableCollection<PatientScore> patientScoreHistory = new();
+    [ObservableProperty] private ObservableCollection<string> applicationRegimeOptions = new();
+    [ObservableProperty] private ObservableCollection<string> appointmentScores = new();
+    [ObservableProperty] private string scoreSearchText = string.Empty;
 
     [ObservableProperty] private bool scheduledStatusSelected;
     [ObservableProperty] private bool inProgressStatusSelected;
@@ -264,40 +267,28 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             await UserDialogService.ShowAlertAsync("Скор", "Прво изберете пациент.", "Во ред");
             return;
         }
-
-        if(!(CanCreate || CanUpdate))
+        if(string.IsNullOrWhiteSpace(ScoreSearchText))
         {
-            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за внесување скор.", "Во ред");
+            await UserDialogService.ShowAlertAsync("Скор", "Внесете име на скор, на пример DAS28.", "Во ред");
             return;
         }
-
-        var scoreName = await UserDialogService.ShowPromptAsync(
-            "Нов скор", "Внесете го името на скорот (на пример DAS28).", "Продолжи", "Откажи", "DAS28");
-        if(string.IsNullOrWhiteSpace(scoreName)) return;
-
+        var scoreName = ScoreSearchText.Trim();
         var number = await UserDialogService.ShowPromptAsync(
-            "Вредност на скор", $"Внесете ја вредноста за „{scoreName.Trim()}“.", "Зачувај", "Откажи", "Пример: 3.2");
+            "Вредност за прегледот",
+            $"Внесете ја вредноста за „{scoreName}“. Вредноста ќе биде зачувана со прегледот поврзан со терминот.",
+            "Додај", "Откажи", "Пример: 3.2");
         if(string.IsNullOrWhiteSpace(number)) return;
-
-        try
-        {
-            var saved = await _service.SavePatientScore(new PatientScore
-            {
-                PatientId = SelectedPatientForAppointment.Id,
-                ScoreText = scoreName.Trim(),
-                Number = number.Trim()
-            });
-
-            PatientScoreHistory.Insert(0, saved);
-            OnPropertyChanged(nameof(CurrentPatientScore));
-            await UserDialogService.ShowAlertAsync("Успешно", $"Скорот „{saved.DisplayText}“ е зачуван во историјата на пациентот.", "Во ред");
-        }
-        catch(Exception ex)
-        {
-            await UserDialogService.ShowAlertAsync("Грешка", $"Скорот не може да се зачува: {ex.Message}", "Во ред");
-        }
+        var entry = $"{scoreName}: {number.Trim()}";
+        if(!AppointmentScores.Contains(entry, StringComparer.OrdinalIgnoreCase))
+            AppointmentScores.Add(entry);
+        ScoreSearchText = string.Empty;
     }
 
+    [RelayCommand]
+    private void RemoveAppointmentScore(string? score)
+    {
+        if(!string.IsNullOrWhiteSpace(score)) AppointmentScores.Remove(score);
+    }
 
     // =========================
     // UI STATE
@@ -651,6 +642,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         Appointment=CreateBlankAppointment();
 
         var lookups = await _service.GetAppointmentContext();
+        ApplicationRegimeOptions = new ObservableCollection<string>((await _service.GetApplicationRegimesAsync()).Select(x => x.Regime));
         PatientsList=new ObservableCollection<Patient>(lookups.Patients);
         DoctorsList=new ObservableCollection<Doctor>(lookups.Doctors);
 
@@ -1066,7 +1058,14 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             await _service.SaveAppointment(
                 Appointment,
                 SelectedMkb10Assignments.ToList(),
-                SelectedMedicines.ToList());
+                SelectedMedicines.ToList(),
+                AppointmentScores.Select(entry =>
+                {
+                    var separator = entry.IndexOf(':');
+                    return separator > 0
+                        ? new PatientScore { ScoreText = entry[..separator].Trim(), Number = entry[(separator + 1)..].Trim() }
+                        : new PatientScore { ScoreText = entry.Trim() };
+                }).ToList());
 
             await UserDialogService.ShowAlertAsync("Успешно", "Терминот е успешно зачуван.", "OK");
 
