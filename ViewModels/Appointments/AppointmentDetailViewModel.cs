@@ -929,6 +929,15 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [RelayCommand]
     private async Task Cancel()
     {
+        // In read-only detail mode, the header action is navigation—not a form cancel.
+        // Keep the current page when cancelling edits, but return to the previous page
+        // when the user is simply viewing an existing appointment.
+        if(!_isNewAppointmentMode && IsReadOnly)
+        {
+            await NavigationService.GoToAsync("..");
+            return;
+        }
+
         var confirmed = await UserDialogService.ShowConfirmationAsync(
             "Откажи",
             "Дали сте сигурни дека сакате да се вратите назад без да ги зачувате промените?",
