@@ -1017,8 +1017,8 @@
 																				ButtonKind="Secondary"
 																				Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.UploadMedicineResolutionCommand}"
 																				CommandParameter="{Binding .}"
-																				FontSizeEx="10"
-																				HeightRequestEx="32"
+																				FontSizeEx="9"
+																				HeightRequestEx="26"
 																				Text="Прикачи"
 																				WidthRequestEx="88" />
 																			<controls:FFButton
@@ -1026,8 +1026,8 @@
 																				ButtonKind="Danger"
 																				Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.MoveMedicineToInactiveCommand}"
 																				CommandParameter="{Binding .}"
-																				FontSizeEx="10"
-																				HeightRequestEx="32"
+																				FontSizeEx="9"
+																				HeightRequestEx="26"
 																				Text="Неактивен"
 																				WidthRequestEx="100" />
 																		</Grid>
