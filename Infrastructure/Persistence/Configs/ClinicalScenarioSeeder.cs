@@ -20,7 +20,10 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         Guid.Parse("00000000-0000-0000-0000-000000007007"),
         Guid.Parse("00000000-0000-0000-0000-000000007008"),
         Guid.Parse("00000000-0000-0000-0000-000000007009"),
-        Guid.Parse("00000000-0000-0000-0000-000000007010")
+        Guid.Parse("00000000-0000-0000-0000-000000007010"),
+        Guid.Parse("00000000-0000-0000-0000-000000007011"),
+        Guid.Parse("00000000-0000-0000-0000-000000007012"),
+        Guid.Parse("00000000-0000-0000-0000-000000007013")
     ];
 
     private static readonly Guid[] EncounterIds =
@@ -30,7 +33,10 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         Guid.Parse("00000000-0000-0000-0000-000000008003"),
         Guid.Parse("00000000-0000-0000-0000-000000008004"),
         Guid.Parse("00000000-0000-0000-0000-000000008005"),
-        Guid.Parse("00000000-0000-0000-0000-000000008006")
+        Guid.Parse("00000000-0000-0000-0000-000000008006"),
+        Guid.Parse("00000000-0000-0000-0000-000000008007"),
+        Guid.Parse("00000000-0000-0000-0000-000000008008"),
+        Guid.Parse("00000000-0000-0000-0000-000000008009")
     ];
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
@@ -106,7 +112,10 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         MakeAppointment(6, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-12).AddHours(9), AppointmentStatus.Completed, "Последна завршена контрола"),
         MakeAppointment(7, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(8).AddHours(10), AppointmentStatus.Scheduled, "Следна контролна посета"),
         MakeAppointment(8, SeedIds.Patient4, SeedIds.Doctor4, today.AddDays(15).AddHours(11), AppointmentStatus.Scheduled, "Закажана контрола"),
-        MakeAppointment(9, SeedIds.Patient4, SeedIds.Doctor4, today.AddDays(-5).AddHours(11), AppointmentStatus.Cancelled, "Откажан термин")
+        MakeAppointment(9, SeedIds.Patient4, SeedIds.Doctor4, today.AddDays(-5).AddHours(11), AppointmentStatus.Cancelled, "Откажан термин"),
+        MakeAppointment(10, SeedIds.Patient1, SeedIds.Doctor1, today.AddDays(-15).AddHours(9), AppointmentStatus.Completed, "Контролен преглед"),
+        MakeAppointment(11, SeedIds.Patient4, SeedIds.Doctor4, today.AddDays(-18).AddHours(11), AppointmentStatus.Completed, "Контролен преглед"),
+        MakeAppointment(12, SeedIds.Patient5, SeedIds.Doctor5, today.AddDays(-25).AddHours(10), AppointmentStatus.Completed, "Почетен преглед")
     ];
 
     private static Appointment MakeAppointment(int i, Guid patientId, Guid doctorId, DateTime start, AppointmentStatus status, string reason) => new()
@@ -130,13 +139,16 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         MakeEncounter(2, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-58).AddHours(9), "Почетна проценка"),
         MakeEncounter(3, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-44).AddHours(9), "Контрола на терапија"),
         MakeEncounter(4, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-29).AddHours(9), "Редовна контрола"),
-        MakeEncounter(5, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-12).AddHours(9), "Последна завршена контрола")
+        MakeEncounter(5, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-12).AddHours(9), "Последна завршена контрола"),
+        MakeEncounter(6, SeedIds.Patient1, SeedIds.Doctor1, today.AddDays(-15).AddHours(9), "Контролен преглед"),
+        MakeEncounter(7, SeedIds.Patient4, SeedIds.Doctor4, today.AddDays(-18).AddHours(11), "Контролен преглед"),
+        MakeEncounter(8, SeedIds.Patient5, SeedIds.Doctor5, today.AddDays(-25).AddHours(10), "Почетен преглед")
     ];
 
     private static Encounter MakeEncounter(int i, Guid patientId, Guid doctorId, DateTime start, string reason) => new()
     {
         Id = EncounterIds[i],
-        AppointmentId = AppointmentIds[i + (i < 2 ? 1 : 1)],
+        AppointmentId = AppointmentIds[i < 6 ? i + 1 : i + 4],
         PatientId = patientId,
         DoctorId = doctorId,
         EncounterNumber = $"PREG-DEMO-{i + 1:000}",
