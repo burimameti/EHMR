@@ -276,10 +276,10 @@
 							<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="8">
 								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1*" ColumnSpacing="8" VerticalOptions="Start">
-									<Border Grid.Column="0" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start" HorizontalOptions="Fill">
+									<Border Grid.Column="0" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
 										<VerticalStackLayout Spacing="0">
 											<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}">
-												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="МКБ-10 ДИЈАГНОЗИ" />
+												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="МКБ-10 ДИЈАГНОЗИ" />
 											</Grid>
 											<VerticalStackLayout BindableLayout.ItemsSource="{Binding CurrentMkb10Assignments}" Spacing="0" VerticalOptions="Start">
 												<BindableLayout.EmptyView><Label FontSize="11" Text="Нема доделени МКБ-10 дијагнози." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
@@ -298,7 +298,7 @@
 									<Border Grid.Column="1" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start" HorizontalOptions="Fill">
 										<VerticalStackLayout Spacing="0">
 											<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}">
-												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="АКТИВНИ ЛЕКОВИ" />
+												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="АКТИВНИ ЛЕКОВИ" />
 											</Grid>
 											<VerticalStackLayout BindableLayout.ItemsSource="{Binding CurrentPatientMedicines}" Spacing="0" VerticalOptions="Start">
 												<BindableLayout.EmptyView><Label FontSize="11" Text="Нема активна терапија." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
@@ -317,7 +317,7 @@
 									</Border>
 									<Border Grid.Column="2" VerticalOptions="Start" Style="{StaticResource CrudFormSectionCardStyle}">
 										<VerticalStackLayout Spacing="5">
-											<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ПРЕТХОДЕН СКОР" />
+											<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="ПРЕТХОДЕН СКОР" />
 											<Label FontAttributes="Bold" FontSize="12" LineBreakMode="WordWrap" Text="{Binding CurrentPatientScore, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
 										</VerticalStackLayout>
 									</Border>
@@ -489,16 +489,11 @@
 											</CollectionView.ItemTemplate>
 										</CollectionView>
 									</Border>
-									<Border
-					Padding="0"
-					BackgroundColor="White"
-					Stroke="{StaticResource SparkBorderSubtle}"
-					StrokeShape="RoundRectangle 8"
-					StrokeThickness="1">
+									<Border Style="{StaticResource CrudFormTableFrameStyle}">
 						<VerticalStackLayout Spacing="0">
 							<Grid Padding="10,8" BackgroundColor="{StaticResource SparkSurfaceAlt}" ColumnDefinitions="*,44" ColumnSpacing="8">
-								<Label Style="{StaticResource TableHeaderLabelStyle}" Text="СКОР" />
-								<Label Grid.Column="1" HorizontalTextAlignment="Center" Style="{StaticResource TableHeaderLabelStyle}" Text="АКЦИИ" />
+								<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="СКОР" />
+								<Label Grid.Column="1" HorizontalTextAlignment="Center" Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="АКЦИИ" />
 							</Grid>
 							<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterScores}" Spacing="0">
 								<BindableLayout.EmptyView>
