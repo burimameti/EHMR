@@ -28,6 +28,9 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
 
     [ObservableProperty] private string filteredPatientCount = "";
     [ObservableProperty] private bool useCyrillicSearch = true;
+    [ObservableProperty] private ObservableCollection<Patient> suggestions = new();
+    [ObservableProperty] private Patient? selectedSuggestion;
+    [ObservableProperty] private bool showSuggestions;
     private bool _sparkInitialized;
     // ================= QUERY STATE (deep-link support) =================
     private string? _pendingSearch;
@@ -203,7 +206,41 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
                 && variants.Any(v => value.StartsWith(v, StringComparison.OrdinalIgnoreCase));
     }
 
-    partial void OnUseCyrillicSearchChanged(bool value) => ApplyPipeline();
+    partial void OnUseCyrillicSearchChanged(bool value)
+    {
+        ApplyPipeline();
+        OnSearchTextChanged(SearchText);
+    }
+
+    protected override void OnSearchTextChanged(string value)
+    {
+        if(SelectedSuggestion is not null && string.Equals(value, SelectedSuggestion.FullName, StringComparison.OrdinalIgnoreCase))
+            return;
+
+        SelectedSuggestion=null;
+        var term=value?.Trim() ?? string.Empty;
+        if(term.Length < 2 || AllItems.Count == 0)
+        {
+            Suggestions.Clear();
+            ShowSuggestions=false;
+            return;
+        }
+
+        var matches=ApplySearch(AllItems, term)
+            .Take(8)
+            .ToList();
+        Suggestions=new ObservableCollection<Patient>(matches);
+        ShowSuggestions=Suggestions.Count>0;
+    }
+
+    partial void OnSelectedSuggestionChanged(Patient? value)
+    {
+        if(value is null) return;
+        SearchText=value.FullName ?? string.Empty;
+        Suggestions.Clear();
+        ShowSuggestions=false;
+        ApplyPipeline();
+    }
     protected override IEnumerable<Patient> ApplyFilters(IEnumerable<Patient> query)
     {
         if(SelectedStatus!="All")
