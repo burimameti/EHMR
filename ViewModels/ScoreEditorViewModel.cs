@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Extensions;
 using EHMR.Views.Popups;
 using EHMR.Domain.Entities;
 using EHMR.Infrastructure.Persistence;
