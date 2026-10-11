@@ -153,6 +153,10 @@ public class PatientSeeder : IEntitySeeder
             .Select(x => x.Id)
             .ToHashSetAsync(ct);
 
+        var existingPatients = await context.Patients
+            .Where(x => patients.Select(p => p.Id).Contains(x.Id))
+            .ToListAsync(ct);
+
         var missingPatients = patients
             .Where(x => !existingPatientIds.Contains(x.Id))
             .ToList();
@@ -160,6 +164,33 @@ public class PatientSeeder : IEntitySeeder
         if(missingPatients.Count > 0)
             await context.Patients.AddRangeAsync(missingPatients, ct);
 
-await context.SaveChangesAsync(ct);
+        // These fixed IDs are demo-only records; refresh their seed fields so an older
+        // database also marks the fifth patient inactive.
+        foreach(var existing in existingPatients)
+        {
+            var seed = patients.First(x => x.Id == existing.Id);
+            existing.DoctorId = seed.DoctorId;
+            existing.FirstName = seed.FirstName;
+            existing.LastName = seed.LastName;
+            existing.NationalId = seed.NationalId;
+            existing.SzboNumber = seed.SzboNumber;
+            existing.BirthDate = seed.BirthDate;
+            existing.Gender = seed.Gender;
+            existing.City = seed.City;
+            existing.Address = seed.Address;
+            existing.PostalCode = seed.PostalCode;
+            existing.Phone = seed.Phone;
+            existing.Email = seed.Email;
+            existing.EmergencyContactName = seed.EmergencyContactName;
+            existing.EmergencyContactPhone = seed.EmergencyContactPhone;
+            existing.EmergencyRelationship = seed.EmergencyRelationship;
+            existing.BloodType = seed.BloodType;
+            existing.Allergies = seed.Allergies;
+            existing.Status = seed.Status;
+            existing.InactiveReason = seed.InactiveReason;
+            existing.IsDeleted = false;
+        }
+
+        await context.SaveChangesAsync(ct);
     }
 }
