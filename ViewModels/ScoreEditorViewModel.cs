@@ -177,31 +177,11 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
             return;
 
         var name = popup.ScoreNameResult.Trim();
-        if (Items.Any(x => string.Equals(x.Description, name, StringComparison.OrdinalIgnoreCase)))
-        {
-            SearchStatusText = "Овој скор веќе е додаден во табелата.";
-            return;
-        }
 
-        // A newly-created definition is attached to the patient immediately;
-        // the clinical value is entered directly in the table row.
-        var row = new ScoreRow
-        {
-            Description = name,
-            Number = string.Empty,
-            RecordedAt = DateTime.UtcNow
-        };
-        Items.Insert(0, row);
-        SelectedScore = row;
-        OnPropertyChanged(nameof(SelectedScore));
-
-        _suppressSearch = true;
-        DescriptionText = string.Empty;
-        _suppressSearch = false;
+        // The popup saves only the score definition. Keep the search populated so
+        // the user can explicitly select the result to add it to the patient grid.
+        DescriptionText = name;
         NumberText = string.Empty;
-        Suggestions.Clear();
-        HasSuggestions = false;
-        ShowSuggestions = false;
         SearchStatusText = string.Empty;
     }
 
