@@ -6,11 +6,14 @@ namespace EHMR.Views.Encounters;
 public partial class EncounterQuickPreviewPage : ContentPage
 {
     private readonly ISelectedItemService<Encounter> _selectedItemService;
+    private TaskCompletionSource<bool>? _printDocumentLoaded;
+    private bool _isPrintDocumentReady;
 
     public EncounterQuickPreviewPage(ISelectedItemService<Encounter> selectedItemService)
     {
         InitializeComponent();
         _selectedItemService = selectedItemService;
+        PrintWebView.Navigated += OnPrintWebViewNavigated;
     }
 
     protected override void OnAppearing()
@@ -18,6 +21,9 @@ public partial class EncounterQuickPreviewPage : ContentPage
         base.OnAppearing();
         var encounter = _selectedItemService.SelectedItem;
         BindingContext = encounter;
+
+        _isPrintDocumentReady = false;
+        _printDocumentLoaded = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         if (encounter is not null)
             PrintWebView.Source = new HtmlWebViewSource { Html = BuildPrintHtml(encounter) };
@@ -100,24 +106,47 @@ h2{{font-size:10pt;color:#0f4c81;text-transform:uppercase;letter-spacing:.8px;ma
 </body></html>";
     }
 
+    private void OnPrintWebViewNavigated(object? sender, WebNavigatedEventArgs e)
+    {
+        _isPrintDocumentReady = e.Result == WebNavigationResult.Success;
+        _printDocumentLoaded?.TrySetResult(_isPrintDocumentReady);
+    }
+
     private async void OnPrintClicked(object sender, EventArgs e)
     {
 #if WINDOWS
         try
         {
-            if (PrintWebView.Handler?.PlatformView is Microsoft.UI.Xaml.Controls.WebView2 nativeWebView)
+            if (_printDocumentLoaded is not null && !_isPrintDocumentReady)
             {
-                await nativeWebView.EnsureCoreWebView2Async();
-                nativeWebView.CoreWebView2.ShowPrintUI(Microsoft.Web.WebView2.Core.CoreWebView2PrintDialogKind.Browser);
+                // Wait for the HTML report to finish loading before opening the native print dialog.
+                var completed = await Task.WhenAny(_printDocumentLoaded.Task, Task.Delay(TimeSpan.FromSeconds(10)));
+                if (completed != _printDocumentLoaded.Task || !await _printDocumentLoaded.Task)
+                {
+                    await DisplayAlert("Печатење", "Извештајот сè уште не е подготвен за печатење. Обидете се повторно.", "ОК");
+                    return;
+                }
+            }
+
+            if (PrintWebView.Handler?.PlatformView is not Microsoft.UI.Xaml.Controls.WebView2 nativeWebView)
+            {
+                await DisplayAlert("Печатење", "Компонентата за печатење не е иницијализирана. Затворете го прегледот и отворете го повторно.", "ОК");
                 return;
             }
 
-            await DisplayAlert("Печатење", "Прегледот за печатење сè уште се подготвува. Обидете се повторно.", "ОК");
+            await nativeWebView.EnsureCoreWebView2Async();
+            if (nativeWebView.CoreWebView2 is null)
+            {
+                await DisplayAlert("Печатење", "Не можеше да се иницијализира печатењето.", "ОК");
+                return;
+            }
+
+            nativeWebView.CoreWebView2.ShowPrintUI(Microsoft.Web.WebView2.Core.CoreWebView2PrintDialogKind.Browser);
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine(ex);
-            await DisplayAlert("Печатење", "Не успеа да се отвори дијалогот за печатење.", "ОК");
+            System.Diagnostics.Debug.WriteLine($"Encounter report printing failed: {ex}");
+            await DisplayAlert("Печатење", $"Не успеа да се отвори дијалогот за печатење: {ex.Message}", "ОК");
         }
 #else
         await DisplayAlert("Печатење", "Печатењето е достапно во Windows десктоп верзијата.", "ОК");
