@@ -16,16 +16,11 @@
 	</Style>
 
 	<Style x:Key="CrudFormBodyGridStyle" TargetType="Border">
-		<Setter Property="BackgroundColor" Value="{StaticResource Gray200}" />
-
-
 		<Setter Property="BackgroundColor" Value="{StaticResource SparkContentBackground}" />
 		<Setter Property="Stroke" Value="{StaticResource SparkBorder}" />
 		<Setter Property="StrokeShape" Value="RoundRectangle 12" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Shadow" Value="{x:Null}" />
-
-
 	</Style>
 
 	<Style x:Key="CrudFormCardStyle" TargetType="controls:FFSectionCard">
