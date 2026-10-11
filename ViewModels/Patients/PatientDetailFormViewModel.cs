@@ -26,8 +26,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
 {
     private readonly IPatientService _patientService;
     private readonly ISelectedItemService<Patient> _selectedItemService;
-    private readonly ISelectedItemService<Appointment> _selectedAppointmentService;
-    private readonly INavigationService _navigationService;
+private readonly INavigationService _navigationService;
     private readonly IUserDialogService _userDialogService;
     private readonly IDbContextFactory<DesktopTherapyDbContext> _dbFactory;
     private readonly ILicenseService _licenseService;
@@ -55,14 +54,7 @@ public partial class PatientDetailFormViewModel : ObservableObject, IDisposable
     public bool CanViewNationalId =>
         _authorizationService.HasRole(UserRole.Admin)||_authorizationService.HasRole(UserRole.SuperAdmin);
     public bool CanCreatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Create);
-    public bool CanCreateAppointment =>
-        !_isNewPatientMode &&
-        IsReadOnly &&
-        Patient.Id != Guid.Empty &&
-        Patient.Status == PatientStatus.Active &&
-        _authorizationService.CanPerform(Modules.Appointments, ModuleAction.Create) &&
-        _authorizationService.CanPerform(Modules.Appointments, ModuleAction.Schedule);
-    public bool CanEditPatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Edit);
+public bool CanEditPatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Edit);
     public bool CanDeletePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Delete);
     public bool CanActivatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Activate);
     public bool CanDeactivatePatient => _authorizationService.CanPerform(Modules.Patients, ModuleAction.Deactivate);
@@ -84,8 +76,7 @@ public bool CanSavePatientForm => CanSavePatient;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEditMode))]
-    [NotifyPropertyChangedFor(nameof(CanCreateAppointment))]
-    [NotifyPropertyChangedFor(nameof(InputBgColor))]
+[NotifyPropertyChangedFor(nameof(InputBgColor))]
     [NotifyPropertyChangedFor(nameof(InputBorderColor))]
     private bool isReadOnly = true;
 
@@ -169,8 +160,7 @@ public bool CanSavePatientForm => CanSavePatient;
     public PatientDetailFormViewModel(
         IPatientService patientService,
         ISelectedItemService<Patient> selectedItemService,
-        ISelectedItemService<Appointment> selectedAppointmentService,
-        INavigationService navigationService,
+INavigationService navigationService,
         IUserDialogService userDialogService,
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
         ILicenseService licenseService,
@@ -180,8 +170,7 @@ public bool CanSavePatientForm => CanSavePatient;
         _licenseService=licenseService;
         _patientService=patientService;
         _selectedItemService=selectedItemService;
-        _selectedAppointmentService=selectedAppointmentService;
-        _navigationService=navigationService;
+_navigationService=navigationService;
         _userDialogService=userDialogService;
         _dbFactory=dbFactory;
         _clinicalReportService=clinicalReportService;
@@ -456,58 +445,6 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
         }
 
         IsReadOnly=false;
-    }
-
-    [RelayCommand]
-    private async Task CreateAppointmentAsync()
-    {
-        if(_isNewPatientMode || Patient.Id == Guid.Empty)
-        {
-            await _userDialogService.ShowAlertAsync(
-                "Термин",
-                "Прво зачувајте го пациентот, па потоа креирајте термин.",
-                "ОК");
-            return;
-        }
-
-        if(Patient.Status == PatientStatus.Inactive)
-        {
-            await _userDialogService.ShowAlertAsync(
-                "Пациентот е неактивен",
-                "За неактивен пациент не може да се креира термин.",
-                "ОК");
-            return;
-        }
-
-        if(!_authorizationService.CanPerform(Modules.Appointments, ModuleAction.Create) ||
-           !_authorizationService.CanPerform(Modules.Appointments, ModuleAction.Schedule))
-        {
-            await _userDialogService.ShowAlertAsync(
-                "Пристапот е одбиен",
-                "Немате овластување за креирање и закажување термин.",
-                "ОК");
-            return;
-        }
-
-        _selectedAppointmentService.SelectedItem = new Appointment
-        {
-            Id = Guid.Empty,
-            PatientId = Patient.Id
-        };
-        _selectedAppointmentService.OpenInEditMode = true;
-        await _navigationService.GoToAsync(AppRoutes.Appointments.Detail);
-    }
-
-    public async Task RefreshAfterAppointmentAsync()
-    {
-        var selectedAppointment = _selectedAppointmentService.SelectedItem;
-        if(Patient.Id == Guid.Empty ||
-           selectedAppointment is not { Id: var id, PatientId: var patientId } ||
-           id == Guid.Empty || patientId != Patient.Id)
-            return;
-
-        await LoadHistoryAsync(Patient.Id);
-        _selectedAppointmentService.SelectedItem = null;
     }
 
     private bool _isSaving;
