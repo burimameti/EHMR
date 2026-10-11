@@ -642,11 +642,11 @@
 				<!--  ═══════════════  ДЕСНА КОЛОНА  ═══════════════  -->
 				<controls:FFSectionCard
 					Grid.Column="1"
-					Margin="-3,0,0,0"
+					Margin="0"
 					IsVisible="{Binding HasPatientContext}"
 					Style="{StaticResource CrudFormCardStyle}">
-					<ScrollView VerticalScrollBarVisibility="Never">
-						<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
+					<controls:CustomScrollView ScrollBarColor="{StaticResource SparkAccentTeal}">
+						<VerticalStackLayout Style="{StaticResource CrudFormSidebarStackStyle}">
 
 							<!--  Последни прегледи  -->
 							<controls:CrudSectionHeader
@@ -872,7 +872,7 @@
 								Style="{StaticResource SectionHeaderStyle}" />
 
 							<Label
-								FontSize="16"
+								FontSize="12"
 								IsVisible="{Binding HasPatientContext, Converter={StaticResource InverseBoolConverter}}"
 								Text="Изберете документ."
 								TextColor="{StaticResource SparkTextSecondary}" />
@@ -965,7 +965,7 @@
 							</FlexLayout>
 
 						</VerticalStackLayout>
-					</ScrollView>
+					</controls:CustomScrollView>
 				</controls:FFSectionCard>
 
 			</Grid>
