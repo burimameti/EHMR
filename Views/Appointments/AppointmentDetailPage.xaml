@@ -56,19 +56,11 @@
 		</Border>
 
 		<!--  ДЕСЕН ГЛАВЕН КОНТЕЈНЕР  -->
-		<Grid
-			Grid.Column="1"
-			Padding="0"
-			RowDefinitions="Auto,*,Auto"
-			RowSpacing="16">
+		<Grid Grid.Column="1" RowDefinitions="Auto,*,Auto" Style="{StaticResource CrudFormPageGridStyle}">
 
 			<!--  PAGE HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<controls:FFPageHeader
-					Title="{Binding HeaderTitle}"
-					Grid.Row="0"
-					Margin="0,0,0,12"
-					Subtitle="{Binding HeaderSubtitle}">
+				<controls:FFPageHeader Title="{Binding HeaderTitle}" Subtitle="{Binding HeaderSubtitle}">
 					<controls:FFPageHeader.HeaderContent>
 						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
 
@@ -108,20 +100,14 @@
 			</Border>
 
 			<!--  MAIN PANEL  -->
-			<Grid
-				Grid.Row="1"
-				Margin="16,0,16,0"
-				ColumnDefinitions="2.5*,1*"
-				ColumnSpacing="16">
+			<Border Grid.Row="1" Style="{StaticResource CrudFormBodyGridStyle}">
+				<Grid ColumnDefinitions="2.5*,1*" ColumnSpacing="{StaticResource CrudFormColumnSpacing}">
 
 				<!--  ═══════════════════════════════════════════════════  -->
 				<!--  ЛЕВА КОЛОНА  -->
 				<!--  ═══════════════════════════════════════════════════  -->
-				<controls:FFSectionCard
-					Grid.Column="0"
-					Margin="0"
-					ContentPadding="18">
-					<ScrollView VerticalScrollBarVisibility="Never">
+				<controls:FFSectionCard Grid.Column="0" Style="{StaticResource CrudFormCardStyle}">
+					<controls:CustomScrollView ScrollBarColor="{StaticResource SparkAccentTeal}">
 						<VerticalStackLayout Padding="0" Spacing="16">
 
 							<!--  ══════════════════════════════════════════  -->
@@ -1071,32 +1057,10 @@
 							</VerticalStackLayout>
 
 							<!--  ══════════════════════════════════════════  -->
-							<!--  АКЦИИ — исто позиционирање како во Encounter  -->
-							<!--  ══════════════════════════════════════════  -->
-							<Grid
-								Padding="0,8,0,8"
-								ColumnDefinitions="*,*"
-								ColumnSpacing="16"
-								IsVisible="{Binding IsEditMode}">
-								<controls:FFButton
-									Grid.Column="0"
-									ButtonKind="Secondary"
-									Command="{Binding CancelCommand}"
-									HeightRequestEx="46"
-									Text="Откажи" />
-								<controls:FFButton
-									Grid.Column="1"
-									BackgroundColorEx="{StaticResource SidebarActiveBg}"
-									ButtonKind="Primary"
-									Command="{Binding SaveCommand}"
-									HeightRequestEx="46"
-									IsEnabled="{Binding CanSaveAppointment}"
-									Text="Зачувај"
-									TextColorEx="White" />
-							</Grid>
+							
 
 						</VerticalStackLayout>
-					</ScrollView>
+					</controls:CustomScrollView>
 				</controls:FFSectionCard>
 
 				<!--  ═══════════════════════════════════════════════════  -->
@@ -1107,7 +1071,7 @@
 					RowDefinitions="Auto,*"
 					RowSpacing="12">
 
-					<controls:FFSectionCard Margin="0" ContentPadding="18">
+					<controls:FFSectionCard Grid.Row="0" Style="{StaticResource CrudFormCardStyle}">
 						<VerticalStackLayout Padding="14" Spacing="12">
 
 							<controls:CrudSectionHeader Title="ИСТОРИЈА НА ПАЦИЕНТОТ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
@@ -1138,7 +1102,8 @@
 
 				</Grid>
 			</Grid>
-			<Border Grid.Row="2" Margin="0,0,0,16" Padding="16,10" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
+			</Border>
+			<Border Grid.Row="2" Margin="16,10,16,16" Padding="16,10" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
 				<Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
 					<Label Grid.Column="0" FontSize="10.5" Text="Завршете ги податоците за терминот" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
 					<controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="42" IsVisible="{Binding IsEditMode}" Text="Откажи" WidthRequestEx="130" />
