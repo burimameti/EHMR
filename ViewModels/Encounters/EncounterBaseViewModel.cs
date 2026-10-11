@@ -472,8 +472,18 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     partial void OnPatientMkb10AssignmentsChanged(ObservableCollection<PatientMkb10Assignment> value)
     {
         OnPropertyChanged(nameof(CurrentMkb10Assignments));
+        OnPropertyChanged(nameof(DistinctPatientMkb10Assignments));
         OnPropertyChanged(nameof(CurrentMkb10Summary));
     }
+
+    // Historical MKB-10 timeline: show each diagnosis code only once even if
+    // the patient has multiple assignments/encounters referencing the same code.
+    public IEnumerable<PatientMkb10Assignment> DistinctPatientMkb10Assignments =>
+        PatientMkb10Assignments
+            .Where(x => x.Mkb10Code != null)
+            .GroupBy(x => x.Mkb10Code!.Code, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.OrderByDescending(x => x.DiagnosedAt).First())
+            .OrderByDescending(x => x.DiagnosedAt);
 
     public IEnumerable<PatientMkb10Assignment> CurrentMkb10Assignments =>
         PatientMkb10Assignments
