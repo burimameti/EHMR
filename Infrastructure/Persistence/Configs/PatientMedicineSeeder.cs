@@ -1,113 +1,68 @@
-﻿
-using Microsoft.EntityFrameworkCore;
 using EHMR.Domain.Entities;
-using System;
+using Microsoft.EntityFrameworkCore;
 using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
 
 namespace EHMR.Infrastructure.Persistence.Configs;
 
 public sealed class PatientMedicineSeeder : IEntitySeeder
 {
-    public int Order => 9; 
+    public int Order => 9;
+
+    private static readonly (Guid PatientId, Guid MedicineId, string Dosage, string Frequency)[] Assignments =
+    [
+        (SeedIds.Patient1, SeedIds.Med5, "1 таблета од 850mg", "Неделно"),
+        (SeedIds.Patient1, SeedIds.Med6, "1 таблета од 5mg", "Месечно"),
+        (SeedIds.Patient2, SeedIds.Med7, "1 капсула од 20mg", "На 2 месеци"),
+        (SeedIds.Patient3, SeedIds.Med9, "3 таблети одеднаш (7.5mg вкупно)", "На 3 месеци"),
+        (SeedIds.Patient3, SeedIds.Med8, "1 таблета според план", "На 4 месеци"),
+        (SeedIds.Patient4, SeedIds.Med10, "1 доза според план", "На 5 месеци")
+    ];
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {
-        var applicationRegimes = await context.ApplicationRegimes
-            .Where(x => x.IsActive)
-            .ToListAsync(ct);
-
-        if(applicationRegimes.Count == 0)
+        var regimes = await context.ApplicationRegimes.Where(x => x.IsActive).ToListAsync(ct);
+        if (regimes.Count == 0)
             return;
 
-        // ApplicationRegime is the route/method of administration, not frequency.
-        var oral = applicationRegimes.FirstOrDefault(
-            x => string.Equals(x.Regime, "Орално", StringComparison.OrdinalIgnoreCase))?.Id
-            ?? applicationRegimes.FirstOrDefault()?.Id;
-        var existingMedicines = await context.PatientMedicines
-            .Where(x => x.ApplicationRegimeId == null)
+        // ApplicationRegime is the administration route, while DosingFrequency is the interval.
+        var oralId = regimes.FirstOrDefault(x =>
+            string.Equals(x.Regime, "Орално", StringComparison.OrdinalIgnoreCase))?.Id
+            ?? regimes[0].Id;
+
+        var patientIds = new[] { SeedIds.Patient1, SeedIds.Patient2, SeedIds.Patient3, SeedIds.Patient4, SeedIds.Patient5 };
+        var existing = await context.PatientMedicines
+            .Where(x => patientIds.Contains(x.PatientId) && x.EncounterId == null)
             .ToListAsync(ct);
 
-        foreach(var item in existingMedicines)
-            item.ApplicationRegimeId ??= oral;
+        var desiredKeys = Assignments.Select(x => (x.PatientId, x.MedicineId)).ToHashSet();
 
-        if(existingMedicines.Count > 0)
-            await context.SaveChangesAsync(ct);
+        // Reconcile legacy patient-card seed rows without touching encounter administrations.
+        var obsolete = existing.Where(x => !desiredKeys.Contains((x.PatientId, x.MedicineId))).ToList();
+        if (obsolete.Count > 0)
+            context.PatientMedicines.RemoveRange(obsolete);
 
-        if(await context.PatientMedicines.AnyAsync(ct))
+        foreach (var seed in Assignments)
         {
-            // Seed-managed demo assignments have zero on the patient card;
-            // encounter administrations are stored separately per visit.
-            var demoAssignments = await context.PatientMedicines
-                .Where(x => x.EncounterId == null && (
-                    (x.PatientId == SeedIds.Patient1 && (x.MedicineId == SeedIds.Med5 || x.MedicineId == SeedIds.Med6))
-                    || (x.PatientId == SeedIds.Patient2 && x.MedicineId == SeedIds.Med7)
-                    || (x.PatientId == SeedIds.Patient3 && x.MedicineId == SeedIds.Med9)))
-                .ToListAsync(ct);
-            foreach(var assignment in demoAssignments)
-                assignment.Quantity = 0m;
-            if(demoAssignments.Count > 0)
-                await context.SaveChangesAsync(ct);
-            return;
+            var row = existing.FirstOrDefault(x =>
+                x.PatientId == seed.PatientId && x.MedicineId == seed.MedicineId);
+            if (row is null)
+            {
+                row = new PatientMedicine
+                {
+                    Id = Guid.Parse($"00000000-0000-0000-0000-{(920000 + Array.IndexOf(Assignments, seed)):D12}"),
+                    PatientId = seed.PatientId,
+                    MedicineId = seed.MedicineId
+                };
+                context.PatientMedicines.Add(row);
+            }
+
+            row.ApplicationRegimeId = oralId;
+            row.Dosage = seed.Dosage;
+            row.DosingFrequency = seed.Frequency;
+            row.Quantity = 0m;
+            row.IsActive = true;
         }
 
-        var patientMedicines = new List<PatientMedicine>
-        {
-            // Пациент 1 терапија (Марјан - прима Метформин за шеќер и Амлодипин за притисок)
-            new()
-            {
-                Id = Guid.NewGuid(),
-                PatientId = SeedIds.Patient1,
-                MedicineId = SeedIds.Med5, // Метформин
-                ApplicationRegimeId = oral,
-
-                Dosage = "1 таблета од 850mg",
-
-                IsActive = true,
-                Quantity = 0m
-            },
-            new()
-            {
-                Id = Guid.NewGuid(),
-                PatientId = SeedIds.Patient1,
-                MedicineId = SeedIds.Med6, // Амлодипин
-                ApplicationRegimeId = oral,
-
-                Dosage = "1 таблета од 5mg",
-
-                IsActive = true,
-                Quantity = 0m
-            },
-
-            // Пациент 2 терапија (Билјана - прима Омепразол за желудник)
-            new()
-            {
-                Id = Guid.NewGuid(),
-                PatientId = SeedIds.Patient2,
-                MedicineId = SeedIds.Med7, // Омепразол
-                ApplicationRegimeId = oral,
-
-                Dosage = "1 капсула од 20mg",
-
-                IsActive = true,
-                Quantity = 0m
-            },
-
-            // Пациент 3 терапија (Зоран - Онколошки пациент на Метотрексат)
-            new()
-            {
-                Id = Guid.NewGuid(),
-                PatientId = SeedIds.Patient3,
-                MedicineId = SeedIds.Med9, // Метотрексат
-                ApplicationRegimeId = oral,
-
-                Dosage = "3 таблети одеднаш (7.5mg вкупно)",
-
-                IsActive = true,
-                Quantity = 0m
-            }
-        };
-
-        await context.PatientMedicines.AddRangeAsync(patientMedicines, ct);
         await context.SaveChangesAsync(ct);
     }
 }
