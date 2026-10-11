@@ -8,6 +8,9 @@
     BackgroundColor="#EEF2F6">
 
     <Grid RowDefinitions="Auto,*" RowSpacing="0">
+        <WebView x:Name="PrintWebView" Grid.Row="1" Opacity="0.01"
+                 WidthRequest="1" HeightRequest="1" HorizontalOptions="Start"
+                 VerticalOptions="Start" InputTransparent="True" />
         <Grid Grid.Row="0" Padding="24,14" BackgroundColor="White" ColumnDefinitions="*,Auto">
             <VerticalStackLayout Spacing="2">
                 <Label Text="PREVIEW" FontSize="11" FontAttributes="Bold" TextColor="#64748B" />
