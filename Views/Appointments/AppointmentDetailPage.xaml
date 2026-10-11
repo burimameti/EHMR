@@ -613,17 +613,17 @@
 									<Grid ColumnDefinitions="110,*,110" ColumnSpacing="1">
 										<Border Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												Text="МКБ КОД" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
+												Text="МКБ КОД" Style="{StaticResource CrudFormTableHeaderLabelStyle}" />
 										</Border>
 										<Border
 											Grid.Column="1" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												Text="ОПИС" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
+												Text="ОПИС" Style="{StaticResource CrudFormTableHeaderLabelStyle}" />
 										</Border>
 										<Border
 											Grid.Column="2" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												Text="ДАТУМ" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
+												Text="ДАТУМ" Style="{StaticResource CrudFormTableHeaderLabelStyle}" />
 										</Border>
 									</Grid>
 
@@ -758,12 +758,12 @@
 											<Border
 												Grid.Column="0" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 												<Label
-													Text="ИМЕ НА ЛЕКОТ" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
+													Text="ИМЕ НА ЛЕКОТ" Style="{StaticResource CrudFormTableHeaderLabelStyle}" />
 											</Border>
 											<Border
 												Grid.Column="1" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 												<Label
-													Text="КОЛИЧИНА" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
+													Text="КОЛИЧИНА" Style="{StaticResource CrudFormTableHeaderLabelStyle}" />
 											</Border>
 											<Border
 												Grid.Column="2" / Style="{StaticResource CrudFormTableHeaderCellStyle}">
@@ -778,7 +778,7 @@
 													Stroke="{StaticResource SparkBorderSubtle}"
 													StrokeThickness="1">
 													<Label
-														Text="Нема доделени лекови." / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
+														Text="Нема доделени лекови." Style="{StaticResource CrudFormTableHeaderLabelStyle}" />
 												</Border>
 											</BindableLayout.EmptyView>
 											<BindableLayout.ItemTemplate>
@@ -843,22 +843,22 @@
 									<Grid ColumnDefinitions="*,1.3*,90,110" ColumnSpacing="1">
 										<Border Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												Text="НАЗИВ" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
+												Text="НАЗИВ" Style="{StaticResource CrudFormTableHeaderLabelStyle}" />
 										</Border>
 										<Border
 											Grid.Column="1" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												Text="ГЕНЕРИЧКО ИМЕ" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
+												Text="ГЕНЕРИЧКО ИМЕ" Style="{StaticResource CrudFormTableHeaderLabelStyle}" />
 										</Border>
 										<Border
 											Grid.Column="2" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												Text="КОЛИЧИНА" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
+												Text="КОЛИЧИНА" Style="{StaticResource CrudFormTableHeaderLabelStyle}" />
 										</Border>
 										<Border
 											Grid.Column="3" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												Text="ДАТУМ" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
+												Text="ДАТУМ" Style="{StaticResource CrudFormTableHeaderLabelStyle}" />
 										</Border>
 									</Grid>
 
