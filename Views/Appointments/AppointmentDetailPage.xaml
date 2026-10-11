@@ -327,7 +327,45 @@
 
 							</VerticalStackLayout>
 
-							<!--  ══════════════════════════════════════════  -->
+							<!-- ОСНОВНИ ПОДАТОЦИ И КОНТАКТНИ ИНФОРМАЦИИ -->
+							<Border IsVisible="{Binding SelectedPatientForAppointment, Converter={StaticResource SparkNotNullConverter}}" Style="{StaticResource CrudFormSectionCardStyle}">
+								<VerticalStackLayout Spacing="10">
+									<controls:CrudSectionHeader Title="ОСНОВНИ ПОДАТОЦИ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
+									<Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="14" RowSpacing="8">
+										<VerticalStackLayout Spacing="1"><Label FontSize="11" Text="Датум на раѓање" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="13" Text="{Binding SelectedPatientForAppointment.BirthDate, StringFormat='{0:dd.MM.yyyy}', TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout>
+										<VerticalStackLayout Grid.Column="1" Spacing="1"><Label FontSize="11" Text="Пол" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="13" Text="{Binding SelectedPatientForAppointment.Gender, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout>
+										<VerticalStackLayout Grid.Column="2" Spacing="1"><Label FontSize="11" Text="Статус на пациент" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="13" Text="{Binding SelectedPatientForAppointment.Status, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout>
+									</Grid>
+									<controls:CrudSectionHeader Title="КОНТАКТНИ ИНФОРМАЦИИ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
+									<Grid ColumnDefinitions="*,*,*" ColumnSpacing="14">
+										<VerticalStackLayout Spacing="1"><Label FontSize="11" Text="Телефон" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="13" Text="{Binding SelectedPatientForAppointment.Phone, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout>
+										<VerticalStackLayout Grid.Column="1" Spacing="1"><Label FontSize="11" Text="СЗБО" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="13" Text="{Binding SelectedPatientForAppointment.SzboNumber, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout>
+										<VerticalStackLayout Grid.Column="2" Spacing="1"><Label FontSize="11" Text="Адреса" TextColor="{StaticResource SparkTextSecondary}" /><Label FontAttributes="Bold" FontSize="13" LineBreakMode="TailTruncation" Text="{Binding SelectedPatientForAppointment.Address, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout>
+									</Grid>
+								</VerticalStackLayout>
+							</Border>
+
+							<!-- БИОЛОШКА ТЕРАПИЈА: ист распоред 2:2:1 како кај преглед -->
+							<Border IsVisible="{Binding SelectedPatientForAppointment, Converter={StaticResource SparkNotNullConverter}}" Style="{StaticResource CrudFormSectionCardStyle}">
+								<VerticalStackLayout Spacing="8">
+									<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
+									<Grid ColumnDefinitions="2*,2*,1*" ColumnSpacing="8" VerticalOptions="Start">
+										<Border Grid.Column="0" VerticalOptions="Start" Style="{StaticResource CrudFormTableFrameStyle}">
+											<VerticalStackLayout Spacing="0"><Grid Style="{StaticResource CrudFormTableHeaderGridStyle}"><Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="МКБ-10 ДИЈАГНОЗИ" /></Grid>
+												<VerticalStackLayout BindableLayout.ItemsSource="{Binding CurrentMkb10Assignments}" Spacing="0"><BindableLayout.EmptyView><Label Padding="6" FontSize="11" Text="Нема доделени МКБ-10 дијагнози." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView><BindableLayout.ItemTemplate><DataTemplate x:DataType="entities:PatientMkb10Assignment"><Grid ColumnDefinitions="18,*" ColumnSpacing="5"><controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" /><VerticalStackLayout Grid.Column="1" Padding="0,3" Spacing="1"><Label FontAttributes="Bold" FontSize="11.5" Text="{Binding Mkb10Code.Code, TargetNullValue='—'}" TextColor="{StaticResource SparkAccentTealDark}" /><Label FontSize="10.5" LineBreakMode="WordWrap" Text="{Binding Mkb10Code.Description, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout></Grid></DataTemplate></BindableLayout.ItemTemplate></VerticalStackLayout>
+											</VerticalStackLayout>
+										</Border>
+										<Border Grid.Column="1" VerticalOptions="Start" Style="{StaticResource CrudFormTableFrameStyle}">
+											<VerticalStackLayout Spacing="0"><Grid Style="{StaticResource CrudFormTableHeaderGridStyle}"><Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="АКТИВНИ ЛЕКОВИ" /></Grid>
+												<VerticalStackLayout BindableLayout.ItemsSource="{Binding CurrentPatientMedicines}" Spacing="0"><BindableLayout.EmptyView><Label Padding="6" FontSize="11" Text="Нема активна терапија." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView><BindableLayout.ItemTemplate><DataTemplate x:DataType="entities:PatientMedicine"><Grid ColumnDefinitions="18,*" ColumnSpacing="5"><controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" /><VerticalStackLayout Grid.Column="1" Padding="0,3" Spacing="1"><Label FontAttributes="Bold" FontSize="11.5" LineBreakMode="WordWrap" Text="{Binding Medicine.BilingualName, TargetNullValue='Лек'}" TextColor="{StaticResource SparkTextPrimary}" /><Label FontSize="10" Text="{Binding Dosage, StringFormat='Доза: {0}', TargetNullValue=''}" TextColor="{StaticResource SparkTextSecondary}" /></VerticalStackLayout></Grid></DataTemplate></BindableLayout.ItemTemplate></VerticalStackLayout>
+										</VerticalStackLayout>
+										</Border>
+										<Border Grid.Column="2" VerticalOptions="Start" Style="{StaticResource CrudFormSectionCardStyle}"><VerticalStackLayout Spacing="5"><Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="ПРЕТХОДЕН СКОР" /><Label FontAttributes="Bold" FontSize="12" LineBreakMode="WordWrap" Text="{Binding CurrentPatientScore, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout></Border>
+									</Grid>
+								</VerticalStackLayout>
+							</Border>
+
+<!--  ══════════════════════════════════════════  -->
 							<!--  2. ТЕРМИН  -->
 							<!--  ══════════════════════════════════════════  -->
 							<VerticalStackLayout Spacing="12">
@@ -342,20 +380,11 @@
 										Grid.Row="1"
 										ColumnDefinitions="1.4*,1*"
 										ColumnSpacing="16">
-										<VerticalStackLayout Grid.Column="0" Spacing="6">
-											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Датум" />
-											<DatePicker
-												BackgroundColor="White"
-												Date="{Binding PreferredAppointmentDate, Mode=TwoWay}"
-												IsVisible="{Binding IsEditMode}"
-												TextColor="{StaticResource SparkTextPrimary}" />
-											<Label
-												Padding="12,10"
-												IsVisible="{Binding IsReadOnly}"
-												Style="{StaticResource CrudFormValueSurfaceStyle}"
-												Text="{Binding Appointment.ScheduledStart, StringFormat='{:d.M.yyyy}'}"
-												TextColor="{StaticResource SparkTextPrimary}" />
-										</VerticalStackLayout>
+										<Grid Grid.Column="0" ColumnDefinitions="Auto,*" ColumnSpacing="12" VerticalOptions="Center">
+											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Датум" VerticalOptions="Center" />
+											<DatePicker Grid.Column="1" BackgroundColor="White" Date="{Binding PreferredAppointmentDate, Mode=TwoWay}" IsVisible="{Binding IsEditMode}" TextColor="{StaticResource SparkTextPrimary}" />
+											<Label Grid.Column="1" Padding="12,8" IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}" Text="{Binding Appointment.ScheduledStart, StringFormat='{:d.M.yyyy}'}" TextColor="{StaticResource SparkTextPrimary}" />
+										</Grid>
 
 										<!--<VerticalStackLayout Grid.Column="1" Spacing="6">
 											<Label Style="{StaticResource EditFieldLabelStyle}" Text="Време" />
@@ -586,25 +615,6 @@
 									</VerticalStackLayout>
 
 								</Grid>
-
-								<!--  ИСТОРИЈА НА ПРЕТХОДНИ ЛЕКОВИ  -->
-								<VerticalStackLayout Margin="0,14,0,0" Spacing="8">
-									<Label FontAttributes="Bold" FontSize="11" Text="Историја на претходни лекови" TextColor="{StaticResource SparkTextSecondary}" />
-									<VerticalStackLayout BindableLayout.ItemsSource="{Binding PreviousMedicinesHistory}" Spacing="1">
-										<BindableLayout.EmptyView>
-											<Label FontSize="12" Text="Нема претходни лекови." TextColor="{StaticResource SparkTextSecondary}" />
-										</BindableLayout.EmptyView>
-										<BindableLayout.ItemTemplate>
-											<DataTemplate x:DataType="entities:PatientMedicine">
-												<Grid ColumnDefinitions="*,80,100" ColumnSpacing="1">
-													<Border Padding="8,7" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="11.5" Text="{Binding Medicine.Name, TargetNullValue='Непознат лек'}" TextColor="{StaticResource SparkTextPrimary}" /></Border>
-													<Border Grid.Column="1" Padding="6,7" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="11" Text="{Binding Dosage}" TextColor="{StaticResource SparkTextPrimary}" /></Border>
-													<Border Grid.Column="2" Padding="6,7" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="10.5" Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkTextSecondary}" /></Border>
-												</Grid>
-											</DataTemplate>
-										</BindableLayout.ItemTemplate>
-									</VerticalStackLayout>
-								</VerticalStackLayout>
 
 								<!--  ═══ READ-ONLY MODE: full-width data table ═══  -->
 								<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="0">
