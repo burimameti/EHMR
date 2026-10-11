@@ -1,5 +1,6 @@
 using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Extensions;
 using EHMR.Views.Popups;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
