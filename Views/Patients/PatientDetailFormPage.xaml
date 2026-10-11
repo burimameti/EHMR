@@ -1152,13 +1152,7 @@
 														</CollectionView>
 													</Border>
 												</VerticalStackLayout>
-
-												<!--  Row 2 лево: АКТИВНИ  -->
-												
-
-												<!--  Row 2 десно: НЕАКТИВНИ  -->
-												
-											</Grid>
+</Grid>
 
 										</Grid>
 									</VerticalStackLayout>
