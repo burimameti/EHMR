@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="EHMR.Views.Popups.NewScorePopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+    <Border Padding="14" BackgroundColor="{StaticResource SparkBackground}"
+            Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 8"
+            StrokeThickness="1" WidthRequest="380">
+        <VerticalStackLayout Spacing="8">
+            <Label FontAttributes="Bold" FontSize="15" Text="Нов скор" TextColor="{StaticResource SparkTextPrimary}" />
+            <Label FontSize="10" Text="Скорот ќе се зачува во постојниот регистар и ќе се додаде во табелата на пациентот."
+                   TextColor="{StaticResource SparkTextSecondary}" />
+            <Label FontAttributes="Bold" FontSize="10" Text="НАЗИВ НА СКОР *" TextColor="{StaticResource SparkTextSecondary}" />
+            <Border BackgroundColor="{StaticResource SparkBackground}" HeightRequest="36" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 6">
+                <Entry x:Name="NameEntry" BackgroundColor="Transparent" FontSize="13" Placeholder="Пр. DAS28" TextColor="{StaticResource SparkTextPrimary}" />
+            </Border>
+            <Label FontAttributes="Bold" FontSize="10" Text="ОПИС (ОПЦИОНАЛНО)" TextColor="{StaticResource SparkTextSecondary}" />
+            <Border BackgroundColor="{StaticResource SparkBackground}" HeightRequest="70" Stroke="{StaticResource SparkBorder}" StrokeShape="RoundRectangle 6">
+                <Editor x:Name="DescriptionEntry" AutoSize="TextChanges" BackgroundColor="Transparent" FontSize="12" Placeholder="Опис на клиничкиот скор" TextColor="{StaticResource SparkTextPrimary}" />
+            </Border>
+            <HorizontalStackLayout HorizontalOptions="End" Spacing="8">
+                <Button BackgroundColor="{StaticResource SparkSurfaceAlt}" BorderColor="{StaticResource SparkBorder}" BorderWidth="1" Clicked="OnCancelClicked" CornerRadius="6" HeightRequest="34" Text="Откажи" TextColor="{StaticResource SparkTextPrimary}" WidthRequest="86" />
+                <Button BackgroundColor="{StaticResource SparkAccentTealDark}" Clicked="OnSaveClicked" CornerRadius="6" HeightRequest="34" Text="Зачувај и додај" TextColor="White" WidthRequest="132" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </Border>
+</toolkit:Popup>
