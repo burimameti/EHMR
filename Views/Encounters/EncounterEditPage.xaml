@@ -398,7 +398,7 @@
 												FontAttributes="Bold"
 												FontSize="9.5"
 												Text="ЛЕК"
-												TextColor="White" />
+												TextColor="{StaticResource SparkTextSecondary}" />
 										</Border>
 										<Border
 											Grid.Column="1"
@@ -409,30 +409,30 @@
 												FontAttributes="Bold"
 												FontSize="9.5"
 												Text="ДОЗА"
-												TextColor="White" />
+												TextColor="{StaticResource SparkTextSecondary}" />
 										</Border>
 										<Border
 											Grid.Column="2"
 											Padding="8,7"
-											BackgroundColor="{StaticResource Gray600}"
+											BackgroundColor="{StaticResource Gray300}"
 											StrokeThickness="0">
 											<Label
 												FontAttributes="Bold"
 												FontSize="9.5"
 												Text="КОЛИЧИНА"
-												TextColor="White" />
+												TextColor="{StaticResource SparkTextSecondary}" />
 										</Border>
 										<Border
 											Grid.Column="3"
 											Padding="0"
-											BackgroundColor="{StaticResource Gray600}"
+											BackgroundColor="{StaticResource Gray300}"
 											StrokeThickness="0">
 											<Label
 												FontAttributes="Bold"
 												FontSize="9"
 												HorizontalOptions="Center"
 												Text="ТЕКОВНА"
-												TextColor="White"
+												TextColor="{StaticResource SparkTextSecondary}"
 												VerticalOptions="Center" />
 										</Border>
 									</Grid>
