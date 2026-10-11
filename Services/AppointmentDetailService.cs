@@ -430,6 +430,24 @@ Encounter? encounterForMedicines = null;
                 }
             }
 
+            if(medicinesEditable && medicines is { Count: > 0 })
+            {
+                var regimeRows = await db.ApplicationRegimes
+                    .Where(x => x.IsActive)
+                    .ToListAsync();
+                foreach(var medicine in medicines)
+                {
+                    var regimeName = medicine.ApplicationRegimeDisplay?.Trim();
+                    if(string.IsNullOrWhiteSpace(regimeName)) continue;
+                    var match = regimeRows.FirstOrDefault(x => string.Equals(x.Regime, regimeName, StringComparison.OrdinalIgnoreCase));
+                    if(match is not null)
+                    {
+                        medicine.ApplicationRegimeId = match.Id;
+                        medicine.ApplicationRegime = match;
+                    }
+                }
+            }
+
             // Store medicine values on this encounter only. Never move or update
             // the patient's active assignment while saving an appointment.
             if(medicinesEditable && encounterForMedicines is not null && medicines is { Count: > 0 })
