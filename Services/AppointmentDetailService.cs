@@ -202,11 +202,19 @@ var patients = await db.Patients
                 .Include(x => x.Encounter)
                 .OrderByDescending(x => x.DiagnosedAt)
                 .ToListAsync();
-return new PatientContextDto
+
+            var scores = await db.PatientScores
+                .AsNoTracking()
+                .Where(x => x.PatientId==patientId)
+                .OrderByDescending(x => x.RecordedAt)
+                .ToListAsync();
+
+            return new PatientContextDto
             {
                 Appointments=appointments,
                 Mkb10Assignments=mkb10Assignments,
-                PatientMedicines=patientMedicines
+                PatientMedicines=patientMedicines,
+                Scores=scores
             };
         }
         public async Task<List<Medicine>> SearchMedicines(string query, CancellationToken token)
