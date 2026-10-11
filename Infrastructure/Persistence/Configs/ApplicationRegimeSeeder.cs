@@ -9,47 +9,50 @@ public sealed class ApplicationRegimeSeeder : IEntitySeeder
 
     private static readonly string[] Regimes =
     [
-        "Орално",
-        "Поткожно",
-        "Интравенски",
-        "Интрамускулно",
-        "Интраартикуларно",
-        "Интраназално",
-        "Топикално",
-        "Сублингвално"
+        "Еднаш неделно",
+        "Еднаш на две недели",
+        "Еднаш на три недели",
+        "Еднаш месечно",
+        "Еднаш на два месеци",
+        "Еднаш на три месеци",
+        "Еднаш на четири месеци",
+        "Еднаш на пет месеци",
+        "Еднаш на шест месеци",
+        "Еднаш годишно"
     ];
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {
         var existing = await context.ApplicationRegimes.ToListAsync(ct);
         var changed = false;
-
-        foreach(var name in Regimes)
+        var legacyRoutes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            var regime = existing.FirstOrDefault(x =>
-                string.Equals(x.Regime, name, StringComparison.OrdinalIgnoreCase));
+            "Орално", "Поткожно", "Интравенски", "Интрамускулно",
+            "Интраартикуларно", "Интраназално", "Топикално", "Сублингвално"
+        };
 
-            if(regime is null)
+        foreach (var item in existing.Where(x => legacyRoutes.Contains(x.Regime) && x.IsActive))
+        {
+            item.IsActive = false;
+            changed = true;
+        }
+
+        foreach (var name in Regimes)
+        {
+            var regime = existing.FirstOrDefault(x => string.Equals(x.Regime, name, StringComparison.OrdinalIgnoreCase));
+            if (regime is null)
             {
-                context.ApplicationRegimes.Add(new ApplicationRegime
-                {
-                    Id = Guid.NewGuid(),
-                    Regime = name,
-                    IsActive = true
-                });
+                context.ApplicationRegimes.Add(new ApplicationRegime { Id = Guid.NewGuid(), Regime = name, IsActive = true });
                 changed = true;
-                continue;
             }
-
-            // Keep canonical seed options selectable on every seed run.
-            if(!regime.IsActive)
+            else if (!regime.IsActive)
             {
                 regime.IsActive = true;
                 changed = true;
             }
         }
 
-        if(changed)
+        if (changed)
             await context.SaveChangesAsync(ct);
     }
 }
