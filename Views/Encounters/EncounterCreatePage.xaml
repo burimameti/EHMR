@@ -245,7 +245,8 @@
 
 
 							<!-- БИОЛОШКА ТЕРАПИЈА: усогласен приказ на МКБ, активни лекови и претходен скор -->
-							<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="8">
+							<Border Style="{StaticResource CrudFormSectionCardStyle}">
+								<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="8">
 								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1*" ColumnSpacing="8" VerticalOptions="Start">
 									<Border Grid.Column="0" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
@@ -294,7 +295,8 @@
 										</VerticalStackLayout>
 									</Border>
 								</Grid>
-							</VerticalStackLayout>
+							</VerticalStackLayout></VerticalStackLayout>
+							</Border>
 
 							<!--  Сите контролни полиња за прегледот се прикажуваат дури по избор на пациент.  -->
 							<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="12">
@@ -307,9 +309,10 @@
 									RowSpacing="14">
 
 									<!--  ═══ РЕД 1 · КОЛОНА 0: ТЕКОВНА ТЕРАПИЈА ═══  -->
-									<VerticalStackLayout
-										Grid.Row="0"
-										Grid.Column="0"
+									<Border Grid.Row="0" Grid.Column="0" Style="{StaticResource CrudFormSectionCardStyle}">
+										<VerticalStackLayout
+									
+									
 										Spacing="10">
 
 										<controls:CrudSectionHeader
@@ -475,7 +478,8 @@
 												</DataTemplate>
 											</BindableLayout.ItemTemplate>
 										</VerticalStackLayout>
-									</VerticalStackLayout>
+									</VerticalStackLayout></VerticalStackLayout>
+									</Border>
 
 									<!--  ═══ РЕД 1 · КОЛОНА 1: СКОРОВИ ═══  -->
 									<VerticalStackLayout
@@ -544,9 +548,10 @@
 									</VerticalStackLayout>
 
 									<!--  ═══ РЕД 2 · КОЛОНА 0: СЛЕДЕН ТЕРМИН ═══  -->
-									<VerticalStackLayout
-										Grid.Row="1"
-										Grid.Column="0"
+									<Border Grid.Row="1" Grid.Column="0" Style="{StaticResource CrudFormSectionCardStyle}">
+										<VerticalStackLayout
+									
+									
 										Spacing="20">
 										<controls:CrudSectionHeader
 											Title="СЛЕДЕН ТЕРМИН"
@@ -596,7 +601,8 @@
 												Placeholder="Брзо избирање"
 												SelectedItem="{Binding SelectedFollowUpInterval, Mode=TwoWay}" />
 										</VerticalStackLayout>
-									</VerticalStackLayout>
+									</VerticalStackLayout></VerticalStackLayout>
+									</Border>
 
 									<!--  ═══ РЕД 2 · КОЛОНА 1: НАОДИ (исклучено) ═══  -->
 									<!--<VerticalStackLayout
