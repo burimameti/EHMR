@@ -19,7 +19,10 @@ public sealed class PatientScoreSeeder : IEntitySeeder
         new(Guid.Parse("00000000-0000-0000-0000-000000009103"), SeedIds.Patient3, Guid.Parse("00000000-0000-0000-0000-000000008003"), "DAS28", "7.0", 58),
         new(Guid.Parse("00000000-0000-0000-0000-000000009104"), SeedIds.Patient3, Guid.Parse("00000000-0000-0000-0000-000000008004"), "DAS28", "6.1", 44),
         new(Guid.Parse("00000000-0000-0000-0000-000000009105"), SeedIds.Patient3, Guid.Parse("00000000-0000-0000-0000-000000008005"), "DAS28", "5.4", 29),
-        new(Guid.Parse("00000000-0000-0000-0000-000000009106"), SeedIds.Patient3, Guid.Parse("00000000-0000-0000-0000-000000008006"), "DAS28", "4.8", 12)
+        new(Guid.Parse("00000000-0000-0000-0000-000000009106"), SeedIds.Patient3, Guid.Parse("00000000-0000-0000-0000-000000008006"), "DAS28", "4.8", 12),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009107"), SeedIds.Patient1, Guid.Parse("00000000-0000-0000-0000-000000008007"), "DAS28", "3.9", 15),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009108"), SeedIds.Patient4, Guid.Parse("00000000-0000-0000-0000-000000008008"), "DAS28", "4.6", 18),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009109"), SeedIds.Patient5, Guid.Parse("00000000-0000-0000-0000-000000008009"), "DAS28", "5.1", 25)
     ];
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
