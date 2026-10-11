@@ -132,15 +132,19 @@ namespace EHMR
                     Logger.Log("Resolving AppShell from DI");
                     var shell = ServiceProvider.GetRequiredService<AppShell>();
 
+                    // Attach Shell to the active window BEFORE navigating.
+                    // NavigationService resolves Shell.Current / window.Page; if navigation
+                    // runs first, it can silently return because the Shell is not active yet,
+                    // leaving the default Dashboard visible without authentication.
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        Logger.Log("Attaching AppShell to the active window");
+                        window.Page=shell;
+                    });
+
                     Logger.Log("Calling shell.HandleInitialNavigationAsync (checks login state)");
                     await shell.HandleInitialNavigationAsync();
                     Logger.Log("HandleInitialNavigationAsync completed successfully");
-
-                    await MainThread.InvokeOnMainThreadAsync(() =>
-                    {
-                        Logger.Log("Swapping window.Page to AppShell");
-                        window.Page=shell;
-                    });
                 }
                 catch(Exception ex)
                 {
