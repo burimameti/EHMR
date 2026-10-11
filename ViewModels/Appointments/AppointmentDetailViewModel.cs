@@ -189,6 +189,46 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [ObservableProperty] private ObservableCollection<PatientMedicine> patientMedicinesHistory = new();
     [ObservableProperty] private ObservableCollection<PatientScore> patientScoreHistory = new();
 
+    [ObservableProperty] private bool scheduledStatusSelected;
+    [ObservableProperty] private bool inProgressStatusSelected;
+    [ObservableProperty] private bool completedStatusSelected;
+    [ObservableProperty] private bool cancelledStatusSelected;
+    [ObservableProperty] private AppointmentStatus? selectedStatusForSave;
+
+    public string StatusDisplay => SelectedStatusForSave switch
+    {
+        AppointmentStatus.Scheduled => "Закажан",
+        AppointmentStatus.InProgress => "Во тек",
+        AppointmentStatus.Completed => "Завршен",
+        AppointmentStatus.Cancelled => "Откажан",
+        _ => "Не е избран"
+    };
+
+    partial void OnScheduledStatusSelectedChanged(bool value) { if(value) SelectStatusForSave(AppointmentStatus.Scheduled); }
+    partial void OnInProgressStatusSelectedChanged(bool value) { if(value) SelectStatusForSave(AppointmentStatus.InProgress); }
+    partial void OnCompletedStatusSelectedChanged(bool value) { if(value) SelectStatusForSave(AppointmentStatus.Completed); }
+    partial void OnCancelledStatusSelectedChanged(bool value) { if(value) SelectStatusForSave(AppointmentStatus.Cancelled); }
+
+    private void SelectStatusForSave(AppointmentStatus status)
+    {
+        SelectedStatusForSave=status;
+        if(status!=AppointmentStatus.Scheduled) ScheduledStatusSelected=false;
+        if(status!=AppointmentStatus.InProgress) InProgressStatusSelected=false;
+        if(status!=AppointmentStatus.Completed) CompletedStatusSelected=false;
+        if(status!=AppointmentStatus.Cancelled) CancelledStatusSelected=false;
+        OnPropertyChanged(nameof(StatusDisplay));
+    }
+
+    private void ResetStatusSelection()
+    {
+        ScheduledStatusSelected=false;
+        InProgressStatusSelected=false;
+        CompletedStatusSelected=false;
+        CancelledStatusSelected=false;
+        SelectedStatusForSave=null;
+        OnPropertyChanged(nameof(StatusDisplay));
+    }
+
     public IEnumerable<PatientMkb10Assignment> CurrentMkb10Assignments =>
         PatientMkb10History
             .Where(x => x.Mkb10Code is not null)
@@ -482,6 +522,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
 
     public async Task LoadAsync()
     {
+        ResetStatusSelection();
 
         var selected = _selectedItemService.SelectedItem;
 
@@ -923,6 +964,34 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             await UserDialogService.ShowAlertAsync("Валидација", "Избраниот пациент нема доделен матичен реуматолог.", "OK");
             return;
         }
+        if(SelectedMedicines.All(x => !x.IsActive))
+        {
+            await UserDialogService.ShowAlertAsync("Валидација", "Доделете најмалку еден активен лек.", "OK");
+            return;
+        }
+        if(PatientScoreHistory.Count==0)
+        {
+            await UserDialogService.ShowAlertAsync("Валидација", "Пациентот мора да има внесен скор пред зачувување.", "OK");
+            return;
+        }
+        if(SelectedStatusForSave is null)
+        {
+            await UserDialogService.ShowAlertAsync("Валидација", "Изберете статус за терминот пред зачувување.", "OK");
+            return;
+        }
+        var statusAuthorized = SelectedStatusForSave.Value switch
+        {
+            AppointmentStatus.Scheduled => CanSchedule,
+            AppointmentStatus.InProgress => CanUpdate,
+            AppointmentStatus.Completed => CanComplete,
+            AppointmentStatus.Cancelled => CanCancel,
+            _ => false
+        };
+        if(!statusAuthorized)
+        {
+            await UserDialogService.ShowAlertAsync("Пристапот е одбиен", "Немате овластување за избраниот статус.", "ОК");
+            return;
+        }
 
         if(IsNewAppointment)
             await AssignNextAvailableSlotAsync();
@@ -937,6 +1006,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         {
             Appointment.PatientId=SelectedPatientForAppointment.Id;
             Appointment.DoctorId=SelectedDoctorForAppointment.Id;
+            Appointment.Status=SelectedStatusForSave!.Value;
 
             await _service.SaveAppointment(
                 Appointment,
