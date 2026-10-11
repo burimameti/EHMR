@@ -11,7 +11,7 @@ public class AuthStateService : IAuthStateService
 
     public User? CurrentUser => _currentUser;
     public Guid? CurrentDoctorId => _currentDoctorId;
-    public bool IsAuthenticated => _currentUser is not null;
+    public bool IsAuthenticated => _currentUser is not null && _currentUser.Role != Domain.Entities.UserRole.Staff;
     public event EventHandler? AuthStateChanged;
 
 
