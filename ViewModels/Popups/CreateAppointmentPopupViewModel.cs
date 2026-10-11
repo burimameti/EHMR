@@ -147,6 +147,23 @@ public partial class CreateAppointmentPopupViewModel : ObservableObject
         var doctors = await _encounterService.GetDoctors();
         Doctors=new ObservableCollection<Doctor>(doctors);
         SelectedDoctor=Doctors.FirstOrDefault(d => d.Id==_prefillDoctorId);
+
+        if(SelectedDoctor is not null)
+        {
+            var nextSlot=await _encounterService.GetNextAvailableSlot(
+                SelectedDoctor.Id, DateTime.Now, 30, _patientId);
+            AppointmentDate=nextSlot.Date;
+            AppointmentTime=nextSlot.TimeOfDay;
+        }
+        else
+        {
+            var now=DateTime.Now;
+            var nextSlot=new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
+            var minutesToNextHalfHour=30-(nextSlot.Minute%30);
+            nextSlot=nextSlot.AddMinutes(minutesToNextHalfHour);
+            AppointmentDate=nextSlot.Date;
+            AppointmentTime=nextSlot.TimeOfDay;
+        }
     }
 
     [RelayCommand]
