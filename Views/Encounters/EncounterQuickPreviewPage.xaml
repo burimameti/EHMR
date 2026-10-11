@@ -8,15 +8,17 @@
 	BackgroundColor="#EEF2F6">
 
 	<Grid RowDefinitions="Auto,*" RowSpacing="0">
+		<!-- WebView2 needs a real render surface to initialize reliably for printing.
+             Keep it visually unobtrusive, but do not reduce it to a 1x1 surface. -->
 		<WebView
 			x:Name="PrintWebView"
 			Grid.Row="1"
-			HeightRequest="1"
+			HeightRequest="700"
 			HorizontalOptions="Start"
 			InputTransparent="True"
 			Opacity="0.01"
 			VerticalOptions="Start"
-			WidthRequest="1" />
+			WidthRequest="900" />
 		<Grid
 			Grid.Row="0"
 			Padding="24,14"
