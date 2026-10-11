@@ -611,39 +611,19 @@
 
 									<!--  Table header  -->
 									<Grid ColumnDefinitions="110,*,110" ColumnSpacing="1">
-										<Border
-											Padding="12,9"
-											BackgroundColor="#475569"
-											StrokeShape="RoundRectangle 6,0,0,0"
-											StrokeThickness="0">
+										<Border Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												FontAttributes="Bold"
-												FontSize="11"
-												Text="МКБ КОД"
-												TextColor="White" />
+												Text="МКБ КОД" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
 										</Border>
 										<Border
-											Grid.Column="1"
-											Padding="12,9"
-											BackgroundColor="#475569"
-											StrokeThickness="0">
+											Grid.Column="1" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												FontAttributes="Bold"
-												FontSize="11"
-												Text="ОПИС"
-												TextColor="White" />
+												Text="ОПИС" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
 										</Border>
 										<Border
-											Grid.Column="2"
-											Padding="12,9"
-											BackgroundColor="#475569"
-											StrokeShape="RoundRectangle 0,6,0,0"
-											StrokeThickness="0">
+											Grid.Column="2" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												FontAttributes="Bold"
-												FontSize="11"
-												Text="ДАТУМ"
-												TextColor="White" />
+												Text="ДАТУМ" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
 										</Border>
 									</Grid>
 
@@ -776,33 +756,17 @@
 											ColumnSpacing="1"
 											IsVisible="{Binding HasSelectedMedicines}">
 											<Border
-												Grid.Column="0"
-												Padding="10,8"
-												BackgroundColor="#475569"
-												StrokeShape="RoundRectangle 6,0,0,0"
-												StrokeThickness="0">
+												Grid.Column="0" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 												<Label
-													FontAttributes="Bold"
-													FontSize="10"
-													Text="ИМЕ НА ЛЕКОТ"
-													TextColor="White" />
+													Text="ИМЕ НА ЛЕКОТ" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
 											</Border>
 											<Border
-												Grid.Column="1"
-												Padding="10,8"
-												BackgroundColor="#475569"
-												StrokeThickness="0">
+												Grid.Column="1" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 												<Label
-													FontAttributes="Bold"
-													FontSize="10"
-													Text="КОЛИЧИНА"
-													TextColor="White" />
+													Text="КОЛИЧИНА" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
 											</Border>
 											<Border
-												Grid.Column="2"
-												BackgroundColor="#475569"
-												StrokeShape="RoundRectangle 0,6,0,0"
-												StrokeThickness="0" />
+												Grid.Column="2" / Style="{StaticResource CrudFormTableHeaderCellStyle}">
 										</Grid>
 
 										<!--  Table rows  -->
@@ -814,9 +778,7 @@
 													Stroke="{StaticResource SparkBorderSubtle}"
 													StrokeThickness="1">
 													<Label
-														FontSize="12"
-														Text="Нема доделени лекови."
-														TextColor="{StaticResource SparkTextSecondary}" />
+														Text="Нема доделени лекови." / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
 												</Border>
 											</BindableLayout.EmptyView>
 											<BindableLayout.ItemTemplate>
@@ -879,50 +841,24 @@
 								<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="0">
 
 									<Grid ColumnDefinitions="*,1.3*,90,110" ColumnSpacing="1">
-										<Border
-											Padding="12,9"
-											BackgroundColor="#475569"
-											StrokeShape="RoundRectangle 6,0,0,0"
-											StrokeThickness="0">
+										<Border Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												FontAttributes="Bold"
-												FontSize="11"
-												Text="НАЗИВ"
-												TextColor="White" />
+												Text="НАЗИВ" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
 										</Border>
 										<Border
-											Grid.Column="1"
-											Padding="12,9"
-											BackgroundColor="#475569"
-											StrokeThickness="0">
+											Grid.Column="1" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												FontAttributes="Bold"
-												FontSize="11"
-												Text="ГЕНЕРИЧКО ИМЕ"
-												TextColor="White" />
+												Text="ГЕНЕРИЧКО ИМЕ" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
 										</Border>
 										<Border
-											Grid.Column="2"
-											Padding="12,9"
-											BackgroundColor="#475569"
-											StrokeThickness="0">
+											Grid.Column="2" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												FontAttributes="Bold"
-												FontSize="11"
-												Text="КОЛИЧИНА"
-												TextColor="White" />
+												Text="КОЛИЧИНА" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
 										</Border>
 										<Border
-											Grid.Column="3"
-											Padding="12,9"
-											BackgroundColor="#475569"
-											StrokeShape="RoundRectangle 0,6,0,0"
-											StrokeThickness="0">
+											Grid.Column="3" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 											<Label
-												FontAttributes="Bold"
-												FontSize="11"
-												Text="ДАТУМ"
-												TextColor="White" />
+												Text="ДАТУМ" / Style="{StaticResource CrudFormTableHeaderLabelStyle}">
 										</Border>
 									</Grid>
 
