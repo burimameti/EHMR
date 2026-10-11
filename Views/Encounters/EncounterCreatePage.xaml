@@ -98,28 +98,23 @@
 												<DataTemplate x:DataType="entities:Patient">
 													<Border
 														Margin="1"
-														Padding="10,7"
-														BackgroundColor="#F8FAFC"
+														Padding="10,8"
+														BackgroundColor="White"
 														Stroke="{StaticResource SparkBorderSubtle}"
-														StrokeShape="RoundRectangle 7"
+														StrokeShape="RoundRectangle 6"
 														StrokeThickness="1">
-														<Grid ColumnDefinitions="2*,1.2*" ColumnSpacing="12">
-															<Label
-																FontAttributes="Bold"
-																FontSize="16"
-																Text="{Binding FullName}"
-																TextColor="White"
-																VerticalOptions="Center" />
-															<VerticalStackLayout Grid.Column="1" Spacing="1">
-																<Label
-																	FontSize="9.5"
-																	Text="СЗБО број"
-																	TextColor="{StaticResource SparkTextSecondary}" />
-																<Label
-																	FontAttributes="Bold"
-																	FontSize="11.5"
-																	Text="{Binding SzboNumber}"
-																	TextColor="{StaticResource SparkAccentTealDark}" />
+														<Grid ColumnDefinitions="1.5*,1.1*,1.1*" ColumnSpacing="12">
+															<VerticalStackLayout Spacing="2" VerticalOptions="Center">
+																<Label FontAttributes="Bold" FontSize="13" Text="{Binding FullName}" TextColor="{StaticResource SparkTextPrimary}" />
+																<Label FontSize="10" Text="Име и презиме" TextColor="{StaticResource SparkTextSecondary}" />
+															</VerticalStackLayout>
+															<VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+																<Label FontSize="10" Text="ЕМБГ" TextColor="{StaticResource SparkTextSecondary}" />
+																<Label FontAttributes="Bold" FontSize="11" Text="{Binding NationalId, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
+															</VerticalStackLayout>
+															<VerticalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="Center">
+																<Label FontSize="10" Text="СЗБО број" TextColor="{StaticResource SparkTextSecondary}" />
+																<Label FontAttributes="Bold" FontSize="11" Text="{Binding SzboNumber, TargetNullValue='—'}" TextColor="{StaticResource SparkAccentTealDark}" />
 															</VerticalStackLayout>
 														</Grid>
 													</Border>
