@@ -17,17 +17,5 @@ namespace EHMR.Views.Patients
             MenuHost.Content=this.menuView;
         }
 
-        protected override async void OnAppearing()
-        {
-            base.OnAppearing();
-            try
-            {
-                await _viewModel.RefreshAfterAppointmentAsync();
-            }
-            catch(Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"[PatientDetail] Appointment history refresh failed: {ex}");
-            }
-        }
     }
 }
