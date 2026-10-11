@@ -107,6 +107,14 @@ public sealed class PatientMkb10AssignmentSeeder : IEntitySeeder
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {
+        var obsoleteSeedId = Guid.Parse("00000000-0000-0000-0000-000000009215");
+        var obsolete = await context.PatientMkb10Assignments.Where(x => x.Id == obsoleteSeedId).ToListAsync(ct);
+        if (obsolete.Count > 0)
+        {
+            context.PatientMkb10Assignments.RemoveRange(obsolete);
+            await context.SaveChangesAsync(ct);
+        }
+
         var codesNeeded = Seeds.Select(x => x.Code).Distinct().ToArray();
         var codeIds = await context.Mkb10Codes
             .Where(x => codesNeeded.Contains(x.Code))
