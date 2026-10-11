@@ -165,7 +165,7 @@ namespace EHMR.Domain.Entities.Reports
 
         public string Key => "patients";
         public string Title => "Пациенти";
-        public string Description => "Регистрирани пациенти во избраниот временски период.";
+        public string Description => "Пациенти по секој преглед во избраниот временски период; секоја посета е посебен ред.";
         public string Icon => "🧑‍⚕️";
         public ReportType Type => ReportType.Patients;
         public ReportCategory Category => ReportCategory.Clinical;
@@ -495,6 +495,8 @@ namespace EHMR.Domain.Entities.Reports
                 Debug.WriteLine($"[Patients] [7] Applying filters...");
                 var filtered = ApplyFilters(patients, from, to);
                 var filtered_list = filtered.ToList();
+                if (_selectedScorePatientId.HasValue)
+                    filtered_list = filtered_list.Where(x => x.Id == _selectedScorePatientId.Value).ToList();
                 Debug.WriteLine($"[Patients] [8] After filtering: {filtered_list.Count} patients");
 
                 Debug.WriteLine($"[Patients] [9] Building report rows...");
