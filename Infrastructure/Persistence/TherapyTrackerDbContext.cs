@@ -406,6 +406,7 @@ public abstract class TherapyTrackerDbContext : DbContext, IUnitOfWork
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Dosage).HasMaxLength(100);
+            entity.Property(x => x.DosingFrequency).IsRequired().HasMaxLength(50).HasDefaultValue("Месечно");
 
             entity.Property(x => x.IsActive).HasDefaultValue(true);
 
