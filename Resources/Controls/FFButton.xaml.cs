@@ -78,7 +78,7 @@ public partial class FFButton : ContentView
         var horizontalPadding = Math.Max(8, 20 * scale);
         Container.Padding = new Thickness(horizontalPadding, 0);
         // Keep a consistent minimum touch target even in narrow layouts.
-        Container.MinimumHeightRequest = Math.Max(40, HeightRequestEx);
+        Container.MinimumHeightRequest = Math.Max(34, HeightRequestEx);
         Container.StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(6) };
 
     }
@@ -108,22 +108,22 @@ public partial class FFButton : ContentView
         BindableProperty.Create(nameof(IsLoading), typeof(bool), typeof(FFButton), false);
 
     public static readonly BindableProperty HeightRequestExProperty =
-        BindableProperty.Create(nameof(HeightRequestEx), typeof(double), typeof(FFButton), 40d,
-            propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumHeightRequest=Math.Max(40, (double)v));
+        BindableProperty.Create(nameof(HeightRequestEx), typeof(double), typeof(FFButton), 36d,
+            propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumHeightRequest=Math.Max(34, (double)v));
 
     public static readonly BindableProperty WidthRequestExProperty =
         BindableProperty.Create(nameof(WidthRequestEx), typeof(double), typeof(FFButton), -1d,
             propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumWidthRequest=(double)v);
 
     public static readonly BindableProperty ContentPaddingProperty =
-        BindableProperty.Create(nameof(ContentPadding), typeof(Thickness), typeof(FFButton), new Thickness(16, 0),
+        BindableProperty.Create(nameof(ContentPadding), typeof(Thickness), typeof(FFButton), new Thickness(12, 0),
             propertyChanged: (b, _, v) => ((FFButton)b).Container.Padding=(Thickness)v);
 
     public static readonly BindableProperty CornerRadiusProperty =
         BindableProperty.Create(nameof(CornerRadius), typeof(float), typeof(FFButton), 0f);
 
     public static readonly BindableProperty FontSizeExProperty =
-        BindableProperty.Create(nameof(FontSizeEx), typeof(double), typeof(FFButton), 16d);
+        BindableProperty.Create(nameof(FontSizeEx), typeof(double), typeof(FFButton), 13d);
 
     public static readonly BindableProperty FontFamilyProperty =
         BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(FFButton), "Segoe UI");
