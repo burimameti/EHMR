@@ -685,61 +685,24 @@
 								IsVisible="{Binding HasPatientContext}"
 								Spacing="6">
 
+								<BindableLayout.EmptyView>
+									<Label Padding="4,6" FontSize="11" Text="Нема претходни прегледи." TextColor="{StaticResource SparkTextSecondary}" />
+								</BindableLayout.EmptyView>
 								<BindableLayout.ItemTemplate>
 									<DataTemplate x:DataType="entities:Encounter">
-										<Border
-											Padding="12,10"
-											BackgroundColor="{StaticResource SparkTabActiveBg}"
-											StrokeShape="RoundRectangle 10"
-											StrokeThickness="0">
-											<Border.GestureRecognizers>
-												<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.OpenEncounterCommand}" CommandParameter="{Binding .}" />
-											</Border.GestureRecognizers>
-											<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-												<Border
-													BackgroundColor="{StaticResource SparkAccentTealBg}"
-													HeightRequest="32"
-													StrokeShape="RoundRectangle 16"
-													StrokeThickness="0"
-													WidthRequest="32">
-													<Label
-														FontFamily="FASolid"
-														FontSize="11"
-														HorizontalOptions="Center"
-														Text="&#xf0f1;"
-														TextColor="{StaticResource SparkAccentTealDark}"
-														VerticalOptions="Center" />
-												</Border>
-												<VerticalStackLayout
-													Grid.Column="1"
-													Spacing="2"
-													VerticalOptions="Center">
-													<Label
-														FontAttributes="Bold"
-														FontSize="13"
-														LineBreakMode="TailTruncation"
-														Text="{Binding ClinicalNotes, TargetNullValue='Преглед без наведена причина'}"
-														TextColor="{StaticResource SparkTextPrimary}" />
-													<Label
-														FontSize="11"
-														Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}"
-														TextColor="{StaticResource SparkTextSecondary}" />
-												</VerticalStackLayout>
-												<Border
-													Grid.Column="2"
-													Padding="8,3"
-													BackgroundColor="{StaticResource SparkAccentTealBg}"
-													StrokeShape="RoundRectangle 8"
-													StrokeThickness="0"
-													VerticalOptions="Center">
-													<Label
-														FontAttributes="Bold"
-														FontSize="9"
-														Text="{Binding Status}"
-														TextColor="{StaticResource SparkAccentTealDark}" />
-												</Border>
-											</Grid>
-										</Border>
+										<Grid ColumnDefinitions="18,*" ColumnSpacing="5" Padding="0,2">
+											<Grid.GestureRecognizers>
+											<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.OpenEncounterCommand}" CommandParameter="{Binding .}" />
+										</Grid.GestureRecognizers>
+											<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+											<VerticalStackLayout Grid.Column="1" Padding="0,3,0,7" Spacing="2">
+												<Label FontAttributes="Bold" FontSize="12.5" LineBreakMode="WordWrap" Text="{Binding ClinicalNotes, TargetNullValue='Преглед без наведена причина'}" TextColor="{StaticResource SparkTextPrimary}" />
+												<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+													<Label FontSize="10.5" Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkTextSecondary}" />
+													<Label Grid.Column="1" FontAttributes="Bold" FontSize="9.5" Text="{Binding Status}" TextColor="{StaticResource SparkAccentTealDark}" />
+												</Grid>
+											</VerticalStackLayout>
+										</Grid>
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
@@ -793,30 +756,7 @@
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
 
-							<controls:CrudSectionHeader
-								Title="ПРЕТХОДЕН СКОР"
-								IsVisible="{Binding HasPatientContext}"
-								LineColor="{StaticResource Gray600}"
-								Style="{StaticResource CrudFormSectionHeaderStyle}" />
-							<Border
-								Padding="10,8"
-								BackgroundColor="{StaticResource SparkContentBackground}"
-								IsVisible="{Binding HasPatientContext}"
-								Stroke="{StaticResource SparkBorder}"
-								StrokeShape="RoundRectangle 10"
-								StrokeThickness="1">
-								<VerticalStackLayout Spacing="3">
-									<Label
-										FontAttributes="Bold"
-										FontSize="12.5"
-										Text="{Binding CurrentPatientScore}"
-										TextColor="{StaticResource SparkTextPrimary}" />
-									<Label
-										FontSize="11"
-										Text="{Binding CurrentPatientScoreDate, StringFormat='{0:dd.MM.yyyy}'}"
-										TextColor="{StaticResource SparkTextSecondary}" />
-								</VerticalStackLayout>
-							</Border>
+
 							<!--  История на дијагнози  -->
 							<!-- Историја на скорови од картонот, одделно од скоровите за тековниот преглед. -->
 							<controls:CrudSectionHeader
@@ -833,14 +773,12 @@
 								</BindableLayout.EmptyView>
 								<BindableLayout.ItemTemplate>
 									<DataTemplate x:DataType="entities:PatientScore">
-										<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+										<Grid ColumnDefinitions="18,*" ColumnSpacing="5" Padding="0,2">
 											<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
-											<Border Grid.Column="1" Style="{StaticResource CrudCollectionItemStyle}">
-												<VerticalStackLayout Spacing="2">
-													<Label Style="{StaticResource CrudCollectionCodeStyle}" Text="{Binding ScoreText, TargetNullValue='—'}" />
-													<Label Style="{StaticResource CrudCollectionMetaStyle}" Text="{Binding RecordedAt, StringFormat='{0:dd.MM.yyyy}'}" />
-												</VerticalStackLayout>
-											</Border>
+											<VerticalStackLayout Grid.Column="1" Padding="0,3,0,7" Spacing="2">
+												<Label FontAttributes="Bold" FontSize="12" Text="{Binding ScoreText, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
+												<Label FontSize="10.5" Text="{Binding RecordedAt, StringFormat='{0:dd.MM.yyyy}'}" TextColor="{StaticResource SparkTextSecondary}" />
+											</VerticalStackLayout>
 										</Grid>
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
