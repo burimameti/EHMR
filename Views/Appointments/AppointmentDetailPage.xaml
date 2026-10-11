@@ -1064,11 +1064,10 @@
 				<!--  ═══════════════════════════════════════════════════  -->
 				<Grid
 					Grid.Column="1"
-					RowDefinitions="Auto,*"
-					RowSpacing="12">
+					RowDefinitions="*">
 
 					<controls:FFSectionCard Grid.Row="0" Style="{StaticResource CrudFormCardStyle}">
-						<VerticalStackLayout Padding="14" Spacing="12">
+						<VerticalStackLayout Padding="0" Spacing="12">
 
 							<controls:CrudSectionHeader Title="ИСТОРИЈА НА ПАЦИЕНТОТ" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
 
