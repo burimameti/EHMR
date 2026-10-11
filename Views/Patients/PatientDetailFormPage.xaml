@@ -149,10 +149,6 @@
 
 								<!--  ═══ 1. ЛИЧНИ ПОДАТОЦИ ═══  -->
 								<Border
-									Padding="14"
-									Stroke="#DCE3EA"
-									StrokeShape="RoundRectangle 12"
-									StrokeThickness="1"
 									Style="{StaticResource CrudFormSectionCardStyle}">
 									<VerticalStackLayout Spacing="10">
 
@@ -313,10 +309,6 @@
 
 								<!--  ═══ 2. КОНТАКТ ИНФОРМАЦИИ ═══  -->
 								<Border
-									Padding="14"
-									Stroke="#DCE3EA"
-									StrokeShape="RoundRectangle 12"
-									StrokeThickness="1"
 									Style="{StaticResource CrudFormSectionCardStyle}">
 									<VerticalStackLayout Spacing="10">
 
@@ -475,10 +467,6 @@
 
 								<!--  ═══ 3. БИОЛОШКА ТЕРАПИЈА ═══  -->
 								<Border
-									Padding="14"
-									Stroke="#DCE3EA"
-									StrokeShape="RoundRectangle 12"
-									StrokeThickness="1"
 									Style="{StaticResource CrudFormSectionCardStyle}">
 									<VerticalStackLayout Spacing="14">
 										<controls:CrudSectionHeader
@@ -772,10 +760,8 @@
 													<VerticalStackLayout Spacing="0">
 
 														<Grid
-															Padding="10,8"
-															BackgroundColor="{StaticResource Gray300}"
 															ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,88,100"
-															ColumnSpacing="6">
+															ColumnSpacing="6" Style="{StaticResource CrudFormTableHeaderGridStyle}">
 															<Label
 																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="ЛЕК" />
@@ -905,10 +891,8 @@
 													<VerticalStackLayout Spacing="0">
 
 														<Grid
-															Padding="10,8"
-															BackgroundColor="{StaticResource Gray300}"
 															ColumnDefinitions="1.3*,1.1*,0.9*,0.6*,88,100"
-															ColumnSpacing="6">
+															ColumnSpacing="6" Style="{StaticResource CrudFormTableHeaderGridStyle}">
 															<Label
 																Grid.Column="0"
 																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
