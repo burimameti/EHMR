@@ -53,6 +53,10 @@ public sealed class PatientMkb10AssignmentSeeder : IEntitySeeder
             "Есенцијална хипертензија.",
             PatientMkb10AssignmentStatus.Active),
 
+        new(Guid.Parse("00000000-0000-0000-0000-000000009203"), "MKB-DEMO-P2-001", SeedIds.Patient2, null, "M06.9", -180, true, "Умерена", "Реуматолошка состојба.", PatientMkb10AssignmentStatus.Active),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009204"), "MKB-DEMO-P4-001", SeedIds.Patient4, null, "M06.9", -120, true, "Умерена", "Реуматолошка состојба.", PatientMkb10AssignmentStatus.Active),
+        new(Guid.Parse("00000000-0000-0000-0000-000000009205"), "MKB-DEMO-P5-001", SeedIds.Patient5, null, "M06.9", -75, true, "Умерена", "Реуматолошка состојба.", PatientMkb10AssignmentStatus.Active),
+
         // Visit-level diagnoses: each belongs to its specific encounter.
         new(
             Guid.Parse("00000000-0000-0000-0000-000000009211"),
