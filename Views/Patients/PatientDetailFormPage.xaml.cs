@@ -1,3 +1,4 @@
+using System;
 using EHMR.ViewModels;
 using EHMR.Views;
 
