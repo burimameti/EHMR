@@ -187,9 +187,21 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [ObservableProperty] private ObservableCollection<Appointment> appointmentHistory = new();
     [ObservableProperty] private ObservableCollection<PatientMkb10Assignment> patientMkb10History = new();
     [ObservableProperty] private ObservableCollection<PatientMedicine> patientMedicinesHistory = new();
+    [ObservableProperty] private ObservableCollection<PatientScore> patientScoreHistory = new();
 
-    public IEnumerable<PatientMedicine> PreviousMedicinesHistory =>
-        PatientMedicinesHistory.Where(x => !x.IsActive);
+    public IEnumerable<PatientMkb10Assignment> CurrentMkb10Assignments =>
+        PatientMkb10History
+            .Where(x => x.Mkb10Code is not null)
+            .GroupBy(x => x.Mkb10Code!.Code, StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.OrderByDescending(x => x.DiagnosedAt).First())
+            .OrderByDescending(x => x.DiagnosedAt);
+
+    public IEnumerable<PatientMedicine> CurrentPatientMedicines => PatientMedicinesHistory.Where(x => x.IsActive);
+
+    public string CurrentPatientScore => PatientScoreHistory
+        .OrderByDescending(x => x.RecordedAt)
+        .Select(x => x.DisplayText)
+        .FirstOrDefault() ?? "—";
 
     // =========================
     // UI STATE
@@ -504,7 +516,10 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
         PatientMkb10History=new ObservableCollection<PatientMkb10Assignment>(ctx.Mkb10Assignments);
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
-        OnPropertyChanged(nameof(PreviousMedicinesHistory));
+        PatientScoreHistory=new ObservableCollection<PatientScore>(ctx.Scores);
+        OnPropertyChanged(nameof(CurrentMkb10Assignments));
+        OnPropertyChanged(nameof(CurrentPatientMedicines));
+        OnPropertyChanged(nameof(CurrentPatientScore));
         SelectedMedicines=IsNewAppointment
             ? new ObservableCollection<PatientMedicine>()
             : new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
@@ -566,7 +581,10 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             AppointmentHistory=new ObservableCollection<Appointment>();
             PatientMkb10History=new ObservableCollection<PatientMkb10Assignment>();
             PatientMedicinesHistory=new ObservableCollection<PatientMedicine>();
-            OnPropertyChanged(nameof(PreviousMedicinesHistory));
+            PatientScoreHistory=new ObservableCollection<PatientScore>();
+            OnPropertyChanged(nameof(CurrentMkb10Assignments));
+            OnPropertyChanged(nameof(CurrentPatientMedicines));
+            OnPropertyChanged(nameof(CurrentPatientScore));
             SelectedMedicines=new ObservableCollection<PatientMedicine>();
             SelectedDoctorForAppointment=null;
         }
@@ -605,7 +623,10 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         AppointmentHistory=new ObservableCollection<Appointment>(ctx.Appointments);
         PatientMkb10History=new ObservableCollection<PatientMkb10Assignment>(ctx.Mkb10Assignments);
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
-        OnPropertyChanged(nameof(PreviousMedicinesHistory));
+        PatientScoreHistory=new ObservableCollection<PatientScore>(ctx.Scores);
+        OnPropertyChanged(nameof(CurrentMkb10Assignments));
+        OnPropertyChanged(nameof(CurrentPatientMedicines));
+        OnPropertyChanged(nameof(CurrentPatientScore));
         SelectedMedicines=IsNewAppointment
             ? new ObservableCollection<PatientMedicine>()
             : new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
