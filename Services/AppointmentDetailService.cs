@@ -115,6 +115,7 @@ namespace EHMR.Services
                 : [];
 var patients = await db.Patients
                 .AsNoTracking()
+                .Where(x => x.Status == PatientStatus.Active)
                 .Include(x => x.Doctor)
                 .OrderBy(x => x.LastName)
                 .ThenBy(x => x.FirstName)
@@ -260,6 +261,12 @@ Encounter? encounterForMedicines = null;
 
             if(appointment.Id==Guid.Empty)
             {
+                var patientIsActive = await db.Patients
+                    .AsNoTracking()
+                    .AnyAsync(x => x.Id == appointment.PatientId && x.Status == PatientStatus.Active);
+                if (!patientIsActive)
+                    throw new InvalidOperationException("Не може да се креира термин за непостоечки или неактивен пациент.");
+
                 appointment.Id=Guid.NewGuid();
 
                 if(string.IsNullOrWhiteSpace(appointment.AppointmentNumber))
