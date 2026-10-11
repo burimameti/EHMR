@@ -915,7 +915,7 @@
 												<Grid
 													Grid.Row="0"
 													Grid.Column="0"
-													ColumnDefinitions="*,Auto"
+													ColumnDefinitions="*,Auto,Auto"
 													HeightRequest="34">
 													<Label
 														FontAttributes="Bold"
@@ -931,6 +931,14 @@
 														IsVisible="{Binding IsEditMode}"
 														Text="+ Нов режим"
 														WidthRequestEx="116" />
+													<controls:FFButton
+														Grid.Column="2"
+														ButtonKind="Primary"
+														Command="{Binding CreateMedicineCommand}"
+														HeightRequestEx="34"
+														IsVisible="{Binding IsEditMode}"
+														Text="+ Нов лек"
+														WidthRequestEx="92" />
 												</Grid>
 												<Grid
 													Grid.Row="0"
