@@ -364,7 +364,7 @@
                                             <VerticalStackLayout Spacing="6">
                                                 <Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="ПРЕТХОДЕН СКОР" />
                                                 <Label FontAttributes="Bold" FontSize="12" LineBreakMode="WordWrap" Text="{Binding CurrentPatientScore, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
-                                                <controls:FFButton ButtonKind="Secondary" Command="{Binding AddPatientScoreCommand}" HeightRequestEx="32" Text="+ Нов скор" IsEnabled="{Binding IsNewAppointment}" />
+                                                <controls:FFButton ButtonKind="Secondary" Command="{Binding AddPatientScoreCommand}" HeightRequestEx="32" Text="+ Нов скор" IsVisible="False" />
                                             </VerticalStackLayout>
                                         </Border>
 									</Grid>
@@ -755,7 +755,7 @@
 										<Border Padding="8,0" BackgroundColor="White" HeightRequest="46" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Label FontSize="11" LineBreakMode="TailTruncation" Text="{Binding Medicine.BilingualName, TargetNullValue='Непознат лек'}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></Border>
 										<Border Grid.Column="1" Padding="4,0" BackgroundColor="White" HeightRequest="46" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Entry Style="{StaticResource CrudFormTableCellEntryStyle}" Keyboard="Numeric" Text="{Binding Dosage, Mode=TwoWay}" /></Border>
 										<Border Grid.Column="2" Padding="2,0" BackgroundColor="White" HeightRequest="46" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1">
-                                            <controls:FFPicker IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsEditMode}" ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}" Label="" MinimumWidthRequest="110" SelectedItem="{Binding ApplicationRegimeDisplay, Mode=TwoWay}" />
+                                            <controls:FFPicker IsEnabled="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsReadOnly, Converter={StaticResource InverseBoolConverter}}" ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApplicationRegimeOptions}" Label="" MinimumWidthRequest="110" SelectedItem="{Binding ApplicationRegimeDisplay, Mode=TwoWay}" />
                                         </Border>
 										<Border Grid.Column="3" Padding="4,0" BackgroundColor="White" HeightRequest="46" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><Entry Style="{StaticResource CrudFormTableCellEntryStyle}" Keyboard="Numeric" Text="{Binding Quantity, Mode=TwoWay}" /></Border>
 										<Border Grid.Column="4" BackgroundColor="White" HeightRequest="46" Stroke="{StaticResource SparkBorderSubtle}" StrokeThickness="1"><HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center"><controls:FFButton ButtonKind="Danger" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveMedicineCommand}" CommandParameter="{Binding .}" HeightRequestEx="32" Text="×" WidthRequestEx="32" /></HorizontalStackLayout></Border>
