@@ -936,7 +936,7 @@ public class EncounterDetailService : IEncounterDetailService
             EncounterDate=appointment.ScheduledStart,
             ScheduledStart=appointment.ScheduledStart,
             ScheduledEnd=appointment.ScheduledEnd,
-            ReasonForVisit=null,
+            ReasonForVisit=appointment.ReasonForVisit,
             Notes=appointment.ClinicalNotes,
             VisitSource="Appointment",
             Status=EncounterStatus.Scheduled,
