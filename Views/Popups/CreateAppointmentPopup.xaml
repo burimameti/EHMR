@@ -7,11 +7,7 @@
 	xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
 	<Border
-		Padding="16"
-		BackgroundColor="{StaticResource SparkBackground}"
-		StrokeShape="RoundRectangle 16"
-		StrokeThickness="0"
-		WidthRequest="420">
+		WidthRequest="420" Style="{StaticResource CrudFormSectionCardStyle}">
 
 		<VerticalStackLayout Spacing="18">
 
