@@ -17,10 +17,7 @@
 			<converters:EncounterStatusToColorConverter x:Key="StatusColorConverter" />
 			<converters:EncounterStatusToBgConverter x:Key="StatusBgConverter" />
 
-			<Style x:Key="SectionHeaderStyle" TargetType="controls:CrudSectionHeader">
-				<Setter Property="BackgroundColor" Value="{StaticResource Transparent}" />
-				<Setter Property="TextColor" Value="{StaticResource Gray800}" />
-			</Style>
+			
 
 			<DataTemplate x:Key="MedicineRowTemplate" x:DataType="entities:PatientMedicine">
 				<Border
@@ -151,21 +148,17 @@
 
 			<Grid Grid.Row="1" Style="{StaticResource CrudFormBodyGridStyle}">
 
-				<controls:FFSectionCard Margin="0">
+				<controls:FFSectionCard Margin="0" Style="{StaticResource CrudFormCardStyle}">
 					<ScrollView VerticalScrollBarVisibility="Never">
 						<VerticalStackLayout Style="{StaticResource CrudFormContentStackStyle}">
 
 							<!--  ПАЦИЕНТ И РЕУМАТОЛОГ  -->
 							<VerticalStackLayout Spacing="12">
 								<controls:CrudSectionHeader
-									Title="ПАЦИЕНТ И РЕУМАТОЛОГ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+									Title="ПАЦИЕНТ И РЕУМАТОЛОГ"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 								<Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-									<Border
-										Padding="14,12"
-										BackgroundColor="{StaticResource SparkTabActiveBg}"
-										StrokeShape="RoundRectangle 10"
-										StrokeThickness="0">
+									<Border Style="{StaticResource CrudFormSectionCardStyle}">
 										<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
 											<Border
 												BackgroundColor="{StaticResource SparkAccentTealBg}"
@@ -200,11 +193,7 @@
 									</Border>
 
 									<Border
-										Grid.Column="1"
-										Padding="14,12"
-										BackgroundColor="{StaticResource SparkTabActiveBg}"
-										StrokeShape="RoundRectangle 10"
-										StrokeThickness="0">
+										Grid.Column="1" Style="{StaticResource CrudFormSectionCardStyle}">
 										<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
 											<Border
 												BackgroundColor="{StaticResource SparkAccentTealBg}"
@@ -239,11 +228,7 @@
 									</Border>
 								</Grid>
 
-								<Border
-									Padding="14"
-									BackgroundColor="{StaticResource SparkTabActiveBg}"
-									StrokeShape="RoundRectangle 10"
-									StrokeThickness="0">
+								<Border Style="{StaticResource CrudFormSectionCardStyle}">
 									<Grid
 										ColumnDefinitions="1.3*,1*,1*,1.3*"
 										ColumnSpacing="14"
@@ -364,12 +349,12 @@
 
 							<!-- БИОЛОШКА ТЕРАПИЈА: усогласен приказ на МКБ, активни лекови и претходен скор -->
 							<VerticalStackLayout IsVisible="True" Spacing="8">
-								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1*" ColumnSpacing="8" VerticalOptions="Start">
 									<Border Grid.Column="0" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start" HorizontalOptions="Fill">
 										<VerticalStackLayout Spacing="0">
 											<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}">
-												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="МКБ-10 ДИЈАГНОЗИ" />
+												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="МКБ-10 ДИЈАГНОЗИ" />
 											</Grid>
 											<VerticalStackLayout BindableLayout.ItemsSource="{Binding Mkb10Assignments}" Spacing="0" VerticalOptions="Start">
 												<BindableLayout.EmptyView><Label FontSize="11" Text="Нема доделени МКБ-10 дијагнози." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
@@ -388,7 +373,7 @@
 									<Border Grid.Column="1" Padding="0" BackgroundColor="White" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start" HorizontalOptions="Fill">
 										<VerticalStackLayout Spacing="0">
 											<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}">
-												<Label Style="{StaticResource TableHeaderLabelStyle}" Text="АКТИВНИ ЛЕКОВИ" />
+												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="АКТИВНИ ЛЕКОВИ" />
 											</Grid>
 											<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="0" VerticalOptions="Start">
 												<BindableLayout.EmptyView><Label FontSize="11" Text="Нема лекови во овој преглед." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
@@ -405,9 +390,9 @@
 											</VerticalStackLayout>
 										</VerticalStackLayout>
 									</Border>
-									<Border Grid.Column="2" Padding="10,8" BackgroundColor="{StaticResource SparkTabActiveBg}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1" VerticalOptions="Start">
+									<Border Grid.Column="2" VerticalOptions="Start" Style="{StaticResource CrudFormSectionCardStyle}">
 										<VerticalStackLayout Spacing="5">
-											<Label Style="{StaticResource TableHeaderLabelStyle}" Text="ПРЕТХОДЕН СКОР" />
+											<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="ПРЕТХОДЕН СКОР" />
 											<Label FontAttributes="Bold" FontSize="12" LineBreakMode="WordWrap" Text="{Binding CurrentPatientScore, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
 										</VerticalStackLayout>
 									</Border>
@@ -417,13 +402,10 @@
 			<!--  ЛЕКОВИ  -->
 							<VerticalStackLayout Spacing="10">
 								<controls:CrudSectionHeader
-									Title="ЛЕКОВИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+									Title="ЛЕКОВИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 								<Grid ColumnDefinitions="1.4*,1*,1.35*,0.8*" ColumnSpacing="1">
-									<Border
-										Padding="10,7"
-										BackgroundColor="{StaticResource Gray300}"
-										StrokeThickness="0">
+									<Border Style="{StaticResource CrudFormTableHeaderCellStyle}">
 										<Label
 											FontAttributes="Bold"
 											FontSize="9"
@@ -431,10 +413,7 @@
 											TextColor="{StaticResource SparkTextPrimary}" />
 									</Border>
 									<Border
-										Grid.Column="1"
-										Padding="10,7"
-										BackgroundColor="{StaticResource Gray300}"
-										StrokeThickness="0">
+										Grid.Column="1" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 										<Label
 											FontAttributes="Bold"
 											FontSize="9"
@@ -442,10 +421,7 @@
 											TextColor="{StaticResource SparkTextPrimary}" />
 									</Border>
 									<Border
-										Grid.Column="2"
-										Padding="10,7"
-										BackgroundColor="{StaticResource Gray300}"
-										StrokeThickness="0">
+										Grid.Column="2" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 										<Label
 											FontAttributes="Bold"
 											FontSize="9"
@@ -453,10 +429,7 @@
 											TextColor="{StaticResource SparkTextPrimary}" />
 									</Border>
 									<Border
-										Grid.Column="3"
-										Padding="10,7"
-										BackgroundColor="{StaticResource Gray300}"
-										StrokeThickness="0">
+										Grid.Column="3" Style="{StaticResource CrudFormTableHeaderCellStyle}">
 										<Label
 											FontAttributes="Bold"
 											FontSize="9"
@@ -513,7 +486,7 @@
 							<!--  ДОКУМЕНТИ  -->
 							<VerticalStackLayout Spacing="10">
 								<controls:CrudSectionHeader
-									Title="ДОКУМЕНТИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource SectionHeaderStyle}" />
+									Title="ДОКУМЕНТИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 								<FlexLayout
 									BindableLayout.ItemsSource="{Binding PatientDocuments}"
 									Direction="Row"
