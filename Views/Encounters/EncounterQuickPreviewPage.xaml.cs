@@ -69,7 +69,7 @@ h1{{font-size:20pt;margin-bottom:4px}}h2{{font-size:12pt;border-bottom:1px solid
             if (PrintWebView.Handler?.PlatformView is Microsoft.UI.Xaml.Controls.WebView2 nativeWebView)
             {
                 await nativeWebView.EnsureCoreWebView2Async();
-                await nativeWebView.CoreWebView2.ShowPrintUIAsync();
+                nativeWebView.CoreWebView2.ShowPrintUI();
                 return;
             }
 
