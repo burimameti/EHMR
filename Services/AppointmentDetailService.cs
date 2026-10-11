@@ -309,7 +309,7 @@ Encounter? encounterForMedicines = null;
                     encounter.ScheduledStart=appointment.ScheduledStart;
                     encounter.ScheduledEnd=appointment.ScheduledEnd;
                     encounter.Notes=appointment.ClinicalNotes;
-                    encounter.ReasonForVisit=null;
+                    encounter.ReasonForVisit=appointment.ReasonForVisit;
 
                     //var (resolvedEncounter, resolvedAppointment)=
                     //    ReconcileStatus(encounter.Status, appointment.Status);
