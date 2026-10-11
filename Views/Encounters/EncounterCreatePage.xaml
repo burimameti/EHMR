@@ -34,10 +34,10 @@
 			Style="{StaticResource CrudFormPageGridStyle}">
 
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<controls:FFPageHeader Title="Нов Преглед" Subtitle="Креирање нов преглед">
+				<controls:FFPageHeader Title="Нов преглед" Subtitle="Креирање нов преглед">
 					<controls:FFPageHeader.HeaderContent>
 						<controls:FFButton
-							ButtonKind="Secondary"
+							ButtonKind="Ghost"
 							Command="{Binding CancelCommand}"
 							HeightRequestEx="40"
 							Text="Назад"
@@ -46,14 +46,12 @@
 				</controls:FFPageHeader>
 			</Border>
 
-			<Grid
-				Grid.Row="1"
-				ColumnDefinitions="2.7*,1*"
-				Style="{StaticResource CrudFormBodyGridStyle}">
+			<Border Grid.Row="1" Style="{StaticResource CrudFormBodyGridStyle}">
+				<Grid ColumnDefinitions="2.7*,1*" ColumnSpacing="14">
 
 				<!--  ═══════════════  ЛЕВА КОЛОНА — ФОРМИ  ═══════════════  -->
-				<controls:FFSectionCard Grid.Column="0" Margin="0">
-					<ScrollView VerticalScrollBarVisibility="Never">
+				<controls:FFSectionCard Grid.Column="0" Margin="0" Style="{StaticResource CrudFormCardStyle}">
+					<controls:CustomScrollView ScrollBarColor="{StaticResource SparkAccentTeal}">
 						<VerticalStackLayout Style="{StaticResource CrudFormContentStackStyle}">
 
 							<!--  ── 1. ПАЦИЕНТ И РЕУМАТОЛОГ ──  -->
@@ -638,7 +636,7 @@
 
 							</VerticalStackLayout>
 						</VerticalStackLayout>
-					</ScrollView>
+					</controls:CustomScrollView>
 				</controls:FFSectionCard>
 
 				<!--  ═══════════════  ДЕСНА КОЛОНА  ═══════════════  -->
@@ -971,6 +969,7 @@
 				</controls:FFSectionCard>
 
 			</Grid>
+			</Border>
 
 			<!--  ДОЛНА ЛЕНТА  -->
 			<Border
