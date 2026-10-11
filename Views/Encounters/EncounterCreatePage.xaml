@@ -530,7 +530,7 @@
 						StrokeShape="RoundRectangle 8"
 						StrokeThickness="1">
 							<VerticalStackLayout Spacing="0">
-								<Grid Padding="10,8" BackgroundColor="{StaticResource SparkSurfaceAlt}" ColumnDefinitions="*,44" ColumnSpacing="8">
+								<Grid Padding="10,8" BackgroundColor="{StaticResource Gray300}" ColumnDefinitions="*,44" ColumnSpacing="8">
 									<Label Style="{StaticResource TableHeaderLabelStyle}" Text="СКОР" />
 									<Label Grid.Column="1" HorizontalTextAlignment="Center" Style="{StaticResource TableHeaderLabelStyle}" Text="АКЦИИ" />
 								</Grid>
