@@ -309,28 +309,37 @@
 										Grid.Column="0"
 										Spacing="10">
 
-										<Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
-							<controls:CrudSectionHeader
+										<controls:CrudSectionHeader
 								Title="ТЕКОВНА ТЕРАПИЈА"
 								LineColor="{StaticResource Gray600}"
 								Style="{StaticResource SectionHeaderStyle}" />
-							<controls:FFButton
-								Grid.Column="1"
-								ButtonKind="Secondary"
-								Command="{Binding AddPatientActiveMedicineCommand}"
-								HeightRequestEx="36"
-								Text="+ Лек за Преглед"
-								WidthRequestEx="145" />
-							<controls:FFButton
-								Grid.Column="2"
-								ButtonKind="Primary"
-								Command="{Binding AddEncounterScoreFromListCommand}"
-								HeightRequestEx="36"
-								Text="+ Скор За Преглед"
-								WidthRequestEx="145" />
-						</Grid>
 
-										<!-- Лековите се додаваат рачно од активната терапија на пациентот; тука се внесува само количината за овој преглед. -->
+										<controls:FFSearchBox Placeholder="Пребарај одобрени лекови кај пациентот..." Text="{Binding MedicineSearchText, Mode=TwoWay}" />
+										<Border
+											Padding="4"
+											BackgroundColor="White"
+											IsVisible="{Binding ShowMedicineDropdown}"
+											Stroke="{StaticResource SparkBorderSubtle}"
+											StrokeShape="RoundRectangle 8"
+											StrokeThickness="1">
+											<CollectionView HeightRequest="180" ItemsSource="{Binding MedicineResults}">
+												<CollectionView.ItemTemplate>
+													<DataTemplate x:DataType="entities:Medicine">
+														<Border Padding="10,7" BackgroundColor="Transparent" StrokeThickness="0">
+															<Border.GestureRecognizers>
+																<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddMedicineCommand}" CommandParameter="{Binding .}" />
+															</Border.GestureRecognizers>
+															<VerticalStackLayout Spacing="1">
+																<Label FontAttributes="Bold" FontSize="12.5" Text="{Binding BilingualName}" TextColor="{StaticResource SparkAccentTealDark}" />
+																<Label FontSize="10.5" Text="{Binding GenericName}" TextColor="{StaticResource SparkTextSecondary}" />
+															</VerticalStackLayout>
+														</Border>
+													</DataTemplate>
+											</CollectionView.ItemTemplate>
+										</CollectionView>
+									</Border>
+
+										<!-- Лековите се додаваат преку пребарување на активната, одобрена терапија на пациентот. -->
 
 
 										<!--  Заглавие на табелата (последната колона е 130, иста како во редовите)  -->
