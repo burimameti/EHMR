@@ -1022,10 +1022,19 @@
 			</Grid>
 			</Border>
 			<Border Grid.Row="2" Margin="16,10,16,16" Padding="16,10" BackgroundColor="White" IsVisible="{Binding IsEditMode}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
-				<Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
-					<Label Grid.Column="0" FontSize="10.5" Text="Завршете ги податоците за терминот" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" />
-					<controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="42" IsVisible="{Binding IsEditMode}" Text="Откажи" WidthRequestEx="130" />
-					<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" HeightRequestEx="42" IsEnabled="{Binding CanSaveAppointment}" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
+				<Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="7">
+					<Label Grid.Row="0" FontAttributes="Bold" FontSize="11" Text="ЗАДОЛЖИТЕЛЕН СТАТУС — изберете еден пред зачувување" TextColor="{StaticResource SparkTextSecondary}" />
+					<Grid Grid.Row="1" ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+						<HorizontalStackLayout Grid.Column="0" Spacing="4"><CheckBox IsChecked="{Binding ScheduledStatusSelected, Mode=TwoWay}" VerticalOptions="Center" /><Label FontSize="11" Text="Закажан" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></HorizontalStackLayout>
+						<HorizontalStackLayout Grid.Column="1" Spacing="4"><CheckBox IsChecked="{Binding InProgressStatusSelected, Mode=TwoWay}" VerticalOptions="Center" /><Label FontSize="11" Text="Во тек" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></HorizontalStackLayout>
+						<HorizontalStackLayout Grid.Column="2" Spacing="4"><CheckBox IsChecked="{Binding CompletedStatusSelected, Mode=TwoWay}" VerticalOptions="Center" /><Label FontSize="11" Text="Завршен" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></HorizontalStackLayout>
+						<HorizontalStackLayout Grid.Column="3" Spacing="4"><CheckBox IsChecked="{Binding CancelledStatusSelected, Mode=TwoWay}" VerticalOptions="Center" /><Label FontSize="11" Text="Откажан" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></HorizontalStackLayout>
+					</Grid>
+					<Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+						<Label Grid.Column="0" FontSize="11" Text="{Binding StatusDisplay, StringFormat='Избран статус: {0}'}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
+						<controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="42" Text="Откажи" WidthRequestEx="130" />
+						<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" HeightRequestEx="42" IsEnabled="{Binding CanSaveAppointment}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
+					</Grid>
 				</Grid>
 			</Border>
 
