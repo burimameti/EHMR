@@ -4,11 +4,7 @@ using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
 
 namespace EHMR.Infrastructure.Persistence.Configs;
 
-/// <summary>
-/// Поврзани демо сценарија за проверка на Dashboard, Термини и Прегледи.
-/// Секој запис има фиксно ID и се додава само ако недостасува, па seeder-от е
-/// безбеден и за база што веќе содржи други демо податоци.
-/// </summary>
+/// <summary>Deterministic demo appointments and completed encounters, spread across two months.</summary>
 public sealed class ClinicalScenarioSeeder : IEntitySeeder
 {
     public int Order => 56;
@@ -21,7 +17,10 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         Guid.Parse("00000000-0000-0000-0000-000000007004"),
         Guid.Parse("00000000-0000-0000-0000-000000007005"),
         Guid.Parse("00000000-0000-0000-0000-000000007006"),
-        Guid.Parse("00000000-0000-0000-0000-000000007007")
+        Guid.Parse("00000000-0000-0000-0000-000000007007"),
+        Guid.Parse("00000000-0000-0000-0000-000000007008"),
+        Guid.Parse("00000000-0000-0000-0000-000000007009"),
+        Guid.Parse("00000000-0000-0000-0000-000000007010")
     ];
 
     private static readonly Guid[] EncounterIds =
@@ -31,281 +30,136 @@ public sealed class ClinicalScenarioSeeder : IEntitySeeder
         Guid.Parse("00000000-0000-0000-0000-000000008003"),
         Guid.Parse("00000000-0000-0000-0000-000000008004"),
         Guid.Parse("00000000-0000-0000-0000-000000008005"),
-        Guid.Parse("00000000-0000-0000-0000-000000008006"),
-        Guid.Parse("00000000-0000-0000-0000-000000008007")
+        Guid.Parse("00000000-0000-0000-0000-000000008006")
     ];
 
     public async Task SeedAsync(DesktopTherapyDbContext context, CancellationToken ct = default)
     {
-        var requiredPatients=await context.Patients
-            .Where(x => x.Id==SeedIds.Patient3||x.Id==SeedIds.Patient2||x.Id==SeedIds.Patient3)
-            .Select(x => x.Id)
-            .ToListAsync(ct);
-        var requiredDoctors=await context.Doctors
-            .Where(x => x.Id==SeedIds.Doctor5||x.Id==SeedIds.Doctor2||x.Id==SeedIds.Doctor3)
-            .Select(x => x.Id)
-            .ToListAsync(ct);
-
-        if(requiredPatients.Count<2||requiredDoctors.Count<1)
+        var patientIds = new[] { SeedIds.Patient1, SeedIds.Patient2, SeedIds.Patient3, SeedIds.Patient4, SeedIds.Patient5 };
+        var found = await context.Patients.Where(x => patientIds.Contains(x.Id)).Select(x => x.Id).ToListAsync(ct);
+        if (found.Count != patientIds.Length)
             return;
 
-        var today=DateTime.Today;
-        var appointments=BuildAppointments(today);
-        var existingAppointmentIds=await context.Appointments
-            .Where(x => AppointmentIds.Contains(x.Id))
-            .Select(x => x.Id)
-            .ToListAsync(ct);
-        var missingAppointments=appointments
-            .Where(x => !existingAppointmentIds.Contains(x.Id))
-            .ToList();
+        var doctors = new[] { SeedIds.Doctor1, SeedIds.Doctor2, SeedIds.Doctor3, SeedIds.Doctor4, SeedIds.Doctor5 };
+        var doctorIds = await context.Doctors.Where(x => doctors.Contains(x.Id)).Select(x => x.Id).ToListAsync(ct);
+        if (doctorIds.Count == 0)
+            return;
 
-        if(missingAppointments.Count>0)
+        var today = DateTime.Today;
+        var appointments = BuildAppointments(today);
+        var existingAppointments = await context.Appointments.Where(x => AppointmentIds.Contains(x.Id)).ToListAsync(ct);
+        foreach (var item in appointments)
         {
-            await context.Appointments.AddRangeAsync(missingAppointments, ct);
-            await context.SaveChangesAsync(ct);
+            var existing = existingAppointments.FirstOrDefault(x => x.Id == item.Id);
+            if (existing == null) context.Appointments.Add(item);
+            else
+            {
+                existing.PatientId = item.PatientId;
+                existing.DoctorId = item.DoctorId;
+                existing.AppointmentNumber = item.AppointmentNumber;
+                existing.ScheduledStart = item.ScheduledStart;
+                existing.ScheduledEnd = item.ScheduledEnd;
+                existing.Status = item.Status;
+                existing.ReasonForVisit = item.ReasonForVisit;
+                existing.ClinicalNotes = item.ClinicalNotes;
+            }
         }
+        await context.SaveChangesAsync(ct);
 
-        var encounters=BuildEncounters(today);
-        var existingEncounterIds=await context.Encounters
-            .Where(x => EncounterIds.Contains(x.Id))
-            .Select(x => x.Id)
-            .ToListAsync(ct);
-        var missingEncounters=encounters
-            .Where(x => !existingEncounterIds.Contains(x.Id))
-            .ToList();
-
-        if(missingEncounters.Count>0)
+        var encounters = BuildEncounters(today);
+        var existingEncounters = await context.Encounters.Where(x => EncounterIds.Contains(x.Id)).ToListAsync(ct);
+        foreach (var item in encounters)
         {
-            await context.Encounters.AddRangeAsync(missingEncounters, ct);
-            await context.SaveChangesAsync(ct);
+            var existing = existingEncounters.FirstOrDefault(x => x.Id == item.Id);
+            if (existing == null) context.Encounters.Add(item);
+            else
+            {
+                existing.PatientId = item.PatientId;
+                existing.AppointmentId = item.AppointmentId;
+                existing.DoctorId = item.DoctorId;
+                existing.EncounterNumber = item.EncounterNumber;
+                existing.Status = EncounterStatus.Completed;
+                existing.EncounterDate = item.EncounterDate;
+                existing.ScheduledStart = item.ScheduledStart;
+                existing.ScheduledEnd = item.ScheduledEnd;
+                existing.StartTime = item.StartTime;
+                existing.EndTime = item.EndTime;
+                existing.DurationMinutes = item.DurationMinutes;
+                existing.ChiefComplaint = item.ChiefComplaint;
+                existing.Assessment = item.Assessment;
+                existing.Plan = item.Plan;
+                existing.IsLocked = true;
+                existing.IsActive = true;
+            }
         }
-
-        await SeedEncounterMedicinesAsync(context, ct);
+        await context.SaveChangesAsync(ct);
     }
 
     private static List<Appointment> BuildAppointments(DateTime today) =>
     [
-        Appointment(0, SeedIds.Patient3, SeedIds.Doctor5, today.AddMonths(-8).AddHours(9), AppointmentStatus.Completed, "Прв реуматолошки преглед", "Почетна проценка и лабораториски насоки."),
-        Appointment(1, SeedIds.Patient3, SeedIds.Doctor5, today.AddMonths(-5).AddHours(10), AppointmentStatus.Completed, "Контрола по воведена терапија", "Намалена утринска вкочанетост."),
-        Appointment(2, SeedIds.Patient3, SeedIds.Doctor5, today.AddMonths(-2).AddHours(11), AppointmentStatus.Completed, "Редовна контрола", "Стабилна состојба, терапијата се продолжува."),
-        Appointment(3, SeedIds.Patient3, SeedIds.Doctor5, today.AddDays(-14).AddHours(9).AddMinutes(30), AppointmentStatus.Completed, "Контрола на болка во зглобови", "Добар одговор на терапијата."),
-        Appointment(4, SeedIds.Patient3, SeedIds.Doctor5, today.AddDays(3).AddHours(10), AppointmentStatus.Scheduled, "Следна контролна посета", "Закажана контрола со нови лабораториски резултати."),
-       // Appointment(5, SeedIds.Patient2, SeedIds.Doctor2, today.AddHours(12), AppointmentStatus.CheckedIn, "Акутна болка и оток на колено", "Пациентот е пријавен и чека преглед."),
-      //  Appointment(6, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-1).AddHours(13), AppointmentStatus.Missed, "Контрола на хронична терапија", "Пациентот не се појави.")
+        MakeAppointment(0, SeedIds.Patient1, SeedIds.Doctor1, today.AddDays(4).AddHours(9), AppointmentStatus.Scheduled, "Контролен преглед"),
+        MakeAppointment(1, SeedIds.Patient2, SeedIds.Doctor2, today.AddDays(-52).AddHours(10), AppointmentStatus.Completed, "Прв завршен преглед"),
+        MakeAppointment(2, SeedIds.Patient2, SeedIds.Doctor2, today.AddDays(-21).AddHours(10), AppointmentStatus.Completed, "Втор завршен преглед"),
+        MakeAppointment(3, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-58).AddHours(9), AppointmentStatus.Completed, "Почетна проценка"),
+        MakeAppointment(4, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-44).AddHours(9), AppointmentStatus.Completed, "Контрола на терапија"),
+        MakeAppointment(5, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-29).AddHours(9), AppointmentStatus.Completed, "Редовна контрола"),
+        MakeAppointment(6, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-12).AddHours(9), AppointmentStatus.Completed, "Последна завршена контрола"),
+        MakeAppointment(7, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(8).AddHours(10), AppointmentStatus.Scheduled, "Следна контролна посета"),
+        MakeAppointment(8, SeedIds.Patient4, SeedIds.Doctor4, today.AddDays(15).AddHours(11), AppointmentStatus.Scheduled, "Закажана контрола"),
+        MakeAppointment(9, SeedIds.Patient4, SeedIds.Doctor4, today.AddDays(-5).AddHours(11), AppointmentStatus.Cancelled, "Откажан термин")
     ];
 
-    private static Appointment Appointment(
-        int index,
-        Guid patientId,
-        Guid doctorId,
-        DateTime start,
-        AppointmentStatus status,
-        string reason,
-        string notes) => new()
+    private static Appointment MakeAppointment(int i, Guid patientId, Guid doctorId, DateTime start, AppointmentStatus status, string reason) => new()
     {
-        Id=AppointmentIds[index],
-        AppointmentNumber=$"TER-DEMO-{index+1:000}",
-        PatientId=patientId,
-        DoctorId=doctorId,
-        ScheduledStart=start,
-        ScheduledEnd=start.AddMinutes(30),
-        Status=status,
-        ReasonForVisit=reason,
-        ClinicalNotes=notes,
-        CreatedAt=start.AddDays(-7)
+        Id = AppointmentIds[i],
+        AppointmentNumber = $"TER-DEMO-{i + 1:000}",
+        PatientId = patientId,
+        DoctorId = doctorId,
+        ScheduledStart = start,
+        ScheduledEnd = start.AddMinutes(30),
+        Status = status,
+        ReasonForVisit = reason,
+        ClinicalNotes = status == AppointmentStatus.Cancelled ? "Терминот е откажан." : "Демо запис за тестирање.",
+        CreatedAt = start.AddDays(-2)
     };
 
     private static List<Encounter> BuildEncounters(DateTime today) =>
     [
-        CompletedEncounter(0, SeedIds.Patient3, SeedIds.Doctor5, today.AddMonths(-8).AddHours(9), "Болка во мали зглобови и утринска вкочанетост", "Почетна реуматолошка проценка", "Потребни лабораториски анализи и контролен преглед."),
-        CompletedEncounter(1, SeedIds.Patient3, SeedIds.Doctor5, today.AddMonths(-5).AddHours(10), "Утринската вкочанетост е намалена", "Делумен клинички одговор", "Продолжување на терапијата со следење на крвна слика."),
-        CompletedEncounter(2, SeedIds.Patient3, SeedIds.Doctor5, today.AddMonths(-2).AddHours(11), "Повремена болка при оптоварување", "Стабилна хронична состојба", "Продолжи со редовна терапија и умерена активност."),
-        CompletedEncounter(3, SeedIds.Patient3, SeedIds.Doctor5, today.AddDays(-14).AddHours(9).AddMinutes(30), "Болка во зглобови со интензитет 3/10", "Добар одговор на терапија", "Контрола за три месеци со лабораториски резултати."),
-        ScheduledEncounter(4, SeedIds.Patient3, SeedIds.Doctor5, today.AddDays(3).AddHours(10), EncounterStatus.Scheduled, "Следна контролна посета"),
-       // ScheduledEncounter(5, SeedIds.Patient2, SeedIds.Doctor2, today.AddHours(12), EncounterStatus.CheckedIn, "Акутна болка и оток на колено"),
-       // ScheduledEncounter(6, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-1).AddHours(13), EncounterStatus.NoShow, "Контрола на хронична терапија")
+        MakeEncounter(0, SeedIds.Patient2, SeedIds.Doctor2, today.AddDays(-52).AddHours(10), "Прв завршен преглед"),
+        MakeEncounter(1, SeedIds.Patient2, SeedIds.Doctor2, today.AddDays(-21).AddHours(10), "Втор завршен преглед"),
+        MakeEncounter(2, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-58).AddHours(9), "Почетна проценка"),
+        MakeEncounter(3, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-44).AddHours(9), "Контрола на терапија"),
+        MakeEncounter(4, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-29).AddHours(9), "Редовна контрола"),
+        MakeEncounter(5, SeedIds.Patient3, SeedIds.Doctor3, today.AddDays(-12).AddHours(9), "Последна завршена контрола")
     ];
 
-    private static Encounter CompletedEncounter(
-        int index,
-        Guid patientId,
-        Guid doctorId,
-        DateTime start,
-        string complaint,
-        string assessment,
-        string plan) => new()
+    private static Encounter MakeEncounter(int i, Guid patientId, Guid doctorId, DateTime start, string reason) => new()
     {
-        Id=EncounterIds[index],
-        AppointmentId=AppointmentIds[index],
-        PatientId=patientId,
-        DoctorId=doctorId,
-        EncounterNumber=$"PREG-DEMO-{index+1:000}",
-        EncounterType="Outpatient",
-        Status=EncounterStatus.Completed,
-        Priority="Routine",
-        EncounterDate=start,
-        ScheduledStart=start,
-        ScheduledEnd=start.AddMinutes(30),
-        CheckInTime=start.AddMinutes(-10),
-        StartTime=start,
-        EndTime=start.AddMinutes(30),
-        CheckOutTime=start.AddMinutes(35),
-        DurationMinutes=30,
-        ChiefComplaint=complaint,
-        ReasonForVisit=complaint,
-        HistoryOfPresentIllness="Симптомите и текот на терапијата се разгледани со пациентот.",
-        Assessment=assessment,
-        Plan=plan,
-        Notes="Демо клиничка белешка за проверка на приказот во детали.",
-        ClinicalNotes="Демо клиничка белешка за проверка на приказот во детали.",
-        VisitSource="Appointment",
-        IsLocked=true,
-        IsActive=true,
-        CreatedAt=start,
-        UpdatedAt=start.AddMinutes(30),
-        CreatedBy=SeedIds.AdminUser,
-        UpdatedBy=SeedIds.AdminUser
+        Id = EncounterIds[i],
+        AppointmentId = AppointmentIds[i + (i < 2 ? 1 : 1)],
+        PatientId = patientId,
+        DoctorId = doctorId,
+        EncounterNumber = $"PREG-DEMO-{i + 1:000}",
+        EncounterType = "Outpatient",
+        Status = EncounterStatus.Completed,
+        Priority = "Routine",
+        EncounterDate = start,
+        ScheduledStart = start,
+        ScheduledEnd = start.AddMinutes(30),
+        StartTime = start,
+        EndTime = start.AddMinutes(30),
+        DurationMinutes = 30,
+        ChiefComplaint = reason,
+        ReasonForVisit = reason,
+        Assessment = "Клиничката состојба е проценета.",
+        Plan = "Продолжување со следење и контролен преглед.",
+        Notes = "Демо клиничка белешка.",
+        ClinicalNotes = "Демо клиничка белешка.",
+        VisitSource = "Appointment",
+        IsLocked = true,
+        IsActive = true,
+        CreatedAt = start,
+        UpdatedAt = start.AddMinutes(30),
+        CreatedBy = SeedIds.AdminUser
     };
-
-    private static Encounter ScheduledEncounter(
-        int index,
-        Guid patientId,
-        Guid doctorId,
-        DateTime start,
-        EncounterStatus status,
-        string reason) => new()
-    {
-        Id=EncounterIds[index],
-        AppointmentId=AppointmentIds[index],
-        PatientId=patientId,
-        DoctorId=doctorId,
-        EncounterNumber=$"PREG-DEMO-{index+1:000}",
-        EncounterType="Outpatient",
-        Status=status,
-        Priority="Routine",
-        EncounterDate=start,
-        ScheduledStart=start,
-        ScheduledEnd=start.AddMinutes(30),
-        CheckInTime=status==EncounterStatus.Scheduled ? start.AddMinutes(-10) : null,
-        DurationMinutes=30,
-        ReasonForVisit=reason,
-        VisitSource="Appointment",
-        IsLocked=false,
-        IsActive=true,
-        CreatedAt=start.AddDays(-3),
-        CreatedBy=SeedIds.AdminUser
-    };
-
-    private static async Task SeedEncounterMedicinesAsync(
-        DesktopTherapyDbContext context,
-        CancellationToken ct)
-    {
-        var regimes = await context.ApplicationRegimes
-            .Where(x => x.IsActive)
-            .ToListAsync(ct);
-        var oral = regimes.FirstOrDefault(x => x.Regime == "Орално")?.Id;
-        var subcutaneous = regimes.FirstOrDefault(x => x.Regime == "Поткожно")?.Id;
-
-        var medicines = new[]
-        {
-            new { Id = SeedIds.Med2, RegimeId = oral,  Dosage = "1 таблета од 400 mg", Notes = "По јадење, краткотрајно за болка." },
-            new { Id = SeedIds.Med6, RegimeId = oral, Dosage = "1 таблета од 5 mg", Notes = "Да се зема секое утро." },
-            new { Id = SeedIds.Med9, RegimeId = subcutaneous, Dosage = "7.5 mg еднаш неделно", Notes = "Редовна контрола на крвна слика." }
-        };
-
-        // Ensure the new medicine-first patient-level assignments exist.
-        foreach(var medicine in medicines)
-        {
-            var existingAssignment = await context.PatientMedicines.FirstOrDefaultAsync(
-                x => x.PatientId == SeedIds.Patient3
-                    && x.EncounterId == null
-                    && x.MedicineId == medicine.Id,
-                ct);
-            if(existingAssignment is not null)
-            {
-                existingAssignment.Quantity = 0m;
-                existingAssignment.ApplicationRegimeId = medicine.RegimeId;
-     
-                existingAssignment.Dosage = medicine.Dosage;
-         
-                existingAssignment.IsActive = true;
-                continue;
-            }
-
-            context.PatientMedicines.Add(new PatientMedicine
-            {
-                Id = Guid.Parse(medicine.Id == SeedIds.Med2
-                    ? "00000000-0000-0000-0000-000000009101"
-                    : medicine.Id == SeedIds.Med6
-                        ? "00000000-0000-0000-0000-000000009102"
-                        : "00000000-0000-0000-0000-000000009103"),
-                PatientId = SeedIds.Patient3,
-                MedicineId = medicine.Id,
-                ApplicationRegimeId = medicine.RegimeId,
-         
-                Dosage = medicine.Dosage,
-           
-                IsActive = true,
-                Quantity = 0m
-            });
-        }
-        await context.SaveChangesAsync(ct);
-
-        // Each demo encounter gets its own quantity snapshot for every medicine
-        // assigned to the patient. Quantities deliberately vary by visit, including
-        // zero, and never overwrite the patient-level assignment quantity.
-        decimal[,] quantities =
-        {
-            { 1m, 0m, 0m },
-            { 5m, 1m, 0m },
-            { 0m, 0m, 2m },
-            { 0m, 1m, 5m }
-        };
-
-        var seededEncounterIds = EncounterIds.Take(4).ToArray();
-        var existingRows = await context.PatientMedicines
-            .Where(x => x.EncounterId.HasValue && seededEncounterIds.Contains(x.EncounterId.Value))
-            .ToListAsync(ct);
-
-        for(var encounterIndex = 0; encounterIndex < seededEncounterIds.Length; encounterIndex++)
-        {
-            for(var medicineIndex = 0; medicineIndex < medicines.Length; medicineIndex++)
-            {
-                var medicine = medicines[medicineIndex];
-                var encounterId = seededEncounterIds[encounterIndex];
-                var quantity = quantities[encounterIndex, medicineIndex];
-                var existing = existingRows.FirstOrDefault(
-                    x => x.EncounterId == encounterId && x.MedicineId == medicine.Id);
-
-                if(existing is not null)
-                {
-                    // These fixed demo encounter rows are intentionally refreshed
-                    // so a database seeded with the old model receives the new values.
-                    existing.Quantity = quantity;
-                    existing.ApplicationRegimeId = medicine.RegimeId;
-                
-                    existing.Dosage = medicine.Dosage;
-                 
-                    existing.IsActive = true;
-                    continue;
-                }
-
-                context.PatientMedicines.Add(new PatientMedicine
-                {
-                    Id = Guid.Parse($"00000000-0000-0000-0000-{(910000 + encounterIndex * 10 + medicineIndex):D12}"),
-                    PatientId = SeedIds.Patient3,
-                    EncounterId = encounterId,
-                    MedicineId = medicine.Id,
-                    ApplicationRegimeId = medicine.RegimeId,
-                
-                    Dosage = medicine.Dosage,
-               
-                    IsActive = true,
-                    Quantity = quantity
-                });
-            }
-        }
-
-        await context.SaveChangesAsync(ct);
-    }
 }
