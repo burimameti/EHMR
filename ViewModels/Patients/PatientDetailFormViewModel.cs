@@ -1,4 +1,6 @@
 using CommunityToolkit.Maui.Storage;
+using CommunityToolkit.Maui.Views;
+using EHMR.Views.Popups;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EHMR.Domain.Entities;
@@ -1082,6 +1084,21 @@ PrescriptionHistory=new ObservableCollection<Prescription>(
         {
             await _userDialogService.ShowAlertAsync("Грешка", $"Пребарувањето на лекови не успеа: {ex.Message}", "OK");
         }
+    }
+
+    [RelayCommand]
+    private async Task CreateMedicineAsync()
+    {
+        if (!IsEditMode || !CanSavePatient)
+            return;
+
+        var popup = new NewMedicinePopup(_dbFactory);
+        await Shell.Current.ShowPopupAsync(popup);
+        if (popup.MedicineResult is not { } medicine)
+            return;
+
+        // Reuse the existing attachment path so duplicate protection and row behavior stay identical.
+        AddMedicine(medicine);
     }
 
     [RelayCommand]
