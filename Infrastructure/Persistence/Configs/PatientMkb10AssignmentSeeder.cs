@@ -127,41 +127,30 @@ public sealed class PatientMkb10AssignmentSeeder : IEntitySeeder
             return;
         }
 
-        var seedIds = Seeds.Select(x => x.Id).ToArray();
-        var existingIds = await context.PatientMkb10Assignments
-            .Where(x => seedIds.Contains(x.Id))
-            .Select(x => x.Id)
-            .ToListAsync(ct);
+        foreach (var seed in Seeds.Where(x => codeIds.ContainsKey(x.Code)))
+        {
+            var row = await context.PatientMkb10Assignments
+                .FirstOrDefaultAsync(x => x.Id == seed.Id || x.AssignmentNumber == seed.AssignmentNumber, ct);
 
-        var existingAssignmentNumbers = await context.PatientMkb10Assignments
-            .Where(x => Seeds.Select(s => s.AssignmentNumber).Contains(x.AssignmentNumber))
-            .Select(x => x.AssignmentNumber)
-            .ToListAsync(ct);
-
-        var rows = Seeds
-            .Where(x => codeIds.ContainsKey(x.Code))
-            .Where(x => !existingIds.Contains(x.Id) && !existingAssignmentNumbers.Contains(x.AssignmentNumber))
-            .Select(x => new PatientMkb10Assignment
+            if (row == null)
             {
-                Id = x.Id,
-                AssignmentNumber = x.AssignmentNumber,
-                PatientId = x.PatientId,
-                EncounterId = x.EncounterId,
-                Mkb10CodeId = codeIds[x.Code],
-                DiagnosedAt = DateTime.UtcNow.Date.AddDays(x.DaysOffset),
-                IsPrimary = x.IsPrimary,
-                Severity = x.Severity,
-                ClinicalDescription = x.Description,
-                Status = x.Status,
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = "Seed"
-            })
-            .ToList();
+                row = new PatientMkb10Assignment { Id = seed.Id };
+                context.PatientMkb10Assignments.Add(row);
+            }
 
-        if (rows.Count == 0)
-            return;
+            row.AssignmentNumber = seed.AssignmentNumber;
+            row.PatientId = seed.PatientId;
+            row.EncounterId = seed.EncounterId;
+            row.Mkb10CodeId = codeIds[seed.Code];
+            row.DiagnosedAt = DateTime.UtcNow.Date.AddDays(seed.DaysOffset);
+            row.IsPrimary = seed.IsPrimary;
+            row.Severity = seed.Severity;
+            row.ClinicalDescription = seed.Description;
+            row.Status = seed.Status;
+            row.CreatedAt = DateTime.UtcNow;
+            row.CreatedBy = "Seed";
+        }
 
-        await context.PatientMkb10Assignments.AddRangeAsync(rows, ct);
         await context.SaveChangesAsync(ct);
     }
 }
