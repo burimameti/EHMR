@@ -360,7 +360,13 @@
 												<VerticalStackLayout BindableLayout.ItemsSource="{Binding CurrentPatientMedicines}" Spacing="0"><BindableLayout.EmptyView><Label Padding="6" FontSize="11" Text="Нема активна терапија." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView><BindableLayout.ItemTemplate><DataTemplate x:DataType="entities:PatientMedicine"><Grid ColumnDefinitions="18,*" ColumnSpacing="5"><controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" /><VerticalStackLayout Grid.Column="1" Padding="0,3" Spacing="1"><Label FontAttributes="Bold" FontSize="11.5" LineBreakMode="WordWrap" Text="{Binding Medicine.BilingualName, TargetNullValue='Лек'}" TextColor="{StaticResource SparkTextPrimary}" /><Label FontSize="10" Text="{Binding Dosage, StringFormat='Доза: {0}', TargetNullValue=''}" TextColor="{StaticResource SparkTextSecondary}" /></VerticalStackLayout></Grid></DataTemplate></BindableLayout.ItemTemplate></VerticalStackLayout>
 										</VerticalStackLayout>
 										</Border>
-										<Border Grid.Column="2" VerticalOptions="Start" Style="{StaticResource CrudFormSectionCardStyle}"><VerticalStackLayout Spacing="5"><Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="ПРЕТХОДЕН СКОР" /><Label FontAttributes="Bold" FontSize="12" LineBreakMode="WordWrap" Text="{Binding CurrentPatientScore, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" /></VerticalStackLayout></Border>
+										<Border Grid.Column="2" VerticalOptions="Start" Style="{StaticResource CrudFormSectionCardStyle}">
+                                            <VerticalStackLayout Spacing="6">
+                                                <Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="ПРЕТХОДЕН СКОР" />
+                                                <Label FontAttributes="Bold" FontSize="12" LineBreakMode="WordWrap" Text="{Binding CurrentPatientScore, TargetNullValue='—'}" TextColor="{StaticResource SparkTextPrimary}" />
+                                                <controls:FFButton ButtonKind="Secondary" Command="{Binding AddPatientScoreCommand}" HeightRequestEx="32" Text="+ Нов скор" IsEnabled="{Binding IsNewAppointment}" />
+                                            </VerticalStackLayout>
+                                        </Border>
 									</Grid>
 								</VerticalStackLayout>
 							</Border>
