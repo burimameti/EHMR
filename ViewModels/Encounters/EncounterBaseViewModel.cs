@@ -443,6 +443,12 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
 
     public string ActiveTherapySummary => ActiveMedicinesSummary;
 
+    // Patient-level active therapies displayed as connected timeline rows.
+    public IEnumerable<PatientMedicine> CurrentPatientMedicines =>
+        PatientMedicines.Where(x => x.IsActive && !x.EncounterId.HasValue)
+            .OrderBy(x => x.Medicine?.BilingualName);
+
+
     // Patient-level therapies that were discontinued are clinical history.
     // Encounter snapshots are excluded because they belong to individual visits,
     // not to the patient's active-therapy timeline.
@@ -533,6 +539,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             CurrentPatientScore=string.Empty;
             CurrentPatientScoreDate=null;
             OnPropertyChanged(nameof(CurrentMkb10Assignments));
+            OnPropertyChanged(nameof(CurrentPatientMedicines));
             OnPropertyChanged(nameof(MedicationHistory));
             ScoreOptions.Clear();
             ScoreSuggestions.Clear();
@@ -589,6 +596,7 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
             OnPropertyChanged(nameof(CurrentMkb10Summary));
             OnPropertyChanged(nameof(ActiveMedicinesSummary));
             OnPropertyChanged(nameof(ActiveTherapySummary));
+            OnPropertyChanged(nameof(CurrentPatientMedicines));
             OnPropertyChanged(nameof(PreviousMedicines));
             OnPropertyChanged(nameof(MedicationHistory));
             OnPropertyChanged(nameof(CurrentMkb10Assignments));
