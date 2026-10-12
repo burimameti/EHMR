@@ -930,8 +930,8 @@
 					</Grid>
 					<Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
 						<Label Grid.Column="0" FontSize="11" Text="{Binding StatusDisplay, StringFormat='Избран статус: {0}'}" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
-						<controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="42" Text="Откажи" WidthRequestEx="130" />
-						<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" HeightRequestEx="42" IsEnabled="{Binding CanSaveAppointment}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
+						<controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="40" Text="Откажи" WidthRequestEx="130" />
+						<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" HeightRequestEx="40" IsEnabled="{Binding CanSaveAppointment}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
 					</Grid>
 				</Grid>
 			</Border>
