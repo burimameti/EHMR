@@ -138,6 +138,11 @@ public partial class MedicineDetailFormViewModel : ObservableObject
     {
         var selected = _selectionService.SelectedItem;
 
+        // SelectedItemService is a singleton. Consume edit-navigation context after
+        // capturing it so a later Create flow cannot inherit this medicine.
+        if(selected is not null)
+            _selectionService.SelectedItem = null;
+
         if(selected==null)
         {
             Medicine=new Medicine();
