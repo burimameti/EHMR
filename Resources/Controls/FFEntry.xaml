@@ -27,7 +27,7 @@
 			Stroke="{StaticResource FFControlInputBorder}"
 			StrokeThickness="1">
 			<Border.StrokeShape>
-				<RoundRectangle CornerRadius="{StaticResource FFControlInputCornerRadius}" />
+				<RoundRectangle CornerRadius="8" />
 			</Border.StrokeShape>
 
 			<Grid
