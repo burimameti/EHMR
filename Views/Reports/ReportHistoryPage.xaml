@@ -39,7 +39,13 @@
 
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 
-				<controls:FFPageHeader Title="Историја на извештаи" Subtitle="Преглед, пребарување и превземање на генерирани извештаи">
+				<controls:FFPageHeader
+                            Title="Историја на извештаи"
+                            Subtitle="Преглед, пребарување и превземање на генерирани извештаи"
+                            PrimaryButtonText="Нов извештај"
+                            PrimaryButtonCommand="{Binding NavigateToReportCommand}"
+                            PrimaryButtonIsEnabled="{Binding CanCreate}"
+                            ShowPrimaryButton="{Binding CanCreate}">
 						<controls:FFPageHeader.HeaderContent>
 							<HorizontalStackLayout Margin="1,0,1,0" Spacing="12">
 								<controls:FFButton
@@ -47,15 +53,6 @@
 									Command="{Binding GoBackCommand}"
 									HeightRequestEx="40"
 									Text="Назад"
-									WidthRequestEx="130" />
-
-
-								<controls:FFButton
-									ButtonKind="Primary"
-									Command="{Binding NavigateToReportCommand}"
-									HeightRequestEx="40"
-									IsVisible="{Binding CanCreate}"
-									Text="Нов извештај"
 									WidthRequestEx="130" />
 							</HorizontalStackLayout>
 						</controls:FFPageHeader.HeaderContent>
