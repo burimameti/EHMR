@@ -1515,8 +1515,8 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
         MedicineResults.Clear();
         ShowMedicineDropdown=false;
     }
-    private readonly List<Guid> _deletedMedicineIds = [];
-    protected IReadOnlyList<Guid> DeletedMedicineIds => _deletedMedicineIds;
+    public readonly List<Guid> _deletedMedicineIds = [];
+    public IReadOnlyList<Guid> DeletedMedicineIds => _deletedMedicineIds;
 
     // =====================================================
     // REMOVE MEDICINE
@@ -1542,9 +1542,9 @@ public abstract partial class EncounterBaseViewModel : ObservableObject, IDispos
     // Tracks ids that existed in PatientMedicines at load time (before any
     // AddMedicine calls this session), so RemoveMedicine can tell "existing
     // history row being deleted" apart from "session-added row being undone".
-    private readonly HashSet<Guid> _originalPatientMedicineIds = [];
+    public readonly HashSet<Guid> _originalPatientMedicineIds = [];
 
-    private bool PatientMedicinesHadIdBeforeThisSession(Guid id) =>
+    public bool PatientMedicinesHadIdBeforeThisSession(Guid id) =>
         _originalPatientMedicineIds.Contains(id);
     // =====================================================
     // EDIT MODE
