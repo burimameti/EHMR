@@ -904,7 +904,7 @@
 								ButtonKind="Primary"
 								Command="{Binding CreateNewEncounterForSelectedDayCommand}" IsEnabled="{Binding CanCreate}"
 								ContentPadding="16,0"
-								HeightRequestEx="36"
+								HeightRequestEx="40"
 								Text="{Binding ContentNewButtonText}" />
 						</Grid>
 
