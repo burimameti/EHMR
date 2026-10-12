@@ -130,15 +130,14 @@
 											so its BindingContext is already the page's ViewModel — no RelativeSource
 											needed, and BrowseFileAsync takes no parameter so no CommandParameter either.
 										-->
-										<Button
+										<controls:FFButton
 											Grid.Column="1"
-											BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
-											TextColor="White"
-											Command="{Binding BrowseFileCommand}" IsEnabled="{Binding CanManage}"
-											HeightRequest="38"
-											Style="{StaticResource TabButtonActiveStyle}"
+											ButtonKind="Secondary"
+											Command="{Binding BrowseFileCommand}"
+											IsEnabled="{Binding CanManage}"
+											HeightRequestEx="40"
 											Text="Избери..."
-											WidthRequest="120" />
+											WidthRequestEx="130" />
 									</Grid>
 									<BoxView Style="{StaticResource MbkFieldUnderline}" />
 								</VerticalStackLayout>
