@@ -56,7 +56,7 @@
 				<!--  ═══════════════  ЛЕВА КОЛОНА — ФОРМИ  ═══════════════  -->
 				<controls:FFSectionCard Grid.Column="0" Margin="0" Style="{StaticResource CrudFormCardStyle}">
 					<controls:CustomScrollView ScrollBarColor="{StaticResource SparkAccentTeal}">
-						<VerticalStackLayout Spacing="20" Style="{StaticResource CrudFormContentStackStyle}">
+						<VerticalStackLayout Spacing="10" Style="{StaticResource CrudFormContentStackStyle}">
 
 							<!--  ── 1. ПАЦИЕНТ И РЕУМАТОЛОГ ──  -->
 							<Border Margin="0,0,0,10" Style="{StaticResource CrudFormSectionCardStyle}">
@@ -941,7 +941,7 @@
 					<Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
 						<Label Grid.Column="0" Text="{Binding StatusDisplay, StringFormat='Избран статус: {0}'}" FontSize="12" TextColor="{StaticResource SparkAccentTealDark}" VerticalOptions="Center" />
 						<controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="42" Text="Откажи" WidthRequestEx="130" />
-						<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveEncounterCommand}" HeightRequestEx="42" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
+						<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SparkStatusSuccessText}" ButtonKind="Primary" Command="{Binding SaveEncounterCommand}" HeightRequestEx="42" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
 					</Grid>
 				</Grid>
 			</Border>
