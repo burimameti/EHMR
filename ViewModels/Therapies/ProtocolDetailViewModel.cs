@@ -4,6 +4,7 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
+using EHMR.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace EHMR.ViewModels;
@@ -13,11 +14,15 @@ public partial class ProtocolDetailFormViewModel(
     ISelectedItemService<TherapyProtocol> selectedItemService,
     INavigationService navigationService, IAuthStateService authStateService,
     IUserDialogService userDialogService,
-    IAuthorizationService authorizationService) : ObservableObject
+    IAuthorizationService authorizationService,
+    FormSessionLifecycle formSessions) : ObservableObject
 {
     [ObservableProperty] private string _pageTitle = "Нов Протокол";
     [ObservableProperty] private bool _isEditMode;
-    [ObservableProperty] private TherapyProtocol _currentProtocol;
+    [ObservableProperty] private TherapyProtocol _currentProtocol = new();
+
+    private bool _hasInitialized;
+    private bool _isCreateEntry;
 
     public bool CanCreate => authorizationService.CanPerform(Modules.Protocols, ModuleAction.Create);
     public bool CanUpdate => authorizationService.CanPerform(Modules.Protocols, ModuleAction.Edit);
@@ -28,9 +33,23 @@ public partial class ProtocolDetailFormViewModel(
     public bool CanSave => IsEditMode ? CanUpdate : CanCreate;
     public bool CanEditForm => IsEditMode ? CanUpdate : CanCreate;
 
-    public void InitializeForm()
+    public void OnPageAppearing()
     {
         var selected = selectedItemService.SelectedItem;
+
+        if(_hasInitialized && _isCreateEntry && selected == null)
+            formSessions.BeginCreateEntry(this, ResetForNewProtocolSession);
+
+        InitializeForm(selected);
+        _hasInitialized=true;
+        _isCreateEntry=selected == null;
+
+        if(_isCreateEntry)
+            formSessions.MarkEntryCompleted(this);
+    }
+
+    private void InitializeForm(TherapyProtocol? selected)
+    {
 
         if(selected==null)
         {
@@ -52,6 +71,19 @@ public partial class ProtocolDetailFormViewModel(
             OnPropertyChanged(nameof(CanEditForm));
             CurrentProtocol=selected;
         }
+    }
+
+    private void ResetForNewProtocolSession()
+    {
+        CurrentProtocol=new TherapyProtocol
+        {
+            CreatedAt=DateTime.UtcNow,
+            CreatedByDoctor=authStateService.CurrentUser.Username
+        };
+        PageTitle="➕ Нов Протокол";
+        IsEditMode=false;
+        OnPropertyChanged(nameof(CanSave));
+        OnPropertyChanged(nameof(CanEditForm));
     }
 
     [RelayCommand]
