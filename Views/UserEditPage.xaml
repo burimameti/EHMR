@@ -191,7 +191,7 @@
 												StrokeShape="RoundRectangle 8" StrokeThickness="1">
 												<Grid ColumnDefinitions="190,*" ColumnSpacing="12">
 													<Label FontAttributes="Bold" FontSize="13" Text="{Binding DisplayName}"
-														TextColor="#0F172A" VerticalOptions="Center" />
+														TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
 													<HorizontalStackLayout Grid.Column="1" BindableLayout.ItemsSource="{Binding Actions}"
 														Spacing="10" VerticalOptions="Center">
 														<BindableLayout.ItemTemplate>
@@ -199,7 +199,7 @@
 																<HorizontalStackLayout Spacing="2">
 																	<CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
 																		IsEnabled="{Binding BindingContext.IsEditMode, Source={x:Reference Root}}"
-																		Color="#2AEBE7" VerticalOptions="Center" />
+																		Color="{StaticResource SparkAccentTeal}" VerticalOptions="Center" />
 																	<Label FontSize="10" Text="{Binding DisplayName}" TextColor="#475569"
 																		VerticalOptions="Center" />
 																</HorizontalStackLayout>
@@ -236,7 +236,7 @@
 									<HorizontalStackLayout Spacing="10">
 										<Border
 											Padding="7,5"
-											BackgroundColor="#2AEBE7"
+											BackgroundColor="{StaticResource SparkAccentTeal}"
 											StrokeShape="RoundRectangle 4"
 											StrokeThickness="0"
 											VerticalOptions="Center">
@@ -250,7 +250,7 @@
 											FontAttributes="Bold"
 											FontSize="13"
 											Text="{Binding User.Role}"
-											TextColor="#0F172A"
+											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
 									</HorizontalStackLayout>
 								</Border>
