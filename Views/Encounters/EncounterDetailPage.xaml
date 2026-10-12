@@ -105,6 +105,10 @@
 				<controls:FFPageHeader
                         Title="{Binding Encounter.EncounterNumber, StringFormat='Детали за преглед Бр. {0}'}"
                         Subtitle="{Binding Encounter.EncounterDate, StringFormat='Преглед од {0:dd.MM.yyyy}'}"
+                        PrimaryButtonText="Уреди"
+                        PrimaryButtonCommand="{Binding EditCommand}"
+                        PrimaryButtonIsEnabled="{Binding CanShowEdit}"
+                        ShowPrimaryButton="{Binding CanShowEdit}"
                         SecondaryButtonText="Преглед за печатење / PDF"
                         SecondaryButtonCommand="{Binding GenerateClinicalReportCommand}"
                         SecondaryButtonIsEnabled="{Binding CanPrint}"
@@ -548,22 +552,12 @@
 				Stroke="{StaticResource SparkBorderSubtle}"
 				StrokeShape="RoundRectangle 8"
 				StrokeThickness="1">
-				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+				<Grid ColumnDefinitions="*" ColumnSpacing="10">
 					<Label
 						FontSize="10.5"
 						Text="Прегледот е само за читање. За корекција користи се администраторско уредување."
 						TextColor="{StaticResource SparkTextSecondary}"
 						VerticalOptions="Center" />
-					<controls:FFButton
-						Grid.Column="1"
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						ButtonKind="Primary"
-						Command="{Binding EditCommand}"
-						HeightRequestEx="40"
-						IsVisible="{Binding CanShowEdit}"
-						Text="Уреди"
-						TextColorEx="{StaticResource SidebarActiveText}"
-						WidthRequestEx="130" />
 				</Grid>
 			</Border>
 		</Grid>
