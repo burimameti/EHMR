@@ -820,13 +820,15 @@
 									</VerticalStackLayout>
 								</VerticalStackLayout>
 
-							</VerticalStackLayout>
+								</VerticalStackLayout>
+							</Border>
 						</Grid>
 
 							<!--  ══════════════════════════════════════════  -->
 							<!--  2. ТЕРМИН  -->
 							<!--  ══════════════════════════════════════════  -->
-							<VerticalStackLayout Spacing="12">
+							<Border Style="{StaticResource CrudFormSectionCardStyle}">
+								<VerticalStackLayout Spacing="12">
 								<controls:CrudSectionHeader Title="ТЕРМИН" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 								<Grid ColumnDefinitions="1.4*,1*" ColumnSpacing="16">
 									<Grid Grid.Column="0" ColumnDefinitions="Auto,*" ColumnSpacing="12" VerticalOptions="Center">
@@ -835,11 +837,13 @@
 										<Label Grid.Column="1" Padding="12,8" IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}" Text="{Binding Appointment.ScheduledStart, StringFormat='{:d.M.yyyy}'}" TextColor="{StaticResource SparkTextPrimary}" />
 									</Grid>
 								</Grid>
-							</VerticalStackLayout>
+								</VerticalStackLayout>
+							</Border>
 
 							<!--  5. ЗАБЕЛЕШКА  -->
 							<!--  ══════════════════════════════════════════  -->
-							<VerticalStackLayout Spacing="12">
+							<Border Style="{StaticResource CrudFormSectionCardStyle}">
+								<VerticalStackLayout Spacing="12">
 
 								<controls:CrudSectionHeader Title="ЗАБЕЛЕШКА" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
