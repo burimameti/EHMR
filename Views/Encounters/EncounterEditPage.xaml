@@ -26,7 +26,14 @@
 			Style="{StaticResource CrudFormPageGridStyle}">
 
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<controls:FFPageHeader Title="Уреди преглед" Subtitle="Изменете ги медицинските детали за тековниот преглед">
+				<controls:FFPageHeader
+                        Title="Уреди преглед"
+                        Subtitle="Изменете ги медицинските детали за тековниот преглед"
+                        SecondaryButtonText="Преглед за печатење / PDF"
+                        SecondaryButtonCommand="{Binding GenerateClinicalReportCommand}"
+                        SecondaryButtonIsEnabled="{Binding CanPrint}"
+                        SecondaryButtonWidthRequest="230"
+                        ShowSecondaryButton="True">
 					<controls:FFPageHeader.HeaderContent>
 						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
 							<controls:FFButton
@@ -35,13 +42,6 @@
 								HeightRequestEx="40"
 								Text="Назад"
 								WidthRequestEx="130" />
-							<controls:FFButton
-								ButtonKind="Secondary"
-								Command="{Binding GenerateClinicalReportCommand}"
-								ContentPadding="16,0"
-								HeightRequestEx="40"
-								IsEnabled="{Binding CanPrint}"
-								Text="Преглед за печатење / PDF" />
 							<Border Padding="10,6" BackgroundColor="{StaticResource SparkAccentTealBg}" StrokeThickness="0" StrokeShape="RoundRectangle 8" VerticalOptions="Center">
 								<Label FontAttributes="Bold" FontSize="12" Text="{Binding EncounterStatusDisplay, StringFormat='Тековен статус: {0}'}" TextColor="{StaticResource SparkAccentTealDark}" />
 							</Border>
