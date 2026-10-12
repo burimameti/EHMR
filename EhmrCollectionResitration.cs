@@ -279,6 +279,7 @@ namespace EHMR
             //  services.AddSingleton<IDashboardService, DashboardService>();
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<IEncounterDetailService, EncounterDetailService>();
+            services.AddSingleton<FormSessionLifecycle>();
             services.AddSingleton<INavigationHost, NavigationHost>();
             services.AddSingleton<INavigationDataStore, NavigationDataStore>();
             services.AddSingleton<INavigationEvents, NavigationEvents>();
