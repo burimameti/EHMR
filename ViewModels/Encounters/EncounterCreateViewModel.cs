@@ -128,6 +128,10 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
             PatientDiagnosisHistory.Clear();
             PatientEncounterHistory.Clear();
             PatientActivePrescriptions.Clear();
+            PatientEncounters.Clear();
+            PatientAppointments.Clear();
+            PatientPrescriptions.Clear();
+            PatientScoreHistory.Clear();
             EncounterScores.Clear();
             EncounterFindings.Clear();
             Score=null;
