@@ -759,6 +759,7 @@ public partial class DashboardViewModel : ObservableObject
             return;
         }
         _selectedPatient.SelectedItem=null;
+        _selectedPatient.OpenInEditMode=false;
         await navigationService.GoToAsync(AppRoutes.Encounters.Create);
     }
 
@@ -785,6 +786,7 @@ public partial class DashboardViewModel : ObservableObject
         if(!confirmed) return;
 
         _selectedPatient.SelectedItem=patient;
+        _selectedPatient.OpenInEditMode=false;
         await navigationService.GoToAsync(AppRoutes.Encounters.Create);
     }
 
