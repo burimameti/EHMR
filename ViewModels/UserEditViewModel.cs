@@ -22,6 +22,8 @@ public partial class UserEditViewModel : ObservableObject
     private readonly IAuthorizationService _authorization;
 
     private UserAdminDto? _originalUser;
+    private UserAdminDto? _loadedSelectedUser;
+    private bool _hasLoadedSelectedUser;
     private bool _isNewUserMode;
 
     [ObservableProperty]
@@ -131,6 +133,17 @@ public partial class UserEditViewModel : ObservableObject
         {
             var allSystemModules = Modules.GetAll().ToList();
             var selected = _userSelectionService.SelectedItem;
+            if(selected is not null)
+            {
+                _loadedSelectedUser=selected;
+                _hasLoadedSelectedUser=true;
+                _userSelectionService.SelectedItem=null; // consume singleton navigation context
+            }
+            else if(!_isNewUserMode && _hasLoadedSelectedUser)
+            {
+                selected=_loadedSelectedUser;
+            }
+
             InitializeForm(selected, allSystemModules);
         }
         catch(Exception ex)
