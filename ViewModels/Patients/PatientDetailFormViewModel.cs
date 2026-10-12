@@ -277,7 +277,8 @@ _navigationService=navigationService;
         if(selectedPatient==null)
         {
             _isNewPatientMode=true;
-            _selectedItemService.OpenInEditMode=true;
+            // Create mode must not inherit the Edit flag from a previously opened record.
+            _selectedItemService.OpenInEditMode=false;
 
             Patient=CreateBlankForRegistration();
             PageTitle="Нов Пациент";
