@@ -24,12 +24,6 @@
 
 
 
-			<Style x:Key="FieldEntryStyle" TargetType="Entry">
-				<Setter Property="BackgroundColor" Value="Transparent" />
-				<Setter Property="FontSize" Value="13" />
-				<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-			</Style>
 
 			<Style x:Key="ReadHintStyle" TargetType="Label">
 				<Setter Property="FontSize" Value="11" />
@@ -260,7 +254,7 @@
 												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
 													<Entry
 														Placeholder="Пр. Марко"
-														Style="{StaticResource FieldEntryStyle}"
+														Style="{StaticResource CrudFormFieldEntryStyle}"
 														Text="{Binding Patient.FirstName}" />
 												</Border>
 												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
@@ -278,7 +272,7 @@
 												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
 													<Entry
 														Placeholder="Пр. Петровски"
-														Style="{StaticResource FieldEntryStyle}"
+														Style="{StaticResource CrudFormFieldEntryStyle}"
 														Text="{Binding Patient.LastName}" />
 												</Border>
 												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
@@ -354,7 +348,7 @@
 												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
 													<Entry
 														Placeholder="Здравствен број"
-														Style="{StaticResource FieldEntryStyle}"
+														Style="{StaticResource CrudFormFieldEntryStyle}"
 														Text="{Binding Patient.SzboNumber}" />
 												</Border>
 												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
@@ -376,7 +370,7 @@
 													<Entry
 														IsPassword="True"
 														Placeholder="Матичен број"
-														Style="{StaticResource FieldEntryStyle}"
+														Style="{StaticResource CrudFormFieldEntryStyle}"
 														Text="{Binding Patient.NationalId}" />
 												</Border>
 												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
@@ -418,7 +412,7 @@
 													<Entry
 														Keyboard="Telephone"
 														Placeholder="+389 7X XXX XXX"
-														Style="{StaticResource FieldEntryStyle}"
+														Style="{StaticResource CrudFormFieldEntryStyle}"
 														Text="{Binding Patient.Phone}" />
 												</Border>
 												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
@@ -443,7 +437,7 @@
 													<Entry
 														Keyboard="Email"
 														Placeholder="email@example.com"
-														Style="{StaticResource FieldEntryStyle}"
+														Style="{StaticResource CrudFormFieldEntryStyle}"
 														Text="{Binding Patient.Email}" />
 												</Border>
 												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
@@ -490,7 +484,7 @@
 												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
 													<Entry
 														Placeholder="Улица и број"
-														Style="{StaticResource FieldEntryStyle}"
+														Style="{StaticResource CrudFormFieldEntryStyle}"
 														Text="{Binding Patient.Address}" />
 												</Border>
 												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
@@ -511,7 +505,7 @@
 												<Border IsVisible="{Binding IsEditMode}" Style="{StaticResource EditFieldBoxStyle}">
 													<Entry
 														Placeholder="Име и презиме"
-														Style="{StaticResource FieldEntryStyle}"
+														Style="{StaticResource CrudFormFieldEntryStyle}"
 														Text="{Binding Patient.EmergencyContactName}" />
 												</Border>
 												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
@@ -533,7 +527,7 @@
 													<Entry
 														Keyboard="Telephone"
 														Placeholder="+389..."
-														Style="{StaticResource FieldEntryStyle}"
+														Style="{StaticResource CrudFormFieldEntryStyle}"
 														Text="{Binding Patient.EmergencyContactPhone}" />
 												</Border>
 												<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="2">
