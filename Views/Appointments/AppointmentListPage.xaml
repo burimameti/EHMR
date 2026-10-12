@@ -32,13 +32,12 @@
 						PrimaryButtonIsEnabled="{Binding CanCreate}"
 						PrimaryButtonText="Нов термин"
 						RefreshCommand="{Binding LoadCommand}"
+						SecondaryButtonCommand="{Binding GoBackCommand}"
+						SecondaryButtonText="Назад"
 						ShowPrimaryButton="True"
 						ShowRefreshButton="True"
-						Subtitle="Преглед и управување со закажани термини">
-						SecondaryButtonText="Назад"
-					SecondaryButtonCommand="{Binding GoBackCommand}"
-					ShowSecondaryButton="True"
-					</controls:FFPageHeader>
+						ShowSecondaryButton="True"
+						Subtitle="Преглед и управување со закажани термини" />
 				</Grid>
 			</Border>
 

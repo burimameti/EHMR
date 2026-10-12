@@ -31,13 +31,12 @@
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader
 					Title="Прегледи"
-					Subtitle="Преглед, пребарување и управување со медицински прегледи"
 					RefreshCommand="{Binding LoadCommand}"
-					ShowRefreshButton="True">
-					SecondaryButtonText="Назад"
 					SecondaryButtonCommand="{Binding GoBackCommand}"
+					SecondaryButtonText="Назад"
+					ShowRefreshButton="True"
 					ShowSecondaryButton="True"
-				</controls:FFPageHeader>
+					Subtitle="Преглед, пребарување и управување со медицински прегледи" />
 			</Border>
 
 			<Border

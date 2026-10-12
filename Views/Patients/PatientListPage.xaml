@@ -29,13 +29,12 @@
 					<controls:FFPageHeader
 						Title="Пациенти"
 						Grid.Column="0"
-						Subtitle="Преглед, пребарување и управување со пациенти"
 						RefreshCommand="{Binding LoadCommand}"
-						ShowRefreshButton="True">
+						SecondaryButtonCommand="{Binding GoBackCommand}"
 						SecondaryButtonText="Назад"
-					SecondaryButtonCommand="{Binding GoBackCommand}"
-					ShowSecondaryButton="True"
-					</controls:FFPageHeader>
+						ShowRefreshButton="True"
+						ShowSecondaryButton="True"
+						Subtitle="Преглед, пребарување и управување со пациенти" />
 
 
 				</Grid>
@@ -62,19 +61,38 @@
 										Tabs="{Binding Tabs}"
 										UseCyrillicInput="{Binding UseCyrillicSearch, Mode=TwoWay}">
 										<controls:SparkExplorerHeaderView.SuggestionTemplate>
-										<DataTemplate x:DataType="domain:Patient">
-											<VerticalStackLayout Spacing="0" BackgroundColor="White">
-												<Grid Padding="10,8" ColumnDefinitions="*,Auto" ColumnSpacing="12">
-													<VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
-														<Label Text="{Binding FullName}" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource SparkTextPrimary}" />
-														<Label Text="{Binding PatientNumber, StringFormat='Пациент бр. {0}'}" FontSize="11" TextColor="{StaticResource SparkTextSecondary}" />
-													</VerticalStackLayout>
-													<Label Grid.Column="1" Text="{Binding SzboNumber}" FontSize="11" TextColor="{StaticResource SparkTextSecondary}" VerticalOptions="Center" HorizontalTextAlignment="End" />
-												</Grid>
-												<BoxView HeightRequest="1" BackgroundColor="#E2E8F0" />
-											</VerticalStackLayout>
-										</DataTemplate>
-									</controls:SparkExplorerHeaderView.SuggestionTemplate>
+											<DataTemplate x:DataType="domain:Patient">
+												<VerticalStackLayout BackgroundColor="White" Spacing="0">
+													<Grid
+														Padding="10,8"
+														ColumnDefinitions="*,Auto"
+														ColumnSpacing="12">
+														<VerticalStackLayout
+															Grid.Column="0"
+															Spacing="2"
+															VerticalOptions="Center">
+															<Label
+																FontAttributes="Bold"
+																FontSize="13"
+																Text="{Binding FullName}"
+																TextColor="{StaticResource SparkTextPrimary}" />
+															<Label
+																FontSize="11"
+																Text="{Binding PatientNumber, StringFormat='Пациент бр. {0}'}"
+																TextColor="{StaticResource SparkTextSecondary}" />
+														</VerticalStackLayout>
+														<Label
+															Grid.Column="1"
+															FontSize="11"
+															HorizontalTextAlignment="End"
+															Text="{Binding SzboNumber}"
+															TextColor="{StaticResource SparkTextSecondary}"
+															VerticalOptions="Center" />
+													</Grid>
+													<BoxView BackgroundColor="#E2E8F0" HeightRequest="1" />
+												</VerticalStackLayout>
+											</DataTemplate>
+										</controls:SparkExplorerHeaderView.SuggestionTemplate>
 									</controls:SparkExplorerHeaderView>
 
 								</VerticalStackLayout>
