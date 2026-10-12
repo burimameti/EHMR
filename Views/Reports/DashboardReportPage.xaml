@@ -112,9 +112,9 @@
 						Grid.Column="1"
 						ButtonKind="Secondary"
 						Command="{Binding GoBackCommand}"
-						ContentPadding="16,0"
-						HeightRequestEx="40"
-						Text="← Назад" />
+						ContentPadding="7,0"
+						HeightRequestEx="32"
+						Text="‹ Назад" />
 				</Grid>
 			</Border>
 
