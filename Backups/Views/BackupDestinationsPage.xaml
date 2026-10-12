@@ -145,27 +145,39 @@
 						ColumnSpacing="8"
 						RowDefinitions="Auto,Auto"
 						RowSpacing="8">
-						<Button
+						<controls:FFButton
 							Grid.Row="0"
 							Grid.Column="0"
+							ButtonKind="Primary"
 							Command="{Binding SaveCommand}"
+							HeightRequestEx="40"
+							WidthRequestEx="130"
 							IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
 							Text="Зачувај" />
-						<Button
+						<controls:FFButton
 							Grid.Row="0"
 							Grid.Column="1"
+							ButtonKind="Secondary"
 							Command="{Binding NewCommand}"
+							HeightRequestEx="40"
+							WidthRequestEx="130"
 							Text="Нова" />
-						<Button
+						<controls:FFButton
 							Grid.Row="1"
 							Grid.Column="0"
+							ButtonKind="Secondary"
 							Command="{Binding TestConnectionCommand}"
+							HeightRequestEx="40"
+							WidthRequestEx="130"
 							IsEnabled="{Binding HasSelection}"
 							Text="Тестирај" />
-						<Button
+						<controls:FFButton
 							Grid.Row="1"
 							Grid.Column="1"
+							ButtonKind="Danger"
 							Command="{Binding DeleteCommand}"
+							HeightRequestEx="40"
+							WidthRequestEx="130"
 							IsEnabled="{Binding HasSelection}"
 							Text="Избриши" />
 					</Grid>
