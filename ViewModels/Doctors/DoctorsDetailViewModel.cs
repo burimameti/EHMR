@@ -45,6 +45,8 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
     };
 
     private bool _isExistingDoctor;
+    private Doctor? _loadedSelectedDoctor;
+    private bool _hasLoadedSelectedDoctor;
     private Doctor? _snapshot;
 
     // =====================================================
@@ -125,6 +127,16 @@ public partial class DoctorsDetailViewModel : BaseViewModel<Doctor>
     public async Task LoadAsync()
     {
         var selected = SelectedItemService.SelectedItem;
+        if(selected is not null)
+        {
+            _loadedSelectedDoctor=selected;
+            _hasLoadedSelectedDoctor=true;
+            SelectedItemService.SelectedItem=null; // consume singleton navigation context
+        }
+        else if(_isExistingDoctor && _hasLoadedSelectedDoctor)
+        {
+            selected=_loadedSelectedDoctor;
+        }
 
         if(selected is not null)
         {
