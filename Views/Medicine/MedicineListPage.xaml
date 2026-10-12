@@ -269,7 +269,7 @@
 										Command="{Binding NewMedicineCommand}"
 										HeightRequestEx="40"
 										Text="Нов лек"
-										TextColorEx="White" />
+										TextColorEx="White" WidthRequestEx="160" />
 								</Grid>
 								<controls:SparkExplorerHeaderView
 									Buttons="{Binding Buttons}"
@@ -316,7 +316,7 @@
 										Command="{Binding AddApplicationRegimeCommand}"
 										HeightRequestEx="40"
 										Text="Додади начин"
-										TextColorEx="White" />
+										TextColorEx="White" WidthRequestEx="160" />
 								</Grid>
 								<Border
 									Padding="8,0"
@@ -363,7 +363,7 @@
 										Command="{Binding AddClinicalScoreCommand}"
 										HeightRequestEx="40"
 										Text="Нов скор"
-										TextColorEx="White" />
+										TextColorEx="White" WidthRequestEx="160" />
 								</Grid>
 								<Border
 									Padding="8,0"
