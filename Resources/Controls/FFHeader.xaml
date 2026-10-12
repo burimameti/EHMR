@@ -73,8 +73,10 @@
 					BorderWidth="1"
 					Command="{Binding SecondaryButtonCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
+					IsEnabled="{Binding SecondaryButtonIsEnabled, Source={x:Reference Root}}"
 					IsVisible="{Binding ShowSecondaryButton, Source={x:Reference Root}}"
 					Style="{StaticResource PageHeaderActionButtonStyle}"
+					WidthRequest="{Binding SecondaryButtonWidthRequest, Source={x:Reference Root}}"
 					Text="{Binding SecondaryButtonText, Source={x:Reference Root}}"
 					TextColor="{StaticResource SparkTextPrimary}" />
 				<Button
