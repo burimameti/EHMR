@@ -561,7 +561,7 @@
 
 										<HorizontalStackLayout
 											HorizontalOptions="Start"
-											Spacing="-55"
+											Spacing="8"
 											VerticalOptions="Center">
 											<CheckBox IsChecked="{Binding ScheduleNextFollowUp, Mode=TwoWay}" VerticalOptions="Center" />
 											<Label
