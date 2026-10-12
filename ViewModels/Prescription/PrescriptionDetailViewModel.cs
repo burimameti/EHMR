@@ -19,6 +19,7 @@ public partial class PrescriptionDetailFormViewModel : ObservableObject
     private readonly FormSessionLifecycle _formSessions;
     private bool _hasInitialized;
     private bool _isNewMode;
+    private Prescription? _loadedPrescription;
 
     [ObservableProperty] private string pageTitle = "Нов Рецепт";
     [ObservableProperty] private bool isReadOnly;
@@ -71,6 +72,16 @@ public partial class PrescriptionDetailFormViewModel : ObservableObject
         await LoadPatientsAsync();
 
         var currentPrescription = _selectedPrescriptionService.SelectedItem;
+        if(currentPrescription != null)
+        {
+            _loadedPrescription=currentPrescription;
+            _selectedPrescriptionService.SelectedItem=null; // consume navigation context; keep the loaded record for re-entry
+        }
+        else if(_hasInitialized && !_isNewMode)
+        {
+            currentPrescription=_loadedPrescription;
+        }
+
         if(currentPrescription != null)
         {
             _isNewMode=false;
