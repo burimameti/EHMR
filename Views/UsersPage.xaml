@@ -7,7 +7,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels"
 	x:Name="PageRoot"
 	x:DataType="viewModels:UsersViewModel"
-	BackgroundColor="#F1F5F9">
+	BackgroundColor="{StaticResource PageBackground}">
 <Grid ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
@@ -41,21 +41,19 @@
 
 					<controls:FFButton
 						Grid.Column="1"
-						BackgroundColorEx="#2AEBE7"
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
-						ContentPadding="20,0"
 						HeightRequestEx="40"
+						WidthRequestEx="130"
 						IsVisible="{Binding CanCreate}"
-						Text="Нов"
-						TextColorEx="#0F172A" />
+						Text="Нов" />
 				</Grid>
 			</Border>
 
 			<!--  MAIN CONTENT / GRID  -->
 			<Border
 				Grid.Row="1"
-				BackgroundColor="#F1F5F9"
+				BackgroundColor="{StaticResource PageBackground}"
 				StrokeThickness="0">
 				<ScrollView VerticalScrollBarVisibility="Never">
 					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
@@ -92,7 +90,7 @@
 		<!--  LOADING OVERLAY  -->
 		<Grid
 			Grid.Column="1"
-			BackgroundColor="#800F172A"
+			BackgroundColor="{StaticResource SparkOverlay}"
 			IsVisible="{Binding IsBusy}">
 			<VerticalStackLayout
 				HorizontalOptions="Center"
