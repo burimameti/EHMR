@@ -102,16 +102,16 @@
 			Style="{StaticResource CrudFormPageGridStyle}">
 
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<controls:FFPageHeader Title="{Binding Encounter.EncounterNumber, StringFormat='Детали за преглед Бр. {0}'}" Subtitle="{Binding Encounter.EncounterDate, StringFormat='Преглед од {0:dd.MM.yyyy}'}">
+				<controls:FFPageHeader
+                        Title="{Binding Encounter.EncounterNumber, StringFormat='Детали за преглед Бр. {0}'}"
+                        Subtitle="{Binding Encounter.EncounterDate, StringFormat='Преглед од {0:dd.MM.yyyy}'}"
+                        SecondaryButtonText="Преглед за печатење / PDF"
+                        SecondaryButtonCommand="{Binding GenerateClinicalReportCommand}"
+                        SecondaryButtonIsEnabled="{Binding CanPrint}"
+                        SecondaryButtonWidthRequest="230"
+                        ShowSecondaryButton="True">
 					<controls:FFPageHeader.HeaderContent>
 						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-							<controls:FFButton
-								ButtonKind="Secondary"
-								Command="{Binding GenerateClinicalReportCommand}"
-								ContentPadding="16,0"
-								HeightRequestEx="40"
-								IsEnabled="{Binding CanPrint}"
-								Text="Преглед за печатење / PDF" />
 							<Border
 								Padding="12,0"
 								BackgroundColor="{Binding Encounter.Status, Converter={StaticResource StatusBgConverter}}"
