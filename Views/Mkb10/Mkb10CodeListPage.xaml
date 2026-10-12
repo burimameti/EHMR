@@ -46,15 +46,13 @@
 								HorizontalOptions="End"
 								Spacing="10"
 								VerticalOptions="Center">
-								<Button
-									BackgroundColor="{StaticResource SparkAccentTeal}"
-									TextColor="White"
+								<controls:FFButton
+									ButtonKind="Primary"
 									Command="{Binding NewCommand}"
 									IsEnabled="{Binding CanCreate}"
-									HeightRequest="45"
-									Style="{StaticResource TabButtonActiveStyle}"
+									HeightRequestEx="40"
 									Text="Нов код"
-									WidthRequest="160" />
+									WidthRequestEx="130" />
 							</HorizontalStackLayout>
 						</Grid>
 					</controls:FFSectionCard>
