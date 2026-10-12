@@ -34,9 +34,9 @@
 					Subtitle="Преглед, пребарување и управување со медицински прегледи"
 					RefreshCommand="{Binding LoadCommand}"
 					ShowRefreshButton="True">
-					<controls:FFPageHeader.HeaderContent>
-						<controls:FFButton ButtonKind="Secondary" Command="{Binding GoBackCommand}" HeightRequestEx="40" Text="Назад" WidthRequestEx="130" />
-					</controls:FFPageHeader.HeaderContent>
+					SecondaryButtonText="Назад"
+					SecondaryButtonCommand="{Binding GoBackCommand}"
+					ShowSecondaryButton="True"
 				</controls:FFPageHeader>
 			</Border>
 
