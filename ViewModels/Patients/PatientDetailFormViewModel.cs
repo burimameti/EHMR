@@ -385,26 +385,30 @@ _navigationService=navigationService;
         {
             await using var db = await _dbFactory.CreateDbContextAsync();
 
-            Mkb10History=new ObservableCollection<PatientMkb10CodeDto>(
-                await db.Set<PatientMkb10Assignment>()
-                    .AsNoTracking()
-                    .Where(x => x.PatientId==patientId)
-                    .OrderByDescending(x => x.DiagnosedAt)
-                    .Select(x => new PatientMkb10CodeDto
-                    {
-                        Id=x.Id,
-                        PatientId=x.PatientId,
-                        EncounterId=x.EncounterId,
-                        Mkb10CodeId=x.Mkb10CodeId,
-                        Mkb10Code=x.Mkb10Code!=null ? x.Mkb10Code.Code : string.Empty,
-                        Mkb10Description=x.Mkb10Code!=null ? x.Mkb10Code.Description??string.Empty : string.Empty,
-                        DiagnosedAt=x.DiagnosedAt,
-                        IsPrimary=x.IsPrimary,
-                        Severity=x.Severity,
-                        ClinicalDescription=x.ClinicalDescription,
-                        Status=x.Status
-                    })
-                    .ToListAsync());
+            // Load the diagnosis assignments and their catalog entries explicitly.
+            // Keep encounter-linked and patient-level diagnoses visible in the patient detail history.
+            var diagnosisAssignments = await db.Set<PatientMkb10Assignment>()
+                .AsNoTracking()
+                .Include(x => x.Mkb10Code)
+                .Where(x => x.PatientId == patientId)
+                .OrderByDescending(x => x.DiagnosedAt)
+                .ToListAsync();
+
+            Mkb10History = new ObservableCollection<PatientMkb10CodeDto>(
+                diagnosisAssignments.Select(x => new PatientMkb10CodeDto
+                {
+                    Id = x.Id,
+                    PatientId = x.PatientId,
+                    EncounterId = x.EncounterId,
+                    Mkb10CodeId = x.Mkb10CodeId,
+                    Mkb10Code = x.Mkb10Code?.Code ?? string.Empty,
+                    Mkb10Description = x.Mkb10Code?.Description ?? string.Empty,
+                    DiagnosedAt = x.DiagnosedAt,
+                    IsPrimary = x.IsPrimary,
+                    Severity = x.Severity,
+                    ClinicalDescription = x.ClinicalDescription,
+                    Status = x.Status
+                }));
 
             EncounterHistory=new ObservableCollection<Encounter>(
                 await db.Encounters
