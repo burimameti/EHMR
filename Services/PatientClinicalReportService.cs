@@ -72,7 +72,7 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
 
         var scores=await db.PatientScores.AsNoTracking()
             .Where(x => x.PatientId==patientId)
-            .OrderByDescending(x => x.RecordedAt).Take(45).ToListAsync();
+            .OrderByDescending(x => x.RecordedAt).Take(5).ToListAsync();
 
         var previousEncounters = focusEncounter is null
             ? new List<Domain.Entities.Encounter>()
@@ -179,7 +179,7 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
                         });
                     }
 
-                    Section(column, "ИСТОРИЈА НА СКОРОВИ (ПОСЛЕДНИ 45)", () =>
+                    Section(column, "ИСТОРИЈА НА ПОСЛЕДНИ 5 СКОРОВИ", () =>
                     {
                         if(scores.Count==0) { Empty(column, "Нема внесени скорови."); return; }
                         foreach(var score in scores)
