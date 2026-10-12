@@ -7,7 +7,7 @@
 	xmlns:viewModels="clr-namespace:EHMR.ViewModels.Prescriptions"
 	x:Name="PageRoot"
 	x:DataType="viewModels:PrescriptionListViewModel"
-	BackgroundColor="{StaticResource SparkBorder}">
+	BackgroundColor="{StaticResource PageBackground}">
 
 	<Grid ColumnDefinitions="285,*">
 
