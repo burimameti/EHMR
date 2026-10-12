@@ -16,18 +16,18 @@
 			FontSize="11"
 			IsVisible="{Binding HasLabel, Source={x:Reference Root}}"
 			Text="{Binding Label, Source={x:Reference Root}}"
-			TextColor="#94A3B8" />
+			TextColor="{StaticResource FFControlLabelText}" />
 
 		<!--  INPUT SHELL  -->
 		<Border
 			x:Name="InputBorder"
 			Padding="0"
-			BackgroundColor="White"
-			MinimumHeightRequest="36"
-			Stroke="#CBD5E1"
+			BackgroundColor="{StaticResource FFControlInputBackground}"
+			MinimumHeightRequest="{StaticResource FFControlInputHeight}"
+			Stroke="{StaticResource FFControlInputBorder}"
 			StrokeThickness="1">
 			<Border.StrokeShape>
-				<RoundRectangle CornerRadius="8" />
+				<RoundRectangle CornerRadius="{StaticResource FFControlInputCornerRadius}" />
 			</Border.StrokeShape>
 
 			<Grid
@@ -54,16 +54,16 @@
 					Focused="OnEntryFocused"
 					FontFamily="Sans"
 					FontSize="13"
-					HeightRequest="36"
+					HeightRequest="{StaticResource FFControlInputHeight}"
 					IsEnabled="{Binding IsEnabled, Source={x:Reference Root}}"
 					IsPassword="{Binding IsPassword, Source={x:Reference Root}}"
 					Keyboard="{Binding Keyboard, Source={x:Reference Root}}"
 					MaxLength="{Binding MaxLength, Source={x:Reference Root}}"
 					Placeholder="{Binding Placeholder, Source={x:Reference Root}}"
-					PlaceholderColor="#CBD5E1"
+					PlaceholderColor="{StaticResource FFControlPlaceholderText}"
 					ReturnType="{Binding ReturnType, Source={x:Reference Root}}"
 					Text="{Binding Text, Source={x:Reference Root}, Mode=TwoWay}"
-					TextColor="#0F172A"
+					TextColor="{StaticResource FFControlInputText}"
 					Unfocused="OnEntryUnfocused"
 					VerticalOptions="Center" />
 
@@ -89,7 +89,7 @@
 					Value="True">
 					<Setter Property="Stroke" Value="{StaticResource SparkAccentTeal}" />
 					<Setter Property="StrokeThickness" Value="1.5" />
-					<Setter Property="BackgroundColor" Value="#FAFCFF" />
+					<Setter Property="BackgroundColor" Value="{StaticResource FFControlInputFocusBackground}" />
 				</DataTrigger>
 				<DataTrigger
 					Binding="{Binding IsPointerOver, Source={x:Reference Root}}"
@@ -104,13 +104,13 @@
 					Value="True">
 					<Setter Property="Stroke" Value="#EF4444" />
 					<Setter Property="StrokeThickness" Value="1.5" />
-					<Setter Property="BackgroundColor" Value="#FFF8F8" />
+					<Setter Property="BackgroundColor" Value="{StaticResource FFControlInputErrorBackground}" />
 				</DataTrigger>
 				<DataTrigger
 					Binding="{Binding IsEnabled, Source={x:Reference Root}}"
 					TargetType="Border"
 					Value="False">
-					<Setter Property="BackgroundColor" Value="#F8FAFC" />
+					<Setter Property="BackgroundColor" Value="{StaticResource FFControlInputDisabledBackground}" />
 					<Setter Property="Opacity" Value="0.6" />
 				</DataTrigger>
 			</Border.Triggers>
