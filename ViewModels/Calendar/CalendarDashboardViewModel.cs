@@ -528,6 +528,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
                     return;
 
                 _appointmentSelect.SelectedItem=appointment;
+                _appointmentSelect.OpenInEditMode=false; // calendar selection opens appointment in read-only detail mode
 
                 // Check once more immediately before navigation.
                 if(!IsCurrentEncounterNavigation(navigationVersion))
