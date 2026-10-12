@@ -47,6 +47,7 @@ public partial class EncounterQuickPreviewPage : ContentPage
                 }
 
                 BindingContext = encounter;
+                await LoadDynamicReportSectionsAsync(encounter.PatientId, encounter.Id);
                 var html = await BuildReportHtmlAsync(encounter.PatientId, encounter.Id);
                 PrintWebView.Source = new HtmlWebViewSource { Html = html };
             }
@@ -66,6 +67,116 @@ public partial class EncounterQuickPreviewPage : ContentPage
                 Html = "<!doctype html><html><body style='font-family:Arial,sans-serif;color:#111827;background:#fff;padding:24px'><h3>Не е избран преглед.</h3><p>Затворете го прегледот и отворете го повторно од листата на прегледи.</p></body></html>"
             };
         }
+    }
+
+
+    private async Task LoadDynamicReportSectionsAsync(Guid patientId, Guid encounterId)
+    {
+        DynamicReportSections.Children.Clear();
+        await using var db = await _factory.CreateDbContextAsync();
+
+        var diagnoses = await db.PatientMkb10Assignments.AsNoTracking()
+            .Include(x => x.Mkb10Code)
+            .Where(x => x.PatientId == patientId && x.EncounterId == encounterId)
+            .OrderByDescending(x => x.IsPrimary).ThenBy(x => x.Mkb10Code!.Code)
+            .Take(5).ToListAsync();
+
+        var medicines = await db.PatientMedicines.AsNoTracking()
+            .Include(x => x.Medicine).Include(x => x.ApplicationRegime)
+            .Where(x => x.PatientId == patientId && x.EncounterId == encounterId)
+            .OrderByDescending(x => x.CreatedAt).Take(5).ToListAsync();
+
+        var prescriptions = await db.Prescriptions.AsNoTracking()
+            .Where(x => x.PatientId == patientId && x.EncounterId == encounterId)
+            .OrderBy(x => x.Medication).Take(5).ToListAsync();
+
+        var scores = await db.PatientScores.AsNoTracking()
+            .Where(x => x.PatientId == patientId && x.EncounterId == encounterId)
+            .OrderByDescending(x => x.RecordedAt).Take(5).ToListAsync();
+
+        var recentEncounterIds = await db.Encounters.AsNoTracking()
+            .Where(x => x.PatientId == patientId && x.Id != encounterId)
+            .OrderByDescending(x => x.ScheduledStart ?? x.EncounterDate)
+            .Select(x => x.Id).Take(5).ToListAsync();
+
+        var diagnosisHistory = await db.PatientMkb10Assignments.AsNoTracking()
+            .Include(x => x.Mkb10Code).Include(x => x.Encounter)
+            .Where(x => x.PatientId == patientId && x.EncounterId.HasValue &&
+                        recentEncounterIds.Contains(x.EncounterId.Value))
+            .OrderByDescending(x => x.Encounter!.ScheduledStart ?? x.Encounter.EncounterDate)
+            .ThenByDescending(x => x.DiagnosedAt).Take(5).ToListAsync();
+
+        var medicineHistory = await db.PatientMedicines.AsNoTracking()
+            .Include(x => x.Medicine).Include(x => x.ApplicationRegime).Include(x => x.Encounter)
+            .Where(x => x.PatientId == patientId && x.EncounterId.HasValue && x.EncounterId != encounterId)
+            .OrderByDescending(x => x.Encounter!.ScheduledStart ?? x.Encounter.EncounterDate)
+            .Take(5).ToListAsync();
+
+        var scoreHistory = await db.PatientScores.AsNoTracking()
+            .Where(x => x.PatientId == patientId && x.EncounterId != encounterId)
+            .OrderByDescending(x => x.RecordedAt).Take(5).ToListAsync();
+
+        void AddSection(string title, IEnumerable<(string Main, string? Detail)> rows, string emptyText)
+        {
+            var section = new VerticalStackLayout { Spacing = 3 };
+            section.Children.Add(new Label
+            {
+                Text = title,
+                FontAttributes = FontAttributes.Bold,
+                FontSize = 13,
+                TextColor = Color.FromArgb("#111827")
+            });
+            section.Children.Add(new BoxView { BackgroundColor = Color.FromArgb("#111827"), HeightRequest = 1 });
+            var rowList = rows.ToList();
+            if (rowList.Count == 0)
+            {
+                section.Children.Add(new Label { Text = emptyText, FontSize = 12, TextColor = Color.FromArgb("#475569") });
+            }
+            else
+            {
+                foreach (var item in rowList)
+                {
+                    var row = new Grid { ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) }, Padding = new Thickness(0, 3) };
+                    row.Add(new Label { Text = item.Main, FontAttributes = FontAttributes.Bold, FontSize = 12, TextColor = Color.FromArgb("#111827"), LineBreakMode = LineBreakMode.WordWrap });
+                    if (!string.IsNullOrWhiteSpace(item.Detail))
+                        row.Add(new Label { Text = item.Detail, FontSize = 11, TextColor = Color.FromArgb("#334155"), HorizontalTextAlignment = TextAlignment.End, VerticalTextAlignment = TextAlignment.Center }, 1, 0);
+                    section.Children.Add(row);
+                    section.Children.Add(new BoxView { BackgroundColor = Color.FromArgb("#E2E8F0"), HeightRequest = 1 });
+                }
+            }
+            DynamicReportSections.Children.Add(section);
+        }
+
+        AddSection("ДИЈАГНОЗА ЗА ОВОЈ ПРЕГЛЕД (МКБ-10)",
+            diagnoses.Select(d => ($"{d.Mkb10Code?.Code ?? "—"} — {d.Mkb10Code?.Description ?? "Без опис"}", d.IsPrimary ? "Примарна" : null)),
+            "Нема внесена МКБ-10 дијагноза за овој преглед.");
+
+        var currentMedicineRows = medicines.Select(m =>
+            (m.Medicine?.FullName ?? m.Medicine?.Name ?? "Непознат лек",
+             string.Join(" · ", new[] { m.Dosage, m.ApplicationRegime?.Regime, m.Quantity > 0 ? $"Количина: {m.Quantity:0.##}" : null }.Where(v => !string.IsNullOrWhiteSpace(v)))))
+            .Concat(prescriptions.Select(p => (p.Medication ?? "Рецепт", string.Join(" · ", new[] { p.Dosage, p.Instructions, p.Status }.Where(v => !string.IsNullOrWhiteSpace(v))))))
+            .Take(5);
+        AddSection("ЛЕКОВИ ПОВРЗАНИ СО ОВОЈ ПРЕГЛЕД", currentMedicineRows,
+            "Нема лекови поврзани со овој преглед.");
+
+        var currentScoreLine = scores.Count == 0
+            ? "Нема внесени скорови за овој преглед."
+            : string.Join("   |   ", scores.Select(s => $"{s.ScoreText}: {(string.IsNullOrWhiteSpace(s.Number) ? "—" : s.Number)} ({s.RecordedAt.ToLocalTime():dd.MM.yyyy})"));
+        AddSection("СКОР ЗА ОВОЈ ПРЕГЛЕД", new[] { (currentScoreLine, (string?)null) }, "");
+
+        AddSection("ИСТОРИЈА НА ПОСЛЕДНИ 5 СКОРОВИ",
+            scoreHistory.Select(s => ($"{s.ScoreText}: {(string.IsNullOrWhiteSpace(s.Number) ? "—" : s.Number)}", s.RecordedAt.ToLocalTime().ToString("dd.MM.yyyy"))),
+            "Нема претходни скорови.");
+
+        AddSection("ИСТОРИЈА НА ЛЕКОВИ ПО ПРЕГЛЕДИ (ДО 5)",
+            medicineHistory.Select(m => (m.Medicine?.FullName ?? m.Medicine?.Name ?? "Непознат лек",
+                $"{(m.Encounter?.ScheduledStart ?? m.Encounter?.EncounterDate):dd.MM.yyyy} · {m.Dosage}")),
+            "Нема претходни лекови поврзани со прегледи.");
+
+        AddSection("ИСТОРИЈА НА ДИЈАГНОЗИ — ПОСЛЕДНИ 5 ПРЕГЛЕДИ",
+            diagnosisHistory.Select(d => ($"{d.Mkb10Code?.Code ?? "—"} — {d.Mkb10Code?.Description ?? "Без опис"}",
+                $"{(d.Encounter?.ScheduledStart ?? d.Encounter?.EncounterDate):dd.MM.yyyy}")),
+            "Нема дијагнози во последните 5 прегледи.");
     }
 
     private async Task<string> BuildReportHtmlAsync(
