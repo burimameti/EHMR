@@ -1,281 +1,60 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-	x:Class="EHMR.Views.Encounters.EncounterQuickPreviewPage"
-	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:entities="clr-namespace:EHMR.Domain.Entities"
-	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
-	x:DataType="entities:Encounter"
-	BackgroundColor="#EEF2F6">
+    x:Class="EHMR.Views.Encounters.EncounterQuickPreviewPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:EHMR.Resources.Controls"
+    BackgroundColor="#EEF2F6">
 
-	<Grid RowDefinitions="Auto,*" RowSpacing="0">
-		<!-- WebView2 needs a real render surface to initialize reliably for printing.
-             Keep it visually unobtrusive, but do not reduce it to a 1x1 surface. -->
-		<WebView
-			x:Name="PrintWebView"
-			Grid.Row="1"
-			HorizontalOptions="Fill"
-			InputTransparent="False"
-			Opacity="1"
-			VerticalOptions="Fill"
- />
-		<Grid
-			Grid.Row="0"
-			Padding="24,14"
-			BackgroundColor="White"
-			ColumnDefinitions="*,Auto">
-			<VerticalStackLayout Spacing="2">
-				<Label
-					FontAttributes="Bold"
-					FontSize="11"
-					Text="PREVIEW"
-					TextColor="#64748B" />
-				<Label
-					FontAttributes="Bold"
-					FontSize="20"
-					Text="Преглед на медицински извештај"
-					TextColor="#1E293B" />
-			</VerticalStackLayout>
-			<HorizontalStackLayout
-				Grid.Column="1"
-				Spacing="8"
-				VerticalOptions="Center">
-				<controls:FFButton
-					ButtonKind="Primary"
-					BackgroundColorEx="#2AEBE7"
-					TextColorEx="#0F172A"
-					Clicked="OnPrintClicked"
-					ContentPadding="18,0"
-					HeightRequestEx="40"
-					Text="Печати"
-					WidthRequestEx="130" />
-				<controls:FFButton
-					ButtonKind="Secondary"
-					BackgroundColorEx="#F1F5F9"
-					TextColorEx="#334155"
-					Clicked="OnBackClicked"
-					ContentPadding="18,0"
-					HeightRequestEx="40"
-					Text="Назад"
-					WidthRequestEx="130" />
-			</HorizontalStackLayout>
-		</Grid>
+    <Grid RowDefinitions="Auto,*" RowSpacing="0">
+        <Grid
+            Grid.Row="0"
+            Padding="24,14"
+            BackgroundColor="White"
+            ColumnDefinitions="*,Auto">
+            <VerticalStackLayout Spacing="2">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="11"
+                    Text="PREVIEW"
+                    TextColor="#64748B" />
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="20"
+                    Text="Преглед на медицински извештај"
+                    TextColor="#1E293B" />
+            </VerticalStackLayout>
+            <HorizontalStackLayout
+                Grid.Column="1"
+                Spacing="8"
+                VerticalOptions="Center">
+                <controls:FFButton
+                    ButtonKind="Primary"
+                    BackgroundColorEx="#2AEBE7"
+                    TextColorEx="#0F172A"
+                    Clicked="OnPrintClicked"
+                    ContentPadding="18,0"
+                    HeightRequestEx="40"
+                    Text="Печати"
+                    WidthRequestEx="130" />
+                <controls:FFButton
+                    ButtonKind="Secondary"
+                    BackgroundColorEx="#F1F5F9"
+                    TextColorEx="#334155"
+                    Clicked="OnBackClicked"
+                    ContentPadding="18,0"
+                    HeightRequestEx="40"
+                    Text="Назад"
+                    WidthRequestEx="130" />
+            </HorizontalStackLayout>
+        </Grid>
 
-		<ScrollView
-            IsVisible="False"
-			Grid.Row="1"
-			Padding="24"
-			VerticalScrollBarVisibility="Always">
-			<Border
-				Margin="0,0,0,24"
-				Padding="42"
-				BackgroundColor="White"
-				HorizontalOptions="Center"
-				MaximumWidthRequest="1000"
-				Stroke="#DCE3EA"
-				StrokeThickness="1">
-				<VerticalStackLayout Spacing="4">
-					<Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
-						<VerticalStackLayout Padding="6" Spacing="4">
-							<Label
-								FontAttributes="Bold"
-								FontSize="11"
-								Text="КЛИНИКА ЗА РЕУМАТОЛОГИЈА СКОПЈЕ"
-								TextColor="#64748B" />
-							<Label
-								FontAttributes="Bold"
-								FontSize="22"
-								Text="ИЗВЕШТАЈ ЗА ПРЕГЛЕД БР."
-								TextColor="#0F172A" />
-						</VerticalStackLayout>
-
-						<BoxView
-							Grid.Row="1"
-							Grid.ColumnSpan="2"
-							Margin="0,16,0,0"
-							BackgroundColor="#64748B"
-							HeightRequest="2" />
-					</Grid>
-
-					<VerticalStackLayout Spacing="6">
-						<Label
-							FontAttributes="Bold"
-							FontSize="13"
-							Text="ПОДАТОЦИ ЗА ПАЦИЕНТОТ"
-							TextColor="#64748B" />
-						<Grid
-							ColumnDefinitions="*,*"
-							ColumnSpacing="24"
-							RowDefinitions="Auto,Auto,Auto"
-							RowSpacing="6">
-							<VerticalStackLayout Spacing="3">
-								<Label
-									FontSize="10"
-									Text="Име и презиме"
-									TextColor="#64748B" />
-								<Label
-									FontAttributes="Bold"
-									FontSize="14"
-									Text="{Binding Patient.FullName, TargetNullValue='—'}"
-									TextColor="#1E293B" />
-							</VerticalStackLayout>
-							<VerticalStackLayout Grid.Column="1" Spacing="3">
-								<Label
-									FontSize="10"
-									Text="ЕМБГ"
-									TextColor="#64748B" />
-								<Label
-									FontSize="14"
-									Text="{Binding Patient.NationalId, TargetNullValue='—'}"
-									TextColor="#1E293B" />
-							</VerticalStackLayout>
-							<VerticalStackLayout Grid.Row="1" Spacing="3">
-								<Label
-									FontSize="10"
-									Text="СЗБО број"
-									TextColor="#64748B" />
-								<Label
-									FontSize="14"
-									Text="{Binding Patient.SzboNumber, TargetNullValue='—'}"
-									TextColor="#1E293B" />
-							</VerticalStackLayout>
-							<VerticalStackLayout
-								Grid.Row="1"
-								Grid.Column="1"
-								Spacing="3">
-								<Label
-									FontSize="10"
-									Text="Датум на раѓање"
-									TextColor="#64748B" />
-								<Label
-									FontSize="14"
-									Text="{Binding Patient.BirthDate, StringFormat='{0:dd.MM.yyyy}'}"
-									TextColor="#1E293B" />
-							</VerticalStackLayout>
-							<VerticalStackLayout Grid.Row="2" Spacing="3">
-								<Label
-									FontSize="10"
-									Text="Телефон"
-									TextColor="#64748B" />
-								<Label
-									FontSize="14"
-									Text="{Binding Patient.Phone, TargetNullValue='—'}"
-									TextColor="#1E293B" />
-							</VerticalStackLayout>
-							<VerticalStackLayout
-								Grid.Row="2"
-								Grid.Column="1"
-								Spacing="3">
-								<Label
-									FontSize="10"
-									Text="Адреса"
-									TextColor="#64748B" />
-								<Label
-									FontSize="14"
-									Text="{Binding Patient.Address, TargetNullValue='—'}"
-									TextColor="#1E293B" />
-							</VerticalStackLayout>
-						</Grid>
-					</VerticalStackLayout>
-
-					<BoxView BackgroundColor="#E2E8F0" HeightRequest="1" />
-
-					<VerticalStackLayout Spacing="10">
-						<Label
-							FontAttributes="Bold"
-							FontSize="13"
-							Text="ПОДАТОЦИ ЗА ПРЕГЛЕДОТ"
-							TextColor="#64748B" />
-						<Grid ColumnDefinitions="*,*" ColumnSpacing="24" RowDefinitions="Auto,Auto" RowSpacing="12">
-							<VerticalStackLayout Spacing="3">
-								<Label FontSize="10" Text="Реуматолог" TextColor="#64748B" />
-								<Label FontSize="14" Text="{Binding Doctor.User.FirstName, TargetNullValue=''}" TextColor="#1E293B" />
-								<Label FontSize="14" Text="{Binding Doctor.User.LastName, TargetNullValue='—'}" TextColor="#1E293B" />
-							</VerticalStackLayout>
-							<VerticalStackLayout Grid.Column="1" Spacing="3">
-								<Label FontSize="10" Text="Статус" TextColor="#64748B" />
-								<Label FontSize="14" Text="{Binding Status}" TextColor="#1E293B" />
-							</VerticalStackLayout>
-							<VerticalStackLayout Grid.Row="1" Spacing="3">
-								<Label FontSize="10" Text="Број на преглед" TextColor="#64748B" />
-								<Label FontAttributes="Bold" FontSize="14" Text="{Binding EncounterNumber, TargetNullValue='—'}" TextColor="#1E293B" />
-							</VerticalStackLayout>
-							<VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="3">
-								<Label FontSize="10" Text="Датум на преглед" TextColor="#64748B" />
-								<Label FontAttributes="Bold" FontSize="14" Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}" TextColor="#1E293B" />
-							</VerticalStackLayout>
-						</Grid>
-					</VerticalStackLayout>
-
-
-					<VerticalStackLayout Spacing="10">
-						<Label FontAttributes="Bold" FontSize="13" Text="ДИЈАГНОЗА ЗА ПРЕГЛЕДОТ" TextColor="#64748B" />
-						<VerticalStackLayout BindableLayout.ItemsSource="{Binding Mkb10Assignments}" Spacing="6">
-							<BindableLayout.EmptyView><Label FontSize="13" Text="Нема доделена дијагноза за овој преглед." TextColor="#64748B" /></BindableLayout.EmptyView>
-							<BindableLayout.ItemTemplate>
-								<DataTemplate x:DataType="entities:PatientMkb10Assignment">
-									<VerticalStackLayout Spacing="2">
-										<Label FontAttributes="Bold" FontSize="13" Text="{Binding Mkb10Code.Code, TargetNullValue='—'}" TextColor="#1E293B" />
-										<Label FontSize="13" Text="{Binding Mkb10Code.Description, TargetNullValue=''}" TextColor="#475569" />
-									</VerticalStackLayout>
-								</DataTemplate>
-							</BindableLayout.ItemTemplate>
-						</VerticalStackLayout>
-					</VerticalStackLayout>
-
-					<BoxView BackgroundColor="#E2E8F0" HeightRequest="1" />
-
-					<VerticalStackLayout Spacing="8">
-						<Label FontAttributes="Bold" FontSize="13" Text="ЛЕК И КОЛИЧИНА ЗА ПРЕГЛЕДОТ" TextColor="#64748B" />
-						<VerticalStackLayout BindableLayout.ItemsSource="{Binding Prescriptions}" Spacing="6">
-							<BindableLayout.EmptyView><Label FontSize="13" Text="Нема евидентиран лек за овој преглед." TextColor="#64748B" /></BindableLayout.EmptyView>
-							<BindableLayout.ItemTemplate>
-								<DataTemplate x:DataType="entities:Prescription">
-									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
-										<Label FontSize="13" Text="{Binding Medication, TargetNullValue='—'}" TextColor="#1E293B" />
-										<Label Grid.Column="1" FontSize="13" Text="{Binding Dosage, TargetNullValue='—'}" TextColor="#1E293B" />
-									</Grid>
-								</DataTemplate>
-							</BindableLayout.ItemTemplate>
-						</VerticalStackLayout>
-					</VerticalStackLayout>
-
-					<BoxView BackgroundColor="#E2E8F0" HeightRequest="1" />
-
-					<VerticalStackLayout Spacing="6">
-						<Label FontAttributes="Bold" FontSize="13" Text="СКОР" TextColor="#64748B" />
-						<Label FontSize="13" Text="{Binding PatientScore.ScoreText, TargetNullValue='Нема внесен скор.'}" TextColor="#1E293B" />
-						<Label FontAttributes="Bold" FontSize="16" Text="{Binding PatientScore.Number, TargetNullValue='—'}" TextColor="#1E293B" />
-					</VerticalStackLayout>
-
-					<BoxView BackgroundColor="#E2E8F0" HeightRequest="1" />
-
-					<VerticalStackLayout Spacing="6">
-						<Label FontAttributes="Bold" FontSize="13" Text="ЗАБЕЛЕШКА" TextColor="#64748B" />
-						<Label FontSize="13" Text="{Binding ClinicalNotes, TargetNullValue='Нема внесена забелешка.'}" TextColor="#1E293B" />
-					</VerticalStackLayout>
-
-					<Grid
-						Margin="0,30,0,0"
-						ColumnDefinitions="*,*"
-						ColumnSpacing="40">
-						<VerticalStackLayout Spacing="28">
-							<BoxView BackgroundColor="#94A3B8" HeightRequest="1" />
-							<Label
-								FontSize="11"
-								Text="Потпис на лекар"
-								TextColor="#64748B" />
-						</VerticalStackLayout>
-						<VerticalStackLayout Grid.Column="1" Spacing="28">
-							<BoxView BackgroundColor="#94A3B8" HeightRequest="1" />
-							<Label
-								FontSize="11"
-								Text="Печат на установа"
-								TextColor="#64748B" />
-						</VerticalStackLayout>
-					</Grid>
-				</VerticalStackLayout>
-			</Border>
-		</ScrollView>
-	</Grid>
+        <WebView
+            x:Name="PrintWebView"
+            Grid.Row="1"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill"
+            IsVisible="True"
+            Opacity="1" />
+    </Grid>
 </ContentPage>
