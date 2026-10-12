@@ -48,7 +48,6 @@
 						BackgroundColorEx="{StaticResource SparkButtonSecondaryBg}"
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
-						ContentPadding="16,0"
 						HeightRequestEx="40"
 						IsVisible="{Binding CanCreate}"
 						Text="Нов преглед"
