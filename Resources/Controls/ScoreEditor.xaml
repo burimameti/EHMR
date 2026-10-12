@@ -29,7 +29,7 @@
 		</ResourceDictionary>
 	</ContentView.Resources>
 
-	<VerticalStackLayout Spacing="8">
+	<VerticalStackLayout Spacing="4">
 
 		<!--  Акција за додавање скор; насловот го прикажува родителската секција  -->
 		<Grid ColumnDefinitions="*,Auto" HeightRequest="34" IsVisible="{Binding IsEditable}">
@@ -119,15 +119,8 @@
 					<BoxView Grid.Column="2" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
 				</Grid>
 
-				<VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" Spacing="0">
-					<BindableLayout.EmptyView>
-						<Label
-							Padding="12"
-							FontSize="11"
-							HorizontalOptions="Center"
-							Text="Нема внесени скорови."
-							TextColor="{StaticResource SparkTextMuted}" />
-					</BindableLayout.EmptyView>
+				<Grid RowDefinitions="Auto,Auto">
+					<VerticalStackLayout Grid.Row="0" BindableLayout.ItemsSource="{Binding Items}" IsVisible="{Binding HasItems}" Spacing="0">
 					<BindableLayout.ItemTemplate>
 						<DataTemplate x:DataType="vm:ScoreRow">
 							<Grid RowDefinitions="Auto,1">
@@ -172,7 +165,9 @@
 							</Grid>
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
-				</VerticalStackLayout>
+					</VerticalStackLayout>
+					<Label Grid.Row="1" Padding="12" FontSize="11" HorizontalOptions="Center" IsVisible="{Binding HasNoItems}" Text="Нема внесени скорови." TextColor="{StaticResource SparkTextMuted}" />
+				</Grid>
 
 			</VerticalStackLayout>
 		</Border>
