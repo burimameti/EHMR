@@ -98,6 +98,7 @@
 		<Grid
 			Grid.Column="1"
 			RowDefinitions="Auto,*,Auto"
+			RowSpacing="0"
 			Style="{StaticResource CrudFormPageGridStyle}">
 
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
@@ -140,7 +141,7 @@
 
 				<controls:FFSectionCard Margin="0" Style="{StaticResource CrudFormCardStyle}">
 					<ScrollView VerticalScrollBarVisibility="Never">
-						<VerticalStackLayout Style="{StaticResource CrudFormContentStackStyle}">
+						<VerticalStackLayout Spacing="20" Style="{StaticResource CrudFormContentStackStyle}">
 
 							<!--  ПАЦИЕНТ И РЕУМАТОЛОГ  -->
 							<VerticalStackLayout Spacing="12">
@@ -331,7 +332,7 @@
 							<Border Style="{StaticResource CrudFormSectionCardStyle}">
 								<VerticalStackLayout IsVisible="True" Spacing="8">
 								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
-								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1.5*" ColumnSpacing="8" VerticalOptions="Start">
+								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1*" ColumnSpacing="8" VerticalOptions="Start">
 									<Border Grid.Column="0" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
 										<VerticalStackLayout Spacing="0">
 											<Grid Style="{StaticResource CrudFormTableHeaderGridStyle}">
@@ -354,7 +355,7 @@
 									<Border Grid.Column="1" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
 										<VerticalStackLayout Spacing="0">
 											<Grid Style="{StaticResource CrudFormTableHeaderGridStyle}">
-												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="АКТИВНИ ЛЕКОВИ" />
+												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="ЛЕКОВИ ВО ОВОЈ ПРЕГЛЕД" />
 											</Grid>
 											<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="0" VerticalOptions="Start">
 												<BindableLayout.EmptyView><Label FontSize="11" Text="Нема лекови во овој преглед." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
