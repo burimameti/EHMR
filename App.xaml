@@ -7,7 +7,7 @@
 	xmlns:local="clr-namespace:EHMR">
 	<Application.Resources>
 		<ResourceDictionary>
-			<!-- Shared table typography used by editable grids and patient tables. -->
+			<!--  Shared table typography used by editable grids and patient tables.  -->
 			<Style x:Key="TableHeaderLabelStyle" TargetType="Label">
 				<Setter Property="FontAttributes" Value="Bold" />
 				<Setter Property="FontSize" Value="9" />

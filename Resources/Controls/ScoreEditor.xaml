@@ -11,11 +11,20 @@
 	<ContentView.Resources>
 		<ResourceDictionary>
 
-			<Style x:Key="ScoreFrameStyle" BasedOn="{StaticResource CrudFormTableFrameStyle}" TargetType="Border" />
+			<Style
+				x:Key="ScoreFrameStyle"
+				BasedOn="{StaticResource CrudFormTableFrameStyle}"
+				TargetType="Border" />
 
-			<Style x:Key="ScoreHeaderLabelStyle" BasedOn="{StaticResource CrudFormTableHeaderLabelStyle}" TargetType="Label" />
+			<Style
+				x:Key="ScoreHeaderLabelStyle"
+				BasedOn="{StaticResource CrudFormTableHeaderLabelStyle}"
+				TargetType="Label" />
 
-			<Style x:Key="ScoreCellEntryStyle" BasedOn="{StaticResource CrudFormTableCellEntryStyle}" TargetType="Entry" />
+			<Style
+				x:Key="ScoreCellEntryStyle"
+				BasedOn="{StaticResource CrudFormTableCellEntryStyle}"
+				TargetType="Entry" />
 
 		</ResourceDictionary>
 	</ContentView.Resources>
@@ -97,7 +106,8 @@
 
 				<Grid
 					ColumnDefinitions="*,90,44"
-					ColumnSpacing="8" Style="{StaticResource CrudFormTableHeaderGridStyle}">
+					ColumnSpacing="8"
+					Style="{StaticResource CrudFormTableHeaderGridStyle}">
 					<Label
 						Grid.Column="0"
 						Style="{StaticResource ScoreHeaderLabelStyle}"
