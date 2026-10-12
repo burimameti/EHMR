@@ -22,8 +22,17 @@ public partial class MedicineListViewModel : BaseViewModel<Medicine>
     [RelayCommand]
     private async Task NewMedicineAsync()
     {
+        if(!CanCreate)
+        {
+            await UserDialogService.ShowAlertAsync(
+                PermissionDeniedTitle,
+                PermissionDeniedMessage,
+                "OK");
+            return;
+        }
+
         SelectedItemService.SelectedItem=default;
-        SelectedItemService.OpenInEditMode=true;
+        SelectedItemService.OpenInEditMode=false;
         await NavigationService.GoToAsync(DetailRoute);
     }
 
