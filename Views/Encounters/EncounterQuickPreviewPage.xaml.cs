@@ -73,7 +73,8 @@ public partial class EncounterQuickPreviewPage : ContentPage
     private async void OnPrintClicked(object sender, EventArgs e)
     {
 #if WINDOWS
-        if (sender is VisualElement printButton) printButton.IsEnabled = false;
+        var printButton = sender as VisualElement;
+        if (printButton is not null) printButton.IsEnabled = false;
         try
         {
             if (string.IsNullOrWhiteSpace(_reportHtml))
@@ -104,7 +105,7 @@ public partial class EncounterQuickPreviewPage : ContentPage
         }
         finally
         {
-            if (sender is VisualElement printButton) printButton.IsEnabled = true;
+            if (printButton is not null) printButton.IsEnabled = true;
         }
 #else
         await DisplayAlert("Печатење", "Печатењето е достапно во Windows десктоп верзијата.", "ОК");
