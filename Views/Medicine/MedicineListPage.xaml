@@ -28,7 +28,9 @@
 					<controls:FFPageHeader
 						Title="Регистар на лекови"
 						Grid.Column="0"
-						Subtitle="Регистар на лекови во клиниката со нивните стандардни дози">
+						Subtitle="Регистар на лекови во клиниката со нивните стандардни дози"
+						RefreshCommand="{Binding LoadCommand}"
+						ShowRefreshButton="True">
 						<controls:FFPageHeader.HeaderContent>
 							<controls:FFButton
 								ButtonKind="Secondary"
