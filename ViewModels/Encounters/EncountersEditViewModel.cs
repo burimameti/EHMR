@@ -186,9 +186,7 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         // A reused Shell page may have consumed SelectedItem during the previous visit.
         // Keep the ID as a fallback, but prefer a newly supplied selection when present.
         var selected = _selectedItemService.SelectedItem;
-        if(selected is { Id: not var emptyId } && emptyId != Guid.Empty)
-            _currentEncounterId = selected.Id;
-        else if(selected is not null && selected.Id != Guid.Empty)
+        if(selected is not null && selected.Id != Guid.Empty)
             _currentEncounterId = selected.Id;
 
         if(_currentEncounterId == Guid.Empty)
