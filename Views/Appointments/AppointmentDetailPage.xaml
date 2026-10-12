@@ -369,7 +369,8 @@
 <!--  ══════════════════════════════════════════  -->
 							<!--  3. МКБ-10 ДИЈАГНОЗИ  -->
 							<!--  ══════════════════════════════════════════  -->
-							<VerticalStackLayout Spacing="14">
+							<Border Style="{StaticResource CrudFormSectionCardStyle}" IsVisible="{Binding SelectedPatientForAppointment, Converter={StaticResource SparkNotNullConverter}}">
+								<VerticalStackLayout Spacing="14">
 
 								<controls:CrudSectionHeader Title="МКБ-10 ДИЈАГНОЗИ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
@@ -572,10 +573,8 @@
                                             </VerticalStackLayout>
                                         </Border>
 
-                                        <VerticalStackLayout
-                                            Grid.Row="1"
-                                            Grid.Column="1"
-										Spacing="8">
+                                        <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource CrudFormSectionCardStyle}">
+                                            <VerticalStackLayout Spacing="8">
 										<Label
 											FontAttributes="Bold"
 											FontSize="11"
