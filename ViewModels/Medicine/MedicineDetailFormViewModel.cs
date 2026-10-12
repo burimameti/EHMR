@@ -4,6 +4,7 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
+using EHMR.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Maui.Graphics;
 
@@ -16,6 +17,7 @@ public partial class MedicineDetailFormViewModel : ObservableObject
     private readonly INavigationService _navigationService;
     private readonly IUserDialogService _dialogService;
     private readonly IAuthorizationService _authorization;
+    private readonly FormSessionLifecycle _formSessions;
 
     private Medicine? _originalMedicine;
     private bool _isNewMode;
@@ -95,15 +97,41 @@ public partial class MedicineDetailFormViewModel : ObservableObject
         ISelectedItemService<Medicine> selectionService,
         INavigationService navigationService,
         IUserDialogService dialogService,
-        IAuthorizationService authorization)
+        IAuthorizationService authorization,
+        FormSessionLifecycle formSessions)
     {
         _dbFactory=dbFactory;
         _selectionService=selectionService;
         _navigationService=navigationService;
         _dialogService=dialogService;
         _authorization=authorization;
+        _formSessions=formSessions;
 
         Initialize();
+    }
+
+    /// <summary>
+    /// Handles re-entry to this form without blank-resetting an existing medicine.
+    /// </summary>
+    public void OnPageAppearing()
+    {
+        if(!_isNewMode)
+            return;
+
+        _formSessions.BeginCreateEntry(this, ResetForNewMedicineSession);
+        _formSessions.MarkEntryCompleted(this);
+    }
+
+    private void ResetForNewMedicineSession()
+    {
+        Medicine=new Medicine();
+        _originalMedicine=Medicine.Clone();
+        IsReadOnly=false;
+        IsBusy=false;
+        ActiveTab=1;
+        PageTitle="Нов лек";
+        PageSubtitle="Внес на нов лек";
+        RefreshState();
     }
 
     private void Initialize()
