@@ -187,7 +187,12 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         // Keep the ID as a fallback, but prefer a newly supplied selection when present.
         var selected = _selectedItemService.SelectedItem;
         if(selected is not null && selected.Id != Guid.Empty)
+        {
             _currentEncounterId = selected.Id;
+            // The selected-item service is a singleton; retain the ID locally and
+            // consume the navigation object even if permission checks later exit.
+            _selectedItemService.SelectedItem = null;
+        }
 
         if(_currentEncounterId == Guid.Empty)
         {
