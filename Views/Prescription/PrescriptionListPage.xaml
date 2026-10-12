@@ -25,31 +25,16 @@
 
 			<!--  HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-					<controls:FFPageHeader
-						Title="Рецепти"
-						Grid.Column="0"
-						Subtitle="Преглед, пребарување и управување со рецепти" >
-				<controls:FFPageHeader.HeaderContent>
-<controls:FFButton
-						ButtonKind="Secondary"
-						Command="{Binding GoBackCommand}"
-						HeightRequestEx="40"
-						Text="Назад"
-						WidthRequestEx="130" />
-			</controls:FFPageHeader.HeaderContent>
-		</controls:FFPageHeader>
-
-					<controls:FFButton
-						Grid.Column="1"
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						ButtonKind="Primary"
-						Command="{Binding NewCommand}"
-						HeightRequestEx="40"
-						IsEnabled="{Binding CanCreate}"
-						Text="Нов рецепт"
-						TextColorEx="White" WidthRequestEx="160" />
-				</Grid>
+				<controls:FFPageHeader
+					Title="Рецепти"
+					Subtitle="Преглед, пребарување и управување со рецепти">
+					<controls:FFPageHeader.HeaderContent>
+						<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+							<controls:FFButton ButtonKind="Secondary" Command="{Binding GoBackCommand}" HeightRequestEx="40" Text="Назад" WidthRequestEx="130" />
+							<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding NewCommand}" HeightRequestEx="40" IsEnabled="{Binding CanCreate}" Text="Нов рецепт" TextColorEx="White" WidthRequestEx="160" />
+						</HorizontalStackLayout>
+					</controls:FFPageHeader.HeaderContent>
+				</controls:FFPageHeader>
 			</Border>
 
 			<!--  MAIN CONTENT / GRID  -->
