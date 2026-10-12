@@ -306,43 +306,11 @@
 									Text="{Binding Status, TargetNullValue='—'}"
 									TextColor="#111827" />
 							</Grid>
-							<Grid
-								Grid.Row="1"
-								Grid.Column="0"
-								Grid.ColumnSpan="2"
-								Padding="0,3"
-								ColumnDefinitions="120,*">
-								<Label
-									FontAttributes="Bold"
-									FontSize="12"
-									Text="Причина за посета"
-									TextColor="#111827" />
-								<Label
-									Grid.Column="1"
-									FontSize="12"
-									Text="{Binding ReasonForVisit, TargetNullValue='—'}"
-									TextColor="#111827" />
-							</Grid>
-							<Grid
-								Grid.Row="2"
-								Grid.Column="0"
-								Grid.ColumnSpan="2"
-								Padding="0,3"
-								ColumnDefinitions="120,*">
-								<Label
-									FontAttributes="Bold"
-									FontSize="12"
-									Text="Главна тегоба"
-									TextColor="#111827" />
-								<Label
-									Grid.Column="1"
-									FontSize="12"
-									Text="{Binding ChiefComplaint, TargetNullValue='—'}"
-									TextColor="#111827" />
-							</Grid>
 						</Grid>
 					</VerticalStackLayout>
 
+
+					<VerticalStackLayout x:Name="DynamicReportSections" Spacing="4" />
 
 					<!--  Signature lines  -->
 					<Grid
