@@ -841,9 +841,6 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         var providerPickers = _activeProvider.BuildPickers().ToList();
 
-        // Report-specific controls are described here in the ViewModel.
-        // SparkExplorerHeaderView only renders these definitions; the page has
-        // no hand-authored period/date/medicine controls.
         if(_activeProvider.Type == ReportType.Patients)
         {
             var periodPicker = new SparkPickerItem
@@ -861,6 +858,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                    SelectedPeriodTypeLabel != selected)
                     SelectedPeriodTypeLabel = selected;
             };
+            // Keep the period controls together in the first picker row.
             Pickers.Add(periodPicker);
 
             var fromDate = new SparkPickerItem
@@ -891,12 +889,17 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             };
             Pickers.Add(toDate);
 
+            // Status and city should start the second row, together with medicine search.
+            foreach(var picker in providerPickers.Where(p =>
+                p.Placeholder == "Статус" || p.Placeholder == "Град"))
+                Pickers.Add(picker);
+
             var medicineToggle = new SparkPickerItem
             {
                 ControlType = SparkFilterControlType.CheckBox,
                 Placeholder = "Пребарување по лек",
                 IsChecked = IsMedicineSearchEnabled,
-                IsInlineWithSearch = true
+                IsInlineWithSearch = false
             };
             medicineToggle.PropertyChanged += (_, e) =>
             {
@@ -910,9 +913,15 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                patientsProvider.MedicinePicker is { } medicinePicker)
             {
                 medicinePicker.IsVisible = IsMedicineSearchEnabled;
-                medicinePicker.IsInlineWithSearch = true;
+                medicinePicker.IsInlineWithSearch = false;
                 Pickers.Add(medicinePicker);
             }
+
+            foreach(var picker in providerPickers.Where(p =>
+                p.Placeholder != "Статус" && p.Placeholder != "Град"))
+                Pickers.Add(picker);
+
+            return;
         }
 
         foreach(var picker in providerPickers)
