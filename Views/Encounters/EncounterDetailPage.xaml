@@ -144,6 +144,7 @@
 						<VerticalStackLayout Spacing="20" Style="{StaticResource CrudFormContentStackStyle}">
 
 							<!--  ПАЦИЕНТ И РЕУМАТОЛОГ  -->
+							<Border Margin="0,0,0,10" Style="{StaticResource CrudFormSectionCardStyle}">
 							<VerticalStackLayout Spacing="12">
 								<controls:CrudSectionHeader
 									Title="ПАЦИЕНТ И РЕУМАТОЛОГ"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
@@ -326,6 +327,7 @@
 									</Grid>
 								</Border>
 							</VerticalStackLayout>
+							</Border>
 
 
 							<!-- БИОЛОШКА ТЕРАПИЈА: МКБ-10 дијагнози, активни лекови и скор -->
