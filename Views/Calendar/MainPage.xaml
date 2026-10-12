@@ -137,7 +137,7 @@
 							FontAttributes="Bold"
 							FontSize="24"
 							Text="{Binding PageTitle}"
-						TextColor="#0F172A"
+						TextColor="{StaticResource SparkTextPrimary}"
 						VerticalOptions="Center" />
 						<controls:FFButton
 							Grid.Column="1"
@@ -168,7 +168,7 @@
 									Padding="4,6"
 									FontSize="14"
 									Text="Денес"
-									TextColor="#0F172A"
+									TextColor="{StaticResource SparkTextPrimary}"
 									VerticalOptions="Center" />
 							</Grid>
 
@@ -176,7 +176,7 @@
 								FontAttributes="Bold"
 								FontSize="15"
 								Text="{Binding CurrentMonthYearText}"
-								TextColor="#0F172A"
+								TextColor="{StaticResource SparkTextPrimary}"
 								VerticalOptions="Center" />
 
 							<!--  Мали стрелки во заедничка рамка, како во дизајнот.  -->
@@ -308,7 +308,7 @@
 										HorizontalOptions="Fill"
 										ItemsSource="{Binding Statuses}"
 										SelectedItem="{Binding SelectedStatus}"
-										TextColor="#0F172A"
+										TextColor="{StaticResource SparkTextPrimary}"
 										TitleColor="#94A3B8"
 										VerticalOptions="Center"
 										WidthRequest="128" />
@@ -620,7 +620,7 @@
 											FontAttributes="Bold"
 											FontSize="14"
 											Text="{Binding SelectedDayTitle}"
-											TextColor="#0F172A"
+											TextColor="{StaticResource SparkTextPrimary}"
 											VerticalOptions="Center" />
 										<Label
 											Grid.Column="1"
@@ -807,7 +807,7 @@
 															FontSize="11"
 															IsVisible="{Binding IsToday, Converter={StaticResource InvertedBoolConverter}}"
 															Text="{Binding DayNumber}"
-															TextColor="#0F172A" />
+															TextColor="{StaticResource SparkTextPrimary}" />
 														<BoxView
 															Grid.Column="1"
 															HeightRequest="3"
@@ -890,7 +890,7 @@
 									FontAttributes="Bold"
 									FontSize="18"
 									Text="{Binding WaitlistTitle}"
-									TextColor="#0F172A" />
+									TextColor="{StaticResource SparkTextPrimary}" />
 								<Label
 									FontSize="11"
 									Text="{Binding WaitlistDateText}"
@@ -933,7 +933,7 @@
 										PlaceholderColor="#94A3B8"
 										ReturnCommand="{Binding ApplyCalendarSearchCommand}"
 										Text="{Binding SearchText}"
-										TextColor="#0F172A"
+										TextColor="{StaticResource SparkTextPrimary}"
 										VerticalOptions="Center" />
 									<Label
 										Grid.Column="2"
@@ -984,7 +984,7 @@
 										FontAttributes="Bold"
 										FontSize="13"
 										Text="На чекање"
-										TextColor="#0F172A" />
+										TextColor="{StaticResource SparkTextPrimary}" />
 									<Border
 										Padding="6,1"
 										BackgroundColor="#0F172A"
@@ -1054,7 +1054,7 @@
 															FontAttributes="Bold"
 															FontSize="14"
 															Text="{Binding PatientName}"
-															TextColor="#0F172A" />
+															TextColor="{StaticResource SparkTextPrimary}" />
 														<Border
 															Grid.Column="1"
 															BackgroundColor="#E11D48"
@@ -1152,7 +1152,7 @@
 															FontAttributes="Bold"
 															FontSize="14"
 															Text="{Binding PatientName}"
-															TextColor="#0F172A" />
+															TextColor="{StaticResource SparkTextPrimary}" />
 														<Border
 															Grid.Column="1"
 															BackgroundColor="#D97706"
@@ -1250,7 +1250,7 @@
 															FontAttributes="Bold"
 															FontSize="14"
 															Text="{Binding PatientName}"
-															TextColor="#0F172A" />
+															TextColor="{StaticResource SparkTextPrimary}" />
 														<Border
 															Grid.Column="1"
 															BackgroundColor="#2563EB"
