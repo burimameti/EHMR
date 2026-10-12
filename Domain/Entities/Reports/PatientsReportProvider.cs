@@ -183,14 +183,10 @@ namespace EHMR.Domain.Entities.Reports
                 new SparkGridColumn { Header = "БРОЈ НА ПРЕГЛЕД", Key = "EncounterNumber", Width = new GridLength(1.1, GridUnitType.Star) },
                 new SparkGridColumn { Header = "ТИП", Key = "EncounterType", Width = new GridLength(0.8, GridUnitType.Star) },
                 new SparkGridColumn { Header = "СТАТУС", Key = "EncounterStatus", Width = new GridLength(0.9, GridUnitType.Star) },
-                new SparkGridColumn { Header = "ЛЕКАР", Key = "EncounterDoctor", Width = new GridLength(1.3, GridUnitType.Star) },
-                new SparkGridColumn { Header = "ПРИЧИНА ЗА ПРЕГЛЕД", Key = "ChiefComplaint", Width = new GridLength(1.5, GridUnitType.Star) },
-                new SparkGridColumn { Header = "АНАМНЕЗА", Key = "History", Width = new GridLength(1.5, GridUnitType.Star) },
-                new SparkGridColumn { Header = "НАОД / ПРОЦЕНА", Key = "Assessment", Width = new GridLength(1.5, GridUnitType.Star) },
-                new SparkGridColumn { Header = "ПЛАН", Key = "Plan", Width = new GridLength(1.5, GridUnitType.Star) },
+                new SparkGridColumn { Header = "РЕУМАТОЛОГ", Key = "EncounterDoctor", Width = new GridLength(1.3, GridUnitType.Star) },
+                new SparkGridColumn { Header = "ДИЈАГНОЗА", Key = "Diagnosis", Width = new GridLength(1.8, GridUnitType.Star) },
                 new SparkGridColumn { Header = "СКОР", Key = "Score", Width = new GridLength(1.1, GridUnitType.Star) },
                 new SparkGridColumn { Header = "ЛЕКОВИ", Key = "Medicine", Width = new GridLength(1.5, GridUnitType.Star) },
-                new SparkGridColumn { Header = "MKB-10 КОДОВИ", Key = "PatientMkb10Assignment", Width = new GridLength(1.2, GridUnitType.Star) },
                 new SparkGridColumn { Header = "ЗАБЕЛЕШКИ", Key = "Notes", Width = new GridLength(1.5, GridUnitType.Star) }
             };
 
@@ -713,17 +709,13 @@ namespace EHMR.Domain.Entities.Reports
                         encounter.EncounterDate.ToString("dd.MM.yyyy HH:mm"),
                         string.IsNullOrWhiteSpace(encounter.EncounterNumber) ? "-" : encounter.EncounterNumber,
                         string.IsNullOrWhiteSpace(encounter.EncounterType) ? "-" : encounter.EncounterType,
-                        encounter.Status.ToString(),
+                        MapEncounterStatusToMacedonian(encounter.Status),
                         doctor,
-                        encounter.ChiefComplaint ?? encounter.ReasonForVisit ?? "-",
-                        encounter.HistoryOfPresentIllness ?? "-",
-                        encounter.Assessment ?? "-",
-                        encounter.Plan ?? "-",
+                        BuildEncounterMkb10Info(encounter),
                         score is null
                             ? "Нема скор"
                             : string.IsNullOrWhiteSpace(score.Number) ? score.ScoreText : $"{score.ScoreText}: {score.Number}",
                         BuildEncounterMedicinesInfo(patient, encounter.Id),
-                        BuildEncounterMkb10Info(encounter),
                         encounter.Notes ?? encounter.ClinicalNotes ?? "-"
                     ],
                     IsAlertSeverity = false
@@ -801,11 +793,20 @@ namespace EHMR.Domain.Entities.Reports
             return medicines.Count == 0 ? "Нема лекови за прегледот" : string.Join(", ", medicines);
         }
 
+        private static string MapEncounterStatusToMacedonian(EncounterStatus status) => status switch
+        {
+            EncounterStatus.Scheduled => "Закажан",
+            EncounterStatus.InProgress => "Во тек",
+            EncounterStatus.Completed => "Завршен",
+            EncounterStatus.Cancelled => "Откажан",
+            _ => "Непознат"
+        };
+
         private static string BuildEncounterMkb10Info(Encounter encounter)
         {
             var mkb10Assignments = (encounter.Mkb10Assignments ?? [])
                 .Where(item => item.Mkb10Code != null)
-                .Select(item => item.Mkb10Code!.Code)
+                .Select(item => $"{item.Mkb10Code!.Code} — {item.Mkb10Code.Description}")
                 .Distinct()
                 .ToList();
 
