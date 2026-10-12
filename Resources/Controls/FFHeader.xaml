@@ -79,12 +79,12 @@
 					BorderWidth="1"
 					Command="{Binding SecondaryButtonCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
-					HeightRequest="36"
+					HeightRequest="40"
 					IsVisible="{Binding ShowSecondaryButton, Source={x:Reference Root}}"
 					Style="{StaticResource TabButtonStyle}"
 					Text="{Binding SecondaryButtonText, Source={x:Reference Root}}"
 					TextColor="{StaticResource SparkTextPrimary}"
-					WidthRequest="140" />
+					WidthRequest="130" />
 				<Button
 					Command="{Binding RefreshCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
