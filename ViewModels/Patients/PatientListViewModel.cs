@@ -348,12 +348,14 @@ public partial class PatientListViewModel : BaseViewModel<Patient>, IQueryAttrib
         if(!confirmed) return;
 
         SelectedItemService.SelectedItem=patient;
+        SelectedItemService.OpenInEditMode=false;
         await NavigationService.GoToAsync(AppRoutes.Encounters.Create);
     }
      [RelayCommand]
     private async Task AddAsync()
     {      
         SelectedItemService.SelectedItem=null;
+        SelectedItemService.OpenInEditMode=false;
         await NavigationService.GoToAsync(AppRoutes.Patients.Detail);
     }
     // ============================================================
