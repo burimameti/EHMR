@@ -43,17 +43,12 @@
 					Text="{Binding Caption, Source={x:Reference Root}}"
 					TextColor="{StaticResource SparkTextSecondary}" />
 				<Label
-					FontAttributes="Bold"
-					FontSize="20"
-					Text="{Binding Title, Source={x:Reference Root}}"
-					TextColor="{StaticResource SparkTextPrimary}" />
+					Style="{StaticResource PageHeaderTitleStyle}"
+					Text="{Binding Title, Source={x:Reference Root}}" />
 				<Label
-					FontSize="12"
+					Style="{StaticResource PageHeaderSubtitleStyle}"
 					IsVisible="{Binding Subtitle, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
-					LineBreakMode="TailTruncation"
-					MaxLines="1"
-					Text="{Binding Subtitle, Source={x:Reference Root}}"
-					TextColor="{StaticResource SparkTextSecondary}" />
+					Text="{Binding Subtitle, Source={x:Reference Root}}" />
 			</VerticalStackLayout>
 
 			<HorizontalStackLayout
