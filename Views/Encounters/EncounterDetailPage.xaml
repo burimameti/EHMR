@@ -112,6 +112,12 @@
                         ShowSecondaryButton="True">
 					<controls:FFPageHeader.HeaderContent>
 						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+							<controls:FFButton
+								ButtonKind="Secondary"
+								Command="{Binding CancelCommand}"
+								HeightRequestEx="40"
+								Text="Назад"
+								WidthRequestEx="130" />
 							<Border
 								Padding="12,0"
 								BackgroundColor="{Binding Encounter.Status, Converter={StaticResource StatusBgConverter}}"
@@ -542,7 +548,7 @@
 				Stroke="{StaticResource SparkBorderSubtle}"
 				StrokeShape="RoundRectangle 8"
 				StrokeThickness="1">
-				<Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
 					<Label
 						FontSize="10.5"
 						Text="Прегледот е само за читање. За корекција користи се администраторско уредување."
@@ -550,13 +556,6 @@
 						VerticalOptions="Center" />
 					<controls:FFButton
 						Grid.Column="1"
-						ButtonKind="Secondary"
-						Command="{Binding CancelCommand}"
-						HeightRequestEx="40"
-						Text="Назад"
-						WidthRequestEx="130" />
-					<controls:FFButton
-						Grid.Column="2"
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
 						ButtonKind="Primary"
 						Command="{Binding EditCommand}"
