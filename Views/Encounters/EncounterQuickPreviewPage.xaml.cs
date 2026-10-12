@@ -148,16 +148,16 @@ public partial class EncounterQuickPreviewPage : ContentPage
             DynamicReportSections.Children.Add(section);
         }
 
-        AddSection("ДИЈАГНОЗА ЗА ОВОЈ ПРЕГЛЕД (МКБ-10)",
-            diagnoses.Select(d => ($"{d.Mkb10Code?.Code ?? "—"} — {d.Mkb10Code?.Description ?? "Без опис"}", d.IsPrimary ? "Примарна" : null)),
+        AddSection("ДИЈАГНОЗА (МКБ-10)",
+            diagnoses.Select(d => ($"{d.Mkb10Code?.Code ?? "—"} — {d.Mkb10Code?.Description ?? "Без опис"}", d.IsPrimary ? "" : null)),
             "Нема внесена МКБ-10 дијагноза за овој преглед.");
 
         var currentMedicineRows = medicines.Select(m =>
             (m.Medicine?.FullName ?? m.Medicine?.Name ?? "Непознат лек",
-             string.Join(" · ", new[] { m.Dosage, m.ApplicationRegime?.Regime, m.Quantity > 0 ? $"Количина: {m.Quantity:0.##}" : null }.Where(v => !string.IsNullOrWhiteSpace(v)))))
-            .Concat(prescriptions.Select(p => (p.Medication ?? "Рецепт", string.Join(" · ", new[] { p.Dosage, p.Instructions, p.Status }.Where(v => !string.IsNullOrWhiteSpace(v))))))
-            .Take(5);
-        AddSection("ЛЕКОВИ ПОВРЗАНИ СО ОВОЈ ПРЕГЛЕД", currentMedicineRows,
+             string.Join(" · ", new[] { m.Dosage, m.ApplicationRegime?.Regime, m.Quantity > 0 ? $"Количина: {m.Quantity:0.##}" : null }.Where(v => !string.IsNullOrWhiteSpace(v)))));
+            
+            //.Take();
+        AddSection("ЛЕКОВИ ВО ОВОЈ ПРЕГЛЕД", currentMedicineRows,
             "Нема лекови поврзани со овој преглед.");
 
         var currentScoreLine = scores.Count == 0
@@ -165,18 +165,18 @@ public partial class EncounterQuickPreviewPage : ContentPage
             : string.Join("   |   ", scores.Select(s => $"{s.ScoreText}: {(string.IsNullOrWhiteSpace(s.Number) ? "—" : s.Number)} ({s.RecordedAt.ToLocalTime():dd.MM.yyyy})"));
         AddSection("СКОР ЗА ОВОЈ ПРЕГЛЕД", new[] { (currentScoreLine, (string?)null) }, "");
 
-        AddSection("ИСТОРИЈА НА ПОСЛЕДНИ 5 СКОРОВИ",
+        AddSection("ИСТОРИЈА СКОРОВИ",
             scoreHistory.Select(s => ($"{s.ScoreText}: {(string.IsNullOrWhiteSpace(s.Number) ? "—" : s.Number)}", s.RecordedAt.ToLocalTime().ToString("dd.MM.yyyy"))),
             "Нема претходни скорови.");
 
-        AddSection("ИСТОРИЈА НА ЛЕКОВИ ПО ПРЕГЛЕДИ (ДО 5)",
+        AddSection("ИСТОРИЈА НА ЛЕКОВИ ПО ПРЕГЛЕДИ",
             medicineHistory.Select(m => (m.Medicine?.FullName ?? m.Medicine?.Name ?? "Непознат лек",
-                $"{(m.Encounter?.ScheduledStart ?? m.Encounter?.EncounterDate):dd.MM.yyyy} · {m.Dosage}")),
+                $"")),
             "Нема претходни лекови поврзани со прегледи.");
 
         AddSection("ИСТОРИЈА НА ДИЈАГНОЗИ — ПОСЛЕДНИ 5 ПРЕГЛЕДИ",
             diagnosisHistory.Select(d => ($"{d.Mkb10Code?.Code ?? "—"} — {d.Mkb10Code?.Description ?? "Без опис"}",
-                $"{(d.Encounter?.ScheduledStart ?? d.Encounter?.EncounterDate):dd.MM.yyyy}")),
+                $"")),
             "Нема дијагнози во последните 5 прегледи.");
     }
 
@@ -279,8 +279,7 @@ public partial class EncounterQuickPreviewPage : ContentPage
             var meds = new System.Text.StringBuilder();
             foreach (var m in encounterMedicines)
                 meds.Append(RowHtml(m.Medicine?.FullName ?? m.Medicine?.Name ?? "Непознат лек", BuildMedicineDetails(m)));
-            foreach (var p in prescriptions)
-                meds.Append(RowHtml(p.Medication ?? "Рецепт", string.Join(" · ", new[] { p.Dosage, p.Instructions, p.Status }.Where(x => !string.IsNullOrWhiteSpace(x)))));
+  
             html.Append(SectionHtml("ЛЕКОВИ ПОВРЗАНИ СО ОВОЈ ПРЕГЛЕД",
                 meds.Length == 0 ? EmptyHtml("Нема лекови поврзани со овој преглед.") : meds.ToString()));
 
@@ -300,22 +299,22 @@ public partial class EncounterQuickPreviewPage : ContentPage
 
         var currentScoreHtml = scores.Count == 0 ? EmptyHtml("Нема внесени скорови за овој преглед.")
             : RowHtml(string.Join("   |   ", scores.Select(s => $"{s.ScoreText}: {(string.IsNullOrWhiteSpace(s.Number) ? "—" : s.Number)}")));
-        html.Append(SectionHtml("СКОР ЗА ОВОЈ ПРЕГЛЕД", currentScoreHtml));
+        html.Append(SectionHtml("МОМЕНТАЛЕН СКОР", currentScoreHtml));
 
         var scoreHtml = scoreHistory.Count == 0 ? EmptyHtml("Нема претходни скорови.")
             : RowHtml(string.Join("   |   ", scoreHistory.Select(s =>
                 $"{s.ScoreText}: {(string.IsNullOrWhiteSpace(s.Number) ? "—" : s.Number)} ({s.RecordedAt.ToLocalTime():dd.MM.yyyy})")));
-        html.Append(SectionHtml("ИСТОРИЈА НА ПОСЛЕДНИ 5 СКОРОВИ", scoreHtml));
+        html.Append(SectionHtml("ИСТОРИЈА НА СКОРОВИ", scoreHtml));
 
         var diagnosisHistoryHtml = diagnosisHistory.Count == 0 ? EmptyHtml("Нема дијагнози во последните 5 прегледи.")
             : string.Concat(diagnosisHistory.Select(d => RowHtml(
                 $"{d.Mkb10Code?.Code ?? "—"} — {d.Mkb10Code?.Description ?? "Без опис"}",
                 $"{(d.Encounter?.ScheduledStart ?? d.Encounter?.EncounterDate):dd.MM.yyyy}")));
-        html.Append(SectionHtml("ИСТОРИЈА НА ДИЈАГНОЗИ — ПОСЛЕДНИ 5 ПРЕГЛЕДИ", diagnosisHistoryHtml));
+        html.Append(SectionHtml("ИСТОРИЈА НА ДИЈАГНОЗИ", diagnosisHistoryHtml));
 
         var historyHtml = medicineHistory.Count == 0 ? EmptyHtml("Нема претходни лекови.")
             : string.Concat(medicineHistory.Select(m => RowHtml(m.Medicine?.FullName ?? m.Medicine?.Name ?? "Непознат лек", BuildMedicineDetails(m))));
-        html.Append(SectionHtml("ИСТОРИЈА НА ЛЕКОВИ (ДО 5)", historyHtml));
+        html.Append(SectionHtml("ИСТОРИЈА НА ЛЕКОВИ", historyHtml));
         html.Append("<div class='signatures'><div class='sig'>Потпис на лекар</div><div class='sig'>Печат на установа</div></div></body></html>");
         return html.ToString();
     }
