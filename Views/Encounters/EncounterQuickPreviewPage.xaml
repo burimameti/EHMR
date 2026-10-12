@@ -144,22 +144,7 @@
 									Text="{Binding Patient.SzboNumber, TargetNullValue='—'}"
 									TextColor="#111827" />
 							</Grid>
-							<Grid
-								Grid.Row="1"
-								Grid.Column="0"
-								Padding="0,3"
-								ColumnDefinitions="120,*">
-								<Label
-									FontAttributes="Bold"
-									FontSize="12"
-									Text="ЕМБГ"
-									TextColor="#111827" />
-								<Label
-									Grid.Column="1"
-									FontSize="12"
-									Text="{Binding Patient.NationalId, TargetNullValue='—'}"
-									TextColor="#111827" />
-							</Grid>
+
 							<Grid
 								Grid.Row="1"
 								Grid.Column="1"
