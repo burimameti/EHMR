@@ -1283,7 +1283,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             var currentUser=string.IsNullOrWhiteSpace(UserName) ? "Систем" : UserName;
             var pdfPath=await _reportExportService.ExportToPdfAsync(
                 reportTitle: dynamicTitle,
-                insitutionName: "КЛИНИКА ЗА РЕУМАТОЛОГИЈА - СКОПЈЕ",
+                insitutionName: "КЛИНИКА ЗА РЕВМАТОЛОГИЈА – Скопје",
                 generatedBy: currentUser,
                 startDate: StartDate,
                 endDate: EndDate,
@@ -1333,7 +1333,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             {
                 var path = await _reportExportService.ExportToPdfAsync(
                     reportTitle: dynamicTitle,
-                    insitutionName: "КЛИНИКА ЗА РЕУМАТОЛОГИЈА - СКОПЈЕ",
+                    insitutionName: "КЛИНИКА ЗА РЕВМАТОЛОГИЈА – Скопје",
                     generatedBy: currentUser,
                     startDate: StartDate,
                     endDate: EndDate,
