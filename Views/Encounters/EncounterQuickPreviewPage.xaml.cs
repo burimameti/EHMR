@@ -54,7 +54,7 @@ public partial class EncounterQuickPreviewPage : ContentPage
         var patientFields = new System.Text.StringBuilder("<div class='grid'>");
         patientFields.Append(Field("Пациент", patient?.FullName))
             .Append(Field("СЗБО", patient?.SzboNumber))
-            .Append(Field("ЕМБГ", maskedId))
+      
             .Append(Field("Датум на раѓање", patient?.BirthDate.ToString("dd.MM.yyyy")))
             .Append(Field("Пол", patient?.Gender.ToString()))
             .Append(Field("Телефон", patient?.Phone))
