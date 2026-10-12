@@ -34,6 +34,7 @@
 		<Grid
 			Grid.Column="1"
 			RowDefinitions="Auto,*,Auto"
+			RowSpacing="0"
 			Style="{StaticResource CrudFormPageGridStyle}">
 
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
@@ -62,7 +63,7 @@
 			</Border>
 
 			<Border Grid.Row="1" Style="{StaticResource CrudFormBodyGridStyle}">
-				<Grid ColumnDefinitions="2*,0.6*" ColumnSpacing="14">
+				<Grid ColumnDefinitions="2.7*,1*" ColumnSpacing="14">
 
 				<!--  ═══════════════════════════════════════════════════════  -->
 				<!--  ЛЕВА КОЛОНА — ФОРМИ  -->
@@ -73,7 +74,7 @@
 					IsEnabled="{Binding CanAdminEditEncounter}"
 					Style="{StaticResource CrudFormCardStyle}">
 					<controls:CustomScrollView ScrollBarColor="{StaticResource SparkAccentTeal}">
-						<VerticalStackLayout Style="{StaticResource CrudFormContentStackStyle}">
+						<VerticalStackLayout Spacing="20" Style="{StaticResource CrudFormContentStackStyle}">
 
 							<!--  ── 1. ПАЦИЕНТ И РЕУМАТОЛОГ ─────────────────────  -->
 							<VerticalStackLayout Spacing="12">
@@ -271,8 +272,8 @@
 
 
 							<!-- БИОЛОШКА ТЕРАПИЈА: усогласен приказ на МКБ, активни лекови и претходен скор -->
-							<Border Style="{StaticResource CrudFormSectionCardStyle}">
-								<VerticalStackLayout IsVisible="{Binding HasPatientContext}" Spacing="8">
+							<Border IsVisible="{Binding HasPatientContext}" Margin="0,0,0,10" Style="{StaticResource CrudFormSectionCardStyle}">
+								<VerticalStackLayout Spacing="8">
 								<controls:CrudSectionHeader Title="БИОЛОШКА ТЕРАПИЈА" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 								<Grid RowDefinitions="Auto" ColumnDefinitions="2*,2*,1*" ColumnSpacing="8" VerticalOptions="Start">
 									<Border Grid.Column="0" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
