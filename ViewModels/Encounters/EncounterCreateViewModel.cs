@@ -98,10 +98,8 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
         _isApplyingContext=true;
         try
         {
-            _appointmentContext.SelectedItem=null;
-            _patientContext.SelectedItem=null;
-            _encounterContext.SelectedItem=null;
-
+            // Preserve any context deliberately supplied by another page
+            // (patient or appointment); LoadAsync consumes and clears it.
             Encounter=new Encounter
             {
                 Id=Guid.NewGuid(),
