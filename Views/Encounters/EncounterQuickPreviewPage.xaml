@@ -52,7 +52,7 @@
                     <VerticalStackLayout Spacing="4">
                         <Label FontAttributes="Bold" FontSize="13" Text="ОСНОВНИ ИНФОРМАЦИИ" TextColor="#111827" />
                         <BoxView BackgroundColor="#111827" HeightRequest="1" />
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="24" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="24" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
                             <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="120,*" Padding="0,3">
                                 <Label FontAttributes="Bold" FontSize="12" Text="Пациент" TextColor="#111827" />
                                 <Label Grid.Column="1" FontSize="12" Text="{Binding Patient.FullName, TargetNullValue='—'}" TextColor="#111827" />
@@ -82,12 +82,16 @@
                                 <Label Grid.Column="1" FontSize="12" Text="{Binding Patient.Address, TargetNullValue='—'}" TextColor="#111827" />
                             </Grid>
                             <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="120,*" Padding="0,3">
-                                <Label FontAttributes="Bold" FontSize="12" Text="Град / поштенски број" TextColor="#111827" />
+                                <Label FontAttributes="Bold" FontSize="12" Text="Град" TextColor="#111827" />
                                 <Label Grid.Column="1" FontSize="12" Text="{Binding Patient.City, TargetNullValue='—'}" TextColor="#111827" />
                             </Grid>
                             <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions="120,*" Padding="0,3">
                                 <Label FontAttributes="Bold" FontSize="12" Text="Реуматолог" TextColor="#111827" />
-                                <Label Grid.Column="1" FontSize="12" Text="{Binding Doctor.User.FullName, TargetNullValue='—'}" TextColor="#111827" />
+                                <Label Grid.Column="1" FontSize="12" Text="{Binding Doctor.FullName, TargetNullValue='—'}" TextColor="#111827" />
+                            </Grid>
+                            <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions="120,*" Padding="0,3">
+                                <Label FontAttributes="Bold" FontSize="12" Text="Поштенски број" TextColor="#111827" />
+                                <Label Grid.Column="1" FontSize="12" Text="{Binding Patient.PostalCode, TargetNullValue='—'}" TextColor="#111827" />
                             </Grid>
                         </Grid>
                     </VerticalStackLayout>
