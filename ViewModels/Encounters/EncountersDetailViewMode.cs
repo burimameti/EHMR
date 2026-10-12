@@ -92,26 +92,8 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
         if(Encounter.Id==Guid.Empty||Encounter.PatientId==Guid.Empty)
             return;
 
-        try
-        {
-            var path=await _clinicalReportService.GeneratePdfAsync(
-                Encounter.PatientId,
-                Encounter.Id,
-                null,
-                $"Извештај за преглед - {Encounter.EncounterNumber}");
-
-            await Launcher.Default.OpenAsync(new OpenFileRequest(
-                Path.GetFileName(path),
-                new ReadOnlyFile(path)));
-        }
-        catch(Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine(ex);
-            await UserDialogService.ShowAlertAsync(
-                "Извештај",
-                $"PDF извештајот не може да се генерира: {ex.Message}",
-                "ОК");
-        }
+        _selectedItemService.SelectedItem = Encounter;
+        await NavigationService.GoToAsync(AppRoutes.Encounters.Preview);
     }
 
     [RelayCommand]
