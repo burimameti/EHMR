@@ -18,5 +18,11 @@ namespace EHMR.Views
             BindingContext=_viewModel;
             MenuHost.Content=this.menuView;
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            _viewModel.OnPageAppearing();
+        }
     }
 }
