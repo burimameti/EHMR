@@ -81,6 +81,24 @@ public partial class FFPageHeader : ContentView
         set => SetValue(SecondaryButtonCommandProperty, value);
     }
 
+    public static readonly BindableProperty SecondaryButtonIsEnabledProperty =
+        BindableProperty.Create(nameof(SecondaryButtonIsEnabled), typeof(bool), typeof(FFPageHeader), true);
+
+    public bool SecondaryButtonIsEnabled
+    {
+        get => (bool)GetValue(SecondaryButtonIsEnabledProperty);
+        set => SetValue(SecondaryButtonIsEnabledProperty, value);
+    }
+
+    public static readonly BindableProperty SecondaryButtonWidthRequestProperty =
+        BindableProperty.Create(nameof(SecondaryButtonWidthRequest), typeof(double), typeof(FFPageHeader), 130d);
+
+    public double SecondaryButtonWidthRequest
+    {
+        get => (double)GetValue(SecondaryButtonWidthRequestProperty);
+        set => SetValue(SecondaryButtonWidthRequestProperty, value);
+    }
+
     public static readonly BindableProperty ShowSecondaryButtonProperty =
         BindableProperty.Create(
             nameof(ShowSecondaryButton),
