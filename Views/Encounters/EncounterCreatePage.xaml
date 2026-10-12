@@ -717,41 +717,40 @@
 							<VerticalStackLayout
 								BindableLayout.ItemsSource="{Binding MedicationHistory}"
 								IsVisible="{Binding HasPatientContext}"
-								Spacing="6">
+								Spacing="2">
 
+								<BindableLayout.EmptyView>
+									<Label Padding="4,6" FontSize="11" Text="Нема историја на лекови." TextColor="{StaticResource SparkTextSecondary}" />
+								</BindableLayout.EmptyView>
 								<BindableLayout.ItemTemplate>
 									<DataTemplate x:DataType="entities:PatientMedicine">
-										<Border
-											Padding="10,8"
-											BackgroundColor="{StaticResource SparkContentBackground}"
-											Stroke="{StaticResource SparkBorder}"
-											StrokeShape="RoundRectangle 10"
-											StrokeThickness="1">
-											<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-												<VerticalStackLayout Spacing="1">
+										<Grid ColumnDefinitions="18,*" ColumnSpacing="5" Padding="0,2">
+											<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+											<Grid Grid.Column="1" Padding="0,3,0,7" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+												<VerticalStackLayout Spacing="2" VerticalOptions="Center">
 													<Label
 														FontAttributes="Bold"
 														FontSize="12.5"
-														LineBreakMode="TailTruncation"
+														LineBreakMode="WordWrap"
 														Text="{Binding Medicine.BilingualName, TargetNullValue='—'}"
 														TextColor="{StaticResource SparkTextPrimary}" />
 													<Label
-														FontSize="12"
+														FontSize="11"
 														Text="{Binding ApplicationRegime.Regime, TargetNullValue='—'}"
 														TextColor="{StaticResource SparkTextSecondary}" />
 												</VerticalStackLayout>
-												<VerticalStackLayout Grid.Column="1" Spacing="1">
+												<VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
 													<Label
-														FontSize="11"
-														Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}"
+														FontSize="10.5"
+													Text="{Binding StartDate, StringFormat='{0:dd.MM.yyyy}'}"
 														TextColor="{StaticResource SparkTextPrimary}" />
 													<Label
-														FontSize="11"
-														Text="{Binding EndDate, StringFormat='{0:dd.MM.yyyy}'}"
-														TextColor="{StaticResource SparkTextSecondary}" />
+														FontSize="10.5"
+													Text="{Binding EndDate, StringFormat='{0:dd.MM.yyyy}'}"
+													TextColor="{StaticResource SparkTextSecondary}" />
 												</VerticalStackLayout>
 											</Grid>
-										</Border>
+										</Grid>
 									</DataTemplate>
 								</BindableLayout.ItemTemplate>
 							</VerticalStackLayout>
