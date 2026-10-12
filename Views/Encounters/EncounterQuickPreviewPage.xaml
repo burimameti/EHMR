@@ -76,7 +76,7 @@
 							<Label
 								FontAttributes="Bold"
 								FontSize="12"
-								Text="EHMR"
+								Text="КЛИНИКА ЗА РЕУМАТОЛОГИЈА -СКОПЈЕ"
 								TextColor="#64748B" />
 							<Label
 								FontAttributes="Bold"
@@ -88,10 +88,6 @@
 							Grid.Column="1"
 							HorizontalOptions="End"
 							Spacing="4">
-							<Label
-								FontSize="12"
-								Text="{Binding EncounterNumber, StringFormat='Број: {0}'}"
-								TextColor="#111827" />
 							<Label
 								FontSize="12"
 								Text="{Binding EncounterDate, StringFormat='Датум: {0:dd.MM.yyyy}'}"
@@ -240,70 +236,6 @@
 									Grid.Column="1"
 									FontSize="12"
 									Text="{Binding Doctor.FullName, TargetNullValue='—'}"
-									TextColor="#111827" />
-							</Grid>
-							<Grid
-								Grid.Row="5"
-								Grid.Column="0"
-								Grid.ColumnSpan="2"
-								Padding="0,3"
-								ColumnDefinitions="120,*">
-								<Label
-									FontAttributes="Bold"
-									FontSize="12"
-									Text="Поштенски број"
-									TextColor="#111827" />
-								<Label
-									Grid.Column="1"
-									FontSize="12"
-									Text="{Binding Patient.PostalCode, TargetNullValue='—'}"
-									TextColor="#111827" />
-							</Grid>
-						</Grid>
-					</VerticalStackLayout>
-
-					<!--  Encounter details  -->
-					<VerticalStackLayout Spacing="4">
-						<Label
-							FontAttributes="Bold"
-							FontSize="13"
-							Text="ПОДАТОЦИ ЗА ПРЕГЛЕДОТ"
-							TextColor="#111827" />
-						<BoxView BackgroundColor="#111827" HeightRequest="1" />
-						<Grid
-							ColumnDefinitions="*,*"
-							ColumnSpacing="24"
-							RowDefinitions="Auto,Auto,Auto">
-							<Grid
-								Grid.Row="0"
-								Grid.Column="0"
-								Padding="0,3"
-								ColumnDefinitions="120,*">
-								<Label
-									FontAttributes="Bold"
-									FontSize="12"
-									Text="Број на преглед"
-									TextColor="#111827" />
-								<Label
-									Grid.Column="1"
-									FontSize="12"
-									Text="{Binding EncounterNumber, TargetNullValue='—'}"
-									TextColor="#111827" />
-							</Grid>
-							<Grid
-								Grid.Row="0"
-								Grid.Column="1"
-								Padding="0,3"
-								ColumnDefinitions="120,*">
-								<Label
-									FontAttributes="Bold"
-									FontSize="12"
-									Text="Статус"
-									TextColor="#111827" />
-								<Label
-									Grid.Column="1"
-									FontSize="12"
-									Text="{Binding Status, TargetNullValue='—'}"
 									TextColor="#111827" />
 							</Grid>
 						</Grid>
