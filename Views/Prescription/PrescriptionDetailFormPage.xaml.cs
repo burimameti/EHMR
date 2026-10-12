@@ -17,10 +17,29 @@ namespace EHMR.Views.Prescription
             MenuHost.Content=_menuVew;
         }
 
-        protected override void OnAppearing()
+        private bool _isInitializing;
+
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
-            _ = _viewModel.OnPageAppearingAsync();
+
+            // Avoid overlapping async loads if Shell raises OnAppearing repeatedly.
+            if(_isInitializing)
+                return;
+
+            _isInitializing=true;
+            try
+            {
+                await _viewModel.OnPageAppearingAsync();
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[PrescriptionDetail] Initialization failed: {ex}");
+            }
+            finally
+            {
+                _isInitializing=false;
+            }
         }
     }
 }
