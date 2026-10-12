@@ -82,11 +82,11 @@
 				HorizontalOptions="Center"
 				Spacing="12"
 				VerticalOptions="Center">
-				<ActivityIndicator IsRunning="{Binding IsBusy}" Color="#2AEBE7" />
+				<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
 				<Label
 					FontSize="13"
 					Text="Вчитување..."
-					TextColor="#0F172A" />
+					TextColor="{StaticResource SparkTextPrimary}" />
 			</VerticalStackLayout>
 		</Grid>
 
