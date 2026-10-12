@@ -141,7 +141,7 @@
                             Grid.Column="1"
                             ButtonKind="Primary"
                             Command="{Binding GeneratePatientHistoryReportCommand}"
-                            HeightRequestEx="36"
+                            HeightRequestEx="40"
                             IsEnabled="{Binding CanExport}"
                             Text="Генерирај извештај – Историја на Скор"
                             WidthRequestEx="250" />
