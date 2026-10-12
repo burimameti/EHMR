@@ -1012,6 +1012,11 @@
 																HorizontalTextAlignment="Center"
 																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="НЕАКТИВЕН" />
+									<BoxView Grid.Column="1" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="2" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="3" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="4" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="5" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
 														</Grid>
 
 														<VerticalStackLayout BindableLayout.ItemsSource="{Binding AttachedMedicines}" Spacing="0">
@@ -1078,6 +1083,11 @@
 																				HeightRequestEx="19"
 																				Text="Неактивен"
 																				WidthRequestEx="70" />
+									<BoxView Grid.Column="1" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="2" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="3" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="4" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="5" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
 																		</Grid>
 																		<BoxView
 																			Grid.Row="1"
@@ -1127,6 +1137,11 @@
 																HorizontalTextAlignment="Center"
 																Style="{StaticResource CrudFormTableHeaderLabelStyle}"
 																Text="АКЦИИ" />
+									<BoxView Grid.Column="1" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="2" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="3" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="4" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="5" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
 														</Grid>
 
 														<VerticalStackLayout BindableLayout.ItemsSource="{Binding PreviousMedicines}" Spacing="0">
@@ -1187,6 +1202,11 @@
 																					<TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemovePreviousMedicineCommand}" CommandParameter="{Binding .}" />
 																				</Label.GestureRecognizers>
 																			</Label>
+									<BoxView Grid.Column="1" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="2" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="3" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="4" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="5" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
 																		</Grid>
 																		<BoxView
 																			Grid.Row="1"
