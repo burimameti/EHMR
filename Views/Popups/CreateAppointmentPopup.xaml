@@ -71,7 +71,7 @@
 					ButtonKind="Secondary"
 					Command="{Binding CancelCommand}"
 					ContentPadding="20,0"
-					HeightRequestEx="42"
+					HeightRequestEx="40"
 					Text="Откажи" />
 				<controls:FFButton
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
@@ -79,7 +79,7 @@
 					ButtonKind="Primary"
 					Command="{Binding SaveCommand}"
 					ContentPadding="20,0"
-					HeightRequestEx="42"
+					HeightRequestEx="40"
 					Text="Зачувај" />
 			</HorizontalStackLayout>
 
