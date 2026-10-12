@@ -29,7 +29,9 @@
 					<controls:FFPageHeader
 						Title="Пациенти"
 						Grid.Column="0"
-						Subtitle="Преглед, пребарување и управување со пациенти">
+						Subtitle="Преглед, пребарување и управување со пациенти"
+						RefreshCommand="{Binding LoadCommand}"
+						ShowRefreshButton="True">
 						<controls:FFPageHeader.HeaderContent>
 							<controls:FFButton
 								ButtonKind="Secondary"
