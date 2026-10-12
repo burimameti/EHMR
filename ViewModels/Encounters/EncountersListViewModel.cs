@@ -529,6 +529,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         }
 
         SelectedItemService.SelectedItem=default;
+        SelectedItemService.OpenInEditMode=false;
         await NavigationService.GoToAsync(AppRoutes.Encounters.Create);
     }
 
