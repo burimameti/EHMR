@@ -100,7 +100,8 @@
                                     ButtonKind="Secondary"
                                     Command="{Binding GoToBackupsCommand}"
                                     HeightRequestEx="40"
-                                    Text="Прикажи ги сите" />
+                                    Text="Прикажи ги сите"
+                                    WidthRequestEx="150" />
                             </Grid>
 
                             <controls:SparkDataGridView
