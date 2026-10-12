@@ -45,10 +45,13 @@
 							Placeholder="Внесете нов начин..."
 							Text="{Binding NewRegime, Mode=TwoWay}"
 							WidthRequest="240" />
-						<Button
+						<controls:FFButton
+							ButtonKind="Primary"
 							Command="{Binding AddCommand}"
 							IsEnabled="{Binding CanManage}"
-							Text="Нов начин" />
+							HeightRequestEx="40"
+						Text="Нов начин"
+						WidthRequestEx="130" />
 					</HorizontalStackLayout>
 				</Grid>
 			</Border>
