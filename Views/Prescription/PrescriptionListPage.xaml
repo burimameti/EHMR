@@ -48,7 +48,7 @@
 						HeightRequestEx="40"
 						IsEnabled="{Binding CanCreate}"
 						Text="Нов рецепт"
-						TextColorEx="White" />
+						TextColorEx="White" WidthRequestEx="160" />
 				</Grid>
 			</Border>
 
