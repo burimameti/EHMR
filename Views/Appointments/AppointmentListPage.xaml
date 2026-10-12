@@ -35,14 +35,9 @@
 						ShowPrimaryButton="True"
 						ShowRefreshButton="True"
 						Subtitle="Преглед и управување со закажани термини">
-						<controls:FFPageHeader.HeaderContent>
-							<controls:FFButton
-								ButtonKind="Secondary"
-								Command="{Binding GoBackCommand}"
-								HeightRequestEx="40"
-								Text="Назад"
-								WidthRequestEx="130" />
-						</controls:FFPageHeader.HeaderContent>
+						SecondaryButtonText="Назад"
+					SecondaryButtonCommand="{Binding GoBackCommand}"
+					ShowSecondaryButton="True"
 					</controls:FFPageHeader>
 				</Grid>
 			</Border>
