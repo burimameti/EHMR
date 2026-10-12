@@ -854,6 +854,10 @@
 												Grid.Column="1"
 												Spacing="8"
 												VerticalOptions="Start">
+												<controls:CrudSectionHeader
+													Title="СКОРОВИ"
+													LineColor="{StaticResource Gray600}"
+													Style="{StaticResource CrudFormSectionHeaderStyle}" />
 												<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
 
 
