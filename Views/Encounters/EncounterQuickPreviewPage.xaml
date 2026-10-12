@@ -225,20 +225,16 @@
 
 					<VerticalStackLayout Spacing="8">
 						<Label FontAttributes="Bold" FontSize="13" Text="ЛЕК И КОЛИЧИНА ЗА ПРЕГЛЕДОТ" TextColor="#64748B" />
-						<VerticalStackLayout BindableLayout.ItemsSource="{Binding MedicationOrders}" Spacing="6">
+						<VerticalStackLayout BindableLayout.ItemsSource="{Binding Prescriptions}" Spacing="6">
 							<BindableLayout.EmptyView><Label FontSize="13" Text="Нема евидентиран лек за овој преглед." TextColor="#64748B" /></BindableLayout.EmptyView>
 							<BindableLayout.ItemTemplate>
-								<DataTemplate x:DataType="entities:Medicine">
+								<DataTemplate x:DataType="entities:Prescription">
 									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
-										<Label FontSize="13" Text="{Binding Name, TargetNullValue='—'}" TextColor="#1E293B" />
-										<Label Grid.Column="1" FontAttributes="Bold" FontSize="13" Text="{Binding Quantity, TargetNullValue='—'}" TextColor="#1E293B" />
+										<Label FontSize="13" Text="{Binding Medication, TargetNullValue='—'}" TextColor="#1E293B" />
+										<Label Grid.Column="1" FontSize="13" Text="{Binding Dosage, TargetNullValue='—'}" TextColor="#1E293B" />
 									</Grid>
 								</DataTemplate>
 							</BindableLayout.ItemTemplate>
-						</VerticalStackLayout>
-						<VerticalStackLayout Spacing="3">
-							<Label FontSize="10" Text="Времетраење на прегледот" TextColor="#64748B" />
-							<Label FontAttributes="Bold" FontSize="13" Text="{Binding DurationMinutes, StringFormat='{0} минути', TargetNullValue='—'}" TextColor="#1E293B" />
 						</VerticalStackLayout>
 					</VerticalStackLayout>
 
@@ -246,7 +242,7 @@
 
 					<VerticalStackLayout Spacing="6">
 						<Label FontAttributes="Bold" FontSize="13" Text="СКОР" TextColor="#64748B" />
-						<Label FontSize="13" Text="{Binding PatientScore.Description, TargetNullValue='Нема внесен скор.'}" TextColor="#1E293B" />
+						<Label FontSize="13" Text="{Binding PatientScore.ScoreText, TargetNullValue='Нема внесен скор.'}" TextColor="#1E293B" />
 						<Label FontAttributes="Bold" FontSize="16" Text="{Binding PatientScore.Number, TargetNullValue='—'}" TextColor="#1E293B" />
 					</VerticalStackLayout>
 
