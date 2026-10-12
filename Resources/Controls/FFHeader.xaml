@@ -66,25 +66,21 @@
 					BackgroundColor="{StaticResource SparkButtonPrimaryBg}"
 					Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
-					HeightRequest="40"
 					IsEnabled="{Binding PrimaryButtonIsEnabled, Source={x:Reference Root}}"
 					IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
-					Style="{StaticResource TabButtonActiveStyle}"
+					Style="{StaticResource PageHeaderPrimaryButtonStyle}"
 					Text="{Binding PrimaryButtonText, Source={x:Reference Root}}"
-					TextColor="White"
-					WidthRequest="130" />
+					TextColor="White" />
 				<Button
 					BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
 					BorderColor="{StaticResource SparkBorder}"
 					BorderWidth="1"
 					Command="{Binding SecondaryButtonCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
-					HeightRequest="40"
 					IsVisible="{Binding ShowSecondaryButton, Source={x:Reference Root}}"
-					Style="{StaticResource TabButtonStyle}"
+					Style="{StaticResource PageHeaderActionButtonStyle}"
 					Text="{Binding SecondaryButtonText, Source={x:Reference Root}}"
-					TextColor="{StaticResource SparkTextPrimary}"
-					WidthRequest="130" />
+					TextColor="{StaticResource SparkTextPrimary}" />
 				<Button
 					Command="{Binding RefreshCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
