@@ -22,14 +22,11 @@
 				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
 					<VerticalStackLayout>
 						<Label
-							FontAttributes="Bold"
-							FontSize="22"
-							Text="Начини на апликација"
-							TextColor="{StaticResource SparkTextPrimary}" />
+							Style="{StaticResource PageHeaderTitleStyle}"
+							Text="Начини на апликација" />
 						<Label
-							FontSize="12"
-							Text="Регистар на начини на апликација за лекови"
-							TextColor="{StaticResource SparkTextSecondary}" />
+							Style="{StaticResource PageHeaderSubtitleStyle}"
+							Text="Регистар на начини на апликација за лекови" />
 					</VerticalStackLayout>
 					<HorizontalStackLayout
 						Grid.Column="1"
