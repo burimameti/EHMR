@@ -43,19 +43,24 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
     {
         var selectedEncounter = _selectedItemService.SelectedItem;
 
+        // Consume navigation context before awaiting I/O, so an exception cannot
+        // leave a stale encounter selected for a later navigation.
+        if(selectedEncounter!=null)
+            _selectedItemService.SelectedItem=null;
+
         if(selectedEncounter!=null)
         {
-            // EXISTING ENCOUNTER — unchanged path
             await LoadForViewAsync(selectedEncounter.Id, "Не е избран преглед за прикажување.");
             EncounterMedicines=new ObservableCollection<PatientMedicine>(
                 PatientMedicines.Where(x => x.EncounterId==Encounter.Id));
-            _selectedItemService.SelectedItem=null;
             OnPropertyChanged(nameof(CanEditEncounter));
-            return;   // ← излегува тука, не стигнува до "нов" делот подолу
+            return;
         }
 
-        // NEW ENCOUNTER — само кога selectedEncounter е null
+        // NEW ENCOUNTER — consume the patient context before asynchronous loading too.
         var preselectedPatient = _selectedPatientService.SelectedItem;
+        if(preselectedPatient!=null)
+            _selectedPatientService.SelectedItem=null;
 
         await InitializeAsync(null);
 
@@ -63,7 +68,6 @@ public partial class EncounterDetailViewModel : EncounterBaseViewModel
         {
             SelectedPatient=Patients.FirstOrDefault(p => p.Id==preselectedPatient.Id)??preselectedPatient;
             SelectedDoctor = SelectedPatient.Doctor;
-            _selectedPatientService.SelectedItem=null;
         }
     }    
     [RelayCommand]
