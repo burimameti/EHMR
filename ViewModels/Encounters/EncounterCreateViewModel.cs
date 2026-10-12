@@ -269,13 +269,10 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     {
         if(_isLoading) return;
 
-        // The shared lifecycle tracker detects re-entry; this view-model owns the
-        // entity-specific reset so deliberate patient/appointment context is preserved.
-        if(_formSessions.HasCompletedEntry(this))
-        {
-            ResetForNewSession();
-            _formSessions.Forget(this);
-        }
+        // Shared lifecycle decides whether this is a fresh Create entry.
+        // The callback resets only encounter-specific state; incoming patient or
+        // appointment context is applied immediately below and is preserved.
+        _formSessions.BeginCreateEntry(this, ResetForNewSession);
 
         _isLoading=true;
         try
