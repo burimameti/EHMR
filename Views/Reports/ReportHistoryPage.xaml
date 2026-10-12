@@ -39,9 +39,7 @@
 
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 
-				<Grid ColumnDefinitions="*,Auto">
-
-					<controls:FFPageHeader Title="Историја на извештаи" Subtitle="Преглед, пребарување и превземање на генерирани извештаи">
+				<controls:FFPageHeader Title="Историја на извештаи" Subtitle="Преглед, пребарување и превземање на генерирани извештаи">
 						<controls:FFPageHeader.HeaderContent>
 							<HorizontalStackLayout Margin="1,0,1,0" Spacing="12">
 								<controls:FFButton
@@ -61,25 +59,7 @@
 									WidthRequestEx="130" />
 							</HorizontalStackLayout>
 						</controls:FFPageHeader.HeaderContent>
-					</controls:FFPageHeader>
-
-					<HorizontalStackLayout
-						Grid.Column="1"
-						Margin="0,0,33,0"
-						Spacing="10">
-
-						<!--<Button
-							Background="{StaticResource ExpandCardBackground}"
-							Command="{Binding RefreshCommand}"
-							HeightRequest="45"
-							Style="{StaticResource TabButtonActiveStyle}"
-							Text="Искисти"
-							WidthRequest="130" />-->
-
-
-					</HorizontalStackLayout>
-
-				</Grid>
+				</controls:FFPageHeader>
 
 			</Border>
 
