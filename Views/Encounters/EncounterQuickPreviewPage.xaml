@@ -14,12 +14,11 @@
 		<WebView
 			x:Name="PrintWebView"
 			Grid.Row="1"
-			HeightRequest="0"
 			HorizontalOptions="Fill"
 			InputTransparent="False"
 			Opacity="1"
 			VerticalOptions="Fill"
-			WidthRequest="0" />
+ />
 		<Grid
 			Grid.Row="0"
 			Padding="24,14"
