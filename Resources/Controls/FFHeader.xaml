@@ -44,7 +44,8 @@
 					TextColor="{StaticResource SparkTextSecondary}" />
 				<Label
 					Style="{StaticResource PageHeaderTitleStyle}"
-					Text="{Binding Title, Source={x:Reference Root}}" />
+					Text="{Binding Title, Source={x:Reference Root}}"
+					TextColor="{StaticResource SparkTextPrimary}" />
 				<Label
 					Style="{StaticResource PageHeaderSubtitleStyle}"
 					IsVisible="{Binding Subtitle, Source={x:Reference Root}, Converter={StaticResource StringNotNullOrEmptyConverter}}"
