@@ -202,7 +202,7 @@ public partial class EncounterQuickPreviewPage : ContentPage
         var diagnoses = await db.PatientMkb10Assignments.AsNoTracking().Include(x => x.Mkb10Code)
             .Where(x => x.PatientId == patientId && (encounter == null
                 ? x.EncounterId == null : x.EncounterId == encounter.Id))
-            .OrderByDescending(x => x.IsPrimary).ThenBy(x => x.Mkb10Code!.Code).ToListAsync();
+            .OrderByDescending(x => x.IsPrimary).ThenBy(x => x.Mkb10Code!.Code).Take(5).ToListAsync();
 
         var allMedicines = await db.PatientMedicines.AsNoTracking()
             .Include(x => x.Medicine).Include(x => x.ApplicationRegime)
@@ -215,8 +215,20 @@ public partial class EncounterQuickPreviewPage : ContentPage
             : await db.Prescriptions.AsNoTracking()
                 .Where(x => x.PatientId == patientId && x.EncounterId == encounter.Id)
                 .OrderBy(x => x.Medication).ToListAsync();
-        var scores = await db.PatientScores.AsNoTracking().Where(x => x.PatientId == patientId)
+        var scores = await db.PatientScores.AsNoTracking().Where(x => x.PatientId == patientId &&
+                (encounter == null ? x.EncounterId == null : x.EncounterId == encounter.Id))
             .OrderByDescending(x => x.RecordedAt).Take(5).ToListAsync();
+        var scoreHistory = await db.PatientScores.AsNoTracking()
+            .Where(x => x.PatientId == patientId && (encounter == null || x.EncounterId != encounter.Id))
+            .OrderByDescending(x => x.RecordedAt).Take(5).ToListAsync();
+        var recentEncounterIds = encounter == null ? new List<Guid>() :
+            await db.Encounters.AsNoTracking().Where(x => x.PatientId == patientId && x.Id != encounter.Id)
+                .OrderByDescending(x => x.ScheduledStart ?? x.EncounterDate).Select(x => x.Id).Take(5).ToListAsync();
+        var diagnosisHistory = recentEncounterIds.Count == 0 ? new List<PatientMkb10Assignment>() :
+            await db.PatientMkb10Assignments.AsNoTracking().Include(x => x.Mkb10Code).Include(x => x.Encounter)
+                .Where(x => x.PatientId == patientId && x.EncounterId.HasValue && recentEncounterIds.Contains(x.EncounterId.Value))
+                .OrderByDescending(x => x.Encounter!.ScheduledStart ?? x.Encounter.EncounterDate)
+                .ThenByDescending(x => x.DiagnosedAt).Take(5).ToListAsync();
         var previous = encounter == null ? new List<Domain.Entities.Encounter>()
             : await db.Encounters.AsNoTracking().Include(x => x.Doctor).ThenInclude(x => x.User)
                 .Where(x => x.PatientId == patientId && x.Id != encounter.Id &&
@@ -290,10 +302,20 @@ public partial class EncounterQuickPreviewPage : ContentPage
             html.Append(SectionHtml("ИСТОРИЈА НА ПРЕТХОДНИ ПРЕГЛЕДИ (ДО 5)", prevHtml));
         }
 
-        var scoreHtml = scores.Count == 0 ? EmptyHtml("Нема внесени скорови.")
-            : string.Concat(scores.Select(s => RowHtml($"{s.ScoreText} — {(string.IsNullOrWhiteSpace(s.Number) ? "—" : s.Number)}",
-                s.RecordedAt.ToLocalTime().ToString("dd.MM.yyyy"))));
+        var currentScoreHtml = scores.Count == 0 ? EmptyHtml("Нема внесени скорови за овој преглед.")
+            : RowHtml(string.Join("   |   ", scores.Select(s => $"{s.ScoreText}: {(string.IsNullOrWhiteSpace(s.Number) ? "—" : s.Number)}")));
+        html.Append(SectionHtml("СКОР ЗА ОВОЈ ПРЕГЛЕД", currentScoreHtml));
+
+        var scoreHtml = scoreHistory.Count == 0 ? EmptyHtml("Нема претходни скорови.")
+            : RowHtml(string.Join("   |   ", scoreHistory.Select(s =>
+                $"{s.ScoreText}: {(string.IsNullOrWhiteSpace(s.Number) ? "—" : s.Number)} ({s.RecordedAt.ToLocalTime():dd.MM.yyyy})")));
         html.Append(SectionHtml("ИСТОРИЈА НА ПОСЛЕДНИ 5 СКОРОВИ", scoreHtml));
+
+        var diagnosisHistoryHtml = diagnosisHistory.Count == 0 ? EmptyHtml("Нема дијагнози во последните 5 прегледи.")
+            : string.Concat(diagnosisHistory.Select(d => RowHtml(
+                $"{d.Mkb10Code?.Code ?? "—"} — {d.Mkb10Code?.Description ?? "Без опис"}",
+                $"{(d.Encounter?.ScheduledStart ?? d.Encounter?.EncounterDate):dd.MM.yyyy}")));
+        html.Append(SectionHtml("ИСТОРИЈА НА ДИЈАГНОЗИ — ПОСЛЕДНИ 5 ПРЕГЛЕДИ", diagnosisHistoryHtml));
 
         var historyHtml = medicineHistory.Count == 0 ? EmptyHtml("Нема претходни лекови.")
             : string.Concat(medicineHistory.Select(m => RowHtml(m.Medicine?.FullName ?? m.Medicine?.Name ?? "Непознат лек", BuildMedicineDetails(m))));
