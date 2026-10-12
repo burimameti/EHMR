@@ -443,21 +443,20 @@
 
 					<!--  DELETE  -->
 
-					<Button
+					<controls:FFButton
 						Grid.Column="0"
-						Padding="24,0"
-						BackgroundColor="#FEE2E2"
-						BorderColor="#FCA5A5"
-						BorderWidth="1"
+						ButtonKind="Danger"
 						Command="{Binding DeleteCommand}"
 						CornerRadius="6"
-						FontAttributes="Bold"
-						FontSize="14"
-						HeightRequest="46"
-						HorizontalOptions="Start"
+						HeightRequestEx="40"
+						HorizontalOptionsEx="Start"
 						IsEnabled="{Binding CanDelete}"
 						Text="Избриши"
-						TextColor="#DC2626" />
+						BackgroundColorEx="#FEE2E2"
+						TextColorEx="#DC2626"
+						BorderColor="#FCA5A5"
+						BorderThickness="1"
+						WidthRequestEx="130" />
 
 					<!--  RIGHT BUTTONS  -->
 
@@ -466,44 +465,41 @@
 						HorizontalOptions="End"
 						Spacing="14">
 
-						<Button
-							BackgroundColor="#F1F5F9"
-							BorderColor="#CBD5E1"
-							BorderWidth="1"
+						<controls:FFButton
+							ButtonKind="Secondary"
 							Command="{Binding CancelCommand}"
 							CornerRadius="6"
-							FontAttributes="Bold"
-							FontSize="14"
-							HeightRequest="46"
+							HeightRequestEx="40"
 							Text="Откажи"
-							TextColor="#475569"
-							WidthRequest="120" />
+							BackgroundColorEx="#F1F5F9"
+							TextColorEx="#475569"
+							BorderColor="#CBD5E1"
+							BorderThickness="1"
+							WidthRequestEx="130" />
 
-						<Button
-							BackgroundColor="#ECFDF5"
-							BorderColor="#10B981"
-							BorderWidth="1"
+						<controls:FFButton
+							ButtonKind="Secondary"
 							Command="{Binding ToggleEditModeCommand}"
 							CornerRadius="6"
-							FontAttributes="Bold"
-							FontSize="14"
-							HeightRequest="46"
+							HeightRequestEx="40"
 							IsEnabled="{Binding CanUpdate}"
 							Text="Уреди"
-							TextColor="#059669"
-							WidthRequest="130" />
+							BackgroundColorEx="#ECFDF5"
+							TextColorEx="#059669"
+							BorderColor="#10B981"
+							BorderThickness="1"
+							WidthRequestEx="130" />
 
-						<Button
-							BackgroundColor="#10B981"
+						<controls:FFButton
+							ButtonKind="Primary"
 							Command="{Binding SaveCommand}"
 							CornerRadius="6"
-							FontAttributes="Bold"
-							FontSize="14"
-							HeightRequest="46"
+							HeightRequestEx="40"
 							IsEnabled="{Binding CanSave}"
 							Text="Зачувај"
-							TextColor="White"
-							WidthRequest="150" />
+							BackgroundColorEx="#10B981"
+							TextColorEx="White"
+							WidthRequestEx="130" />
 
 					</HorizontalStackLayout>
 
