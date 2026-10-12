@@ -9,9 +9,9 @@
 
 			<VerticalStackLayout>
 
-				<Label Style="{StaticResource MedicalSectionTitle}" Text="{Binding Title}" />
+				<Label Style="{StaticResource PageHeaderTitleStyle}" Text="{Binding Title}" />
 
-				<Label Style="{StaticResource MutedText}" Text="{Binding Subtitle}" />
+				<Label Style="{StaticResource PageHeaderSubtitleStyle}" Text="{Binding Subtitle}" />
 			</VerticalStackLayout>
 
 			<Border
