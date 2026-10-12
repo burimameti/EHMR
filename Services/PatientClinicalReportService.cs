@@ -41,46 +41,53 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
         if(encounterId.HasValue && focusEncounter is null)
             throw new InvalidOperationException("Прегледот не е пронајден.");
 
-        // Patient report: patient-level MKB-10 assignments only.
-        // Encounter report: assignments belonging to that exact encounter.
-        var diagnosesQuery=db.PatientMkb10Assignments
-            .AsNoTracking()
-            .Include(x => x.Mkb10Code)
-            .Where(x => x.PatientId==patientId);
+        // Current encounter data and bounded patient history are loaded separately.
+        var diagnoses = focusEncounter is null
+            ? await db.PatientMkb10Assignments.AsNoTracking().Include(x => x.Mkb10Code)
+                .Where(x => x.PatientId==patientId && x.EncounterId==null)
+                .OrderByDescending(x => x.IsPrimary).ThenBy(x => x.Mkb10Code!.Code).ToListAsync()
+            : await db.PatientMkb10Assignments.AsNoTracking().Include(x => x.Mkb10Code)
+                .Where(x => x.PatientId==patientId && x.EncounterId==focusEncounter.Id)
+                .OrderByDescending(x => x.IsPrimary).ThenBy(x => x.Mkb10Code!.Code).ToListAsync();
 
-        diagnosesQuery=focusEncounter is not null
-            ? diagnosesQuery.Where(x => x.EncounterId==focusEncounter.Id)
-            : diagnosesQuery.Where(x => x.EncounterId==null);
+        var allPatientMedicines=await db.PatientMedicines.AsNoTracking()
+            .Include(x => x.Medicine).Include(x => x.ApplicationRegime)
+            .Where(x => x.PatientId==patientId)
+            .OrderByDescending(x => x.CreatedAt).ToListAsync();
 
-        var diagnoses=await diagnosesQuery
-            .OrderByDescending(x => x.DiagnosedAt)
-            .Take(5)
-            .ToListAsync();
+        var encounterMedicines = focusEncounter is null
+            ? allPatientMedicines.Where(x => x.EncounterId==null && x.IsActive).Take(5).ToList()
+            : allPatientMedicines.Where(x => x.EncounterId==focusEncounter.Id ||
+                (!x.EncounterId.HasValue && x.IsActive)).Take(5).ToList();
 
-        var medicines=await db.PatientMedicines
-            .AsNoTracking()
-            .Include(x => x.Medicine)
-            .Include(x => x.ApplicationRegime)
-            .Where(x => x.PatientId==patientId &&
-                (focusEncounter == null
-                    ? !x.EncounterId.HasValue
-                    : x.EncounterId==focusEncounter.Id || (!x.EncounterId.HasValue && x.IsActive)))
-            .OrderByDescending(x => x.IsActive)
-            .ThenByDescending(x => x.CreatedAt)
-            .ToListAsync();
+        var encounterPrescriptions = focusEncounter is null
+            ? new List<Domain.Entities.Prescription>()
+            : await db.Prescriptions.AsNoTracking()
+                .Where(x => x.PatientId==patientId && x.EncounterId==focusEncounter.Id)
+                .OrderBy(x => x.Medication).ToListAsync();
 
-        var activeMedicines=medicines.Where(x => x.IsActive).ToList();
-        var previousMedicines=medicines.Where(x => !x.IsActive).Take(5).ToList();
+        var medicineHistory=allPatientMedicines
+            .Where(x => focusEncounter is null || x.EncounterId!=focusEncounter.Id)
+            .Take(5).ToList();
 
-        var scores=await db.PatientScores
-            .AsNoTracking()
-            .Where(x => x.PatientId==patientId &&
-                (focusEncounter == null
-                    ? !x.EncounterId.HasValue
-                    : x.EncounterId==focusEncounter.Id))
-            .OrderByDescending(x => x.RecordedAt)
-            .Take(5)
-            .ToListAsync();
+        var scores=await db.PatientScores.AsNoTracking()
+            .Where(x => x.PatientId==patientId)
+            .OrderByDescending(x => x.RecordedAt).Take(45).ToListAsync();
+
+        var previousEncounters = focusEncounter is null
+            ? new List<Domain.Entities.Encounter>()
+            : await db.Encounters.AsNoTracking().Include(x => x.Doctor).ThenInclude(x => x.User)
+                .Where(x => x.PatientId==patientId && x.Id!=focusEncounter.Id &&
+                    (x.ScheduledStart ?? x.EncounterDate) < (focusEncounter.ScheduledStart ?? focusEncounter.EncounterDate))
+                .OrderByDescending(x => x.ScheduledStart ?? x.EncounterDate).Take(5).ToListAsync();
+
+        var nextAppointment = focusEncounter is null
+            ? null
+            : await db.Appointments.AsNoTracking().Include(x => x.Doctor).ThenInclude(x => x.User)
+                .Where(x => x.PatientId==patientId &&
+                    x.Status==Domain.Entities.AppointmentStatus.Scheduled &&
+                    x.ScheduledStart > (focusEncounter.ScheduledStart ?? focusEncounter.EncounterDate))
+                .OrderBy(x => x.ScheduledStart).FirstOrDefaultAsync();
 
         var outputTitle=focusEncounter is not null
             ? $"Извештај за преглед бр. {focusEncounter.EncounterNumber}"
@@ -95,8 +102,9 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
-                page.Margin(28);
-                page.DefaultTextStyle(x => x.FontFamily("Arial").FontSize(8.5f));
+                page.MarginHorizontal(30);
+                page.MarginVertical(26);
+                page.DefaultTextStyle(x => x.FontFamily("Arial").FontSize(10));
 
                 page.Header().Element(c => BuildHeader(
                     c,
@@ -119,73 +127,72 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
                             TwoColumn(column, "Датум на преглед", focusEncounter.EncounterDate.ToString("dd.MM.yyyy HH:mm"));
                     });
 
-                    Section(column, "АКТИВНИ ЛЕКОВИ", () =>
+                    if(focusEncounter is not null)
                     {
-                        if(activeMedicines.Count==0)
+                        Section(column, "ПОДАТОЦИ ЗА ПРЕГЛЕДОТ", () =>
                         {
-                            Empty(column, "Нема активни лекови.");
-                            return;
-                        }
+                            TwoColumn(column, "Број на преглед", focusEncounter.EncounterNumber);
+                            TwoColumn(column, "Причина за посета", focusEncounter.ReasonForVisit);
+                            TwoColumn(column, "Главна тегоба", focusEncounter.ChiefComplaint);
+                            TwoColumn(column, "Анамнеза", focusEncounter.HistoryOfPresentIllness);
+                            TwoColumn(column, "Проценка", focusEncounter.Assessment);
+                            TwoColumn(column, "План", focusEncounter.Plan);
+                            TwoColumn(column, "Забелешка", focusEncounter.Notes ?? focusEncounter.ClinicalNotes);
+                        });
 
-                        foreach(var m in activeMedicines)
+                        Section(column, "ДИЈАГНОЗА ЗА ОВОЈ ПРЕГЛЕД (МКБ-10)", () =>
                         {
-                            Row(
-                                column,
-                                m.Medicine?.Name ?? "Непознат лек",
-                                BuildMedicineDetails(m));
-                        }
-                    });
+                            if(diagnoses.Count==0) { Empty(column, "Нема внесена МКБ-10 дијагноза за овој преглед."); return; }
+                            foreach(var d in diagnoses)
+                                Row(column, $"{d.Mkb10Code?.Code ?? "—"} — {d.Mkb10Code?.Description ?? "Без опис"}",
+                                    d.IsPrimary ? "Примарна дијагноза" : null);
+                        });
 
-                    Section(column, "НЕАКТИВНИ ЛЕКОВИ", () =>
+                        Section(column, "ЛЕКОВИ ПОВРЗАНИ СО ОВОЈ ПРЕГЛЕД", () =>
+                        {
+                            if(encounterMedicines.Count==0 && encounterPrescriptions.Count==0)
+                            { Empty(column, "Нема лекови поврзани со овој преглед."); return; }
+                            foreach(var medicine in encounterMedicines)
+                                Row(column, medicine.Medicine?.FullName ?? medicine.Medicine?.Name ?? "Непознат лек",
+                                    BuildMedicineDetails(medicine));
+                            foreach(var prescription in encounterPrescriptions)
+                                Row(column, prescription.Medication ?? "Рецепт",
+                                    string.Join(" · ", new[] { prescription.Dosage, prescription.Instructions, prescription.Status }
+                                        .Where(x => !string.IsNullOrWhiteSpace(x))));
+                        });
+
+                        if(nextAppointment is not null)
+                            Section(column, "ПОДАТОЦИ ЗА СЛЕДНА КОНТРОЛА", () =>
+                            {
+                                TwoColumn(column, "Датум и време", nextAppointment.ScheduledStart.ToString("dd.MM.yyyy HH:mm"));
+                                TwoColumn(column, "Лекар", nextAppointment.Doctor?.FullName);
+                                TwoColumn(column, "Причина", nextAppointment.ReasonForVisit);
+                                TwoColumn(column, "Статус", nextAppointment.Status.ToString());
+                            });
+
+                        Section(column, "ИСТОРИЈА НА ПРЕТХОДНИ ПРЕГЛЕДИ (ДО 5)", () =>
+                        {
+                            if(previousEncounters.Count==0) { Empty(column, "Нема претходни прегледи."); return; }
+                            foreach(var previous in previousEncounters)
+                                Row(column, $"Преглед бр. {previous.EncounterNumber}",
+                                    $"{(previous.ScheduledStart ?? previous.EncounterDate):dd.MM.yyyy HH:mm} · {previous.Doctor?.FullName ?? "—"} · {previous.Status}");
+                        });
+                    }
+
+                    Section(column, "ИСТОРИЈА НА СКОРОВИ (ПОСЛЕДНИ 45)", () =>
                     {
-                        if(previousMedicines.Count==0)
-                        {
-                            Empty(column, "Нема неактивни лекови.");
-                            return;
-                        }
-
-                        foreach(var m in previousMedicines)
-                        {
-                            Row(
-                                column,
-                                m.Medicine?.Name ?? "Непознат лек",
-                                BuildMedicineDetails(m));
-                        }
-                    });
-
-                    Section(column, "ДИЈАГНОЗИ", () =>
-                    {
-                        if(diagnoses.Count==0)
-                        {
-                            Empty(column, "Нема внесени дијагнози.");
-                            return;
-                        }
-
-                        foreach(var d in diagnoses)
-                        {
-                            Row(
-                                column,
-                                $"{d.Mkb10Code?.Code ?? "—"} — {d.Mkb10Code?.Description ?? "Без опис"}",
-                                $"{d.DiagnosedAt:dd.MM.yyyy}");
-                        }
-                    });
-
-                    Section(column, "СКОРОВИ", () =>
-                    {
-                        if(scores.Count==0)
-                        {
-                            Empty(column, "Нема внесени скорови.");
-                            return;
-                        }
-
+                        if(scores.Count==0) { Empty(column, "Нема внесени скорови."); return; }
                         foreach(var score in scores)
-                        {
-                            var value=string.IsNullOrWhiteSpace(score.Number) ? "—" : score.Number;
-                            Row(
-                                column,
-                                $"{score.ScoreText} - {value}",
-                                $"{score.RecordedAt:dd.MM.yyyy}");
-                        }
+                            Row(column, $"{score.ScoreText} — {(string.IsNullOrWhiteSpace(score.Number) ? "—" : score.Number)}",
+                                score.RecordedAt.ToLocalTime().ToString("dd.MM.yyyy"));
+                    });
+
+                    Section(column, "ИСТОРИЈА НА ЛЕКОВИ (ДО 5)", () =>
+                    {
+                        if(medicineHistory.Count==0) { Empty(column, "Нема претходни лекови."); return; }
+                        foreach(var medicine in medicineHistory)
+                            Row(column, medicine.Medicine?.FullName ?? medicine.Medicine?.Name ?? "Непознат лек",
+                                BuildMedicineDetails(medicine));
                     });
                 });
 
@@ -240,7 +247,7 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
         string title,
         Action content)
     {
-        column.Item().PaddingTop(7).Column(section =>
+        column.Item().PaddingTop(10).Column(section =>
         {
             section.Item()
                 .BorderBottom(1)
@@ -248,7 +255,7 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
                 .PaddingBottom(3)
                 .Text(title)
                 .Bold()
-                .FontSize(9)
+                .FontSize(10)
                 .FontColor("#111827");
 
             content();
@@ -259,8 +266,8 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
     {
         column.Item().PaddingVertical(2).Row(row =>
         {
-            row.ConstantItem(145).Text(label).Bold().FontSize(8.5f);
-            row.RelativeItem().Text(string.IsNullOrWhiteSpace(value) ? "—" : value).FontSize(8.5f);
+            row.ConstantItem(145).Text(label).Bold().FontSize(9.5f);
+            row.RelativeItem().Text(string.IsNullOrWhiteSpace(value) ? "—" : value).FontSize(9.5f);
         });
     }
 
@@ -268,9 +275,9 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
     {
         column.Item().PaddingVertical(3).BorderBottom(1).BorderColor("#E2E8F0").Column(c =>
         {
-            c.Item().Text(title).Bold().FontSize(8.5f);
+            c.Item().Text(title).Bold().FontSize(9.5f);
             if(!string.IsNullOrWhiteSpace(value))
-                c.Item().PaddingTop(1).Text(value).FontSize(8);
+                c.Item().PaddingTop(2).Text(value).FontSize(9);
         });
     }
 
