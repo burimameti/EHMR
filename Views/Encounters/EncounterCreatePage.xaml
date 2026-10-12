@@ -11,18 +11,6 @@
 	BackgroundColor="{StaticResource PageBackground}">
 
 
-	<ContentPage.Resources>
-		<ResourceDictionary>
-			<Style x:Key="FieldEntryStyle" TargetType="Entry">
-				<Setter Property="BackgroundColor" Value="Transparent" />
-				<Setter Property="FontSize" Value="13" />
-				<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
-				<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
-			</Style>
-			
-			
-		</ResourceDictionary>
-	</ContentPage.Resources>
 	<Grid ColumnDefinitions="260,*">
 
 		<!--  ЛЕВО МЕНИ  -->
