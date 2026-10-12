@@ -53,7 +53,13 @@
 
 			<!--  PAGE HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<controls:FFPageHeader Title="{Binding HeaderTitle}" Subtitle="{Binding HeaderSubtitle}">
+				<controls:FFPageHeader
+                        Title="{Binding HeaderTitle}"
+                        Subtitle="{Binding HeaderSubtitle}"
+                        SecondaryButtonText="Печати / PDF"
+                        SecondaryButtonCommand="{Binding GenerateClinicalReportCommand}"
+                        SecondaryButtonIsEnabled="{Binding CanPrint}"
+                        ShowSecondaryButton="{Binding IsReadOnly}">
 					<controls:FFPageHeader.HeaderContent>
 						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
 
@@ -69,14 +75,6 @@
 								IsVisible="{Binding IsNewAppointment, Converter={StaticResource InverseBoolConverter}}"
 								Text="{Binding Appointment.Status, Converter={StaticResource AppointmentStatusDisplayConverter}}"
 								TextColor="White" />
-							<controls:FFButton
-								ButtonKind="Secondary"
-								Command="{Binding GenerateClinicalReportCommand}"
-								ContentPadding="16,0"
-								HeightRequestEx="40"
-								IsEnabled="{Binding CanPrint}"
-								IsVisible="{Binding IsReadOnly}"
-								Text="Печати / PDF" />
 							<controls:FFButton
 								ButtonKind="Secondary"
 								Command="{Binding ToggleEditModeCommand}"
