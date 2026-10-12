@@ -16,5 +16,11 @@ namespace EHMR.Views.Therapies
             BindingContext=_viewModel;
             MenuHost.Content=_menu;
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            _viewModel.OnPageAppearing();
+        }
     }
 }
