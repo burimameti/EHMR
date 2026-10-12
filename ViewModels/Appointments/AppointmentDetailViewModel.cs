@@ -202,6 +202,20 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     [ObservableProperty] private ObservableCollection<string> applicationRegimeOptions = new();
     [ObservableProperty] private ObservableCollection<string> appointmentScores = new();
     [ObservableProperty] private string scoreSearchText = string.Empty;
+    [ObservableProperty] private ObservableCollection<string> scoreSuggestions = new();
+    [ObservableProperty] private bool showScoreSuggestions;
+    private readonly List<string> _scoreOptions = new();
+
+    partial void OnScoreSearchTextChanged(string value)
+    {
+        var query = value?.Trim() ?? string.Empty;
+        var candidates = string.IsNullOrWhiteSpace(query) ? _scoreOptions :
+            _scoreOptions.Where(x => x.Contains(query, StringComparison.OrdinalIgnoreCase)
+                || x.Contains(MacedonianTransliterator.ToCyrillic(query), StringComparison.OrdinalIgnoreCase)
+                || x.Contains(MacedonianTransliterator.ToLatin(query), StringComparison.OrdinalIgnoreCase)).ToList();
+        ScoreSuggestions = new ObservableCollection<string>(candidates.Distinct(StringComparer.OrdinalIgnoreCase).Take(8));
+        ShowScoreSuggestions = ScoreSuggestions.Count > 0;
+    }
 
     [ObservableProperty] private bool scheduledStatusSelected;
     [ObservableProperty] private bool inProgressStatusSelected;
@@ -252,7 +266,24 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             .Select(g => g.OrderByDescending(x => x.DiagnosedAt).First())
             .OrderByDescending(x => x.DiagnosedAt);
 
-    public IEnumerable<PatientMedicine> CurrentPatientMedicines => PatientMedicinesHistory.Where(x => x.IsActive);
+    private async Task LoadScoreOptionsAsync()
+    {
+        _scoreOptions.Clear();
+        var globalOptions = await _service.GetScoreSuggestionsAsync();
+        _scoreOptions.AddRange(globalOptions.Where(x => !string.IsNullOrWhiteSpace(x)));
+        _scoreOptions.AddRange(PatientScoreHistory.Where(x => !string.IsNullOrWhiteSpace(x.ScoreText)).Select(x => x.ScoreText.Trim()));
+        var distinct = _scoreOptions.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        _scoreOptions.Clear();
+        _scoreOptions.AddRange(distinct);
+        OnScoreSearchTextChanged(ScoreSearchText);
+    }
+
+    private IEnumerable<PatientMedicine> ActivePatientMedicineAssignments =>
+        PatientMedicinesHistory.Where(x => x.IsActive && !x.EncounterId.HasValue && x.Medicine is not null)
+            .GroupBy(x => x.MedicineId).Select(group => group.First())
+            .OrderBy(x => x.Medicine!.BilingualName);
+
+    public IEnumerable<PatientMedicine> CurrentPatientMedicines => ActivePatientMedicineAssignments;
 
     public string CurrentPatientScore => PatientScoreHistory
         .OrderByDescending(x => x.RecordedAt)
@@ -282,6 +313,17 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         if(!AppointmentScores.Contains(entry, StringComparer.OrdinalIgnoreCase))
             AppointmentScores.Add(entry);
         ScoreSearchText = string.Empty;
+        ScoreSuggestions.Clear();
+        ShowScoreSuggestions = false;
+    }
+
+    [RelayCommand]
+    private async Task SelectScoreSuggestionAsync(string? score)
+    {
+        if(string.IsNullOrWhiteSpace(score)) return;
+        ScoreSearchText = score;
+        ShowScoreSuggestions = false;
+        await AddPatientScoreAsync();
     }
 
     [RelayCommand]
@@ -605,12 +647,13 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         PatientMkb10History=new ObservableCollection<PatientMkb10Assignment>(ctx.Mkb10Assignments);
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
         PatientScoreHistory=new ObservableCollection<PatientScore>(ctx.Scores);
+        await LoadScoreOptionsAsync();
         OnPropertyChanged(nameof(CurrentMkb10Assignments));
         OnPropertyChanged(nameof(CurrentPatientMedicines));
         OnPropertyChanged(nameof(CurrentPatientScore));
         SelectedMedicines=IsNewAppointment
             ? new ObservableCollection<PatientMedicine>()
-            : new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
+            : new ObservableCollection<PatientMedicine>(ActivePatientMedicineAssignments);
 
         SelectedPatientForAppointment=PatientsList.FirstOrDefault(x => x.Id==Appointment.PatientId);
         SelectedDoctorForAppointment=DoctorsList.FirstOrDefault(x => x.Id==Appointment.DoctorId);
@@ -671,6 +714,9 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             PatientMkb10History=new ObservableCollection<PatientMkb10Assignment>();
             PatientMedicinesHistory=new ObservableCollection<PatientMedicine>();
             PatientScoreHistory=new ObservableCollection<PatientScore>();
+            _scoreOptions.Clear();
+            ScoreSuggestions.Clear();
+            ShowScoreSuggestions=false;
             OnPropertyChanged(nameof(CurrentMkb10Assignments));
             OnPropertyChanged(nameof(CurrentPatientMedicines));
             OnPropertyChanged(nameof(CurrentPatientScore));
@@ -713,12 +759,13 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         PatientMkb10History=new ObservableCollection<PatientMkb10Assignment>(ctx.Mkb10Assignments);
         PatientMedicinesHistory=new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
         PatientScoreHistory=new ObservableCollection<PatientScore>(ctx.Scores);
+        await LoadScoreOptionsAsync();
         OnPropertyChanged(nameof(CurrentMkb10Assignments));
         OnPropertyChanged(nameof(CurrentPatientMedicines));
         OnPropertyChanged(nameof(CurrentPatientScore));
         SelectedMedicines=IsNewAppointment
             ? new ObservableCollection<PatientMedicine>()
-            : new ObservableCollection<PatientMedicine>(ctx.PatientMedicines);
+            : new ObservableCollection<PatientMedicine>(ActivePatientMedicineAssignments);
 
         OnPropertyChanged(nameof(HeaderTitle));
         OnPropertyChanged(nameof(HeaderSubtitle));
@@ -858,59 +905,53 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     // =========================
 
     [RelayCommand]
-    private async Task SearchMedicinesAsync(string query)
+    private Task SearchMedicinesAsync(string query)
     {
-        if(string.IsNullOrWhiteSpace(query))
+        if(string.IsNullOrWhiteSpace(query) || SelectedPatientForAppointment is null)
         {
             MedicineResults.Clear();
             ShowMedicineDropdown=false;
-            return;
+            return Task.CompletedTask;
         }
+        var term=query.Trim();
+        var approvedMedicines=ActivePatientMedicineAssignments
+            .Where(x => !SelectedMedicines.Any(selected => selected.MedicineId==x.MedicineId))
+            .Where(x => MedicineSearchMatches(x.Medicine?.Name, term)
+                || MedicineSearchMatches(x.Medicine?.GenericName, term)
+                || MedicineSearchMatches(x.Medicine?.BilingualName, term)
+                || MedicineSearchMatches(x.Medicine?.Code, term))
+            .Select(x => x.Medicine!).GroupBy(x => x.Id).Select(group => group.First()).Take(12).ToList();
+        MedicineResults=new ObservableCollection<Medicine>(approvedMedicines);
+        ShowMedicineDropdown=MedicineResults.Count>0;
+        return Task.CompletedTask;
+    }
 
-        _medicineCts.Cancel();
-        _medicineCts.Dispose();
-        _medicineCts=new CancellationTokenSource();
-        var token = _medicineCts.Token;
-
-        try { await Task.Delay(250, token); }
-        catch(TaskCanceledException) { return; }
-
-        try
-        {
-            var searchTerm = MacedonianTransliterator.ToCyrillic(query);
-            var byTerm = await _service.SearchMedicines(searchTerm, token);
-            var result = byTerm;
-
-            if(!string.Equals(searchTerm, query, StringComparison.OrdinalIgnoreCase))
-            {
-                var byRaw = await _service.SearchMedicines(query, token);
-                result=byTerm.UnionBy(byRaw, x => x.Id).ToList();
-            }
-
-            if(token.IsCancellationRequested) return;
-
-            MedicineResults=new ObservableCollection<Medicine>(result.Take(30));
-            ShowMedicineDropdown=MedicineResults.Count>0;
-        }
-        catch(TaskCanceledException) { }
+    private static bool MedicineSearchMatches(string? source, string query)
+    {
+        if(string.IsNullOrWhiteSpace(source) || string.IsNullOrWhiteSpace(query)) return false;
+        var variants = new[] { query, MacedonianTransliterator.ToCyrillic(query), MacedonianTransliterator.ToLatin(query) };
+        return variants.Any(value => source.Contains(value, StringComparison.OrdinalIgnoreCase));
     }
 
     [RelayCommand]
     private void AddMedicine(Medicine medicine)
     {
-        if(medicine==null) return;
+        if(medicine is null || SelectedPatientForAppointment is null) return;
         if(SelectedMedicines.Any(x => x.MedicineId==medicine.Id)) return;
-
+        var assignedMedicine=ActivePatientMedicineAssignments.FirstOrDefault(x => x.MedicineId==medicine.Id);
+        if(assignedMedicine is null) return;
         SelectedMedicines.Add(new PatientMedicine
         {
-            MedicineId=medicine.Id,
-            Medicine=medicine,
-            PatientId=SelectedPatientForAppointment?.Id??Guid.Empty,
-            Dosage="1",
-            Quantity=1,
+            Id=Guid.Empty,
+            MedicineId=assignedMedicine.MedicineId,
+            Medicine=assignedMedicine.Medicine,
+            PatientId=SelectedPatientForAppointment.Id,
+            Dosage=assignedMedicine.Dosage,
+            ApplicationRegimeId=assignedMedicine.ApplicationRegimeId,
+            ApplicationRegime=assignedMedicine.ApplicationRegime,
+            Quantity=assignedMedicine.Quantity,
             IsActive=true
         });
-
         MedicineSearchText=string.Empty;
         MedicineResults.Clear();
         ShowMedicineDropdown=false;
