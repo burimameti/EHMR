@@ -40,69 +40,67 @@ public partial class EncounterQuickPreviewPage : ContentPage
         var maskedId = string.IsNullOrWhiteSpace(nationalId) ? "—" :
             nationalId.Length <= 4 ? new string('•', nationalId.Length) :
             new string('•', nationalId.Length - 4) + nationalId[^4..];
+        var doctorName = $"{doctor?.FirstName} {doctor?.LastName}".Trim();
+        var address = string.Join(", ", new[] { patient?.Address, patient?.City, patient?.PostalCode }
+            .Where(x => !string.IsNullOrWhiteSpace(x)));
+
+        static string Field(string label, string? value) =>
+            $"<div class='field'><span class='label'>{System.Net.WebUtility.HtmlEncode(label)}</span><span class='value'>{Safe(value)}</span></div>";
+        static string Section(string title, string body) =>
+            $"<section><h2>{System.Net.WebUtility.HtmlEncode(title)}</h2>{body}</section>";
+        static string TextBlock(string title, string? value) =>
+            $"<div class='text-block'><div class='block-title'>{System.Net.WebUtility.HtmlEncode(title)}</div><div class='block-value'>{Safe(value)}</div></div>";
+
+        var patientFields = new System.Text.StringBuilder("<div class='grid'>");
+        patientFields.Append(Field("Пациент", patient?.FullName))
+            .Append(Field("СЗБО", patient?.SzboNumber))
+            .Append(Field("ЕМБГ", maskedId))
+            .Append(Field("Датум на раѓање", patient?.BirthDate.ToString("dd.MM.yyyy")))
+            .Append(Field("Пол", patient?.Gender.ToString()))
+            .Append(Field("Телефон", patient?.Phone))
+            .Append(Field("Адреса", address))
+            .Append(Field("Реуматолог", doctorName))
+            .Append("</div>");
+
+        var encounterFields = new System.Text.StringBuilder("<div class='grid'>");
+        encounterFields.Append(Field("Број на преглед", encounter.EncounterNumber))
+            .Append(Field("Статус", encounter.Status.ToString()))
+            .Append(Field("Причина за посета", encounter.ReasonForVisit ?? encounter.Appointment?.ReasonForVisit))
+            .Append(Field("Главна тегоба", encounter.ChiefComplaint))
+            .Append("</div>");
 
         return $@"<!doctype html><html><head><meta charset='utf-8'>
 <style>
-@page{{size:A4;margin:16mm 16mm 18mm 16mm}}
+@page{{size:A4;margin:14mm 15mm 16mm}}
 *{{box-sizing:border-box}}
-body{{font-family:'Segoe UI',Arial,sans-serif;color:#172033;margin:0;font-size:10.5pt;line-height:1.5}}
-
-.header{{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #0f4c81;padding-bottom:12px;margin-bottom:20px}}
-.org{{color:#0f4c81;font-size:8.5pt;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}}
-h1{{font-size:19pt;margin:4px 0 0 0;color:#0f172a;font-weight:700}}
-.meta{{text-align:right;font-size:9pt;color:#475569;line-height:1.6}}
-.meta b{{color:#172033}}
-
-h2{{font-size:10pt;color:#0f4c81;text-transform:uppercase;letter-spacing:.8px;margin:22px 0 10px 0;padding-bottom:5px;border-bottom:1px solid #cbd5e1}}
-
-.grid{{display:grid;grid-template-columns:1fr 1fr;gap:10px 28px}}
-.field{{padding:8px 12px;background:#f8fafc;border-left:3px solid #0f4c81;border-radius:2px}}
-.label{{display:block;color:#64748b;font-size:8pt;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}}
-.value{{font-weight:600;font-size:10.5pt;color:#0f172a}}
-
-.block{{margin-bottom:14px;page-break-inside:avoid}}
-.block-title{{font-size:9pt;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}}
-.block-body{{margin:0;padding:8px 12px;border:1px solid #e2e8f0;border-radius:3px;min-height:34px;white-space:pre-wrap}}
-
-.signatures{{display:flex;gap:48px;margin-top:56px;page-break-inside:avoid}}
-.sig{{flex:1;border-top:1px solid #94a3b8;padding-top:6px;font-size:9pt;color:#64748b;text-align:center}}
-
-.footer{{margin-top:28px;font-size:8pt;color:#94a3b8;text-align:center}}
+html,body{{background:#fff}}
+body{{font-family:Arial,'Segoe UI',sans-serif;color:#111827;margin:0 auto;padding:0;max-width:190mm;font-size:10pt;line-height:1.35}}
+.header{{display:flex;justify-content:space-between;gap:18px;align-items:center;border-bottom:1px solid #111827;padding:0 0 7px;margin-bottom:7px}}
+.org{{font-size:10pt;font-weight:700;letter-spacing:.2px;color:#64748b}}
+h1{{font-size:12pt;margin:0;color:#111827;font-weight:700}}
+.meta{{text-align:right;font-size:9pt;color:#111827;line-height:1.45}}
+h2{{font-size:10pt;color:#111827;font-weight:700;margin:10px 0 4px;padding:0 0 3px;border-bottom:1px solid #111827;letter-spacing:0}}
+.grid{{display:grid;grid-template-columns:1fr 1fr;column-gap:18px;row-gap:0}}
+.field{{display:grid;grid-template-columns:38% 62%;gap:5px;padding:3px 0;border-bottom:1px solid #e5e7eb;break-inside:avoid;min-width:0}}
+.label{{font-weight:700;font-size:9pt;color:#111827}}
+.value{{font-size:9pt;color:#111827;overflow-wrap:anywhere}}
+.text-block{{margin:7px 0 0;break-inside:avoid}}
+.block-title{{font-weight:700;font-size:9.5pt;color:#111827;padding-bottom:3px;border-bottom:1px solid #e5e7eb}}
+.block-value{{font-size:9pt;color:#111827;padding:4px 0;white-space:pre-wrap;overflow-wrap:anywhere;min-height:16px}}
+.signatures{{display:flex;gap:48px;margin-top:30px;break-inside:avoid}}
+.sig{{flex:1;border-top:1px solid #64748b;padding-top:5px;text-align:center;font-size:9pt;color:#475569}}
 </style></head><body>
-
 <div class='header'>
-  <div>
-    <div class='org'>Медицинска установа</div>
-    <h1>Клинички извештај за преглед</h1>
-  </div>
-  <div class='meta'>
-    <div>Број: <b>{Safe(encounter.EncounterNumber)}</b></div>
-    <div>Датум: <b>{Safe(encounter.EncounterDate.ToString("dd.MM.yyyy"))}</b></div>
-  </div>
+  <div><div class='org'>EHMR</div><h1>Извештај за преглед</h1></div>
+  <div class='meta'><div>Број: <b>{Safe(encounter.EncounterNumber)}</b></div><div>Датум: <b>{Safe(encounter.EncounterDate.ToString("dd.MM.yyyy HH:mm"))}</b></div></div>
 </div>
-
-<h2>Податоци за пациентот</h2>
-<div class='grid'>
-  <div class='field'><span class='label'>Име и презиме</span><span class='value'>{Safe(patient?.FullName)}</span></div>
-  <div class='field'><span class='label'>ЕМБГ</span><span class='value'>{Safe(maskedId)}</span></div>
-  <div class='field'><span class='label'>СЗБО број</span><span class='value'>{Safe(patient?.SzboNumber)}</span></div>
-  <div class='field'><span class='label'>Датум на раѓање</span><span class='value'>{Safe(patient?.BirthDate.ToString("dd.MM.yyyy"))}</span></div>
-  <div class='field'><span class='label'>Реуматолог</span><span class='value'>{Safe($"{doctor?.FirstName} {doctor?.LastName}".Trim())}</span></div>
-  <div class='field'><span class='label'>Статус</span><span class='value'>{Safe(encounter.Status.ToString())}</span></div>
-</div>
-
-<h2>Податоци за прегледот</h2>
-<div class='block'><div class='block-title'>Главна поплака</div><div class='block-body'>{Safe(encounter.ChiefComplaint)}</div></div>
-<div class='block'><div class='block-title'>Анамнеза на сегашната состојба</div><div class='block-body'>{Safe(encounter.HistoryOfPresentIllness)}</div></div>
-<div class='block'><div class='block-title'>Процена / дијагностички заклучок</div><div class='block-body'>{Safe(encounter.Assessment)}</div></div>
-<div class='block'><div class='block-title'>План и препораки</div><div class='block-body'>{Safe(encounter.Plan)}</div></div>
-<div class='block'><div class='block-title'>Клинички забелешки</div><div class='block-body'>{Safe(encounter.ClinicalNotes)}</div></div>
-
-<div class='signatures'>
-  <div class='sig'>Потпис на лекар</div>
-  <div class='sig'>Печат на установа</div>
-</div>
-
+{Section("ОСНОВНИ ИНФОРМАЦИИ", patientFields.ToString())}
+{Section("ПОДАТОЦИ ЗА ПРЕГЛЕДОТ", encounterFields.ToString())}
+{TextBlock("АНАМНЕЗА", encounter.HistoryOfPresentIllness)}
+{TextBlock("ПРОЦЕНКА", encounter.Assessment)}
+{TextBlock("ПЛАН И ПРЕПОРАКИ", encounter.Plan)}
+{TextBlock("ЗАБЕЛЕШКА", encounter.Notes ?? encounter.ClinicalNotes ?? encounter.Appointment?.ClinicalNotes)}
+<div class='signatures'><div class='sig'>Потпис на лекар</div><div class='sig'>Печат на установа</div></div>
 </body></html>";
     }
 
