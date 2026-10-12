@@ -367,9 +367,9 @@
 									<Border Grid.Column="1" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
 										<VerticalStackLayout Spacing="0">
 											<Grid Style="{StaticResource CrudFormTableHeaderGridStyle}">
-												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="ЛЕКОВИ ВО ОВОЈ ПРЕГЛЕД" />
+												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="АКТИВНИ / ОДОБРЕНИ ЛЕКОВИ ЗА ПАЦИЕНТ" />
 											</Grid>
-											<VerticalStackLayout BindableLayout.ItemsSource="{Binding EncounterMedicines}" Spacing="0" VerticalOptions="Start">
+											<VerticalStackLayout BindableLayout.ItemsSource="{Binding CurrentPatientMedicines}" Spacing="0" VerticalOptions="Start">
 												<BindableLayout.EmptyView><Label FontSize="11" Text="Нема лекови во овој преглед." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
 												<BindableLayout.ItemTemplate><DataTemplate x:DataType="entities:PatientMedicine">
 													<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
@@ -403,7 +403,7 @@
 			<!--  ЛЕКОВИ  -->
 							<VerticalStackLayout Spacing="10">
 								<controls:CrudSectionHeader
-									Title="ЛЕКОВИ"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
+									Title="АКТИВНИ / ОДОБРЕНИ ЛЕКОВИ ЗА ПАЦИЕНТ"  LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 								<Grid ColumnDefinitions="1.4*,1*,1.35*,0.8*" ColumnSpacing="1">
 									<Border Style="{StaticResource CrudFormTableHeaderCellStyle}">
