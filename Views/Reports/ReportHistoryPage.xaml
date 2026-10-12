@@ -58,7 +58,7 @@
 									HeightRequestEx="40"
 									IsVisible="{Binding CanCreate}"
 									Text="Нов извештај"
-									WidthRequestEx="120" />
+									WidthRequestEx="130" />
 							</HorizontalStackLayout>
 						</controls:FFPageHeader.HeaderContent>
 					</controls:FFPageHeader>
