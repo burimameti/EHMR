@@ -38,19 +38,22 @@
 								Command="{Binding ToggleEditModeCommand}" IsEnabled="{Binding CanUpdate}"
 								HeightRequestEx="40"
 								IsVisible="{Binding Id, Converter={StaticResource GuidToBoolConverter}}"
-								Text="Уреди" />
+								Text="Уреди"
+								WidthRequestEx="130" />
 							<controls:FFButton
 								ButtonKind="Secondary"
 								Command="{Binding BackCommand}"
 								HeightRequestEx="40"
-								Text="Назад" />
+								Text="Назад"
+								WidthRequestEx="130" />
 							<controls:FFButton
 								BackgroundColorEx="{StaticResource SidebarActiveBg}"
 								Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}"
 								HeightRequestEx="40"
 								IsVisible="{Binding IsReadOnly, Converter={StaticResource InverseBoolConverter}}"
 								Text="Зачувај"
-								TextColorEx="White" />
+								TextColorEx="White"
+								WidthRequestEx="130" />
 						</HorizontalStackLayout>
 					</controls:FFPageHeader.HeaderContent>
 				</controls:FFPageHeader>
