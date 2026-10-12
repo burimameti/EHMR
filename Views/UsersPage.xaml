@@ -46,7 +46,7 @@
 						HeightRequestEx="40"
 						WidthRequestEx="130"
 						IsVisible="{Binding CanCreate}"
-						Text="Нов" />
+						Text="Нов" WidthRequestEx="160" />
 				</Grid>
 			</Border>
 
