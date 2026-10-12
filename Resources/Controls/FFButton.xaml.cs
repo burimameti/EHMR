@@ -6,12 +6,12 @@ namespace EHMR.Resources.Controls;
 
 public partial class FFButton : ContentView
 {
-    private double _lastWidth = -1;
-
     public FFButton()
     {
         InitializeComponent();
         ApplyKind();
+
+        ApplyCornerRadius();
 
         var pointer = new PointerGestureRecognizer();
         pointer.PointerEntered += (_, _) => ApplyHover(true);
@@ -62,25 +62,16 @@ public partial class FFButton : ContentView
 
     private void OnButtonSizeChanged(object? sender, EventArgs e)
     {
-        var width = Width;
-        if (width <= 0 || Math.Abs(width - _lastWidth) < 2)
-            return;
-
-        _lastWidth = width;
-
-        // Keep the normal desktop appearance at comfortable widths,
-        // but reduce internal geometry when the button is constrained.
-        var scale = width >= 180 ? 1d
-            : width >= 145 ? 0.92d
-            : width >= 115 ? 0.84d
-            : 0.76d;
-
-        var horizontalPadding = Math.Max(8, 20 * scale);
-        Container.Padding = new Thickness(horizontalPadding, 0);
-        // Keep a consistent minimum touch target even in narrow layouts.
+        // Keep the same geometry regardless of available width. Width constraints
+        // are handled by the layout; they must not silently change button padding.
         Container.MinimumHeightRequest = Math.Max(34, HeightRequestEx);
-        Container.StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(6) };
+        ApplyCornerRadius();
+    }
 
+    private void ApplyCornerRadius()
+    {
+        if (Container is not null)
+            Container.StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(Math.Max(0, CornerRadius)) };
     }
 
     // ═══════════════════════════════════════════════════════════ //
@@ -120,7 +111,8 @@ public partial class FFButton : ContentView
             propertyChanged: (b, _, v) => ((FFButton)b).Container.Padding=(Thickness)v);
 
     public static readonly BindableProperty CornerRadiusProperty =
-        BindableProperty.Create(nameof(CornerRadius), typeof(float), typeof(FFButton), 0f);
+        BindableProperty.Create(nameof(CornerRadius), typeof(float), typeof(FFButton), 6f,
+            propertyChanged: (b, _, _) => ((FFButton)b).ApplyCornerRadius());
 
     public static readonly BindableProperty FontSizeExProperty =
         BindableProperty.Create(nameof(FontSizeEx), typeof(double), typeof(FFButton), 13d);
