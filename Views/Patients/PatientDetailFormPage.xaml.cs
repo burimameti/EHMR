@@ -23,6 +23,7 @@ namespace EHMR.Views.Patients
             base.OnAppearing();
             try
             {
+                await _viewModel.OnPageAppearingAsync();
                 await _viewModel.RefreshHistoryAsync();
             }
             catch (Exception ex)
