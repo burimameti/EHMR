@@ -23,16 +23,14 @@
 						WidthRequestEx="130" />
 			</controls:FFPageHeader.HeaderContent>
 		</controls:FFPageHeader>
-					<Button
+					<controls:FFButton
 						Grid.Column="1"
-						BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
-						TextColor="White"
+						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
-						HeightRequest="45"
+						HeightRequestEx="40"
 						IsEnabled="{Binding CanCreate}"
-						Style="{StaticResource TabButtonActiveStyle}"
 						Text="Нов протокол"
-						WidthRequest="170" />
+						WidthRequestEx="150" />
 				</Grid>
 			</Border>
 			<Border Grid.Row="1" BackgroundColor="{StaticResource PageBackground}" StrokeThickness="0">
