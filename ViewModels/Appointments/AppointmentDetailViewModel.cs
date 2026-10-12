@@ -20,6 +20,8 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     private CancellationTokenSource _medicineCts = new();
 
     private Appointment? _originalAppointment;
+    private Appointment? _loadedAppointmentSelection;
+    private bool _hasLoadedExistingAppointment;
     private bool _isNewAppointmentMode;
     private bool _isModalReturnMode;
     private bool _isApplyingAutomaticSlot;
@@ -623,6 +625,18 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             selected=null;
         }
 
+        // SelectedItemService is a singleton. Consume navigation context once captured,
+        // while retaining the record locally so this same edit page can reappear safely.
+        if(selected is not null)
+        {
+            _loadedAppointmentSelection=selected;
+            _selectedItemService.SelectedItem=null;
+        }
+        else if(_hasLoadedExistingAppointment)
+        {
+            selected=_loadedAppointmentSelection;
+        }
+
         if(selected==null)
         {
             await LoadNewAppointmentAsync(prefillPatientId);
@@ -635,6 +649,8 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         if(id==Guid.Empty) return;
 
         var dto = await _service.GetAppointment(id);
+        _loadedAppointmentSelection=dto.Appointment;
+        _hasLoadedExistingAppointment=true;
         var ctx = await _service.GetPatientContext(dto.Appointment.PatientId);
 
         _originalAppointment=dto.Appointment.Clone();
