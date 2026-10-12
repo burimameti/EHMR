@@ -19,6 +19,8 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
     private readonly ISelectedItemService<Encounter> _selectedItemService;
     private readonly IPatientClinicalReportService _clinicalReportService;
     private readonly IAuthorizationService _authorizationService;
+    private readonly FormSessionLifecycle _formSessions;
+    private Guid _currentEncounterId;
 
     [ObservableProperty]
     private bool scheduleNextFollowUp;
@@ -115,12 +117,14 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
         IUserDialogService userDialogService,
         ISelectedItemService<Encounter> selectedItemService,
         IPatientClinicalReportService clinicalReportService,
-        IAuthorizationService authorizationService)
+        IAuthorizationService authorizationService,
+        FormSessionLifecycle formSessions)
         : base(service, navigationService, userDialogService, authorizationService)
     {
         _selectedItemService=selectedItemService;
         _clinicalReportService=clinicalReportService;
         _authorizationService=authorizationService;
+        _formSessions=formSessions;
         PageTitle="Промена на преглед";
         EncounterMedicines.CollectionChanged+=OnEncounterMedicinesChanged;
     }
@@ -179,21 +183,31 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
 
     public async Task LoadAsync()
     {
+        // A reused Shell page may have consumed SelectedItem during the previous visit.
+        // Keep the ID as a fallback, but prefer a newly supplied selection when present.
         var selected = _selectedItemService.SelectedItem;
-        if(selected==null||selected.Id==Guid.Empty)
+        if(selected is { Id: not var emptyId } && emptyId != Guid.Empty)
+            _currentEncounterId = selected.Id;
+        else if(selected is not null && selected.Id != Guid.Empty)
+            _currentEncounterId = selected.Id;
+
+        if(_currentEncounterId == Guid.Empty)
         {
             OnError("Не е избран преглед за промена.");
             return;
         }
 
-        // The persisted status remains on the encounter; a new edit session must explicitly select
-        // which status should be saved, so no checkbox state is inherited from another session.
+        // Re-entry always reloads the persisted encounter, discarding any unsaved form edits.
+        // The persisted status remains unchanged until the user explicitly selects a new status.
         ResetStatusSelection();
+        ScheduleNextFollowUp=false;
+        NextFollowUpDate=DateTime.Today.AddDays(7);
+        SelectedFollowUpInterval=null;
 
         // Load all patient medicine records for context/history, then edit only the
         // snapshot rows linked to this encounter. Patient-level active assignments
         // and medicine snapshots from other encounters remain unchanged.
-        await InitializeAsync(selected.Id);
+        await InitializeAsync(_currentEncounterId);
 
         EncounterMedicines.CollectionChanged-=OnEncounterMedicinesChanged;
         EncounterMedicines=new ObservableCollection<PatientMedicine>(
@@ -211,7 +225,8 @@ public partial class EncounterEditViewModel : EncounterBaseViewModel
 
         IsEditMode=true;
         IsReadOnly=false;
-        _selectedItemService.SelectedItem=null; // consume — prevents stale ID on next navigation
+        _selectedItemService.SelectedItem=null; // consume navigation context; keep the ID for safe reload on re-entry
+        _formSessions.MarkEntryCompleted(this);
     }
 
     [RelayCommand]
