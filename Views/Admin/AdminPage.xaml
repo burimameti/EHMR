@@ -33,9 +33,9 @@
                         Grid.Column="1"
                         ButtonKind="Secondary"
                         Command="{Binding RefreshCommand}"
-                        ContentPadding="18,0"
                         HeightRequestEx="40"
-                        Text="Освежи" />
+                        Text="Освежи"
+                        WidthRequestEx="130" />
                 </Grid>
             </Border>
 
