@@ -96,6 +96,17 @@
 					</Grid>
 					<BoxView BackgroundColor="#111827" HeightRequest="1" />
 
+					<Grid ColumnDefinitions="*,*" ColumnSpacing="24" Padding="0,4">
+						<VerticalStackLayout Spacing="2">
+							<Label FontAttributes="Bold" FontSize="12" Text="БРОЈ НА ПРЕГЛЕД" TextColor="#111827" />
+							<Label FontSize="12" Text="{Binding EncounterNumber, TargetNullValue='—'}" TextColor="#111827" />
+						</VerticalStackLayout>
+						<VerticalStackLayout Grid.Column="1" Spacing="2">
+							<Label FontAttributes="Bold" FontSize="12" Text="СТАТУС" TextColor="#111827" />
+							<Label FontSize="12" Text="{Binding Status, TargetNullValue='—'}" TextColor="#111827" />
+						</VerticalStackLayout>
+					</Grid>
+
 					<!--  Patient information  -->
 					<VerticalStackLayout Spacing="4">
 						<Label
