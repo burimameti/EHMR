@@ -519,45 +519,63 @@
 										</CollectionView>
 									</VerticalStackLayout>
 
-                                        <VerticalStackLayout Grid.Row="1" Grid.Column="2" Spacing="8">
-                                            <controls:CrudSectionHeader Title="СКОРОВИ ЗА ТЕРМИНОТ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
-                                            <controls:FFSearchBox Placeholder="Пребарај скор..." Text="{Binding ScoreSearchText, Mode=TwoWay}" />
-                                            <Border Padding="4" BackgroundColor="White" IsVisible="{Binding ShowScoreSuggestions}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
-                                                <CollectionView HeightRequest="150" ItemsSource="{Binding ScoreSuggestions}" SelectionMode="None">
-                                                    <CollectionView.ItemTemplate>
-                                                        <DataTemplate x:DataType="x:String">
-                                                            <Border Padding="9,6" BackgroundColor="Transparent" StrokeThickness="0">
-                                                                <Border.GestureRecognizers>
-                                                                    <TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectScoreSuggestionCommand}" CommandParameter="{Binding .}" />
-                                                                </Border.GestureRecognizers>
-                                                                <Label FontSize="12" Text="{Binding .}" TextColor="{StaticResource SparkTextPrimary}" />
-                                                            </Border>
-                                                        </DataTemplate>
-                                                    </CollectionView.ItemTemplate>
-                                                </CollectionView>
-                                            </Border>
-                                            <Border Style="{StaticResource CrudFormTableFrameStyle}">
-                                                <VerticalStackLayout Spacing="0">
-                                                    <Grid ColumnDefinitions="*,32" Style="{StaticResource CrudFormTableHeaderGridStyle}">
-                                                        <Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="СКОР" />
-                                                        <Label Grid.Column="1" Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="×" HorizontalTextAlignment="Center" />
-                                                    </Grid>
-                                                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding AppointmentScores}" Spacing="0">
-                                                        <BindableLayout.EmptyView><Label Padding="8" FontSize="11" Text="Нема внесени скорови." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
-                                                        <BindableLayout.ItemTemplate>
+                                        <Border Grid.Row="1" Grid.Column="2" Style="{StaticResource CrudFormSectionCardStyle}">
+                                            <VerticalStackLayout Spacing="10">
+                                                <controls:CrudSectionHeader
+                                                    Title="СКОРОВИ ЗА ТЕРМИНОТ"
+                                                    LineColor="{StaticResource Gray600}"
+                                                    Style="{StaticResource CrudFormSectionHeaderStyle}" />
+                                                <controls:FFSearchBox Placeholder="Пребарај скор..." Text="{Binding ScoreSearchText, Mode=TwoWay}" />
+                                                <Border
+                                                    Padding="4"
+                                                    BackgroundColor="White"
+                                                    IsVisible="{Binding ShowScoreSuggestions}"
+                                                    Stroke="{StaticResource SparkBorderSubtle}"
+                                                    StrokeShape="RoundRectangle 8"
+                                                    StrokeThickness="1">
+                                                    <CollectionView HeightRequest="150" ItemsSource="{Binding ScoreSuggestions}">
+                                                        <CollectionView.ItemTemplate>
                                                             <DataTemplate x:DataType="x:String">
-                                                                <Grid ColumnDefinitions="*,32" Padding="6,4">
-                                                                    <Label Text="{Binding .}" FontSize="11" VerticalOptions="Center" TextColor="{StaticResource SparkTextPrimary}" />
-                                                                    <Label Grid.Column="1" Text="×" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center" TextColor="#DC2626">
-                                                                        <Label.GestureRecognizers><TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveAppointmentScoreCommand}" CommandParameter="{Binding .}" /></Label.GestureRecognizers>
-                                                                    </Label>
-                                                                </Grid>
+                                                                <Border Padding="9,6" BackgroundColor="Transparent" StrokeThickness="0">
+                                                                    <Border.GestureRecognizers>
+                                                                        <TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectScoreSuggestionCommand}" CommandParameter="{Binding .}" />
+                                                                    </Border.GestureRecognizers>
+                                                                    <Label FontSize="12" Text="{Binding .}" TextColor="{StaticResource SparkTextPrimary}" />
+                                                                </Border>
                                                             </DataTemplate>
-                                                        </BindableLayout.ItemTemplate>
+                                                        </CollectionView.ItemTemplate>
+                                                    </CollectionView>
+                                                </Border>
+                                                <Border Style="{StaticResource CrudFormTableFrameStyle}">
+                                                    <VerticalStackLayout Spacing="0">
+                                                        <Grid ColumnDefinitions="*,44" ColumnSpacing="8" Style="{StaticResource CrudFormTableHeaderGridStyle}">
+                                                            <Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="СКОР" />
+                                                            <Label Grid.Column="1" HorizontalTextAlignment="Center" Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="АКЦИИ" />
+                                                        </Grid>
+                                                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding AppointmentScores}" Spacing="0">
+                                                            <BindableLayout.EmptyView>
+                                                                <Label Padding="12" FontSize="11" HorizontalOptions="Center" Text="Нема внесени скорови." TextColor="{StaticResource SparkTextMuted}" />
+                                                            </BindableLayout.EmptyView>
+                                                            <BindableLayout.ItemTemplate>
+                                                                <DataTemplate x:DataType="x:String">
+                                                                    <Grid RowDefinitions="Auto,1">
+                                                                        <Grid Padding="10,6" ColumnDefinitions="*,44" ColumnSpacing="8">
+                                                                            <Label FontSize="11" LineBreakMode="WordWrap" Text="{Binding .}" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" />
+                                                                            <Label Grid.Column="1" FontFamily="FASolid" FontSize="13" HorizontalOptions="Center" Text="&#xf1f8;" TextColor="#DC2626" VerticalOptions="Center">
+                                                                                <Label.GestureRecognizers>
+                                                                                    <TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveAppointmentScoreCommand}" CommandParameter="{Binding .}" />
+                                                                                </Label.GestureRecognizers>
+                                                                            </Label>
+                                                                        </Grid>
+                                                                        <BoxView Grid.Row="1" HeightRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+                                                                    </Grid>
+                                                                </DataTemplate>
+                                                            </BindableLayout.ItemTemplate>
+                                                        </VerticalStackLayout>
                                                     </VerticalStackLayout>
-                                                </VerticalStackLayout>
-                                            </Border>
-                                        </VerticalStackLayout>
+                                                </Border>
+                                            </VerticalStackLayout>
+                                        </Border>
 
                                         <VerticalStackLayout
                                             Grid.Row="1"
