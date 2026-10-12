@@ -1267,18 +1267,20 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             if(_activeProvider==null)
                 return;
 
-            var rows=await _activeProvider.GenerateAsync(
-                StartDate.Date,
-                EndDate.Date.AddDays(1));
-
-            AllItems=rows;
-            ApplyPipeline();
-            CalculateMetrics();
+            // Export the exact filtered data backing the grid. Do not run a
+            // second query here: that could produce different rows than the user sees.
+            var exportRows=BuildExportRows();
+            if(exportRows.Count == 0)
+            {
+                await UserDialogService.ShowAlertAsync(
+                    "Нема податоци",
+                    "Во grid-от нема редови за избраните филтри.",
+                    "ОК");
+                return;
+            }
 
             var dynamicTitle=GetDynamicReportTitle();
             var currentUser=string.IsNullOrWhiteSpace(UserName) ? "Систем" : UserName;
-            var exportRows=BuildExportRows();
-
             var pdfPath=await _reportExportService.ExportToPdfAsync(
                 reportTitle: dynamicTitle,
                 insitutionName: "КЛИНИКА ЗА РЕУМАТОЛОГИЈА - СКОПЈЕ",
@@ -1380,7 +1382,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             {
                 var path = await _reportExportService.ExportToExcelAsync(
                     ActiveReportTitle,
-                    GridColumns.ToList(),
+                    GetExportColumns(),
                     BuildExportRows());
 
                 await UserDialogService.ShowAlertAsync(
