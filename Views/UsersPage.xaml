@@ -24,30 +24,16 @@
 
 			<!--  HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-					<controls:FFPageHeader
-						Title="Корисници"
-						Grid.Column="0"
-						Subtitle="Управување со кориснички сметки, безбедносни роли и системски пристап">
-						<controls:FFPageHeader.HeaderContent>
-							<controls:FFButton
-								ButtonKind="Secondary"
-								Command="{Binding GoBackCommand}"
-								HeightRequestEx="40"
-								Text="Назад"
-								WidthRequestEx="130" />
-						</controls:FFPageHeader.HeaderContent>
-					</controls:FFPageHeader>
-
-					<controls:FFButton
-						Grid.Column="1"
-						ButtonKind="Primary"
-						Command="{Binding NewCommand}"
-						HeightRequestEx="40"
-						IsVisible="{Binding CanCreate}"
-						Text="Нов"
-						WidthRequestEx="130" />
-				</Grid>
+				<controls:FFPageHeader
+					Title="Корисници"
+					Subtitle="Управување со кориснички сметки, безбедносни роли и системски пристап">
+					<controls:FFPageHeader.HeaderContent>
+						<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+							<controls:FFButton ButtonKind="Secondary" Command="{Binding GoBackCommand}" HeightRequestEx="40" Text="Назад" WidthRequestEx="130" />
+							<controls:FFButton ButtonKind="Primary" Command="{Binding NewCommand}" HeightRequestEx="40" IsVisible="{Binding CanCreate}" Text="Нов" WidthRequestEx="130" />
+						</HorizontalStackLayout>
+					</controls:FFPageHeader.HeaderContent>
+				</controls:FFPageHeader>
 			</Border>
 
 			<!--  MAIN CONTENT / GRID  -->
