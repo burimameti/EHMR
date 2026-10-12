@@ -1,7 +1,8 @@
 <ContentView
 	x:Class="EHMR.Components.Search.SearchFilterBarView"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls">
 
 	<Border Style="{StaticResource DashboardCard}">
 		<Grid ColumnDefinitions="*,90,170,170,130,120" ColumnSpacing="8">
@@ -40,14 +41,19 @@
 
 			<Picker ItemsSource="{Binding StatusFilters}" SelectedItem="{Binding SelectedStatus}" />
 
-			<Button
-				BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
+			<controls:FFButton
+				ButtonKind="Secondary"
 				Command="{Binding ClearFiltersCommand}"
-				CornerRadius="6"
+				HeightRequestEx="40"
 				Text="Исчисти"
-				TextColor="White" />
+				WidthRequestEx="130" />
 
-			<Button Command="{Binding AddCommand}" Text="Нов" />
+			<controls:FFButton
+				ButtonKind="Primary"
+				Command="{Binding AddCommand}"
+				HeightRequestEx="40"
+				Text="Нов"
+				WidthRequestEx="120" />
 		</Grid>
 	</Border>
 </ContentView>
