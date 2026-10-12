@@ -23,11 +23,16 @@ public partial class EncounterQuickPreviewPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        var encounter = _selectedItemService.SelectedItem;
+        var encounter = _selectedItemService.SelectedItem ?? BindingContext as Encounter;
         BindingContext = encounter;
 
         _isPrintDocumentReady = false;
         _printDocumentLoaded = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        PrintWebView.Source = new HtmlWebViewSource
+        {
+            Html = "<!doctype html><html><body style='font-family:Arial,sans-serif;color:#111827;background:#fff;padding:24px'><h3>Се вчитува извештајот...</h3></body></html>"
+        };
 
         if (encounter is not null)
         {
@@ -39,8 +44,18 @@ public partial class EncounterQuickPreviewPage : ContentPage
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Encounter preview load failed: {ex}");
-                PrintWebView.Source = new HtmlWebViewSource { Html = "<html><body style='font-family:Arial;padding:24px'><h3>Не може да се прикаже извештајот.</h3></body></html>" };
+                PrintWebView.Source = new HtmlWebViewSource
+                {
+                    Html = $"<!doctype html><html><body style='font-family:Arial,sans-serif;color:#111827;background:#fff;padding:24px'><h3>Не може да се прикаже извештајот.</h3><pre style='white-space:pre-wrap'>{System.Net.WebUtility.HtmlEncode(ex.Message)}</pre></body></html>"
+                };
             }
+        }
+        else
+        {
+            PrintWebView.Source = new HtmlWebViewSource
+            {
+                Html = "<!doctype html><html><body style='font-family:Arial,sans-serif;color:#111827;background:#fff;padding:24px'><h3>Не е избран преглед.</h3><p>Затворете го прегледот и отворете го повторно од листата на прегледи.</p></body></html>"
+            };
         }
     }
 
