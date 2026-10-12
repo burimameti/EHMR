@@ -1,171 +1,152 @@
 using EHMR.Domain.Entities;
 using EHMR.Domain.Interfaces;
-#if WINDOWS
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.Web.WebView2.Core;
-#endif
 
 namespace EHMR.Views.Encounters;
 
 public partial class EncounterQuickPreviewPage : ContentPage
 {
     private readonly ISelectedItemService<Encounter> _selectedItemService;
-    private readonly IPatientClinicalReportService _clinicalReportService;
-    private string? _reportHtml;
-    private bool _loading;
+    private TaskCompletionSource<bool>? _printDocumentLoaded;
+    private bool _isPrintDocumentReady;
 
-    public EncounterQuickPreviewPage(
-        ISelectedItemService<Encounter> selectedItemService,
-        IPatientClinicalReportService clinicalReportService)
+    public EncounterQuickPreviewPage(ISelectedItemService<Encounter> selectedItemService)
     {
         InitializeComponent();
         _selectedItemService = selectedItemService;
-        _clinicalReportService = clinicalReportService;
+        PrintWebView.Navigated += OnPrintWebViewNavigated;
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-        if (_loading) return;
+        var encounter = _selectedItemService.SelectedItem;
+        BindingContext = encounter;
 
-        _loading = true;
-        try
-        {
-            var encounter = _selectedItemService.SelectedItem
-                ?? throw new InvalidOperationException("Не е избран преглед за прикажување.");
-            if (encounter.PatientId == Guid.Empty)
-                throw new InvalidOperationException("Прегледот нема поврзан пациент.");
+        _isPrintDocumentReady = false;
+        _printDocumentLoaded = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-            _reportHtml = await _clinicalReportService.GenerateHtmlAsync(
-                encounter.PatientId,
-                encounter.Id,
-                title: $"Извештај за преглед - {encounter.EncounterNumber}");
-
-            if (string.IsNullOrWhiteSpace(_reportHtml) ||
-                !_reportHtml.Contains("<body", StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException("Сервисот не генерираше валиден HTML извештај.");
-
-#if WINDOWS
-            var nativeWebView = await GetNativeWebViewAsync();
-            await nativeWebView.EnsureCoreWebView2Async();
-            var core = nativeWebView.CoreWebView2
-                ?? throw new InvalidOperationException("Windows WebView не успеа да се иницијализира.");
-
-            var navigation = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            Microsoft.UI.Xaml.TypedEventHandler<CoreWebView2, CoreWebView2NavigationCompletedEventArgs>? completed = null;
-            completed = (_, args) =>
-            {
-                core.NavigationCompleted -= completed;
-                if (args.IsSuccess)
-                    navigation.TrySetResult(true);
-                else
-                    navigation.TrySetException(new InvalidOperationException(
-                        $"HTML извештајот не се вчита (WebView2 error: {args.WebErrorStatus})."));
-            };
-
-            core.NavigationCompleted += completed;
-            core.NavigateToString(_reportHtml);
-            await navigation.Task.WaitAsync(TimeSpan.FromSeconds(20));
-#else
-            await MainThread.InvokeOnMainThreadAsync(() =>
-                PrintWebView.Source = new HtmlWebViewSource { Html = _reportHtml });
-#endif
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Clinical report preview failed: {ex}");
-            var message = System.Net.WebUtility.HtmlEncode(ex.Message);
-            var errorHtml = $"<!doctype html><html><head><meta charset='utf-8'></head><body style='font:15px Arial;color:#991b1b;background:#fff;padding:24px'><h2>Извештајот не може да се прикаже</h2><p>{message}</p></body></html>";
-#if WINDOWS
-            try
-            {
-                var nativeWebView = await GetNativeWebViewAsync();
-                await nativeWebView.EnsureCoreWebView2Async();
-                nativeWebView.CoreWebView2?.NavigateToString(errorHtml);
-            }
-            catch (Exception fallbackException)
-            {
-                System.Diagnostics.Debug.WriteLine($"Could not display report error page: {fallbackException}");
-            }
-#else
-            await MainThread.InvokeOnMainThreadAsync(() =>
-                PrintWebView.Source = new HtmlWebViewSource { Html = errorHtml });
-#endif
-            await DisplayAlert("Извештај", $"Извештајот не може да се прикаже: {ex.Message}", "ОК");
-        }
-        finally
-        {
-            _loading = false;
-        }
+        if (encounter is not null)
+            PrintWebView.Source = new HtmlWebViewSource { Html = BuildPrintHtml(encounter) };
     }
 
-#if WINDOWS
-    private async Task<WebView2> GetNativeWebViewAsync()
+    private static string BuildPrintHtml(Encounter encounter)
     {
-        if (PrintWebView.Handler?.PlatformView is WebView2 existing)
-            return existing;
+        static string Safe(string? value) => System.Net.WebUtility.HtmlEncode(
+            string.IsNullOrWhiteSpace(value) ? "—" : value);
 
-        var ready = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        EventHandler? handlerChanged = null;
-        handlerChanged = (_, _) =>
-        {
-            if (PrintWebView.Handler?.PlatformView is WebView2)
-            {
-                PrintWebView.HandlerChanged -= handlerChanged;
-                ready.TrySetResult(true);
-            }
-        };
+        var patient = encounter.Patient;
+        var doctor = encounter.Doctor?.User;
+        var nationalId = patient?.NationalId;
+        var maskedId = string.IsNullOrWhiteSpace(nationalId) ? "—" :
+            nationalId.Length <= 4 ? new string('•', nationalId.Length) :
+            new string('•', nationalId.Length - 4) + nationalId[^4..];
 
-        PrintWebView.HandlerChanged += handlerChanged;
-        if (PrintWebView.Handler?.PlatformView is WebView2)
-        {
-            PrintWebView.HandlerChanged -= handlerChanged;
-            return (WebView2)PrintWebView.Handler.PlatformView;
-        }
+        return $@"<!doctype html><html><head><meta charset='utf-8'>
+<style>
+@page{{size:A4;margin:16mm 16mm 18mm 16mm}}
+*{{box-sizing:border-box}}
+body{{font-family:'Segoe UI',Arial,sans-serif;color:#172033;margin:0;font-size:10.5pt;line-height:1.5}}
 
-        try
-        {
-            await ready.Task.WaitAsync(TimeSpan.FromSeconds(15));
-        }
-        finally
-        {
-            PrintWebView.HandlerChanged -= handlerChanged;
-        }
+.header{{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #0f4c81;padding-bottom:12px;margin-bottom:20px}}
+.org{{color:#0f4c81;font-size:8.5pt;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}}
+h1{{font-size:19pt;margin:4px 0 0 0;color:#0f172a;font-weight:700}}
+.meta{{text-align:right;font-size:9pt;color:#475569;line-height:1.6}}
+.meta b{{color:#172033}}
 
-        return PrintWebView.Handler?.PlatformView as WebView2
-            ?? throw new InvalidOperationException("Прозорецот за извештај не е подготвен.");
+h2{{font-size:10pt;color:#0f4c81;text-transform:uppercase;letter-spacing:.8px;margin:22px 0 10px 0;padding-bottom:5px;border-bottom:1px solid #cbd5e1}}
+
+.grid{{display:grid;grid-template-columns:1fr 1fr;gap:10px 28px}}
+.field{{padding:8px 12px;background:#f8fafc;border-left:3px solid #0f4c81;border-radius:2px}}
+.label{{display:block;color:#64748b;font-size:8pt;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}}
+.value{{font-weight:600;font-size:10.5pt;color:#0f172a}}
+
+.block{{margin-bottom:14px;page-break-inside:avoid}}
+.block-title{{font-size:9pt;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}}
+.block-body{{margin:0;padding:8px 12px;border:1px solid #e2e8f0;border-radius:3px;min-height:34px;white-space:pre-wrap}}
+
+.signatures{{display:flex;gap:48px;margin-top:56px;page-break-inside:avoid}}
+.sig{{flex:1;border-top:1px solid #94a3b8;padding-top:6px;font-size:9pt;color:#64748b;text-align:center}}
+
+.footer{{margin-top:28px;font-size:8pt;color:#94a3b8;text-align:center}}
+</style></head><body>
+
+<div class='header'>
+  <div>
+    <div class='org'>Медицинска установа</div>
+    <h1>Клинички извештај за преглед</h1>
+  </div>
+  <div class='meta'>
+    <div>Број: <b>{Safe(encounter.EncounterNumber)}</b></div>
+    <div>Датум: <b>{Safe(encounter.EncounterDate.ToString("dd.MM.yyyy"))}</b></div>
+  </div>
+</div>
+
+<h2>Податоци за пациентот</h2>
+<div class='grid'>
+  <div class='field'><span class='label'>Име и презиме</span><span class='value'>{Safe(patient?.FullName)}</span></div>
+  <div class='field'><span class='label'>ЕМБГ</span><span class='value'>{Safe(maskedId)}</span></div>
+  <div class='field'><span class='label'>СЗБО број</span><span class='value'>{Safe(patient?.SzboNumber)}</span></div>
+  <div class='field'><span class='label'>Датум на раѓање</span><span class='value'>{Safe(patient?.BirthDate.ToString("dd.MM.yyyy"))}</span></div>
+  <div class='field'><span class='label'>Реуматолог</span><span class='value'>{Safe($"{doctor?.FirstName} {doctor?.LastName}".Trim())}</span></div>
+  <div class='field'><span class='label'>Статус</span><span class='value'>{Safe(encounter.Status.ToString())}</span></div>
+</div>
+
+<h2>Податоци за прегледот</h2>
+<div class='block'><div class='block-title'>Главна поплака</div><div class='block-body'>{Safe(encounter.ChiefComplaint)}</div></div>
+<div class='block'><div class='block-title'>Анамнеза на сегашната состојба</div><div class='block-body'>{Safe(encounter.HistoryOfPresentIllness)}</div></div>
+<div class='block'><div class='block-title'>Процена / дијагностички заклучок</div><div class='block-body'>{Safe(encounter.Assessment)}</div></div>
+<div class='block'><div class='block-title'>План и препораки</div><div class='block-body'>{Safe(encounter.Plan)}</div></div>
+<div class='block'><div class='block-title'>Клинички забелешки</div><div class='block-body'>{Safe(encounter.ClinicalNotes)}</div></div>
+
+<div class='signatures'>
+  <div class='sig'>Потпис на лекар</div>
+  <div class='sig'>Печат на установа</div>
+</div>
+
+</body></html>";
     }
-#endif
+
+    private void OnPrintWebViewNavigated(object? sender, WebNavigatedEventArgs e)
+    {
+        _isPrintDocumentReady = e.Result == WebNavigationResult.Success;
+        _printDocumentLoaded?.TrySetResult(_isPrintDocumentReady);
+    }
 
     private async void OnPrintClicked(object sender, EventArgs e)
     {
 #if WINDOWS
-        var printButton = sender as VisualElement;
-        if (printButton is not null) printButton.IsEnabled = false;
         try
         {
-            if (string.IsNullOrWhiteSpace(_reportHtml))
+            if (_printDocumentLoaded is not null && !_isPrintDocumentReady)
             {
-                await DisplayAlert("Печатење", "Извештајот сè уште не е подготвен.", "ОК");
+                // Wait for the HTML report to finish loading before opening the native print dialog.
+                var completed = await Task.WhenAny(_printDocumentLoaded.Task, Task.Delay(TimeSpan.FromSeconds(10)));
+                if (completed != _printDocumentLoaded.Task || !await _printDocumentLoaded.Task)
+                {
+                    await DisplayAlert("Печатење", "Извештајот сè уште не е подготвен за печатење. Обидете се повторно.", "ОК");
+                    return;
+                }
+            }
+
+            if (PrintWebView.Handler?.PlatformView is not Microsoft.UI.Xaml.Controls.WebView2 nativeWebView)
+            {
+                await DisplayAlert("Печатење", "Компонентата за печатење не е иницијализирана. Затворете го прегледот и отворете го повторно.", "ОК");
                 return;
             }
 
-            var nativeWebView = await GetNativeWebViewAsync();
             await nativeWebView.EnsureCoreWebView2Async();
-            var core = nativeWebView.CoreWebView2
-                ?? throw new InvalidOperationException("Windows WebView не успеа да се иницијализира.");
+            if (nativeWebView.CoreWebView2 is null)
+            {
+                await DisplayAlert("Печатење", "Не можеше да се иницијализира печатењето.", "ОК");
+                return;
+            }
 
-            // Open the system print dialog for the report already shown on this page.
-            core.ShowPrintUI(CoreWebView2PrintDialogKind.System);
+            nativeWebView.CoreWebView2.ShowPrintUI(Microsoft.Web.WebView2.Core.CoreWebView2PrintDialogKind.Browser);
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Clinical report printing failed: {ex}");
+            System.Diagnostics.Debug.WriteLine($"Encounter report printing failed: {ex}");
             await DisplayAlert("Печатење", $"Не успеа да се отвори дијалогот за печатење: {ex.Message}", "ОК");
-        }
-        finally
-        {
-            if (printButton is not null) printButton.IsEnabled = true;
         }
 #else
         await DisplayAlert("Печатење", "Печатењето е достапно во Windows десктоп верзијата.", "ОК");
@@ -173,5 +154,7 @@ public partial class EncounterQuickPreviewPage : ContentPage
     }
 
     private async void OnBackClicked(object sender, EventArgs e)
-        => await Shell.Current.GoToAsync("..");
+    {
+        await Shell.Current.GoToAsync("..");
+    }
 }
