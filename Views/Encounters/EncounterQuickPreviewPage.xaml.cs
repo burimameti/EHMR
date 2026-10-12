@@ -24,30 +24,58 @@ public partial class EncounterQuickPreviewPage : ContentPage
         base.OnAppearing();
         if (_loading) return;
 
-        var encounter = _selectedItemService.SelectedItem;
-        if (encounter is null)
-        {
-            await DisplayAlert("Извештај", "Не е избран преглед за прикажување.", "ОК");
-            return;
-        }
-
         _loading = true;
         try
         {
-            var patientId = encounter.PatientId;
-            if (patientId == Guid.Empty)
+            // Give the WebView a visible, deterministic document immediately;
+            // then replace it with the real clinical report once data is ready.
+            PrintWebView.Source = new HtmlWebViewSource
             {
-                await DisplayAlert("Извештај", "Прегледот нема поврзан пациент.", "ОК");
-                return;
-            }
+                Html = "<!doctype html><html><body style='font:16px Arial;color:#222;padding:24px'>Се подготвува медицинскиот извештај...</body></html>"
+            };
+
+            var encounter = _selectedItemService.SelectedItem;
+            if (encounter is null)
+                throw new InvalidOperationException("Не е избран преглед за прикажување.");
+
+            if (encounter.PatientId == Guid.Empty)
+                throw new InvalidOperationException("Прегледот нема поврзан пациент.");
 
             _reportHtml = await _clinicalReportService.GenerateHtmlAsync(
-                patientId, encounter.Id, title: $"Извештај за преглед - {encounter.EncounterNumber}");
+                encounter.PatientId,
+                encounter.Id,
+                title: $"Извештај за преглед - {encounter.EncounterNumber}");
+
+#if WINDOWS
+            // Navigate the actual WebView2 surface directly. Setting only the
+            // MAUI Source can race the native control during Shell navigation.
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                if (PrintWebView.Handler?.PlatformView is Microsoft.UI.Xaml.Controls.WebView2 native)
+                {
+                    await native.EnsureCoreWebView2Async();
+                    if (native.CoreWebView2 is not null)
+                        native.CoreWebView2.NavigateToString(_reportHtml);
+                    else
+                        PrintWebView.Source = new HtmlWebViewSource { Html = _reportHtml };
+                }
+                else
+                {
+                    PrintWebView.Source = new HtmlWebViewSource { Html = _reportHtml };
+                }
+            });
+#else
             PrintWebView.Source = new HtmlWebViewSource { Html = _reportHtml };
+#endif
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Clinical report preview failed: {ex}");
+            var message = System.Net.WebUtility.HtmlEncode(ex.Message);
+            PrintWebView.Source = new HtmlWebViewSource
+            {
+                Html = $"<!doctype html><html><body style='font:15px Arial;color:#991b1b;padding:24px'><h2>Извештајот не може да се прикаже</h2><p>{message}</p></body></html>"
+            };
             await DisplayAlert("Извештај", $"Извештајот не може да се прикаже: {ex.Message}", "ОК");
         }
         finally
