@@ -122,7 +122,7 @@
 													FontSize="15"
 													LineBreakMode="WordWrap"
 													Text="{Binding Title}"
-													TextColor="#0F172A" />
+													TextColor="{StaticResource SparkTextPrimary}" />
 												<Label
 													CharacterSpacing="0.5"
 													FontAttributes="Bold"
