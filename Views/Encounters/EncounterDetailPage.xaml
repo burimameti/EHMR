@@ -141,7 +141,7 @@
 
 				<controls:FFSectionCard Margin="0" Style="{StaticResource CrudFormCardStyle}">
 					<ScrollView VerticalScrollBarVisibility="Never">
-						<VerticalStackLayout Spacing="20" Style="{StaticResource CrudFormContentStackStyle}">
+						<VerticalStackLayout Spacing="10" Style="{StaticResource CrudFormContentStackStyle}">
 
 							<!--  ПАЦИЕНТ И РЕУМАТОЛОГ  -->
 							<Border Margin="0,0,0,10" Style="{StaticResource CrudFormSectionCardStyle}">
@@ -563,7 +563,7 @@
 						HeightRequestEx="42"
 						IsVisible="{Binding CanShowEdit}"
 						Text="Уреди"
-						TextColorEx="White"
+						TextColorEx="{StaticResource SidebarActiveText}"
 						WidthRequestEx="130" />
 				</Grid>
 			</Border>
