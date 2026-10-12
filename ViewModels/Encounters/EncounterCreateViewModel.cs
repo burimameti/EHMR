@@ -21,8 +21,8 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     private readonly ISelectedItemService<Patient> _patientContext;
     private readonly ISelectedItemService<Encounter> _encounterContext;
     private readonly IAuthorizationService _authorizationService;
+    private readonly FormSessionLifecycle _formSessions;
     private bool _isLoading;
-    private bool _isLoaded;
 
 
     // A new encounter must have an explicitly selected status before it can be saved.
@@ -247,13 +247,15 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
         ISelectedItemService<Appointment> appointmentContext,
         ISelectedItemService<Patient> patientContext,
         ISelectedItemService<Encounter> encounterContext,
-        IAuthorizationService authorizationService)
+        IAuthorizationService authorizationService,
+        FormSessionLifecycle formSessions)
         : base(service, navigationService, userDialogService, authorizationService)
     {
         _appointmentContext=appointmentContext;
         _patientContext=patientContext;
         _encounterContext=encounterContext;
         _authorizationService=authorizationService;
+        _formSessions=formSessions;
         PageTitle="Нов Преглед";
 
         EncounterMedicines.CollectionChanged+=OnEncounterMedicinesChanged;
@@ -269,10 +271,10 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
 
         // Shell can reuse this page/view-model when the user leaves for another
         // menu section and later opens "Нов преглед" again. Treat that as a new draft.
-        if(_isLoaded)
+        if(_formSessions.HasCompletedEntry(this))
         {
             ResetForNewSession();
-            _isLoaded=false;
+            _formSessions.Forget(this);
         }
 
         _isLoading=true;
@@ -291,7 +293,7 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                 IsEditMode=true;
                 IsReadOnly=false;
                 RefreshSidePanel();
-                _isLoaded=true;
+                _formSessions.MarkEntryCompleted(this);
                 return;
             }
             var incomingPatient=_patientContext.SelectedItem;
