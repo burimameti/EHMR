@@ -4,6 +4,7 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Interfaces;
 using EHMR.Domain.Entities.Rbac;
 using EHMR.Services.Dto;
+using EHMR.Services;
 using System.Collections.ObjectModel;
 
 namespace EHMR.ViewModels.Prescriptions;
@@ -15,6 +16,9 @@ public partial class PrescriptionDetailFormViewModel : ObservableObject
     private readonly ISelectedItemService<Prescription> _selectedPrescriptionService;
     private readonly IUserDialogService _dialogService;
     private readonly IAuthorizationService _authorization;
+    private readonly FormSessionLifecycle _formSessions;
+    private bool _hasInitialized;
+    private bool _isNewMode;
 
     [ObservableProperty] private string pageTitle = "Нов Рецепт";
     [ObservableProperty] private bool isReadOnly;
@@ -39,47 +43,79 @@ public partial class PrescriptionDetailFormViewModel : ObservableObject
         IPatientService patientService,
         ISelectedItemService<Prescription> selectedPrescriptionService,
         IUserDialogService dialogService,
-        IAuthorizationService authorization)
+        IAuthorizationService authorization,
+        FormSessionLifecycle formSessions)
     {
         _prescriptionService=prescriptionService;
         _patientService=patientService;
         _selectedPrescriptionService=selectedPrescriptionService;
         _dialogService=dialogService;
         _authorization=authorization;
-
-        // Автоматско вчитавање при иницијализација
-        _=InitializeAsync();
+        _formSessions=formSessions;
     }
 
-    private async Task InitializeAsync()
+    /// <summary>
+    /// Loads the prescription form when the page becomes visible. Create entries
+    /// are reset only when this same form instance is re-entered after completion.
+    /// </summary>
+    public async Task OnPageAppearingAsync()
     {
-        if(!CanView) return;
+        if(!CanView)
+            return;
 
-        // 1. Вчитај ги сите пациенти за Picker-от
-        var patients = await _patientService.GetAllAsync();
-        PatientsList=new ObservableCollection<PatientDto>(patients);
-
-        // 2. Провери дали уредуваме постоечки рецепт преку SelectedItemService
-        var currentPrescription = _selectedPrescriptionService.SelectedItem;
-        if(currentPrescription!=null)
+        if(_hasInitialized && _isNewMode)
         {
-            Id=currentPrescription.Id;
-            Medication=currentPrescription.Medication??string.Empty;
-            Dosage=currentPrescription.Dosage??string.Empty;
-            Instructions=currentPrescription.Instructions??string.Empty;
-            Status=currentPrescription.Status??"Активни";
-            PageTitle=$"Рецепт: {currentPrescription.Medication}";
-            IsReadOnly=true; // Започнува во преглед режим
+            _formSessions.BeginCreateEntry(this, ResetForNewPrescriptionSession);
+        }
 
-            // Селектирај го точниот пациент во листата
+        await LoadPatientsAsync();
+
+        var currentPrescription = _selectedPrescriptionService.SelectedItem;
+        if(currentPrescription != null)
+        {
+            _isNewMode=false;
+            Id=currentPrescription.Id;
+            Medication=currentPrescription.Medication ?? string.Empty;
+            Dosage=currentPrescription.Dosage ?? string.Empty;
+            Instructions=currentPrescription.Instructions ?? string.Empty;
+            Status=currentPrescription.Status ?? "Активни";
+            PageTitle=$"Рецепт: {currentPrescription.Medication}";
+            IsReadOnly=true;
             SelectedPatient=PatientsList.FirstOrDefault(p => p.Id==currentPrescription.PatientId);
         }
         else
         {
-            Id=Guid.Empty;
-            IsReadOnly=false; // Нов запис започнува директно во Edit режим
+            _isNewMode=true;
+            if(!_hasInitialized)
+                ResetForNewPrescriptionSession();
+
+            IsReadOnly=false;
             PageTitle="Нов Рецепт";
         }
+
+        _hasInitialized=true;
+        _formSessions.MarkEntryCompleted(this);
+        OnPropertyChanged(nameof(CanSave));
+        OnPropertyChanged(nameof(CanEditForm));
+        OnPropertyChanged(nameof(IsEditMode));
+    }
+
+    private async Task LoadPatientsAsync()
+    {
+        var patients = await _patientService.GetAllAsync();
+        PatientsList=new ObservableCollection<PatientDto>(patients);
+    }
+
+    private void ResetForNewPrescriptionSession()
+    {
+        Id=Guid.Empty;
+        SelectedPatient=null;
+        Medication=string.Empty;
+        Dosage=string.Empty;
+        Instructions=string.Empty;
+        Status="Активни";
+        PageTitle="Нов Рецепт";
+        IsReadOnly=false;
     }
 
     [RelayCommand]
