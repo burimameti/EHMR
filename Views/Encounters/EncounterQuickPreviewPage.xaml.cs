@@ -256,7 +256,7 @@ public partial class EncounterQuickPreviewPage : ContentPage
         html.Append("<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><style>");
         html.Append("@page{size:A4;margin:14mm 15mm 16mm}*{box-sizing:border-box}html,body{background:#fff}body{font-family:Arial,'Segoe UI',sans-serif;color:#111827;margin:0 auto;padding:0;max-width:190mm;font-size:10pt;line-height:1.35}.header{display:flex;justify-content:space-between;gap:18px;align-items:center;border-bottom:1px solid #111827;padding:0 0 7px;margin-bottom:7px}.org{font-size:10pt;font-weight:700;letter-spacing:.2px;color:#64748b}h1{font-size:12pt;margin:0;color:#111827;font-weight:700}.meta{text-align:right;font-size:9pt;color:#111827;line-height:1.45}h2{font-size:10pt;color:#111827;font-weight:700;margin:10px 0 4px;padding:0 0 3px;border-bottom:1px solid #111827;letter-spacing:0}section{break-inside:auto}.grid{display:grid;grid-template-columns:1fr 1fr;column-gap:18px;row-gap:0}.field{display:grid;grid-template-columns:38% 62%;gap:5px;padding:2px 0;border-bottom:1px solid #e5e7eb;break-inside:avoid;min-width:0}.field-label{font-weight:700;font-size:9pt;color:#111827}.field-value{font-size:9pt;color:#111827;overflow-wrap:anywhere}.row{padding:3px 0;border-bottom:1px solid #e5e7eb;break-inside:avoid}.row-title{font-weight:700;font-size:9.5pt;color:#111827}.row-detail{font-size:9pt;color:#111827;margin-top:1px;overflow-wrap:anywhere}.empty{color:#475569;font-size:9pt;margin:3px 0}.signatures{display:flex;gap:48px;margin-top:30px;break-inside:avoid}.sig{flex:1;border-top:1px solid #64748b;padding-top:5px;text-align:center;font-size:9pt;color:#475569}@media(max-width:600px){body{padding:14px}.grid{grid-template-columns:1fr}.header{align-items:flex-start;flex-direction:column}.meta{text-align:left}.field{grid-template-columns:40% 60%}}");
         html.Append("</style></head><body>");
-        html.Append($"<div class='header'><div><div class='org'>EHMR</div><h1>{E(reportTitle)}</h1></div><div class='meta'><div>Број: <b>{E(encounter?.EncounterNumber)}</b></div><div>Датум: <b>{E(encounter?.EncounterDate.ToString("dd.MM.yyyy HH:mm"))}</b></div></div></div>");
+        html.Append($"<div class='header'><div><div class='org'>КЛИНИКА ЗА РЕУМАТОЛОГИЈА -СКОПЈЕ</div><h1>{E(reportTitle)}</h1></div><div class='meta'><div>Датум: <b>{E(encounter?.EncounterDate.ToString("dd.MM.yyyy HH:mm"))}</b></div></div></div>");
 
         var doctorName = encounter?.Doctor?.FullName ?? patient.Doctor?.FullName;
         var fields = new System.Text.StringBuilder("<div class='grid'>");
@@ -271,10 +271,11 @@ public partial class EncounterQuickPreviewPage : ContentPage
 
         if (encounter != null)
         {
-            var details = new System.Text.StringBuilder("<div class='grid'>");
-            details.Append(Field("Број на преглед", encounter.EncounterNumber))
+            var encounterSummary = new System.Text.StringBuilder("<div class='grid'>");
+            encounterSummary.Append(Field("БРОЈ НА ПРЕГЛЕД", encounter.EncounterNumber))
+                .Append(Field("СТАТУС", encounter.Status.ToString()))
                 .Append("</div>");
-            html.Append(SectionHtml("ПОДАТОЦИ ЗА ПРЕГЛЕДОТ", details.ToString()));
+            html.Append(encounterSummary.ToString());
 
             var dx = diagnoses.Count == 0 ? EmptyHtml("Нема внесена МКБ-10 дијагноза за овој преглед.")
                 : string.Concat(diagnoses.Select(d => RowHtml($"{d.Mkb10Code?.Code ?? "—"} — {d.Mkb10Code?.Description ?? "Без опис"}", d.IsPrimary ? "Примарна дијагноза" : null)));
