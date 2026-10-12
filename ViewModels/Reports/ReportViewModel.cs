@@ -889,10 +889,13 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             };
             Pickers.Add(toDate);
 
-            // Status and city should start the second row, together with medicine search.
+            // Status and city must render in the second filter row, not inline with search.
             foreach(var picker in providerPickers.Where(p =>
                 p.Placeholder == "Статус" || p.Placeholder == "Град"))
+            {
+                picker.IsInlineWithSearch = false;
                 Pickers.Add(picker);
+            }
 
             var medicineToggle = new SparkPickerItem
             {
