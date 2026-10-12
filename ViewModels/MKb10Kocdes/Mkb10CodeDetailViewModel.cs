@@ -12,6 +12,8 @@ public partial class Mkb10CodeDetailViewModel : ObservableObject
     private readonly IMkb10CodeService _service;
     private readonly ISelectedItemService<Mkb10Code> _selected;
     private readonly IAuthorizationService _authorization;
+    private Mkb10Code? _loadedCode;
+    private bool _hasLoadedSelectedCode;
 
     [ObservableProperty]
     private Mkb10Code mkb10Code = new();
@@ -76,9 +78,21 @@ public partial class Mkb10CodeDetailViewModel : ObservableObject
 
     public async Task LoadAsync()
     {
-        if(_selected.SelectedItem!=null)
+        var selected = _selected.SelectedItem;
+        if(selected is not null)
         {
-            Mkb10Code=_selected.SelectedItem;
+            _loadedCode=selected;
+            _hasLoadedSelectedCode=true;
+            _selected.SelectedItem=null; // consume singleton navigation context
+        }
+        else if(_hasLoadedSelectedCode)
+        {
+            selected=_loadedCode;
+        }
+
+        if(selected is not null)
+        {
+            Mkb10Code=selected;
             IsEditMode=false;
         }
         else
