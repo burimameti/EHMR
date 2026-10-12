@@ -4,6 +4,7 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:entities="clr-namespace:EHMR.Domain.Entities"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	x:DataType="entities:Encounter"
 	BackgroundColor="#EEF2F6">
 
@@ -40,21 +41,22 @@
 				Grid.Column="1"
 				Spacing="8"
 				VerticalOptions="Center">
-				<Button
-					Padding="18,0"
-					BackgroundColor="#2AEBE7"
+				<controls:FFButton
+					ButtonKind="Primary"
+					BackgroundColorEx="#2AEBE7"
+					TextColorEx="#0F172A"
 					Clicked="OnPrintClicked"
-					FontAttributes="Bold"
-					HeightRequest="36"
-					Text="Печати"
-					TextColor="#0F172A" />
-				<Button
-					Padding="18,0"
-					BackgroundColor="#F1F5F9"
+					ContentPadding="18,0"
+					HeightRequestEx="40"
+					Text="Печати" />
+				<controls:FFButton
+					ButtonKind="Secondary"
+					BackgroundColorEx="#F1F5F9"
+					TextColorEx="#334155"
 					Clicked="OnBackClicked"
-					HeightRequest="36"
-					Text="Назад"
-					TextColor="#334155" />
+					ContentPadding="18,0"
+					HeightRequestEx="40"
+					Text="Назад" />
 			</HorizontalStackLayout>
 		</Grid>
 
