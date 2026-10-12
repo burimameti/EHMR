@@ -14,20 +14,20 @@
 
         <Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="12">
             <Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-                    <controls:FFPageHeader
-                        Title="Бекап"
-                        Subtitle="Преглед на состојбата и историјата на резервните копии." />
-                    <controls:FFButton
-                        Grid.Column="1"
-                        ButtonKind="Primary"
-                        BackgroundColorEx="{StaticResource SidebarActiveBg}"
-                        TextColorEx="White"
-                        Command="{Binding RunBackupCommand}"
-                        ContentPadding="18,0"
-                        HeightRequestEx="45"
-                        Text="Нов бекап" />
-                </Grid>
+                <controls:FFPageHeader
+                    Title="Бекап"
+                    Subtitle="Преглед на состојбата и историјата на резервните копии.">
+                    <controls:FFPageHeader.HeaderContent>
+                        <controls:FFButton
+                            ButtonKind="Primary"
+                            BackgroundColorEx="{StaticResource SidebarActiveBg}"
+                            TextColorEx="White"
+                            Command="{Binding RunBackupCommand}"
+                            HeightRequestEx="40"
+                            WidthRequestEx="130"
+                            Text="Нов бекап" />
+                    </controls:FFPageHeader.HeaderContent>
+                </controls:FFPageHeader>
             </Border>
 
             <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
