@@ -66,13 +66,13 @@
 					BackgroundColor="{StaticResource SparkButtonPrimaryBg}"
 					Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
-					HeightRequest="36"
+					HeightRequest="40"
 					IsEnabled="{Binding PrimaryButtonIsEnabled, Source={x:Reference Root}}"
 					IsVisible="{Binding ShowPrimaryButton, Source={x:Reference Root}}"
 					Style="{StaticResource TabButtonActiveStyle}"
 					Text="{Binding PrimaryButtonText, Source={x:Reference Root}}"
 					TextColor="White"
-					WidthRequest="140" />
+					WidthRequest="130" />
 				<Button
 					BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
 					BorderColor="{StaticResource SparkBorder}"
