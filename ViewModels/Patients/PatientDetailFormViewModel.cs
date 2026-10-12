@@ -270,6 +270,10 @@ _navigationService=navigationService;
             selectedPatient=null;
         }
 
+        // Consume the singleton navigation selection after capturing the patient above.
+        // The local selectedPatient remains available for the async record load below.
+        _selectedItemService.SelectedItem = null;
+
         if(selectedPatient==null)
         {
             _isNewPatientMode=true;
