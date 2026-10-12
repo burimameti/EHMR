@@ -93,6 +93,92 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     [ObservableProperty]
     private PatientDocument? latestPatientDocument;
 
+    private void ResetForNewSession()
+    {
+        _isApplyingContext=true;
+        try
+        {
+            _appointmentContext.SelectedItem=null;
+            _patientContext.SelectedItem=null;
+            _encounterContext.SelectedItem=null;
+
+            Encounter=new Encounter
+            {
+                Id=Guid.NewGuid(),
+                EncounterDate=DateTime.Now,
+                CreatedAt=DateTime.UtcNow
+            };
+
+            SelectedPatient=null;
+            SelectedDoctor=null;
+            SelectedAppointment=null;
+            LinkedAppointment=null;
+            IsPatientLockedFromContext=false;
+            IsEditMode=true;
+            IsReadOnly=false;
+
+            PatientSearchText=string.Empty;
+            PatientSuggestions.Clear();
+            ShowPatientSuggestions=false;
+            PatientSuggestionSelection=null;
+
+            Mkb10Assignments.Clear();
+            Prescriptions.Clear();
+            EncounterMedicines.Clear();
+            PatientMedicines.Clear();
+            PatientMkb10Assignments.Clear();
+            PatientDiagnosisHistory.Clear();
+            PatientEncounterHistory.Clear();
+            PatientActivePrescriptions.Clear();
+            EncounterScores.Clear();
+            EncounterFindings.Clear();
+            Score=null;
+            ScoreText=string.Empty;
+            ScoreSearchText=string.Empty;
+            ScoreSuggestions.Clear();
+            ShowScoreSuggestions=false;
+            CurrentPatientScore=string.Empty;
+            CurrentPatientScoreDate=null;
+
+            MkbCodeSearchText=string.Empty;
+            MkbDescriptionSearchText=string.Empty;
+            MkbResults.Clear();
+            ShowMkbDropdown=false;
+            MedicineSearchText=string.Empty;
+            MedicineResults.Clear();
+            ShowMedicineDropdown=false;
+            AppointmentSearchText=string.Empty;
+            AppointmentSearchResults.Clear();
+            ShowAppointmentDropdown=false;
+            AvailableAppointments.Clear();
+
+            EncounterDiagnosisNotes=string.Empty;
+            ResetStatusSelection();
+            ScheduleNextFollowUp=false;
+            NextFollowUpDate=DateTime.Today.AddDays(7);
+            SelectedFollowUpInterval=null;
+            _deletedMedicineIds.Clear();
+            _originalPatientMedicineIds.Clear();
+            RecentEncounters.Clear();
+            PatientDocuments.Clear();
+            PatientPhotoSource=null;
+            LatestPatientDocument=null;
+        }
+        finally
+        {
+            _isApplyingContext=false;
+        }
+
+        OnPropertyChanged(nameof(HasEncounterMedicines));
+        OnPropertyChanged(nameof(AutomaticScheduleDisplay));
+        OnPropertyChanged(nameof(HasPatientContext));
+        OnPropertyChanged(nameof(HasAppointment));
+        OnPropertyChanged(nameof(IsWalkIn));
+        OnPropertyChanged(nameof(HasEncounterContext));
+        OnPropertyChanged(nameof(ContextDisplay));
+        OnPropertyChanged(nameof(StatusDisplay));
+    }
+
     // ── Patient search ────────────────────────────────────────────────────────
     [ObservableProperty]
     private string patientSearchText = string.Empty;
@@ -177,7 +263,16 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     // ── Load ──────────────────────────────────────────────────────────────────
     public async Task LoadAsync()
     {
-        if(_isLoading||_isLoaded) return;
+        if(_isLoading) return;
+
+        // Shell can reuse this page/view-model when the user leaves for another
+        // menu section and later opens "Нов преглед" again. Treat that as a new draft.
+        if(_isLoaded)
+        {
+            ResetForNewSession();
+            _isLoaded=false;
+        }
+
         _isLoading=true;
         try
         {
