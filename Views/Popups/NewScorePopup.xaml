@@ -87,27 +87,8 @@
 
 			<!--  Actions  -->
 			<HorizontalStackLayout HorizontalOptions="End" Spacing="10">
-				<Button
-					BackgroundColor="{StaticResource SparkSurfaceAlt}"
-					BorderColor="{StaticResource SparkBorder}"
-					BorderWidth="1"
-					Clicked="OnCancelClicked"
-					CornerRadius="8"
-					FontSize="12"
-					HeightRequest="38"
-					Text="Откажи"
-					TextColor="{StaticResource SparkTextPrimary}"
-					WidthRequest="100" />
-				<Button
-					BackgroundColor="{StaticResource SparkAccentTealDark}"
-					Clicked="OnSaveClicked"
-					CornerRadius="8"
-					FontAttributes="Bold"
-					FontSize="12"
-					HeightRequest="38"
-					Text="Зачувај и додај"
-					TextColor="White"
-					WidthRequest="140" />
+				<controls:FFButton ButtonKind="Secondary" Clicked="OnCancelClicked" CornerRadius="8" HeightRequestEx="40" Text="Откажи" BackgroundColorEx="{StaticResource SparkSurfaceAlt}" TextColorEx="{StaticResource SparkTextPrimary}" BorderColor="{StaticResource SparkBorder}" BorderThickness="1" WidthRequestEx="100" />
+				<controls:FFButton ButtonKind="Primary" Clicked="OnSaveClicked" CornerRadius="8" HeightRequestEx="40" Text="Зачувај и додај" BackgroundColorEx="{StaticResource SparkAccentTealDark}" TextColorEx="White" WidthRequestEx="140" />
 			</HorizontalStackLayout>
 		</VerticalStackLayout>
 	</Border>
