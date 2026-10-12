@@ -46,8 +46,16 @@ namespace EHMR.ViewModels.SparkForm
         {
             await ExecuteSafeAsync(async () =>
             {
+                // Capture and consume the singleton navigation context immediately.
+                // The local reference remains available for this load, while the next
+                // Create navigation cannot inherit the previous record.
                 var selected = _selectedItemService.SelectedItem;
+                if(selected is not null)
+                    _selectedItemService.SelectedItem=null;
+
                 _isNew=selected==null;
+                if(_isNew)
+                    _selectedItemService.OpenInEditMode=false;
 
                 Item=selected??new TEntity();
                 _original=_isNew ? null : Clone(Item);
