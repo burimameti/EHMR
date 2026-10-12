@@ -28,6 +28,8 @@ public partial class BackupDetailsViewModel : ObservableObject
     private readonly IBackupHistoryRepository _historyRepository;
     private readonly ISelectedItemService<BackupHistory> _selectedItemService;
     private readonly IAuthorizationService _authorization;
+    private BackupHistory? _loadedBackup;
+    private bool _hasLoadedBackup;
 
     [ObservableProperty]
     private BackupHistory? backup;
@@ -89,7 +91,19 @@ public partial class BackupDetailsViewModel : ObservableObject
         {
             IsBusy=true;
 
-            Backup=_selectedItemService.SelectedItem;
+            var selectedBackup=_selectedItemService.SelectedItem;
+            if(selectedBackup is not null)
+            {
+                _loadedBackup=selectedBackup;
+                _hasLoadedBackup=true;
+                _selectedItemService.SelectedItem=null; // consume singleton navigation context
+            }
+            else if(_hasLoadedBackup)
+            {
+                selectedBackup=_loadedBackup;
+            }
+
+            Backup=selectedBackup;
 
             var recent = (await _historyRepository.GetRecentAsync(30)).ToList();
 
