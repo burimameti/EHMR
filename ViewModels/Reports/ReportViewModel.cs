@@ -1188,76 +1188,65 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     public string GetDynamicReportTitle()
     {
-        var titleBuilder = new List<string>();
+        var titleParts = new List<string>();
 
-        // 1. Период префикс
-        string periodPrefix = SelectedPeriodTypeLabel switch
+        if(SelectedPeriodTypeLabel == "Сите")
         {
-            "Сите" => "Извештај за пациенти",
-            "Месечно" => "Месечен извештај",
-            "Квартално" => "Квартален извештај",
-            "Полугодишно" => "Полугодишен извештај",
-            "Годишно" => "Годишен извештај",
-            "Прилагодено" => "Прилагоден извештај",
-            _ => "Извештај за пациенти"
-        };
+            titleParts.Add("Извештај за пациенти за сите периоди");
+        }
+        else
+        {
+            var periodLabel = SelectedPeriodTypeLabel switch
+            {
+                "Месечно" => "Периодичен извештај за пациенти",
+                "Квартално" => "Периодичен извештај за пациенти",
+                "Полугодишно" => "Периодичен извештај за пациенти",
+                "Годишно" => "Периодичен извештај за пациенти",
+                "Прилагодено" => "Периодичен извештај за пациенти",
+                _ => "Периодичен извештај за пациенти"
+            };
 
-        titleBuilder.Add(periodPrefix);
+            titleParts.Add($"{periodLabel} од {StartDate:dd.MM.yyyy} до {EndDate:dd.MM.yyyy}");
+        }
 
-        // 2. Основен наслов за категоријата
-        string baseEntity = _activeReport?.Type==ReportType.Patients ? "за Пациенти" : ActiveReportTitle;
-        titleBuilder.Add(baseEntity);
-
-        // 3. Активни филтри според Placeholder
         var activeFilters = new List<string>();
-
         foreach(var picker in Pickers)
         {
-            if(picker.SelectedItem!=null&&
-                !string.IsNullOrWhiteSpace(picker.SelectedItem.ToString())&&
-                !picker.SelectedItem.ToString()!.Equals("Сите", StringComparison.OrdinalIgnoreCase))
-            {
-                var selectedVal = picker.SelectedItem.ToString();
+            var selected = picker.SelectedItem?.ToString()?.Trim();
+            var filterType = picker.Placeholder?.Trim() ?? string.Empty;
 
-                // Наместо picker.Label, директно го земаме picker.Placeholder
-                string filterType = picker.Placeholder??string.Empty;
+            if(string.IsNullOrWhiteSpace(selected) ||
+               selected.Equals("Сите", StringComparison.OrdinalIgnoreCase) ||
+               filterType.Equals("Тип на период", StringComparison.OrdinalIgnoreCase) ||
+               filterType.Equals("Од", StringComparison.OrdinalIgnoreCase) ||
+               filterType.Equals("До", StringComparison.OrdinalIgnoreCase))
+                continue;
 
-                if(filterType.Contains("Пол", StringComparison.OrdinalIgnoreCase))
-                {
-                    activeFilters.Add($"по пол ({selectedVal})");
-                }
-                else if(filterType.Contains("Реуматолог", StringComparison.OrdinalIgnoreCase)||
-                         filterType.Contains("Лекар", StringComparison.OrdinalIgnoreCase)||
-                         filterType.Contains("Реуматолог", StringComparison.OrdinalIgnoreCase))
-                {
-                    activeFilters.Add($"за реуматолог {selectedVal}");
-                }
-                else if(filterType.Contains("Дијагноза", StringComparison.OrdinalIgnoreCase))
-                {
-                    activeFilters.Add($"по дијагноза ({selectedVal})");
-                }
-                else if(filterType.Contains("Град", StringComparison.OrdinalIgnoreCase))
-                {
-                    activeFilters.Add($"од град {selectedVal}");
-                }
-                else if(filterType.Contains("Лек", StringComparison.OrdinalIgnoreCase))
-                {
-                    activeFilters.Add($"со лек {selectedVal}");
-                }
-                else if(!string.IsNullOrWhiteSpace(filterType))
-                {
-                    activeFilters.Add($"по {filterType.ToLower()}: {selectedVal}");
-                }
-            }
+            if(filterType.Contains("Пол", StringComparison.OrdinalIgnoreCase))
+                activeFilters.Add($"пол: {selected}");
+            else if(filterType.Contains("Реуматолог", StringComparison.OrdinalIgnoreCase) ||
+                    filterType.Contains("Лекар", StringComparison.OrdinalIgnoreCase))
+                activeFilters.Add($"реуматолог: {selected}");
+            else if(filterType.Contains("Дијагноза", StringComparison.OrdinalIgnoreCase))
+                activeFilters.Add($"дијагноза: {selected}");
+            else if(filterType.Contains("Град", StringComparison.OrdinalIgnoreCase))
+                activeFilters.Add($"град: {selected}");
+            else if(filterType.Contains("Лек", StringComparison.OrdinalIgnoreCase))
+                activeFilters.Add($"лек: {selected}");
+            else if(filterType.Contains("Статус", StringComparison.OrdinalIgnoreCase))
+                activeFilters.Add($"статус: {selected}");
+            else if(filterType.Contains("Скор", StringComparison.OrdinalIgnoreCase))
+                activeFilters.Add($"скор: {selected}");
+            else
+                activeFilters.Add($"{filterType}: {selected}");
         }
 
-        if(activeFilters.Count>0)
-        {
-            titleBuilder.Add(string.Join(" ", activeFilters));
-        }
+        if(activeFilters.Count > 0)
+            titleParts.Add("Филтри: " + string.Join(", ", activeFilters));
 
-        return string.Join(" ", titleBuilder);
+        return string.Join(" — ", titleParts);
     }
+
     [RelayCommand]
     private async Task ExecuteReportGenerationAsync()
     {
@@ -1296,7 +1285,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                 generatedBy: currentUser,
                 startDate: StartDate,
                 endDate: EndDate,
-                columns: GridColumns.ToList(),
+                columns: GetExportColumns(),
                 rows: exportRows,
                 selectedMedicine: (_activeProvider as PatientsReportProvider)?.SelectedMedicineForExport,
                 selectedMedicineTotalQuantity: (_activeProvider as PatientsReportProvider)?.SelectedMedicineTotalQuantityForExport);
@@ -1334,7 +1323,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
             return;
 
         var dynamicTitle = GetDynamicReportTitle();
-        var currentUser = !string.IsNullOrWhiteSpace(UserName) ? UserName : "Марко Марковски";
+        var currentUser = !string.IsNullOrWhiteSpace(UserName) ? UserName : "Систем";
 
         await ExecuteSafeAsync(async () =>
         {
@@ -1346,8 +1335,8 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
                     generatedBy: currentUser,
                     startDate: StartDate,
                     endDate: EndDate,
-                    columns: GridColumns.ToList(),
-                    rows: GridRows.ToList(),
+                    columns: GetExportColumns(),
+                    rows: BuildExportRows(),
                     selectedMedicine: (_activeProvider as PatientsReportProvider)?.SelectedMedicineForExport,
                     selectedMedicineTotalQuantity: (_activeProvider as PatientsReportProvider)?.SelectedMedicineTotalQuantityForExport
                 );
@@ -1422,16 +1411,27 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         }, "Грешка при Excel export");
     }
 
+    private List<SparkGridColumn> GetExportColumns()
+    {
+        // The expand/collapse control is a grid-only UI column, not report data.
+        return GridColumns
+            .Where(column => !string.Equals(column.Key, "GroupExpand", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
     private List<SparkGridRow> BuildExportRows()
     {
         var rows = new List<SparkGridRow>();
+        var dataColumns = _activeProvider?.Columns.ToList() ?? [];
 
+        // Export the full filtered result set represented by the grid, not only
+        // the current visual page or the expandable patient-group summary rows.
         foreach(var reportRow in FilteredItems)
         {
             var row = new SparkGridRow { Tag=reportRow };
 
-            for(int i = 0; i<reportRow.Cells.Count&&i<GridColumns.Count; i++)
-                row[GridColumns[i].Key]=reportRow.Cells[i];
+            for(int i = 0; i<reportRow.Cells.Count && i<dataColumns.Count; i++)
+                row[dataColumns[i].Key]=reportRow.Cells[i];
 
             rows.Add(row);
         }
