@@ -10,6 +10,7 @@ using EHMR.Domain.Interfaces;
 using EHMR.Helpers;
 using EHMR.Infrastructure.Persistence;
 using EHMR.Services.Dto;
+using EHMR.Services;
 
 using EHMR.ViewModels.Patients.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ private readonly INavigationService _navigationService;
     private readonly ILicenseService _licenseService;
     private readonly IPatientClinicalReportService _clinicalReportService;
     private readonly IAuthorizationService _authorizationService;
+    private readonly FormSessionLifecycle _formSessions;
 
     private PatientEditDto? _originalPatient;
     private bool _isNewPatientMode;
@@ -165,7 +167,8 @@ INavigationService navigationService,
         IDbContextFactory<DesktopTherapyDbContext> dbFactory,
         ILicenseService licenseService,
         IPatientClinicalReportService clinicalReportService,
-        IAuthorizationService authorizationService)
+        IAuthorizationService authorizationService,
+        FormSessionLifecycle formSessions)
     {
         _licenseService=licenseService;
         _patientService=patientService;
@@ -175,6 +178,7 @@ _navigationService=navigationService;
         _dbFactory=dbFactory;
         _clinicalReportService=clinicalReportService;
         _authorizationService=authorizationService;
+        _formSessions=formSessions;
 
         // MKB10 A-Z sections, исто као во EncounterBaseViewModel.
         for(var letter = 'A'; letter<='Z'; letter++)
@@ -183,6 +187,77 @@ _navigationService=navigationService;
         ScoreEditor=new ScoreEditorViewModel(dbFactory);
 
         InitializeForm();
+    }
+
+    /// <summary>
+    /// Called by the page on every appearance. A completed Create session is reset
+    /// when the user returns to the same form; Edit sessions are never blank-reset.
+    /// </summary>
+    public async Task OnPageAppearingAsync()
+    {
+        if(!_isNewPatientMode)
+            return;
+
+        _formSessions.BeginCreateEntry(this, ResetForNewPatientSession);
+        _formSessions.MarkEntryCompleted(this);
+
+        await LoadApplicationRegimesAsync();
+    }
+
+    private void ResetForNewPatientSession()
+    {
+        Patient=CreateBlankForRegistration();
+        PageTitle="Нов Пациент";
+        IsReadOnly=!CanCreatePatient;
+        ScoreEditor.IsReadOnly=IsReadOnly;
+        ScoreEditor.Load(Array.Empty<PatientScore>());
+
+        SelectedGenderDisplay=string.Empty;
+        SelectedStatusDisplay=string.Empty;
+        SelectedRelationDisplay=string.Empty;
+        SelectedCityDisplay=string.Empty;
+        IsPatientActive=true;
+        InactiveReason=string.Empty;
+
+        PatientMkb10Codes.Clear();
+        MkbResults.Clear();
+        MkbCodeSearchText=string.Empty;
+        MkbDescriptionSearchText=string.Empty;
+        SelectedMkb10Display=string.Empty;
+        SelectedMkbSection=string.Empty;
+        foreach(var section in MkbAlphabetSections)
+            section.IsSelected=false;
+
+        AttachedMedicines.Clear();
+        PreviousMedicines.Clear();
+        MedicineResults.Clear();
+        MedicineSearchText=string.Empty;
+        ShowMedicineDropdown=false;
+
+        Documents.Clear();
+        SelectedDocumentPreview=null;
+        DoctorSearchResults.Clear();
+        DoctorSearchText=string.Empty;
+        SelectedDoctorDisplay=string.Empty;
+
+        Mkb10History.Clear();
+        EncounterHistory.Clear();
+        ScoreHistory.Clear();
+        AppointmentHistory.Clear();
+        PrescriptionHistory.Clear();
+        MedicineHistory.Clear();
+
+        _deletedPatientMkb10CodeIds.Clear();
+        _deletedMedicineIds.Clear();
+        _deletedDocumentIds.Clear();
+        _originalPatient=null;
+        _childrenLoaded=false;
+
+        OnPropertyChanged(nameof(IsNewPatient));
+        OnPropertyChanged(nameof(HeaderTitle));
+        OnPropertyChanged(nameof(HeaderSubtitle));
+        OnPropertyChanged(nameof(CanSavePatientForm));
+        OnPropertyChanged(nameof(MaskedNationalId));
     }
 
     private void InitializeForm()
