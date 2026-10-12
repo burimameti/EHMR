@@ -99,7 +99,7 @@ public partial class FFButton : ContentView
         BindableProperty.Create(nameof(IsLoading), typeof(bool), typeof(FFButton), false);
 
     public static readonly BindableProperty HeightRequestExProperty =
-        BindableProperty.Create(nameof(HeightRequestEx), typeof(double), typeof(FFButton), 36d,
+        BindableProperty.Create(nameof(HeightRequestEx), typeof(double), typeof(FFButton), 40d,
             propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumHeightRequest=Math.Max(34, (double)v));
 
     public static readonly BindableProperty WidthRequestExProperty =
