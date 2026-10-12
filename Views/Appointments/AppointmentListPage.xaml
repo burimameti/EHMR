@@ -163,7 +163,9 @@
 
 		<!--  LOADING OVERLAY  -->
 		<VerticalStackLayout
+			Grid.Column="1"
 			HorizontalOptions="Center"
+			IsVisible="{Binding IsBusy}"
 			Spacing="12"
 			VerticalOptions="Center">
 			<ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource SparkAccentTeal}" />
