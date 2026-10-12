@@ -99,7 +99,6 @@
                                     Grid.Column="1"
                                     ButtonKind="Secondary"
                                     Command="{Binding GoToBackupsCommand}"
-                                    ContentPadding="16,0"
                                     HeightRequestEx="38"
                                     Text="Прикажи ги сите" />
                             </Grid>
