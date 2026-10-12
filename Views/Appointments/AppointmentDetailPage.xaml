@@ -522,7 +522,20 @@
                                         <VerticalStackLayout Grid.Row="1" Grid.Column="2" Spacing="8">
                                             <controls:CrudSectionHeader Title="СКОРОВИ ЗА ТЕРМИНОТ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
                                             <controls:FFSearchBox Placeholder="Пребарај скор..." Text="{Binding ScoreSearchText, Mode=TwoWay}" />
-                                            <controls:FFButton ButtonKind="Secondary" Command="{Binding AddPatientScoreCommand}" HeightRequestEx="36" Text="+ Скор За Преглед" />
+                                            <Border Padding="4" BackgroundColor="White" IsVisible="{Binding ShowScoreSuggestions}" Stroke="{StaticResource SparkBorderSubtle}" StrokeShape="RoundRectangle 8" StrokeThickness="1">
+                                                <CollectionView HeightRequest="150" ItemsSource="{Binding ScoreSuggestions}" SelectionMode="None">
+                                                    <CollectionView.ItemTemplate>
+                                                        <DataTemplate x:DataType="x:String">
+                                                            <Border Padding="9,6" BackgroundColor="Transparent" StrokeThickness="0">
+                                                                <Border.GestureRecognizers>
+                                                                    <TapGestureRecognizer Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectScoreSuggestionCommand}" CommandParameter="{Binding .}" />
+                                                                </Border.GestureRecognizers>
+                                                                <Label FontSize="12" Text="{Binding .}" TextColor="{StaticResource SparkTextPrimary}" />
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </CollectionView.ItemTemplate>
+                                                </CollectionView>
+                                            </Border>
                                             <Border Style="{StaticResource CrudFormTableFrameStyle}">
                                                 <VerticalStackLayout Spacing="0">
                                                     <Grid ColumnDefinitions="*,32" Style="{StaticResource CrudFormTableHeaderGridStyle}">
