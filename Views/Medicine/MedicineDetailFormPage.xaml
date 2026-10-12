@@ -71,14 +71,16 @@
                                 IsEnabled="{Binding CanEditForm}"
                                 IsVisible="{Binding IsEditMode}"
                                 Text="Зачувај"
-                                TextColorEx="White" />
+                                TextColorEx="White"
+                                WidthRequestEx="130" />
 
                             <controls:FFButton
                                 ButtonKind="Secondary"
                                 Command="{Binding CancelCommand}"
                                 HeightRequestEx="40"
                                 IsVisible="{Binding IsEditMode}"
-                                Text="Откажи" />
+                                Text="Откажи"
+                                WidthRequestEx="130" />
 
                             <controls:FFButton
                                 BackgroundColorEx="{StaticResource SidebarActiveBg}"
@@ -87,7 +89,8 @@
                                 IsEnabled="{Binding CanUpdate}"
                                 IsVisible="{Binding IsReadOnly}"
                                 Text="Уреди"
-                                TextColorEx="White" />
+                                TextColorEx="White"
+                                WidthRequestEx="130" />
 
                         </HorizontalStackLayout>
                     </controls:FFPageHeader.HeaderContent>
