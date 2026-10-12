@@ -645,12 +645,12 @@
 												Grid.Row="0"
 												Grid.Column="0"
 												Spacing="10">
+												<Label
+													FontAttributes="Bold"
+													FontSize="11"
+													Text="МКБ СЕКЦИЈА · ЛАТИНИЦА A–Z"
+													TextColor="{StaticResource SparkTextSecondary}" />
 												<VerticalStackLayout IsVisible="{Binding IsEditMode}" Spacing="5">
-													<Label
-														FontAttributes="Bold"
-														FontSize="11"
-														Text="МКБ СЕКЦИЈА · ЛАТИНИЦА A–Z"
-														TextColor="{StaticResource SparkTextSecondary}" />
 													<Border
 														Padding="6,5"
 														BackgroundColor="#F4F7FA"
@@ -719,9 +719,10 @@
 														</ScrollView>
 													</Border>
 												</VerticalStackLayout>
+											</VerticalStackLayout>
 
-												<Grid
-													ColumnDefinitions="*,*"
+											<Grid
+												ColumnDefinitions="*,*"
 													ColumnSpacing="10"
 													RowDefinitions="Auto,Auto,Auto"
 													RowSpacing="6">
@@ -853,10 +854,6 @@
 												Grid.Column="1"
 												Spacing="8"
 												VerticalOptions="Start">
-												<controls:CrudSectionHeader
-													Title="СКОРОВИ"
-													LineColor="{StaticResource Gray600}"
-													Style="{StaticResource CrudFormSectionHeaderStyle}" />
 												<controls:ScoreEditor BindingContext="{Binding ScoreEditor}" />
 
 
