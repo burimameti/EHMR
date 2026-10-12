@@ -76,23 +76,21 @@
 						HorizontalOptions="End"
 						Spacing="10"
 						VerticalOptions="Center">
-						<Button
-							BackgroundColor="{StaticResource SparkBadgeNeutralBgSelected}"
-							TextColor="White"
-							Command="{Binding CancelImportCommand}" IsEnabled="{Binding CanManage}"
-							HeightRequest="45"
+						<controls:FFButton
+							ButtonKind="Secondary"
+							Command="{Binding CancelImportCommand}"
+							IsEnabled="{Binding CanManage}"
+							HeightRequestEx="40"
 							IsVisible="{Binding IsImporting}"
-							Style="{StaticResource TabButtonActiveStyle}"
 							Text="Прекини"
-							WidthRequest="140" />
-						<Button
-							BackgroundColor="{StaticResource SparkAccentTeal}"
-							TextColor="White"
-							Command="{Binding ImportCommand}" IsEnabled="{Binding CanManage}"
-							HeightRequest="45"
-							Style="{StaticResource TabButtonActiveStyle}"
+							WidthRequestEx="130" />
+						<controls:FFButton
+							ButtonKind="Primary"
+							Command="{Binding ImportCommand}"
+							IsEnabled="{Binding CanManage}"
+							HeightRequestEx="40"
 							Text="Увези"
-							WidthRequest="140" />
+							WidthRequestEx="130" />
 					</HorizontalStackLayout>
 				</Grid>
 			</Border>
