@@ -35,6 +35,7 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
             ? await db.Encounters
                 .AsNoTracking()
                 .Include(x => x.Doctor).ThenInclude(x => x.User)
+                .Include(x => x.Appointment)
                 .FirstOrDefaultAsync(x => x.Id==encounterId.Value && x.PatientId==patientId)
             : null;
 
@@ -57,8 +58,7 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
 
         var encounterMedicines = focusEncounter is null
             ? allPatientMedicines.Where(x => x.EncounterId==null && x.IsActive).Take(5).ToList()
-            : allPatientMedicines.Where(x => x.EncounterId==focusEncounter.Id ||
-                (!x.EncounterId.HasValue && x.IsActive)).Take(5).ToList();
+            : allPatientMedicines.Where(x => x.EncounterId==focusEncounter.Id).Take(5).ToList();
 
         var encounterPrescriptions = focusEncounter is null
             ? new List<Domain.Entities.Prescription>()
@@ -132,12 +132,12 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
                         Section(column, "ПОДАТОЦИ ЗА ПРЕГЛЕДОТ", () =>
                         {
                             TwoColumn(column, "Број на преглед", focusEncounter.EncounterNumber);
-                            TwoColumn(column, "Причина за посета", focusEncounter.ReasonForVisit);
+                            TwoColumn(column, "Причина за посета", focusEncounter.ReasonForVisit ?? focusEncounter.Appointment?.ReasonForVisit);
                             TwoColumn(column, "Главна тегоба", focusEncounter.ChiefComplaint);
                             TwoColumn(column, "Анамнеза", focusEncounter.HistoryOfPresentIllness);
                             TwoColumn(column, "Проценка", focusEncounter.Assessment);
                             TwoColumn(column, "План", focusEncounter.Plan);
-                            TwoColumn(column, "Забелешка", focusEncounter.Notes ?? focusEncounter.ClinicalNotes);
+                            TwoColumn(column, "Забелешка", focusEncounter.Notes ?? focusEncounter.ClinicalNotes ?? focusEncounter.Appointment?.ClinicalNotes);
                         });
 
                         Section(column, "ДИЈАГНОЗА ЗА ОВОЈ ПРЕГЛЕД (МКБ-10)", () =>
