@@ -21,7 +21,11 @@
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader
 					Title="Начини на апликација"
-					Subtitle="Регистар на начини на апликација за лекови">
+					Subtitle="Регистар на начини на апликација за лекови"
+					PrimaryButtonText="Нов начин"
+					PrimaryButtonCommand="{Binding AddCommand}"
+					PrimaryButtonIsEnabled="{Binding CanManage}"
+					ShowPrimaryButton="True">
 					<controls:FFPageHeader.HeaderContent>
 						<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
 							<controls:FFButton
@@ -34,13 +38,6 @@
 								Placeholder="Внесете нов начин..."
 								Text="{Binding NewRegime, Mode=TwoWay}"
 								WidthRequest="240" />
-							<controls:FFButton
-								ButtonKind="Primary"
-								Command="{Binding AddCommand}"
-								IsEnabled="{Binding CanManage}"
-								HeightRequestEx="40"
-								Text="Нов начин"
-								WidthRequestEx="130" />
 						</HorizontalStackLayout>
 					</controls:FFPageHeader.HeaderContent>
 				</controls:FFPageHeader>
