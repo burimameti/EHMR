@@ -941,8 +941,8 @@
 						<HorizontalStackLayout Grid.Column="3" Spacing="5" VerticalOptions="Center"><CheckBox IsChecked="{Binding CancelledStatusSelected, Mode=TwoWay}" VerticalOptions="Center" /><Label Text="Откажан" FontSize="12" TextColor="{StaticResource SparkTextPrimary}" VerticalOptions="Center" /></HorizontalStackLayout>
 					</Grid>
 					<Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
-						<controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="42" Text="Откажи" WidthRequestEx="130" />
-						<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SparkStatusSuccessText}" ButtonKind="Primary" Command="{Binding SaveCommand}" HeightRequestEx="42" IsEnabled="{Binding CanAdminEditEncounter}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
+						<controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="40" Text="Откажи" WidthRequestEx="130" />
+						<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SparkStatusSuccessText}" ButtonKind="Primary" Command="{Binding SaveCommand}" HeightRequestEx="40" IsEnabled="{Binding CanAdminEditEncounter}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
 					</Grid>
 				</Grid>
 			</Border>
