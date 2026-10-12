@@ -60,12 +60,12 @@
 
 						<Label
 							FontAttributes="Bold"
-							FontSize="28"
+							FontSize="20"
 							Text="{Binding HeaderTitle}"
 							TextColor="{StaticResource SparkTextPrimary}" />
 
 						<Label
-							FontSize="14"
+							FontSize="12"
 							Text="{Binding HeaderSubtitle}"
 							TextColor="{StaticResource SparkTextSecondary}" />
 
