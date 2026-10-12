@@ -103,24 +103,13 @@
 				Grid.Row="0"
 				Margin="16"
 				Style="{StaticResource PageCardStyleDashboard}">
-				<Grid
-					ColumnDefinitions="*,Auto"
-					ColumnSpacing="12"
-					VerticalOptions="Center">
-					<sc:FFPageHeader
-						Title="Извештаи за пациенти"
-						Grid.Column="0"
-						Subtitle="Преглед, филтрирање и генерирање извештаи за пациенти" />
-					<sc:FFButton
-						Grid.Column="1"
-						ButtonKind="Secondary"
-						Command="{Binding GoBackCommand}"
-						ContentPadding="0,0"
-						FontSizeEx="14"
-						HeightRequestEx="16"
-						MaximumHeightRequest="36"
-						Text="Назад" />
-				</Grid>
+				<sc:FFPageHeader
+					Title="Извештаи за пациенти"
+					Subtitle="Преглед, филтрирање и генерирање извештаи за пациенти">
+					<sc:FFPageHeader.HeaderContent>
+						<sc:FFButton ButtonKind="Secondary" Command="{Binding GoBackCommand}" HeightRequestEx="40" Text="Назад" WidthRequestEx="130" />
+					</sc:FFPageHeader.HeaderContent>
+				</sc:FFPageHeader>
 			</Border>
 
 			<ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
