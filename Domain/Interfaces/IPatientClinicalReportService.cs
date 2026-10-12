@@ -7,6 +7,12 @@ namespace EHMR.Domain.Interfaces;
 
 public interface IPatientClinicalReportService
 {
+    Task<string> GenerateHtmlAsync(
+        Guid patientId,
+        Guid? encounterId = null,
+        Guid? appointmentId = null,
+        string? title = null);
+
     Task<string> GeneratePdfAsync(
         Guid patientId,
         Guid? encounterId = null,
