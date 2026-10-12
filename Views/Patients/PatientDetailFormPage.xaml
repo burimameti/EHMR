@@ -1230,7 +1230,7 @@
 														ButtonKind="Secondary"
 														Command="{Binding UploadDocumentCommand}"
 														ContentPadding="10,0"
-														HeightRequestEx="36"
+														HeightRequestEx="40"
 														IsEnabled="{Binding IsUploadingDocument, Converter={StaticResource InvertedBoolConverter}}"
 														Text="📎 Прикачи документ" />
 													<Label
@@ -1398,7 +1398,7 @@
 											<controls:FFButton
 												ButtonKind="Secondary"
 												Command="{Binding UploadDocumentCommand}"
-												HeightRequestEx="36"
+												HeightRequestEx="40"
 												IsVisible="{Binding IsEditMode}"
 												Text="📎 Прикачи решение за неактивност" />
 										</VerticalStackLayout>
