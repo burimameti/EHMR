@@ -10,7 +10,7 @@ public partial class FFButton : ContentView
     {
         InitializeComponent();
         ApplyKind();
-
+        ApplyContainerProperties();
         ApplyCornerRadius();
 
         var pointer = new PointerGestureRecognizer();
@@ -64,8 +64,21 @@ public partial class FFButton : ContentView
     {
         // Keep the same geometry regardless of available width. Width constraints
         // are handled by the layout; they must not silently change button padding.
-        Container.MinimumHeightRequest = Math.Max(34, HeightRequestEx);
+        if (Container is not null)
+            Container.MinimumHeightRequest = Math.Max(34, HeightRequestEx);
+        ApplyContainerProperties();
         ApplyCornerRadius();
+    }
+
+    private void ApplyContainerProperties()
+    {
+        if (Container is null)
+            return;
+
+        Container.MinimumHeightRequest = Math.Max(34, HeightRequestEx);
+        Container.MinimumWidthRequest = WidthRequestEx;
+        Container.Padding = ContentPadding;
+        Container.HorizontalOptions = HorizontalOptionsEx;
     }
 
     private void ApplyCornerRadius()
@@ -100,15 +113,15 @@ public partial class FFButton : ContentView
 
     public static readonly BindableProperty HeightRequestExProperty =
         BindableProperty.Create(nameof(HeightRequestEx), typeof(double), typeof(FFButton), 40d,
-            propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumHeightRequest=Math.Max(34, (double)v));
+            propertyChanged: (b, _, _) => ((FFButton)b).ApplyContainerProperties());
 
     public static readonly BindableProperty WidthRequestExProperty =
         BindableProperty.Create(nameof(WidthRequestEx), typeof(double), typeof(FFButton), -1d,
-            propertyChanged: (b, _, v) => ((FFButton)b).Container.MinimumWidthRequest=(double)v);
+            propertyChanged: (b, _, _) => ((FFButton)b).ApplyContainerProperties());
 
     public static readonly BindableProperty ContentPaddingProperty =
         BindableProperty.Create(nameof(ContentPadding), typeof(Thickness), typeof(FFButton), new Thickness(12, 0),
-            propertyChanged: (b, _, v) => ((FFButton)b).Container.Padding=(Thickness)v);
+            propertyChanged: (b, _, _) => ((FFButton)b).ApplyContainerProperties());
 
     public static readonly BindableProperty CornerRadiusProperty =
         BindableProperty.Create(nameof(CornerRadius), typeof(float), typeof(FFButton), 6f,
@@ -125,7 +138,7 @@ public partial class FFButton : ContentView
 
     public static readonly BindableProperty HorizontalOptionsExProperty =
         BindableProperty.Create(nameof(HorizontalOptionsEx), typeof(LayoutOptions), typeof(FFButton), LayoutOptions.Center,
-            propertyChanged: (b, _, v) => ((FFButton)b).Container.HorizontalOptions=(LayoutOptions)v);
+            propertyChanged: (b, _, _) => ((FFButton)b).ApplyContainerProperties());
 
     // Computed color props — driven by ApplyKind()
     public static readonly BindableProperty BackgroundColorExProperty =
