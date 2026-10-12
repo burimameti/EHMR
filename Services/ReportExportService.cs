@@ -91,7 +91,9 @@ namespace EHMR.Services;
                     header.Item().PaddingTop(5).BorderBottom(1).BorderColor("#000000")
                         .PaddingBottom(5).Row(row =>
                         {
-                            row.RelativeItem().Text($"ПЕРИОД: {startDate:dd.MM.yyyy} – {endDate:dd.MM.yyyy}")
+                            row.RelativeItem().Text(reportTitle.Contains("сите периоди", StringComparison.OrdinalIgnoreCase)
+                                ? "ПЕРИОД: СИТЕ ПЕРИОДИ"
+                                : $"ПЕРИОД: {startDate:dd.MM.yyyy} – {endDate:dd.MM.yyyy}")
                                 .FontSize(8);
                             row.ConstantItem(150).AlignRight()
                                 .Text($"ДАТУМ НА ИЗВЕШТАЈ: {DateTime.Now:dd.MM.yyyy}")
@@ -221,9 +223,13 @@ namespace EHMR.Services;
 
     private static double GetColumnWidth(SparkGridColumn column)
     {
-        return column.Width.IsAbsolute&&column.Width.Value>0
+        if(column.Width.IsAbsolute && column.Width.Value > 0)
+            return column.Width.Value;
+
+        // Preserve the relative proportions configured for the grid columns.
+        return column.Width.IsStar && column.Width.Value > 0
             ? column.Width.Value
-            : 180d;
+            : 1d;
     }
 
     private static string CellToText(object? value) => value switch
