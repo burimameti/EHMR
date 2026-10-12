@@ -49,6 +49,8 @@ public partial class EncounterQuickPreviewPage : ContentPage
                 BindingContext = encounter;
                 await LoadDynamicReportSectionsAsync(encounter.PatientId, encounter.Id);
                 var html = await BuildReportHtmlAsync(encounter.PatientId, encounter.Id);
+                _isPrintDocumentReady = false;
+                _printDocumentLoaded = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 PrintWebView.Source = new HtmlWebViewSource { Html = html };
             }
             catch (Exception ex)
