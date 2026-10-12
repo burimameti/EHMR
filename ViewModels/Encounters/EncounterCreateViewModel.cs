@@ -269,8 +269,8 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
     {
         if(_isLoading) return;
 
-        // Shell can reuse this page/view-model when the user leaves for another
-        // menu section and later opens "Нов преглед" again. Treat that as a new draft.
+        // The shared lifecycle tracker detects re-entry; this view-model owns the
+        // entity-specific reset so deliberate patient/appointment context is preserved.
         if(_formSessions.HasCompletedEntry(this))
         {
             ResetForNewSession();
@@ -321,13 +321,13 @@ public partial class EncounterCreateViewModel : EncounterBaseViewModel
                 finally { _isApplyingContext=false; }
                 _patientContext.SelectedItem=null;
                 RefreshSidePanel();
-                _isLoaded=true;
+                _formSessions.MarkEntryCompleted(this);
                 return;
             }
             IsPatientLockedFromContext=false;
             IsEditMode=true;
             IsReadOnly=false;
-            _isLoaded=true;
+            _formSessions.MarkEntryCompleted(this);
         }
         finally { _isLoading=false; }
     }
