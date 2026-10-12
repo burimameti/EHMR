@@ -14,7 +14,6 @@
 	<Color x:Key="FFControlInputErrorBackground">#FFF8F8</Color>
 	<Color x:Key="FFControlInputDisabledBackground">#F8FAFC</Color>
 	<x:Double x:Key="FFControlInputHeight">36</x:Double>
-	<x:Double x:Key="FFControlInputCornerRadius">8</x:Double>
 	<x:Double x:Key="FFControlButtonHeight">40</x:Double>
 	<x:Double x:Key="FFControlButtonCornerRadius">6</x:Double>
 	<Thickness x:Key="FFControlButtonPadding">16,0</Thickness>
