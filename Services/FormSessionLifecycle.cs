@@ -31,7 +31,7 @@ public sealed class FormSessionLifecycle
     public void MarkEntryCompleted(object owner)
     {
         ArgumentNullException.ThrowIfNull(owner);
-        _sessions.GetOrCreateValue(owner).HasCompletedEntry = true;
+        _sessions.GetValue(owner, _ => new SessionState()).HasCompletedEntry = true;
     }
 
     /// <summary>
