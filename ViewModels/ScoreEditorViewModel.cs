@@ -31,9 +31,18 @@ public partial class ScoreEditorViewModel : ObservableObject, IDisposable
     private bool _suppressSearch;
 
     public ScoreEditorViewModel(IDbContextFactory<DesktopTherapyDbContext> dbFactory)
-        => _dbFactory=dbFactory;
+    {
+        _dbFactory = dbFactory;
+        Items.CollectionChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(HasItems));
+            OnPropertyChanged(nameof(HasNoItems));
+        };
+    }
 
     public ObservableCollection<ScoreRow> Items { get; } = new();
+    public bool HasItems => Items.Count > 0;
+    public bool HasNoItems => Items.Count == 0;
     public ObservableCollection<ScoreSuggestion> Suggestions { get; } = new();
     public ScoreRow? SelectedScore { get; private set; }
     public IReadOnlyList<Guid> DeletedIds => _deletedIds;
