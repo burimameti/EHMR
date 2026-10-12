@@ -19,38 +19,31 @@
 			RowDefinitions="Auto,*"
 			RowSpacing="16">
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
-					<VerticalStackLayout>
-						<Label
-							Style="{StaticResource PageHeaderTitleStyle}"
-							Text="Начини на апликација" />
-						<Label
-							Style="{StaticResource PageHeaderSubtitleStyle}"
-							Text="Регистар на начини на апликација за лекови" />
-					</VerticalStackLayout>
-					<HorizontalStackLayout
-						Grid.Column="1"
-						Spacing="8"
-						VerticalOptions="Center">
-						<controls:FFButton
-							ButtonKind="Secondary"
-							Command="{Binding GoBackCommand}"
-							HeightRequestEx="40"
-							Text="Назад"
-							WidthRequestEx="130" />
-						<Entry
-							Placeholder="Внесете нов начин..."
-							Text="{Binding NewRegime, Mode=TwoWay}"
-							WidthRequest="240" />
-						<controls:FFButton
-							ButtonKind="Primary"
-							Command="{Binding AddCommand}"
-							IsEnabled="{Binding CanManage}"
-							HeightRequestEx="40"
-						Text="Нов начин"
-						WidthRequestEx="130" />
-					</HorizontalStackLayout>
-				</Grid>
+				<controls:FFPageHeader
+					Title="Начини на апликација"
+					Subtitle="Регистар на начини на апликација за лекови">
+					<controls:FFPageHeader.HeaderContent>
+						<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+							<controls:FFButton
+								ButtonKind="Secondary"
+								Command="{Binding GoBackCommand}"
+								HeightRequestEx="40"
+								Text="Назад"
+								WidthRequestEx="130" />
+							<Entry
+								Placeholder="Внесете нов начин..."
+								Text="{Binding NewRegime, Mode=TwoWay}"
+								WidthRequest="240" />
+							<controls:FFButton
+								ButtonKind="Primary"
+								Command="{Binding AddCommand}"
+								IsEnabled="{Binding CanManage}"
+								HeightRequestEx="40"
+								Text="Нов начин"
+								WidthRequestEx="130" />
+						</HorizontalStackLayout>
+					</controls:FFPageHeader.HeaderContent>
+				</controls:FFPageHeader>
 			</Border>
 
 			<Border
