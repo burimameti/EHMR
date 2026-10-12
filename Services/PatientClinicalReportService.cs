@@ -183,8 +183,15 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
                     {
                         if(scores.Count==0) { Empty(column, "Нема внесени скорови."); return; }
                         foreach(var score in scores)
-                            Row(column, $"{score.ScoreText} — {(string.IsNullOrWhiteSpace(score.Number) ? "—" : score.Number)}",
-                                score.RecordedAt.ToLocalTime().ToString("dd.MM.yyyy"));
+                        {
+                            column.Item().PaddingVertical(3).BorderBottom(1).BorderColor("#E2E8F0").Row(row =>
+                            {
+                                row.RelativeItem().Text($"{score.ScoreText} — {(string.IsNullOrWhiteSpace(score.Number) ? "—" : score.Number)}")
+                                    .Bold().FontSize(9.5f);
+                                row.ConstantItem(82).AlignRight().Text(score.RecordedAt.ToLocalTime().ToString("dd.MM.yyyy"))
+                                    .FontSize(9);
+                            });
+                        }
                     });
 
                     Section(column, "ИСТОРИЈА НА ЛЕКОВИ (ДО 5)", () =>
