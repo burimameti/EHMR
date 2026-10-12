@@ -178,6 +178,7 @@ public partial class DoctorsListViewModel
             return;
 
         SelectedItemService.SelectedItem=doctor;
+        SelectedItemService.OpenInEditMode=false;
 
         await NavigationService.GoToAsync(
             AppRoutes.Doctors.Detail);
