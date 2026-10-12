@@ -74,7 +74,7 @@
 					IsEnabled="{Binding CanAdminEditEncounter}"
 					Style="{StaticResource CrudFormCardStyle}">
 					<controls:CustomScrollView ScrollBarColor="{StaticResource SparkAccentTeal}">
-						<VerticalStackLayout Spacing="20" Style="{StaticResource CrudFormContentStackStyle}">
+						<VerticalStackLayout Spacing="10" Style="{StaticResource CrudFormContentStackStyle}">
 
 							<!--  ── 1. ПАЦИЕНТ И РЕУМАТОЛОГ ─────────────────────  -->
 							<Border Margin="0,0,0,10" Style="{StaticResource CrudFormSectionCardStyle}">
@@ -954,7 +954,7 @@
 					</Grid>
 					<Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
 						<controls:FFButton Grid.Column="1" ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="42" Text="Откажи" WidthRequestEx="130" />
-						<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" HeightRequestEx="42" IsEnabled="{Binding CanAdminEditEncounter}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
+						<controls:FFButton Grid.Column="2" BackgroundColorEx="{StaticResource SparkStatusSuccessText}" ButtonKind="Primary" Command="{Binding SaveCommand}" HeightRequestEx="42" IsEnabled="{Binding CanAdminEditEncounter}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
 					</Grid>
 				</Grid>
 			</Border>
