@@ -53,143 +53,124 @@ namespace EHMR.Services;
         }
 
     public Task<string> ExportToPdfAsync(
-    string reportTitle,
-    string institutionName,
-    string generatedBy,
-    DateTime startDate,
-    DateTime endDate,
-    IReadOnlyList<SparkGridColumn> columns,
-    IReadOnlyList<SparkGridRow> rows,
-    string? selectedMedicine = null,
-    decimal? selectedMedicineTotalQuantity = null)
+        string reportTitle,
+        string institutionName,
+        string generatedBy,
+        DateTime startDate,
+        DateTime endDate,
+        IReadOnlyList<SparkGridColumn> columns,
+        IReadOnlyList<SparkGridRow> rows,
+        string? selectedMedicine = null,
+        decimal? selectedMedicineTotalQuantity = null)
     {
-        var exportColumns = columns.Where(c => c.CellType!=SparkGridCellType.Actions && !IsSensitiveIdentityColumn(c)).ToList();
+        var exportColumns = columns
+            .Where(c => c.CellType != SparkGridCellType.Actions &&
+                        !string.Equals(c.Key, "GroupExpand", StringComparison.OrdinalIgnoreCase) &&
+                        !IsSensitiveIdentityColumn(c))
+            .ToList();
         var path = BuildOutputPath(reportTitle, "pdf");
 
-        QuestPDF.Settings.License=LicenseType.Community;
+        QuestPDF.Settings.License = LicenseType.Community;
 
         Document.Create(container =>
         {
             container.Page(page =>
             {
-                page.Margin(20);
+                page.Margin(24);
                 page.Size(PageSizes.A4.Landscape());
                 page.DefaultTextStyle(x => x.FontSize(8).FontFamily("Arial"));
 
-                // ==========================================
-                // CLEAN PRINT HEADER
-                // ==========================================
-                page.Header().Column(col =>
+                page.Header().Column(header =>
                 {
-                    // No filled banner/card and no generated-by/confidential note.
-                    // Keep only a restrained document line around the actual header data.
-                    col.Item().BorderBottom(1).BorderColor("#000000").PaddingBottom(5).Table(table =>
-                    {
-                        table.ColumnsDefinition(cd =>
+                    header.Item().AlignCenter().Text(institutionName)
+                        .Bold().FontSize(13).FontColor("#000000");
+
+                    header.Item().PaddingTop(4).AlignCenter().Text(reportTitle)
+                        .Bold().FontSize(10).FontColor("#000000");
+
+                    header.Item().PaddingTop(5).BorderBottom(1).BorderColor("#000000")
+                        .PaddingBottom(5).Row(row =>
                         {
-                            cd.RelativeColumn(1.1f); // Logo placeholder
-                            cd.RelativeColumn(4.0f); // Institution + report title
-                            cd.RelativeColumn(2.0f); // Issue date
-                            cd.RelativeColumn(2.0f); // Period
+                            row.RelativeItem().Text($"ПЕРИОД: {startDate:dd.MM.yyyy} – {endDate:dd.MM.yyyy}")
+                                .FontSize(8);
+                            row.ConstantItem(150).AlignRight()
+                                .Text($"ДАТУМ НА ИЗВЕШТАЈ: {DateTime.Now:dd.MM.yyyy}")
+                                .FontSize(8);
                         });
-
-                        table.Cell().BorderRight(1).Padding(5).AlignCenter().AlignMiddle()
-                            .Border(1).BorderColor("#9CA3AF")
-                            .MinHeight(42)
-                            .Text("LOGO")
-                            .FontSize(8)
-                            .FontColor("#6B7280");
-
-                        table.Cell().BorderRight(1).Padding(5).Column(c =>
-                        {
-                            c.Item().Text(institutionName.ToUpper())
-                                   .Bold()
-                                   .FontSize(10)
-                                   .FontColor("#000000");
-
-                            // Keep the report title as a single clean line.
-                            c.Item().PaddingTop(2).Text(reportTitle)
-                                   .Bold()
-                                   .FontSize(11)
-                                   .FontColor("#1F2937");
-                        });
-
-                        table.Cell().BorderRight(1).Padding(5).Column(c =>
-                        {
-                            c.Item().Text($"ДАТУМ НА ИЗДАВАЊЕ: {DateTime.Now:dd.MM.yyyy}").FontSize(7);
-                        });
-
-                        table.Cell().Padding(5).Column(c =>
-                        {
-                            c.Item().Text("ОПСЕГ НА ПЕРИОД:").Bold().FontSize(8);
-                            c.Item().Text($"{startDate:dd.MM.yyyy} - {endDate:dd.MM.yyyy}").FontSize(8);
-
-                            if(IsMedicineConsumptionReport(reportTitle, selectedMedicine, selectedMedicineTotalQuantity))
-                            {
-                                c.Item().PaddingTop(3).Text("ВКУПНА КОЛИЧИНА НА ЛЕКОТ").Bold().FontSize(8);
-
-                                if(!string.IsNullOrWhiteSpace(selectedMedicine) && selectedMedicineTotalQuantity.HasValue)
-                                {
-                                    c.Item().Text($"{selectedMedicine} : {selectedMedicineTotalQuantity.Value:0.##}").FontSize(8);
-                                }
-                                else
-                                {
-                                    foreach(var item in GetMedicineConsumptionSummary(rows))
-                                        c.Item().Text($"{item.Medicine} : {item.Quantity}").FontSize(8);
-                                }
-                            }
-                        });
-                    });
                 });
 
-                // ==========================================
-                // CONTENT - Содржина на Табелата
-                // ==========================================
-                page.Content().Table(table =>
+                page.Content().PaddingTop(8).Column(contentColumn =>
                 {
-                    table.ColumnsDefinition(cols =>
+                    contentColumn.Item().Table(table =>
                     {
-                        foreach(var col in exportColumns)
-                            cols.RelativeColumn((float)GetColumnWidth(col));
-                    });
-
-                    table.Header(header =>
-                    {
-                        foreach(var col in exportColumns)
+                        table.ColumnsDefinition(cols =>
                         {
-                            header.Cell().Border(1).BorderColor("#000000").Background("#E5E7EB").Padding(4)
-                                .Text(col.Header).Bold();
+                            foreach(var column in exportColumns)
+                                cols.RelativeColumn((float)GetColumnWidth(column));
+                        });
+
+                        table.Header(header =>
+                        {
+                            foreach(var column in exportColumns)
+                            {
+                                header.Cell()
+                                    .Border(0.7f).BorderColor("#000000")
+                                    .Background("#E5E7EB")
+                                    .PaddingVertical(5).PaddingHorizontal(4)
+                                    .Text(column.Header).Bold().FontSize(7);
+                            }
+                        });
+
+                        foreach(var row in rows)
+                        {
+                            foreach(var column in exportColumns)
+                            {
+                                row.TryGetValue(column.Key, out var value);
+                                table.Cell()
+                                    .Border(0.5f).BorderColor("#555555")
+                                    .PaddingVertical(4).PaddingHorizontal(3)
+                                    .Text(CellToText(value)).FontSize(7);
+                            }
                         }
                     });
 
-                    foreach(var row in rows)
+                    if(IsMedicineConsumptionReport(reportTitle, selectedMedicine, selectedMedicineTotalQuantity))
                     {
-                        foreach(var col in exportColumns)
+                        contentColumn.Item().PaddingTop(8).AlignRight().Column(summary =>
                         {
-                            row.TryGetValue(col.Key, out var value);
-                            table.Cell().Border(1).BorderColor("#D1D5DB").Padding(3)
-                                .Text(CellToText(value));
-                        }
+                            if(!string.IsNullOrWhiteSpace(selectedMedicine) && selectedMedicineTotalQuantity.HasValue)
+                            {
+                                summary.Item().Text($"Лек: {selectedMedicine}").Bold().FontSize(9);
+                                summary.Item().Text($"Вкупна количина: {selectedMedicineTotalQuantity.Value:0.##}")
+                                    .Bold().FontSize(9);
+                            }
+                            else
+                            {
+                                foreach(var item in GetMedicineConsumptionSummary(rows))
+                                    summary.Item().Text($"Вкупна количина — {item.Medicine}: {item.Quantity}")
+                                        .FontSize(8);
+                            }
+                        });
                     }
                 });
 
-                // ==========================================
-                // FOOTER - Потпис и Страница
-                // ==========================================
-                page.Footer().Column(col =>
+                page.Footer().PaddingTop(8).Column(footer =>
                 {
-                    col.Item().PaddingTop(6).Row(row =>
+                    footer.Item().BorderTop(0.7f).BorderColor("#000000").PaddingTop(6).Row(row =>
                     {
-                        row.RelativeItem().Text(x =>
-                        {
-                            x.Span("Страница ");
-                            x.CurrentPageNumber();
-                            x.Span(" од ");
-                            x.TotalPages();
-                        });
-
-                        row.RelativeItem().AlignRight().Text($"Потпис на одговорно лице: ________________________________");
+                        row.RelativeItem().Text($"Датум: {DateTime.Now:dd.MM.yyyy}").FontSize(8);
+                        row.RelativeItem().Text("Извештајот го подготвил (име и презиме): __________________________")
+                            .FontSize(8);
+                        row.RelativeItem().AlignRight().Text("Потпис: __________________").FontSize(8);
                     });
+
+                    footer.Item().PaddingTop(4).AlignRight().Text(text =>
+                    {
+                        text.Span("Страница ");
+                        text.CurrentPageNumber();
+                        text.Span(" од ");
+                        text.TotalPages();
+                    }).FontSize(7);
                 });
             });
         }).GeneratePdf(path);
