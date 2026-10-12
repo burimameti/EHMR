@@ -71,9 +71,9 @@ public sealed class PatientClinicalReportService : IPatientClinicalReportService
         static string SectionHtml(string heading, string body) =>
             $"<section><h2>{E(heading)}</h2>{body}</section>";
         static string Field(string label, string? value) =>
-            $"<div class='field'><span>{E(label)}</span><strong>{E(value)}</strong></div>";
+            $"<div class='field'><span class='field-label'>{E(label)}</span><span class='field-value'>{E(value)}</span></div>";
         static string RowHtml(string heading, string? detail = null) =>
-            $"<div class='row'><strong>{E(heading)}</strong>{(string.IsNullOrWhiteSpace(detail) ? "" : $"<div>{E(detail)}</div>")}</div>";
+            $"<div class='row'><div class='row-title'>{E(heading)}</div>{(string.IsNullOrWhiteSpace(detail) ? "" : $"<div class='row-detail'>{E(detail)}</div>")}</div>";
         static string EmptyHtml(string value) => $"<p class='empty'>{E(value)}</p>";
 
         var html = new System.Text.StringBuilder();
