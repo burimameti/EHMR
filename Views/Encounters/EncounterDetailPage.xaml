@@ -552,7 +552,7 @@
 						Grid.Column="1"
 						ButtonKind="Secondary"
 						Command="{Binding CancelCommand}"
-						HeightRequestEx="42"
+						HeightRequestEx="40"
 						Text="Назад"
 						WidthRequestEx="130" />
 					<controls:FFButton
@@ -560,7 +560,7 @@
 						BackgroundColorEx="{StaticResource SidebarActiveBg}"
 						ButtonKind="Primary"
 						Command="{Binding EditCommand}"
-						HeightRequestEx="42"
+						HeightRequestEx="40"
 						IsVisible="{Binding CanShowEdit}"
 						Text="Уреди"
 						TextColorEx="{StaticResource SidebarActiveText}"
