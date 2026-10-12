@@ -29,7 +29,7 @@
 				<controls:FFPageHeader Title="Нов преглед" Subtitle="Креирање нов преглед">
 					<controls:FFPageHeader.HeaderContent>
 						<controls:FFButton
-							ButtonKind="Ghost"
+							ButtonKind="Secondary"
 							Command="{Binding CancelCommand}"
 							HeightRequestEx="40"
 							Text="Назад"
