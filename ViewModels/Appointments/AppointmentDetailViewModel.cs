@@ -1030,6 +1030,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         }
 
         _selectedItemService.SelectedItem=new Appointment { Id=Guid.Empty, PatientId=patient.Id };
+        _selectedItemService.OpenInEditMode=false; // patient-prefilled appointment is a new record, never Edit mode
         await NavigationService.GoToAsync(AppRoutes.Appointments.Detail);
     }
 
