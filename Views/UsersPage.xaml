@@ -8,7 +8,7 @@
 	x:Name="PageRoot"
 	x:DataType="viewModels:UsersViewModel"
 	BackgroundColor="{StaticResource PageBackground}">
-<Grid ColumnDefinitions="285,*">
+	<Grid ColumnDefinitions="285,*">
 
 		<!--  LEFT MENU  -->
 		<Border Grid.Column="0" StrokeThickness="0">
@@ -28,25 +28,25 @@
 					<controls:FFPageHeader
 						Title="Корисници"
 						Grid.Column="0"
-						Subtitle="Управување со кориснички сметки, безбедносни роли и системски пристап" >
-				<controls:FFPageHeader.HeaderContent>
-<controls:FFButton
-						ButtonKind="Secondary"
-						Command="{Binding GoBackCommand}"
-						HeightRequestEx="40"
-						Text="Назад"
-						WidthRequestEx="130" />
-			</controls:FFPageHeader.HeaderContent>
-		</controls:FFPageHeader>
+						Subtitle="Управување со кориснички сметки, безбедносни роли и системски пристап">
+						<controls:FFPageHeader.HeaderContent>
+							<controls:FFButton
+								ButtonKind="Secondary"
+								Command="{Binding GoBackCommand}"
+								HeightRequestEx="40"
+								Text="Назад"
+								WidthRequestEx="130" />
+						</controls:FFPageHeader.HeaderContent>
+					</controls:FFPageHeader>
 
 					<controls:FFButton
 						Grid.Column="1"
 						ButtonKind="Primary"
 						Command="{Binding NewCommand}"
 						HeightRequestEx="40"
-						WidthRequestEx="130"
 						IsVisible="{Binding CanCreate}"
-						Text="Нов" WidthRequestEx="160" />
+						Text="Нов"
+						WidthRequestEx="130" />
 				</Grid>
 			</Border>
 
@@ -59,12 +59,12 @@
 					<VerticalStackLayout Style="{StaticResource ListPageContentStackStyle}">
 						<controls:FFSectionCard>
 							<controls:SparkExplorerHeaderView
-															Buttons="{Binding Buttons}"
-															Pickers="{Binding Pickers}"
-															SearchCommand="{Binding SearchCommand}"
-															SearchPlaceholder="Пребарај по корисничко име, име или презиме..."
-															SearchText="{Binding SearchText}"
-															Tabs="{Binding Tabs}" />
+								Buttons="{Binding Buttons}"
+								Pickers="{Binding Pickers}"
+								SearchCommand="{Binding SearchCommand}"
+								SearchPlaceholder="Пребарај по корисничко име, име или презиме..."
+								SearchText="{Binding SearchText}"
+								Tabs="{Binding Tabs}" />
 						</controls:FFSectionCard>
 						<controls:FFSectionCard>
 							<controls:SparkDataGridView
