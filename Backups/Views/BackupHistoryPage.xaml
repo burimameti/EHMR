@@ -81,26 +81,20 @@
 			<!--  HEADER — same PageHeaderCardStyle + FFPageHeader as Dashboard  -->
 			<!--  =========================================================  -->
 			<Border Grid.Row="0" Style="{StaticResource PageHeaderCardStyle}">
-				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-					<controls:FFPageHeader
-						Title="Историја на бекапи"
-						Grid.Column="0"
-						Subtitle="Преглед на сите извршени бекап процеси." />
-
-					<HorizontalStackLayout
-						Grid.Column="1"
-						Spacing="10"
-						VerticalOptions="Center">
+				<controls:FFPageHeader
+					Title="Историја на бекапи"
+					Subtitle="Преглед на сите извршени бекап процеси.">
+					<controls:FFPageHeader.HeaderContent>
 						<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="{StaticResource SidebarActiveText}"
+							BackgroundColorEx="{StaticResource SidebarActiveBg}"
+							TextColorEx="{StaticResource SidebarActiveText}"
 							ButtonKind="Primary"
 							Command="{Binding RunBackupCommand}"
-							ContentPadding="20,0"
 							HeightRequestEx="40"
+							WidthRequestEx="130"
 							Text="Нов бекап" />
-					</HorizontalStackLayout>
-				</Grid>
+					</controls:FFPageHeader.HeaderContent>
+				</controls:FFPageHeader>
 			</Border>
 
 			<!--  =========================================================  -->
