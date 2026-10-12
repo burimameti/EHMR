@@ -632,7 +632,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             _loadedAppointmentSelection=selected;
             _selectedItemService.SelectedItem=null;
         }
-        else if(_hasLoadedExistingAppointment)
+        else if(_hasLoadedExistingAppointment && prefillPatientId is null)
         {
             selected=_loadedAppointmentSelection;
         }
