@@ -12,6 +12,7 @@ namespace EHMR.Services
         Task<AppointmentDetailDto> GetAppointmentContext();
         Task<PatientContextDto> GetPatientContext(Guid patientId);
         Task<List<ApplicationRegime>> GetApplicationRegimesAsync();
+        Task<List<string>> GetScoreSuggestionsAsync();
         Task<PatientScore> SavePatientScore(PatientScore score);
         Task UpdateAppointmentStatus(Guid appointmentId, AppointmentStatus newStatus);
         Task<List<Mkb10Code>> SearchMkb10Codes(string query, CancellationToken token);
@@ -200,6 +201,9 @@ var patients = await db.Patients
 
         public Task<List<ApplicationRegime>> GetApplicationRegimesAsync() =>
             _encounterService.GetApplicationRegimesAsync();
+
+        public Task<List<string>> GetScoreSuggestionsAsync() =>
+            _encounterService.GetScoreSuggestionsAsync();
 
         public async Task<PatientContextDto> GetPatientContext(Guid patientId)
         {
