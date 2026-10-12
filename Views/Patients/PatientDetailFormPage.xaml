@@ -719,7 +719,6 @@
 														</ScrollView>
 													</Border>
 												</VerticalStackLayout>
-											</VerticalStackLayout>
 
 											<Grid
 												ColumnDefinitions="*,*"
