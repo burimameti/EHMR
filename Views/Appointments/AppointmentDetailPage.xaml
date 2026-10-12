@@ -617,6 +617,7 @@
 											</BindableLayout.ItemTemplate>
 										</VerticalStackLayout>
 									</VerticalStackLayout>
+									</Border>
 
 								</Grid>
 
@@ -877,7 +878,8 @@
 										Text="{Binding Appointment.ClinicalNotes, TargetNullValue='Нема евидентирано.'}" />
 								</Grid>
 
-							</VerticalStackLayout>
+								</VerticalStackLayout>
+							</Border>
 
 							<!--  ══════════════════════════════════════════  -->
 							
