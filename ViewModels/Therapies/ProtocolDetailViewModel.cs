@@ -23,6 +23,7 @@ public partial class ProtocolDetailFormViewModel(
 
     private bool _hasInitialized;
     private bool _isCreateEntry;
+    private TherapyProtocol? _loadedProtocol;
 
     public bool CanCreate => authorizationService.CanPerform(Modules.Protocols, ModuleAction.Create);
     public bool CanUpdate => authorizationService.CanPerform(Modules.Protocols, ModuleAction.Edit);
@@ -37,12 +38,25 @@ public partial class ProtocolDetailFormViewModel(
     {
         var selected = selectedItemService.SelectedItem;
 
-        if(_hasInitialized && _isCreateEntry && selected == null)
+        // Consume the singleton navigation context once, otherwise a later
+        // "New Protocol" navigation can accidentally reopen the previous protocol.
+        if(selected is not null)
+        {
+            _loadedProtocol = selected;
+            selectedItemService.SelectedItem = null;
+        }
+        else if(_hasInitialized && !_isCreateEntry)
+        {
+            // Keep the current record when this same Edit page appears again.
+            selected = _loadedProtocol;
+        }
+
+        if(_hasInitialized && _isCreateEntry && selected is null)
             formSessions.BeginCreateEntry(this, ResetForNewProtocolSession);
 
         InitializeForm(selected);
-        _hasInitialized=true;
-        _isCreateEntry=selected == null;
+        _hasInitialized = true;
+        _isCreateEntry = selected is null;
 
         if(_isCreateEntry)
             formSessions.MarkEntryCompleted(this);
