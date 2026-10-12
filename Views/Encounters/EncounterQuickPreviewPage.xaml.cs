@@ -23,8 +23,8 @@ public partial class EncounterQuickPreviewPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        var encounter = _selectedItemService.SelectedItem ?? BindingContext as Encounter;
-        BindingContext = encounter;
+        var selectedEncounter = _selectedItemService.SelectedItem ?? BindingContext as Encounter;
+        var encounter = selectedEncounter;
 
         _isPrintDocumentReady = false;
         _printDocumentLoaded = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -38,6 +38,15 @@ public partial class EncounterQuickPreviewPage : ContentPage
         {
             try
             {
+                await using (var db = await _factory.CreateDbContextAsync())
+                {
+                    encounter = await db.Encounters.AsNoTracking()
+                        .Include(x => x.Patient).ThenInclude(x => x.Doctor).ThenInclude(x => x.User)
+                        .Include(x => x.Doctor).ThenInclude(x => x.User)
+                        .FirstOrDefaultAsync(x => x.Id == encounter.Id) ?? encounter;
+                }
+
+                BindingContext = encounter;
                 var html = await BuildReportHtmlAsync(encounter.PatientId, encounter.Id);
                 PrintWebView.Source = new HtmlWebViewSource { Html = html };
             }
