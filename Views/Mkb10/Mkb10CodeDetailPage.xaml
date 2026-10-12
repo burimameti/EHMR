@@ -39,62 +39,6 @@
 
 			<!--  =========================================================  -->
 
-			<Border
-				Padding="28"
-				BackgroundColor="{StaticResource SparkBackground}"
-				Stroke="{StaticResource SparkBorder}"
-				StrokeShape="RoundRectangle 0">
-
-				<Grid ColumnDefinitions="*,Auto">
-
-					<VerticalStackLayout Spacing="6">
-
-						<Label
-							FontAttributes="Bold"
-							FontSize="20"
-							Text="{Binding HeaderTitle}"
-							TextColor="{StaticResource SparkTextPrimary}" />
-
-						<Label
-							FontSize="12"
-							Text="{Binding HeaderSubtitle}"
-							TextColor="{StaticResource SparkTextSecondary}" />
-
-					</VerticalStackLayout>
-
-					<HorizontalStackLayout Grid.Column="1" Spacing="10">
-
-						<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="White"
-							ButtonKind="Primary"
-							Command="{Binding SaveCommand}"
-							IsVisible="{Binding IsEditMode}"
-							Text="Зачувај"
-							WidthRequest="160" />
-
-						<controls:FFButton
-							ButtonKind="Secondary"
-							Command="{Binding CancelCommand}"
-							IsVisible="{Binding IsEditMode}"
-							Text="Cancel"
-							WidthRequest="160" />
-
-						<controls:FFButton
-						BackgroundColorEx="{StaticResource SidebarActiveBg}"
-						TextColorEx="White"
-							ButtonKind="Primary"
-							Command="{Binding ToggleEditModeCommand}"
-							IsVisible="{Binding IsReadOnly}"
-							Text="Уреди"
-							WidthRequest="160" />
-
-					</HorizontalStackLayout>
-
-				</Grid>
-
-			</Border>
-
 			<!--  =========================================================  -->
 			<!--  FORM  -->
 			<!--  =========================================================  -->
