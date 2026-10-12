@@ -383,7 +383,7 @@
 									RowDefinitions="Auto,Auto,Auto,Auto"
 									RowSpacing="12">
 
-									<VerticalStackLayout Grid.ColumnSpan="1" Spacing="5">
+									<VerticalStackLayout Grid.ColumnSpan="2" Spacing="5">
 										<Label
 											FontAttributes="Bold"
 											FontSize="11"
@@ -573,8 +573,10 @@
                                             </VerticalStackLayout>
                                         </Border>
 
-                                        <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource CrudFormSectionCardStyle}">
-                                            <VerticalStackLayout Spacing="8">
+                                        <VerticalStackLayout
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+										Spacing="8">
 										<Label
 											FontAttributes="Bold"
 											FontSize="11"
@@ -617,7 +619,6 @@
 											</BindableLayout.ItemTemplate>
 										</VerticalStackLayout>
 									</VerticalStackLayout>
-									</Border>
 
 								</Grid>
 
@@ -705,8 +706,7 @@
 							<!--  ══════════════════════════════════════════  -->
 							<!--  4. ЛЕКОВИ  -->
 							<!--  ══════════════════════════════════════════  -->
-							<Border Style="{StaticResource CrudFormSectionCardStyle}" IsVisible="{Binding SelectedPatientForAppointment, Converter={StaticResource SparkNotNullConverter}}">
-								<VerticalStackLayout Spacing="12">
+							<VerticalStackLayout Spacing="12">
 
 								<controls:CrudSectionHeader Title="ЛЕКОВИ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
@@ -821,16 +821,13 @@
 									</VerticalStackLayout>
 								</VerticalStackLayout>
 
-								</VerticalStackLayout>
-								</Grid>
-							</Border>
+							</VerticalStackLayout>
 						</Grid>
 
 							<!--  ══════════════════════════════════════════  -->
 							<!--  2. ТЕРМИН  -->
 							<!--  ══════════════════════════════════════════  -->
-							<Border Style="{StaticResource CrudFormSectionCardStyle}">
-								<VerticalStackLayout Spacing="12">
+							<VerticalStackLayout Spacing="12">
 								<controls:CrudSectionHeader Title="ТЕРМИН" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 								<Grid ColumnDefinitions="1.4*,1*" ColumnSpacing="16">
 									<Grid Grid.Column="0" ColumnDefinitions="Auto,*" ColumnSpacing="12" VerticalOptions="Center">
@@ -839,13 +836,11 @@
 										<Label Grid.Column="1" Padding="12,8" IsVisible="{Binding IsReadOnly}" Style="{StaticResource CrudFormValueSurfaceStyle}" Text="{Binding Appointment.ScheduledStart, StringFormat='{:d.M.yyyy}'}" TextColor="{StaticResource SparkTextPrimary}" />
 									</Grid>
 								</Grid>
-								</VerticalStackLayout>
-							</Border>
+							</VerticalStackLayout>
 
 							<!--  5. ЗАБЕЛЕШКА  -->
 							<!--  ══════════════════════════════════════════  -->
-							<Border Style="{StaticResource CrudFormSectionCardStyle}">
-								<VerticalStackLayout Spacing="12">
+							<VerticalStackLayout Spacing="12">
 
 								<controls:CrudSectionHeader Title="ЗАБЕЛЕШКА" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
@@ -879,8 +874,7 @@
 										Text="{Binding Appointment.ClinicalNotes, TargetNullValue='Нема евидентирано.'}" />
 								</Grid>
 
-								</VerticalStackLayout>
-							</Border>
+							</VerticalStackLayout>
 
 							<!--  ══════════════════════════════════════════  -->
 							
