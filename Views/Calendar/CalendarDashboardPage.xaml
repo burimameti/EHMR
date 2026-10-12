@@ -810,7 +810,7 @@
 										ButtonKind="Primary"
 										Command="{Binding CreateNewEncounterForSelectedDayCommand}"
 										FontFamily="FASolid"
-										HeightRequestEx="44"
+										HeightRequestEx="40"
 										HorizontalOptionsEx="Fill"
 										Text="&#xf271; Нов преглед"
 										TextColorEx="White" />
