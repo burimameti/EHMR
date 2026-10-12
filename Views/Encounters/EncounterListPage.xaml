@@ -51,7 +51,7 @@
 						HeightRequestEx="40"
 						IsVisible="{Binding CanCreate}"
 						Text="Нов преглед"
-						TextColorEx="{StaticResource White}" />-->
+						TextColorEx="{StaticResource White}" WidthRequestEx="160" />-->
 				</Grid>
 			</Border>
 
