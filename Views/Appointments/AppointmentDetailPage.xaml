@@ -56,6 +56,10 @@
 				<controls:FFPageHeader
                         Title="{Binding HeaderTitle}"
                         Subtitle="{Binding HeaderSubtitle}"
+                        PrimaryButtonText="Уреди"
+                        PrimaryButtonCommand="{Binding ToggleEditModeCommand}"
+                        PrimaryButtonIsEnabled="{Binding CanEditAppointment}"
+                        ShowPrimaryButton="{Binding CanEditAppointment}"
                         SecondaryButtonText="Печати / PDF"
                         SecondaryButtonCommand="{Binding GenerateClinicalReportCommand}"
                         SecondaryButtonIsEnabled="{Binding CanPrint}"
@@ -75,15 +79,7 @@
 								IsVisible="{Binding IsNewAppointment, Converter={StaticResource InverseBoolConverter}}"
 								Text="{Binding Appointment.Status, Converter={StaticResource AppointmentStatusDisplayConverter}}"
 								TextColor="White" />
-							<controls:FFButton
-								ButtonKind="Secondary"
-								Command="{Binding ToggleEditModeCommand}"
-								ContentPadding="22,0"
-								HeightRequestEx="40"
-								IsEnabled="{Binding CanEditAppointment}"
-								IsVisible="{Binding CanEditAppointment}"
-								Text="Уреди"
-								WidthRequestEx="130" />
+							
 						</HorizontalStackLayout>
 					
 						</HorizontalStackLayout>
