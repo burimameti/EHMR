@@ -22,6 +22,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     private Appointment? _originalAppointment;
     private Appointment? _loadedAppointmentSelection;
     private bool _hasLoadedExistingAppointment;
+    private bool _loadedAppointmentOpenInEditMode;
     private bool _isNewAppointmentMode;
     private bool _isModalReturnMode;
     private bool _isApplyingAutomaticSlot;
@@ -631,11 +632,15 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         if(selected is not null)
         {
             _loadedAppointmentSelection=selected;
+            _loadedAppointmentOpenInEditMode=_selectedItemService.OpenInEditMode;
             _selectedItemService.SelectedItem=null;
         }
         else if(_hasLoadedExistingAppointment && prefillPatientId is null)
         {
             selected=_loadedAppointmentSelection;
+            // Re-entry into the same Edit page must preserve its mode even if
+            // another navigation changed the singleton flag in the meantime.
+            _selectedItemService.OpenInEditMode=_loadedAppointmentOpenInEditMode;
         }
 
         if(selected==null)
