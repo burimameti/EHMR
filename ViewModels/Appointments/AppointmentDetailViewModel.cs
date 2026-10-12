@@ -623,6 +623,7 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
             prefillPatientId=selected.PatientId;
             _isModalReturnMode=true;
             selected=null;
+            _selectedItemService.SelectedItem=null; // consume the patient-prefill sentinel too
         }
 
         // SelectedItemService is a singleton. Consume navigation context once captured,
