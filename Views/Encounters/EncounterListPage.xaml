@@ -29,30 +29,13 @@
 			RowDefinitions="Auto,*"
 			RowSpacing="0">
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-					<controls:FFPageHeader
-						Title="Прегледи"
-						Grid.Column="0"
-						Subtitle="Преглед, пребарување и управување со медицински прегледи">
-						<controls:FFPageHeader.HeaderContent>
-							<controls:FFButton
-								ButtonKind="Secondary"
-								Command="{Binding GoBackCommand}"
-								HeightRequestEx="40"
-								Text="Назад"
-								WidthRequestEx="130" />
-						</controls:FFPageHeader.HeaderContent>
-					</controls:FFPageHeader>
-					<!--<controls:FFButton
-						Grid.Column="1"
-						BackgroundColorEx="{StaticResource SparkButtonSecondaryBg}"
-						ButtonKind="Primary"
-						Command="{Binding NewCommand}"
-						HeightRequestEx="40"
-						IsVisible="{Binding CanCreate}"
-						Text="Нов преглед"
-						TextColorEx="{StaticResource White}" WidthRequestEx="160" />-->
-				</Grid>
+				<controls:FFPageHeader
+					Title="Прегледи"
+					Subtitle="Преглед, пребарување и управување со медицински прегледи">
+					<controls:FFPageHeader.HeaderContent>
+						<controls:FFButton ButtonKind="Secondary" Command="{Binding GoBackCommand}" HeightRequestEx="40" Text="Назад" WidthRequestEx="130" />
+					</controls:FFPageHeader.HeaderContent>
+				</controls:FFPageHeader>
 			</Border>
 
 			<Border
