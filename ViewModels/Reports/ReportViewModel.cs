@@ -932,13 +932,6 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
         Buttons.Add(new SparkButtonItem
         {
-            Label="← Назад",
-            IsPrimary=false,
-            Command=GoBackCommand
-        });
-
-        Buttons.Add(new SparkButtonItem
-        {
             Label="Генерирај PDF",
             IsPrimary=true,
             IsEnabled=CanCreate,
