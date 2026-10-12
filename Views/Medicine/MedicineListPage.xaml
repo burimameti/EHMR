@@ -267,7 +267,6 @@
 										BackgroundColorEx="{StaticResource SidebarActiveBg}"
 										ButtonKind="Primary"
 										Command="{Binding NewMedicineCommand}"
-										ContentPadding="18,0"
 										HeightRequestEx="40"
 										Text="Нов лек"
 										TextColorEx="White" />
@@ -315,7 +314,6 @@
 										BackgroundColorEx="{StaticResource SidebarActiveBg}"
 										ButtonKind="Primary"
 										Command="{Binding AddApplicationRegimeCommand}"
-										ContentPadding="18,0"
 										HeightRequestEx="40"
 										Text="Додади начин"
 										TextColorEx="White" />
@@ -363,7 +361,6 @@
 										BackgroundColorEx="{StaticResource SidebarActiveBg}"
 										ButtonKind="Primary"
 										Command="{Binding AddClinicalScoreCommand}"
-										ContentPadding="18,0"
 										HeightRequestEx="40"
 										Text="Нов скор"
 										TextColorEx="White" />
