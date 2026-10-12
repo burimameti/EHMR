@@ -111,29 +111,21 @@ public partial class EncounterQuickPreviewPage : ContentPage
         html.Append("</style></head><body>");
         html.Append($"<div class='header'><div><div class='org'>EHMR</div><h1>{E(reportTitle)}</h1></div><div class='meta'><div>Број: <b>{E(encounter?.EncounterNumber)}</b></div><div>Датум: <b>{E(encounter?.EncounterDate.ToString("dd.MM.yyyy HH:mm"))}</b></div></div></div>");
 
-        var nationalId = patient.NationalId;
-        var maskedId = string.IsNullOrWhiteSpace(nationalId) ? "—" :
-            nationalId.Length <= 4 ? new string('•', nationalId.Length) : new string('•', nationalId.Length - 4) + nationalId[^4..];
         var doctorName = encounter?.Doctor?.FullName ?? patient.Doctor?.FullName;
         var fields = new System.Text.StringBuilder("<div class='grid'>");
         fields.Append(Field("Пациент", patient.FullName)).Append(Field("СЗБО", patient.SzboNumber))
-            .Append(Field("ЕМБГ", maskedId)).Append(Field("Датум на раѓање", patient.BirthDate.ToString("dd.MM.yyyy")))
+            .Append(Field("Датум на раѓање", patient.BirthDate.ToString("dd.MM.yyyy")))
             .Append(Field("Пол", patient.Gender.ToString())).Append(Field("Телефон", patient.Phone))
             .Append(Field("Адреса", JoinAddress(patient.Address, patient.City, patient.PostalCode)))
             .Append(Field("Реуматолог", doctorName));
         if (encounter != null) fields.Append(Field("Датум на преглед", encounter.EncounterDate.ToString("dd.MM.yyyy HH:mm")));
         fields.Append("</div>");
-        html.Append(SectionHtml("ОСНОВНИ ИНФОРМАЦИИ", fields.ToString()));
+        html.Append(SectionHtml("ОСНОВНИ ПОДАТОЦИ", fields.ToString()));
 
         if (encounter != null)
         {
             var details = new System.Text.StringBuilder("<div class='grid'>");
             details.Append(Field("Број на преглед", encounter.EncounterNumber))
-                .Append(Field("Причина за посета", encounter.ReasonForVisit ?? encounter.Appointment?.ReasonForVisit))
-                .Append(Field("Главна тегоба", encounter.ChiefComplaint))
-                .Append(Field("Анамнеза", encounter.HistoryOfPresentIllness))
-                .Append(Field("Проценка", encounter.Assessment)).Append(Field("План", encounter.Plan))
-                .Append(Field("Забелешка", encounter.Notes ?? encounter.ClinicalNotes ?? encounter.Appointment?.ClinicalNotes))
                 .Append("</div>");
             html.Append(SectionHtml("ПОДАТОЦИ ЗА ПРЕГЛЕДОТ", details.ToString()));
 
@@ -151,8 +143,8 @@ public partial class EncounterQuickPreviewPage : ContentPage
 
             if (next != null)
             {
-                var nextFields = "<div class='grid'>" + Field("Датум и време", next.ScheduledStart.ToString("dd.MM.yyyy HH:mm")) +
-                    Field("Лекар", next.Doctor?.FullName) + Field("Причина", next.ReasonForVisit) +
+                var nextFields = "<div class='grid'>" + Field("Датум на преглед", next.ScheduledStart.ToString("dd.MM.yyyy")) +
+                    Field("Матичен Реуматолог", next.Doctor?.FullName) +
                     Field("Статус", next.Status.ToString()) + "</div>";
                 html.Append(SectionHtml("ПОДАТОЦИ ЗА СЛЕДНА КОНТРОЛА", nextFields));
             }
