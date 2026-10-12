@@ -442,7 +442,7 @@
 
 								<VerticalStackLayout
 									BindableLayout.EmptyView="Нема внесени лекови."
-									BindableLayout.ItemsSource="{Binding EncounterMedicines}"
+									BindableLayout.ItemsSource="{Binding CurrentPatientMedicines}"
 									Spacing="5">
 									<BindableLayout.ItemTemplate>
 										<DataTemplate x:DataType="entities:PatientMedicine">
