@@ -16,5 +16,11 @@ namespace EHMR.Views.Prescription
             BindingContext=_viewModel;
             MenuHost.Content=_menuVew;
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            _ = _viewModel.OnPageAppearingAsync();
+        }
     }
 }
