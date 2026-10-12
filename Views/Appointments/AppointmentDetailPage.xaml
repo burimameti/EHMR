@@ -82,7 +82,8 @@
 								HeightRequestEx="40"
 								IsEnabled="{Binding CanEditAppointment}"
 								IsVisible="{Binding CanEditAppointment}"
-								Text="Уреди" />
+								Text="Уреди"
+								WidthRequestEx="130" />
 						</HorizontalStackLayout>
 					
 						</HorizontalStackLayout>
