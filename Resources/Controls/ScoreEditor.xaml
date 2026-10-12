@@ -32,7 +32,7 @@
 	<VerticalStackLayout Spacing="8">
 
 		<!--  Акција за додавање скор; насловот го прикажува родителската секција  -->
-		<Grid ColumnDefinitions="*,Auto" HeightRequest="34">
+		<Grid ColumnDefinitions="*,Auto" HeightRequest="34" IsVisible="{Binding IsEditable}">
 			<controls:FFButton
 				Grid.Column="1"
 				ButtonKind="Primary"
@@ -100,7 +100,7 @@
 
 				<Grid
 					ColumnDefinitions="*,90,44"
-					ColumnSpacing="8"
+					ColumnSpacing="0"
 					Style="{StaticResource CrudFormTableHeaderGridStyle}">
 					<Label
 						Grid.Column="0"
@@ -115,6 +115,8 @@
 						HorizontalTextAlignment="Center"
 						Style="{StaticResource ScoreHeaderLabelStyle}"
 						Text="АКЦИИ" />
+					<BoxView Grid.Column="1" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+					<BoxView Grid.Column="2" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
 				</Grid>
 
 				<VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" Spacing="0">
@@ -132,7 +134,7 @@
 								<Grid
 									Padding="10,6"
 									ColumnDefinitions="*,90,44"
-									ColumnSpacing="8">
+									ColumnSpacing="0">
 									<Label
 										Grid.Column="0"
 										FontSize="11"
@@ -160,6 +162,8 @@
 											<TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.RemoveCommand}" CommandParameter="{Binding .}" />
 										</Label.GestureRecognizers>
 									</Label>
+									<BoxView Grid.Column="1" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+									<BoxView Grid.Column="2" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
 								</Grid>
 								<BoxView
 									Grid.Row="1"
