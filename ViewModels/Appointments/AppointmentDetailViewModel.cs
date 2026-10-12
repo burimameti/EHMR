@@ -702,6 +702,14 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
     //    so we don't pre-seed those collections here just to overwrite them a moment later.
     private async Task LoadNewAppointmentAsync(Guid? prefillPatientId)
     {
+        // Entering Create explicitly ends any cached Edit session on this VM.
+        // This is important for patient-prefilled appointments, where the page can
+        // be revisited after the singleton navigation sentinel has been consumed.
+        _loadedAppointmentSelection=null;
+        _hasLoadedExistingAppointment=false;
+        _loadedAppointmentOpenInEditMode=false;
+        _selectedItemService.OpenInEditMode=false;
+
         _isNewAppointmentMode=true;
         _originalAppointment=null;
         Appointment=CreateBlankAppointment();
