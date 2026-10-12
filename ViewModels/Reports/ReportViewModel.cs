@@ -848,7 +848,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
         {
             var periodPicker = new SparkPickerItem
             {
-                Placeholder = "Тип на период",
+                Placeholder = "По период",
                 SelectedItem = SelectedPeriodTypeLabel
             };
             foreach(var option in PeriodTypeOptions)
