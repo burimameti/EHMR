@@ -170,6 +170,7 @@ public abstract partial class BaseViewModel<T> : ObservableObject, IDisposable
             "Не");
         if(!confirmed) return;
         SelectedItemService.SelectedItem=default;
+        SelectedItemService.OpenInEditMode=false; // a new record must never inherit the previous Edit mode
         await NavigationService.GoToAsync(DetailRoute);
     }
 
