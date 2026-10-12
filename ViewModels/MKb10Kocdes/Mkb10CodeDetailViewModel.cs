@@ -97,6 +97,8 @@ public partial class Mkb10CodeDetailViewModel : ObservableObject
         }
         else
         {
+            // A new code must never inherit the read-only/edit state of a prior selection.
+            _selected.OpenInEditMode=false;
             Mkb10Code=new Mkb10Code
             {
                 IsActive=true
