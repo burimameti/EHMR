@@ -52,7 +52,7 @@ public partial class EncounterQuickPreviewPage : ContentPage
                 ?? throw new InvalidOperationException("Windows WebView не успеа да се иницијализира.");
 
             var navigation = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            EventHandler<CoreWebView2NavigationCompletedEventArgs>? completed = null;
+            Microsoft.UI.Xaml.TypedEventHandler<CoreWebView2, CoreWebView2NavigationCompletedEventArgs>? completed = null;
             completed = (_, args) =>
             {
                 core.NavigationCompleted -= completed;
