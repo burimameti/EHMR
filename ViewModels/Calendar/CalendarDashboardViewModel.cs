@@ -465,6 +465,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
         }
 
         SelectedItemService.SelectedItem=null;
+        SelectedItemService.OpenInEditMode=false;
 
         await NavigationService.GoToAsync(
             $"{AppRoutes.Encounters.Create}?date={targetDate.Ticks}");
@@ -484,6 +485,7 @@ public partial class CalendarDashboardViewModel : BaseViewModel<Encounter>
                 .AddHours(slot.HourValue);
 
         SelectedItemService.SelectedItem=null;
+        SelectedItemService.OpenInEditMode=false;
 
         await NavigationService.GoToAsync(
             $"{AppRoutes.Encounters.Create}?date={targetDateTime.Ticks}");
