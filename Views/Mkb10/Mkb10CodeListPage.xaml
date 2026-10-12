@@ -30,8 +30,14 @@
 
 					<!--  HEADER  -->
 					<controls:FFSectionCard>
-						<Grid ColumnDefinitions="*,*" VerticalOptions="Center">
-							<controls:FFPageHeader Title="МКБ-10 Каталог" Subtitle="Меѓународна класификација на болести и дијагностички шифри" >
+						<Grid VerticalOptions="Center">
+							<controls:FFPageHeader
+                                Title="МКБ-10 Каталог"
+                                Subtitle="Меѓународна класификација на болести и дијагностички шифри"
+                                PrimaryButtonText="Нов код"
+                                PrimaryButtonCommand="{Binding NewCommand}"
+                                PrimaryButtonIsEnabled="{Binding CanCreate}"
+                                ShowPrimaryButton="True">
 				<controls:FFPageHeader.HeaderContent>
 <controls:FFButton
 						ButtonKind="Secondary"
@@ -41,19 +47,6 @@
 						WidthRequestEx="130" />
 			</controls:FFPageHeader.HeaderContent>
 		</controls:FFPageHeader>
-							<HorizontalStackLayout
-								Grid.Column="1"
-								HorizontalOptions="End"
-								Spacing="10"
-								VerticalOptions="Center">
-								<controls:FFButton
-									ButtonKind="Primary"
-									Command="{Binding NewCommand}"
-									IsEnabled="{Binding CanCreate}"
-									HeightRequestEx="40"
-									Text="Нов код"
-									WidthRequestEx="130" />
-							</HorizontalStackLayout>
 						</Grid>
 					</controls:FFSectionCard>
 
