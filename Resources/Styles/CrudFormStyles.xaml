@@ -4,10 +4,43 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:controls="clr-namespace:EHMR.Resources.Controls">
 
+	<!-- Shared input/button tokens: keep visual tuning in this dictionary. -->
+	<Color x:Key="FFControlLabelText">#94A3B8</Color>
+	<Color x:Key="FFControlInputBackground">#FFFFFF</Color>
+	<Color x:Key="FFControlInputBorder">#CBD5E1</Color>
+	<Color x:Key="FFControlInputText">#0F172A</Color>
+	<Color x:Key="FFControlPlaceholderText">#CBD5E1</Color>
+	<Color x:Key="FFControlInputFocusBackground">#FAFCFF</Color>
+	<Color x:Key="FFControlInputErrorBackground">#FFF8F8</Color>
+	<Color x:Key="FFControlInputDisabledBackground">#F8FAFC</Color>
+	<x:Double x:Key="FFControlInputHeight">36</x:Double>
+	<x:Double x:Key="FFControlInputCornerRadius">8</x:Double>
+	<x:Double x:Key="FFControlButtonHeight">40</x:Double>
+	<x:Double x:Key="FFControlButtonCornerRadius">6</x:Double>
+	<Thickness x:Key="FFControlButtonPadding">16,0</Thickness>
+
 	<Thickness x:Key="CrudFormPageMargin">16,0</Thickness>
 	<Thickness x:Key="CrudFormCardPadding">18</Thickness>
 	<x:Double x:Key="CrudFormSectionSpacing">18</x:Double>
 	<x:Double x:Key="CrudFormColumnSpacing">8</x:Double>
+
+	<!-- One default geometry for all FF buttons; explicit per-use sizing remains supported. -->
+	<Style TargetType="controls:FFButton">
+		<Setter Property="HeightRequestEx" Value="{StaticResource FFControlButtonHeight}" />
+		<Setter Property="CornerRadius" Value="{StaticResource FFControlButtonCornerRadius}" />
+		<Setter Property="ContentPadding" Value="{StaticResource FFControlButtonPadding}" />
+		<Setter Property="FontSizeEx" Value="13" />
+		<Setter Property="FontFamily" Value="Segoe UI" />
+		<Setter Property="FontAttributesEx" Value="Bold" />
+	</Style>
+
+	<!-- Shared Entry style used by patient and encounter create/edit forms. -->
+	<Style x:Key="CrudFormFieldEntryStyle" TargetType="Entry">
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
+		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
+	</Style>
 
 	<Style x:Key="CrudFormPageGridStyle" TargetType="Grid">
 		<Setter Property="Margin" Value="0" />
