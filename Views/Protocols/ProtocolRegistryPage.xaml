@@ -13,7 +13,13 @@
 		<Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="0">
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-					<controls:FFPageHeader Title="Регистар на протоколи" Subtitle="Преглед и управување со терапевтски протоколи по медицински гранки" >
+					<controls:FFPageHeader
+                        Title="Регистар на протоколи"
+                        Subtitle="Преглед и управување со терапевтски протоколи по медицински гранки"
+                        PrimaryButtonText="Нов протокол"
+                        PrimaryButtonCommand="{Binding NewCommand}"
+                        PrimaryButtonIsEnabled="{Binding CanCreate}"
+                        ShowPrimaryButton="True">
 				<controls:FFPageHeader.HeaderContent>
 <controls:FFButton
 						ButtonKind="Secondary"
@@ -23,14 +29,6 @@
 						WidthRequestEx="130" />
 			</controls:FFPageHeader.HeaderContent>
 		</controls:FFPageHeader>
-					<controls:FFButton
-						Grid.Column="1"
-						ButtonKind="Primary"
-						Command="{Binding NewCommand}"
-						HeightRequestEx="40"
-						IsEnabled="{Binding CanCreate}"
-						Text="Нов протокол"
-						WidthRequestEx="150" />
 				</Grid>
 			</Border>
 			<Border Grid.Row="1" BackgroundColor="{StaticResource PageBackground}" StrokeThickness="0">
