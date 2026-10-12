@@ -26,11 +26,14 @@
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader
 					Title="Корисници"
-					Subtitle="Управување со кориснички сметки, безбедносни роли и системски пристап">
+					Subtitle="Управување со кориснички сметки, безбедносни роли и системски пристап"
+					PrimaryButtonText="Нов"
+					PrimaryButtonCommand="{Binding NewCommand}"
+					PrimaryButtonIsEnabled="{Binding CanCreate}"
+					ShowPrimaryButton="{Binding CanCreate}">
 					<controls:FFPageHeader.HeaderContent>
 						<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
 							<controls:FFButton ButtonKind="Secondary" Command="{Binding GoBackCommand}" HeightRequestEx="40" Text="Назад" WidthRequestEx="130" />
-							<controls:FFButton ButtonKind="Primary" Command="{Binding NewCommand}" HeightRequestEx="40" IsVisible="{Binding CanCreate}" Text="Нов" WidthRequestEx="130" />
 						</HorizontalStackLayout>
 					</controls:FFPageHeader.HeaderContent>
 				</controls:FFPageHeader>
