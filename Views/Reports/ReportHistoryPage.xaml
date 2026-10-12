@@ -49,7 +49,7 @@
 									Command="{Binding GoBackCommand}"
 									HeightRequestEx="40"
 									Text="Назад"
-									WidthRequestEx="110" />
+									WidthRequestEx="130" />
 
 
 								<controls:FFButton
