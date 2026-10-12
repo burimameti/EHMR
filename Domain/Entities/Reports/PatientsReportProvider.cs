@@ -707,7 +707,6 @@ namespace EHMR.Domain.Entities.Reports
                         patient.FullName ?? "-",
                         encounter.EncounterDate.ToString("dd.MM.yyyy HH:mm"),
                         string.IsNullOrWhiteSpace(encounter.EncounterNumber) ? "-" : encounter.EncounterNumber,
-                        string.IsNullOrWhiteSpace(encounter.EncounterType) ? "-" : encounter.EncounterType,
                         MapEncounterStatusToMacedonian(encounter.Status),
                         doctor,
                         BuildEncounterMkb10Info(encounter),
