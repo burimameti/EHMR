@@ -186,6 +186,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
             return;
 
         _selectedItemService.SelectedItem=encounter;
+        _selectedItemService.OpenInEditMode=false;
         await NavigationService.GoToAsync(AppRoutes.Encounters.Preview);
     }
 
@@ -538,6 +539,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         if(item is null) return;
 
         SelectedItemService.SelectedItem=item;
+        SelectedItemService.OpenInEditMode=false;
         await NavigationService.GoToAsync(AppRoutes.Encounters.Detail);
     }
 
@@ -552,6 +554,7 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
         }
 
         SelectedItemService.SelectedItem=item;
+        SelectedItemService.OpenInEditMode=true;
         await NavigationService.GoToAsync(AppRoutes.Encounters.Edit);
     }
     private void CalculateTabCounts()
