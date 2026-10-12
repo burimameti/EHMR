@@ -4,6 +4,7 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+	xmlns:controls="clr-namespace:EHMR.Resources.Controls"
 	x:Name="Root"
 	Background="{StaticResource AppBg}">
 
@@ -109,18 +110,18 @@
 			<BoxView HeightRequest="1" Color="{StaticResource SparkBorderSubtle}" />
 
 			<!--  Actions  -->
-			<Button
-				BackgroundColor="{StaticResource SparkSurfaceAlt}"
+			<controls:FFButton
+				BackgroundColorEx="{StaticResource SparkSurfaceAlt}"
 				BorderColor="{StaticResource SparkBorder}"
-				BorderWidth="1"
+				BorderThickness="1"
 				Clicked="OnCancelClicked"
 				CornerRadius="8"
-				FontSize="12"
-				HeightRequest="38"
-				HorizontalOptions="End"
+				FontSizeEx="12"
+				HeightRequestEx="40"
+				HorizontalOptionsEx="End"
 				Text="Откажи"
-				TextColor="{StaticResource SparkTextPrimary}"
-				WidthRequest="100" />
+				TextColorEx="{StaticResource SparkTextPrimary}"
+				WidthRequestEx="100" />
 		</VerticalStackLayout>
 	</Border>
 </toolkit:Popup>
