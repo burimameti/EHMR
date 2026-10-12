@@ -86,21 +86,7 @@
 								Text="ИЗВЕШТАЈ ЗА ПРЕГЛЕД БР."
 								TextColor="#0F172A" />
 						</VerticalStackLayout>
-						<VerticalStackLayout
-							Grid.Column="1"
-							HorizontalOptions="End"
-							Spacing="4">
-							<!--<Label Text="БРОЈ НА ПРЕГЛЕД" FontSize="10" TextColor="#64748B" />-->
-							<Label
-								FontAttributes="Bold"
-								FontSize="14"
-								Text="{Binding EncounterNumber}"
-								TextColor="#0F172A" />
-							<Label
-								FontSize="12"
-								Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}"
-								TextColor="#475569" />
-						</VerticalStackLayout>
+
 						<BoxView
 							Grid.Row="1"
 							Grid.ColumnSpan="2"
@@ -198,78 +184,77 @@
 							FontSize="13"
 							Text="ПОДАТОЦИ ЗА ПРЕГЛЕДОТ"
 							TextColor="#64748B" />
-						<Grid ColumnDefinitions="*,*" ColumnSpacing="24">
+						<Grid ColumnDefinitions="*,*" ColumnSpacing="24" RowDefinitions="Auto,Auto" RowSpacing="12">
 							<VerticalStackLayout Spacing="3">
-								<Label
-									FontSize="10"
-									Text="Реуматолог"
-									TextColor="#64748B" />
-								<Label
-									FontSize="14"
-									Text="{Binding Doctor.User.FirstName, TargetNullValue=''}"
-									TextColor="#1E293B" />
-								<Label
-									FontSize="14"
-									Text="{Binding Doctor.User.LastName, TargetNullValue='—'}"
-									TextColor="#1E293B" />
+								<Label FontSize="10" Text="Реуматолог" TextColor="#64748B" />
+								<Label FontSize="14" Text="{Binding Doctor.User.FirstName, TargetNullValue=''}" TextColor="#1E293B" />
+								<Label FontSize="14" Text="{Binding Doctor.User.LastName, TargetNullValue='—'}" TextColor="#1E293B" />
 							</VerticalStackLayout>
 							<VerticalStackLayout Grid.Column="1" Spacing="3">
-								<Label
-									FontSize="10"
-									Text="Статус"
-									TextColor="#64748B" />
-								<Label
-									FontSize="14"
-									Text="{Binding Status}"
-									TextColor="#1E293B" />
+								<Label FontSize="10" Text="Статус" TextColor="#64748B" />
+								<Label FontSize="14" Text="{Binding Status}" TextColor="#1E293B" />
+							</VerticalStackLayout>
+							<VerticalStackLayout Grid.Row="1" Spacing="3">
+								<Label FontSize="10" Text="Број на преглед" TextColor="#64748B" />
+								<Label FontAttributes="Bold" FontSize="14" Text="{Binding EncounterNumber, TargetNullValue='—'}" TextColor="#1E293B" />
+							</VerticalStackLayout>
+							<VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="3">
+								<Label FontSize="10" Text="Датум на преглед" TextColor="#64748B" />
+								<Label FontAttributes="Bold" FontSize="14" Text="{Binding EncounterDate, StringFormat='{0:dd.MM.yyyy}'}" TextColor="#1E293B" />
 							</VerticalStackLayout>
 						</Grid>
 					</VerticalStackLayout>
 
 
-					<VerticalStackLayout Spacing="6">
-						<Label
-							FontAttributes="Bold"
-							FontSize="12"
-							Text="Анамнеза на сегашната состојба"
-							TextColor="#334155" />
-						<Label
-							FontSize="13"
-							Text="{Binding HistoryOfPresentIllness, TargetNullValue='Нема внесена анамнеза.'}"
-							TextColor="#1E293B" />
+					<VerticalStackLayout Spacing="10">
+						<Label FontAttributes="Bold" FontSize="13" Text="ДИЈАГНОЗА ЗА ПРЕГЛЕДОТ" TextColor="#64748B" />
+						<VerticalStackLayout BindableLayout.ItemsSource="{Binding Mkb10Assignments}" Spacing="6">
+							<BindableLayout.EmptyView><Label FontSize="13" Text="Нема доделена дијагноза за овој преглед." TextColor="#64748B" /></BindableLayout.EmptyView>
+							<BindableLayout.ItemTemplate>
+								<DataTemplate x:DataType="entities:PatientMkb10Assignment">
+									<VerticalStackLayout Spacing="2">
+										<Label FontAttributes="Bold" FontSize="13" Text="{Binding Mkb10Code.Code, TargetNullValue='—'}" TextColor="#1E293B" />
+										<Label FontSize="13" Text="{Binding Mkb10Code.Description, TargetNullValue=''}" TextColor="#475569" />
+									</VerticalStackLayout>
+								</DataTemplate>
+							</BindableLayout.ItemTemplate>
+						</VerticalStackLayout>
 					</VerticalStackLayout>
-					<VerticalStackLayout Spacing="6">
-						<Label
-							FontAttributes="Bold"
-							FontSize="12"
-							Text="Процена / дијагностички заклучок"
-							TextColor="#334155" />
-						<Label
-							FontSize="13"
-							Text="{Binding Assessment, TargetNullValue='Нема внесена процена.'}"
-							TextColor="#1E293B" />
+
+					<BoxView BackgroundColor="#E2E8F0" HeightRequest="1" />
+
+					<VerticalStackLayout Spacing="8">
+						<Label FontAttributes="Bold" FontSize="13" Text="ЛЕК И КОЛИЧИНА ЗА ПРЕГЛЕДОТ" TextColor="#64748B" />
+						<VerticalStackLayout BindableLayout.ItemsSource="{Binding MedicationOrders}" Spacing="6">
+							<BindableLayout.EmptyView><Label FontSize="13" Text="Нема евидентиран лек за овој преглед." TextColor="#64748B" /></BindableLayout.EmptyView>
+							<BindableLayout.ItemTemplate>
+								<DataTemplate x:DataType="entities:Medicine">
+									<Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+										<Label FontSize="13" Text="{Binding Name, TargetNullValue='—'}" TextColor="#1E293B" />
+										<Label Grid.Column="1" FontAttributes="Bold" FontSize="13" Text="{Binding Quantity, TargetNullValue='—'}" TextColor="#1E293B" />
+									</Grid>
+								</DataTemplate>
+							</BindableLayout.ItemTemplate>
+						</VerticalStackLayout>
+						<VerticalStackLayout Spacing="3">
+							<Label FontSize="10" Text="Времетраење на прегледот" TextColor="#64748B" />
+							<Label FontAttributes="Bold" FontSize="13" Text="{Binding DurationMinutes, StringFormat='{0} минути', TargetNullValue='—'}" TextColor="#1E293B" />
+						</VerticalStackLayout>
 					</VerticalStackLayout>
+
+					<BoxView BackgroundColor="#E2E8F0" HeightRequest="1" />
+
 					<VerticalStackLayout Spacing="6">
-						<Label
-							FontAttributes="Bold"
-							FontSize="12"
-							Text="План и препораки"
-							TextColor="#334155" />
-						<Label
-							FontSize="13"
-							Text="{Binding Plan, TargetNullValue='Нема внесен план.'}"
-							TextColor="#1E293B" />
+						<Label FontAttributes="Bold" FontSize="13" Text="СКОР" TextColor="#64748B" />
+						<Label FontSize="13" Text="{Binding PatientScore.Description, TargetNullValue='Нема внесен скор.'}" TextColor="#1E293B" />
+						<Label FontAttributes="Bold" FontSize="16" Text="{Binding PatientScore.Number, TargetNullValue='—'}" TextColor="#1E293B" />
 					</VerticalStackLayout>
+
+					<BoxView BackgroundColor="#E2E8F0" HeightRequest="1" />
+
 					<VerticalStackLayout Spacing="6">
-						<Label
-							FontAttributes="Bold"
-							FontSize="12"
-							Text="Забелешки"
-							TextColor="#334155" />
-						<Label
-							FontSize="13"
-							Text="{Binding ClinicalNotes, TargetNullValue='/.'}"
-							TextColor="#1E293B" />
+						<Label FontAttributes="Bold" FontSize="13" Text="ЗАБЕЛЕШКА" TextColor="#64748B" />
+						<Label FontSize="13" Text="{Binding ClinicalNotes, TargetNullValue='Нема внесена забелешка.'}" TextColor="#1E293B" />
 					</VerticalStackLayout>
 
 					<Grid
