@@ -1105,17 +1105,17 @@
 														Margin="0,4,0,0"
 														ColumnDefinitions="*, Auto"
 														ColumnSpacing="8">
-														<Button
+														<controls:FFButton
 															Grid.Column="0"
-															BackgroundColor="#0F172A"
+															BackgroundColorEx="#0F172A"
 															Command="{Binding BindingContext.ProcessEncounterSelectionCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
 															CommandParameter="{Binding Id}"
 															CornerRadius="8"
-															FontAttributes="Bold"
-															FontSize="12"
-															HeightRequest="38"
+															FontAttributesEx="Bold"
+															FontSizeEx="12"
+															HeightRequestEx="40"
 															Text="Започни преглед"
-															TextColor="White" />
+															TextColorEx="White" />
 														<Border
 															Grid.Column="1"
 															HeightRequest="38"
@@ -1203,17 +1203,17 @@
 														Margin="0,4,0,0"
 														ColumnDefinitions="*, Auto"
 														ColumnSpacing="8">
-														<Button
+														<controls:FFButton
 															Grid.Column="0"
-															BackgroundColor="#2563EB"
+															BackgroundColorEx="#2563EB"
 															Command="{Binding BindingContext.ProcessEncounterSelectionCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
 															CommandParameter="{Binding Id}"
 															CornerRadius="8"
-															FontAttributes="Bold"
-															FontSize="12"
-															HeightRequest="38"
+															FontAttributesEx="Bold"
+															FontSizeEx="12"
+															HeightRequestEx="40"
 															Text="Отвори детали"
-															TextColor="White" />
+															TextColorEx="White" />
 														<Border
 															Grid.Column="1"
 															HeightRequest="38"
@@ -1301,17 +1301,17 @@
 														Margin="0,4,0,0"
 														ColumnDefinitions="*, Auto"
 														ColumnSpacing="8">
-														<Button
+														<controls:FFButton
 															Grid.Column="0"
-															BackgroundColor="#0F172A"
+															BackgroundColorEx="#0F172A"
 															Command="{Binding BindingContext.ProcessEncounterSelectionCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
 															CommandParameter="{Binding Id}"
 															CornerRadius="8"
-															FontAttributes="Bold"
-															FontSize="12"
-															HeightRequest="38"
+															FontAttributesEx="Bold"
+															FontSizeEx="12"
+															HeightRequestEx="40"
 															Text="Пријави пациент"
-															TextColor="White" />
+															TextColorEx="White" />
 														<Border
 															Grid.Column="1"
 															HeightRequest="38"
