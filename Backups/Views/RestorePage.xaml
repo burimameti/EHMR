@@ -14,19 +14,20 @@
 
         <Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="12">
             <Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
-                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-                    <controls:FFPageHeader Title="Враќање на база" Subtitle="Враќање на базата на податоци од резервна копија." />
-                    <controls:FFButton
-                        Grid.Column="1"
-                        ButtonKind="Primary"
-                        BackgroundColorEx="{StaticResource SparkDanger}"
-                        TextColorEx="White"
-                        Command="{Binding RestoreCommand}"
-                        ContentPadding="18,0"
-                        HeightRequestEx="45"
-                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
-                        Text="Врати база" />
-                </Grid>
+                <controls:FFPageHeader Title="Враќање на база" Subtitle="Враќање на базата на податоци од резервна копија.">
+                    <controls:FFPageHeader.HeaderContent>
+                        <controls:FFButton
+                            ButtonKind="Primary"
+                            BackgroundColorEx="{StaticResource SparkDanger}"
+                            TextColorEx="White"
+                            Command="{Binding RestoreCommand}"
+                            ContentPadding="18,0"
+                            HeightRequestEx="40"
+                            WidthRequestEx="130"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+                            Text="Врати база" />
+                    </controls:FFPageHeader.HeaderContent>
+                </controls:FFPageHeader>
             </Border>
 
             <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
