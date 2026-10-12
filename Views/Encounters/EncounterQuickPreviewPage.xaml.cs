@@ -124,8 +124,7 @@ public partial class EncounterQuickPreviewPage : ContentPage
             section.Children.Add(new Label
             {
                 Text = title,
-                FontAttributes = FontAttributes.Bold,
-                FontSize = 13,
+                FontSize = 12,
                 TextColor = Color.FromArgb("#111827")
             });
             section.Children.Add(new BoxView { BackgroundColor = Color.FromArgb("#111827"), HeightRequest = 1 });
@@ -138,8 +137,8 @@ public partial class EncounterQuickPreviewPage : ContentPage
             {
                 foreach (var item in rowList)
                 {
-                    var row = new Grid { ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) }, Padding = new Thickness(0, 3) };
-                    row.Add(new Label { Text = item.Main, FontAttributes = FontAttributes.Bold, FontSize = 12, TextColor = Color.FromArgb("#111827"), LineBreakMode = LineBreakMode.WordWrap });
+                    var row = new Grid { ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) }, Padding = new Thickness(0, 1) };
+                    row.Add(new Label { Text = item.Main, FontSize = 12, TextColor = Color.FromArgb("#111827"), LineBreakMode = LineBreakMode.WordWrap });
                     if (!string.IsNullOrWhiteSpace(item.Detail))
                         row.Add(new Label { Text = item.Detail, FontSize = 11, TextColor = Color.FromArgb("#334155"), HorizontalTextAlignment = TextAlignment.End, VerticalTextAlignment = TextAlignment.Center }, 1, 0);
                     section.Children.Add(row);
@@ -253,10 +252,10 @@ public partial class EncounterQuickPreviewPage : ContentPage
         static string EmptyHtml(string value) => $"<p class='empty'>{E(value)}</p>";
 
         var html = new System.Text.StringBuilder();
-        var reportTitle = encounter != null ? $"Извештај за преглед бр. {encounter.EncounterNumber}"
+        var reportTitle = encounter != null ? $"БРОЈ НА ПРЕГЛЕД: {encounter.EncounterNumber}"
             : (string.IsNullOrWhiteSpace(title) ? "Извештај за пациент" : title.Trim());
         html.Append("<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><style>");
-        html.Append("@page{size:A4;margin:14mm 15mm 16mm}*{box-sizing:border-box}html,body{background:#fff}body{font-family:Arial,'Segoe UI',sans-serif;color:#111827;margin:0 auto;padding:0;max-width:190mm;font-size:10pt;line-height:1.35}.header{display:flex;justify-content:space-between;gap:18px;align-items:center;border-bottom:1px solid #111827;padding:0 0 7px;margin-bottom:7px}.org{font-size:10pt;font-weight:700;letter-spacing:.2px;color:#64748b}h1{font-size:12pt;margin:0;color:#111827;font-weight:700}.meta{text-align:right;font-size:9pt;color:#111827;line-height:1.45}h2{font-size:10pt;color:#111827;font-weight:700;margin:10px 0 4px;padding:0 0 3px;border-bottom:1px solid #111827;letter-spacing:0}section{break-inside:auto}.grid{display:grid;grid-template-columns:1fr 1fr;column-gap:18px;row-gap:0}.field{display:grid;grid-template-columns:38% 62%;gap:5px;padding:2px 0;border-bottom:1px solid #e5e7eb;break-inside:avoid;min-width:0}.field-label{font-weight:700;font-size:9pt;color:#111827}.field-value{font-size:9pt;color:#111827;overflow-wrap:anywhere}.row{padding:3px 0;border-bottom:1px solid #e5e7eb;break-inside:avoid}.row-title{font-weight:700;font-size:9.5pt;color:#111827}.row-detail{font-size:9pt;color:#111827;margin-top:1px;overflow-wrap:anywhere}.empty{color:#475569;font-size:9pt;margin:3px 0}.signatures{display:flex;gap:48px;margin-top:30px;break-inside:avoid}.sig{flex:1;border-top:1px solid #64748b;padding-top:5px;text-align:center;font-size:9pt;color:#475569}@media(max-width:600px){body{padding:14px}.grid{grid-template-columns:1fr}.header{align-items:flex-start;flex-direction:column}.meta{text-align:left}.field{grid-template-columns:40% 60%}}");
+        html.Append("@page{size:A4;margin:14mm 15mm 16mm}*{box-sizing:border-box}html,body{background:#fff}body{font-family:Arial,'Segoe UI',sans-serif;color:#111827;margin:0 auto;padding:0;max-width:190mm;font-size:12pt;line-height:1.2;font-weight:400}.header{display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid #111827;padding:0 0 4px;margin-bottom:4px}.org{font-size:12pt;font-weight:400;letter-spacing:0;color:#111827}h1{font-size:14pt;margin:0;color:#111827;font-weight:400}.meta{text-align:right;font-size:12pt;color:#111827;line-height:1.2;font-weight:400}h2{font-size:12pt;color:#111827;font-weight:400;margin:5px 0 2px;padding:0 0 2px;border-bottom:1px solid #111827;letter-spacing:0}section{break-inside:auto}.grid{display:grid;grid-template-columns:1fr 1fr;column-gap:18px;row-gap:0}.field{display:grid;grid-template-columns:38% 62%;gap:4px;padding:1px 0;border-bottom:1px solid #e5e7eb;break-inside:avoid;min-width:0}.field-label{font-weight:400;font-size:12pt;color:#111827}.field-value{font-size:12pt;font-weight:400;color:#111827;overflow-wrap:anywhere}.row{padding:1px 0;border-bottom:1px solid #e5e7eb;break-inside:avoid}.row-title{font-weight:400;font-size:12pt;color:#111827}.row-detail{font-size:12pt;font-weight:400;color:#111827;margin-top:0;overflow-wrap:anywhere}.empty{color:#475569;font-size:12pt;margin:1px 0}.signatures{display:flex;gap:32px;margin-top:16px;break-inside:avoid}.sig{flex:1;border-top:1px solid #64748b;padding-top:3px;text-align:center;font-size:12pt;font-weight:400;color:#475569}@media(max-width:600px){body{padding:14px}.grid{grid-template-columns:1fr}.header{align-items:flex-start;flex-direction:column}.meta{text-align:left}.field{grid-template-columns:40% 60%}}");
         html.Append("</style></head><body>");
         html.Append($"<div class='header'><div><div class='org'>КЛИНИКА ЗА РЕУМАТОЛОГИЈА -СКОПЈЕ</div><h1>{E(reportTitle)}</h1></div><div class='meta'><div>Датум: <b>{E(encounter?.EncounterDate.ToString("dd.MM.yyyy HH:mm"))}</b></div></div></div>");
 
@@ -273,12 +272,6 @@ public partial class EncounterQuickPreviewPage : ContentPage
 
         if (encounter != null)
         {
-            var encounterSummary = new System.Text.StringBuilder("<div class='grid'>");
-            encounterSummary.Append(Field("БРОЈ НА ПРЕГЛЕД", encounter.EncounterNumber))
-                .Append(Field("СТАТУС", encounter.Status.ToString()))
-                .Append("</div>");
-            html.Append(encounterSummary.ToString());
-
             var dx = diagnoses.Count == 0 ? EmptyHtml("Нема внесена МКБ-10 дијагноза за овој преглед.")
                 : string.Concat(diagnoses.Select(d => RowHtml($"{d.Mkb10Code?.Code ?? "—"} — {d.Mkb10Code?.Description ?? "Без опис"}", d.IsPrimary ? "Примарна дијагноза" : null)));
             html.Append(SectionHtml("ДИЈАГНОЗА ЗА ОВОЈ ПРЕГЛЕД (МКБ-10)", dx));
