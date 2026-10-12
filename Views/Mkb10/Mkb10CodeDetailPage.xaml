@@ -26,27 +26,15 @@
 			<!--  HEADER  -->
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader Title="{Binding HeaderTitle}" Subtitle="{Binding HeaderSubtitle}">
-				<controls:FFPageHeader.HeaderContent>
-						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-
-					<controls:FFButton
-                            ButtonKind="Secondary"
-                            Command="{Binding CancelCommand}"
-                            HeightRequestEx="40"
-                            Text="Назад"
-                            WidthRequestEx="130" />
-					<HorizontalStackLayout Spacing="10">
-						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" IsEnabled="{Binding CanEditForm}" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130"
-                            HeightRequestEx="40" />
-						<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" IsVisible="{Binding IsEditMode}" Text="Откажи" WidthRequestEx="130"
-                            HeightRequestEx="40" />
-						<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding ToggleEditModeCommand}" IsEnabled="{Binding CanUpdate}" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="White" WidthRequestEx="130"
-                            HeightRequestEx="40" />
-					</HorizontalStackLayout>
-				
+					<controls:FFPageHeader.HeaderContent>
+						<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+							<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="40" Text="Назад" WidthRequestEx="130" />
+							<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding SaveCommand}" HeightRequestEx="40" IsEnabled="{Binding CanEditForm}" IsVisible="{Binding IsEditMode}" Text="Зачувај" TextColorEx="White" WidthRequestEx="130" />
+							<controls:FFButton ButtonKind="Secondary" Command="{Binding CancelCommand}" HeightRequestEx="40" IsVisible="{Binding IsEditMode}" Text="Откажи" WidthRequestEx="130" />
+							<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding ToggleEditModeCommand}" HeightRequestEx="40" IsEnabled="{Binding CanUpdate}" IsVisible="{Binding IsReadOnly}" Text="Уреди" TextColorEx="White" WidthRequestEx="130" />
 						</HorizontalStackLayout>
 					</controls:FFPageHeader.HeaderContent>
-			</controls:FFPageHeader>
+				</controls:FFPageHeader>
 			</Border>
 
 			<!--  =========================================================  -->
