@@ -26,11 +26,14 @@
 			<Border Grid.Row="0" Style="{StaticResource PageCardStyleDashboard}">
 				<controls:FFPageHeader
 					Title="Реуматолози"
-					Subtitle="Преглед, пребарување и управување со медицински персонал">
+					Subtitle="Преглед, пребарување и управување со медицински персонал"
+					PrimaryButtonText="Нов реуматолог"
+					PrimaryButtonCommand="{Binding NewCommand}"
+					PrimaryButtonIsEnabled="{Binding CanCreate}"
+					ShowPrimaryButton="True">
 					<controls:FFPageHeader.HeaderContent>
 						<HorizontalStackLayout Spacing="8" VerticalOptions="Center">
 							<controls:FFButton ButtonKind="Secondary" Command="{Binding GoBackCommand}" HeightRequestEx="40" Text="Назад" WidthRequestEx="130" />
-							<controls:FFButton BackgroundColorEx="{StaticResource SidebarActiveBg}" ButtonKind="Primary" Command="{Binding NewCommand}" HeightRequestEx="40" IsEnabled="{Binding CanCreate}" Text="Нов реуматолог" TextColorEx="White" WidthRequestEx="160" />
 						</HorizontalStackLayout>
 					</controls:FFPageHeader.HeaderContent>
 				</controls:FFPageHeader>
