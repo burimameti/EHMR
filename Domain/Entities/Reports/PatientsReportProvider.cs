@@ -181,7 +181,6 @@ namespace EHMR.Domain.Entities.Reports
                 new SparkGridColumn { Header = "ПАЦИЕНТ", Key = "Patient", Width = new GridLength(1.8, GridUnitType.Star) },
                 new SparkGridColumn { Header = "ДАТУМ НА ПРЕГЛЕД", Key = "EncounterDate", Width = new GridLength(1.2, GridUnitType.Star) },
                 new SparkGridColumn { Header = "БРОЈ НА ПРЕГЛЕД", Key = "EncounterNumber", Width = new GridLength(1.1, GridUnitType.Star) },
-                new SparkGridColumn { Header = "ТИП", Key = "EncounterType", Width = new GridLength(0.8, GridUnitType.Star) },
                 new SparkGridColumn { Header = "СТАТУС", Key = "EncounterStatus", Width = new GridLength(0.9, GridUnitType.Star) },
                 new SparkGridColumn { Header = "РЕУМАТОЛОГ", Key = "EncounterDoctor", Width = new GridLength(1.3, GridUnitType.Star) },
                 new SparkGridColumn { Header = "ДИЈАГНОЗА", Key = "Diagnosis", Width = new GridLength(1.8, GridUnitType.Star) },
