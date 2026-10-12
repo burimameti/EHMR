@@ -750,6 +750,15 @@ public partial class AppointmentDetailViewModel : BaseDetailViewModel<Appointmen
         SelectedDoctorForAppointment=DoctorsList.FirstOrDefault(x => x.Id==patient.DoctorId);
         Appointment.DoctorId=SelectedDoctorForAppointment?.Id??Guid.Empty;
         PatientSearchText=patient.FullName;
+
+        // Reset patient-scoped selections and search results when switching patients.
+        AppointmentScores.Clear();
+        ScoreSearchText=string.Empty;
+        ScoreSuggestions.Clear();
+        ShowScoreSuggestions=false;
+        MedicineSearchText=string.Empty;
+        MedicineResults.Clear();
+        ShowMedicineDropdown=false;
         PatientSuggestions.Clear();
         ShowPatientSuggestions=false;
 
