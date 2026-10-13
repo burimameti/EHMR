@@ -101,8 +101,25 @@ public class DatabaseMigrationService
 
     private static async Task NormalizeLegacyStatusesAsync(DesktopTherapyDbContext db)
     {
-        // Values 4+ were previously used by removed Missed/NoShow statuses.
-        // Keep existing data valid by mapping all obsolete terminal values to Cancelled.
+        // SQLite may contain legacy enum names that no longer exist in the current
+        // C# enums (for example "CheckedIn"). EF cannot materialize those rows, so
+        // normalize the stored values with SQL before issuing any EF entity query.
+        if(db.Database.IsSqlite())
+        {
+            await db.Database.ExecuteSqlRawAsync("""
+                UPDATE "Appointments"
+                SET "Status" = 'Cancelled'
+                WHERE "Status" IN ('CheckedIn', 'Missed', 'NoShow', 'Rescheduled', 'ReScheduled');
+
+                UPDATE "Encounters"
+                SET "Status" = 'Cancelled'
+                WHERE "Status" IN ('CheckedIn', 'Missed', 'NoShow', 'Rescheduled', 'ReScheduled');
+                """);
+
+            return;
+        }
+
+        // Keep legacy numeric enum values valid for SQL Server databases as well.
         var appointments = await db.Appointments
             .Where(x => (int)x.Status>3)
             .ToListAsync();
