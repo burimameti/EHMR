@@ -59,7 +59,7 @@
 				VerticalOptions="Center">
 				<ContentView Content="{Binding HeaderContent, Source={x:Reference Root}}" />
 				<Button
-					BackgroundColor="{StaticResource SparkButtonPrimaryBg}"
+					BackgroundColor="{StaticResource EpicPrimary}"
 					Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
 					IsEnabled="{Binding PrimaryButtonIsEnabled, Source={x:Reference Root}}"
