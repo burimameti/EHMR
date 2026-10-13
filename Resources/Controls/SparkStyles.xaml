@@ -349,7 +349,8 @@
 				Value="True">
 				<Setter Property="BackgroundColor" Value="#FFFFFF" />
 				<Setter Property="TextColor" Value="#334155" />
-				<Setter Property="BorderWidth" Value="0" />
+				<Setter Property="BorderColor" Value="#0F766E" />
+				<Setter Property="BorderWidth" Value="1" />
 			</DataTrigger>
 		</Style.Triggers>
 	</Style>
