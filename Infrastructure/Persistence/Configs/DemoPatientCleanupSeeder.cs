@@ -5,8 +5,9 @@ using static EHMR.Infrastructure.Persistence.DesktopTherapyDbContext;
 namespace EHMR.Infrastructure.Persistence.Configs;
 
 /// <summary>
-/// Removes legacy seeded patients 6–20 and stale appointments/encounters attached to
-/// the five fixed demo patients. Non-demo patients are never targeted.
+/// Removes only obsolete legacy seeded patients 16–20 and stale appointments/encounters
+/// attached to the fifteen current demo patients. Current demo seed records are preserved.
+/// Non-demo patients are never targeted.
 /// </summary>
 public sealed class DemoPatientCleanupSeeder : IEntitySeeder
 {
@@ -16,16 +17,19 @@ public sealed class DemoPatientCleanupSeeder : IEntitySeeder
     {
         var obsoletePatientIds = new[]
         {
-            SeedIds.Patient6, SeedIds.Patient7, SeedIds.Patient8, SeedIds.Patient9,
-            SeedIds.Patient10, SeedIds.Patient11, SeedIds.Patient12, SeedIds.Patient13,
-            SeedIds.Patient14, SeedIds.Patient15, SeedIds.Patient16, SeedIds.Patient17,
-            SeedIds.Patient18, SeedIds.Patient19, SeedIds.Patient20
+            SeedIds.Patient16, SeedIds.Patient17, SeedIds.Patient18, SeedIds.Patient19,
+            SeedIds.Patient20
         };
-        var demoPatientIds = new[] { SeedIds.Patient1, SeedIds.Patient2, SeedIds.Patient3, SeedIds.Patient4, SeedIds.Patient5 };
-        var keepAppointmentIds = Enumerable.Range(1, 10)
+        var demoPatientIds = new[]
+        {
+            SeedIds.Patient1, SeedIds.Patient2, SeedIds.Patient3, SeedIds.Patient4, SeedIds.Patient5,
+            SeedIds.Patient6, SeedIds.Patient7, SeedIds.Patient8, SeedIds.Patient9, SeedIds.Patient10,
+            SeedIds.Patient11, SeedIds.Patient12, SeedIds.Patient13, SeedIds.Patient14, SeedIds.Patient15
+        };
+        var keepAppointmentIds = Enumerable.Range(1, 25)
             .Select(i => Guid.Parse($"00000000-0000-0000-0000-{(7000 + i):D12}"))
             .ToArray();
-        var keepEncounterIds = Enumerable.Range(1, 6)
+        var keepEncounterIds = Enumerable.Range(1, 25)
             .Select(i => Guid.Parse($"00000000-0000-0000-0000-{(8000 + i):D12}"))
             .ToArray();
 
