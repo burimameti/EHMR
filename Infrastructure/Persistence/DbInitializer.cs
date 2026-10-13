@@ -108,11 +108,21 @@ public class DatabaseMigrationService
         {
             await db.Database.ExecuteSqlRawAsync("""
                 UPDATE "Appointments"
-                SET "Status" = 'Cancelled'
+                SET "Status" = CASE
+                    WHEN "Status" = 'CheckedIn' THEN 'InProgress'
+                    WHEN "Status" IN ('Rescheduled', 'ReScheduled') THEN 'Scheduled'
+                    WHEN "Status" IN ('Missed', 'NoShow') THEN 'Cancelled'
+                    ELSE "Status"
+                END
                 WHERE "Status" IN ('CheckedIn', 'Missed', 'NoShow', 'Rescheduled', 'ReScheduled');
 
                 UPDATE "Encounters"
-                SET "Status" = 'Cancelled'
+                SET "Status" = CASE
+                    WHEN "Status" = 'CheckedIn' THEN 'InProgress'
+                    WHEN "Status" IN ('Rescheduled', 'ReScheduled') THEN 'Scheduled'
+                    WHEN "Status" IN ('Missed', 'NoShow') THEN 'Cancelled'
+                    ELSE "Status"
+                END
                 WHERE "Status" IN ('CheckedIn', 'Missed', 'NoShow', 'Rescheduled', 'ReScheduled');
                 """);
 
