@@ -15,13 +15,20 @@ public class AuthorizationService : IAuthorizationService
     }
    
 
+    // Only doctors are scoped to their own clinical records. Main nurses and
+    // nurses need clinic-wide read access to patients, appointments and encounters.
     public bool IsScopedToOwnData =>
         IsAuthenticated
-        &&!HasRole(UserRole.Admin)
-        &&!HasRole(UserRole.SuperAdmin);
+        && HasRole(UserRole.Doctor);
     public bool CanPerform(string module, ModuleAction action)
     {
         if(!IsAuthenticated || _auth.CurrentUser is null || action == ModuleAction.None)
+            return false;
+
+        // Non-administrator clinical roles must never delete records anywhere.
+        if(action == ModuleAction.Delete
+            && !HasRole(UserRole.Admin)
+            && !HasRole(UserRole.SuperAdmin))
             return false;
 
         // Medicines are a shared clinic catalog. Creating medicines is intentionally
