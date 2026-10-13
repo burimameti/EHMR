@@ -673,6 +673,55 @@ namespace EHMR.Resources.Controls
         private View BuildSingleButton(SparkButtonItem item, SparkGridRow row)
         {
             if(item==null) return new Label();
+
+            // Compact symbol-only controls (such as the report grid's +/−
+            // patient-group toggle) must fit inside their narrow grid column.
+            // BuildActionIcon has a 90px minimum width for regular text actions,
+            // which clips the symbol when the column is only 58px wide.
+            var isExpandToggle = item.Label is "+" or "−" or "-" or "＋" or "－";
+            if(isExpandToggle)
+            {
+                var symbol = item.Label is "-" or "－" ? "−" : item.Label is "＋" ? "+" : item.Label;
+                var compact = new Border
+                {
+                    WidthRequest = R(30),
+                    HeightRequest = R(28),
+                    MinimumWidthRequest = R(30),
+                    MinimumHeightRequest = R(28),
+                    Padding = 0,
+                    BackgroundColor = Color.FromArgb("#E2E8F0"),
+                    Stroke = Color.FromArgb("#94A3B8"),
+                    StrokeThickness = 1,
+                    StrokeShape = new RoundRectangle { CornerRadius = 6 },
+                    HorizontalOptions = LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.Center,
+                    Content = new Label
+                    {
+                        Text = symbol,
+                        FontSize = R(19),
+                        FontAttributes = FontAttributes.Bold,
+                        TextColor = Color.FromArgb("#0F766E"),
+                        HorizontalTextAlignment = TextAlignment.Center,
+                        VerticalTextAlignment = TextAlignment.Center,
+                        HorizontalOptions = LayoutOptions.Fill,
+                        VerticalOptions = LayoutOptions.Fill
+                    }
+                };
+
+                compact.Opacity = item.IsEnabled ? 1 : 0.45;
+                compact.IsEnabled = item.IsEnabled;
+                compact.GestureRecognizers.Add(new TapGestureRecognizer
+                {
+                    Command = new Command(() =>
+                    {
+                        if(compact.IsEnabled && item.Command?.CanExecute(item.CommandParameter ?? row.Tag ?? row) == true)
+                            item.Command.Execute(item.CommandParameter ?? row.Tag ?? row);
+                    })
+                });
+                ToolTipProperties.SetText(compact, symbol == "+" ? "Прошири" : "Собери");
+                return compact;
+            }
+
             var button = BuildActionIcon(item.Label??"", item.IconGlyph, item.Command, item.CommandParameter,
                 ResolveActionColor(item), ResolveActionTextColor(item));
             button.IsEnabled = item.IsEnabled;
