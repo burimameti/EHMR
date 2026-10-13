@@ -41,13 +41,13 @@ public partial class FFButton : ContentView
             }
             if(IsBlue)
             {
-                BackgroundColorEx=Color.FromArgb("#2AEBE7");
+                BackgroundColorEx=Color.FromArgb("#115E59");
                 return;
             }
 
             BackgroundColorEx = ButtonKind switch
             {
-                FFButtonKind.Primary => Color.FromArgb("#2AEBE7"),
+                FFButtonKind.Primary => Color.FromArgb("#115E59"),
                 FFButtonKind.Secondary => Color.FromArgb("#F1F5F9"),
                 FFButtonKind.Green => Color.FromArgb("#166534"),
                 FFButtonKind.Danger => Color.FromArgb("#991B1B"),
@@ -298,7 +298,7 @@ public partial class FFButton : ContentView
 
         if(IsBlue)
         {
-            Set("#5EEAD4", "#000000", "#64748B", 0);
+            Set("#0F766E", "#FFFFFF", "#0F766E", 1);
             return;
         }
 
@@ -306,7 +306,7 @@ public partial class FFButton : ContentView
         {
             // Main action: Save, Create, Confirm
             case FFButtonKind.Primary:
-                Set("#5EEAD4", "#000000", "#64748B", 0);
+                Set("#0F766E", "#FFFFFF", "#0F766E", 1);
                 break;
 
             // Supporting action: Edit, Preview, Back
