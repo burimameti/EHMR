@@ -365,43 +365,26 @@
 										</VerticalStackLayout>
 									</Border>
 									<Border Grid.Column="1" VerticalOptions="Start" HorizontalOptions="Fill" Style="{StaticResource CrudFormTableFrameStyle}">
-										<VerticalStackLayout Spacing="0">
-											<Grid Style="{StaticResource CrudFormTableHeaderGridStyle}">
-												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="АКТИВНИ / ОДОБРЕНИ ЛЕКОВИ ЗА ПАЦИЕНТ" />
-											</Grid>
-											<Grid ColumnDefinitions="1.3*,1.1*,0.9*,0.6*" ColumnSpacing="0" Style="{StaticResource CrudFormTableHeaderGridStyle}">
-												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="ЛЕК" />
-												<Label Grid.Column="1" Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="РЕЖИМ" />
-												<Label Grid.Column="2" Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="ДОЗА" />
-												<Label Grid.Column="3" Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="КОЛ." />
-												<BoxView Grid.Column="1" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
-												<BoxView Grid.Column="2" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
-												<BoxView Grid.Column="3" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
-											</Grid>
-											<VerticalStackLayout BindableLayout.ItemsSource="{Binding CurrentPatientMedicines}" Spacing="0" VerticalOptions="Start">
-												<BindableLayout.EmptyView>
-													<Label Padding="10" FontSize="11" Text="Нема лекови во овој преглед." TextColor="{StaticResource SparkTextSecondary}" />
-												</BindableLayout.EmptyView>
-												<BindableLayout.ItemTemplate>
-													<DataTemplate x:DataType="entities:PatientMedicine">
-														<Grid RowDefinitions="Auto,1">
-															<Grid Padding="10,6" ColumnDefinitions="1.3*,1.1*,0.9*,0.6*" ColumnSpacing="0">
-																<Label Style="{StaticResource CrudFormTableCellLabelStyle}" Text="{Binding Medicine.BilingualName, TargetNullValue='—'}" />
-																<Label Grid.Column="1" Style="{StaticResource CrudFormTableCellLabelStyle}" Text="{Binding ApplicationRegime.Regime, TargetNullValue='—'}" />
-																<Label Grid.Column="2" Style="{StaticResource CrudFormTableCellLabelStyle}" Text="{Binding Dosage, TargetNullValue='—'}" />
-																<Label Grid.Column="3" Style="{StaticResource CrudFormTableCellLabelStyle}" Text="{Binding Quantity, TargetNullValue='—'}" />
-																<BoxView Grid.Column="1" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
-																<BoxView Grid.Column="2" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
-																<BoxView Grid.Column="3" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
-															</Grid>
-															<BoxView Grid.Row="1" HeightRequest="1" Color="{StaticResource SparkBorderSubtle}" />
-														</Grid>
-													</DataTemplate>
-												</BindableLayout.ItemTemplate>
-											</VerticalStackLayout>
+						<VerticalStackLayout Spacing="0">
+							<Grid Style="{StaticResource CrudFormTableHeaderGridStyle}">
+								<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="АКТИВНИ / ОДОБРЕНИ ЛЕКОВИ ЗА ПАЦИЕНТ" />
+							</Grid>
+							<VerticalStackLayout BindableLayout.ItemsSource="{Binding CurrentPatientMedicines}" Spacing="0" VerticalOptions="Start">
+								<BindableLayout.EmptyView><Label FontSize="11" Text="Нема лекови во овој преглед." TextColor="{StaticResource SparkTextSecondary}" /></BindableLayout.EmptyView>
+								<BindableLayout.ItemTemplate><DataTemplate x:DataType="entities:PatientMedicine">
+									<Grid ColumnDefinitions="18,*" ColumnSpacing="5">
+										<controls:CrudTimelineMarker Grid.Column="0" WidthRequest="18" />
+										<VerticalStackLayout Grid.Column="1" Padding="0,3" Spacing="1">
+											<Label FontAttributes="Bold" FontSize="11.5" LineBreakMode="WordWrap" Text="{Binding Medicine.BilingualName, TargetNullValue='Лек'}" TextColor="{StaticResource SparkTextPrimary}" />
+											<Label FontSize="10" Text="{Binding Dosage, StringFormat='Доза: {0}', TargetNullValue=''}" TextColor="{StaticResource SparkTextSecondary}" />
+											<Label FontSize="10" Text="{Binding ApplicationRegime.Regime, StringFormat='Режим: {0}', TargetNullValue=''}" TextColor="{StaticResource SparkTextSecondary}" />
 										</VerticalStackLayout>
-									</Border>
-									<Border Grid.Column="2" VerticalOptions="Start" Style="{StaticResource CrudFormTableFrameStyle}">
+									</Grid>
+								</DataTemplate></BindableLayout.ItemTemplate>
+							</VerticalStackLayout>
+						</VerticalStackLayout>
+					</Border>
+					<Border Grid.Column="2" VerticalOptions="Start" Style="{StaticResource CrudFormTableFrameStyle}">
 										<VerticalStackLayout Spacing="0">
 											<Grid ColumnDefinitions="*,Auto" Style="{StaticResource CrudFormTableHeaderGridStyle}">
 												<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="СКОР / ОПИС" />
@@ -417,6 +400,45 @@
 							</VerticalStackLayout>
 							</Border>
 
+
+			<!-- ЛЕКОВИ: компактна табела во половина ред -->
+			<Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+				<VerticalStackLayout Grid.Column="0" Spacing="10">
+					<controls:CrudSectionHeader Title="АКТИВНИ / ОДОБРЕНИ ЛЕКОВИ ЗА ПАЦИЕНТ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
+					<Border Style="{StaticResource CrudFormTableFrameStyle}" VerticalOptions="Start">
+						<VerticalStackLayout Spacing="0">
+							<Grid ColumnDefinitions="1.3*,1.1*,0.9*,0.6*" ColumnSpacing="0" Style="{StaticResource CrudFormTableHeaderGridStyle}">
+								<Label Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="ЛЕК" />
+								<Label Grid.Column="1" Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="РЕЖИМ" />
+								<Label Grid.Column="2" Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="ДОЗА" />
+								<Label Grid.Column="3" Style="{StaticResource CrudFormTableHeaderLabelStyle}" Text="КОЛ." />
+								<BoxView Grid.Column="1" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+								<BoxView Grid.Column="2" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+								<BoxView Grid.Column="3" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+							</Grid>
+							<VerticalStackLayout BindableLayout.EmptyView="Нема активни лекови." BindableLayout.ItemsSource="{Binding CurrentPatientMedicines}" Spacing="0">
+								<BindableLayout.ItemTemplate>
+									<DataTemplate x:DataType="entities:PatientMedicine">
+										<Grid RowDefinitions="Auto,1">
+											<Grid Padding="10,6" ColumnDefinitions="1.3*,1.1*,0.9*,0.6*" ColumnSpacing="0">
+												<Label Style="{StaticResource CrudFormTableCellLabelStyle}" Text="{Binding Medicine.BilingualName, TargetNullValue='—'}" />
+												<Label Grid.Column="1" Style="{StaticResource CrudFormTableCellLabelStyle}" Text="{Binding ApplicationRegime.Regime, TargetNullValue='—'}" />
+												<Label Grid.Column="2" Style="{StaticResource CrudFormTableCellLabelStyle}" Text="{Binding Dosage, TargetNullValue='—'}" />
+												<Label Grid.Column="3" Style="{StaticResource CrudFormTableCellLabelStyle}" Text="{Binding Quantity, TargetNullValue='—'}" />
+												<BoxView Grid.Column="1" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+												<BoxView Grid.Column="2" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+												<BoxView Grid.Column="3" HorizontalOptions="Start" WidthRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+											</Grid>
+										<BoxView Grid.Row="1" HeightRequest="1" Color="{StaticResource SparkBorderSubtle}" />
+										</Grid>
+									</DataTemplate>
+								</BindableLayout.ItemTemplate>
+							</VerticalStackLayout>
+						</VerticalStackLayout>
+					</Border>
+				</VerticalStackLayout>
+				<VerticalStackLayout Grid.Column="1" />
+			</Grid>
 
 			<!--  ДОКУМЕНТИ  -->
 							<VerticalStackLayout Spacing="10">
