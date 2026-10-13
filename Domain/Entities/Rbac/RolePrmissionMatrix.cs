@@ -31,7 +31,7 @@ public static class RolePermissionMatrix
                 (Modules.Dashboard, ModuleAction.View),
                 (Modules.Doctors, ModuleAction.View),
                 // Main nurse may register and view patients, but cannot edit, deactivate, or delete them.
-                (Modules.Patients, ModuleAction.View|ModuleAction.Create),
+                (Modules.Patients, ModuleAction.View|ModuleAction.Create|ModuleAction.Print),
                 // May create encounters and appointments, but existing clinical records are read-only.
                 (Modules.Encounters, ModuleAction.View|ModuleAction.Create|ModuleAction.Print),
                 (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Schedule),
