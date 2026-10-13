@@ -162,8 +162,8 @@ public partial class EncountersListViewModel : BaseViewModel<Encounter>, IQueryA
 
             actions.Add(new SparkButtonItem
             {
-                IconGlyph="⌕",
-                Label="Preview",
+                IconGlyph="🔍",
+                Label="Брз преглед",
                 Command=PreviewCommand,
                 CommandParameter=e
             });
