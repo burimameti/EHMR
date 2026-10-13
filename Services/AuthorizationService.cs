@@ -31,6 +31,14 @@ public class AuthorizationService : IAuthorizationService
             && !HasRole(UserRole.SuperAdmin))
             return false;
 
+        // Doctors and nursing roles may review appointments/encounters but may
+        // not correct existing records, even if stale explicit grants exist.
+        if(action == ModuleAction.Edit
+            && (HasRole(UserRole.Doctor) || HasRole(UserRole.MainNurse) || HasRole(UserRole.Nurse))
+            && (string.Equals(module, Modules.Appointments, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(module, Modules.Encounters, StringComparison.OrdinalIgnoreCase)))
+            return false;
+
         // Medicines are a shared clinic catalog. Creating medicines is intentionally
         // available to every authenticated user; it is not an RBAC privilege.
         if(string.Equals(module, Modules.Medicines, StringComparison.OrdinalIgnoreCase)
