@@ -23,10 +23,14 @@ public partial class FFPageHeader : ContentView
 
         SecondaryActionButton.BackgroundColor = isBackButton
             ? Color.FromArgb("#475569")
-            : Color.FromArgb("#64748B");
-        SecondaryActionButton.TextColor = Colors.White;
-        SecondaryActionButton.BorderColor = Color.FromArgb("#334155");
-        SecondaryActionButton.BorderWidth = 1;
+            : Color.FromArgb("#FFFFFF");
+        SecondaryActionButton.TextColor = isBackButton
+            ? Colors.White
+            : Color.FromArgb("#334155");
+        SecondaryActionButton.BorderColor = isBackButton
+            ? Color.FromArgb("#334155")
+            : Color.FromArgb("#CBD5E1");
+        SecondaryActionButton.BorderWidth = 1.5;
     }
 
     #region Header Content
