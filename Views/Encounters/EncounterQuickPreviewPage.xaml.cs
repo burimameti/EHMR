@@ -157,7 +157,7 @@ public partial class EncounterQuickPreviewPage : ContentPage
              string.Join(" · ", new[] { m.Dosage, m.ApplicationRegime?.Regime, m.Quantity > 0 ? $"Количина: {m.Quantity:0.##}" : null }.Where(v => !string.IsNullOrWhiteSpace(v)))));
             
             //.Take();
-        AddSection("ЛЕКОВИ ВО ОВОЈ ПРЕГЛЕД", currentMedicineRows,
+        AddSection("ЛЕКОВИ ЗА ОВОЈ ПРЕГЛЕД", currentMedicineRows,
             "Нема лекови поврзани со овој преглед.");
 
         var currentScoreLine = scores.Count == 0
@@ -174,7 +174,7 @@ public partial class EncounterQuickPreviewPage : ContentPage
                 $"")),
             "Нема претходни лекови поврзани со прегледи.");
 
-        AddSection("ИСТОРИЈА НА ДИЈАГНОЗИ — ПОСЛЕДНИ 5 ПРЕГЛЕДИ",
+        AddSection("ИСТОРИЈА НА ДИЈАГНОЗИ",
             diagnosisHistory.Select(d => ($"{d.Mkb10Code?.Code ?? "—"} — {d.Mkb10Code?.Description ?? "Без опис"}",
                 $"")),
             "Нема дијагнози во последните 5 прегледи.");
