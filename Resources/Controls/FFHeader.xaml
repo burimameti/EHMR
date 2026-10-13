@@ -59,7 +59,9 @@
 				VerticalOptions="Center">
 				<ContentView Content="{Binding HeaderContent, Source={x:Reference Root}}" />
 				<Button
-					BackgroundColor="{StaticResource EpicPrimary}"
+					BackgroundColor="#0F766E"
+					BorderColor="#0F766E"
+					BorderWidth="1.5"
 					Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
 					IsEnabled="{Binding PrimaryButtonIsEnabled, Source={x:Reference Root}}"
@@ -69,9 +71,9 @@
 					TextColor="White" />
 				<Button
 					x:Name="SecondaryActionButton"
-					BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
-					BorderColor="{StaticResource SparkBorder}"
-					BorderWidth="1"
+					BackgroundColor="#FFFFFF"
+					BorderColor="#CBD5E1"
+					BorderWidth="1.5"
 					Command="{Binding SecondaryButtonCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
 					IsEnabled="{Binding SecondaryButtonIsEnabled, Source={x:Reference Root}}"
@@ -79,7 +81,7 @@
 					Style="{StaticResource PageHeaderActionButtonStyle}"
 					WidthRequest="{Binding SecondaryButtonWidthRequest, Source={x:Reference Root}}"
 					Text="{Binding SecondaryButtonText, Source={x:Reference Root}}"
-					TextColor="{StaticResource SparkTextPrimary}" />
+					TextColor="#334155" />
 				<Button
 					Command="{Binding RefreshCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
