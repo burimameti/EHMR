@@ -32,10 +32,11 @@ public partial class FFButton : ContentView
                 BackgroundColorEx=Color.FromArgb("#991B1B");
                 return;
             }
-            if(string.Equals(Text, "Назад", StringComparison.OrdinalIgnoreCase)||
-              string.Equals(Text, "Освежи", StringComparison.OrdinalIgnoreCase))
+            if(Text.Trim().EndsWith("Назад", StringComparison.OrdinalIgnoreCase) ||
+               Text.Trim().EndsWith("Back", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(Text, "Освежи", StringComparison.OrdinalIgnoreCase))
             {
-                BackgroundColorEx=Color.FromArgb("#64748B");
+                BackgroundColorEx=Color.FromArgb("#334155");
                 return;
             }
             if(IsBlue)
@@ -283,6 +284,15 @@ public partial class FFButton : ContentView
             string.Equals(Text, "Cancel", StringComparison.OrdinalIgnoreCase))
         {
             Set("#FEF2F2", "#B91C1C", "#64748B", 1);
+            return;
+        }
+
+        // Keep every Back button visually consistent across the application.
+        // Match both the plain and arrow-prefixed Macedonian labels.
+        if(Text.Trim().EndsWith("Назад", StringComparison.OrdinalIgnoreCase) ||
+           Text.Trim().EndsWith("Back", StringComparison.OrdinalIgnoreCase))
+        {
+            Set("#475569", "#FFFFFF", "#334155", 1);
             return;
         }
 
