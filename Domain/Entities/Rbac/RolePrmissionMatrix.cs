@@ -15,8 +15,9 @@ public static class RolePermissionMatrix
             [UserRole.Doctor] = Template(
                 (Modules.Dashboard, ModuleAction.View),
                 (Modules.Doctors, ModuleAction.View),
-                (Modules.Patients, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Activate|ModuleAction.Deactivate),
-                (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Schedule|ModuleAction.Cancel|ModuleAction.Complete),
+                (Modules.Patients, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Activate|ModuleAction.Deactivate|ModuleAction.Print),
+                (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Schedule|ModuleAction.Cancel|ModuleAction.Complete),
+                (Modules.Encounters, ModuleAction.View|ModuleAction.Create|ModuleAction.Print),
             
                 (Modules.Protocols, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Approve|ModuleAction.Print|ModuleAction.Export),
                 (Modules.Inventory, ModuleAction.View),
@@ -31,8 +32,8 @@ public static class RolePermissionMatrix
                 (Modules.Dashboard, ModuleAction.View),
                 (Modules.Doctors, ModuleAction.View),
                 // Main nurse may register and view patients, but cannot edit, deactivate, or delete them.
-                (Modules.Patients, ModuleAction.View|ModuleAction.Create|ModuleAction.Print),
-                // May create encounters and appointments, but existing clinical records are read-only.
+                (Modules.Patients, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Print),
+                // Main nurse can view/create/print encounters but cannot correct or delete them.
                 (Modules.Encounters, ModuleAction.View|ModuleAction.Create|ModuleAction.Print),
                 (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Schedule),
                 (Modules.Protocols, ModuleAction.View),
@@ -50,6 +51,7 @@ public static class RolePermissionMatrix
                 (Modules.Doctors, ModuleAction.View),
                 (Modules.Patients, ModuleAction.View|ModuleAction.Create),
                 (Modules.Appointments, ModuleAction.View|ModuleAction.Create|ModuleAction.Schedule),
+                (Modules.Encounters, ModuleAction.View|ModuleAction.Create|ModuleAction.Print),
               
                 (Modules.Protocols, ModuleAction.View|ModuleAction.Print),
                 (Modules.Inventory, ModuleAction.View),
