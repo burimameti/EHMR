@@ -81,6 +81,7 @@ public static class AppNavigation
                     Title = "Листа на прегледи",
                     Route = AppRoutes.Encounters.List,
                     Module = Modules.Encounters,
+                    RequiredAction = ModuleAction.View,
                     Icon = new IconDefinition { Glyph = "\uf0ae", Font = IconFontType.FontAwesomeSolid }
                 },
                 new()
