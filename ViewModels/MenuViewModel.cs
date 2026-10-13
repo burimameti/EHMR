@@ -77,11 +77,10 @@ public partial class MenuViewModel : ObservableObject, IDisposable
         if(!string.IsNullOrWhiteSpace(exactRoute))
             return exactRoute;
 
-        var parentRoute=AppNavigation.ResolveMenuRoute(route);
-        return _allItems
-            .Select(group => group.Route)
-            .FirstOrDefault(groupRoute =>
-                groupRoute.Equals(parentRoute, StringComparison.OrdinalIgnoreCase));
+        // Keep the actual Shell route here. A detail page belongs to its list
+        // for highlighting, but it must not make the list command think it is
+        // already on that page and ignore the user's click.
+        return route;
     }
     private async void OnAuthChanged(object? sender, EventArgs e)
     {
@@ -308,6 +307,8 @@ public partial class MenuViewModel : ObservableObject, IDisposable
 
     private void ApplyActiveState()
     {
+        var highlightedRoute = AppNavigation.ResolveMenuRoute(ActiveRoute ?? string.Empty);
+
         foreach(var group in _allItems)
         {
             if(group.Items.Count==0)
@@ -315,7 +316,7 @@ public partial class MenuViewModel : ObservableObject, IDisposable
                 group.IsActive=
                     !string.IsNullOrWhiteSpace(group.Route)&&
                     group.Route.Equals(
-                        ActiveRoute,
+                        highlightedRoute,
                         StringComparison.OrdinalIgnoreCase);
                 group.IsExpanded=false;
                 continue;
@@ -326,7 +327,7 @@ public partial class MenuViewModel : ObservableObject, IDisposable
                 item.IsActive=
                     !string.IsNullOrWhiteSpace(item.Route)&&
                     item.Route.Equals(
-                        ActiveRoute,
+                        highlightedRoute,
                         StringComparison.OrdinalIgnoreCase);
                 if(item.IsActive)
                     hasActiveChild=true;
