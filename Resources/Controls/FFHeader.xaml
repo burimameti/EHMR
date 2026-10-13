@@ -83,6 +83,9 @@
 					Text="{Binding SecondaryButtonText, Source={x:Reference Root}}"
 					TextColor="#334155" />
 				<Button
+					BackgroundColor="#FFFFFF"
+					BorderColor="#CBD5E1"
+					BorderWidth="1.5"
 					Command="{Binding RefreshCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
 					HeightRequest="36"
