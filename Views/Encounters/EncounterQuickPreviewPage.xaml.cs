@@ -367,7 +367,19 @@ public partial class EncounterQuickPreviewPage : ContentPage
                 return;
             }
 
+            // The report WebView is intentionally tiny/hidden in the preview page.
+            // Activate the owning MAUI window before opening WebView2's native print UI
+            // so the dialog is not left behind the app or treated as a separate app window.
+            ActivateHostWindow();
+
             nativeWebView.CoreWebView2.ShowPrintUI(Microsoft.Web.WebView2.Core.CoreWebView2PrintDialogKind.Browser);
+
+            // ShowPrintUI is modal; when it returns (Print or Cancel), return focus to EHMR.
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                await Task.Delay(150);
+                ActivateHostWindow();
+            });
         }
         catch (Exception ex)
         {
@@ -381,6 +393,45 @@ public partial class EncounterQuickPreviewPage : ContentPage
 
     private async void OnBackClicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("..");
+        // Closing the preview should only navigate back inside Shell, never close the app window.
+        try
+        {
+            if (Shell.Current is not null)
+            {
+                await Shell.Current.GoToAsync("..");
+                return;
+            }
+
+            if (Navigation.NavigationStack.Count > 1)
+            {
+                await Navigation.PopAsync();
+                return;
+            }
+
+            await DisplayAlert("Преглед", "Не може да се врати на претходната страница.", "ОК");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Encounter preview back navigation failed: {ex}");
+            await DisplayAlert("Преглед", "Не успеа враќањето на претходната страница.", "ОК");
+        }
     }
+
+#if WINDOWS
+    private static void ActivateHostWindow()
+    {
+        try
+        {
+            var mauiWindow = Application.Current?.Windows.FirstOrDefault();
+            if (mauiWindow?.Handler?.PlatformView is Microsoft.UI.Xaml.Window winUiWindow)
+                winUiWindow.Activate();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Could not activate EHMR host window: {ex}");
+        }
+    }
+#else
+    private static void ActivateHostWindow() { }
+#endif
 }
