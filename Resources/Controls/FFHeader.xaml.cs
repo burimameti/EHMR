@@ -8,6 +8,25 @@ public partial class FFPageHeader : ContentView
     public FFPageHeader()
     {
         InitializeComponent();
+        ApplySecondaryButtonStyle();
+    }
+
+    private void ApplySecondaryButtonStyle()
+    {
+        if (SecondaryActionButton is null)
+            return;
+
+        var text = SecondaryButtonText?.Trim() ?? string.Empty;
+        var isBackButton =
+            text.EndsWith("Назад", StringComparison.OrdinalIgnoreCase) ||
+            text.EndsWith("Back", StringComparison.OrdinalIgnoreCase);
+
+        SecondaryActionButton.BackgroundColor = isBackButton
+            ? Color.FromArgb("#475569")
+            : Color.FromArgb("#64748B");
+        SecondaryActionButton.TextColor = Colors.White;
+        SecondaryActionButton.BorderColor = Color.FromArgb("#334155");
+        SecondaryActionButton.BorderWidth = 1;
     }
 
     #region Header Content
@@ -61,7 +80,9 @@ public partial class FFPageHeader : ContentView
         BindableProperty.Create(
             nameof(SecondaryButtonText),
             typeof(string),
-            typeof(FFPageHeader));
+            typeof(FFPageHeader),
+            string.Empty,
+            propertyChanged: (b, _, _) => ((FFPageHeader)b).ApplySecondaryButtonStyle());
 
     public string SecondaryButtonText
     {
