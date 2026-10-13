@@ -61,7 +61,7 @@
 				<Button
 					BackgroundColor="#0F766E"
 					BorderColor="#0F766E"
-					BorderWidth="1.5"
+					BorderWidth="1"
 					Command="{Binding PrimaryButtonCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
 					IsEnabled="{Binding PrimaryButtonIsEnabled, Source={x:Reference Root}}"
@@ -73,7 +73,7 @@
 					x:Name="SecondaryActionButton"
 					BackgroundColor="#FFFFFF"
 					BorderColor="#CBD5E1"
-					BorderWidth="1.5"
+					BorderWidth="1"
 					Command="{Binding SecondaryButtonCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
 					IsEnabled="{Binding SecondaryButtonIsEnabled, Source={x:Reference Root}}"
