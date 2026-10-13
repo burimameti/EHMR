@@ -31,7 +31,7 @@ public static class RolePermissionMatrix
             [UserRole.MainNurse] = Template(
                 (Modules.Dashboard, ModuleAction.View),
                 (Modules.Doctors, ModuleAction.View),
-                // Main nurse may register and view patients, but cannot edit, deactivate, or delete them.
+                // Main nurse may view, register, edit, and print patient records; deletion is blocked globally.
                 (Modules.Patients, ModuleAction.View|ModuleAction.Create|ModuleAction.Edit|ModuleAction.Print),
                 // Main nurse can view/create/print encounters but cannot correct or delete them.
                 (Modules.Encounters, ModuleAction.View|ModuleAction.Create|ModuleAction.Print),
