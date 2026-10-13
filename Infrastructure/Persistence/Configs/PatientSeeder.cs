@@ -143,9 +143,131 @@ public class PatientSeeder : IEntitySeeder
                 IsDeleted = false
             },
 
+        },
+
+            new()
+            {
+                Id = SeedIds.Patient6, DoctorId = SeedIds.Doctor6,
+                FirstName = "Александар", LastName = "Стојанов",
+                NationalId = "1204900123457", SzboNumber = "SZBO-000006",
+                BirthDate = new DateTime(1990, 4, 12), Gender = Gender.Male,
+                City = "Skopje", Address = "ул. Водњанска 14", PostalCode = "1000",
+                Phone = "+38970666006", Email = "aleksandar.stojanov@email.com",
+                EmergencyContactName = "Марија Стојанова", EmergencyContactPhone = "+38970666016",
+                EmergencyRelationship = "Сопруга", BloodType = "A+", Allergies = "Нема",
+                Status = PatientStatus.Active, RegistrationDate = now.AddDays(-22), IsDeleted = false
+            },
+            new()
+            {
+                Id = SeedIds.Patient7, DoctorId = SeedIds.Doctor7,
+                FirstName = "Марија", LastName = "Јованова",
+                NationalId = "0206920123458", SzboNumber = "SZBO-000007",
+                BirthDate = new DateTime(1992, 6, 2), Gender = Gender.Female,
+                City = "Bitola", Address = "ул. Широк Сокак 18", PostalCode = "7000",
+                Phone = "+38970666007", Email = "marija.jovanova@email.com",
+                EmergencyContactName = "Петар Јованов", EmergencyContactPhone = "+38970666017",
+                EmergencyRelationship = "Сопруг", BloodType = "O+", Allergies = "Нема",
+                Status = PatientStatus.Active, RegistrationDate = now.AddDays(-21), IsDeleted = false
+            },
+            new()
+            {
+                Id = SeedIds.Patient8, DoctorId = SeedIds.Doctor8,
+                FirstName = "Бесник", LastName = "Адеми",
+                NationalId = "1107880123459", SzboNumber = "SZBO-000008",
+                BirthDate = new DateTime(1988, 7, 11), Gender = Gender.Male,
+                City = "Tetovo", Address = "ул. Илинденска 27", PostalCode = "1200",
+                Phone = "+38970666008", Email = "besnik.ademi@email.com",
+                EmergencyContactName = "Лиридона Адеми", EmergencyContactPhone = "+38970666018",
+                EmergencyRelationship = "Сопруга", BloodType = "B+", Allergies = "Нема",
+                Status = PatientStatus.Active, RegistrationDate = now.AddDays(-20), IsDeleted = false
+            },
+            new()
+            {
+                Id = SeedIds.Patient9, DoctorId = SeedIds.Doctor9,
+                FirstName = "Ивана", LastName = "Костова",
+                NationalId = "2509950123460", SzboNumber = "SZBO-000009",
+                BirthDate = new DateTime(1995, 9, 25), Gender = Gender.Female,
+                City = "Ohrid", Address = "ул. Туристичка 9", PostalCode = "6000",
+                Phone = "+38970666009", Email = "ivana.kostova@email.com",
+                EmergencyContactName = "Горан Костов", EmergencyContactPhone = "+38970666019",
+                EmergencyRelationship = "Татко", BloodType = "A-", Allergies = "Нема",
+                Status = PatientStatus.Active, RegistrationDate = now.AddDays(-19), IsDeleted = false
+            },
+            new()
+            {
+                Id = SeedIds.Patient10, DoctorId = SeedIds.Doctor10,
+                FirstName = "Арбен", LastName = "Селими",
+                NationalId = "0801830123461", SzboNumber = "SZBO-000010",
+                BirthDate = new DateTime(1983, 1, 8), Gender = Gender.Male,
+                City = "Kumanovo", Address = "ул. Октомвриска 6", PostalCode = "1300",
+                Phone = "+38970666010", Email = "arben.selimi@email.com",
+                EmergencyContactName = "Вјолца Селими", EmergencyContactPhone = "+38970666020",
+                EmergencyRelationship = "Сопруга", BloodType = "O-", Allergies = "Нема",
+                Status = PatientStatus.Active, RegistrationDate = now.AddDays(-18), IsDeleted = false
+            },
+            new()
+            {
+                Id = SeedIds.Patient11, DoctorId = SeedIds.Doctor1,
+                FirstName = "Сања", LastName = "Митревска",
+                NationalId = "1402900123462", SzboNumber = "SZBO-000011",
+                BirthDate = new DateTime(1990, 2, 14), Gender = Gender.Female,
+                City = "Skopje", Address = "ул. Дебарца 11", PostalCode = "1000",
+                Phone = "+38970666011", Email = "sanja.mitrevska@email.com",
+                EmergencyContactName = "Владимир Митревски", EmergencyContactPhone = "+38970666021",
+                EmergencyRelationship = "Сопруг", BloodType = "AB+", Allergies = "Нема",
+                Status = PatientStatus.Active, RegistrationDate = now.AddDays(-17), IsDeleted = false
+            },
+            new()
+            {
+                Id = SeedIds.Patient12, DoctorId = SeedIds.Doctor2,
+                FirstName = "Фисник", LastName = "Красниќи",
+                NationalId = "0907860123463", SzboNumber = "SZBO-000012",
+                BirthDate = new DateTime(1986, 7, 9), Gender = Gender.Male,
+                City = "Gostivar", Address = "ул. Борче Јовановски 5", PostalCode = "1230",
+                Phone = "+38970666012", Email = "fisnik.krasniqi@email.com",
+                EmergencyContactName = "Мира Красниќи", EmergencyContactPhone = "+38970666022",
+                EmergencyRelationship = "Сопруга", BloodType = "B-", Allergies = "Нема",
+                Status = PatientStatus.Active, RegistrationDate = now.AddDays(-16), IsDeleted = false
+            },
+            new()
+            {
+                Id = SeedIds.Patient13, DoctorId = SeedIds.Doctor3,
+                FirstName = "Кристина", LastName = "Трајковска",
+                NationalId = "1709910123464", SzboNumber = "SZBO-000013",
+                BirthDate = new DateTime(1991, 9, 17), Gender = Gender.Female,
+                City = "Prilep", Address = "ул. Маршал Тито 23", PostalCode = "7500",
+                Phone = "+38970666013", Email = "kristina.trajkovska@email.com",
+                EmergencyContactName = "Никола Трајковски", EmergencyContactPhone = "+38970666023",
+                EmergencyRelationship = "Сопруг", BloodType = "A+", Allergies = "Нема",
+                Status = PatientStatus.Active, RegistrationDate = now.AddDays(-15), IsDeleted = false
+            },
+            new()
+            {
+                Id = SeedIds.Patient14, DoctorId = SeedIds.Doctor4,
+                FirstName = "Леарт", LastName = "Ибраими",
+                NationalId = "0605840123465", SzboNumber = "SZBO-000014",
+                BirthDate = new DateTime(1984, 5, 6), Gender = Gender.Male,
+                City = "Strumica", Address = "ул. Ленинова 17", PostalCode = "2400",
+                Phone = "+38970666014", Email = "leart.ibraimi@email.com",
+                EmergencyContactName = "Елмира Ибраими", EmergencyContactPhone = "+38970666024",
+                EmergencyRelationship = "Сопруга", BloodType = "O+", Allergies = "Нема",
+                Status = PatientStatus.Active, RegistrationDate = now.AddDays(-14), IsDeleted = false
+            },
+            new()
+            {
+                Id = SeedIds.Patient15, DoctorId = SeedIds.Doctor5,
+                FirstName = "Наташа", LastName = "Илиевска",
+                NationalId = "2107880123466", SzboNumber = "SZBO-000015",
+                BirthDate = new DateTime(1988, 7, 21), Gender = Gender.Female,
+                City = "Kavadarci", Address = "ул. Македонија 31", PostalCode = "1430",
+                Phone = "+38970666015", Email = "natasa.ilievska@email.com",
+                EmergencyContactName = "Драган Илиевски", EmergencyContactPhone = "+38970666025",
+                EmergencyRelationship = "Сопруг", BloodType = "AB-", Allergies = "Нема",
+                Status = PatientStatus.Active, RegistrationDate = now.AddDays(-13), IsDeleted = false
+            },
         };
 
-        // Keep the demo patient catalogue limited to the five explicitly seeded patients.
+        // Keep the demo patient catalogue limited to fifteen seeded patients.
         // Historical seed patients 6–20 are removed by the dedicated demo cleanup seeder.
         // Idempotent expansion: add missing seeded patients without duplicating records.
         var existingPatientIds = await context.Patients
