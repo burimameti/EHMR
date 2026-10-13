@@ -172,23 +172,55 @@ public class DatabaseMigrationService
 
     private static async Task NormalizeLegacyStatusesAsync(DesktopTherapyDbContext db)
     {
-        // Values 4+ were previously used by removed Missed/NoShow statuses.
-        // Keep existing data valid by mapping all obsolete terminal values to Cancelled.
+        // Normalize legacy string values before EF materializes entities. Older SQLite
+        // databases can contain values such as "CheckedIn", which are no longer members
+        // of the current enums and would otherwise crash startup during entity loading.
+        if(db.Database.IsSqlite())
+        {
+            var connection = db.Database.GetDbConnection();
+            if(connection.State != System.Data.ConnectionState.Open)
+                await connection.OpenAsync();
+
+            await using var command = connection.CreateCommand();
+            command.CommandText = """
+                UPDATE "Appointments"
+                SET "Status" = CASE
+                    WHEN "Status" = 'CheckedIn' THEN 'InProgress'
+                    WHEN "Status" IN ('Rescheduled', 'ReScheduled') THEN 'Scheduled'
+                    WHEN "Status" IN ('Missed', 'NoShow') THEN 'Cancelled'
+                    ELSE "Status"
+                END
+                WHERE "Status" IN ('CheckedIn', 'Missed', 'NoShow', 'Rescheduled', 'ReScheduled');
+
+                UPDATE "Encounters"
+                SET "Status" = CASE
+                    WHEN "Status" = 'CheckedIn' THEN 'InProgress'
+                    WHEN "Status" IN ('Rescheduled', 'ReScheduled') THEN 'Scheduled'
+                    WHEN "Status" IN ('Missed', 'NoShow') THEN 'Cancelled'
+                    ELSE "Status"
+                END
+                WHERE "Status" IN ('CheckedIn', 'Missed', 'NoShow', 'Rescheduled', 'ReScheduled');
+                """;
+            await command.ExecuteNonQueryAsync();
+            return;
+        }
+
+        // SQL Server stores enum values as integers; normalize obsolete numeric values.
         var appointments = await db.Appointments
-            .Where(x => (int)x.Status>3)
+            .Where(x => (int)x.Status > 3)
             .ToListAsync();
 
         foreach(var appointment in appointments)
-            appointment.Status=AppointmentStatus.Cancelled;
+            appointment.Status = AppointmentStatus.Cancelled;
 
         var encounters = await db.Encounters
-            .Where(x => (int)x.Status>3)
+            .Where(x => (int)x.Status > 3)
             .ToListAsync();
 
         foreach(var encounter in encounters)
-            encounter.Status=EncounterStatus.Cancelled;
+            encounter.Status = EncounterStatus.Cancelled;
 
-        if(appointments.Count>0||encounters.Count>0)
+        if(appointments.Count > 0 || encounters.Count > 0)
             await db.SaveChangesAsync();
     }
 
