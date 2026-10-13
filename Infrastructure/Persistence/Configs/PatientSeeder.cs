@@ -143,8 +143,6 @@ public class PatientSeeder : IEntitySeeder
                 IsDeleted = false
             },
 
-        },
-
             new()
             {
                 Id = SeedIds.Patient6, DoctorId = SeedIds.Doctor6,
