@@ -88,6 +88,13 @@ public class AuthorizationService : IAuthorizationService
         if(HasRole(UserRole.Admin))
             return true;
 
+        // RolePermissionMatrix is the source of the built-in role defaults.
+        // Do not require a separate persisted module assignment for roles such
+        // as MainNurse, otherwise their configured default permissions produce
+        // an empty menu on a fresh/default account.
+        if(RolePermissionMatrix.GetActions(module, _auth.CurrentUser.Role) != ModuleAction.None)
+            return true;
+
         return HasModule(module);
     }
 
