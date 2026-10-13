@@ -673,7 +673,7 @@ namespace EHMR.Resources.Controls
         private View BuildSingleButton(SparkButtonItem item, SparkGridRow row)
         {
             if(item==null) return new Label();
-            var button = BuildActionIcon(item.Label??"", item.Command, item.CommandParameter,
+            var button = BuildActionIcon(item.Label??"", item.IconGlyph, item.Command, item.CommandParameter,
                 ResolveActionColor(item), ResolveActionTextColor(item));
             button.IsEnabled = item.IsEnabled;
             button.Opacity = item.IsEnabled ? 1 : 0.45;
@@ -696,7 +696,7 @@ namespace EHMR.Resources.Controls
             foreach(var action in actions)
             {
                 var button = BuildActionIcon(
-                    action.Label??"", action.Command,
+                    action.Label??"", action.IconGlyph, action.Command,
                     action.CommandParameter??row.Tag??row,
                     ResolveActionColor(action), ResolveActionTextColor(action));
                 button.IsEnabled=action.IsEnabled;
@@ -713,19 +713,13 @@ namespace EHMR.Resources.Controls
         {
             var label = action.Label?.Trim()??string.Empty;
 
-            // "Повеќе" is kept here as a compatibility alias for older list VMs.
             if(label.Equals("Детали", StringComparison.OrdinalIgnoreCase)||
-               label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase))
-                return Color.FromArgb("#2AEBE7");
+               label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase)||
+               action.IsPrimary)
+                return Color.FromArgb("#0F766E");
 
             if(label.Equals("Промени", StringComparison.OrdinalIgnoreCase))
                 return Color.FromArgb("#FFFFFF");
-
-            if(label.Equals("Исчисти", StringComparison.OrdinalIgnoreCase))
-                return Color.FromArgb("#F1F5F9");
-
-            if(action.IsPrimary)
-                return Color.FromArgb("#2AEBE7");
 
             return Color.FromArgb("#F1F5F9");
         }
@@ -734,41 +728,63 @@ namespace EHMR.Resources.Controls
         {
             var label = action.Label?.Trim()??string.Empty;
             if(label.Equals("Повеќе", StringComparison.OrdinalIgnoreCase)||
-               label.Equals("Детали", StringComparison.OrdinalIgnoreCase))
-                return Color.FromArgb("#0F172A");
+               label.Equals("Детали", StringComparison.OrdinalIgnoreCase)||
+               action.IsPrimary)
+                return Color.FromArgb("#FFFFFF");
             return Color.FromArgb("#334155");
         }
 
-        private View BuildActionIcon(string text, ICommand command, object commandParameter, Color color, Color textColor)
+        private View BuildActionIcon(string text, string? iconGlyph, ICommand command, object commandParameter, Color color, Color textColor)
         {
+            var isPrimary = color == Color.FromArgb("#0F766E");
             var border = new Border
             {
-                Padding=new Thickness(R(6), R(4)),
+                Padding=new Thickness(R(8), R(4)),
                 Background=new SolidColorBrush(color),
-                Stroke=new SolidColorBrush(color),
+                Stroke=new SolidColorBrush(isPrimary ? Color.FromArgb("#115E59") : Color.FromArgb("#CBD5E1")),
                 StrokeThickness=1,
                 StrokeShape=new RoundRectangle { CornerRadius=6 },
                 HorizontalOptions=LayoutOptions.Center,
                 VerticalOptions=LayoutOptions.Center,
                 MinimumWidthRequest=R(90),
-                MinimumHeightRequest=R(26)
+                MinimumHeightRequest=R(30)
             };
 
-            border.Content=new Label
+            var content = new HorizontalStackLayout
+            {
+                Spacing=R(5),
+                HorizontalOptions=LayoutOptions.Center,
+                VerticalOptions=LayoutOptions.Center
+            };
+
+            if(!string.IsNullOrWhiteSpace(iconGlyph))
+            {
+                content.Children.Add(new Label
+                {
+                    Text=iconGlyph,
+                    FontSize=R(12),
+                    TextColor=textColor,
+                    VerticalTextAlignment=TextAlignment.Center,
+                    VerticalOptions=LayoutOptions.Center
+                });
+            }
+
+            content.Children.Add(new Label
             {
                 Text=text,
                 FontSize=R(11),
                 FontAttributes=FontAttributes.Bold,
                 TextColor=textColor,
-                HorizontalTextAlignment=TextAlignment.Center,
-                VerticalTextAlignment=TextAlignment.Center
-            };
+                VerticalTextAlignment=TextAlignment.Center,
+                VerticalOptions=LayoutOptions.Center
+            });
+            border.Content=content;
 
             border.Opacity = 1;
             border.IsEnabled = true;
 
             var normalBackground = color;
-            var hoverBackground = Color.FromArgb("#6B7881");
+            var hoverBackground = isPrimary ? Color.FromArgb("#115E59") : Color.FromArgb("#E2E8F0");
             var pointer = new PointerGestureRecognizer();
             pointer.PointerEntered += (_, _) =>
             {
