@@ -1,5 +1,5 @@
-﻿    // EHMR.Services/ReportExportService.cs
-    using ClosedXML.Excel;
+﻿// EHMR.Services/ReportExportService.cs
+using ClosedXML.Excel;
 using EHMR.Domain.Interfaces;
 using EHMR.Resources.Controls;
 using QuestPDF.Fluent;
@@ -131,7 +131,7 @@ namespace EHMR.Services;
                                 table.Cell()
                                     .Border(0.5f).BorderColor("#555555")
                                     .PaddingVertical(4).PaddingHorizontal(3)
-                                    .Text(CellToText(value)).FontSize(7);
+                                    .Text(CellToText(value));
                             }
                         }
                     });
@@ -159,20 +159,18 @@ namespace EHMR.Services;
                 page.Footer().PaddingTop(8).Column(footer =>
                 {
                     footer.Item().BorderTop(0.7f).BorderColor("#000000").PaddingTop(6).Row(row =>
-                    {
-                        row.RelativeItem().Text($"Датум: {DateTime.Now:dd.MM.yyyy}").FontSize(8);
-                        row.RelativeItem().Text("Извештајот го подготвил (име и презиме): __________________________")
-                            .FontSize(8);
-                        row.RelativeItem().AlignRight().Text("Потпис: __________________").FontSize(8);
-                    });
-
+{
+    row.RelativeItem().Text($"Датум: {DateTime.Now:dd.MM.yyyy}").FontSize(8);
+    row.RelativeItem().Text("Извештајот го подготвил (име и презиме): __________________________").FontSize(7);
+});
                     footer.Item().PaddingTop(4).AlignRight().Text(text =>
                     {
+                        text.DefaultTextStyle(style => style.FontSize(7));
                         text.Span("Страница ");
                         text.CurrentPageNumber();
                         text.Span(" од ");
                         text.TotalPages();
-                    }).FontSize(7);
+                    });
                 });
             });
         }).GeneratePdf(path);
