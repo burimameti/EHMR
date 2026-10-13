@@ -88,9 +88,13 @@
 					BorderWidth="1.5"
 					Command="{Binding RefreshCommand, Source={x:Reference Root}}"
 					CornerRadius="6"
+					FontFamily="FASolid"
+					FontSize="14"
 					HeightRequest="36"
 					IsVisible="{Binding ShowRefreshButton, Source={x:Reference Root}}"
 					Style="{StaticResource EhmrIconButton}"
+					Text="&#xf021;"
+					TextColor="#334155"
 					WidthRequest="36" />
 			</HorizontalStackLayout>
 		</Grid>
