@@ -38,15 +38,23 @@ public class AuthorizationService : IAuthorizationService
         if(HasRole(UserRole.SuperAdmin)||HasRole(UserRole.Admin))
             return true;
 
+        // Built-in role permissions must remain effective even when the user
+        // has persisted module-permission rows containing None (legacy/default
+        // rows). Explicit permissions may add actions, but must not erase the
+        // role's configured baseline privileges.
+        var roleDefaults = RolePermissionMatrix.GetActions(module, _auth.CurrentUser.Role);
         var explicitPermission = GetExplicitPermission(module);
-        if(explicitPermission.HasValue)
-            return explicitPermission.Value.HasFlag(action);
+        var allowed = roleDefaults | (explicitPermission ?? ModuleAction.None);
 
-        if(!CanAccessModule(module))
-            return false;
+        if(allowed.HasFlag(action))
+            return true;
 
-        var allowed = RolePermissionMatrix.GetActions(module, _auth.CurrentUser.Role);
-        return allowed.HasFlag(action);
+        // Do not allow persisted user-module assignments to grant actions that
+        // are not part of the role baseline unless they are explicitly present.
+        if(explicitPermission.HasValue && explicitPermission.Value.HasFlag(action))
+            return true;
+
+        return false;
     }
     public bool IsAuthenticated
         => _auth.IsAuthenticated;
@@ -81,19 +89,17 @@ public class AuthorizationService : IAuthorizationService
         if(HasRole(UserRole.SuperAdmin))
             return true;
 
-        var explicitPermission = GetExplicitPermission(module);
-        if(explicitPermission.HasValue)
-            return explicitPermission.Value != ModuleAction.None;
-
         if(HasRole(UserRole.Admin))
             return true;
 
-        // RolePermissionMatrix is the source of the built-in role defaults.
-        // Do not require a separate persisted module assignment for roles such
-        // as MainNurse, otherwise their configured default permissions produce
-        // an empty menu on a fresh/default account.
+        // A role's configured baseline is authoritative for its default
+        // modules; legacy persisted rows with Actions=None must not hide them.
         if(RolePermissionMatrix.GetActions(module, _auth.CurrentUser.Role) != ModuleAction.None)
             return true;
+
+        var explicitPermission = GetExplicitPermission(module);
+        if(explicitPermission.HasValue)
+            return explicitPermission.Value != ModuleAction.None;
 
         return HasModule(module);
     }
