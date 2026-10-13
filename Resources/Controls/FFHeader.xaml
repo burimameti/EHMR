@@ -68,6 +68,7 @@
 					Text="{Binding PrimaryButtonText, Source={x:Reference Root}}"
 					TextColor="White" />
 				<Button
+					x:Name="SecondaryActionButton"
 					BackgroundColor="{StaticResource SparkButtonSecondaryBg}"
 					BorderColor="{StaticResource SparkBorder}"
 					BorderWidth="1"
