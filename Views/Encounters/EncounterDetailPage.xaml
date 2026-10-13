@@ -530,7 +530,7 @@
 													<BindableLayout.EmptyView>
 														<Label
 															FontSize="11"
-															Text="Нема доделени МКБ-10 дијагнози."
+															Text="Нема доделени дијагнози."
 															TextColor="{StaticResource SparkTextSecondary}" />
 													</BindableLayout.EmptyView>
 													<BindableLayout.ItemTemplate>
