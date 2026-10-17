@@ -2,6 +2,9 @@ using EHMR.Domain.Entities;
 using EHMR.Domain.Interfaces;
 using EHMR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+#if WINDOWS
+using System.Runtime.InteropServices;
+#endif
 
 namespace EHMR.Views.Encounters;
 
@@ -255,7 +258,7 @@ public partial class EncounterQuickPreviewPage : ContentPage
         var reportTitle = encounter != null ? $"БРОЈ НА ПРЕГЛЕД: {encounter.EncounterNumber}"
             : (string.IsNullOrWhiteSpace(title) ? "Извештај за пациент" : title.Trim());
         html.Append("<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><style>");
-        html.Append("@page{size:A4;margin:14mm 15mm 16mm}*{box-sizing:border-box}html,body{background:#fff}body{font-family:Arial,'Segoe UI',sans-serif;color:#111827;margin:0 auto;padding:0;max-width:190mm;font-size:12pt;line-height:1.2;font-weight:400}.header{display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid #111827;padding:0 0 4px;margin-bottom:4px}.org{font-size:12pt;font-weight:400;letter-spacing:0;color:#111827}h1{font-size:14pt;margin:0;color:#111827;font-weight:400}.meta{text-align:right;font-size:12pt;color:#111827;line-height:1.2;font-weight:400}h2{font-size:12pt;color:#111827;font-weight:400;margin:5px 0 2px;padding:0 0 2px;border-bottom:1px solid #111827;letter-spacing:0}section{break-inside:auto}.grid{display:grid;grid-template-columns:1fr 1fr;column-gap:18px;row-gap:0}.field{display:grid;grid-template-columns:38% 62%;gap:4px;padding:1px 0;border-bottom:1px solid #e5e7eb;break-inside:avoid;min-width:0}.field-label{font-weight:400;font-size:12pt;color:#111827}.field-value{font-size:12pt;font-weight:400;color:#111827;overflow-wrap:anywhere}.row{padding:1px 0;border-bottom:1px solid #e5e7eb;break-inside:avoid}.row-title{font-weight:400;font-size:12pt;color:#111827}.row-detail{font-size:12pt;font-weight:400;color:#111827;margin-top:0;overflow-wrap:anywhere}.empty{color:#475569;font-size:12pt;margin:1px 0}.signatures{display:flex;gap:32px;margin-top:16px;break-inside:avoid}.sig{flex:1;border-top:1px solid #64748b;padding-top:3px;text-align:center;font-size:12pt;font-weight:400;color:#475569}@media(max-width:600px){body{padding:14px}.grid{grid-template-columns:1fr}.header{align-items:flex-start;flex-direction:column}.meta{text-align:left}.field{grid-template-columns:40% 60%}}");
+        html.Append("@page{size:A4;margin:14mm 15mm 20mm}*{box-sizing:border-box}html,body{background:#fff}body{font-family:Arial,'Segoe UI',sans-serif;color:#111827;margin:0 auto;padding:0;max-width:190mm;font-size:12pt;line-height:1.2;font-weight:400}.header{display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid #111827;padding:0 0 4px;margin-bottom:4px}.org{font-size:12pt;font-weight:400;letter-spacing:0;color:#111827}h1{font-size:14pt;margin:0;color:#111827;font-weight:400}.meta{text-align:right;font-size:12pt;color:#111827;line-height:1.2;font-weight:400}h2{font-size:12pt;color:#111827;font-weight:400;margin:5px 0 2px;padding:0 0 2px;border-bottom:1px solid #111827;letter-spacing:0}section{break-inside:auto}.grid{display:grid;grid-template-columns:1fr 1fr;column-gap:18px;row-gap:0}.field{display:grid;grid-template-columns:38% 62%;gap:4px;padding:1px 0;border-bottom:1px solid #e5e7eb;break-inside:avoid;min-width:0}.field-label{font-weight:400;font-size:12pt;color:#111827}.field-value{font-size:12pt;font-weight:400;color:#111827;overflow-wrap:anywhere}.row{padding:1px 0;border-bottom:1px solid #e5e7eb;break-inside:avoid}.row-title{font-weight:400;font-size:12pt;color:#111827}.row-detail{font-size:12pt;font-weight:400;color:#111827;margin-top:0;overflow-wrap:anywhere}.empty{color:#475569;font-size:12pt;margin:1px 0}.signatures{display:flex;gap:32px;margin-top:42px;padding-top:8px;break-inside:avoid;page-break-inside:avoid}.sig{flex:1;border-top:1px solid #64748b;padding-top:8px;text-align:center;font-size:12pt;font-weight:400;color:#475569}@media(max-width:600px){body{padding:14px}.grid{grid-template-columns:1fr}.header{align-items:flex-start;flex-direction:column}.meta{text-align:left}.field{grid-template-columns:40% 60%}}");
         html.Append("</style></head><body>");
         html.Append($"<div class='header'><div><div class='org'>КЛИНИКА ЗА РЕУМАТОЛОГИЈА -СКОПЈЕ</div><h1>{E(reportTitle)}</h1></div><div class='meta'><div>Датум: <b>{E(encounter?.EncounterDate.ToString("dd.MM.yyyy HH:mm"))}</b></div></div></div>");
 
@@ -367,19 +370,13 @@ public partial class EncounterQuickPreviewPage : ContentPage
                 return;
             }
 
-            // The report WebView is intentionally tiny/hidden in the preview page.
-            // Activate the owning MAUI window before opening WebView2's native print UI
-            // so the dialog is not left behind the app or treated as a separate app window.
+            // Ensure the host window is foreground before showing WebView2's native
+            // printer dialog. A tiny hidden WebView can leave the dialog behind EHMR.
             ActivateHostWindow();
-
+            await Task.Delay(120);
+            ActivateHostWindow();
             nativeWebView.CoreWebView2.ShowPrintUI(Microsoft.Web.WebView2.Core.CoreWebView2PrintDialogKind.Browser);
-
-            // ShowPrintUI is modal; when it returns (Print or Cancel), return focus to EHMR.
-            await MainThread.InvokeOnMainThreadAsync(async () =>
-            {
-                await Task.Delay(150);
-                ActivateHostWindow();
-            });
+            ActivateHostWindow();
         }
         catch (Exception ex)
         {
@@ -418,13 +415,24 @@ public partial class EncounterQuickPreviewPage : ContentPage
     }
 
 #if WINDOWS
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern bool BringWindowToTop(IntPtr hWnd);
+
     private static void ActivateHostWindow()
     {
         try
         {
             var mauiWindow = Application.Current?.Windows.FirstOrDefault();
             if (mauiWindow?.Handler?.PlatformView is Microsoft.UI.Xaml.Window winUiWindow)
+            {
                 winUiWindow.Activate();
+                var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(winUiWindow);
+                BringWindowToTop(hwnd);
+                SetForegroundWindow(hwnd);
+            }
         }
         catch (Exception ex)
         {
