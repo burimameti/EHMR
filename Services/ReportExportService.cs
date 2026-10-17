@@ -167,9 +167,9 @@ namespace EHMR.Services;
                         });
                     }
 
-                    // Signature and preparation lines flow after the report table,
-                    // so they appear at the end of the report rather than on every page.
-                    contentColumn.Item().PaddingTop(28).ShowEntire().Row(row =>
+                    // Keep the signature/prepared-by/stamp block anchored to the bottom
+                    // of the final page, never directly underneath the table.
+                    contentColumn.Item().ExtendVertical().AlignBottom().PaddingTop(28).ShowEntire().Row(row =>
                     {
                         row.RelativeItem().PaddingRight(18).Column(sign =>
                         {
