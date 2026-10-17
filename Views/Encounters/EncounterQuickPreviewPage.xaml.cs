@@ -370,13 +370,12 @@ public partial class EncounterQuickPreviewPage : ContentPage
                 return;
             }
 
-            // Ensure the host window is foreground before showing WebView2's native
-            // printer dialog. A tiny hidden WebView can leave the dialog behind EHMR.
+            // Bring EHMR forward before opening WebView2's print-preview window.
+            // Do not reactivate EHMR after ShowPrintUI: doing so steals focus from
+            // the print-preview window and leaves it behind the main application.
             ActivateHostWindow();
             await Task.Delay(120);
-            ActivateHostWindow();
             nativeWebView.CoreWebView2.ShowPrintUI(Microsoft.Web.WebView2.Core.CoreWebView2PrintDialogKind.Browser);
-            ActivateHostWindow();
         }
         catch (Exception ex)
         {
