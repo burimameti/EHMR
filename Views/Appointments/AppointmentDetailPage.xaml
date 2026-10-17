@@ -370,11 +370,11 @@
 								<controls:CrudSectionHeader Title="МКБ-10 ИСТОРИЈА ОД КАРТОНОТ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 
-								<!--  ═══ EDIT MODE: alphabet + dual search + compact assigned list ═══  -->
+								<!--  MKB-10 is read-only here; assignments are managed in the patient card. -->
 								<Grid
 									ColumnDefinitions="*"
 									ColumnSpacing="0"
-									IsVisible="{Binding IsEditMode}"
+									IsVisible="False"
 									RowDefinitions="Auto,Auto,Auto,Auto"
 									RowSpacing="12">
 
