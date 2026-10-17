@@ -75,6 +75,11 @@ namespace EHMR.Services
                     normalizedRoute,
                     false,
                     navParams);
+
+                // Registered Shell routes can leave their previous pages on the
+                // navigation stack. Keep the Shell root and the destination only,
+                // disposing transient page view-models before removing stale pages.
+                DisposeStaleRoutePages(activeShell);
             }
             catch(Exception ex)
             {
@@ -88,6 +93,41 @@ namespace EHMR.Services
             finally
             {
                 NavigationLock.Release();
+            }
+        }
+
+        private static void DisposeStaleRoutePages(Shell shell)
+        {
+            var stack = shell.Navigation.NavigationStack;
+            if(stack.Count <= 2)
+                return;
+
+            // Preserve the root page and the newly navigated-to page.
+            for(var index = stack.Count - 2; index >= 1; index--)
+            {
+                var stalePage = stack[index];
+
+                if(stalePage.BindingContext is IDisposable disposable &&
+                   stalePage.BindingContext is not ViewModels.MenuViewModel)
+                {
+                    try
+                    {
+                        disposable.Dispose();
+                    }
+                    catch(Exception ex)
+                    {
+                        Debug.WriteLine($"Failed to dispose view-model for stale route '{stalePage.GetType().Name}': {ex}");
+                    }
+                }
+
+                try
+                {
+                    shell.Navigation.RemovePage(stalePage);
+                }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine($"Failed to remove stale route page '{stalePage.GetType().Name}': {ex}");
+                }
             }
         }
 
