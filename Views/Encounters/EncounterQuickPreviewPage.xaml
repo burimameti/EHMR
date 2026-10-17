@@ -11,12 +11,12 @@
 		<WebView
 			x:Name="PrintWebView"
 			Grid.Row="1"
-			HeightRequest="1"
+			HeightRequest="900"
 			HorizontalOptions="Start"
 			InputTransparent="True"
 			Opacity="0.01"
 			VerticalOptions="Start"
-			WidthRequest="1" />
+			WidthRequest="700" />
 
 		<Grid
 			Grid.Row="0"
@@ -235,10 +235,10 @@
 
 					<!--  Signature lines  -->
 					<Grid
-						Margin="0,16,0,0"
+						Margin="0,48,0,12"
 						ColumnDefinitions="*,*"
 						ColumnSpacing="24">
-						<VerticalStackLayout Spacing="6">
+						<VerticalStackLayout Spacing="8">
 							<BoxView BackgroundColor="#64748B" HeightRequest="1" />
 							<Label
 								FontSize="11"
