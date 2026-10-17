@@ -318,24 +318,6 @@ Encounter? encounterForMedicines = null;
 
                 encounterForMedicines=savedEncounter;
 
-                foreach(var d in mkb10Assignments)
-                {
-                    var assignmentNumber = await SequenceHelper.GenerateNumberAsync(
-                        db, SequenceNames.PatientMkb10Assignment, "MKB");
-                    db.PatientMkb10Assignments.Add(new PatientMkb10Assignment
-                    {
-                        Id=Guid.NewGuid(),
-                        AssignmentNumber=assignmentNumber,
-                        PatientId=appointment.PatientId,
-                        EncounterId=savedEncounter.Id,
-                        Mkb10CodeId=d.Mkb10CodeId,
-                        DiagnosedAt=appointment.ScheduledStart,
-                        IsPrimary=d.IsPrimary,
-                        Severity=d.Severity,
-                        ClinicalDescription=d.ClinicalDescription,
-                        Status=d.Status,
-                    });
-                }
             }
             else
             {
@@ -377,29 +359,8 @@ Encounter? encounterForMedicines = null;
 
                     await db.SaveChangesAsync();
 
-                    var existingAssignments = await db.PatientMkb10Assignments
-                        .Where(x => x.EncounterId==encounter.Id)
-                        .ToListAsync();
-                    db.PatientMkb10Assignments.RemoveRange(existingAssignments);
-
-                    foreach(var d in mkb10Assignments)
-                    {
-                        var assignmentNumber = await SequenceHelper.GenerateNumberAsync(
-                            db, SequenceNames.PatientMkb10Assignment, "MKB");
-                        db.PatientMkb10Assignments.Add(new PatientMkb10Assignment
-                        {
-                            Id=Guid.NewGuid(),
-                            AssignmentNumber=assignmentNumber,
-                            PatientId=appointment.PatientId,
-                            EncounterId=encounter.Id,
-                            Mkb10CodeId=d.Mkb10CodeId,
-                            DiagnosedAt=appointment.ScheduledStart,
-                            IsPrimary=d.IsPrimary,
-                            Severity=d.Severity,
-                            ClinicalDescription=d.ClinicalDescription,
-                            Status=d.Status,
-                        });
-                    }
+                    // MKB-10 diagnoses belong to the patient card/history.
+                    // Appointment edits must never replace or delete those assignments.
                 }
                 else if(encounter is null)
                 {
