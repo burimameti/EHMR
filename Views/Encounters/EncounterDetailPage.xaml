@@ -620,7 +620,7 @@
 													<Label
 														FontSize="11"
 														LineBreakMode="WordWrap"
-														Text="{Binding Score.ScoreText, TargetNullValue='—'}"
+														Text="{Binding Score.ScoreText, TargetNullValue='Во овој преглед нема внесен скор.'}"
 														TextColor="{StaticResource SparkTextPrimary}"
 														VerticalOptions="Center" />
 													<Label
