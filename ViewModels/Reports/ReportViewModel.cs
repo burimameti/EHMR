@@ -1217,7 +1217,7 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
             if(string.IsNullOrWhiteSpace(selected) ||
                selected.Equals("Сите", StringComparison.OrdinalIgnoreCase) ||
-               filterType.Equals("Тип на период", StringComparison.OrdinalIgnoreCase) ||
+               filterType.Contains("период", StringComparison.OrdinalIgnoreCase) ||
                filterType.Equals("Од", StringComparison.OrdinalIgnoreCase) ||
                filterType.Equals("До", StringComparison.OrdinalIgnoreCase))
                 continue;
