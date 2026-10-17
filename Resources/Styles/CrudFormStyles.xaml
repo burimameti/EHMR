@@ -39,6 +39,8 @@
 	<!--  Shared Entry style used by patient and encounter create/edit forms.  -->
 	<Style x:Key="CrudFormFieldEntryStyle" TargetType="Entry">
 		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="HeightRequest" Value="42" />
+		<Setter Property="VerticalOptions" Value="Center" />
 		<Setter Property="FontSize" Value="13" />
 		<Setter Property="PlaceholderColor" Value="{StaticResource SparkTextSecondary}" />
 		<Setter Property="TextColor" Value="{StaticResource SparkTextPrimary}" />
