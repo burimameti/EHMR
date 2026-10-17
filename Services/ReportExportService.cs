@@ -94,8 +94,8 @@ namespace EHMR.Services;
                         {
                             row.RelativeItem().Column(left =>
                             {
-                                left.Item().Text($"Датум на извештај: {DateTime.Now:dd.MM.yyyy}").FontSize(8);
-                                left.Item().PaddingTop(3).Text("Архивски бр.: ____________________").FontSize(8);
+                                left.Item().Text("Архивски бр.: ____________________").FontSize(8);
+                                left.Item().PaddingTop(3).Text($"Датум на извештај: {DateTime.Now:dd.MM.yyyy}").FontSize(8);
                             });
                             row.RelativeItem().AlignRight().AlignMiddle().Text(
                                 reportTitle.Contains("сите периоди", StringComparison.OrdinalIgnoreCase)
