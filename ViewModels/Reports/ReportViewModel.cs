@@ -1188,63 +1188,13 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     public string GetDynamicReportTitle()
     {
-        var titleParts = new List<string>();
+        // The exported patient report has a fixed, clean heading.
+        // The selected dates and filters control the data, but must not be
+        // appended to the visible report title.
+        if(_activeReport?.Type == ReportType.Patients)
+            return "Периодичен извештај";
 
-        if(SelectedPeriodTypeLabel == "Сите")
-        {
-            titleParts.Add("Извештај за пациенти за сите периоди");
-        }
-        else
-        {
-            var periodLabel = SelectedPeriodTypeLabel switch
-            {
-                "Месечно" => "Периодичен извештај за пациенти",
-                "Квартално" => "Периодичен извештај за пациенти",
-                "Полугодишно" => "Периодичен извештај за пациенти",
-                "Годишно" => "Периодичен извештај за пациенти",
-                "Прилагодено" => "Периодичен извештај за пациенти",
-                _ => "Периодичен извештај за пациенти"
-            };
-
-            titleParts.Add($"{periodLabel} од {StartDate:dd.MM.yyyy} до {EndDate:dd.MM.yyyy}");
-        }
-
-        var activeFilters = new List<string>();
-        foreach(var picker in Pickers)
-        {
-            var selected = picker.SelectedItem?.ToString()?.Trim();
-            var filterType = picker.Placeholder?.Trim() ?? string.Empty;
-
-            if(string.IsNullOrWhiteSpace(selected) ||
-               selected.Equals("Сите", StringComparison.OrdinalIgnoreCase) ||
-               filterType.Contains("период", StringComparison.OrdinalIgnoreCase) ||
-               filterType.Equals("Од", StringComparison.OrdinalIgnoreCase) ||
-               filterType.Equals("До", StringComparison.OrdinalIgnoreCase))
-                continue;
-
-            if(filterType.Contains("Пол", StringComparison.OrdinalIgnoreCase))
-                activeFilters.Add($"пол: {selected}");
-            else if(filterType.Contains("Реуматолог", StringComparison.OrdinalIgnoreCase) ||
-                    filterType.Contains("Лекар", StringComparison.OrdinalIgnoreCase))
-                activeFilters.Add($"реуматолог: {selected}");
-            else if(filterType.Contains("Дијагноза", StringComparison.OrdinalIgnoreCase))
-                activeFilters.Add($"дијагноза: {selected}");
-            else if(filterType.Contains("Град", StringComparison.OrdinalIgnoreCase))
-                activeFilters.Add($"град: {selected}");
-            else if(filterType.Contains("Лек", StringComparison.OrdinalIgnoreCase))
-                activeFilters.Add($"лек: {selected}");
-            else if(filterType.Contains("Статус", StringComparison.OrdinalIgnoreCase))
-                activeFilters.Add($"статус: {selected}");
-            else if(filterType.Contains("Скор", StringComparison.OrdinalIgnoreCase))
-                activeFilters.Add($"скор: {selected}");
-            else
-                activeFilters.Add($"{filterType}: {selected}");
-        }
-
-        if(activeFilters.Count > 0)
-            titleParts.Add("Филтри: " + string.Join(", ", activeFilters));
-
-        return string.Join(" — ", titleParts);
+        return ActiveReportTitle;
     }
 
     [RelayCommand]
