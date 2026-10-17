@@ -1188,11 +1188,18 @@ public partial class ReportViewModel : BaseViewModel<DynamicReportRow>
 
     public string GetDynamicReportTitle()
     {
-        // The exported patient report has a fixed, clean heading.
-        // The selected dates and filters control the data, but must not be
-        // appended to the visible report title.
         if(_activeReport?.Type == ReportType.Patients)
-            return "Периодичен извештај";
+        {
+            var title = "Периодичен извештај";
+            if(_activeProvider is PatientsReportProvider patientsProvider)
+            {
+                var selectedFilters = patientsProvider.GetSelectedTitleFilters();
+                if(!string.IsNullOrWhiteSpace(selectedFilters))
+                    title += $" според {selectedFilters}";
+            }
+
+            return title;
+        }
 
         return ActiveReportTitle;
     }
