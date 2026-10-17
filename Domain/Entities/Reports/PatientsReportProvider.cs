@@ -78,6 +78,25 @@ namespace EHMR.Domain.Entities.Reports
             IsScoreSearchEnabled=patientId.HasValue;
             FiltersChanged?.Invoke();
         }
+        public string GetSelectedTitleFilters()
+        {
+            var filters = new List<string>();
+
+            if(IsMedicineFilterEnabled && _selectedMedicineFilter != "Сите")
+                filters.Add($"лек: {_selectedMedicineFilter}");
+
+            if(_selectedGenderFilter != "Сите")
+                filters.Add($"пол: {_selectedGenderFilter}");
+
+            if(_selectedRheumatologistFilter != "Сите")
+                filters.Add($"реуматолог: {_selectedRheumatologistFilter}");
+
+            if(_selectedMkb10CodeFilter != "Сите")
+                filters.Add($"дијагноза: {_selectedMkb10CodeFilter}");
+
+            return string.Join(", ", filters);
+        }
+
         public string? SelectedMedicineForExport =>
             IsMedicineFilterEnabled && _selectedMedicineFilter!="Сите"
                 ? _selectedMedicineFilter
