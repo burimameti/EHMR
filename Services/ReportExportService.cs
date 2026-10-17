@@ -173,15 +173,12 @@ namespace EHMR.Services;
                     {
                         row.RelativeItem().PaddingRight(18).Column(sign =>
                         {
-                            sign.Item().BorderTop(0.7f).BorderColor("#000000").PaddingTop(5)
-                                .Text("Изготвил (име и презиме)").FontSize(8);
-                            sign.Item().PaddingTop(4).Text("Потпис: __________________________").FontSize(8);
+                            sign.Item().Text("Изготвил (име и презиме)").FontSize(8);
+                            sign.Item().PaddingTop(4).Text("Потпис").FontSize(8);
                         });
                         row.RelativeItem().PaddingLeft(18).Column(sign =>
                         {
-                            sign.Item().BorderTop(0.7f).BorderColor("#000000").PaddingTop(5)
-                                .Text("Потпис / печат").FontSize(8);
-                            sign.Item().PaddingTop(4).Text("____________________________").FontSize(8);
+                            sign.Item().Text("Потпис / печат").FontSize(8);
                         });
                     });
                 });
