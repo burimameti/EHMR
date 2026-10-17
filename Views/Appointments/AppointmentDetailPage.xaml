@@ -367,7 +367,7 @@
 							<Border Style="{StaticResource CrudFormSectionCardStyle}" IsVisible="{Binding SelectedPatientForAppointment, Converter={StaticResource SparkNotNullConverter}}">
 								<VerticalStackLayout Spacing="14">
 
-								<controls:CrudSectionHeader Title="МКБ-10 ДИЈАГНОЗИ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
+								<controls:CrudSectionHeader Title="МКБ-10 ИСТОРИЈА ОД КАРТОНОТ" LineColor="{StaticResource Gray600}" Style="{StaticResource CrudFormSectionHeaderStyle}" />
 
 
 								<!--  ═══ EDIT MODE: alphabet + dual search + compact assigned list ═══  -->
@@ -378,7 +378,7 @@
 									RowDefinitions="Auto,Auto,Auto,Auto"
 									RowSpacing="12">
 
-									<VerticalStackLayout Grid.ColumnSpan="2" Spacing="5">
+									<VerticalStackLayout Grid.ColumnSpan="2" IsVisible="False" Spacing="5">
 										<Label
 											FontAttributes="Bold"
 											FontSize="11"
@@ -456,6 +456,7 @@
 									<VerticalStackLayout
 										Grid.Row="1"
 										Grid.Column="0"
+										IsVisible="False"
 										Spacing="12">
 
 										<Grid ColumnDefinitions="*,*" ColumnSpacing="10">
@@ -571,6 +572,7 @@
                                         <VerticalStackLayout
                                             Grid.Row="1"
                                             Grid.Column="1"
+                                            IsVisible="False"
 										Spacing="8">
 										<Label
 											FontAttributes="Bold"
@@ -618,7 +620,7 @@
 								</Grid>
 
 								<!--  ═══ READ-ONLY MODE: full-width data table ═══  -->
-								<VerticalStackLayout IsVisible="{Binding IsReadOnly}" Spacing="0">
+								<VerticalStackLayout IsVisible="{Binding SelectedPatientForAppointment, Converter={StaticResource SparkNotNullConverter}}" Spacing="0">
 
 									<!--  Table header  -->
 									<Grid ColumnDefinitions="110,*,110" ColumnSpacing="1">
@@ -639,7 +641,7 @@
 									</Grid>
 
 									<!--  Table rows  -->
-									<VerticalStackLayout BindableLayout.ItemsSource="{Binding SelectedMkb10Assignments}" Spacing="0">
+									<VerticalStackLayout BindableLayout.ItemsSource="{Binding PatientMkb10History}" Spacing="0">
 										<BindableLayout.EmptyView>
 											<Border
 												Padding="12,14"
@@ -648,7 +650,7 @@
 												StrokeThickness="1">
 												<Label
 													FontSize="12"
-													Text="Нема доделени дијагнози."
+													Text="Нема внесени МКБ-10 дијагнози во картонот."
 													TextColor="{StaticResource SparkTextSecondary}" />
 											</Border>
 										</BindableLayout.EmptyView>
