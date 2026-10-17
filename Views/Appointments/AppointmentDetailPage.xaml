@@ -60,10 +60,7 @@
                         PrimaryButtonCommand="{Binding ToggleEditModeCommand}"
                         PrimaryButtonIsEnabled="{Binding CanEditAppointment}"
                         ShowPrimaryButton="{Binding CanEditAppointment}"
-                        SecondaryButtonText="Печати / PDF"
-                        SecondaryButtonCommand="{Binding GenerateClinicalReportCommand}"
-                        SecondaryButtonIsEnabled="{Binding CanPrint}"
-                        ShowSecondaryButton="{Binding IsReadOnly}">
+                        ShowSecondaryButton="False">
 					<controls:FFPageHeader.HeaderContent>
 						<HorizontalStackLayout Spacing="10" VerticalOptions="Center">
 
