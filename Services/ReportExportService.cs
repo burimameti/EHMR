@@ -80,39 +80,48 @@ namespace EHMR.Services;
                 page.Size(PageSizes.A4.Landscape());
                 page.DefaultTextStyle(x => x.FontSize(8).FontFamily("Arial"));
 
-                page.Header().Column(header =>
+                // The institution/report heading is part of the content, not Page.Header,
+                // so it appears once at the top of the first page only.
+                page.Content().PaddingTop(2).Column(contentColumn =>
                 {
-                    header.Item().AlignCenter().Text(institutionName)
-                        .Bold().FontSize(13).FontColor("#000000");
-
-                    header.Item().PaddingTop(4).AlignCenter().Text(reportTitle)
-                        .Bold().FontSize(10).FontColor("#000000");
-
-                    header.Item().PaddingTop(5).BorderBottom(1).BorderColor("#000000")
-                        .PaddingBottom(5).Row(row =>
+                    contentColumn.Item().Column(reportHeading =>
+                    {
+                        reportHeading.Item().AlignCenter().Text(institutionName)
+                            .Bold().FontSize(13).FontColor("#000000");
+                        reportHeading.Item().PaddingTop(3).AlignCenter().Text(reportTitle)
+                            .Bold().FontSize(10).FontColor("#000000");
+                        reportHeading.Item().PaddingTop(6).Row(row =>
                         {
-                            row.RelativeItem().Text(reportTitle.Contains("сите периоди", StringComparison.OrdinalIgnoreCase)
-                                ? "ПЕРИОД: СИТЕ ПЕРИОДИ"
-                                : $"ПЕРИОД: {startDate:dd.MM.yyyy} – {endDate:dd.MM.yyyy}")
-                                .FontSize(8);
-                            row.ConstantItem(150).AlignRight()
-                                .Text($"ДАТУМ НА ИЗВЕШТАЈ: {DateTime.Now:dd.MM.yyyy}")
+                            row.RelativeItem().Column(left =>
+                            {
+                                left.Item().Text($"Датум на извештај: {DateTime.Now:dd.MM.yyyy}").FontSize(8);
+                                left.Item().PaddingTop(3).Text("Архивски бр.: ____________________").FontSize(8);
+                            });
+                            row.RelativeItem().AlignRight().AlignMiddle().Text(
+                                reportTitle.Contains("сите периоди", StringComparison.OrdinalIgnoreCase)
+                                    ? "ПЕРИОД: СИТЕ ПЕРИОДИ"
+                                    : $"ПЕРИОД: {startDate:dd.MM.yyyy} – {endDate:dd.MM.yyyy}")
                                 .FontSize(8);
                         });
-                });
+                        reportHeading.Item().PaddingTop(5).BorderBottom(1).BorderColor("#000000");
+                    });
 
-                page.Content().PaddingTop(8).Column(contentColumn =>
-                {
-                    contentColumn.Item().Table(table =>
+                    contentColumn.Item().PaddingTop(8).Table(table =>
                     {
                         table.ColumnsDefinition(cols =>
                         {
+                            cols.ConstantColumn(34); // Реден број
                             foreach(var column in exportColumns)
                                 cols.RelativeColumn((float)GetColumnWidth(column));
                         });
 
+                        // Keep the column labels as a single table heading. Data rows
+                        // continue their numbering across page breaks.
                         table.Header(header =>
                         {
+                            header.Cell().Border(0.7f).BorderColor("#000000")
+                                .Background("#E5E7EB").PaddingVertical(5).PaddingHorizontal(4)
+                                .Text("Р.бр.").Bold().FontSize(7);
                             foreach(var column in exportColumns)
                             {
                                 header.Cell()
@@ -123,11 +132,14 @@ namespace EHMR.Services;
                             }
                         });
 
-                        foreach(var row in rows)
+                        for(int rowIndex = 0; rowIndex < rows.Count; rowIndex++)
                         {
+                            table.Cell().Border(0.5f).BorderColor("#555555")
+                                .PaddingVertical(4).PaddingHorizontal(3)
+                                .Text((rowIndex + 1).ToString()).FontSize(7);
                             foreach(var column in exportColumns)
                             {
-                                row.TryGetValue(column.Key, out var value);
+                                rows[rowIndex].TryGetValue(column.Key, out var value);
                                 table.Cell()
                                     .Border(0.5f).BorderColor("#555555")
                                     .PaddingVertical(4).PaddingHorizontal(3)
@@ -154,23 +166,33 @@ namespace EHMR.Services;
                             }
                         });
                     }
+
+                    // Signature and preparation lines flow after the report table,
+                    // so they appear at the end of the report rather than on every page.
+                    contentColumn.Item().PaddingTop(28).ShowEntire().Row(row =>
+                    {
+                        row.RelativeItem().PaddingRight(18).Column(sign =>
+                        {
+                            sign.Item().BorderTop(0.7f).BorderColor("#000000").PaddingTop(5)
+                                .Text("Изготвил (име и презиме)").FontSize(8);
+                            sign.Item().PaddingTop(4).Text("Потпис: __________________________").FontSize(8);
+                        });
+                        row.RelativeItem().PaddingLeft(18).Column(sign =>
+                        {
+                            sign.Item().BorderTop(0.7f).BorderColor("#000000").PaddingTop(5)
+                                .Text("Потпис / печат").FontSize(8);
+                            sign.Item().PaddingTop(4).Text("____________________________").FontSize(8);
+                        });
+                    });
                 });
 
-                page.Footer().PaddingTop(8).Column(footer =>
+                page.Footer().PaddingTop(4).AlignRight().Text(text =>
                 {
-                    footer.Item().BorderTop(0.7f).BorderColor("#000000").PaddingTop(6).Row(row =>
-{
-    row.RelativeItem().Text($"Датум: {DateTime.Now:dd.MM.yyyy}").FontSize(8);
-    row.RelativeItem().Text("Извештајот го подготвил (име и презиме): __________________________").FontSize(7);
-});
-                    footer.Item().PaddingTop(4).AlignRight().Text(text =>
-                    {
-                        text.DefaultTextStyle(style => style.FontSize(7));
-                        text.Span("Страница ");
-                        text.CurrentPageNumber();
-                        text.Span(" од ");
-                        text.TotalPages();
-                    });
+                    text.DefaultTextStyle(style => style.FontSize(7));
+                    text.Span("Страница ");
+                    text.CurrentPageNumber();
+                    text.Span(" од ");
+                    text.TotalPages();
                 });
             });
         }).GeneratePdf(path);
