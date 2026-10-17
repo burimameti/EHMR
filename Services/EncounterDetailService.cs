@@ -144,13 +144,37 @@ public class EncounterDetailService : IEncounterDetailService
             .Include(x => x.Appointment)
             .FirstAsync(x => x.Id==id);
 
-        var mkb10Assignments = await db.PatientMkb10Assignments
+        // Show diagnoses assigned specifically to this encounter. If the encounter
+        // has none yet, include the patient's current chart diagnoses as a fallback;
+        // patient-level diagnoses have EncounterId == null and must not disappear
+        // from the encounter detail screen.
+        var encounterAssignments = await db.PatientMkb10Assignments
             .AsNoTracking()
-            .Where(x => x.EncounterId==id)        // ← no more appointment-level MKB-10 assignments
+            .Where(x => x.EncounterId == id)
             .Include(x => x.Mkb10Code)
-            .OrderByDescending(x => x.IsPrimary)
-            .ThenBy(x => x.Mkb10Code!.Code)
             .ToListAsync();
+
+        var patientAssignments = await db.PatientMkb10Assignments
+            .AsNoTracking()
+            .Where(x => x.PatientId == encounter.PatientId
+                && x.EncounterId == null
+                && (x.Status == PatientMkb10AssignmentStatus.Active
+                    || x.Status == PatientMkb10AssignmentStatus.Chronic
+                    || x.Status == PatientMkb10AssignmentStatus.InRemission))
+            .Include(x => x.Mkb10Code)
+            .ToListAsync();
+
+        var encounterDiagnosisCodes = encounterAssignments
+            .Where(x => x.Mkb10CodeId.HasValue)
+            .Select(x => x.Mkb10CodeId!.Value)
+            .ToHashSet();
+
+        var mkb10Assignments = encounterAssignments
+            .Concat(patientAssignments.Where(x =>
+                !x.Mkb10CodeId.HasValue || !encounterDiagnosisCodes.Contains(x.Mkb10CodeId.Value)))
+            .OrderByDescending(x => x.IsPrimary)
+            .ThenBy(x => x.Mkb10Code?.Code)
+            .ToList();
 
         var prescriptions = await db.Prescriptions
             .AsNoTracking()
@@ -158,9 +182,19 @@ public class EncounterDetailService : IEncounterDetailService
             .OrderBy(x => x.Medication)
             .ToListAsync();
 
+        // Prefer this encounter's score. Older scores may be patient-level
+        // (EncounterId == null), so use the latest patient score only as fallback.
         var score = await db.PatientScores
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.EncounterId==id && x.PatientId==encounter.PatientId);
+            .Where(x => x.EncounterId == id && x.PatientId == encounter.PatientId)
+            .OrderByDescending(x => x.RecordedAt)
+            .FirstOrDefaultAsync();
+
+        score ??= await db.PatientScores
+            .AsNoTracking()
+            .Where(x => x.PatientId == encounter.PatientId && x.EncounterId == null)
+            .OrderByDescending(x => x.RecordedAt)
+            .FirstOrDefaultAsync();
 
         var patients = await GetPatients();
         var doctors = await GetDoctors();
