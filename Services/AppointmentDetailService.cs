@@ -372,9 +372,7 @@ Encounter? encounterForMedicines = null;
                 }
                 else
                 {
-                    // encounter is not null AND encounter.IsLocked == true — visit already
-                    // closed (Completed/Cancelled). MKB-10 assignments are already skipped by the
-                    // guard above; freeze medicines for the same reason.
+                    // Encounter is already closed (Completed/Cancelled); freeze medicines too.
                     medicinesEditable=false;
                 }
             }
