@@ -551,6 +551,10 @@
 																		LineBreakMode="WordWrap"
 																		Text="{Binding Mkb10Code.Description, TargetNullValue='—'}"
 																		TextColor="{StaticResource SparkTextPrimary}" />
+														<Label
+															FontSize="9.5"
+															Text="{Binding DiagnosedAt, StringFormat='Евидентирана: {0:dd.MM.yyyy}'}"
+															TextColor="{StaticResource SparkTextSecondary}" />
 																</VerticalStackLayout>
 															</Grid>
 														</DataTemplate>
