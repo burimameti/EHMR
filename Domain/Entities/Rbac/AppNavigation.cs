@@ -358,6 +358,13 @@ public static class AppNavigation
             return string.Empty;
 
         var normalized=route.Trim('/');
+
+        // Both routes are still registered for compatibility, but the menu has
+        // one calendar entry. Normalize the legacy route so Shell navigation,
+        // active-item highlighting and menu-group state all agree.
+        if(normalized.Equals(AppRoutes.Calendar, StringComparison.OrdinalIgnoreCase))
+            return AppRoutes.CalendarPage;
+
         return ParentRoutes.TryGetValue(normalized, out var parent)
             ? parent
             : normalized;
